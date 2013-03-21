@@ -118,7 +118,7 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public typeChecker: TypeChecker;
+        public typeChecker: TypeChecker = null;
         public typeFlow: TypeFlow = null;
         public errorReporter: ErrorReporter;
         public pullErrorReporter: PullErrorReporter;
@@ -500,29 +500,6 @@ module TypeScript {
 
             if (emitter) {
                 emitter.Close();
-            }
-        }
-
-        public emitToOutfile(outputFile: ITextWriter) {
-            if (this.settings.mapSourceFiles) {
-                throw Error("Cannot generate source map");
-            }
-
-            if (this.settings.generateDeclarationFiles) {
-                throw Error("Cannot generate declaration files");
-            }
-
-            if (this.settings.outputOption != "") {
-                throw Error("Cannot parse output option");
-            }
-
-            var emitter: Emitter = emitter = new Emitter(this.typeChecker, "stdout", outputFile, this.emitSettings, this.errorReporter);
-
-            var fileNames = this.fileNameToScript.getAllKeys();
-            for (var i = 0, len = fileNames.length; i < len; i++) {
-                var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
-                this.typeChecker.locationInfo = script.locationInfo;
-                emitter.emitJavascript(script, TokenID.Comma, false);
             }
         }
 

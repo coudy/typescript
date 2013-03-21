@@ -1223,10 +1223,6 @@ module Harness {
             compileUnit(lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
-        export function emitToOutfile(outfile: WriterAggregator) {
-            compiler.emitToOutfile(outfile);
-        }
-
         export function emit(ioHost: TypeScript.EmitterIOHost, usePullEmitter?: bool) {
             compiler.emit(ioHost, usePullEmitter);
         }
