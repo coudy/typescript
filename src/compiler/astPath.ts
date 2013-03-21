@@ -567,32 +567,6 @@ module TypeScript {
         return ctx.path;
     }
 
-    //
-    // Find a source text offset that is safe for lexing tokens at the given position.
-    // This is used when "position" might be inside a comment or string, etc.
-    //
-    export function getTokenizationOffset(script: TypeScript.Script, position: number): number {
-        var bestOffset = 0;
-        var pre = (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker): TypeScript.AST => {
-            if (TypeScript.isValidAstNode(cur)) {
-                // Did we find a closer offset?
-                if (cur.minChar <= position) {
-                    bestOffset = max(bestOffset, cur.minChar);
-                }
-
-                // Stop the walk if this node is not related to "minChar"
-                if (cur.minChar > position || cur.limChar < bestOffset) {
-                    walker.options.goChildren = false;
-                }
-            }
-
-            return cur;
-        }
-
-        TypeScript.getAstWalkerFactory().walk(script, pre);
-        return bestOffset;
-    }
-
     ///
     /// Simple function to Walk an AST using a simple callback function.
     ///

@@ -39,10 +39,6 @@ module Services {
             return this.sourceText;
         }
 
-        public getTokenizationOffset(position: number): number {
-            return TypeScript.getTokenizationOffset(this.script, position);
-        }
-
         public getAstPathToPosition(pos: number, options = TypeScript.GetAstPathOptions.Default): TypeScript.AstPath {
             return TypeScript.getAstPathToPosition(this.script, pos, options);
         }
