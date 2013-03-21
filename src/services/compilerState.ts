@@ -273,8 +273,8 @@ module Services {
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
             this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
             this.errorCollector = new CompilerErrorCollector(this.logger);
-            
-            this.compiler.setErrorCallback((a, b, c, d, e) => { this.errorCollector.reportError(a, b, c, d, e); });
+
+            this.compiler.parser.errorCallback = (a, b, c, d, e) => { this.errorCollector.reportError(a, b, c, d, e); };
 
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();

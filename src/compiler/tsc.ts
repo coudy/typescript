@@ -156,7 +156,7 @@ class BatchCompiler {
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
         compiler.setErrorOutput(this.errorReporter);
 
-        var errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) => {
+        compiler.parser.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) => {
             compiler.errorReporter.hasErrors = true;
             var lineCol = { line: -1, character: -1 };
             lineMap.fillLineAndCharacterFromPosition(minChar, lineCol);
@@ -164,7 +164,6 @@ class BatchCompiler {
             var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
             this.errorReporter.WriteLine(msg);
         };
-        compiler.setErrorCallback(errorCallback);
 
         if (this.compilationSettings.emitComments) {
             compiler.emitCommentsToOutput();

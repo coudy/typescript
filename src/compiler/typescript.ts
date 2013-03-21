@@ -191,10 +191,6 @@ module TypeScript {
             this.emitSettings = new EmitOptions(this.settings);
         }
 
-        public setErrorCallback(fn: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) =>void ) {
-            this.parser.errorCallback = fn;
-        }
-
         public updateUnit(prog: string, fileName: string) {
             return this.updateSourceUnit(new StringScriptSnapshot(prog), fileName);
         }
