@@ -73,29 +73,34 @@ module Services {
             return result;
         }
 
-        public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
-            this.refresh();
+        public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[]{
+            // This needs to run on the default background thread and not the High response one.
+            // Disabling for now.
+            
 
-            var result: ReferenceEntry[] = [];
+            //this.refresh();
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            //var result: ReferenceEntry[] = [];
 
-            /// TODO: this does not allow getting references on "constructor"
+            //var script = this.pullCompilerState.getScriptAST(fileName);
 
-            var path = this.getAstPathToPosition(script, pos);
-            if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
-                this.logger.log("No name found at the given position");
-                return result;
-            }
+            ///// TODO: this does not allow getting references on "constructor"
 
-            var symbolInfoAtPosition = this.pullCompilerState.getSymbolInformationFromPath(path, script);
-            if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
-                this.logger.log("No symbol found at the given position");
-                return result;
-            }
+            //var path = this.getAstPathToPosition(script, pos);
+            //if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
+            //    this.logger.log("No name found at the given position");
+            //    return result;
+            //}
 
-            var symbol = symbolInfoAtPosition.symbol;
-            return this.getReferencesInFile(fileName, symbol);
+            //var symbolInfoAtPosition = this.pullCompilerState.getSymbolInformationFromPath(path, script);
+            //if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
+            //    this.logger.log("No symbol found at the given position");
+            //    return result;
+            //}
+
+            //var symbol = symbolInfoAtPosition.symbol;
+            //return this.getReferencesInFile(fileName, symbol);
+            return [];
         }
 
         public getImplementorsAtPosition(fileName: string, position: number): ReferenceEntry[] {

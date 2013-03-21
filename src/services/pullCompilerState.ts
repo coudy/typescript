@@ -94,10 +94,10 @@ module Services {
         }
 
         public minimalRefresh(): void {
-            if (this.compiler === null) {
-                this.refresh();
-                return;
-            }
+            //if (this.compiler === null) {
+            //    this.refresh();
+            //    return;
+            //}
 
             // Reset the cache at start of every refresh
             this.hostCache = new HostCache(this.host);
