@@ -65,9 +65,13 @@ module TypeScript {
         private requiresExtendsBlock: bool = false;
         private previousTokenTrailingComments: Comment[] = null;
 
+        private isParsingDeclareFile: bool;
+        private isParsingAmbientModule = false;
+
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
                     private lineMap: ILineMap) {
+            this.isParsingDeclareFile = isDSTRFile(fileName) || isDTSFile(fileName);
         }
 
         public static visit(syntaxTree: SyntaxTree, fileName: string): Script {
@@ -388,8 +392,6 @@ module TypeScript {
             var members;
             this.pushDeclLists();
 
-            var isParsingDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
-
             var bod = this.visitSyntaxList(node.moduleElements);
 
             if (this.hasUseStrictDirective(node.moduleElements)) {
@@ -407,7 +409,7 @@ module TypeScript {
                 topLevelMod.modFlags |= ModuleFlags.IsWholeFile;
                 topLevelMod.modFlags |= ModuleFlags.Exported;
 
-                if (isParsingDeclareFile) {
+                if (this.isParsingDeclareFile) {
                     topLevelMod.modFlags |= ModuleFlags.Ambient;
                 }
 
@@ -430,7 +432,7 @@ module TypeScript {
             result.bod = bod;
             result.locationInfo = new LocationInfo(this.fileName, this.lineMap);
             result.topLevelMod = topLevelMod;
-            result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
+            result.isDeclareFile = this.isParsingDeclareFile;
             result.requiresExtendsBlock = this.requiresExtendsBlock;
 
             return result;
@@ -477,11 +479,11 @@ module TypeScript {
             result.preComments = preComments;
             result.postComments = postComments;
 
-            if (node.exportKeyword) {
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 result.varFlags |= VarFlags.Exported;
             }
 
-            if (node.declareKeyword) {
+            if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.varFlags |= VarFlags.Ambient;
             }
 
@@ -563,7 +565,8 @@ module TypeScript {
             //if (hasFlag(modifiers, Modifiers.Public)) {
             //    result.varFlags |= VarFlags.Public;
             //}
-            if (node.exportKeyword) {
+
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 result.varFlags |= VarFlags.Exported;
             }
 
@@ -661,7 +664,12 @@ module TypeScript {
             this.movePast(node.moduleKeyword);
             var names = this.getModuleNames(node);
             this.movePast(node.openBraceToken);
+            var svIsParsingAmbientModule = this.isParsingAmbientModule;
+            if (node.declareKeyword|| this.isParsingDeclareFile) {
+                this.isParsingAmbientModule = true;
+            }
             var members = this.visitSyntaxList(node.moduleElements);
+            this.isParsingAmbientModule = svIsParsingAmbientModule;
             var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
 
@@ -683,13 +691,17 @@ module TypeScript {
                 preComments = null;
                 postComments = null;
 
-                //if (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)) {
-                //    innerDecl.modFlags |= ModuleFlags.Ambient;
-                //}
-
                 // mark the inner module declarations as exported
                 if (i) {
                     moduleDecl.modFlags |= ModuleFlags.Exported;
+                } else if (node.exportKeyword || this.isParsingAmbientModule) {
+                    // outer module is exported if export key word or parsing ambient module
+                    moduleDecl.modFlags |= ModuleFlags.Exported;
+                }
+
+                // mark ambient if declare keyword or parsing ambient module or parsing declare file
+                if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                    moduleDecl.modFlags |= ModuleFlags.Ambient;
                 }
 
                 // REVIEW: will also possibly need to re-parent comments as well
@@ -701,20 +713,6 @@ module TypeScript {
                 members = new ASTList();
                 members.append(moduleDecl);
             }
-
-            if (node.declareKeyword) {
-                moduleDecl.modFlags |= ModuleFlags.Ambient;
-            }
-
-            if (node.exportKeyword) {
-                moduleDecl.modFlags |= ModuleFlags.Exported;
-            }
-
-            //if (hasFlag(modifiers, Modifiers.Exported)) {
-            //    moduleDecl.modFlags |= ModuleFlags.Exported;
-            //} else if (svAmbient) {
-            //    this.reportAmbientElementNotExported(name);
-            //}
 
             //if (isDynamicMod) {
             //    moduleDecl.modFlags |= ModuleFlags.IsDynamic;
@@ -801,11 +799,11 @@ module TypeScript {
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
 
-            if (node.exportKeyword) {
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 funcDecl.fncFlags |= FncFlags.Exported;
             }
 
-            if (node.declareKeyword) {
+            if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 funcDecl.fncFlags |= FncFlags.Ambient;
             }
 
@@ -948,7 +946,7 @@ module TypeScript {
             modDecl.modFlags |= ModuleFlags.IsEnum;
             modDecl.recordNonInterface();
 
-            if (node.exportKeyword) {
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 modDecl.modFlags |= ModuleFlags.Exported;
             }
 
@@ -1034,11 +1032,11 @@ module TypeScript {
                     varDecl.preComments = this.mergeComments(preComments, varDecl.preComments);
                 }
 
-                if (node.exportKeyword) {
+                if (node.exportKeyword || this.isParsingAmbientModule) {
                     varDecl.varFlags |= VarFlags.Exported;
                 }
 
-                if (node.declareKeyword) {
+                if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                     varDecl.varFlags |= VarFlags.Ambient;
                 }
             }
