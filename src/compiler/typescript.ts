@@ -88,14 +88,6 @@ module TypeScript {
         }
     }
 
-    export class ErrorEntry {
-        constructor(public fileName: string,
-                    public minChar: number,
-                    public limChar: number,
-                    public message: string) {
-        }
-    }
-
     export var defaultSettings = new CompilationSettings();
 
     export interface EmitterIOHost {
