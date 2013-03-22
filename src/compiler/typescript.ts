@@ -118,8 +118,7 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public typeChecker: TypeChecker = null;
-        public errorReporter: ErrorReporter;
+        public errorReporter: ErrorReporter = null;
         public pullErrorReporter: PullErrorReporter = null;
 
         public pullTypeChecker: PullTypeChecker = null;
@@ -137,7 +136,6 @@ module TypeScript {
                     public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
             this.errorReporter = new ErrorReporter(this.errorOutput);
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
-            this.initTypeChecker(this.errorOutput);
 
             this.emitSettings = new EmitOptions(this.settings);
 
@@ -150,29 +148,6 @@ module TypeScript {
 
         public timeFunction(funcDescription: string, func: () => any): any {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
-        }
-
-        public initTypeChecker(errorOutput: ITextWriter) {
-            // The initial "refresh" initializes the persistent type state
-            this.typeChecker = new TypeChecker(new PersistentGlobalTypeState(this.errorReporter));
-            this.typeChecker.errorReporter = this.errorReporter;
-
-            // REVIEW: These properties should be moved out of the typeCheck object
-            // ideally, CF should be a separate pass, independent of control flow
-            this.typeChecker.checkControlFlow = this.settings.controlFlow;
-            this.typeChecker.checkControlFlowUseDef = this.settings.controlFlowUseDef;
-            this.typeChecker.printControlFlowGraph = this.settings.printControlFlow;
-
-            this.typeChecker.errorsOnWith = this.settings.errorOnWith;
-            this.typeChecker.styleSettings = this.settings.styleSettings;
-            this.typeChecker.canCallDefinitionSignature = this.settings.canCallDefinitionSignature;
-
-            this.setErrorOutput(this.errorOutput);
-        }
-
-        public setErrorOutput(outerr) {
-            this.errorOutput = outerr;
-            this.errorReporter.setErrOut(outerr);
         }
 
         public emitCommentsToOutput() {

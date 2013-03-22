@@ -30,10 +30,6 @@ module TypeScript {
         public freeCapturedErrors() { this.errorSink = []; }
         public captureError(emsg: string) { this.errorSink[this.errorSink.length] = emsg; }
 
-        public setErrOut(outerr) {
-            this.outfile = outerr;
-        }
-
         public emitPrefix() {
             this.outfile.Write(this.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.character + "): ");
         }

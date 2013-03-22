@@ -154,7 +154,6 @@ class BatchCompiler {
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
         var compiler = new TypeScript.TypeScriptCompiler(
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
-        compiler.setErrorOutput(this.errorReporter);
 
         compiler.errorReporter.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) => {
             compiler.errorReporter.hasErrors = true;
