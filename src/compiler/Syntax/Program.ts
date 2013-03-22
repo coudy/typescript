@@ -13,7 +13,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "ErrantAccessibilityModifierInModule1.ts";
+    // "EnumDeclaration5.ts";
     undefined;
 
 var generate = false;
@@ -33,14 +33,14 @@ class Program {
             // return;
         }
 
-        Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
-
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
         }
+
+        Environment.standardOut.WriteLine("Testing emitter 1.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
+            filePath => this.runEmitter(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
 
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
@@ -210,6 +210,11 @@ class Program {
                 if (!generate) {
                     var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
                     htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult, includeUnchangedRegions);
+                }
+            }
+            else {
+                if (Environment.fileExists(actualFile)) {
+                    Environment.deleteFile(actualFile);
                 }
             }
         }

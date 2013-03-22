@@ -4,7 +4,7 @@ module M {
   }
 
   enum E3 {
-    A: 1
+    A = 1
   }
 }
 
@@ -15,7 +15,7 @@ module M {
     }
 
     enum E3 {
-      A: 1
+      A = 1
     }
   }
 }
@@ -26,6 +26,6 @@ module M.N.O {
   }
 
   enum E3 {
-    A: 1
+    A = 1
   }
 }

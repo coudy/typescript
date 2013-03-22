@@ -1,44 +1,5 @@
 var TypeScript;
 (function (TypeScript) {
-    var Debug = (function () {
-        function Debug() { }
-        Debug.assert = function assert(expression, message) {
-            if (!expression) {
-                throw new Error("Debug Failure. False expression." + (message ? message : ""));
-            }
-        };
-        return Debug;
-    })();
-    TypeScript.Debug = Debug;    
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    var Errors = (function () {
-        function Errors() { }
-        Errors.argument = function argument(argument, message) {
-            return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
-        };
-        Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
-            return new Error("Argument out of range: " + argument + ".");
-        };
-        Errors.argumentNull = function argumentNull(argument) {
-            return new Error("Argument null: " + argument + ".");
-        };
-        Errors.abstract = function abstract() {
-            return new Error("Operation not implemented properly by subclass.");
-        };
-        Errors.notYetImplemented = function notYetImplemented() {
-            return new Error("Not yet implemented.");
-        };
-        Errors.invalidOperation = function invalidOperation(message) {
-            return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
-        };
-        return Errors;
-    })();
-    TypeScript.Errors = Errors;    
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
     var ArrayUtilities = (function () {
         function ArrayUtilities() { }
         ArrayUtilities.isArray = function isArray(value) {
@@ -201,6 +162,563 @@ var TypeScript;
         return ArrayUtilities;
     })();
     TypeScript.ArrayUtilities = ArrayUtilities;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    (function (Constants) {
+        Constants._map = [];
+        Constants.Max31BitInteger = 1073741823;
+        Constants.Min31BitInteger = -1073741824;
+    })(TypeScript.Constants || (TypeScript.Constants = {}));
+    var Constants = TypeScript.Constants;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var Contract = (function () {
+        function Contract() { }
+        Contract.requires = function requires(expression) {
+            if (!expression) {
+                throw new Error("Contract violated. False expression.");
+            }
+        };
+        Contract.throwIfFalse = function throwIfFalse(expression) {
+            if (!expression) {
+                throw new Error("Contract violated. False expression.");
+            }
+        };
+        Contract.throwIfNull = function throwIfNull(value) {
+            if (value === null) {
+                throw new Error("Contract violated. Null value.");
+            }
+        };
+        return Contract;
+    })();
+    TypeScript.Contract = Contract;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var Debug = (function () {
+        function Debug() { }
+        Debug.assert = function assert(expression, message) {
+            if (!expression) {
+                throw new Error("Debug Failure. False expression." + (message ? message : ""));
+            }
+        };
+        return Debug;
+    })();
+    TypeScript.Debug = Debug;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var Errors = (function () {
+        function Errors() { }
+        Errors.argument = function argument(argument, message) {
+            return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
+        };
+        Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
+            return new Error("Argument out of range: " + argument + ".");
+        };
+        Errors.argumentNull = function argumentNull(argument) {
+            return new Error("Argument null: " + argument + ".");
+        };
+        Errors.abstract = function abstract() {
+            return new Error("Operation not implemented properly by subclass.");
+        };
+        Errors.notYetImplemented = function notYetImplemented() {
+            return new Error("Not yet implemented.");
+        };
+        Errors.invalidOperation = function invalidOperation(message) {
+            return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
+        };
+        return Errors;
+    })();
+    TypeScript.Errors = Errors;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var Hash = (function () {
+        function Hash() { }
+        Hash.FNV_BASE = 2166136261;
+        Hash.FNV_PRIME = 16777619;
+        Hash.computeFnv1aCharArrayHashCode = function computeFnv1aCharArrayHashCode(text, start, len) {
+            var hashCode = Hash.FNV_BASE;
+            var end = start + len;
+            for(var i = start; i < end; i++) {
+                hashCode = (hashCode ^ text[i]) * Hash.FNV_PRIME;
+            }
+            return hashCode;
+        };
+        Hash.computeSimple31BitCharArrayHashCode = function computeSimple31BitCharArrayHashCode(key, start, len) {
+            var hash = 0;
+            for(var i = 0; i < len; i++) {
+                var ch = key[start + i];
+                hash = (((hash << 5) + hash) + ch) | 0;
+            }
+            return hash & 0x7FFFFFFF;
+        };
+        Hash.computeSimple31BitStringHashCode = function computeSimple31BitStringHashCode(key) {
+            var hash = 0;
+            var start = 0;
+            var len = key.length;
+            for(var i = 0; i < len; i++) {
+                var ch = key.charCodeAt(start + i);
+                hash = (((hash << 5) + hash) + ch) | 0;
+            }
+            return hash & 0x7FFFFFFF;
+        };
+        Hash.computeMurmur2CharArrayHashCode = function computeMurmur2CharArrayHashCode(key, start, len) {
+            var m = 0x5bd1e995;
+            var r = 24;
+            var numberOfCharsLeft = len;
+            var h = (0 ^ numberOfCharsLeft);
+            var index = start;
+            while(numberOfCharsLeft >= 2) {
+                var c1 = key[index];
+                var c2 = key[index + 1];
+                var k = c1 | (c2 << 16);
+                k *= m;
+                k ^= k >> r;
+                k *= m;
+                h *= m;
+                h ^= k;
+                index += 2;
+                numberOfCharsLeft -= 2;
+            }
+            if (numberOfCharsLeft === 1) {
+                h ^= key[index];
+                h *= m;
+            }
+            h ^= h >> 13;
+            h *= m;
+            h ^= h >> 15;
+            return h;
+        };
+        Hash.computeMurmur2StringHashCode = function computeMurmur2StringHashCode(key) {
+            var m = 0x5bd1e995;
+            var r = 24;
+            var start = 0;
+            var len = key.length;
+            var numberOfCharsLeft = len;
+            var h = (0 ^ numberOfCharsLeft);
+            var index = start;
+            while(numberOfCharsLeft >= 2) {
+                var c1 = key.charCodeAt(index);
+                var c2 = key.charCodeAt(index + 1);
+                var k = c1 | (c2 << 16);
+                k *= m;
+                k ^= k >> r;
+                k *= m;
+                h *= m;
+                h ^= k;
+                index += 2;
+                numberOfCharsLeft -= 2;
+            }
+            if (numberOfCharsLeft === 1) {
+                h ^= key.charCodeAt(index);
+                h *= m;
+            }
+            h ^= h >> 13;
+            h *= m;
+            h ^= h >> 15;
+            return h;
+        };
+        Hash.primes = [
+            3, 
+            7, 
+            11, 
+            17, 
+            23, 
+            29, 
+            37, 
+            47, 
+            59, 
+            71, 
+            89, 
+            107, 
+            131, 
+            163, 
+            197, 
+            239, 
+            293, 
+            353, 
+            431, 
+            521, 
+            631, 
+            761, 
+            919, 
+            1103, 
+            1327, 
+            1597, 
+            1931, 
+            2333, 
+            2801, 
+            3371, 
+            4049, 
+            4861, 
+            5839, 
+            7013, 
+            8419, 
+            10103, 
+            12143, 
+            14591, 
+            17519, 
+            21023, 
+            25229, 
+            30293, 
+            36353, 
+            43627, 
+            52361, 
+            62851, 
+            75431, 
+            90523, 
+            108631, 
+            130363, 
+            156437, 
+            187751, 
+            225307, 
+            270371, 
+            324449, 
+            389357, 
+            467237, 
+            560689, 
+            672827, 
+            807403, 
+            968897, 
+            1162687, 
+            1395263, 
+            1674319, 
+            2009191, 
+            2411033, 
+            2893249, 
+            3471899, 
+            4166287, 
+            4999559, 
+            5999471, 
+            7199369
+        ];
+        Hash.getPrime = function getPrime(min) {
+            for(var i = 0; i < Hash.primes.length; i++) {
+                var num = Hash.primes[i];
+                if (num >= min) {
+                    return num;
+                }
+            }
+            throw TypeScript.Errors.notYetImplemented();
+        };
+        Hash.expandPrime = function expandPrime(oldSize) {
+            var num = oldSize << 1;
+            if (num > 2146435069 && 2146435069 > oldSize) {
+                return 2146435069;
+            }
+            return Hash.getPrime(num);
+        };
+        Hash.combine = function combine(value, currentHash) {
+            return (((currentHash << 5) + currentHash) + value) & 0x7FFFFFFF;
+        };
+        return Hash;
+    })();
+    TypeScript.Hash = Hash;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    (function (Collections) {
+        Collections.DefaultHashTableCapacity = 256;
+        var HashTableEntry = (function () {
+            function HashTableEntry(Key, Value, HashCode, Next) {
+                this.Key = Key;
+                this.Value = Value;
+                this.HashCode = HashCode;
+                this.Next = Next;
+            }
+            return HashTableEntry;
+        })();        
+        var HashTable = (function () {
+            function HashTable(capacity, hash, equals) {
+                this.hash = hash;
+                this.equals = equals;
+                this.entries = [];
+                this.count = 0;
+                var size = TypeScript.Hash.getPrime(capacity);
+                this.hash = hash;
+                this.equals = equals;
+                this.entries = TypeScript.ArrayUtilities.createArray(size, null);
+            }
+            HashTable.prototype.set = function (key, value) {
+                this.addOrSet(key, value, false);
+            };
+            HashTable.prototype.add = function (key, value) {
+                this.addOrSet(key, value, true);
+            };
+            HashTable.prototype.containsKey = function (key) {
+                var hashCode = this.computeHashCode(key);
+                var entry = this.findEntry(key, hashCode);
+                return entry !== null;
+            };
+            HashTable.prototype.get = function (key) {
+                var hashCode = this.computeHashCode(key);
+                var entry = this.findEntry(key, hashCode);
+                return entry === null ? null : entry.Value;
+            };
+            HashTable.prototype.computeHashCode = function (key) {
+                var hashCode = this.hash === null ? key.hashCode() : this.hash(key);
+                hashCode = hashCode & 0x7FFFFFFF;
+                TypeScript.Debug.assert(hashCode > 0);
+                return hashCode;
+            };
+            HashTable.prototype.addOrSet = function (key, value, throwOnExistingEntry) {
+                var hashCode = this.computeHashCode(key);
+                var entry = this.findEntry(key, hashCode);
+                if (entry !== null) {
+                    if (throwOnExistingEntry) {
+                        throw TypeScript.Errors.argument('key', 'Key was already in table.');
+                    }
+                    entry.Key = key;
+                    entry.Value = value;
+                    return;
+                }
+                return this.addEntry(key, value, hashCode);
+            };
+            HashTable.prototype.findEntry = function (key, hashCode) {
+                for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+                    if (e.HashCode === hashCode) {
+                        var equals = this.equals === null ? key === e.Key : this.equals(key, e.Key);
+                        if (equals) {
+                            return e;
+                        }
+                    }
+                }
+                return null;
+            };
+            HashTable.prototype.addEntry = function (key, value, hashCode) {
+                var index = hashCode % this.entries.length;
+                var e = new HashTableEntry(key, value, hashCode, this.entries[index]);
+                this.entries[index] = e;
+                if (this.count === this.entries.length) {
+                    this.grow();
+                }
+                this.count++;
+                return e.Key;
+            };
+            HashTable.prototype.grow = function () {
+                var newSize = TypeScript.Hash.expandPrime(this.entries.length);
+                var oldEntries = this.entries;
+                var newEntries = TypeScript.ArrayUtilities.createArray(newSize, null);
+                this.entries = newEntries;
+                for(var i = 0; i < oldEntries.length; i++) {
+                    var e = oldEntries[i];
+                    while(e !== null) {
+                        var newIndex = e.HashCode % newSize;
+                        var tmp = e.Next;
+                        e.Next = newEntries[newIndex];
+                        newEntries[newIndex] = e;
+                        e = tmp;
+                    }
+                }
+            };
+            return HashTable;
+        })();
+        Collections.HashTable = HashTable;        
+        function createHashTable(capacity, hash, equals) {
+            if (typeof capacity === "undefined") { capacity = Collections.DefaultHashTableCapacity; }
+            if (typeof hash === "undefined") { hash = null; }
+            if (typeof equals === "undefined") { equals = null; }
+            return new HashTable(capacity, hash, equals);
+        }
+        Collections.createHashTable = createHashTable;
+        var currentHashCode = 1;
+        function identityHashCode(value) {
+            if (value.__hash === undefined) {
+                value.__hash = currentHashCode;
+                currentHashCode++;
+            }
+            return value.__hash;
+        }
+        Collections.identityHashCode = identityHashCode;
+    })(TypeScript.Collections || (TypeScript.Collections = {}));
+    var Collections = TypeScript.Collections;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var IntegerUtilities = (function () {
+        function IntegerUtilities() { }
+        IntegerUtilities.integerDivide = function integerDivide(numerator, denominator) {
+            return (numerator / denominator) >> 0;
+        };
+        IntegerUtilities.integerMultiplyLow32Bits = function integerMultiplyLow32Bits(n1, n2) {
+            var n1Low16 = n1 & 0x0000ffff;
+            var n1High16 = n1 >>> 16;
+            var n2Low16 = n2 & 0x0000ffff;
+            var n2High16 = n2 >>> 16;
+            var resultLow32 = (((n1 & 0xffff0000) * n2) >>> 0) + (((n1 & 0x0000ffff) * n2) >>> 0) >>> 0;
+            return resultLow32;
+        };
+        IntegerUtilities.integerMultiplyHigh32Bits = function integerMultiplyHigh32Bits(n1, n2) {
+            var n1Low16 = n1 & 0x0000ffff;
+            var n1High16 = n1 >>> 16;
+            var n2Low16 = n2 & 0x0000ffff;
+            var n2High16 = n2 >>> 16;
+            var resultHigh32 = n1High16 * n2High16 + ((((n1Low16 * n2Low16) >>> 17) + n1Low16 * n2High16) >>> 15);
+            return resultHigh32;
+        };
+        return IntegerUtilities;
+    })();
+    TypeScript.IntegerUtilities = IntegerUtilities;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var MathPrototype = (function () {
+        function MathPrototype() { }
+        MathPrototype.max = function max(a, b) {
+            return a >= b ? a : b;
+        };
+        MathPrototype.min = function min(a, b) {
+            return a <= b ? a : b;
+        };
+        return MathPrototype;
+    })();
+    TypeScript.MathPrototype = MathPrototype;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    (function (Collections) {
+        Collections.DefaultStringTableCapacity = 256;
+        var StringTableEntry = (function () {
+            function StringTableEntry(Text, HashCode, Next) {
+                this.Text = Text;
+                this.HashCode = HashCode;
+                this.Next = Next;
+            }
+            return StringTableEntry;
+        })();        
+        var StringTable = (function () {
+            function StringTable(capacity) {
+                this.entries = [];
+                this.count = 0;
+                var size = TypeScript.Hash.getPrime(capacity);
+                this.entries = TypeScript.ArrayUtilities.createArray(size, null);
+            }
+            StringTable.prototype.addCharArray = function (key, start, len) {
+                var hashCode = TypeScript.Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 0x7FFFFFFF;
+                var entry = this.findCharArrayEntry(key, start, len, hashCode);
+                if (entry !== null) {
+                    return entry.Text;
+                }
+                var slice = key.slice(start, start + len);
+                return this.addEntry(TypeScript.StringUtilities.fromCharCodeArray(slice), hashCode);
+            };
+            StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
+                for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+                    if (e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
+                        return e;
+                    }
+                }
+                return null;
+            };
+            StringTable.prototype.addEntry = function (text, hashCode) {
+                var index = hashCode % this.entries.length;
+                var e = new StringTableEntry(text, hashCode, this.entries[index]);
+                this.entries[index] = e;
+                if (this.count === this.entries.length) {
+                    this.grow();
+                }
+                this.count++;
+                return e.Text;
+            };
+            StringTable.prototype.grow = function () {
+                var newSize = TypeScript.Hash.expandPrime(this.entries.length);
+                var oldEntries = this.entries;
+                var newEntries = TypeScript.ArrayUtilities.createArray(newSize, null);
+                this.entries = newEntries;
+                for(var i = 0; i < oldEntries.length; i++) {
+                    var e = oldEntries[i];
+                    while(e !== null) {
+                        var newIndex = e.HashCode % newSize;
+                        var tmp = e.Next;
+                        e.Next = newEntries[newIndex];
+                        newEntries[newIndex] = e;
+                        e = tmp;
+                    }
+                }
+            };
+            StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
+                if (text.length !== length) {
+                    return false;
+                }
+                var s = start;
+                for(var i = 0; i < length; i++) {
+                    if (text.charCodeAt(i) !== array[s]) {
+                        return false;
+                    }
+                    s++;
+                }
+                return true;
+            };
+            return StringTable;
+        })();
+        Collections.StringTable = StringTable;        
+        Collections.DefaultStringTable = new StringTable(Collections.DefaultStringTableCapacity);
+    })(TypeScript.Collections || (TypeScript.Collections = {}));
+    var Collections = TypeScript.Collections;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var StringUtilities = (function () {
+        function StringUtilities() { }
+        StringUtilities.fromCharCodeArray = function fromCharCodeArray(array) {
+            return String.fromCharCode.apply(null, array);
+        };
+        StringUtilities.endsWith = function endsWith(string, value) {
+            return string.substring(string.length - value.length, string.length) === value;
+        };
+        StringUtilities.startsWith = function startsWith(string, value) {
+            return string.substr(0, value.length) === value;
+        };
+        StringUtilities.copyTo = function copyTo(source, sourceIndex, destination, destinationIndex, count) {
+            for(var i = 0; i < count; i++) {
+                destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
+            }
+        };
+        StringUtilities.repeat = function repeat(value, count) {
+            return Array(count + 1).join(value);
+        };
+        return StringUtilities;
+    })();
+    TypeScript.StringUtilities = StringUtilities;    
+})(TypeScript || (TypeScript = {}));
+var global = Function("return this").call(null);
+var TypeScript;
+(function (TypeScript) {
+    var Clock;
+    (function (Clock) {
+        Clock.now;
+        Clock.resolution;
+                        if (typeof WScript !== "undefined" && typeof global['WScript'].InitializeProjection !== "undefined") {
+            global['WScript'].InitializeProjection();
+            Clock.now = function () {
+                return TestUtilities.QueryPerformanceCounter();
+            };
+            Clock.resolution = TestUtilities.QueryPerformanceFrequency();
+        } else {
+            Clock.now = function () {
+                return Date.now();
+            };
+            Clock.resolution = 1000;
+        }
+    })(Clock || (Clock = {}));
+    var Timer = (function () {
+        function Timer() {
+            this.time = 0;
+        }
+        Timer.prototype.start = function () {
+            this.time = 0;
+            this.startTime = Clock.now();
+        };
+        Timer.prototype.end = function () {
+            this.time = (Clock.now() - this.startTime);
+        };
+        return Timer;
+    })();
+    TypeScript.Timer = Timer;    
 })(TypeScript || (TypeScript = {}));
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
@@ -442,31 +960,6 @@ var Environment = (function () {
         return null;
     }
 })();
-var TypeScript;
-(function (TypeScript) {
-    var StringUtilities = (function () {
-        function StringUtilities() { }
-        StringUtilities.fromCharCodeArray = function fromCharCodeArray(array) {
-            return String.fromCharCode.apply(null, array);
-        };
-        StringUtilities.endsWith = function endsWith(string, value) {
-            return string.substring(string.length - value.length, string.length) === value;
-        };
-        StringUtilities.startsWith = function startsWith(string, value) {
-            return string.substr(0, value.length) === value;
-        };
-        StringUtilities.copyTo = function copyTo(source, sourceIndex, destination, destinationIndex, count) {
-            for(var i = 0; i < count; i++) {
-                destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
-            }
-        };
-        StringUtilities.repeat = function repeat(value, count) {
-            return Array(count + 1).join(value);
-        };
-        return StringUtilities;
-    })();
-    TypeScript.StringUtilities = StringUtilities;    
-})(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
     (function (SyntaxKind) {
@@ -931,40 +1424,38 @@ var TypeScript;
         SyntaxKind.ImplementsClause = 228;
         SyntaxKind._map[229] = "ExtendsClause";
         SyntaxKind.ExtendsClause = 229;
-        SyntaxKind._map[230] = "ColonValueClause";
-        SyntaxKind.ColonValueClause = 230;
-        SyntaxKind._map[231] = "EqualsValueClause";
-        SyntaxKind.EqualsValueClause = 231;
-        SyntaxKind._map[232] = "CaseSwitchClause";
-        SyntaxKind.CaseSwitchClause = 232;
-        SyntaxKind._map[233] = "DefaultSwitchClause";
-        SyntaxKind.DefaultSwitchClause = 233;
-        SyntaxKind._map[234] = "ElseClause";
-        SyntaxKind.ElseClause = 234;
-        SyntaxKind._map[235] = "CatchClause";
-        SyntaxKind.CatchClause = 235;
-        SyntaxKind._map[236] = "FinallyClause";
-        SyntaxKind.FinallyClause = 236;
-        SyntaxKind._map[237] = "TypeParameter";
-        SyntaxKind.TypeParameter = 237;
-        SyntaxKind._map[238] = "Constraint";
-        SyntaxKind.Constraint = 238;
-        SyntaxKind._map[239] = "Parameter";
-        SyntaxKind.Parameter = 239;
-        SyntaxKind._map[240] = "EnumElement";
-        SyntaxKind.EnumElement = 240;
-        SyntaxKind._map[241] = "TypeAnnotation";
-        SyntaxKind.TypeAnnotation = 241;
-        SyntaxKind._map[242] = "SimplePropertyAssignment";
-        SyntaxKind.SimplePropertyAssignment = 242;
-        SyntaxKind._map[243] = "ExternalModuleReference";
-        SyntaxKind.ExternalModuleReference = 243;
-        SyntaxKind._map[244] = "ModuleNameModuleReference";
-        SyntaxKind.ModuleNameModuleReference = 244;
-        SyntaxKind._map[245] = "GetAccessorPropertyAssignment";
-        SyntaxKind.GetAccessorPropertyAssignment = 245;
-        SyntaxKind._map[246] = "SetAccessorPropertyAssignment";
-        SyntaxKind.SetAccessorPropertyAssignment = 246;
+        SyntaxKind._map[230] = "EqualsValueClause";
+        SyntaxKind.EqualsValueClause = 230;
+        SyntaxKind._map[231] = "CaseSwitchClause";
+        SyntaxKind.CaseSwitchClause = 231;
+        SyntaxKind._map[232] = "DefaultSwitchClause";
+        SyntaxKind.DefaultSwitchClause = 232;
+        SyntaxKind._map[233] = "ElseClause";
+        SyntaxKind.ElseClause = 233;
+        SyntaxKind._map[234] = "CatchClause";
+        SyntaxKind.CatchClause = 234;
+        SyntaxKind._map[235] = "FinallyClause";
+        SyntaxKind.FinallyClause = 235;
+        SyntaxKind._map[236] = "TypeParameter";
+        SyntaxKind.TypeParameter = 236;
+        SyntaxKind._map[237] = "Constraint";
+        SyntaxKind.Constraint = 237;
+        SyntaxKind._map[238] = "Parameter";
+        SyntaxKind.Parameter = 238;
+        SyntaxKind._map[239] = "EnumElement";
+        SyntaxKind.EnumElement = 239;
+        SyntaxKind._map[240] = "TypeAnnotation";
+        SyntaxKind.TypeAnnotation = 240;
+        SyntaxKind._map[241] = "SimplePropertyAssignment";
+        SyntaxKind.SimplePropertyAssignment = 241;
+        SyntaxKind._map[242] = "ExternalModuleReference";
+        SyntaxKind.ExternalModuleReference = 242;
+        SyntaxKind._map[243] = "ModuleNameModuleReference";
+        SyntaxKind.ModuleNameModuleReference = 243;
+        SyntaxKind._map[244] = "GetAccessorPropertyAssignment";
+        SyntaxKind.GetAccessorPropertyAssignment = 244;
+        SyntaxKind._map[245] = "SetAccessorPropertyAssignment";
+        SyntaxKind.SetAccessorPropertyAssignment = 245;
         SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
         SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
         SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -1118,7 +1609,7 @@ var TypeScript;
         }
         SyntaxFacts.isTokenKind = isTokenKind;
         function isAnyKeyword(kind) {
-            return kind >= 15 /* FirstKeyword */  && kind <= 69 /* LastKeyword */ ;
+            return kind >= TypeScript.SyntaxKind.FirstKeyword && kind <= TypeScript.SyntaxKind.LastKeyword;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
         function isStandardKeyword(kind) {
@@ -1739,9 +2230,6 @@ var definitions = [
     {
         name: 'VariableDeclaratorSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IEnumElementSyntax'
-        ],
         children: [
             {
                 name: 'identifier',
@@ -1769,20 +2257,6 @@ var definitions = [
         children: [
             {
                 name: 'equalsToken',
-                isToken: true
-            }, 
-            {
-                name: 'value',
-                type: 'IExpressionSyntax'
-            }
-        ]
-    }, 
-    {
-        name: 'ColonValueClauseSyntax',
-        baseType: 'SyntaxNode',
-        children: [
-            {
-                name: 'colonToken',
                 isToken: true
             }, 
             {
@@ -3242,7 +3716,7 @@ var definitions = [
             {
                 name: 'enumElements',
                 isSeparatedList: true,
-                elementType: 'IEnumElementSyntax'
+                elementType: 'EnumElementSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -3254,9 +3728,6 @@ var definitions = [
     {
         name: 'EnumElementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [
-            'IEnumElementSyntax'
-        ],
         children: [
             {
                 name: 'identifier',
@@ -3272,12 +3743,11 @@ var definitions = [
                 isOptional: true
             }, 
             {
-                name: 'colonValueClause',
-                type: 'ColonValueClauseSyntax',
+                name: 'equalsValueClause',
+                type: 'EqualsValueClauseSyntax',
                 isOptional: true
             }
-        ],
-        isTypeScriptSpecific: true
+        ]
     }, 
     {
         name: 'CastExpressionSyntax',
@@ -3857,6 +4327,8 @@ function generateArgumentChecks(definition) {
 function generateConstructor(definition) {
     if (definition.isAbstract) {
     }
+    var i;
+    var child;
     var base = baseType(definition);
     var subchildren = childrenInAllSubclasses(definition);
     var baseSubchildren = childrenInAllSubclasses(base);
@@ -3869,8 +4341,8 @@ function generateConstructor(definition) {
     if (subchildren.length > 0) {
         children = subchildren;
     }
-    for(var i = 0; i < children.length; i++) {
-        var child = children[i];
+    for(i = 0; i < children.length; i++) {
+        child = children[i];
         if (getType(child) !== "SyntaxKind" && !TypeScript.ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
             result += "public ";
         }
@@ -3879,7 +4351,7 @@ function generateConstructor(definition) {
     }
     result += "parsedInStrictMode: bool) {\r\n";
     result += "        super(";
-    for(var i = 0; i < baseSubchildrenNames.length; i++) {
+    for(i = 0; i < baseSubchildrenNames.length; i++) {
         result += baseSubchildrenNames[i] + ", ";
     }
     result += "parsedInStrictMode); \r\n";
@@ -3887,8 +4359,8 @@ function generateConstructor(definition) {
         result += "\r\n";
     }
     result += generateArgumentChecks(definition);
-    for(var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
+    for(i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
         if (child.type === "SyntaxKind") {
             result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
         }
@@ -3916,8 +4388,10 @@ function generateFactory1Method(definition) {
         return "";
     }
     var result = "\r\n    public static create(";
-    for(var i = 0; i < mandatoryChildren.length; i++) {
-        var child = mandatoryChildren[i];
+    var i;
+    var child;
+    for(i = 0; i < mandatoryChildren.length; i++) {
+        child = mandatoryChildren[i];
         result += child.name + ": " + getType(child);
         if (i < mandatoryChildren.length - 1) {
             result += ",\r\n                         ";
@@ -3925,8 +4399,8 @@ function generateFactory1Method(definition) {
     }
     result += "): " + definition.name + " {\r\n";
     result += "        return new " + definition.name + "(";
-    for(var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
+    for(i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
         if (!isOptional(child)) {
             result += child.name;
         } else if (child.isList) {
@@ -3981,9 +4455,11 @@ function generateFactory2Method(definition) {
     if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
+    var i;
+    var child;
     var result = "\r\n    public static create1(";
-    for(var i = 0; i < mandatoryChildren.length; i++) {
-        var child = mandatoryChildren[i];
+    for(i = 0; i < mandatoryChildren.length; i++) {
+        child = mandatoryChildren[i];
         result += child.name + ": " + getType(child);
         if (i < mandatoryChildren.length - 1) {
             result += ",\r\n                          ";
@@ -3991,8 +4467,8 @@ function generateFactory2Method(definition) {
     }
     result += "): " + definition.name + " {\r\n";
     result += "        return new " + definition.name + "(";
-    for(var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
+    for(i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
         if (isMandatory(child)) {
             result += child.name;
         } else if (child.isList) {
@@ -4029,7 +4505,8 @@ function generateIsMethod(definition) {
     var result = "";
     if (definition.interfaces) {
         var ifaces = definition.interfaces.slice(0);
-        for(var i = 0; i < ifaces.length; i++) {
+        var i;
+        for(i = 0; i < ifaces.length; i++) {
             var current = ifaces[i];
             while(current !== undefined) {
                 if (!TypeScript.ArrayUtilities.contains(ifaces, current)) {
@@ -4038,7 +4515,7 @@ function generateIsMethod(definition) {
                 current = interfaces[current];
             }
         }
-        for(var i = 0; i < ifaces.length; i++) {
+        for(i = 0; i < ifaces.length; i++) {
             var type = ifaces[i];
             type = getStringWithoutSuffix(type);
             if (isInterface(type)) {
@@ -4307,8 +4784,10 @@ function generateUpdateMethod(definition) {
     result += "\r\n";
     result += "    public ";
     result += "update(";
-    for(var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
+    var i;
+    var child;
+    for(i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
         result += getSafeName(child) + ": " + getType(child);
         if (i < definition.children.length - 1) {
             result += ",\r\n                  ";
@@ -4319,8 +4798,8 @@ function generateUpdateMethod(definition) {
         result += "        return this;\r\n";
     } else {
         result += "        if (";
-        for(var i = 0; i < definition.children.length; i++) {
-            var child = definition.children[i];
+        for(i = 0; i < definition.children.length; i++) {
+            child = definition.children[i];
             if (i !== 0) {
                 result += " && ";
             }
@@ -4330,8 +4809,8 @@ function generateUpdateMethod(definition) {
         result += "            return this;\r\n";
         result += "        }\r\n\r\n";
         result += "        return new " + definition.name + "(";
-        for(var i = 0; i < definition.children.length; i++) {
-            var child = definition.children[i];
+        for(i = 0; i < definition.children.length; i++) {
+            child = definition.children[i];
             result += getSafeName(child);
             result += ", ";
         }
@@ -4471,13 +4950,7 @@ function generateNode(definition) {
     return result;
 }
 function generateNodes() {
-    var result = "///<reference path='SyntaxNode.ts' />\r\n";
-    result += "///<reference path='ISyntaxList.ts' />\r\n";
-    result += "///<reference path='ISeparatedSyntaxList.ts' />\r\n";
-    result += "///<reference path='SeparatedSyntaxList.ts' />\r\n";
-    result += "///<reference path='SyntaxList.ts' />\r\n";
-    result += "///<reference path='SyntaxToken.ts' />\r\n";
-    result += "///<reference path='Syntax.ts' />\r\n\r\n";
+    var result = "///<reference path='References.ts' />\r\n\r\n";
     result += "module TypeScript {\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -4496,10 +4969,8 @@ function isNodeOrToken(child) {
     return child.type && isInterface(child.type);
 }
 function generateRewriter() {
-    var result = "///<reference path='SyntaxVisitor.generated.ts' />\r\n";
-    result = "";
-    result += "///<reference path='ISyntaxNodeOrToken.ts' />\r\n";
-    result += "\r\nmodule TypeScript {\r\n" + "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "            return token;\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "            return node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" + "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = this.visitNodeOrToken(item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.list(newItems);\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.separatedList(newItems);\r\n" + "        }\r\n";
+    var result = "///<reference path='References.ts' />\r\n\r\n";
+    result += "module TypeScript {\r\n" + "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "            return token;\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "            return node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" + "            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = this.visitNodeOrToken(item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.list(newItems);\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "            var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "                if (item !== newItem && newItems === null) {\r\n" + "                    newItems = [];\r\n" + "                    for (var j = 0; j < i; j++) {\r\n" + "                        newItems.push(list.childAt(j));\r\n" + "                    }\r\n" + "                }\r\n" + "\r\n" + "                if (newItems) {\r\n" + "                    newItems.push(newItem);\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "            return newItems === null ? list : Syntax.separatedList(newItems);\r\n" + "        }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) {
@@ -4688,7 +5159,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     return result;
 }
 function generateTokens() {
-    var result = "///<reference path='ISyntaxToken.ts' />\r\n" + "///<reference path='..\\Text\\IText.ts' />\r\n" + "///<reference path='SyntaxToken.ts' />\r\n" + "\r\n" + "module TypeScript.Syntax {\r\n";
+    var result = "///<reference path='References.ts' />\r\n" + "\r\n" + "module TypeScript.Syntax {\r\n";
     result += generateToken(false, false, false);
     result += "\r\n";
     result += generateToken(false, true, false);
@@ -4712,7 +5183,7 @@ function generateTokens() {
 }
 function generateWalker() {
     var result = "";
-    result += "///<reference path='SyntaxVisitor.generated.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class SyntaxWalker implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): void {\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): void {\r\n" + "            node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken.isToken()) { \r\n" + "                this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" + "            }\r\n" + "            else {\r\n" + "                this.visitNode(<SyntaxNode>nodeOrToken);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "            if (token === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitToken(token);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNode(node: SyntaxNode): void {\r\n" + "            if (node === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNode(node);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNodeOrToken(nodeOrToken);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "               this.visitNodeOrToken(list.childAt(i));\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                this.visitNodeOrToken(item);\r\n" + "            }\r\n" + "        }\r\n";
+    result += "///<reference path='References.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class SyntaxWalker implements ISyntaxVisitor {\r\n" + "        public visitToken(token: ISyntaxToken): void {\r\n" + "        }\r\n" + "\r\n" + "        public visitNode(node: SyntaxNode): void {\r\n" + "            node.accept(this);\r\n" + "        }\r\n" + "\r\n" + "        public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken.isToken()) { \r\n" + "                this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" + "            }\r\n" + "            else {\r\n" + "                this.visitNode(<SyntaxNode>nodeOrToken);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "            if (token === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitToken(token);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNode(node: SyntaxNode): void {\r\n" + "            if (node === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNode(node);\r\n" + "        }\r\n" + "\r\n" + "        public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "            if (nodeOrToken === null) {\r\n" + "                return;\r\n" + "            }\r\n" + "\r\n" + "            this.visitNodeOrToken(nodeOrToken);\r\n" + "        }\r\n" + "\r\n" + "        public visitList(list: ISyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "               this.visitNodeOrToken(list.childAt(i));\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "                var item = list.childAt(i);\r\n" + "                this.visitNodeOrToken(item);\r\n" + "            }\r\n" + "        }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) {
@@ -4755,23 +5226,24 @@ function generateWalker() {
 function generateKeywordCondition(keywords, currentCharacter, indent) {
     var length = keywords[0].text.length;
     var result = "";
+    var index;
     if (keywords.length === 1) {
         var keyword = keywords[0];
         if (currentCharacter === length) {
             return indent + "return SyntaxKind." + (TypeScript.SyntaxKind)._map[keyword.kind] + ";\r\n";
         }
         var keywordText = keywords[0].text;
-        var result = indent + "return (";
+        result = indent + "return (";
         for(var i = currentCharacter; i < length; i++) {
             if (i > currentCharacter) {
                 result += " && ";
             }
-            var index = i === 0 ? "startIndex" : ("startIndex + " + i);
+            index = i === 0 ? "startIndex" : ("startIndex + " + i);
             result += "array[" + index + "] === CharacterCodes." + keywordText.substr(i, 1);
         }
         result += ") ? SyntaxKind." + (TypeScript.SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierName;\r\n";
     } else {
-        var index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
+        index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
         result += indent + "switch(array[" + index + "]) {\r\n";
         var groupedKeywords = TypeScript.ArrayUtilities.groupBy(keywords, function (k) {
             return k.text.substr(currentCharacter, 1);
@@ -4792,9 +5264,10 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
     return result;
 }
 function generateScannerUtilities() {
-    var result = "///<reference path='..\\Text\\CharacterCodes.ts' />\r\n" + "///<reference path='SyntaxKind.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class ScannerUtilities {\r\n";
+    var result = "///<reference path='References.ts' />\r\n" + "\r\n" + "module TypeScript {\r\n" + "    export class ScannerUtilities {\r\n";
+    var i;
     var keywords = [];
-    for(var i = 15 /* FirstKeyword */ ; i <= 69 /* LastKeyword */ ; i++) {
+    for(i = TypeScript.SyntaxKind.FirstKeyword; i <= TypeScript.SyntaxKind.LastKeyword; i++) {
         keywords.push({
             kind: i,
             text: TypeScript.SyntaxFacts.getText(i)
@@ -4808,7 +5281,7 @@ function generateScannerUtilities() {
         return k.text.length;
     });
     result += "            switch (length) {\r\n";
-    for(var i = minTokenLength; i <= maxTokenLength; i++) {
+    for(i = minTokenLength; i <= maxTokenLength; i++) {
         var keywordsOfLengthI = TypeScript.ArrayUtilities.where(keywords, function (k) {
             return k.text.length === i;
         });
@@ -4829,13 +5302,15 @@ function generateScannerUtilities() {
     return result;
 }
 function generateVisitor() {
+    var i;
+    var definition;
     var result = "";
-    result += "///<reference path='SyntaxNodes.generated.ts' />\r\n\r\n";
+    result += "///<reference path='References.ts' />\r\n\r\n";
     result += "module TypeScript {\r\n";
     result += "    export interface ISyntaxVisitor {\r\n";
     result += "        visitToken(token: ISyntaxToken): any;\r\n";
-    for(var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    for(i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (!definition.isAbstract) {
             result += "        visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
         }
@@ -4850,8 +5325,8 @@ function generateVisitor() {
         result += "        private visitToken(token: ISyntaxToken): any {\r\n";
         result += "            return this.defaultVisit(token);\r\n";
         result += "        }\r\n";
-        for(var i = 0; i < definitions.length; i++) {
-            var definition = definitions[i];
+        for(i = 0; i < definitions.length; i++) {
+            definition = definitions[i];
             if (!definition.isAbstract) {
                 result += "\r\n        private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
                 result += "            return this.defaultVisit(node);\r\n";
@@ -4864,43 +5339,47 @@ function generateVisitor() {
     return result;
 }
 function generateFactory() {
-    var result = "///<reference path='ISyntaxList.ts' />\r\n";
+    var result = "///<reference path='References.ts' />\r\n";
     result += "\r\nmodule TypeScript.Syntax {\r\n";
     result += "    export interface IFactory {\r\n";
-    for(var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    var i;
+    var j;
+    var definition;
+    var child;
+    for(i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
-        for(var j = 0; j < definition.children.length; j++) {
+        for(j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
-            var child = definition.children[j];
+            child = definition.children[j];
             result += child.name + ": " + getType(child);
         }
         result += "): " + definition.name + ";\r\n";
     }
     result += "    }\r\n\r\n";
-    result += "    class NormalModeFactory implements IFactory {\r\n";
-    for(var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    result += "    export class NormalModeFactory implements IFactory {\r\n";
+    for(i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
-        for(var j = 0; j < definition.children.length; j++) {
+        for(j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
-            var child = definition.children[j];
+            child = definition.children[j];
             result += getSafeName(child) + ": " + getType(child);
         }
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
-        for(var j = 0; j < definition.children.length; j++) {
-            var child = definition.children[j];
+        for(j = 0; j < definition.children.length; j++) {
+            child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
         }
@@ -4908,24 +5387,24 @@ function generateFactory() {
         result += "        }\r\n";
     }
     result += "    }\r\n\r\n";
-    result += "    class StrictModeFactory implements IFactory {\r\n";
-    for(var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    result += "    export class StrictModeFactory implements IFactory {\r\n";
+    for(i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
-        for(var j = 0; j < definition.children.length; j++) {
+        for(j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
-            var child = definition.children[j];
+            child = definition.children[j];
             result += getSafeName(child) + ": " + getType(child);
         }
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
-        for(var j = 0; j < definition.children.length; j++) {
-            var child = definition.children[j];
+        for(j = 0; j < definition.children.length; j++) {
+            child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
         }

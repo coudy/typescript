@@ -951,12 +951,12 @@ module TypeScript.Emitter1 {
         }
 
         private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
-                                            enumElement: IEnumElementSyntax,
+                                            enumElement: EnumElementSyntax,
                                             assignDefaultValues: bool,
                                             index: number): IExpressionSyntax {
-            if (this.hasValueClause(enumElement)) {
+            if (enumElement.equalsValueClause !== null) {
                 // Use the value if one is provided.
-                return this.valueClause(enumElement).accept(this).withTrailingTrivia(Syntax.emptyTriviaList);
+                return enumElement.equalsValueClause.value.accept(this).withTrailingTrivia(Syntax.emptyTriviaList);
             }
 
             // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
@@ -967,7 +967,7 @@ module TypeScript.Emitter1 {
 
             // Add one to the previous value.
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier);
-            var previousEnumElement = <VariableDeclaratorSyntax>enumDeclaration.enumElements.nonSeparatorAt(index - 1);
+            var previousEnumElement = <EnumElementSyntax>enumDeclaration.enumElements.nonSeparatorAt(index - 1);
             var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(previousEnumElement));
 
             var receiver = variableIdentifier.kind() === SyntaxKind.StringLiteral
@@ -991,31 +991,12 @@ module TypeScript.Emitter1 {
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
 
             if (node.enumElements.nonSeparatorCount() > 0) {
-                /*
-                // var _ = E;
-                statements.push(VariableStatementSyntax.create1(
-                    this.factory.variableDeclaration(
-                        Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
-                        Syntax.separatedList([this.factory.variableDeclarator(
-                            Syntax.identifier("_").withTrailingTrivia(this.space), null,
-                            this.factory.equalsValueClause(
-                                Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                                identifier))]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
-
-                // _._map = []
-                statements.push(ExpressionStatementSyntax.create1(
-                    Syntax.assignmentExpression(
-                        MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")).withTrailingTrivia(this.space),
-                        Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                        ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
-                */
-
                 var assignDefaultValues = { value: true };
                 for (var i = 0, n = node.enumElements.nonSeparatorCount(); i < n; i++) {
-                    var enumElement = <IEnumElementSyntax>node.enumElements.nonSeparatorAt(i)
+                    var enumElement = <EnumElementSyntax>node.enumElements.nonSeparatorAt(i)
                     var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(enumElement));
 
-                    assignDefaultValues.value = assignDefaultValues.value && !this.hasValueClause(enumElement);
+                    assignDefaultValues.value = assignDefaultValues.value && (enumElement.equalsValueClause === null);
 
                     // "E.Foo = 1" or "E['A B'] = 1"
                     var left = variableIdentifier.kind() === SyntaxKind.StringLiteral
@@ -1058,32 +1039,9 @@ module TypeScript.Emitter1 {
                 .withBlock(block);
         }
 
-        private hasValueClause(node: IEnumElementSyntax): bool {
-            if (node.kind() === SyntaxKind.VariableDeclarator) {
-                return (<VariableDeclaratorSyntax>node).equalsValueClause !== null;
-            }
-            else {
-                return (<EnumElementSyntax>node).colonValueClause !== null;
-            }
-        }
-
-        private valueClause(node: IEnumElementSyntax): IExpressionSyntax {
-            if (node.kind() === SyntaxKind.VariableDeclarator) {
-                return (<VariableDeclaratorSyntax>node).equalsValueClause.value;
-            }
-            else {
-                return (<EnumElementSyntax>node).colonValueClause.value;
-            }
-        }
-
-        private getEnumElementIdentifier(node: IEnumElementSyntax): ISyntaxToken {
-            if (node.kind() === SyntaxKind.VariableDeclarator) {
-                return (<VariableDeclaratorSyntax>node).identifier;
-            }
-            else {
-                var enumElement = <EnumElementSyntax>node;
-                return enumElement.identifier || enumElement.stringLiteral;
-            }
+        private getEnumElementIdentifier(node: EnumElementSyntax): ISyntaxToken {
+            var enumElement = <EnumElementSyntax>node;
+            return enumElement.identifier || enumElement.stringLiteral;
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): IStatementSyntax[] {

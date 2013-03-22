@@ -1890,9 +1890,7 @@ module TypeScript.Parser {
         }
 
         private isEnumElement(): bool {
-            // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
-            if (this.currentNode() !== null &&
-                (this.currentNode().kind() === SyntaxKind.VariableDeclarator || this.currentNode().kind() === SyntaxKind.EnumElement)) {
+            if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.EnumElement) {
                 return true;
             }
 
@@ -1901,34 +1899,28 @@ module TypeScript.Parser {
                    token0.tokenKind === SyntaxKind.StringLiteral;
         }
 
-        private parseEnumElement(): IEnumElementSyntax {
+        private parseEnumElement(): EnumElementSyntax {
             // Debug.assert(this.isEnumElement());
-            // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
-            if (this.currentNode() !== null && (this.currentNode().kind() === SyntaxKind.EnumElement || this.currentNode().kind() === SyntaxKind.VariableDeclarator)) {
+            if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.EnumElement) {
                 return <EnumElementSyntax>this.eatNode();
             }
-
-            var token0 = this.currentToken();
 
             var identifier: ISyntaxToken = null;
             var stringLiteral: ISyntaxToken = null;
 
-            if (SyntaxFacts.isIdentifierNameOrAnyKeyword(token0)) {
-                // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
-                // Back compat.  For the time being, we allow enum elements of the form "foo = value".
-                // We will eventually remove this and require the "foo: value" form.
-                if (this.peekToken(1).tokenKind === SyntaxKind.EqualsToken) {
-                    return this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ true);
-                }
-
+            if (SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())) {
                 identifier = this.eatIdentifierNameToken();
             }
             else {
                 stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
             }
 
-            var colonValueClause: ColonValueClauseSyntax = this.parseOptionalColonValueClause();
-            return this.factory.enumElement(identifier, stringLiteral, colonValueClause);
+            var equalsValueClause: EqualsValueClauseSyntax = null;
+            if (this.isEqualsValueClause(/*inParameter*/ false)) {
+                equalsValueClause = this.parseEqualsValueClause(/*allowIn:*/ true);
+            }
+
+            return this.factory.enumElement(identifier, stringLiteral, equalsValueClause);
         }
 
         private isClassDeclaration(): bool {
@@ -3510,19 +3502,6 @@ module TypeScript.Parser {
             }
 
             return false;
-        }
-
-        private parseOptionalColonValueClause(): ColonValueClauseSyntax {
-            return this.isColonValueClause() ? this.parseColonValueClause() : null;
-        }
-
-        private parseColonValueClause(): ColonValueClauseSyntax {
-            // Debug.assert(this.isColonValueClause());
-
-            var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var value = this.parseAssignmentExpression(/*allowIn:*/ true);
-
-            return this.factory.colonValueClause(colonToken, value);
         }
 
         private parseEqualsValueClause(allowIn: bool): EqualsValueClauseSyntax {

@@ -1,6 +1,5 @@
-///<reference path='..\Core\ArrayUtilities.ts' />
+///<reference path='..\Core\References.ts' />
 ///<reference path='..\Core\Environment.ts' />
-///<reference path='..\Core\StringUtilities.ts' />
 ///<reference path='SyntaxFacts.ts' />
 ///<reference path='SyntaxKind.ts' />
 
@@ -202,7 +201,6 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'VariableDeclaratorSyntax',
         baseType: 'SyntaxNode',
-        interfaces: [ 'IEnumElementSyntax' ],
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true },
@@ -214,14 +212,6 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'equalsToken', isToken: true },
-            <any>{ name: 'value', type: 'IExpressionSyntax' }
-        ]
-    },
-    <any>{
-        name: 'ColonValueClauseSyntax',
-        baseType: 'SyntaxNode',
-        children: [
-            <any>{ name: 'colonToken', isToken: true },
             <any>{ name: 'value', type: 'IExpressionSyntax' }
         ]
     },
@@ -840,7 +830,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'enumKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'enumElements', isSeparatedList: true, elementType: 'IEnumElementSyntax' },
+            <any>{ name: 'enumElements', isSeparatedList: true, elementType: 'EnumElementSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
@@ -848,13 +838,11 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'EnumElementSyntax',
         baseType: 'SyntaxNode',
-        interfaces: ['IEnumElementSyntax'],
         children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'], isOptional: true  },
-            <any>{ name: 'stringLiteral', isToken: true, isOptional: true  },
-            <any>{ name: 'colonValueClause', type: 'ColonValueClauseSyntax', isOptional: true }
-        ],
-        isTypeScriptSpecific: true
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'], isOptional: true },
+            <any>{ name: 'stringLiteral', isToken: true, isOptional: true },
+            <any>{ name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true }
+        ]
     },
     <any>{
         name: 'CastExpressionSyntax',
@@ -1081,7 +1069,7 @@ function generateProperties(definition: ITypeDefinition): string {
     var result = "";
 
     for (var i = 0; i < definition.children.length; i++) {
-        var child: IMemberDefinition = definition.children[i];
+        var child = definition.children[i];
 
         if (getType(child) === "SyntaxKind") {
             result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
@@ -1101,7 +1089,7 @@ function generateNullChecks(definition: ITypeDefinition): string {
     var result = "";
 
     for (var i = 0; i < definition.children.length; i++) {
-        var child: IMemberDefinition = definition.children[i];
+        var child = definition.children[i];
 
         if (!child.isOptional && !child.isToken) {
             result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
@@ -1271,6 +1259,8 @@ function generateConstructor(definition: ITypeDefinition): string {
         // return "";
     }
 
+    var i: number;
+    var child: IMemberDefinition;
     var base = baseType(definition);
     var subchildren = childrenInAllSubclasses(definition);
     var baseSubchildren = childrenInAllSubclasses(base);
@@ -1284,8 +1274,8 @@ function generateConstructor(definition: ITypeDefinition): string {
         children = subchildren;
     }
 
-    for (var i = 0; i < children.length; i++) {
-        var child = children[i];
+    for (i = 0; i < children.length; i++) {
+        child = children[i];
 
         if (getType(child) !== "SyntaxKind" && !TypeScript.ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
             result += "public ";
@@ -1299,7 +1289,7 @@ function generateConstructor(definition: ITypeDefinition): string {
     
     result += "        super(";
 
-    for (var i = 0; i < baseSubchildrenNames.length; i++) {
+    for (i = 0; i < baseSubchildrenNames.length; i++) {
         result += baseSubchildrenNames[i] + ", ";
     }
 
@@ -1310,8 +1300,8 @@ function generateConstructor(definition: ITypeDefinition): string {
 
     result += generateArgumentChecks(definition);
 
-    for (var i = 0; i < definition.children.length; i++) {
-        var child: IMemberDefinition = definition.children[i];
+    for (i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
 
         if (child.type === "SyntaxKind") {
             result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
@@ -1347,9 +1337,11 @@ function generateFactory1Method(definition: ITypeDefinition): string {
     }
 
     var result = "\r\n    public static create("
+    var i: number;
+    var child: IMemberDefinition;
 
-    for (var i = 0; i < mandatoryChildren.length; i++) {
-        var child = mandatoryChildren[i];
+    for (i = 0; i < mandatoryChildren.length; i++) {
+        child = mandatoryChildren[i];
 
         result += child.name + ": " + getType(child);
 
@@ -1362,8 +1354,8 @@ function generateFactory1Method(definition: ITypeDefinition): string {
 
     result += "        return new " + definition.name + "(";
     
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
+    for (i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
 
         if (!isOptional(child)) {
             result += child.name;
@@ -1447,10 +1439,12 @@ function generateFactory2Method(definition: ITypeDefinition): string {
         return "";
     }
 
+    var i: number;
+    var child: IMemberDefinition;
     var result = "\r\n    public static create1("
 
-    for (var i = 0; i < mandatoryChildren.length; i++) {
-        var child = mandatoryChildren[i];
+    for (i = 0; i < mandatoryChildren.length; i++) {
+        child = mandatoryChildren[i];
 
         result += child.name + ": " + getType(child);
 
@@ -1460,11 +1454,10 @@ function generateFactory2Method(definition: ITypeDefinition): string {
     }
 
     result += "): " + definition.name + " {\r\n";
+    result += "        return new " + definition.name + "(";
 
-     result += "        return new " + definition.name + "(";
-    
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
+    for (i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
 
         if (isMandatory(child)) {
             result += child.name;
@@ -1523,7 +1516,8 @@ function generateIsMethod(definition: ITypeDefinition): string {
 
     if (definition.interfaces) {
         var ifaces = definition.interfaces.slice(0);
-        for (var i = 0; i < ifaces.length; i++) {
+        var i: number;
+        for (i = 0; i < ifaces.length; i++) {
             var current = ifaces[i];
 
             while (current !== undefined) {
@@ -1535,7 +1529,7 @@ function generateIsMethod(definition: ITypeDefinition): string {
             }
         }
 
-        for (var i = 0; i < ifaces.length; i++) {
+        for (i = 0; i < ifaces.length; i++) {
             var type = ifaces[i];
             type = getStringWithoutSuffix(type);
             if (isInterface(type)) {
@@ -1617,7 +1611,7 @@ function generateFirstTokenMethod(definition: ITypeDefinition): string {
         result += "        var token = null;\r\n";
 
         for (var i = 0; i < definition.children.length; i++) {
-            var child: IMemberDefinition = definition.children[i];
+            var child = definition.children[i];
 
             if (getType(child) === "SyntaxKind") {
                 continue;
@@ -1671,7 +1665,7 @@ function generateLastTokenMethod(definition: ITypeDefinition): string {
             result += "        var token = null;\r\n";
 
             for (var i = definition.children.length - 1; i >= 0; i--) {
-                var child: IMemberDefinition = definition.children[i];
+                var child = definition.children[i];
 
                 if (getType(child) === "SyntaxKind") {
                     continue;
@@ -1862,7 +1856,7 @@ function generateWithMethods(definition: ITypeDefinition): string {
     var result = "";
 
     for (var i = 0; i < definition.children.length; i++) {
-        var child: IMemberDefinition = definition.children[i];
+        var child = definition.children[i];
         result += generateWithMethod(definition, child);
     }
 
@@ -1900,9 +1894,11 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
     //}
     
     result += "update("
+    var i: number;
+    var child: IMemberDefinition;
 
-    for (var i = 0; i < definition.children.length; i++) {
-        var child: IMemberDefinition = definition.children[i];
+    for (i = 0; i < definition.children.length; i++) {
+        child = definition.children[i];
 
         result += getSafeName(child) + ": " + getType(child);
 
@@ -1919,8 +1915,8 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
     else {
         result += "        if (";
 
-        for (var i = 0; i < definition.children.length; i++) {
-            var child: IMemberDefinition = definition.children[i];
+        for (i = 0; i < definition.children.length; i++) {
+            child = definition.children[i];
 
             if (i !== 0) {
                 result += " && ";
@@ -1935,8 +1931,8 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
 
         result += "        return new " + definition.name + "(";
 
-        for (var i = 0; i < definition.children.length; i++) {
-            var child: IMemberDefinition = definition.children[i];
+        for (i = 0; i < definition.children.length; i++) {
+            child = definition.children[i];
 
             result += getSafeName(child);
             result += ", ";
@@ -2139,13 +2135,7 @@ function generateNode(definition: ITypeDefinition): string {
 }
 
 function generateNodes(): string {
-    var result = "///<reference path='SyntaxNode.ts' />\r\n";
-    result += "///<reference path='ISyntaxList.ts' />\r\n"
-    result += "///<reference path='ISeparatedSyntaxList.ts' />\r\n"
-    result += "///<reference path='SeparatedSyntaxList.ts' />\r\n"
-    result += "///<reference path='SyntaxList.ts' />\r\n"
-    result += "///<reference path='SyntaxToken.ts' />\r\n"
-    result += "///<reference path='Syntax.ts' />\r\n\r\n"
+    var result = "///<reference path='References.ts' />\r\n\r\n"
 
     result += "module TypeScript {\r\n";
 
@@ -2174,11 +2164,9 @@ function isNodeOrToken(child: IMemberDefinition) {
 }
 
 function generateRewriter(): string {
-    var result = "///<reference path='SyntaxVisitor.generated.ts' />\r\n";
-    result = "";
-    result += "///<reference path='ISyntaxNodeOrToken.ts' />\r\n";
+    var result = "///<reference path='References.ts' />\r\n\r\n";
 
-    result += "\r\nmodule TypeScript {\r\n" +
+    result += "module TypeScript {\r\n" +
 "    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" +
 "        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
 "            return token;\r\n" +
@@ -2542,9 +2530,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 
 function generateTokens(): string {
     var result = 
-        "///<reference path='ISyntaxToken.ts' />\r\n" +
-        "///<reference path='..\\Text\\IText.ts' />\r\n" +
-        "///<reference path='SyntaxToken.ts' />\r\n" +
+        "///<reference path='References.ts' />\r\n" +
         "\r\n" +
         "module TypeScript.Syntax {\r\n";
 
@@ -2651,7 +2637,7 @@ function generateWalker(): string {
     var result = "";
 
     result +=
-"///<reference path='SyntaxVisitor.generated.ts' />\r\n"+
+"///<reference path='References.ts' />\r\n"+
 "\r\n" +
 "module TypeScript {\r\n" +
 "    export class SyntaxWalker implements ISyntaxVisitor {\r\n" +
@@ -2762,6 +2748,7 @@ function generateKeywordCondition(keywords: { text: string; kind: TypeScript.Syn
     var length = keywords[0].text.length;
 
     var result = "";
+    var index: string;
 
     if (keywords.length === 1) {
         var keyword = keywords[0];
@@ -2771,21 +2758,21 @@ function generateKeywordCondition(keywords: { text: string; kind: TypeScript.Syn
         }
 
         var keywordText = keywords[0].text;
-        var result = indent + "return ("
+        result = indent + "return ("
 
         for (var i = currentCharacter; i < length; i++) {
             if (i > currentCharacter) {
                 result += " && ";
             }
 
-            var index = i === 0 ? "startIndex" : ("startIndex + " + i);
+            index = i === 0 ? "startIndex" : ("startIndex + " + i);
             result += "array[" + index + "] === CharacterCodes." + keywordText.substr(i, 1);
         }
 
         result += ") ? SyntaxKind." + (<any>TypeScript.SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierName;\r\n";
     }
     else {
-        var index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
+        index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
         result += indent + "switch(array[" + index + "]) {\r\n"
 
         var groupedKeywords = TypeScript.ArrayUtilities.groupBy(keywords, k => k.text.substr(currentCharacter, 1));
@@ -2807,14 +2794,15 @@ function generateKeywordCondition(keywords: { text: string; kind: TypeScript.Syn
 }
 
 function generateScannerUtilities(): string {
-    var result = "///<reference path='..\\Text\\CharacterCodes.ts' />\r\n" +
-        "///<reference path='SyntaxKind.ts' />\r\n" +
+    var result = "///<reference path='References.ts' />\r\n" +
         "\r\n" +
         "module TypeScript {\r\n" +
         "    export class ScannerUtilities {\r\n";
 
+    var i: number;
     var keywords: { text: string; kind: TypeScript.SyntaxKind; }[] = [];
-    for (var i = TypeScript.SyntaxKind.FirstKeyword; i <= TypeScript.SyntaxKind.LastKeyword; i++) {
+
+    for (i = TypeScript.SyntaxKind.FirstKeyword; i <= TypeScript.SyntaxKind.LastKeyword; i++) {
         keywords.push({ kind: i, text: TypeScript.SyntaxFacts.getText(i) });
     }
 
@@ -2825,7 +2813,7 @@ function generateScannerUtilities(): string {
     result += "            switch (length) {\r\n";
 
 
-    for (var i = minTokenLength; i <= maxTokenLength; i++) {
+    for (i = minTokenLength; i <= maxTokenLength; i++) {
         var keywordsOfLengthI = TypeScript.ArrayUtilities.where(keywords, k => k.text.length === i);
         if (keywordsOfLengthI.length > 0) {
             result += "            case " + i + ":\r\n";
@@ -2849,16 +2837,18 @@ function generateScannerUtilities(): string {
 }
 
 function generateVisitor(): string {
+    var i: number;
+    var definition: ITypeDefinition;
     var result = "";
 
-    result += "///<reference path='SyntaxNodes.generated.ts' />\r\n\r\n";
+    result += "///<reference path='References.ts' />\r\n\r\n";
 
     result += "module TypeScript {\r\n";
     result += "    export interface ISyntaxVisitor {\r\n";
     result += "        visitToken(token: ISyntaxToken): any;\r\n";
 
-    for (var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    for (i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (!definition.isAbstract) {
             result += "        visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
         }
@@ -2876,8 +2866,8 @@ function generateVisitor(): string {
         result += "            return this.defaultVisit(token);\r\n";
         result += "        }\r\n";
 
-        for (var i = 0; i < definitions.length; i++) {
-            var definition = definitions[i];
+        for (i = 0; i < definitions.length; i++) {
+            definition = definitions[i];
 
             if (!definition.isAbstract) {
                 result += "\r\n        private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
@@ -2895,25 +2885,29 @@ function generateVisitor(): string {
 }
 
 function generateFactory(): string {
-    var result = "///<reference path='ISyntaxList.ts' />\r\n";
+    var result = "///<reference path='References.ts' />\r\n";
 
     result += "\r\nmodule TypeScript.Syntax {\r\n";
-
     result += "    export interface IFactory {\r\n";
+    
+    var i: number;
+    var j: number;
+    var definition: ITypeDefinition;
+    var child: IMemberDefinition;
 
-    for (var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    for (i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
 
-        for (var j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
 
-            var child = definition.children[j];
+            child = definition.children[j];
             result += child.name + ": " + getType(child);
         }
 
@@ -2923,64 +2917,63 @@ function generateFactory(): string {
     result += "    }\r\n\r\n";
 
     // TODO: stop exporting these once compiler bugs are fixed.
-    result += "    class NormalModeFactory implements IFactory {\r\n";
+    result += "    export class NormalModeFactory implements IFactory {\r\n";
 
-    for (var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    for (i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
 
-        for (var j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
 
-            var child = definition.children[j];
+            child = definition.children[j];
             result += getSafeName(child) + ": " + getType(child);
         }
 
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
 
-        for (var j = 0; j < definition.children.length; j++) {
-            var child = definition.children[j];
+        for (j = 0; j < definition.children.length; j++) {
+            child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
         }
 
         result += "/*parsedInStrictMode:*/ false);\r\n";
-
         result += "        }\r\n"
     }
 
     result += "    }\r\n\r\n";
     
     // TODO: stop exporting these once compiler bugs are fixed.
-    result += "    class StrictModeFactory implements IFactory {\r\n";
+    result += "    export class StrictModeFactory implements IFactory {\r\n";
 
-    for (var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+    for (i = 0; i < definitions.length; i++) {
+        definition = definitions[i];
         if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
 
-        for (var j = 0; j < definition.children.length; j++) {
+        for (j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
 
-            var child = definition.children[j];
+            child = definition.children[j];
             result += getSafeName(child) + ": " + getType(child);
         }
 
         result += "): " + definition.name + " {\r\n";
         result += "            return new " + definition.name + "(";
 
-        for (var j = 0; j < definition.children.length; j++) {
-            var child = definition.children[j];
+        for (j = 0; j < definition.children.length; j++) {
+            child = definition.children[j];
             result += getSafeName(child);
             result += ", ";
         }
@@ -2991,7 +2984,6 @@ function generateFactory(): string {
     }
 
     result += "    }\r\n\r\n";
-
 
     result += "    export var normalModeFactory: IFactory = new NormalModeFactory();\r\n";
     result += "    export var strictModeFactory: IFactory = new StrictModeFactory();\r\n";

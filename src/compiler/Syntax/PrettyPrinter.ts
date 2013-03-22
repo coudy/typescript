@@ -348,12 +348,6 @@ module TypeScript.PrettyPrinter {
             this.appendNode(node.equalsValueClause);
         }
 
-        private visitColonValueClause(node: ColonValueClauseSyntax): void {
-            this.appendToken(node.colonToken);
-            this.ensureSpace();
-            node.value.accept(this);
-        }
-
         private visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
             this.ensureSpace();
             this.appendToken(node.equalsToken);
@@ -868,7 +862,8 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.identifier);
             this.ensureSpace();
             this.appendToken(node.stringLiteral);
-            this.appendNode(node.colonValueClause);
+            this.ensureSpace();
+            this.appendNode(node.equalsValueClause);
         }
 
         private visitCastExpression(node: CastExpressionSyntax): void {

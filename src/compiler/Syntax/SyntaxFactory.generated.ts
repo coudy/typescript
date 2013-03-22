@@ -17,7 +17,6 @@ module TypeScript.Syntax {
         variableDeclaration(varKeyword: ISyntaxToken, variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax;
         variableDeclarator(identifier: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax): VariableDeclaratorSyntax;
         equalsValueClause(equalsToken: ISyntaxToken, value: IExpressionSyntax): EqualsValueClauseSyntax;
-        colonValueClause(colonToken: ISyntaxToken, value: IExpressionSyntax): ColonValueClauseSyntax;
         prefixUnaryExpression(kind: SyntaxKind, operatorToken: ISyntaxToken, operand: IUnaryExpressionSyntax): PrefixUnaryExpressionSyntax;
         arrayLiteralExpression(openBracketToken: ISyntaxToken, expressions: ISeparatedSyntaxList, closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax;
         omittedExpression(): OmittedExpressionSyntax;
@@ -71,7 +70,7 @@ module TypeScript.Syntax {
         whileStatement(whileKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax): WhileStatementSyntax;
         withStatement(withKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax): WithStatementSyntax;
         enumDeclaration(exportKeyword: ISyntaxToken, enumKeyword: ISyntaxToken, identifier: ISyntaxToken, openBraceToken: ISyntaxToken, enumElements: ISeparatedSyntaxList, closeBraceToken: ISyntaxToken): EnumDeclarationSyntax;
-        enumElement(identifier: ISyntaxToken, stringLiteral: ISyntaxToken, colonValueClause: ColonValueClauseSyntax): EnumElementSyntax;
+        enumElement(identifier: ISyntaxToken, stringLiteral: ISyntaxToken, equalsValueClause: EqualsValueClauseSyntax): EnumElementSyntax;
         castExpression(lessThanToken: ISyntaxToken, type: ITypeSyntax, greaterThanToken: ISyntaxToken, expression: IUnaryExpressionSyntax): CastExpressionSyntax;
         objectLiteralExpression(openBraceToken: ISyntaxToken, propertyAssignments: ISeparatedSyntaxList, closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax;
         simplePropertyAssignment(propertyName: ISyntaxToken, colonToken: ISyntaxToken, expression: IExpressionSyntax): SimplePropertyAssignmentSyntax;
@@ -90,7 +89,6 @@ module TypeScript.Syntax {
         debuggerStatement(debuggerKeyword: ISyntaxToken, semicolonToken: ISyntaxToken): DebuggerStatementSyntax;
     }
 
-    // TODO: stop exporting this when compiler bug is fixed.
     export class NormalModeFactory implements IFactory {
         sourceUnit(moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken): SourceUnitSyntax {
             return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ false);
@@ -136,9 +134,6 @@ module TypeScript.Syntax {
         }
         equalsValueClause(equalsToken: ISyntaxToken, value: IExpressionSyntax): EqualsValueClauseSyntax {
             return new EqualsValueClauseSyntax(equalsToken, value, /*parsedInStrictMode:*/ false);
-        }
-        colonValueClause(colonToken: ISyntaxToken, value: IExpressionSyntax): ColonValueClauseSyntax {
-            return new ColonValueClauseSyntax(colonToken, value, /*parsedInStrictMode:*/ false);
         }
         prefixUnaryExpression(kind: SyntaxKind, operatorToken: ISyntaxToken, operand: IUnaryExpressionSyntax): PrefixUnaryExpressionSyntax {
             return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand, /*parsedInStrictMode:*/ false);
@@ -299,8 +294,8 @@ module TypeScript.Syntax {
         enumDeclaration(exportKeyword: ISyntaxToken, enumKeyword: ISyntaxToken, identifier: ISyntaxToken, openBraceToken: ISyntaxToken, enumElements: ISeparatedSyntaxList, closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
             return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, /*parsedInStrictMode:*/ false);
         }
-        enumElement(identifier: ISyntaxToken, stringLiteral: ISyntaxToken, colonValueClause: ColonValueClauseSyntax): EnumElementSyntax {
-            return new EnumElementSyntax(identifier, stringLiteral, colonValueClause, /*parsedInStrictMode:*/ false);
+        enumElement(identifier: ISyntaxToken, stringLiteral: ISyntaxToken, equalsValueClause: EqualsValueClauseSyntax): EnumElementSyntax {
+            return new EnumElementSyntax(identifier, stringLiteral, equalsValueClause, /*parsedInStrictMode:*/ false);
         }
         castExpression(lessThanToken: ISyntaxToken, type: ITypeSyntax, greaterThanToken: ISyntaxToken, expression: IUnaryExpressionSyntax): CastExpressionSyntax {
             return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, /*parsedInStrictMode:*/ false);
@@ -352,7 +347,6 @@ module TypeScript.Syntax {
         }
     }
 
-    // TODO: stop exporting this when compiler bug is fixed.
     export class StrictModeFactory implements IFactory {
         sourceUnit(moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken): SourceUnitSyntax {
             return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ true);
@@ -398,9 +392,6 @@ module TypeScript.Syntax {
         }
         equalsValueClause(equalsToken: ISyntaxToken, value: IExpressionSyntax): EqualsValueClauseSyntax {
             return new EqualsValueClauseSyntax(equalsToken, value, /*parsedInStrictMode:*/ true);
-        }
-        colonValueClause(colonToken: ISyntaxToken, value: IExpressionSyntax): ColonValueClauseSyntax {
-            return new ColonValueClauseSyntax(colonToken, value, /*parsedInStrictMode:*/ true);
         }
         prefixUnaryExpression(kind: SyntaxKind, operatorToken: ISyntaxToken, operand: IUnaryExpressionSyntax): PrefixUnaryExpressionSyntax {
             return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand, /*parsedInStrictMode:*/ true);
@@ -561,8 +552,8 @@ module TypeScript.Syntax {
         enumDeclaration(exportKeyword: ISyntaxToken, enumKeyword: ISyntaxToken, identifier: ISyntaxToken, openBraceToken: ISyntaxToken, enumElements: ISeparatedSyntaxList, closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
             return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, /*parsedInStrictMode:*/ true);
         }
-        enumElement(identifier: ISyntaxToken, stringLiteral: ISyntaxToken, colonValueClause: ColonValueClauseSyntax): EnumElementSyntax {
-            return new EnumElementSyntax(identifier, stringLiteral, colonValueClause, /*parsedInStrictMode:*/ true);
+        enumElement(identifier: ISyntaxToken, stringLiteral: ISyntaxToken, equalsValueClause: EqualsValueClauseSyntax): EnumElementSyntax {
+            return new EnumElementSyntax(identifier, stringLiteral, equalsValueClause, /*parsedInStrictMode:*/ true);
         }
         castExpression(lessThanToken: ISyntaxToken, type: ITypeSyntax, greaterThanToken: ISyntaxToken, expression: IUnaryExpressionSyntax): CastExpressionSyntax {
             return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, /*parsedInStrictMode:*/ true);

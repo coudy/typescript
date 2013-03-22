@@ -276,7 +276,6 @@ module TypeScript {
         // Clauses
         ImplementsClause,
         ExtendsClause,
-        ColonValueClause,
         EqualsValueClause,
         CaseSwitchClause,
         DefaultSwitchClause,

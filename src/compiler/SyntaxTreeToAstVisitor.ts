@@ -850,30 +850,17 @@ module TypeScript {
                     this.movePast(<ISyntaxToken>node.enumElements.childAt(i));
                 }
                 else {
-                    var element = <IEnumElementSyntax>node.enumElements.childAt(i);
+                    var enumElement = <EnumElementSyntax>node.enumElements.childAt(i);
 
                     var memberValue: AST = null;
 
-                    if (element.kind() === SyntaxKind.VariableDeclarator) {
-                        var variableDeclarator = <VariableDeclaratorSyntax>element;
-                        memberName = this.identifierFromToken(variableDeclarator.identifier, /*isOptional:*/ false);
-                        this.movePast(variableDeclarator.identifier);
+                    memberName = this.identifierFromToken(enumElement.identifier || enumElement.stringLiteral, /*isOptional:*/ false);
+                    this.movePast(enumElement.identifier);
+                    this.movePast(enumElement.stringLiteral);
 
-                        if (variableDeclarator.equalsValueClause !== null) {
-                            memberValue = variableDeclarator.equalsValueClause.accept(this);
-                            lastValue = <NumberLiteral>memberValue;
-                        }
-                    }
-                    else {
-                        var enumElement = <EnumElementSyntax>element;
-                        memberName = this.identifierFromToken(enumElement.identifier || enumElement.stringLiteral, /*isOptional:*/ false);
-                        this.movePast(enumElement.identifier);
-                        this.movePast(enumElement.stringLiteral);
-
-                        if (enumElement.colonValueClause !== null) {
-                            memberValue = enumElement.colonValueClause.accept(this);
-                            lastValue = <NumberLiteral>memberValue;
-                        }
+                    if (enumElement.equalsValueClause !== null) {
+                        memberValue = enumElement.equalsValueClause.accept(this);
+                        lastValue = <NumberLiteral>memberValue;
                     }
 
                     var memberStart = this.position;
@@ -1117,13 +1104,6 @@ module TypeScript {
 
             this.previousTokenTrailingComments = null;
             return result;
-        }
-
-        private visitColonValueClause(node: ColonValueClauseSyntax): AST {
-            this.assertElementAtPosition(node);
-
-            this.movePast(node.colonToken);
-            return node.value.accept(this);
         }
 
         private getUnaryExpressionNodeType(kind: SyntaxKind): NodeType {

@@ -80,7 +80,4 @@ module TypeScript {
 
     export interface INameSyntax extends ITypeSyntax {
     }
-
-    export interface IEnumElementSyntax extends ISyntaxNode {
-    }
 }

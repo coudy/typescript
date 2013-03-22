@@ -16,7 +16,6 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 ///<reference path='LanguageVersion.ts' />
 ///<reference path='ParseOptions.ts' />
-///<reference path='Parser.ts' />
 ///<reference path='PositionedElement.ts' />
 ///<reference path='Scanner.ts' />
 ///<reference path='ScannerUtilities.generated.ts' />
@@ -60,6 +59,9 @@
 
 // DepthLimitedWalker depends on PositionTrackingWalker
 ///<reference path='DepthLimitedWalker.ts' />
+
+// Parser depends on PositionTrackingWalker
+///<reference path='Parser.ts' />
 
 ///<reference path='TextSpanWalker.ts' />
 ///<reference path='Unicode.ts' />

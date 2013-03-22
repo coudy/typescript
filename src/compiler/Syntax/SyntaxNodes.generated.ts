@@ -1159,7 +1159,7 @@ module TypeScript {
     }
     }
 
-    export class VariableDeclaratorSyntax extends SyntaxNode implements IEnumElementSyntax {
+    export class VariableDeclaratorSyntax extends SyntaxNode {
 
     constructor(public identifier: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
@@ -1188,10 +1188,6 @@ module TypeScript {
             case 2: return this.equalsValueClause;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    private isEnumElement(): bool {
-        return true;
     }
 
     public update(identifier: ISyntaxToken,
@@ -1295,70 +1291,6 @@ module TypeScript {
 
     public withValue(value: IExpressionSyntax): EqualsValueClauseSyntax {
         return this.update(this.equalsToken, value);
-    }
-
-    public isTypeScriptSpecific(): bool {
-        if (this.value.isTypeScriptSpecific()) { return true; }
-        return false;
-    }
-    }
-
-    export class ColonValueClauseSyntax extends SyntaxNode {
-
-    constructor(public colonToken: ISyntaxToken,
-                public value: IExpressionSyntax,
-                parsedInStrictMode: bool) {
-        super(parsedInStrictMode); 
-
-    }
-
-    public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitColonValueClause(this);
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.ColonValueClause;
-    }
-
-    public childCount(): number {
-        return 2;
-    }
-
-    public childAt(slot: number): ISyntaxElement {
-        switch (slot) {
-            case 0: return this.colonToken;
-            case 1: return this.value;
-            default: throw Errors.invalidOperation();
-        }
-    }
-
-    public update(colonToken: ISyntaxToken,
-                  value: IExpressionSyntax): ColonValueClauseSyntax {
-        if (this.colonToken === colonToken && this.value === value) {
-            return this;
-        }
-
-        return new ColonValueClauseSyntax(colonToken, value, /*parsedInStrictMode:*/ this.parsedInStrictMode());
-    }
-
-    public static create1(value: IExpressionSyntax): ColonValueClauseSyntax {
-        return new ColonValueClauseSyntax(Syntax.token(SyntaxKind.ColonToken), value, /*parsedInStrictMode:*/ false);
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): ColonValueClauseSyntax {
-        return <ColonValueClauseSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): ColonValueClauseSyntax {
-        return <ColonValueClauseSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public withColonToken(colonToken: ISyntaxToken): ColonValueClauseSyntax {
-        return this.update(colonToken, this.value);
-    }
-
-    public withValue(value: IExpressionSyntax): ColonValueClauseSyntax {
-        return this.update(this.colonToken, value);
     }
 
     public isTypeScriptSpecific(): bool {
@@ -6012,7 +5944,7 @@ module TypeScript {
         return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, enumElements, this.closeBraceToken);
     }
 
-    public withEnumElement(enumElement: IEnumElementSyntax): EnumDeclarationSyntax {
+    public withEnumElement(enumElement: EnumElementSyntax): EnumDeclarationSyntax {
         return this.withEnumElements(Syntax.separatedList([enumElement]));
     }
 
@@ -6025,11 +5957,11 @@ module TypeScript {
     }
     }
 
-    export class EnumElementSyntax extends SyntaxNode implements IEnumElementSyntax {
+    export class EnumElementSyntax extends SyntaxNode {
 
     constructor(public identifier: ISyntaxToken,
                 public stringLiteral: ISyntaxToken,
-                public colonValueClause: ColonValueClauseSyntax,
+                public equalsValueClause: EqualsValueClauseSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
@@ -6051,23 +5983,19 @@ module TypeScript {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.stringLiteral;
-            case 2: return this.colonValueClause;
+            case 2: return this.equalsValueClause;
             default: throw Errors.invalidOperation();
         }
     }
 
-    private isEnumElement(): bool {
-        return true;
-    }
-
     public update(identifier: ISyntaxToken,
                   stringLiteral: ISyntaxToken,
-                  colonValueClause: ColonValueClauseSyntax): EnumElementSyntax {
-        if (this.identifier === identifier && this.stringLiteral === stringLiteral && this.colonValueClause === colonValueClause) {
+                  equalsValueClause: EqualsValueClauseSyntax): EnumElementSyntax {
+        if (this.identifier === identifier && this.stringLiteral === stringLiteral && this.equalsValueClause === equalsValueClause) {
             return this;
         }
 
-        return new EnumElementSyntax(identifier, stringLiteral, colonValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new EnumElementSyntax(identifier, stringLiteral, equalsValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(): EnumElementSyntax {
@@ -6087,19 +6015,20 @@ module TypeScript {
     }
 
     public withIdentifier(identifier: ISyntaxToken): EnumElementSyntax {
-        return this.update(identifier, this.stringLiteral, this.colonValueClause);
+        return this.update(identifier, this.stringLiteral, this.equalsValueClause);
     }
 
     public withStringLiteral(stringLiteral: ISyntaxToken): EnumElementSyntax {
-        return this.update(this.identifier, stringLiteral, this.colonValueClause);
+        return this.update(this.identifier, stringLiteral, this.equalsValueClause);
     }
 
-    public withColonValueClause(colonValueClause: ColonValueClauseSyntax): EnumElementSyntax {
-        return this.update(this.identifier, this.stringLiteral, colonValueClause);
+    public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): EnumElementSyntax {
+        return this.update(this.identifier, this.stringLiteral, equalsValueClause);
     }
 
     public isTypeScriptSpecific(): bool {
-        return true;
+        if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) { return true; }
+        return false;
     }
     }
 

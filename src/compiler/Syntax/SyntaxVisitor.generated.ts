@@ -18,7 +18,6 @@ module TypeScript {
         visitVariableDeclaration(node: VariableDeclarationSyntax): any;
         visitVariableDeclarator(node: VariableDeclaratorSyntax): any;
         visitEqualsValueClause(node: EqualsValueClauseSyntax): any;
-        visitColonValueClause(node: ColonValueClauseSyntax): any;
         visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): any;
         visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): any;
         visitOmittedExpression(node: OmittedExpressionSyntax): any;
@@ -157,10 +156,6 @@ module TypeScript {
         }
 
         private visitEqualsValueClause(node: EqualsValueClauseSyntax): any {
-            return this.defaultVisit(node);
-        }
-
-        private visitColonValueClause(node: ColonValueClauseSyntax): any {
             return this.defaultVisit(node);
         }
 

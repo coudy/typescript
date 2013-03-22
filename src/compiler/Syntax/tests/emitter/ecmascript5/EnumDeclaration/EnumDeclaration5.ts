@@ -8,11 +8,11 @@ enum E2 {
 }
 
 enum E3 {
-  A: 1
+  A = 1
 }
 
 enum E3 {
-  A: 1,
+  A = 1,
   B
 }
 
@@ -21,10 +21,10 @@ enum E4 {
 }
 
 enum E5 {
-  "A A": 1
+  "A A" = 1
 }
 
 enum E6 {
-  "A A": 1,
+  "A A" = 1,
   B
 }

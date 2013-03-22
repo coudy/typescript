@@ -182,12 +182,6 @@ module TypeScript {
                 <IExpressionSyntax>this.visitNodeOrToken(node.value));
         }
 
-        public visitColonValueClause(node: ColonValueClauseSyntax): any {
-            return node.update(
-                this.visitToken(node.colonToken),
-                <IExpressionSyntax>this.visitNodeOrToken(node.value));
-        }
-
         public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): any {
             return node.update(
                 node.kind(),
@@ -603,7 +597,7 @@ module TypeScript {
             return node.update(
                 node.identifier === null ? null : this.visitToken(node.identifier),
                 node.stringLiteral === null ? null : this.visitToken(node.stringLiteral),
-                node.colonValueClause === null ? null : <ColonValueClauseSyntax>this.visitNode(node.colonValueClause));
+                node.equalsValueClause === null ? null : <EqualsValueClauseSyntax>this.visitNode(node.equalsValueClause));
         }
 
         public visitCastExpression(node: CastExpressionSyntax): any {

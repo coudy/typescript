@@ -162,11 +162,6 @@ module TypeScript {
             this.visitNodeOrToken(node.value);
         }
 
-        public visitColonValueClause(node: ColonValueClauseSyntax): void {
-            this.visitToken(node.colonToken);
-            this.visitNodeOrToken(node.value);
-        }
-
         public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): void {
             this.visitToken(node.operatorToken);
             this.visitNodeOrToken(node.operand);
@@ -525,7 +520,7 @@ module TypeScript {
         public visitEnumElement(node: EnumElementSyntax): void {
             this.visitOptionalToken(node.identifier);
             this.visitOptionalToken(node.stringLiteral);
-            this.visitOptionalNode(node.colonValueClause);
+            this.visitOptionalNode(node.equalsValueClause);
         }
 
         public visitCastExpression(node: CastExpressionSyntax): void {
