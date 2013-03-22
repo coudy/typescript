@@ -21,4 +21,31 @@ module TypeScript {
         // should be returned.
         getTextChangeRangeSinceVersion(scriptVersion: number): TextChangeRange;
     }
+
+    export module ScriptSnapshot {
+        class StringScriptSnapshot implements IScriptSnapshot {
+            constructor(private text: string) {
+            }
+
+            public getText(start: number, end: number): string {
+                return this.text.substring(start, end);
+            }
+
+            public getLength(): number {
+                return this.text.length;
+            }
+
+            public getLineStartPositions(): number[] {
+                return TextUtilities.parseLineStarts(SimpleText.fromString(this.text));
+            }
+
+            public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
+                throw Errors.notYetImplemented();
+            }
+        }
+
+        export function fromString(text: string): IScriptSnapshot {
+            return new StringScriptSnapshot(text);
+        }
+    }
 }

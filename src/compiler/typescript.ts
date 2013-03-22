@@ -142,7 +142,7 @@ module TypeScript {
         }
 
         public addUnit(prog: string, fileName: string, referencedFiles?: IFileReference[] = []): Script {
-            return this.addSourceUnit(new StringScriptSnapshot(prog), fileName, referencedFiles);
+            return this.addSourceUnit(ScriptSnapshot.fromString(prog), fileName, referencedFiles);
         }
 
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {

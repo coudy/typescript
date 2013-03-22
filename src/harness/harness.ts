@@ -784,8 +784,8 @@ module Harness {
             }
             else {
                 // requires unit to already exist in the compiler
-                compiler.pullUpdateUnit(fileName, new TypeScript.StringScriptSnapshot(""), null);
-                compiler.pullUpdateUnit(fileName, new TypeScript.StringScriptSnapshot(code), null);
+                compiler.pullUpdateUnit(fileName, TypeScript.ScriptSnapshot.fromString(""), null);
+                compiler.pullUpdateUnit(fileName, TypeScript.ScriptSnapshot.fromString(code), null);
             }
         }
 
@@ -1170,7 +1170,7 @@ module Harness {
         }
 
         export function updateUnit(code: string, unitName: string) {
-            compiler.pullUpdateUnit(unitName, new TypeScript.StringScriptSnapshot(code), null);
+            compiler.pullUpdateUnit(unitName, TypeScript.ScriptSnapshot.fromString(code), null);
         }
 
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1605,7 +1605,7 @@ module Harness {
 
         /** Parse a file on disk given its fileName */
         public parseFile(fileName: string) {
-            var sourceText = new TypeScript.StringScriptSnapshot(IO.readFile(fileName))
+            var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName))
             return this.parseSourceText(fileName, sourceText);
         }
         
