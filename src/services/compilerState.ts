@@ -262,24 +262,14 @@ module Services {
             return <TypeScript.Script>this.compiler.fileNameToScript.lookup(fileName);
         }
 
-        public createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var sourceText = this.getScriptSnapshot(fileName);
-            var text = new TypeScript.ScriptSnapshotText(sourceText);
-            return TypeScript.Parser1.parse(text);
-        }
-
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             var syntaxTree = this.compiler.fileNameToSyntaxTree.lookup(fileName);
             if (syntaxTree === null) {
-                syntaxTree = this.createSyntaxTree(fileName);
+                syntaxTree = TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(this.getScriptSnapshot(fileName)));
                 this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
             }
 
             return syntaxTree;
-        }
-
-        public setSyntaxTree(fileName: string, syntaxTree: TypeScript.SyntaxTree): void {
-            this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
         }
 
         public getLineMap(fileName: string): number[] {
@@ -288,11 +278,6 @@ module Services {
 
         public pullGetErrorsForFile(fileName: string): TypeScript.SemanticError[] {
             return this.compiler.pullGetErrorsForFile(fileName);
-        }
-
-        public getScriptTextChangeRange(fileName: string): TypeScript.TextChangeRange {
-            var lastKnownVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
-            return this.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
         public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {
@@ -348,31 +333,13 @@ module Services {
                 return false;
             }
 
-            this.updateSyntaxTree(fileName);
-
-            //
-            // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
-            //
+            var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, compilerScriptVersion);
 
             // Keep track of the version of script we're adding to the compiler.
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
-            return compiler.pullUpdateUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
-        }
 
-        private updateSyntaxTree(fileName: string): void {
-            var newText = new TypeScript.ScriptSnapshotText(this.getScriptSnapshot(fileName));
-
-            var editRange = this.getScriptTextChangeRange(fileName);
-            if (editRange === null) {
-                // Unknown edit.  Do a full parse.
-                this.setSyntaxTree(fileName, TypeScript.Parser1.parse(newText));
-            }
-            else {
-                // DO an incremental parser.
-                this.setSyntaxTree(
-                    fileName,
-                    TypeScript.Parser1.incrementalParse(this.getSyntaxTree(fileName), editRange, newText));
-            }
+            return compiler.pullUpdateUnit(
+                fileName, this.hostCache.getScriptSnapshot(fileName), textChangeRange);
         }
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {

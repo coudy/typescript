@@ -1132,11 +1132,17 @@ module TypeScript {
             });
         }
 
-        public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string): bool {
+        public pullUpdateUnit(fileName: string, scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): bool {
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 var oldScript = <Script>this.fileNameToScript.lookup(fileName);
+                var oldSyntaxTree = this.fileNameToSyntaxTree.lookup(fileName);
 
-                var syntaxTree = Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), LanguageVersion.EcmaScript5);
+                var text = new TypeScript.ScriptSnapshotText(scriptSnapshot);
+
+                var syntaxTree = textChangeRange === null
+                    ? TypeScript.Parser1.parse(text)
+                    : TypeScript.Parser1.incrementalParse(oldSyntaxTree, textChangeRange, text);
+
                 var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
 
                 this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
