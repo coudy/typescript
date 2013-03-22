@@ -66,7 +66,7 @@ module TypeScript {
                 // Closing files could result in exceptions, report them if they occur
                 this.declFile.Close();
             } catch (ex) {
-                this.errorReporter.emitterError(null, ex.message);
+                this.errorReporter.emitterError(ex.message);
             }
         }
 
@@ -719,7 +719,7 @@ module TypeScript {
                                 // Creating files can cause exceptions, report them.   
                                 this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));
                             } catch (ex) {
-                                this.errorReporter.emitterError(null, ex.message);
+                                this.errorReporter.emitterError(ex.message);
                             }
                         }
                         this.pushDeclarationContainer(moduleDecl);
@@ -731,7 +731,7 @@ module TypeScript {
                                 // Closing files could result in exceptions, report them if they occur
                                 this.declFile.Close();
                             } catch (ex2) {
-                                this.errorReporter.emitterError(null, ex2.message);
+                                this.errorReporter.emitterError(ex2.message);
                             }
                             this.declFile = this.singleDeclFile;
                         }

@@ -175,7 +175,7 @@ module TypeScript {
                 // Closing files could result in exceptions, report them if they occur
                 sourceMapOut.Close();
             } catch (ex) {
-                sourceMapper.errorReporter.emitterError(null, ex.message);
+                sourceMapper.errorReporter.emitterError(ex.message);
             }
         }
     }

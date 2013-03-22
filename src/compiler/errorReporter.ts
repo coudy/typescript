@@ -104,8 +104,9 @@ module TypeScript {
             }
         }
 
-        public emitterError(ast: AST, message: string) {
-            this.reportError(ast, message);
+        public emitterError(message: string) {
+            this.outfile.WriteLine(message);
+
             // Emitter errors are not recoverable, stop immediately
             throw Error("EmitError");
         }

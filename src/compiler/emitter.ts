@@ -1377,7 +1377,7 @@ module TypeScript {
                 // Closing files could result in exceptions, report them if they occur
                 this.outfile.Close();
             } catch (ex) {
-                this.errorReporter.emitterError(null, ex.message);
+                this.errorReporter.emitterError(ex.message);
             }
         }
 
@@ -1835,7 +1835,7 @@ module TypeScript {
             try {
                 return this.emitOptions.ioHost.createFile(fileName, useUTF8);
             } catch (ex) {
-                this.errorReporter.emitterError(null, ex.message);
+                this.errorReporter.emitterError(ex.message);
             }
         }
     }

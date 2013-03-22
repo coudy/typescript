@@ -245,7 +245,7 @@ module TypeScript {
 
                                 if (j === 0) {
                                     // Its error to not have common path
-                                    this.errorReporter.emitterError(null, "Cannot find the common subdirectory path for the input files");
+                                    this.errorReporter.emitterError("Cannot find the common subdirectory path for the input files");
                                     return;
                                 }
 
@@ -292,7 +292,7 @@ module TypeScript {
 
             // Verify if options are correct
             if (this.isDynamicModuleCompilation() && !this.emitSettings.outputMany) {
-                this.errorReporter.emitterError(null, "Cannot compile dynamic modules when emitting into single file");
+                this.errorReporter.emitterError("Cannot compile dynamic modules when emitting into single file");
             }
 
             // Parse the directory structure
@@ -484,7 +484,7 @@ module TypeScript {
                 // Creating files can cause exceptions, report them.   
                 return this.emitSettings.ioHost.createFile(fileName, useUTF8);
             } catch (ex) {
-                this.errorReporter.emitterError(null, ex.message);
+                this.errorReporter.emitterError(ex.message);
             }
         }
 
