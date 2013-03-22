@@ -22,7 +22,7 @@ module TypeScript {
         public fnc: FuncDecl;
         public moduleDecl: ModuleDeclaration;
 
-        constructor (public container: Symbol, public previous: ScopeChain,
+        constructor(public container: Symbol, public previous: ScopeChain,
                      public scope: SymbolScope) { }
     }
 
@@ -34,7 +34,7 @@ module TypeScript {
         // use lists by symbol 
         public useIndexBySymbol: number[][] = [];
 
-        constructor (public bb: BasicBlock) { }
+        constructor(public bb: BasicBlock) { }
 
         public updateTop() {
             var temp = new BitVector(this.top.bitCount);
@@ -79,7 +79,7 @@ module TypeScript {
                 var context: UseDefContext = walker.state;
                 var asg: BinaryExpression;
                 var id: Identifier;
-                
+
                 if (cur === null) {
                     cur = null;
                 }
@@ -170,7 +170,7 @@ module TypeScript {
         public symbolCount = 0;
         public func: Symbol;
 
-        constructor () {
+        constructor() {
         }
 
         public getSymbolIndex(sym: Symbol) {
@@ -214,7 +214,7 @@ module TypeScript {
         public firstBits = 0;
         public restOfBits: number[] = null;
 
-        constructor (public bitCount: number) {
+        constructor(public bitCount: number) {
             if (this.bitCount > BitVector.packBits) {
                 this.restOfBits = [];
                 var len = Math.floor(this.bitCount / BitVector.packBits);
@@ -224,7 +224,7 @@ module TypeScript {
             }
         }
 
-        public set(bitIndex: number, value: bool) {
+        public set (bitIndex: number, value: bool) {
             if (bitIndex < BitVector.packBits) {
                 if (value) {
                     this.firstBits |= (1 << bitIndex);
@@ -245,7 +245,7 @@ module TypeScript {
             }
         }
 
-        public map(fn: (index: number) =>any) {
+        public map(fn: (index: number) => any) {
             var k: number;
             for (k = 0; k < BitVector.packBits; k++) {
                 if (k === this.bitCount) {
@@ -361,7 +361,7 @@ module TypeScript {
         public currentSwitch: BasicBlock[] = [];
         public walker: IAstWalker;
 
-        constructor (public current: BasicBlock,
+        constructor(public current: BasicBlock,
                      public exit: BasicBlock) {
             this.entry = this.current;
         }
@@ -410,8 +410,8 @@ module TypeScript {
 
         public markBase = 0;
 
-        public bfs(nodeFunc: (bb: BasicBlock) =>void , edgeFunc: (node1: BasicBlock, node2: BasicBlock) =>void ,
-            preEdges: () =>void , postEdges: () =>void ) {
+        public bfs(nodeFunc: (bb: BasicBlock) => void , edgeFunc: (node1: BasicBlock, node2: BasicBlock) => void ,
+            preEdges: () => void , postEdges: () => void ) {
             var markValue = this.markBase++;
             var q: BasicBlock[] = [];
             q[q.length] = this.entry;
@@ -579,7 +579,7 @@ module TypeScript {
         public rdCache: IResolutionData[] = [];
         public nextUp: number = 0;
 
-        constructor () {
+        constructor() {
             for (var i = 0; i < this.cacheSize; i++) {
                 this.rdCache[i] = {
                     actuals: [],
@@ -1070,7 +1070,7 @@ module TypeScript {
         }
 
         public typeCheckThis(ast: AST): AST {
-           ast.type = this.anyType;
+            ast.type = this.anyType;
             var illegalThisRef = false;
             if (this.thisFnc === null) {
                 // 'this' in class bodies should bind to 'any'
@@ -1102,9 +1102,9 @@ module TypeScript {
                 this.thisFnc &&
                 hasFlag(this.thisFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
 
-                    // if the enclosing function was bound to a property,
-                    // checkInitSelf would not have been able to mark the 
-                    // function for a self init
+                // if the enclosing function was bound to a property,
+                // checkInitSelf would not have been able to mark the 
+                // function for a self init
                 if (this.thisFnc.boundToProperty) {
                     var container = this.thisFnc.boundToProperty.sym.container;
                     if (container.declAST.nodeType === NodeType.FuncDecl) {
@@ -2040,7 +2040,7 @@ module TypeScript {
         }
 
         // Checks if the privacy is satisfied by type that is used in the declaration inside container
-        private checkTypePrivacy(type: Type, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : bool) =>void ) {
+        private checkTypePrivacy(type: Type, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName: bool) => void ) {
             // Primitive types
             if (!(type && type.primitiveTypeClass === Primitive.None)) {
                 return;
@@ -2075,7 +2075,7 @@ module TypeScript {
         }
 
         // Checks if the privacy is satisfied by typeSymbol that is used in the declaration inside container
-        private checkSignatureGroupPrivacy(sgroup: SignatureGroup, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : bool) =>void ) {
+        private checkSignatureGroupPrivacy(sgroup: SignatureGroup, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName: bool) => void ) {
             if (sgroup) {
                 var len = sgroup.signatures.length;
                 for (var i = 0; i < sgroup.signatures.length; i++) {
@@ -2243,7 +2243,7 @@ module TypeScript {
             var accessorType: Type = (isGetter || isSetter) && funcDecl.accessorSymbol ? funcDecl.accessorSymbol.getType() : null;
             var prevModDecl = this.checker.currentModDecl;
             var ssb: SymbolScopeBuilder;
-            
+
             if (funcDecl.isConstructor && !funcDecl.isOverload) {
                 if (fnType.instanceType === null) {
                     this.checker.errorReporter.simpleError(funcDecl, "Malformed function body (is this a class named the same as an existing interface?)");
@@ -2623,7 +2623,7 @@ module TypeScript {
                     !funcDecl.isConstructor &&
                     !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression) &&
                     !hasFlag(funcDecl.fncFlags, FncFlags.IsFatArrowFunction)) {
-                        // relax the restriction if the method only contains a single "throw" statement
+                    // relax the restriction if the method only contains a single "throw" statement
                     onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === NodeType.Throw)
 
                     if (!onlyHasThrow) {
@@ -2981,12 +2981,11 @@ module TypeScript {
             }
             else {
                 sym.type = mod;
-                
+
                 // Add the imported module to the AMD dependency list
-                if (this.checker.typeFlow.currentScript && 
-                    this.checker.typeFlow.currentScript.topLevelMod && 
-                    this.checker.typeFlow.currentScript.topLevelMod.mod) 
-                {
+                if (this.checker.typeFlow.currentScript &&
+                    this.checker.typeFlow.currentScript.topLevelMod &&
+                    this.checker.typeFlow.currentScript.topLevelMod.mod) {
                     this.checker.typeFlow.currentScript.topLevelMod.mod.importedModules.push(importDecl);
                 }
 
@@ -3229,10 +3228,10 @@ module TypeScript {
                             (binex.operand2.nodeType === NodeType.FuncDecl &&
                             (<FuncDecl>binex.operand2).isAccessor() &&
                                 this.typeFromAccessorFuncDecl(<FuncDecl>binex.operand2) === targetMember.getType())) {
-                                    // set the field type to the proper contextual type
-                                    // this is especially important in the 'any' case, so that
-                                    // fields typed to 'any' aren't accepted for contextual typing,
-                                    // but never properly set to the target type
+                            // set the field type to the proper contextual type
+                            // this is especially important in the 'any' case, so that
+                            // fields typed to 'any' aren't accepted for contextual typing,
+                            // but never properly set to the target type
                             binex.operand1.type = targetMember.getType();
                         }
                     }
@@ -3598,7 +3597,7 @@ module TypeScript {
             // No need to recurse since dots are left associative
             var apparentTarget = target.nodeType === NodeType.Dot ? (<BinaryExpression> target).operand2 : target;
             if (exactCandidates.length === 0) {
-                var candidateInfo: {sig: Signature; ambiguous: bool;};
+                var candidateInfo: { sig: Signature; ambiguous: bool; };
                 var applicableCandidates = this.checker.getApplicableSignatures(conversionCandidates, args, comparisonInfo);
                 if (applicableCandidates.length > 0) {
                     candidateInfo = this.checker.findMostApplicableSignature(applicableCandidates, args);
@@ -3865,90 +3864,6 @@ module TypeScript {
             var globalChain = new ScopeChain(this.checker.gloMod, null, this.globalScope);
             var context = new AssignScopeContext(globalChain, this, [this.checker.currentModDecl]);
             getAstWalkerFactory().walk(ast, preAssignScopes, postAssignScopes, null, context);
-        }
-
-        public findMemberScope(enclosingScopeContext: EnclosingScopeContext, matchFlag: ASTFlags) {
-            var enclosingScope = enclosingScopeContext.getScope();
-            var pos = enclosingScopeContext.pos - enclosingScopeContext.getScriptFragmentPosition();
-            var scriptFragment = enclosingScopeContext.getScriptFragment();
-
-            var memContext = new MemberScopeContext(this, pos, matchFlag);
-            memContext.scope = enclosingScope;
-            if (scriptFragment.nodeType === NodeType.Name) {
-                return scriptFragment.type.getMemberScope(this);
-            }
-            else {
-                getAstWalkerFactory().walk(scriptFragment, preFindMemberScope, null, null, memContext);
-                if (memContext.ast && enclosingScopeContext.enclosingClassDecl && memContext.ast.type === enclosingScopeContext.enclosingClassDecl.type.instanceType) {
-                    enclosingScopeContext.publicsOnly = false;
-                }
-                if (memContext.type) {
-                    return memContext.type.getMemberScope(this);
-                }
-                else {
-                    return null;
-                }
-            }
-        }
-
-        public findMemberScopeAt(enclosingScopeContext: EnclosingScopeContext) {
-            return this.findMemberScope(enclosingScopeContext, ASTFlags.DotLHS);
-        }
-
-        public findMemberScopeAtFullAst(enclosingScopeContext: EnclosingScopeContext) {
-            var matchFlag = ASTFlags.DotLHS;
-            var pos = enclosingScopeContext.pos;
-            var astResult: AST = null;
-
-            var preFindMemberScopeFullAst = function (ast: AST, parent: AST, walker: IAstWalker) {
-                if (isValidAstNode(ast)) {
-                    // Note: pos === ast.limChar       in case of incomplete code (e.g. "foo.")
-                    // Note: (pos - 1) === ast.limChar in case of complete code (e.g. "foo.bar")
-                    if (hasFlag(ast.flags, matchFlag) && (pos === ast.limChar || (pos - 1) === ast.limChar)) {
-                        astResult = ast;
-                        walker.options.stopWalk();
-                    }
-
-                    // Stop traversal if range does not contain position
-                    walker.options.goChildren = (ast.minChar <= pos) && (pos <= ast.limChar);
-                }
-                return ast;
-            }
-
-            var preFindMemberScopeFullAstFuzy = function (ast: AST, parent: AST, walker: IAstWalker) {
-                if (isValidAstNode(ast)) {
-                    if (hasFlag(ast.flags, matchFlag) && ((ast.minChar < pos) && (pos <= ast.limChar))) {
-                        astResult = ast;
-                    }
-
-                    // Stop traversal if range does not contain position
-                    walker.options.goChildren = (ast.minChar <= pos) && (pos <= ast.limChar);
-                }
-                return ast;
-            }
-
-            getAstWalkerFactory().walk(enclosingScopeContext.script, preFindMemberScopeFullAst);
-
-            if (astResult === null) {
-                // Perform a more "fusy" match. This is because the limChar of AST nodes is sometimes
-                // not what we expect, for example:
-                //   foo./*comment*/;
-                // In this case, limChar points to ";" instead of "." (because of the trailing comment).
-                getAstWalkerFactory().walk(enclosingScopeContext.script, preFindMemberScopeFullAstFuzy);
-            }
-
-            if (astResult &&
-                enclosingScopeContext.enclosingClassDecl &&
-                astResult.type === enclosingScopeContext.enclosingClassDecl.type.instanceType) {
-                enclosingScopeContext.publicsOnly = false;
-            }
-
-            if (astResult && astResult.type) {
-                return astResult.type.getMemberScope(this);
-            }
-            else {
-                return null;
-            }
         }
     }
 }
