@@ -119,7 +119,6 @@ module TypeScript {
 
     export class TypeScriptCompiler {
         public typeChecker: TypeChecker = null;
-        public typeFlow: TypeFlow = null;
         public errorReporter: ErrorReporter;
         public pullErrorReporter: PullErrorReporter;
 
