@@ -440,7 +440,7 @@ module TypeScript.SimpleText {
         }
 
         public lineMap(): LineMap {
-            return LineMap.createFromText(this);
+            return LineMap.fromSimpleText(this);
         }
     }
 
@@ -480,7 +480,7 @@ module TypeScript.SimpleText {
         }
 
         public lineMap(): LineMap {
-            return LineMap.createFromText(this);
+            return LineMap.fromSimpleText(this);
         }
     }
 

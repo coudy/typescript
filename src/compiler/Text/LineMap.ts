@@ -74,7 +74,7 @@ module TypeScript {
             return new LineAndCharacter(lineNumber, position - this.lineStarts()[lineNumber]);
         }
 
-        public static createFromText(text: ISimpleText): LineMap {
+        public static fromSimpleText(text: ISimpleText): LineMap {
             var lineStarts = TextUtilities.parseLineStarts(text);
 
             return new LineMap(lineStarts, text.length());
@@ -85,7 +85,7 @@ module TypeScript {
         }
 
         public static fromString(text: string): LineMap {
-            return LineMap.createFromText(SimpleText.fromString(text));
+            return LineMap.fromSimpleText(SimpleText.fromString(text));
         }
     }
 }
