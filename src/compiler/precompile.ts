@@ -333,10 +333,10 @@ module TypeScript {
         }
         
         var referencedFiles: IFileReference[] = [];
-        processTripleSlashDirectives(text.lineMap(), firstToken, settings, referencedFiles);
+        var properties  = processTripleSlashDirectives(text.lineMap(), firstToken, settings, referencedFiles);
 
         scannerDiagnostics.length = 0;
-        return { settings:settings, referencedFiles: referencedFiles, importedFiles: importedFiles };
+        return { settings:settings, referencedFiles: referencedFiles, importedFiles: importedFiles, isLibFile: properties.noDefaultLib };
     }
 
 } // Tools
