@@ -1223,8 +1223,8 @@ module Harness {
             compileUnit(lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
-        export function emit(ioHost: TypeScript.EmitterIOHost, usePullEmitter?: bool) {
-            compiler.emit(ioHost, usePullEmitter);
+        export function emit(ioHost: TypeScript.EmitterIOHost) {
+            compiler.emit(ioHost);
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1251,7 +1251,7 @@ module Harness {
             compiler.pullErrorReporter.reportErrors(semanticErrors);
 
             var errorLines = stderr.lines;
-            emit(stdout, true);
+            emit(stdout);
             compiler.emitDeclarations();
 
             if (context) {

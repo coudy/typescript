@@ -224,7 +224,7 @@ class BatchCompiler {
             var mapInputToOutput = (inputFile: string, outputFile: string): void => {
                 this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
             };
-            compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
+            compiler.emit(emitterIOHost, mapInputToOutput);
             compiler.emitDeclarations();
         } catch (err) {
             compiler.errorReporter.hasErrors = true;

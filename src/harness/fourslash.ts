@@ -988,8 +988,8 @@ module FourSlash {
 
         fsOutput.reset();
         fsErrors.reset();
-        Harness.Compiler.addUnit(IO.readFile(tsFn), tsFn);        
-        Harness.Compiler.addUnit(content, mockFilename);        
+        Harness.Compiler.addUnit(IO.readFile(tsFn), tsFn);
+        Harness.Compiler.addUnit(content, mockFilename);
         Harness.Compiler.compile(content, mockFilename);
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
@@ -999,7 +999,7 @@ module FourSlash {
             resolvePath: (s: string)=>s
         }
 
-        Harness.Compiler.emit(emitterIOHost, true);
+        Harness.Compiler.emit(emitterIOHost);
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + fileName + ': ' + fsErrors.lines.join('\r\n'));
         }
