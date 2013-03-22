@@ -768,7 +768,7 @@ module Services {
             var minChar = -1;
             var limChar = -1;
             var kind = this.mapPullElementKind(typeInfoAtPosition.symbol, !typeInfoAtPosition.callSignatures,
-                !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.ast && typeInfoAtPosition.ast.nodeType == TypeScript.NodeType.New);
+                !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.isConstructorCall);
 
             var symbolForDocComment = typeInfoAtPosition.candidateSignature ? typeInfoAtPosition.candidateSignature : typeInfoAtPosition.symbol;
             var docComment = this.compilerState.getDocComments(symbolForDocComment, !typeInfoAtPosition.callSignatures);

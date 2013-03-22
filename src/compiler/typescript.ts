@@ -110,6 +110,7 @@ module TypeScript {
         enclosingScopeSymbol: PullSymbol;
         candidateSignature: PullSignatureSymbol;
         callSignatures: PullSignatureSymbol[];
+        isConstructorCall: bool;
     }
 
     export interface PullVisibleSymbolsInfo {
@@ -749,6 +750,7 @@ module TypeScript {
             var resolutionContext = new PullTypeResolutionContext();
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
+            var isConstructorCall = false;
 
             var pre = (cur: AST, parent: AST): AST => {
                 if (isValidAstNode(cur)) {
@@ -938,7 +940,15 @@ module TypeScript {
                         }
 
                         if (!isPropertyOrVar) {
-                            callSignatures = callExpression.nodeType === NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
+                            isConstructorCall = foundAST.nodeType == NodeType.Super || callExpression.nodeType === NodeType.New;
+
+                            if (foundAST.nodeType == NodeType.Super) {
+                                if (symbol.getKind() == PullElementKind.Class) {
+                                    callSignatures = (<PullClassTypeSymbol>symbol).getConstructorMethod().getType().getConstructSignatures();
+                                }
+                            } else {
+                                callSignatures = callExpression.nodeType === NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
+                            }
                             var callResolutionResults: PullAdditionalCallResolutionData = {
                                 targetSymbol: null,
                                 resolvedSignatures: null,
@@ -979,7 +989,14 @@ module TypeScript {
 
             var enclosingScopeSymbol = this.getSymbolOfDeclaration(enclosingDecl);
 
-            return { symbol: symbol, ast: foundAST, enclosingScopeSymbol: enclosingScopeSymbol, candidateSignature: candidateSignature, callSignatures: callSignatures };
+            return {
+                symbol: symbol,
+                ast: foundAST,
+                enclosingScopeSymbol: enclosingScopeSymbol,
+                candidateSignature: candidateSignature,
+                callSignatures: callSignatures,
+                isConstructorCall: isConstructorCall
+            };
         }
 
         private extractResolutionContextFromPath(path: AstPath, script: Script, scriptName?: string): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {

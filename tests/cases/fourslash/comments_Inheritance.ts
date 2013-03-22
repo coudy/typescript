@@ -381,8 +381,8 @@ verify.currentSignatureHelpDocCommentIs("c2 constructor");
 goTo.marker('18');
 verify.currentSignatureHelpDocCommentIs("");
 
-//goTo.marker('18sq');
-//verify.quickInfoIs("(a: number): c2", "c2 constructor", "c2", "constructor");
+goTo.marker('18sq');
+verify.quickInfoIs("(a: number): c2", "c2 constructor", "c2", "constructor");
 
 goTo.marker('18spropq');
 verify.quickInfoIs("c2", "", "c2", "class");
@@ -653,8 +653,8 @@ verify.completionListContains("i2_i", "i2", "", "i2_i", "var");
 verify.completionListContains("i3", "i3", "", "i3", "interface");
 verify.completionListContains("i3_i", "i3", "", "i3_i", "var");
 
-//goTo.marker('52');
-//verify.quickInfoIs("(): c5", "", "c5", "constructor");
+goTo.marker('52');
+verify.quickInfoIs("(): c5", "", "c5", "constructor");
 
 goTo.marker('53');
 verify.quickInfoIs(undefined, "c5 class", "c5", "class");
