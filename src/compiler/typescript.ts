@@ -120,7 +120,7 @@ module TypeScript {
     export class TypeScriptCompiler {
         public typeChecker: TypeChecker = null;
         public errorReporter: ErrorReporter;
-        public pullErrorReporter: PullErrorReporter;
+        public pullErrorReporter: PullErrorReporter = null;
 
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;
@@ -167,7 +167,6 @@ module TypeScript {
             this.typeChecker.styleSettings = this.settings.styleSettings;
             this.typeChecker.canCallDefinitionSignature = this.settings.canCallDefinitionSignature;
 
-            this.errorReporter.checker = this.typeChecker;
             this.setErrorOutput(this.errorOutput);
         }
 
