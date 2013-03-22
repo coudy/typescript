@@ -42,7 +42,7 @@ module TypeScript {
     }
 
     export function instanceCompare(a: Symbol, b: Symbol) {
-        if (((a == null) || (!a.isInstanceProperty()))) {
+        if (((a === null) || (!a.isInstanceProperty()))) {
             return b;
         }
         else {
@@ -171,8 +171,8 @@ module TypeScript {
         var members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
         var ambientMembers = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
 
-        var withType = new Type();
-        var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.unitIndex, withType);
+        withType = new Type();
+        var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.fileName, withType, context.typeFlow.compilationSettings.optimizeModuleCodeGen);
         withType.members = members;
         withType.ambientMembers = ambientMembers;
         withType.symbol = withSymbol;
@@ -219,7 +219,7 @@ module TypeScript {
             else {
                 if (context.scopeChain.previous.scope.container &&
                     context.scopeChain.previous.scope.container.declAST &&
-                    context.scopeChain.previous.scope.container.declAST.nodeType == NodeType.FuncDecl &&
+                    context.scopeChain.previous.scope.container.declAST.nodeType === NodeType.FuncDecl &&
                     (<FuncDecl>context.scopeChain.previous.scope.container.declAST).isConstructor) {
 
                         // if the parent is the class constructor, use the constructor scope
@@ -240,7 +240,9 @@ module TypeScript {
             container = context.scopeChain.thisType.symbol;
         }
 
-        if (funcDecl.type == null || hasFlag(funcDecl.type.symbol.flags, SymbolFlags.TypeSetDuringScopeAssignment)) {
+        var fgSym: TypeSymbol = null;
+
+        if (funcDecl.type === null || hasFlag(funcDecl.type.symbol.flags, SymbolFlags.TypeSetDuringScopeAssignment)) {
             if (context.scopeChain.fnc && context.scopeChain.fnc.type) {
                 container = context.scopeChain.fnc.type.symbol;
             }
@@ -248,13 +250,12 @@ module TypeScript {
             var funcScope = null;
             var outerFnc: FuncDecl = context.scopeChain.fnc;
             var nameText = funcDecl.name ? funcDecl.name.actualText : null;
-            var fgSym: TypeSymbol = null;
 
             if (isStatic) {
                 // In the case of function-nested statics, no member list will have bee initialized for the function, so we need
                 // to copy it over.  We don't set this by default because having a non-null member list will throw off assignment
                 // compatibility tests
-                if (outerFnc.type.members == null && container.getType().memberScope) {
+                if (outerFnc.type.members === null && container.getType().memberScope) {
                     outerFnc.type.members = (<SymbolScopeBuilder>(<TypeSymbol>container).type.memberScope).valueMembers;
                 }
                 funcScope = context.scopeChain.fnc.type.memberScope;
@@ -278,7 +279,7 @@ module TypeScript {
             }
 
             context.typeFlow.checker.createFunctionSignature(funcDecl, container,
-                                                            funcScope, fgSym, fgSym == null);
+                                                            funcScope, fgSym, fgSym === null);
 
             // it's a getter or setter for a class property                     
             if (!funcDecl.accessorSymbol && 
@@ -317,7 +318,7 @@ module TypeScript {
         var ambientFuncStaticMembers = new ScopedMembers(new DualStringHashTable(ambientFuncStaticTable, new StringHashTable()));
 
         // REVIEW: Is it a problem that this is being set twice for properties and constructors?
-        funcDecl.unitIndex = context.typeFlow.checker.locationInfo.unitIndex;
+        funcDecl.fileName = context.typeFlow.checker.locationInfo.fileName;
 
         var locals = new SymbolScopeBuilder(funcMembers, ambientFuncMembers, null, null, parentScope, localContainer);
         var statics = new SymbolScopeBuilder(funcStaticMembers, ambientFuncStaticMembers, null, null, parentScope, null);
@@ -351,8 +352,8 @@ module TypeScript {
             funcDecl.enclosingFnc = context.scopeChain.fnc;
             group.enclosingType = isStatic ? context.scopeChain.classType : context.scopeChain.thisType;
             // for mapping when type checking
-            var fgSym = <TypeSymbol>ast.type.symbol;
-            if (((funcDecl.fncFlags & FncFlags.Signature) == FncFlags.None) && funcDecl.vars) {
+            fgSym = <TypeSymbol>ast.type.symbol;
+            if (((funcDecl.fncFlags & FncFlags.Signature) === FncFlags.None) && funcDecl.vars) {
                 context.typeFlow.addLocalsFromScope(locals, fgSym, funcDecl.vars,
                                                     funcTable, false);
                 context.typeFlow.addLocalsFromScope(statics, fgSym, funcDecl.statics,
@@ -400,29 +401,29 @@ module TypeScript {
         var go = true;
 
         if (ast) {
-            if (ast.nodeType == NodeType.List) {
+            if (ast.nodeType === NodeType.List) {
                 var list = <ASTList>ast;
                 list.enclosingScope = context.scopeChain.scope;
             }
-            else if (ast.nodeType == NodeType.ModuleDeclaration) {
+            else if (ast.nodeType === NodeType.ModuleDeclaration) {
                 preAssignModuleScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.ClassDeclaration) {
+            else if (ast.nodeType === NodeType.ClassDeclaration) {
                 preAssignClassScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.InterfaceDeclaration) {
+            else if (ast.nodeType === NodeType.InterfaceDeclaration) {
                 preAssignInterfaceScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.With) {
+            else if (ast.nodeType === NodeType.With) {
                 preAssignWithScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.FuncDecl) {
+            else if (ast.nodeType === NodeType.FuncDecl) {
                 preAssignFuncDeclScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.Catch) {
+            else if (ast.nodeType === NodeType.Catch) {
                 preAssignCatchScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.TypeRef) {
+            else if (ast.nodeType === NodeType.TypeRef) {
                 go = false;
             }
         }
@@ -434,7 +435,7 @@ module TypeScript {
         var context:AssignScopeContext = walker.state;
         var go = true;
         if (ast) {
-            if (ast.nodeType == NodeType.ModuleDeclaration) {
+            if (ast.nodeType === NodeType.ModuleDeclaration) {
                 var prevModDecl = <ModuleDeclaration>ast;
 
                 popAssignScope(context);
@@ -444,22 +445,22 @@ module TypeScript {
                     context.typeFlow.checker.currentModDecl = context.modDeclChain[context.modDeclChain.length - 1];
                 }
             }
-            else if (ast.nodeType == NodeType.ClassDeclaration) {
+            else if (ast.nodeType === NodeType.ClassDeclaration) {
                 popAssignScope(context);
             }
-            else if (ast.nodeType == NodeType.InterfaceDeclaration) {
+            else if (ast.nodeType === NodeType.InterfaceDeclaration) {
                 popAssignScope(context);
             }
-            else if (ast.nodeType == NodeType.With) {
+            else if (ast.nodeType === NodeType.With) {
                 popAssignScope(context);
             }
-            else if (ast.nodeType == NodeType.FuncDecl) {
+            else if (ast.nodeType === NodeType.FuncDecl) {
                 var funcDecl = <FuncDecl>ast;
                 if ((!funcDecl.isConstructor || hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) && !funcDecl.isOverload) {
                     popAssignScope(context);
                 }
             }
-            else if (ast.nodeType == NodeType.Catch) {
+            else if (ast.nodeType === NodeType.Catch) {
                 var catchBlock = <Catch>ast;
                 if (catchBlock.param) {
                     popAssignScope(context);

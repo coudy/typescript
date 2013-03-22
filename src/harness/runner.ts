@@ -26,9 +26,6 @@
 ///<reference path='..\..\tests\runners\projects\runner.ts' />
 ///<reference path='..\..\tests\runners\unittest\unittestrunner.ts' />
 
-declare var IO: IIO;
-declare var Exec: IExec;
-declare var process: any;
 declare var _inheritsFrom; // reference base inheritsFrom in child contexts.
 
 class ConsoleLogger extends Harness.Logger {
@@ -66,7 +63,7 @@ class ConsoleLogger extends Harness.Logger {
     }
 
     public start() {
-        IO.printLine("Running tests" + (iterations > 1 ? " "  + iterations + " times" : "") + (reverse ? " in reverse." : "."));
+        IO.printLine("Running tests" + (iterations > 1 ? " " + iterations + " times" : "") + (reverse ? " in reverse." : "."));
     }
 
     public end() {
@@ -207,6 +204,7 @@ function runTests(tests: RunnerBase[]) {
 }
 
 var runners: RunnerBase[] = [];
+global.runners = runners;
 var reverse: bool = false;
 var iterations: number = 1;
 
@@ -232,6 +230,23 @@ opts.flag('fourslash', {
     }
 });
 
+// for running fourslash tests written against 0.8.3 in the fourslash_old directory
+opts.option('fourslash-all', {
+    experimental: true,
+    set: function (str) {
+        runners.push(new FourslashRunner('all'));
+    }
+});
+
+opts.flag('unittests', {
+    set: function () {
+        runners.push(new UnitTestRunner('compiler'));
+        runners.push(new UnitTestRunner('ls'));
+        runners.push(new UnitTestRunner('services'));
+        runners.push(new UnitTestRunner('samples'));
+    }
+});
+
 opts.flag('ls', {
     set: function () {
         runners.push(new UnitTestRunner('ls'));
@@ -246,13 +261,13 @@ opts.flag('services', {
 });
 
 opts.flag('harness', {
-    set: function () => {
+    set: function () {
         runners.push(new UnitTestRunner('harness'));
     }
 });
 
 opts.option('dump', {
-    set: function (file) => Harness.registerLogger(new JSONLogger(file))
+    set: function (file) { Harness.registerLogger(new JSONLogger(file)); }
 });
 
 opts.option('root', {
@@ -278,24 +293,34 @@ opts.option('iterations', {
     }
 });
 
+// For running only compiler baselines with specific options like emit, decl files, etc
+opts.option('compiler-baselines', {
+    experimental: true,
+    set: function (str) {
+        var runner = new CompilerBaselineRunner();
+        runner.options = str;
+        runners.push(runner);
+    }
+});
+
 opts.parse(IO.arguments)
 
 if (runners.length === 0) {
     if (opts.unnamed.length === 0) {
         // compiler
-        runners.push(new UnitTestRunner('compiler'));
+        //runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        runners.push(new ProjectRunner());
+        //runners.push(new ProjectRunner());
 
         // language services
-        runners.push(new UnitTestRunner('ls'));
+        //runners.push(new UnitTestRunner('ls'));
         runners.push(new FourslashRunner());
 
         // services
-        runners.push(new UnitTestRunner('services'));
+        //runners.push(new UnitTestRunner('services'));
 
         // samples
-        runners.push(new UnitTestRunner('samples'));
+        //runners.push(new UnitTestRunner('samples'));
     } else {
         var runnerFactory = new RunnerFactory();
         var tests = opts.unnamed[0].split(' ');

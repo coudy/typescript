@@ -4,7 +4,7 @@
 ////class Foo {
 ////    /**/
 
-verify.errorExistsBetweenMarkers("1", "2");
+//verify.errorExistsBetweenMarkers("1", "2");
 goTo.marker();
 edit.insert("}");
 verify.currentLineContentIs("}");

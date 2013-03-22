@@ -15,7 +15,7 @@ module Base {
         next: IList;
         prev: IList;
         
-        constructor (public isHead: bool, public data) { };
+        constructor (public isHead: bool, public data) { }
 
         item() {
             return this.data;

@@ -3,8 +3,7 @@ function getFunc() {
 }
 function setFunc(v) {
 }
-Object.defineProperty({
-}, "0", ({
+Object.defineProperty({}, "0", ({
     get: getFunc,
     set: setFunc,
     configurable: true

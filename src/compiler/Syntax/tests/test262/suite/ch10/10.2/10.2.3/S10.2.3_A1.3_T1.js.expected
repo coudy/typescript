@@ -1,0 +1,535 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 665,
+        "moduleElements": [
+            {
+                "kind": "VariableStatement",
+                "fullWidth": 648,
+                "variableDeclaration": {
+                    "kind": "VariableDeclaration",
+                    "fullWidth": 646,
+                    "varKeyword": {
+                        "kind": "VarKeyword",
+                        "width": 3,
+                        "fullWidth": 354,
+                        "text": "var",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * Global object has properties such as built-in objects such as\n * Math, String, Date, parseInt, etc\n *\n * @path ch10/10.2/10.2.3/S10.2.3_A1.3_T1.js\n * @description Eval execution context - Value Properties\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    },
+                    "variableDeclarators": [
+                        {
+                            "kind": "VariableDeclarator",
+                            "fullWidth": 292,
+                            "identifier": {
+                                "kind": "IdentifierName",
+                                "width": 7,
+                                "fullWidth": 8,
+                                "text": "evalStr",
+                                "valueText": "evalStr",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            "equalsValueClause": {
+                                "kind": "EqualsValueClause",
+                                "fullWidth": 284,
+                                "equalsToken": {
+                                    "kind": "EqualsToken",
+                                    "width": 1,
+                                    "fullWidth": 3,
+                                    "text": "=",
+                                    "hasTrailingTrivia": true,
+                                    "hasTrailingNewLine": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "text": "\n"
+                                        }
+                                    ]
+                                },
+                                "value": {
+                                    "kind": "AddExpression",
+                                    "fullWidth": 281,
+                                    "left": {
+                                        "kind": "AddExpression",
+                                        "fullWidth": 274,
+                                        "left": {
+                                            "kind": "AddExpression",
+                                            "fullWidth": 267,
+                                            "left": {
+                                                "kind": "AddExpression",
+                                                "fullWidth": 226,
+                                                "left": {
+                                                    "kind": "AddExpression",
+                                                    "fullWidth": 193,
+                                                    "left": {
+                                                        "kind": "AddExpression",
+                                                        "fullWidth": 177,
+                                                        "left": {
+                                                            "kind": "AddExpression",
+                                                            "fullWidth": 170,
+                                                            "left": {
+                                                                "kind": "AddExpression",
+                                                                "fullWidth": 130,
+                                                                "left": {
+                                                                    "kind": "AddExpression",
+                                                                    "fullWidth": 98,
+                                                                    "left": {
+                                                                        "kind": "AddExpression",
+                                                                        "fullWidth": 82,
+                                                                        "left": {
+                                                                            "kind": "AddExpression",
+                                                                            "fullWidth": 75,
+                                                                            "left": {
+                                                                                "kind": "AddExpression",
+                                                                                "fullWidth": 40,
+                                                                                "left": {
+                                                                                    "kind": "StringLiteral",
+                                                                                    "width": 13,
+                                                                                    "text": "'//CHECK#1\\n'"
+                                                                                },
+                                                                                "operatorToken": {
+                                                                                    "kind": "PlusToken",
+                                                                                    "width": 1,
+                                                                                    "fullWidth": 2,
+                                                                                    "text": "+",
+                                                                                    "hasTrailingTrivia": true,
+                                                                                    "hasTrailingNewLine": true,
+                                                                                    "trailingTrivia": [
+                                                                                        {
+                                                                                            "kind": "NewLineTrivia",
+                                                                                            "text": "\n"
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                "right": {
+                                                                                    "kind": "StringLiteral",
+                                                                                    "width": 25,
+                                                                                    "text": "'if ( NaN === null ) {\\n'"
+                                                                                }
+                                                                            },
+                                                                            "operatorToken": {
+                                                                                "kind": "PlusToken",
+                                                                                "width": 1,
+                                                                                "fullWidth": 2,
+                                                                                "text": "+",
+                                                                                "hasTrailingTrivia": true,
+                                                                                "hasTrailingNewLine": true,
+                                                                                "trailingTrivia": [
+                                                                                    {
+                                                                                        "kind": "NewLineTrivia",
+                                                                                        "text": "\n"
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "right": {
+                                                                                "kind": "StringLiteral",
+                                                                                "width": 33,
+                                                                                "text": "'  $ERROR(\"#1: NaN === null\");\\n'"
+                                                                            }
+                                                                        },
+                                                                        "operatorToken": {
+                                                                            "kind": "PlusToken",
+                                                                            "width": 1,
+                                                                            "fullWidth": 2,
+                                                                            "text": "+",
+                                                                            "hasTrailingTrivia": true,
+                                                                            "hasTrailingNewLine": true,
+                                                                            "trailingTrivia": [
+                                                                                {
+                                                                                    "kind": "NewLineTrivia",
+                                                                                    "text": "\n"
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        "right": {
+                                                                            "kind": "StringLiteral",
+                                                                            "width": 5,
+                                                                            "text": "'}\\n'"
+                                                                        }
+                                                                    },
+                                                                    "operatorToken": {
+                                                                        "kind": "PlusToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": "+",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "hasTrailingNewLine": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "NewLineTrivia",
+                                                                                "text": "\n"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "right": {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 13,
+                                                                        "fullWidth": 14,
+                                                                        "text": "'//CHECK#2\\n'",
+                                                                        "hasLeadingTrivia": true,
+                                                                        "hasLeadingNewLine": true,
+                                                                        "leadingTrivia": [
+                                                                            {
+                                                                                "kind": "NewLineTrivia",
+                                                                                "text": "\n"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "operatorToken": {
+                                                                    "kind": "PlusToken",
+                                                                    "width": 1,
+                                                                    "fullWidth": 2,
+                                                                    "text": "+",
+                                                                    "hasTrailingTrivia": true,
+                                                                    "hasTrailingNewLine": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "NewLineTrivia",
+                                                                            "text": "\n"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "right": {
+                                                                    "kind": "StringLiteral",
+                                                                    "width": 30,
+                                                                    "text": "'if ( Infinity === null ) {\\n'"
+                                                                }
+                                                            },
+                                                            "operatorToken": {
+                                                                "kind": "PlusToken",
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": "+",
+                                                                "hasTrailingTrivia": true,
+                                                                "hasTrailingNewLine": true,
+                                                                "trailingTrivia": [
+                                                                    {
+                                                                        "kind": "NewLineTrivia",
+                                                                        "text": "\n"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "right": {
+                                                                "kind": "StringLiteral",
+                                                                "width": 38,
+                                                                "text": "'  $ERROR(\"#2: Infinity === null\");\\n'"
+                                                            }
+                                                        },
+                                                        "operatorToken": {
+                                                            "kind": "PlusToken",
+                                                            "width": 1,
+                                                            "fullWidth": 2,
+                                                            "text": "+",
+                                                            "hasTrailingTrivia": true,
+                                                            "hasTrailingNewLine": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "NewLineTrivia",
+                                                                    "text": "\n"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "right": {
+                                                            "kind": "StringLiteral",
+                                                            "width": 5,
+                                                            "text": "'}\\n'"
+                                                        }
+                                                    },
+                                                    "operatorToken": {
+                                                        "kind": "PlusToken",
+                                                        "width": 1,
+                                                        "fullWidth": 2,
+                                                        "text": "+",
+                                                        "hasTrailingTrivia": true,
+                                                        "hasTrailingNewLine": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "NewLineTrivia",
+                                                                "text": "\n"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "right": {
+                                                        "kind": "StringLiteral",
+                                                        "width": 13,
+                                                        "fullWidth": 14,
+                                                        "text": "'//CHECK#3\\n'",
+                                                        "hasLeadingTrivia": true,
+                                                        "hasLeadingNewLine": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "NewLineTrivia",
+                                                                "text": "\n"
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                "operatorToken": {
+                                                    "kind": "PlusToken",
+                                                    "width": 1,
+                                                    "fullWidth": 2,
+                                                    "text": "+",
+                                                    "hasTrailingTrivia": true,
+                                                    "hasTrailingNewLine": true,
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "NewLineTrivia",
+                                                            "text": "\n"
+                                                        }
+                                                    ]
+                                                },
+                                                "right": {
+                                                    "kind": "StringLiteral",
+                                                    "width": 31,
+                                                    "text": "'if ( undefined === null ) {\\n'"
+                                                }
+                                            },
+                                            "operatorToken": {
+                                                "kind": "PlusToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": "+",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLine": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "text": "\n"
+                                                    }
+                                                ]
+                                            },
+                                            "right": {
+                                                "kind": "StringLiteral",
+                                                "width": 39,
+                                                "text": "'  $ERROR(\"#3: undefined === null\");\\n'"
+                                            }
+                                        },
+                                        "operatorToken": {
+                                            "kind": "PlusToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": "+",
+                                            "hasTrailingTrivia": true,
+                                            "hasTrailingNewLine": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "NewLineTrivia",
+                                                    "text": "\n"
+                                                }
+                                            ]
+                                        },
+                                        "right": {
+                                            "kind": "StringLiteral",
+                                            "width": 5,
+                                            "text": "'}\\n'"
+                                        }
+                                    },
+                                    "operatorToken": {
+                                        "kind": "PlusToken",
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": "+",
+                                        "hasTrailingTrivia": true,
+                                        "hasTrailingNewLine": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\n"
+                                            }
+                                        ]
+                                    },
+                                    "right": {
+                                        "kind": "StringLiteral",
+                                        "width": 5,
+                                        "text": "';\\n'"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 16,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 14,
+                    "expression": {
+                        "kind": "IdentifierName",
+                        "width": 4,
+                        "fullWidth": 5,
+                        "text": "eval",
+                        "valueText": "eval",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 9,
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [
+                            {
+                                "kind": "IdentifierName",
+                                "width": 7,
+                                "text": "evalStr",
+                                "valueText": "evalStr"
+                            }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "fullWidth": 1,
+            "text": "",
+            "hasLeadingTrivia": true,
+            "hasLeadingNewLine": true,
+            "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "text": "\n"
+                }
+            ]
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0,
+            61,
+            132,
+            133,
+            137,
+            202,
+            239,
+            242,
+            287,
+            345,
+            349,
+            350,
+            365,
+            380,
+            407,
+            442,
+            449,
+            450,
+            465,
+            497,
+            537,
+            544,
+            545,
+            560,
+            593,
+            634,
+            641,
+            648,
+            649,
+            664,
+            665
+        ],
+        "length": 665
+    }
+}

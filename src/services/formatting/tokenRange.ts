@@ -16,86 +16,83 @@
 ///<reference path='formatting.ts' />
 
 
-module Formatting {
+module TypeScript.Formatting {
     export module Shared {
         export interface ITokenAccess {
-            GetTokens(): List_AuthorTokenKind;
-            Contains(token: AuthorTokenKind): bool;
+            GetTokens(): SyntaxKind[];
+            Contains(token: SyntaxKind): bool;
         }
 
         export class TokenRangeAccess implements ITokenAccess {
-            private tokens: List_AuthorTokenKind;
+            private tokens: SyntaxKind[];
 
-            constructor(from: AuthorTokenKind, to: AuthorTokenKind, except: AuthorTokenKind[]) {
-                this.tokens = new List_AuthorTokenKind();
+            constructor(from: SyntaxKind, to: SyntaxKind, except: SyntaxKind[]) {
+                this.tokens = [];
                 for (var token = from; token <= to; token++) {
                     if (except.indexOf(token) < 0) {
-                        this.tokens.add(token);
+                        this.tokens.push(token);
                     }
                 }
             }
 
-            public GetTokens(): List_AuthorTokenKind {
+            public GetTokens(): SyntaxKind[] {
                 return this.tokens;
             }
 
-            public Contains(token: AuthorTokenKind): bool {
-                return this.tokens.contains(token);
+            public Contains(token: SyntaxKind): bool {
+                return this.tokens.indexOf(token) >= 0;
             }
 
 
             public toString(): string {
-                return "[tokenRangeStart=" + (<any>AuthorTokenKind)._map[this.tokens.get(0)] + "," +
-                 "tokenRangeEnd=" + (<any>AuthorTokenKind)._map[this.tokens.get(this.tokens.count()-1)] + "]";
+                return "[tokenRangeStart=" + (<any>SyntaxKind)._map[this.tokens[0]] + "," +
+                 "tokenRangeEnd=" + (<any>SyntaxKind)._map[this.tokens[this.tokens.length - 1]] + "]";
             }
         }
 
         export class TokenValuesAccess implements ITokenAccess {
-            private tokens: List_AuthorTokenKind;
+            private tokens: SyntaxKind[];
 
-            constructor(tks: AuthorTokenKind[]) {
-                this.tokens = new List_AuthorTokenKind();
-                this.tokens.addAll(tks);
+            constructor(tks: SyntaxKind[]) {
+                this.tokens = tks && tks.length ? tks : [];
             }
 
-            public GetTokens(): List_AuthorTokenKind {
+            public GetTokens(): SyntaxKind[] {
                 return this.tokens;
             }
 
-            public Contains(token: AuthorTokenKind): bool {
-                return this.GetTokens().contains(token);
+            public Contains(token: SyntaxKind): bool {
+                return this.tokens.indexOf(token) >= 0;
             }
         }
 
         export class TokenSingleValueAccess implements ITokenAccess {
-            constructor(public token: AuthorTokenKind) {
+            constructor(public token: SyntaxKind) {
             }
 
-            public GetTokens(): List_AuthorTokenKind {
-                var result = new List_AuthorTokenKind();
-                result.add(this.token);
-                return result;
+            public GetTokens(): SyntaxKind[] {
+                return [this.token];
             }
 
-            public Contains(tokenValue: AuthorTokenKind): bool {
+            public Contains(tokenValue: SyntaxKind): bool {
                 return tokenValue == this.token;
             }
 
             public toString(): string {
-                return "[singleTokenKind=" + (<any>AuthorTokenKind)._map[this.token] + "]";
+                return "[singleTokenKind=" + (<any>SyntaxKind)._map[this.token] + "]";
             }
         }
 
         export class TokenAllAccess implements ITokenAccess {
-            public GetTokens(): List_AuthorTokenKind {
-                var result = new List_AuthorTokenKind();
-                for (var token = AuthorTokenKind.atkEnd; token < AuthorTokenKind.Length; token++) {
-                    result.add(token);
+            public GetTokens(): SyntaxKind[] {
+                var result = [];
+                for (var token = SyntaxKind.FirstToken; token <= SyntaxKind.LastToken; token++) {
+                    result.push(token);
                 }
                 return result;
             }
 
-            public Contains(tokenValue: AuthorTokenKind): bool {
+            public Contains(tokenValue: SyntaxKind): bool {
                 return true;
             }
 
@@ -108,15 +105,15 @@ module Formatting {
             constructor(public tokenAccess: ITokenAccess) {
             }
 
-            static FromToken(token: AuthorTokenKind): TokenRange {
+            static FromToken(token: SyntaxKind): TokenRange {
                 return new TokenRange(new TokenSingleValueAccess(token));
             }
 
-            static FromTokens(tokens: AuthorTokenKind[]): TokenRange {
+            static FromTokens(tokens: SyntaxKind[]): TokenRange {
                 return new TokenRange(new TokenValuesAccess(tokens));
             }
 
-            static FromRange(f: AuthorTokenKind, to: AuthorTokenKind, except: AuthorTokenKind[] = []): TokenRange {
+            static FromRange(f: SyntaxKind, to: SyntaxKind, except: SyntaxKind[] = []): TokenRange {
                 return new TokenRange(new TokenRangeAccess(f, to, except));
             }
 
@@ -124,11 +121,11 @@ module Formatting {
                 return new TokenRange(new TokenAllAccess());
             }
 
-            public GetTokens(): List_AuthorTokenKind {
+            public GetTokens(): SyntaxKind[] {
                 return this.tokenAccess.GetTokens();
             }
 
-            public Contains(token: AuthorTokenKind): bool {
+            public Contains(token: SyntaxKind): bool {
                 return this.tokenAccess.Contains(token);
             }
 
@@ -136,18 +133,19 @@ module Formatting {
                 return this.tokenAccess.toString();
             }
 
-            static Any: TokenRange = AllTokens();
-            static Keywords = TokenRange.FromRange(AuthorTokenKind.atkBreak, AuthorTokenKind.atkWith);
-            static Operators = TokenRange.FromRange(AuthorTokenKind.atkSColon, AuthorTokenKind.atkScope);
-            static BinaryOperators = TokenRange.FromRange(AuthorTokenKind.atkArrow, AuthorTokenKind.atkPct);
-            static BinaryKeywordOperators = TokenRange.FromTokens([AuthorTokenKind.atkIn, AuthorTokenKind.atkInstanceof]);
-            static ReservedKeywords = TokenRange.FromRange(AuthorTokenKind.atkImplements, AuthorTokenKind.atkYield);
-            static UnaryPrefixOperators = TokenRange.FromTokens([AuthorTokenKind.atkAdd, AuthorTokenKind.atkSub, AuthorTokenKind.atkTilde, AuthorTokenKind.atkBang]);
-            static UnaryPrefixExpressions = TokenRange.FromTokens([AuthorTokenKind.atkNumber, AuthorTokenKind.atkIdentifier, AuthorTokenKind.atkLParen, AuthorTokenKind.atkLBrack, AuthorTokenKind.atkLCurly, AuthorTokenKind.atkThis, AuthorTokenKind.atkNew]);
-            static UnaryPreincrementExpressions = TokenRange.FromTokens([AuthorTokenKind.atkIdentifier, AuthorTokenKind.atkLParen, AuthorTokenKind.atkThis, AuthorTokenKind.atkNew]);
-            static UnaryPostincrementExpressions = TokenRange.FromTokens([AuthorTokenKind.atkIdentifier, AuthorTokenKind.atkRParen, AuthorTokenKind.atkRBrack, AuthorTokenKind.atkNew]);
-            static UnaryPredecrementExpressions = TokenRange.FromTokens([AuthorTokenKind.atkIdentifier, AuthorTokenKind.atkLParen, AuthorTokenKind.atkThis, AuthorTokenKind.atkNew]);
-            static UnaryPostdecrementExpressions = TokenRange.FromTokens([AuthorTokenKind.atkIdentifier, AuthorTokenKind.atkRParen, AuthorTokenKind.atkRBrack, AuthorTokenKind.atkNew]);
+            static Any: TokenRange = TokenRange.AllTokens();
+            static Keywords = TokenRange.FromRange(SyntaxKind.FirstKeyword, SyntaxKind.LastKeyword);
+            static Operators = TokenRange.FromRange(SyntaxKind.SemicolonToken, SyntaxKind.SlashEqualsToken);
+            static BinaryOperators = TokenRange.FromRange(SyntaxKind.CommaToken, SyntaxKind.SlashEqualsToken);
+            static BinaryKeywordOperators = TokenRange.FromTokens([SyntaxKind.InKeyword, SyntaxKind.InstanceOfKeyword]);
+            static ReservedKeywords = TokenRange.FromRange(SyntaxKind.FirstFutureReservedStrictKeyword, SyntaxKind.LastFutureReservedStrictKeyword);
+            static UnaryPrefixOperators = TokenRange.FromTokens([SyntaxKind.PlusPlusToken, SyntaxKind.MinusMinusToken, SyntaxKind.TildeToken, SyntaxKind.ExclamationToken]);
+            static UnaryPrefixExpressions = TokenRange.FromTokens([SyntaxKind.NumericLiteral, SyntaxKind.IdentifierName, SyntaxKind.OpenParenToken, SyntaxKind.OpenBracketToken, SyntaxKind.OpenBraceToken, SyntaxKind.ThisKeyword, SyntaxKind.NewKeyword]);
+            static UnaryPreincrementExpressions = TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.OpenParenToken, SyntaxKind.ThisKeyword, SyntaxKind.NewKeyword]);
+            static UnaryPostincrementExpressions = TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.CloseParenToken, SyntaxKind.CloseBracketToken, SyntaxKind.NewKeyword]);
+            static UnaryPredecrementExpressions = TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.OpenParenToken, SyntaxKind.ThisKeyword, SyntaxKind.NewKeyword]);
+            static UnaryPostdecrementExpressions = TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.CloseParenToken, SyntaxKind.CloseBracketToken, SyntaxKind.NewKeyword]);
+            static Comments = TokenRange.FromTokens([SyntaxKind.SingleLineCommentTrivia, SyntaxKind.MultiLineCommentTrivia]);
         }
     }
 }

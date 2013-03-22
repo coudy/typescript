@@ -1,0 +1,1897 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 930,
+        "moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 308,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 306,
+                    "expression": {
+                        "kind": "IdentifierName",
+                        "width": 8,
+                        "fullWidth": 291,
+                        "text": "$INCLUDE",
+                        "valueText": "$INCLUDE",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// Copyright 2012 Mozilla Corporation. All rights reserved."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// This code is governed by the BSD license found in the LICENSE file."
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "MultiLineCommentTrivia",
+                                "text": "/**\n * @description Tests that the compare function isn't entirely unreasonable.\n *     This test is not normative.\n * @author Norbert Lindenberg\n */"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 15,
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [
+                            {
+                                "kind": "StringLiteral",
+                                "width": 13,
+                                "text": "\"testIntl.js\""
+                            }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
+                }
+            },
+            {
+                "kind": "VariableStatement",
+                "fullWidth": 111,
+                "variableDeclaration": {
+                    "kind": "VariableDeclaration",
+                    "fullWidth": 109,
+                    "varKeyword": {
+                        "kind": "VarKeyword",
+                        "width": 3,
+                        "fullWidth": 69,
+                        "text": "var",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "// this test should be valid at least for the following locales"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    },
+                    "variableDeclarators": [
+                        {
+                            "kind": "VariableDeclarator",
+                            "fullWidth": 40,
+                            "identifier": {
+                                "kind": "IdentifierName",
+                                "width": 7,
+                                "fullWidth": 8,
+                                "text": "locales",
+                                "valueText": "locales",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            "equalsValueClause": {
+                                "kind": "EqualsValueClause",
+                                "fullWidth": 32,
+                                "equalsToken": {
+                                    "kind": "EqualsToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "=",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                "value": {
+                                    "kind": "ArrayLiteralExpression",
+                                    "fullWidth": 30,
+                                    "openBracketToken": {
+                                        "kind": "OpenBracketToken",
+                                        "width": 1,
+                                        "text": "["
+                                    },
+                                    "expressions": [
+                                        {
+                                            "kind": "StringLiteral",
+                                            "width": 4,
+                                            "text": "\"de\""
+                                        },
+                                        {
+                                            "kind": "CommaToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ",",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "kind": "StringLiteral",
+                                            "width": 4,
+                                            "text": "\"en\""
+                                        },
+                                        {
+                                            "kind": "CommaToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ",",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "kind": "StringLiteral",
+                                            "width": 4,
+                                            "text": "\"es\""
+                                        },
+                                        {
+                                            "kind": "CommaToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ",",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "kind": "StringLiteral",
+                                            "width": 4,
+                                            "text": "\"fr\""
+                                        },
+                                        {
+                                            "kind": "CommaToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ",",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "kind": "StringLiteral",
+                                            "width": 4,
+                                            "text": "\"it\""
+                                        }
+                                    ],
+                                    "closeBracketToken": {
+                                        "kind": "CloseBracketToken",
+                                        "width": 1,
+                                        "text": "]"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 80,
+                "expression": {
+                    "kind": "AssignmentExpression",
+                    "fullWidth": 78,
+                    "left": {
+                        "kind": "IdentifierName",
+                        "width": 7,
+                        "fullWidth": 8,
+                        "text": "locales",
+                        "valueText": "locales",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    },
+                    "operatorToken": {
+                        "kind": "EqualsToken",
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": "=",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    },
+                    "right": {
+                        "kind": "InvocationExpression",
+                        "fullWidth": 68,
+                        "expression": {
+                            "kind": "MemberAccessExpression",
+                            "fullWidth": 32,
+                            "expression": {
+                                "kind": "MemberAccessExpression",
+                                "fullWidth": 13,
+                                "expression": {
+                                    "kind": "IdentifierName",
+                                    "width": 4,
+                                    "text": "Intl",
+                                    "valueText": "Intl"
+                                },
+                                "dotToken": {
+                                    "kind": "DotToken",
+                                    "width": 1,
+                                    "text": "."
+                                },
+                                "name": {
+                                    "kind": "IdentifierName",
+                                    "width": 8,
+                                    "text": "Collator",
+                                    "valueText": "Collator"
+                                }
+                            },
+                            "dotToken": {
+                                "kind": "DotToken",
+                                "width": 1,
+                                "text": "."
+                            },
+                            "name": {
+                                "kind": "IdentifierName",
+                                "width": 18,
+                                "text": "supportedLocalesOf",
+                                "valueText": "supportedLocalesOf"
+                            }
+                        },
+                        "argumentList": {
+                            "kind": "ArgumentList",
+                            "fullWidth": 36,
+                            "openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "arguments": [
+                                {
+                                    "kind": "IdentifierName",
+                                    "width": 7,
+                                    "text": "locales",
+                                    "valueText": "locales"
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "ObjectLiteralExpression",
+                                    "fullWidth": 25,
+                                    "openBraceToken": {
+                                        "kind": "OpenBraceToken",
+                                        "width": 1,
+                                        "text": "{"
+                                    },
+                                    "propertyAssignments": [
+                                        {
+                                            "kind": "SimplePropertyAssignment",
+                                            "fullWidth": 23,
+                                            "propertyName": {
+                                                "kind": "IdentifierName",
+                                                "width": 13,
+                                                "text": "localeMatcher",
+                                                "valueText": "localeMatcher"
+                                            },
+                                            "colonToken": {
+                                                "kind": "ColonToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ":",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
+                                            },
+                                            "expression": {
+                                                "kind": "StringLiteral",
+                                                "width": 8,
+                                                "text": "\"lookup\""
+                                            }
+                                        }
+                                    ],
+                                    "closeBraceToken": {
+                                        "kind": "CloseBraceToken",
+                                        "width": 1,
+                                        "text": "}"
+                                    }
+                                }
+                            ],
+                            "closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
+                            }
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 430,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 428,
+                    "expression": {
+                        "kind": "MemberAccessExpression",
+                        "fullWidth": 15,
+                        "expression": {
+                            "kind": "IdentifierName",
+                            "width": 7,
+                            "text": "locales",
+                            "valueText": "locales"
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 1,
+                            "text": "."
+                        },
+                        "name": {
+                            "kind": "IdentifierName",
+                            "width": 7,
+                            "text": "forEach",
+                            "valueText": "forEach"
+                        }
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 413,
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [
+                            {
+                                "kind": "FunctionExpression",
+                                "fullWidth": 411,
+                                "functionKeyword": {
+                                    "kind": "FunctionKeyword",
+                                    "width": 8,
+                                    "fullWidth": 9,
+                                    "text": "function",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                "callSignature": {
+                                    "kind": "CallSignature",
+                                    "fullWidth": 9,
+                                    "parameterList": {
+                                        "kind": "ParameterList",
+                                        "fullWidth": 9,
+                                        "openParenToken": {
+                                            "kind": "OpenParenToken",
+                                            "width": 1,
+                                            "text": "("
+                                        },
+                                        "parameters": [
+                                            {
+                                                "kind": "Parameter",
+                                                "fullWidth": 6,
+                                                "identifier": {
+                                                    "kind": "IdentifierName",
+                                                    "width": 6,
+                                                    "text": "locale",
+                                                    "valueText": "locale"
+                                                }
+                                            }
+                                        ],
+                                        "closeParenToken": {
+                                            "kind": "CloseParenToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ")",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                "block": {
+                                    "kind": "Block",
+                                    "fullWidth": 393,
+                                    "openBraceToken": {
+                                        "kind": "OpenBraceToken",
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": "{",
+                                        "hasTrailingTrivia": true,
+                                        "hasTrailingNewLine": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\n"
+                                            }
+                                        ]
+                                    },
+                                    "statements": [
+                                        {
+                                            "kind": "VariableStatement",
+                                            "fullWidth": 99,
+                                            "variableDeclaration": {
+                                                "kind": "VariableDeclaration",
+                                                "fullWidth": 97,
+                                                "varKeyword": {
+                                                    "kind": "VarKeyword",
+                                                    "width": 3,
+                                                    "fullWidth": 8,
+                                                    "text": "var",
+                                                    "hasLeadingTrivia": true,
+                                                    "hasTrailingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": "    "
+                                                        }
+                                                    ],
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
+                                                },
+                                                "variableDeclarators": [
+                                                    {
+                                                        "kind": "VariableDeclarator",
+                                                        "fullWidth": 89,
+                                                        "identifier": {
+                                                            "kind": "IdentifierName",
+                                                            "width": 8,
+                                                            "fullWidth": 9,
+                                                            "text": "collator",
+                                                            "valueText": "collator",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
+                                                        },
+                                                        "equalsValueClause": {
+                                                            "kind": "EqualsValueClause",
+                                                            "fullWidth": 80,
+                                                            "equalsToken": {
+                                                                "kind": "EqualsToken",
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": "=",
+                                                                "hasTrailingTrivia": true,
+                                                                "trailingTrivia": [
+                                                                    {
+                                                                        "kind": "WhitespaceTrivia",
+                                                                        "text": " "
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "value": {
+                                                                "kind": "ObjectCreationExpression",
+                                                                "fullWidth": 78,
+                                                                "newKeyword": {
+                                                                    "kind": "NewKeyword",
+                                                                    "width": 3,
+                                                                    "fullWidth": 4,
+                                                                    "text": "new",
+                                                                    "hasTrailingTrivia": true,
+                                                                    "trailingTrivia": [
+                                                                        {
+                                                                            "kind": "WhitespaceTrivia",
+                                                                            "text": " "
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "expression": {
+                                                                    "kind": "MemberAccessExpression",
+                                                                    "fullWidth": 13,
+                                                                    "expression": {
+                                                                        "kind": "IdentifierName",
+                                                                        "width": 4,
+                                                                        "text": "Intl",
+                                                                        "valueText": "Intl"
+                                                                    },
+                                                                    "dotToken": {
+                                                                        "kind": "DotToken",
+                                                                        "width": 1,
+                                                                        "text": "."
+                                                                    },
+                                                                    "name": {
+                                                                        "kind": "IdentifierName",
+                                                                        "width": 8,
+                                                                        "text": "Collator",
+                                                                        "valueText": "Collator"
+                                                                    }
+                                                                },
+                                                                "argumentList": {
+                                                                    "kind": "ArgumentList",
+                                                                    "fullWidth": 61,
+                                                                    "openParenToken": {
+                                                                        "kind": "OpenParenToken",
+                                                                        "width": 1,
+                                                                        "text": "("
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "kind": "ArrayLiteralExpression",
+                                                                            "fullWidth": 8,
+                                                                            "openBracketToken": {
+                                                                                "kind": "OpenBracketToken",
+                                                                                "width": 1,
+                                                                                "text": "["
+                                                                            },
+                                                                            "expressions": [
+                                                                                {
+                                                                                    "kind": "IdentifierName",
+                                                                                    "width": 6,
+                                                                                    "text": "locale",
+                                                                                    "valueText": "locale"
+                                                                                }
+                                                                            ],
+                                                                            "closeBracketToken": {
+                                                                                "kind": "CloseBracketToken",
+                                                                                "width": 1,
+                                                                                "text": "]"
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "kind": "CommaToken",
+                                                                            "width": 1,
+                                                                            "fullWidth": 2,
+                                                                            "text": ",",
+                                                                            "hasTrailingTrivia": true,
+                                                                            "trailingTrivia": [
+                                                                                {
+                                                                                    "kind": "WhitespaceTrivia",
+                                                                                    "text": " "
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "kind": "ObjectLiteralExpression",
+                                                                            "fullWidth": 49,
+                                                                            "openBraceToken": {
+                                                                                "kind": "OpenBraceToken",
+                                                                                "width": 1,
+                                                                                "text": "{"
+                                                                            },
+                                                                            "propertyAssignments": [
+                                                                                {
+                                                                                    "kind": "SimplePropertyAssignment",
+                                                                                    "fullWidth": 22,
+                                                                                    "propertyName": {
+                                                                                        "kind": "IdentifierName",
+                                                                                        "width": 11,
+                                                                                        "text": "sensitivity",
+                                                                                        "valueText": "sensitivity"
+                                                                                    },
+                                                                                    "colonToken": {
+                                                                                        "kind": "ColonToken",
+                                                                                        "width": 1,
+                                                                                        "fullWidth": 2,
+                                                                                        "text": ":",
+                                                                                        "hasTrailingTrivia": true,
+                                                                                        "trailingTrivia": [
+                                                                                            {
+                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                "text": " "
+                                                                                            }
+                                                                                        ]
+                                                                                    },
+                                                                                    "expression": {
+                                                                                        "kind": "StringLiteral",
+                                                                                        "width": 9,
+                                                                                        "text": "\"variant\""
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "kind": "CommaToken",
+                                                                                    "width": 1,
+                                                                                    "fullWidth": 2,
+                                                                                    "text": ",",
+                                                                                    "hasTrailingTrivia": true,
+                                                                                    "trailingTrivia": [
+                                                                                        {
+                                                                                            "kind": "WhitespaceTrivia",
+                                                                                            "text": " "
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "kind": "SimplePropertyAssignment",
+                                                                                    "fullWidth": 23,
+                                                                                    "propertyName": {
+                                                                                        "kind": "IdentifierName",
+                                                                                        "width": 13,
+                                                                                        "text": "localeMatcher",
+                                                                                        "valueText": "localeMatcher"
+                                                                                    },
+                                                                                    "colonToken": {
+                                                                                        "kind": "ColonToken",
+                                                                                        "width": 1,
+                                                                                        "fullWidth": 2,
+                                                                                        "text": ":",
+                                                                                        "hasTrailingTrivia": true,
+                                                                                        "trailingTrivia": [
+                                                                                            {
+                                                                                                "kind": "WhitespaceTrivia",
+                                                                                                "text": " "
+                                                                                            }
+                                                                                        ]
+                                                                                    },
+                                                                                    "expression": {
+                                                                                        "kind": "StringLiteral",
+                                                                                        "width": 8,
+                                                                                        "text": "\"lookup\""
+                                                                                    }
+                                                                                }
+                                                                            ],
+                                                                            "closeBraceToken": {
+                                                                                "kind": "CloseBraceToken",
+                                                                                "width": 1,
+                                                                                "text": "}"
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "closeParenToken": {
+                                                                        "kind": "CloseParenToken",
+                                                                        "width": 1,
+                                                                        "text": ")"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "semicolonToken": {
+                                                "kind": "SemicolonToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ";",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLine": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "text": "\n"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "kind": "VariableStatement",
+                                            "fullWidth": 109,
+                                            "variableDeclaration": {
+                                                "kind": "VariableDeclaration",
+                                                "fullWidth": 107,
+                                                "varKeyword": {
+                                                    "kind": "VarKeyword",
+                                                    "width": 3,
+                                                    "fullWidth": 8,
+                                                    "text": "var",
+                                                    "hasLeadingTrivia": true,
+                                                    "hasTrailingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": "    "
+                                                        }
+                                                    ],
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
+                                                },
+                                                "variableDeclarators": [
+                                                    {
+                                                        "kind": "VariableDeclarator",
+                                                        "fullWidth": 99,
+                                                        "identifier": {
+                                                            "kind": "IdentifierName",
+                                                            "width": 1,
+                                                            "fullWidth": 2,
+                                                            "text": "a",
+                                                            "valueText": "a",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
+                                                        },
+                                                        "equalsValueClause": {
+                                                            "kind": "EqualsValueClause",
+                                                            "fullWidth": 97,
+                                                            "equalsToken": {
+                                                                "kind": "EqualsToken",
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": "=",
+                                                                "hasTrailingTrivia": true,
+                                                                "trailingTrivia": [
+                                                                    {
+                                                                        "kind": "WhitespaceTrivia",
+                                                                        "text": " "
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "value": {
+                                                                "kind": "ArrayLiteralExpression",
+                                                                "fullWidth": 95,
+                                                                "openBracketToken": {
+                                                                    "kind": "OpenBracketToken",
+                                                                    "width": 1,
+                                                                    "text": "["
+                                                                },
+                                                                "expressions": [
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"L\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"X\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"C\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"k\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"Z\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"H\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"d\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"m\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"w\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"A\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"i\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"f\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"y\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"E\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"N\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"V\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"g\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"J\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"b\""
+                                                                    }
+                                                                ],
+                                                                "closeBracketToken": {
+                                                                    "kind": "CloseBracketToken",
+                                                                    "width": 1,
+                                                                    "text": "]"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "semicolonToken": {
+                                                "kind": "SemicolonToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ";",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLine": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "text": "\n"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "kind": "ExpressionStatement",
+                                            "fullWidth": 30,
+                                            "expression": {
+                                                "kind": "InvocationExpression",
+                                                "fullWidth": 28,
+                                                "expression": {
+                                                    "kind": "MemberAccessExpression",
+                                                    "fullWidth": 10,
+                                                    "expression": {
+                                                        "kind": "IdentifierName",
+                                                        "width": 1,
+                                                        "fullWidth": 5,
+                                                        "text": "a",
+                                                        "valueText": "a",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": "    "
+                                                            }
+                                                        ]
+                                                    },
+                                                    "dotToken": {
+                                                        "kind": "DotToken",
+                                                        "width": 1,
+                                                        "text": "."
+                                                    },
+                                                    "name": {
+                                                        "kind": "IdentifierName",
+                                                        "width": 4,
+                                                        "text": "sort",
+                                                        "valueText": "sort"
+                                                    }
+                                                },
+                                                "argumentList": {
+                                                    "kind": "ArgumentList",
+                                                    "fullWidth": 18,
+                                                    "openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "arguments": [
+                                                        {
+                                                            "kind": "MemberAccessExpression",
+                                                            "fullWidth": 16,
+                                                            "expression": {
+                                                                "kind": "IdentifierName",
+                                                                "width": 8,
+                                                                "text": "collator",
+                                                                "valueText": "collator"
+                                                            },
+                                                            "dotToken": {
+                                                                "kind": "DotToken",
+                                                                "width": 1,
+                                                                "text": "."
+                                                            },
+                                                            "name": {
+                                                                "kind": "IdentifierName",
+                                                                "width": 7,
+                                                                "text": "compare",
+                                                                "valueText": "compare"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                }
+                                            },
+                                            "semicolonToken": {
+                                                "kind": "SemicolonToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ";",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLine": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "text": "\n"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "kind": "VariableStatement",
+                                            "fullWidth": 116,
+                                            "variableDeclaration": {
+                                                "kind": "VariableDeclaration",
+                                                "fullWidth": 114,
+                                                "varKeyword": {
+                                                    "kind": "VarKeyword",
+                                                    "width": 3,
+                                                    "fullWidth": 8,
+                                                    "text": "var",
+                                                    "hasLeadingTrivia": true,
+                                                    "hasTrailingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": "    "
+                                                        }
+                                                    ],
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
+                                                },
+                                                "variableDeclarators": [
+                                                    {
+                                                        "kind": "VariableDeclarator",
+                                                        "fullWidth": 106,
+                                                        "identifier": {
+                                                            "kind": "IdentifierName",
+                                                            "width": 8,
+                                                            "fullWidth": 9,
+                                                            "text": "expected",
+                                                            "valueText": "expected",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
+                                                        },
+                                                        "equalsValueClause": {
+                                                            "kind": "EqualsValueClause",
+                                                            "fullWidth": 97,
+                                                            "equalsToken": {
+                                                                "kind": "EqualsToken",
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": "=",
+                                                                "hasTrailingTrivia": true,
+                                                                "trailingTrivia": [
+                                                                    {
+                                                                        "kind": "WhitespaceTrivia",
+                                                                        "text": " "
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "value": {
+                                                                "kind": "ArrayLiteralExpression",
+                                                                "fullWidth": 95,
+                                                                "openBracketToken": {
+                                                                    "kind": "OpenBracketToken",
+                                                                    "width": 1,
+                                                                    "text": "["
+                                                                },
+                                                                "expressions": [
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"A\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"b\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"C\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"d\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"E\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"f\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"g\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"H\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"i\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"J\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"k\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"L\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"m\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"N\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"V\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"w\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"X\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"y\""
+                                                                    },
+                                                                    {
+                                                                        "kind": "CommaToken",
+                                                                        "width": 1,
+                                                                        "fullWidth": 2,
+                                                                        "text": ",",
+                                                                        "hasTrailingTrivia": true,
+                                                                        "trailingTrivia": [
+                                                                            {
+                                                                                "kind": "WhitespaceTrivia",
+                                                                                "text": " "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "kind": "StringLiteral",
+                                                                        "width": 3,
+                                                                        "text": "\"Z\""
+                                                                    }
+                                                                ],
+                                                                "closeBracketToken": {
+                                                                    "kind": "CloseBracketToken",
+                                                                    "width": 1,
+                                                                    "text": "]"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "semicolonToken": {
+                                                "kind": "SemicolonToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ";",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLine": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "text": "\n"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "kind": "ExpressionStatement",
+                                            "fullWidth": 36,
+                                            "expression": {
+                                                "kind": "InvocationExpression",
+                                                "fullWidth": 34,
+                                                "expression": {
+                                                    "kind": "IdentifierName",
+                                                    "width": 17,
+                                                    "fullWidth": 21,
+                                                    "text": "testArraysAreSame",
+                                                    "valueText": "testArraysAreSame",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": "    "
+                                                        }
+                                                    ]
+                                                },
+                                                "argumentList": {
+                                                    "kind": "ArgumentList",
+                                                    "fullWidth": 13,
+                                                    "openParenToken": {
+                                                        "kind": "OpenParenToken",
+                                                        "width": 1,
+                                                        "text": "("
+                                                    },
+                                                    "arguments": [
+                                                        {
+                                                            "kind": "IdentifierName",
+                                                            "width": 8,
+                                                            "text": "expected",
+                                                            "valueText": "expected"
+                                                        },
+                                                        {
+                                                            "kind": "CommaToken",
+                                                            "width": 1,
+                                                            "fullWidth": 2,
+                                                            "text": ",",
+                                                            "hasTrailingTrivia": true,
+                                                            "trailingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "text": " "
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "kind": "IdentifierName",
+                                                            "width": 1,
+                                                            "text": "a",
+                                                            "valueText": "a"
+                                                        }
+                                                    ],
+                                                    "closeParenToken": {
+                                                        "kind": "CloseParenToken",
+                                                        "width": 1,
+                                                        "text": ")"
+                                                    }
+                                                }
+                                            },
+                                            "semicolonToken": {
+                                                "kind": "SemicolonToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ";",
+                                                "hasTrailingTrivia": true,
+                                                "hasTrailingNewLine": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "NewLineTrivia",
+                                                        "text": "\n"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "closeBraceToken": {
+                                        "kind": "CloseBraceToken",
+                                        "width": 1,
+                                        "text": "}"
+                                    }
+                                }
+                            }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ]
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "fullWidth": 1,
+            "text": "",
+            "hasLeadingTrivia": true,
+            "hasLeadingNewLine": true,
+            "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "text": "\n"
+                }
+            ]
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0,
+            60,
+            131,
+            132,
+            136,
+            213,
+            248,
+            278,
+            282,
+            283,
+            308,
+            309,
+            373,
+            419,
+            499,
+            535,
+            634,
+            743,
+            773,
+            889,
+            925,
+            929,
+            930
+        ],
+        "length": 930
+    }
+}

@@ -1,0 +1,59 @@
+{
+    "diagnostics": [
+        {
+            "_position": 3,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_character_0",
+            "_arguments": [
+                "\"\\u0000\""
+            ]
+        },
+        {
+            "_position": 5,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_character_0",
+            "_arguments": [
+                "\"\\u0000\""
+            ]
+        }
+    ],
+    "tokens": [
+        {
+            "kind": "IdentifierName",
+            "width": 3,
+            "text": "foo",
+            "valueText": "foo"
+        },
+        {
+            "kind": "ErrorToken",
+            "width": 1,
+            "text": "\u0000"
+        },
+        {
+            "kind": "PlusToken",
+            "width": 1,
+            "text": "+"
+        },
+        {
+            "kind": "ErrorToken",
+            "width": 1,
+            "text": "\u0000"
+        },
+        {
+            "kind": "IdentifierName",
+            "width": 3,
+            "text": "bar",
+            "valueText": "bar"
+        },
+        {
+            "kind": "SemicolonToken",
+            "width": 1,
+            "text": ";"
+        },
+        {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    ]
+}

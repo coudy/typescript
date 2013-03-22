@@ -1,0 +1,118 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 22,
+        "hasZeroWidthToken": true,
+        "moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 22,
+                "expression": {
+                    "kind": "AddExpression",
+                    "fullWidth": 21,
+                    "left": {
+                        "kind": "AddExpression",
+                        "fullWidth": 9,
+                        "left": {
+                            "kind": "MemberAccessExpression",
+                            "fullWidth": 7,
+                            "expression": {
+                                "kind": "IdentifierName",
+                                "width": 1,
+                                "text": "m",
+                                "valueText": "m"
+                            },
+                            "dotToken": {
+                                "kind": "DotToken",
+                                "width": 1,
+                                "text": "."
+                            },
+                            "name": {
+                                "kind": "IdentifierName",
+                                "width": 5,
+                                "text": "index",
+                                "valueText": "index"
+                            }
+                        },
+                        "operatorToken": {
+                            "kind": "PlusToken",
+                            "width": 1,
+                            "text": "+"
+                        },
+                        "right": {
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "text": "1"
+                        }
+                    },
+                    "operatorToken": {
+                        "kind": "PlusToken",
+                        "width": 1,
+                        "text": "+"
+                    },
+                    "right": {
+                        "kind": "MemberAccessExpression",
+                        "fullWidth": 11,
+                        "expression": {
+                            "kind": "ElementAccessExpression",
+                            "fullWidth": 4,
+                            "expression": {
+                                "kind": "IdentifierName",
+                                "width": 1,
+                                "text": "m",
+                                "valueText": "m"
+                            },
+                            "openBracketToken": {
+                                "kind": "OpenBracketToken",
+                                "width": 1,
+                                "text": "["
+                            },
+                            "argumentExpression": {
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "0"
+                            },
+                            "closeBracketToken": {
+                                "kind": "CloseBracketToken",
+                                "width": 1,
+                                "text": "]"
+                            }
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 1,
+                            "text": "."
+                        },
+                        "name": {
+                            "kind": "IdentifierName",
+                            "width": 6,
+                            "text": "length",
+                            "valueText": "length"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "text": ";"
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0
+        ],
+        "length": 22
+    }
+}

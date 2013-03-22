@@ -1,0 +1,79 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 22,
+        "hasZeroWidthToken": true,
+        "hasRegularExpressionToken": true,
+        "moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 22,
+                "hasRegularExpressionToken": true,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 21,
+                    "hasRegularExpressionToken": true,
+                    "expression": {
+                        "kind": "IdentifierName",
+                        "width": 3,
+                        "text": "Foo",
+                        "valueText": "Foo"
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 18,
+                        "hasRegularExpressionToken": true,
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [
+                            {
+                                "kind": "LogicalNotExpression",
+                                "fullWidth": 16,
+                                "hasRegularExpressionToken": true,
+                                "operatorToken": {
+                                    "kind": "ExclamationToken",
+                                    "width": 1,
+                                    "text": "!"
+                                },
+                                "operand": {
+                                    "kind": "RegularExpressionLiteral",
+                                    "width": 15,
+                                    "text": "/(\\\\?|&)adurl=/"
+                                }
+                            }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "text": ";"
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0
+        ],
+        "length": 22
+    }
+}

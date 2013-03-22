@@ -17,7 +17,7 @@
 
 
 //module EditorAbstractions {
-module Formatting {
+module TypeScript.Formatting {
     export class RulesMap {
         public map: RulesBucket[];
         public mapRowLength: number;
@@ -27,26 +27,25 @@ module Formatting {
             this.mapRowLength = 0;
         }
 
-        static create(rules: List_Rule): RulesMap {
+        static create(rules: Rule[]): RulesMap {
             var result = new RulesMap();
             result.Initialize(rules);
             return result;
         }
 
-        public Initialize(rules: List_Rule) {
-            this.mapRowLength = AuthorTokenKind.Length;
-            this.map = new Array(this.mapRowLength * this.mapRowLength);
+        public Initialize(rules: Rule[]) {
+            this.mapRowLength = SyntaxKind.LastToken + 1;
+            this.map = <any> new Array(this.mapRowLength * this.mapRowLength);//new Array<RulesBucket>(this.mapRowLength * this.mapRowLength);
 
             // This array is used only during construction of the rulesbucket in the map
-            var rulesBucketConstructionStateList: RulesBucketConstructionState[] = new Array(this.map.length);
+            var rulesBucketConstructionStateList: RulesBucketConstructionState[] = <any> new Array(this.map.length);//new Array<RulesBucketConstructionState>(this.map.length);
 
             this.FillRules(rules, rulesBucketConstructionStateList);
             return this.map;
         }
 
-        public FillRules(rules: List_Rule, rulesBucketConstructionStateList: RulesBucketConstructionState[]): void
-        {
-            rules.foreach((rule) => {
+        public FillRules(rules: Rule[], rulesBucketConstructionStateList: RulesBucketConstructionState[]): void {
+            rules.forEach((rule) => {
                 this.FillRule(rule, rulesBucketConstructionStateList);
             });
         }
@@ -57,13 +56,12 @@ module Formatting {
             return rulesBucketIndex;
         }
 
-        private FillRule(rule: Rule, rulesBucketConstructionStateList: RulesBucketConstructionState[]): void
-        {
+        private FillRule(rule: Rule, rulesBucketConstructionStateList: RulesBucketConstructionState[]): void {
             var specificRule = rule.Descriptor.LeftTokenRange != Shared.TokenRange.Any &&
                                rule.Descriptor.RightTokenRange != Shared.TokenRange.Any;
 
-            rule.Descriptor.LeftTokenRange.GetTokens().foreach((left) => {
-                rule.Descriptor.RightTokenRange.GetTokens().foreach((right) => {
+            rule.Descriptor.LeftTokenRange.GetTokens().forEach((left) => {
+                rule.Descriptor.RightTokenRange.GetTokens().forEach((right) => {
                     var rulesBucketIndex = this.GetRuleBucketIndex(left, right);
 
                     var rulesBucket = this.map[rulesBucketIndex];
@@ -76,12 +74,12 @@ module Formatting {
             })
         }
 
-        public  GetRule(context: FormattingContext): Rule {
-            var bucketIndex = this.GetRuleBucketIndex(context.tokenSpan.Token, context.nextTokenSpan.Token);
+        public GetRule(context: FormattingContext): Rule {
+            var bucketIndex = this.GetRuleBucketIndex(context.currentTokenSpan.kind(), context.nextTokenSpan.kind());
             var bucket = this.map[bucketIndex];
             if (bucket != null) {
-                for (var i = 0, len = bucket.Rules().count() ; i < len; i++) {
-                    var rule = bucket.Rules().get(i);
+                for (var i = 0, len = bucket.Rules().length; i < len; i++) {
+                    var rule = bucket.Rules()[i];
                     if (rule.Operation.Context.InContext(context))
                         return rule;
                 }
@@ -93,7 +91,7 @@ module Formatting {
     var MaskBitSize = 5;
     var Mask = 0x1f;
 
-    export enum Position {
+    export enum RulesPosition {
         IgnoreRulesSpecific = 0,
         IgnoreRulesAny = MaskBitSize * 1,
         ContextRulesSpecific = MaskBitSize * 2,
@@ -124,7 +122,7 @@ module Formatting {
             this.rulesInsertionIndexBitmap = 0;
         }
 
-        public GetInsertionIndex(maskPosition: Position): number {
+        public GetInsertionIndex(maskPosition: RulesPosition): number {
             var index = 0;
 
             var pos = 0;
@@ -139,11 +137,10 @@ module Formatting {
             return index;
         }
 
-        public IncreaseInsertionIndex(maskPosition: Position): void
-        {
+        public IncreaseInsertionIndex(maskPosition: RulesPosition): void {
             var value = (this.rulesInsertionIndexBitmap >> maskPosition) & Mask;
             value++;
-            Debug.Assert((value & Mask) == value, "Adding more rules into the sub-bucket than allowed. Maximum allowed is 32 rules.");
+            Debug.assert((value & Mask) == value, "Adding more rules into the sub-bucket than allowed. Maximum allowed is 32 rules.");
 
             var temp = this.rulesInsertionIndexBitmap & ~(Mask << maskPosition);
             temp |= value << maskPosition;
@@ -153,33 +150,33 @@ module Formatting {
     }
 
     export class RulesBucket {
-        private rules: List_Rule;
+        private rules: Rule[];
 
         constructor() {
-            this.rules = new List_Rule();
+            this.rules = [];
         }
 
-        public Rules(): List_Rule {
+        public Rules(): Rule[] {
             return this.rules;
         }
 
         public AddRule(rule: Rule, specificTokens: bool, constructionState: RulesBucketConstructionState[], rulesBucketIndex: number): void {
-            var position: Position;
+            var position: RulesPosition;
 
             if (rule.Operation.Action == RuleAction.Ignore) {
                 position = specificTokens ?
-                    Position.IgnoreRulesSpecific :
-                    Position.IgnoreRulesAny;
+                    RulesPosition.IgnoreRulesSpecific :
+                    RulesPosition.IgnoreRulesAny;
             }
             else if (!rule.Operation.Context.IsAny()) {
                 position = specificTokens ?
-                    Position.ContextRulesSpecific :
-                    Position.ContextRulesAny;
+                    RulesPosition.ContextRulesSpecific :
+                    RulesPosition.ContextRulesAny;
             }
             else {
                 position = specificTokens ?
-                    Position.NoContextRulesSpecific :
-                    Position.NoContextRulesAny;
+                    RulesPosition.NoContextRulesSpecific :
+                    RulesPosition.NoContextRulesAny;
             }
 
             var state = constructionState[rulesBucketIndex];
@@ -187,7 +184,7 @@ module Formatting {
                 state = constructionState[rulesBucketIndex] = new RulesBucketConstructionState();
             }
             var index = state.GetInsertionIndex(position);
-            this.rules.insert(index, rule);
+            this.rules.splice(index, 0, rule);
             state.IncreaseInsertionIndex(position);
         }
     }

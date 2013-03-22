@@ -16,21 +16,17 @@ foo = {
     }
 };
 var s = foo.name || "default";
-if(foo.print !== undefined) {
+if (foo.print !== undefined) {
     foo.print();
 }
 ;
 ;
 ;
 ;
-var test1 = {
-};
-var test2 = {
-};
-var test3 = {
-};
-var test4 = {
-};
+var test1 = {};
+var test2 = {};
+var test3 = {};
+var test4 = {};
 var test5 = {
     M: function () {
     }
@@ -42,13 +38,11 @@ var test7 = {
     M: function () {
     }
 };
-test7 = {
-};
+test7 = {};
 var test8 = {
     M: 5
 };
-test8 = {
-};
+test8 = {};
 var test9_1;
 var test9_2;
 test9_1 = test9_2;

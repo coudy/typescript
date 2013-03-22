@@ -21,7 +21,7 @@ module TypeScript {
         public arrayBase: Type = null;
 
         public specialize(arrInstType: Type, checker: TypeChecker): Type {
-            if (this.arrayBase == null) {
+            if (this.arrayBase === null) {
                 this.arrayBase = arrInstType.specializeType(checker.wildElm.type, this.arrayType.elementType,
                                                    checker, true);
             }
@@ -110,7 +110,7 @@ module TypeScript {
 
         public wildElm: TypeSymbol = null;
 
-        constructor (public errorReporter: ErrorReporter) {
+        constructor (public errorReporter: ErrorReporter, private compilationSettings: CompilationSettings) {
             this.importedGlobals = new SymbolScopeBuilder(null, this.importedGlobalsTable, null, this.importedGlobalsTypeTable, null, null);
 
             this.dualGlobalValues = new DualStringHashTable(this.residentGlobalValues, new StringHashTable());
@@ -138,7 +138,7 @@ module TypeScript {
             // shared global state is resident
             this.setCollectionMode(TypeCheckCollectionMode.Resident);
 
-            this.wildElm = new TypeSymbol("_element", -1, 0, -1, new Type());
+            this.wildElm = new TypeSymbol("_element", -1, 0, unknownLocationInfo.fileName, new Type(), this.compilationSettings.optimizeModuleCodeGen);
             this.importedGlobalsTypeTable.addPublicMember(this.wildElm.name, this.wildElm);
 
             this.mod = new ModuleType(dualGlobalScopedEnclosedTypes, dualGlobalScopedAmbientEnclosedTypes);
@@ -146,17 +146,16 @@ module TypeScript {
             this.mod.ambientMembers = dualGlobalScopedAmbientMembers;
             this.mod.containedScope = this.globalScope;
 
-            this.gloMod = new TypeSymbol(globalId, -1, 0, -1, this.mod);
+            this.gloMod = new TypeSymbol(globalId, -1, 0, unknownLocationInfo.fileName, this.mod, this.compilationSettings.optimizeModuleCodeGen);
             this.mod.members.addPublicMember(this.gloMod.name, this.gloMod);
 
             this.defineGlobalValue("undefined", this.undefinedType);
         }
 
-
         public enterPrimitive(flags: number, name: string) {
             var primitive = new Type();
             primitive.primitiveTypeClass = flags;
-            var symbol = new TypeSymbol(name, -1, name.length, -1, primitive);
+            var symbol = new TypeSymbol(name, -1, name.length, unknownLocationInfo.fileName, primitive, this.compilationSettings.optimizeModuleCodeGen);
             symbol.typeCheckStatus = TypeCheckStatus.Finished;
             primitive.symbol = symbol;
             this.importedGlobals.enter(null, null, symbol, this.errorReporter, true, true, true);
@@ -168,7 +167,7 @@ module TypeScript {
                 this.dualGlobalValues.insertPrimary =
                     this.dualGlobalTypes.insertPrimary =
                         this.dualAmbientGlobalValues.insertPrimary =
-                            this.dualAmbientGlobalTypes.insertPrimary = mode == TypeCheckCollectionMode.Resident;
+                            this.dualAmbientGlobalTypes.insertPrimary = mode === TypeCheckCollectionMode.Resident;
         }
 
         public refreshPersistentState() {
@@ -196,7 +195,7 @@ module TypeScript {
         public defineGlobalValue(name: string, type: Type) {
             var valueLocation = new ValueLocation();
             valueLocation.typeLink = new TypeLink();
-            var sym = new VariableSymbol(name, 0, -1, valueLocation);
+            var sym = new VariableSymbol(name, 0, unknownLocationInfo.fileName, valueLocation);
             sym.setType(type);
             sym.typeCheckStatus = TypeCheckStatus.Finished;
             sym.container = this.gloMod;
@@ -241,7 +240,7 @@ module TypeScript {
         public checkControlFlowUseDef = false;
         public styleSettings: StyleSettings = null;
 
-        public units: LocationInfo[] = null;
+        public fileNameToLocationInfo: StringHashTable = null;
 
         public voidType: Type;
         public booleanType: Type;
@@ -288,7 +287,8 @@ module TypeScript {
 
         public mustCaptureGlobalThis = false;
 
-        constructor (public persistentState: PersistentGlobalTypeState) {
+        constructor(public persistentState: PersistentGlobalTypeState,
+                    public compilationSettings: CompilationSettings) {
             this.voidType = this.persistentState.voidType;
             this.booleanType = this.persistentState.booleanType;
             this.numberType = this.persistentState.doubleType;
@@ -367,8 +367,8 @@ module TypeScript {
 
         public typeStatusIsFinished(status: TypeCheckStatus) {
 
-            return status == TypeCheckStatus.Finished ||
-                   (this.inProvisionalTypecheckMode() && status == this.typingContextStack.getContextID());
+            return status === TypeCheckStatus.Finished ||
+                   (this.inProvisionalTypecheckMode() && status === this.typingContextStack.getContextID());
         }
 
         public addStartedPTO(pto: PhasedTypecheckObject) {
@@ -388,7 +388,7 @@ module TypeScript {
 
         // type collection      
         public collectTypes(ast: AST): void {
-            if (ast.nodeType == NodeType.Script) {
+            if (ast.nodeType === NodeType.Script) {
                 var script = <Script>ast;
                 this.locationInfo = script.locationInfo;
             }
@@ -398,7 +398,7 @@ module TypeScript {
         }
 
         public makeArrayType(type: Type): Type {
-            if (type.arrayCache == null) {
+            if (!type.arrayCache) {
                 type.arrayCache = new ArrayCache();
                 type.arrayCache.arrayType = new Type();
                 type.arrayCache.arrayType.elementType = type;
@@ -423,7 +423,7 @@ module TypeScript {
                     var parameter = <ArgDecl>args.members[i];
                     var paramDef = new ValueLocation();
                     var parameterSymbol = new ParameterSymbol(parameter.id.text, parameter.minChar,
-                                                            this.locationInfo.unitIndex, paramDef);
+                                                            this.locationInfo.fileName, paramDef);
                     parameterSymbol.declAST = parameter;
                     parameterSymbol.funcDecl = funcDecl;
                     parameter.id.sym = parameterSymbol;
@@ -444,13 +444,13 @@ module TypeScript {
         //  (E.g., has a function body - function declarations, property declarations, lambdas)
         public createFunctionSignature(funcDecl: FuncDecl, container: Symbol, scope: SymbolScope, overloadGroupSym: Symbol, addToScope: bool): Signature {
 
-            var isExported = hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported) || container == this.gloMod;
+            var isExported = hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported) || container === this.gloMod;
             var isStatic = hasFlag(funcDecl.fncFlags, FncFlags.Static);
             var isPrivate = hasFlag(funcDecl.fncFlags, FncFlags.Private);
             var isDefinition = !hasFlag(funcDecl.fncFlags, FncFlags.Signature);
             var isAmbient = hasFlag(funcDecl.fncFlags, FncFlags.Ambient);
             var isConstructor = funcDecl.isConstructMember() || funcDecl.isConstructor;
-            var isGlobal = container == this.gloMod;
+            var isGlobal = container === this.gloMod;
 
             var signature: Signature = new Signature();
             var isLambda = funcDecl.fncFlags & FncFlags.IsFunctionExpression;
@@ -481,7 +481,7 @@ module TypeScript {
                 overloadGroupSym &&
                 overloadGroupSym.getType() &&
                 !overloadGroupSym.isAccessor() &&
-                (funcDecl.isSignature() || (isAmbient == hasFlag(overloadGroupSym.flags, SymbolFlags.Ambient)));
+                (funcDecl.isSignature() || (isAmbient === hasFlag(overloadGroupSym.flags, SymbolFlags.Ambient)));
 
             if (useOverloadGroupSym && isPrivate != hasFlag(overloadGroupSym.flags, SymbolFlags.Private)) {
                 this.errorReporter.simpleError(funcDecl, "Public/Private visibility of overloads does not agree");
@@ -490,7 +490,7 @@ module TypeScript {
             var groupType = useOverloadGroupSym ? overloadGroupSym.getType() : new Type();
 
             if (isConstructor) {
-                if (groupType.construct == null) {
+                if (groupType.construct === null) {
                     groupType.construct = new SignatureGroup();
                 }
                 groupType.construct.addSignature(signature);
@@ -500,7 +500,7 @@ module TypeScript {
                 }
             }
             else if (funcDecl.isIndexerMember()) {
-                if (groupType.index == null) {
+                if (groupType.index === null) {
                     groupType.index = new SignatureGroup();
                     groupType.index.flags |= SignatureFlags.IsIndexer;
                 }
@@ -512,7 +512,7 @@ module TypeScript {
                 }
             }
             else {
-                if (groupType.call == null) {
+                if (groupType.call === null) {
                     groupType.call = new SignatureGroup();
                 }
                 groupType.call.addSignature(signature);
@@ -531,7 +531,7 @@ module TypeScript {
 
             // Set the function's name:
             //  In the case of anonymous or functions resulting from error
-            //  correction in the parser (isMissing() == true), we do not
+            //  correction in the parser (isMissing() === true), we do not
             //  want to set a function name, since they shouldn't be inserted
             //  into the enclosing scope
 
@@ -546,12 +546,12 @@ module TypeScript {
                 usedHint = true;
             }
 
-            if (groupType.symbol == null) {
+            if (!groupType.symbol) {
                 groupType.symbol =
                     new TypeSymbol(funcName ? funcName : this.anon,
                                     funcDecl.minChar, funcDecl.limChar - funcDecl.minChar,
-                                    this.locationInfo.unitIndex,
-                                    groupType);
+                                    this.locationInfo.fileName,
+                                    groupType, this.compilationSettings.optimizeModuleCodeGen);
                 if (!useOverloadGroupSym) {
                     groupType.symbol.declAST = funcDecl;
                 }
@@ -596,7 +596,7 @@ module TypeScript {
 
                             groupType.symbol.container = container;
                         } // REVIEW: Another check for overloads...
-                        else if (overloadGroupSym == null || (overloadGroupSym.declAST && !(<FuncDecl>overloadGroupSym.declAST).isOverload && (container.isType()))) {
+                        else if (overloadGroupSym === null || (overloadGroupSym.declAST && !(<FuncDecl>overloadGroupSym.declAST).isOverload && (container.isType()))) {
                             scope.enter(container, funcDecl, groupType.symbol, this.errorReporter, !isPrivate && (isExported || isStatic || isGlobal), false, isAmbient);
                         }
                     }
@@ -616,7 +616,7 @@ module TypeScript {
                 var classType = groupType;
 
                 if (classType != overloadGroupType) {
-                    if (classType.construct == null) {
+                    if (classType.construct === null) {
                         if (overloadGroupType && overloadGroupType.construct) {
                             classType.construct = overloadGroupType.construct;
                         }
@@ -633,7 +633,7 @@ module TypeScript {
                     // sync call and index signatures as well, but don't allocate should they not
                     // already exist
                     if (overloadGroupType) {
-                        if (classType.call == null) {
+                        if (classType.call === null) {
                             classType.call = overloadGroupType.call;
                         }
                         else if (overloadGroupType.call) {
@@ -644,14 +644,14 @@ module TypeScript {
                         // instance type's call signature list
                         if (!isStatic) {
 
-                            if (classType.instanceType == null) {
+                            if (classType.instanceType === null) {
                                 classType.instanceType = overloadGroupType.instanceType;
                             }
 
-                            var instanceType = classType.instanceType;
+                            instanceType = classType.instanceType;
 
                             if (instanceType) {
-                                if (instanceType.call == null) {
+                                if (instanceType.call === null) {
                                     instanceType.call = overloadGroupType.call;
                                 }
                                 else if (overloadGroupType.call) {
@@ -660,7 +660,7 @@ module TypeScript {
                             }
                         }
 
-                        if (classType.index == null) {
+                        if (classType.index === null) {
                             classType.index = overloadGroupType.index;
                         }
                         else if (overloadGroupType.index) {
@@ -682,9 +682,9 @@ module TypeScript {
             var isStatic = hasFlag(funcDecl.fncFlags, FncFlags.Static);
             var isPrivate = hasFlag(funcDecl.fncFlags, FncFlags.Private);
 
-            if (fgSym == null) {
+            if (fgSym === null) {
                 var field = new ValueLocation();
-                accessorSym = new FieldSymbol(nameText, funcDecl.minChar, this.locationInfo.unitIndex, false, field);
+                accessorSym = new FieldSymbol(nameText, funcDecl.minChar, this.locationInfo.fileName, false, field);
                 field.symbol = accessorSym;
                 accessorSym.declAST = funcDecl; // REVIEW: need to reset for getters and setters
 
@@ -765,7 +765,7 @@ module TypeScript {
             if (type.extendsList) {
                 for (var len = type.extendsList.length; i < len; i++) {
                     parent = type.extendsList[i];
-                    if (baseContext.baseId == parent.typeID) {
+                    if (baseContext.baseId === parent.typeID) {
                         this.errorReporter.reportErrorFromSym(parent.symbol, "Type '" + baseContext.base + "' is recursively referenced as a base class of itself");
                         parent.symbol.flags |= SymbolFlags.RecursivelyReferenced;
                         break;
@@ -790,17 +790,17 @@ module TypeScript {
             else if (containingType.members) {
                 symbol = containingType.members.allMembers.lookup(name);
 
-                if (symbol == null && containingType.ambientMembers) {
+                if (symbol === null && containingType.ambientMembers) {
                     symbol = containingType.ambientMembers.allMembers.lookup(name);
                 }
             }
-            if (symbol == null || !symbol.isType()) {
+            if (symbol === null || !symbol.isType()) {
                 var typeMembers = containingType.getAllEnclosedTypes();
                 var ambientTypeMembers = containingType.getAllAmbientEnclosedTypes();
                 if (typeMembers) {
                     symbol = typeMembers.allMembers.lookup(name);
 
-                    if (symbol == null && ambientTypeMembers) {
+                    if (symbol === null && ambientTypeMembers) {
                         symbol = ambientTypeMembers.allMembers.lookup(name);
                     }
 
@@ -818,7 +818,7 @@ module TypeScript {
             var originalIdText = idText;
             var symbol = search(idText);
            
-            if (symbol == null) {
+            if (symbol === null) {
                 // perhaps it's a dynamic module?
                 if (!symbol) {
                     idText = swapQuotes(originalIdText);
@@ -831,19 +831,9 @@ module TypeScript {
                     symbol = search(idText);
                 }
 
-                if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".str";
-                    symbol = search(idText);
-                }
-
                 // Check check for .d.str
                 if (!symbol) {
                     idText = stripQuotes(originalIdText) + ".d.ts";
-                    symbol = search(idText);
-                }
-
-                if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".d.str";
                     symbol = search(idText);
                 }
 
@@ -858,35 +848,23 @@ module TypeScript {
                     // Still, normalizing here alows any language services to be free of assumptions
                     var path = getRootFilePath(switchToForwardSlashes(currentFileName));
 
-                    while (symbol == null && path != "") {
+                    while (symbol === null && path != "") {
                         idText = normalizePath(path + strippedIdText + ".ts");
                         symbol = search(idText);
 
-                        // check for .str
-                        if (symbol == null) {
-                            idText = changePathToSTR(idText);
-                            symbol = search(idText);
-                        }
-
                         // check for .d.ts
-                        if (symbol == null) {
+                        if (symbol === null) {
                             idText = changePathToDTS(idText);
                             symbol = search(idText);
                         }
 
-                        // check for .d.str
-                        if (symbol == null) {
-                            idText = changePathToDSTR(idText);
-                            symbol = search(idText);
-                        }
-
-                        if (symbol == null) {
-							if(path === '/') {
-								path = '';
-							} else {
-								path = normalizePath(path + "..");
-								path = path && path != '/' ? path + '/' : path;
-							}
+                        if (symbol === null) {
+                            if (path === '/') {
+                                path = '';
+                            } else {
+                                path = normalizePath(path + "..");
+                                path = path && path != '/' ? path + '/' : path;
+                            }
                         }
                     }
                 }
@@ -901,29 +879,29 @@ module TypeScript {
             var resultType = this.anyType;
             var lhsType = this.anyType;
 
-            if (lhs && rhs && (rhs.nodeType == NodeType.Name)) {
-                if (lhs.nodeType == NodeType.Dot) {
+            if (lhs && rhs && (rhs.nodeType === NodeType.Name)) {
+                if (lhs.nodeType === NodeType.Dot) {
                     lhsType = this.resolveTypeMember(scope, <BinaryExpression>lhs);
                 }
-                else if (lhs.nodeType == NodeType.Name) {
+                else if (lhs.nodeType === NodeType.Name) {
                     var identifier = <Identifier>lhs;
                     var symbol = scope.find(identifier.text, false, true);
-                    if (symbol == null) {
+                    if (symbol === null) {
                         this.errorReporter.unresolvedSymbol(identifier, identifier.actualText);
                     }
                     else if (symbol.isType()) {
 
                         var typeSymbol = <TypeSymbol> symbol;
 
-                        if (typeSymbol.aliasLink && !typeSymbol.type && typeSymbol.aliasLink.alias.nodeType == NodeType.Name) {
+                        if (typeSymbol.aliasLink && !typeSymbol.type && typeSymbol.aliasLink.alias.nodeType === NodeType.Name) {
                             var modPath = (<Identifier>typeSymbol.aliasLink.alias).text;
-                            var modSym = this.findSymbolForDynamicModule(modPath, this.locationInfo.filename, (id) => scope.find(id, false, true));
+                            var modSym = this.findSymbolForDynamicModule(modPath, this.locationInfo.fileName, (id) => scope.find(id, false, true));
                             if (modSym) {
                                 typeSymbol.type = modSym.getType();
                             }
                         }
 
-                        if (optimizeModuleCodeGen && symbol) {
+                        if (this.compilationSettings.optimizeModuleCodeGen && symbol) {
                             var symType = symbol.getType();
                             // Once the type has been referenced outside of a type ref position, there's
                             // no going back                        
@@ -957,7 +935,7 @@ module TypeScript {
                 if (lhsType != this.anyType) {
                     var rhsIdentifier = <Identifier>rhs;
                     var resultSymbol = this.lookupMemberTypeSymbol(lhsType, rhsIdentifier.text);
-                    if (resultSymbol == null) {
+                    if (resultSymbol === null) {
                         resultType = this.anyType;
                         this.errorReporter.simpleError(dotNode, "Expected type");
                     }
@@ -1012,13 +990,13 @@ module TypeScript {
         public resolveVarDecl(varDecl: VarDecl, scope: SymbolScope): Symbol {
             var field = new ValueLocation();
             var fieldSymbol =
-                new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.unitIndex,
-                                (varDecl.varFlags & VarFlags.Readonly) == VarFlags.None,
+                new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.fileName,
+                                (varDecl.varFlags & VarFlags.Readonly) === VarFlags.None,
                                 field);
             fieldSymbol.transferVarFlags(varDecl.varFlags);
             field.symbol = fieldSymbol;
             fieldSymbol.declAST = varDecl;
-            field.typeLink = getTypeLink(varDecl.typeExpr, this, varDecl.init == null);
+            field.typeLink = getTypeLink(varDecl.typeExpr, this, varDecl.init === null);
             this.resolveTypeLink(scope, field.typeLink, true);
             varDecl.sym = fieldSymbol;
             varDecl.type = field.typeLink.type;
@@ -1027,15 +1005,15 @@ module TypeScript {
 
         public resolveTypeLink(scope: SymbolScope, typeLink: TypeLink, supplyVar: bool): void {
             var arrayCount = 0;
-            if (typeLink.type == null) {
+            if (typeLink.type === null) {
                 var ast: AST = typeLink.ast;
                 if (ast) {
-                    while (typeLink.type == null) {
+                    while (typeLink.type === null) {
                         switch (ast.nodeType) {
                             case NodeType.Name:
                                 var identifier = <Identifier>ast;
                                 var symbol = scope.find(identifier.text, false, true);
-                                if (symbol == null) {
+                                if (symbol === null) {
                                     typeLink.type = this.anyType;
                                     this.errorReporter.unresolvedSymbol(identifier, identifier.actualText);
                                 }
@@ -1066,7 +1044,7 @@ module TypeScript {
                                 var typeRef = <TypeReference>ast;
                                 arrayCount = typeRef.arrayCount;
                                 ast = typeRef.term;
-                                if (ast == null) {
+                                if (ast === null) {
                                     typeLink.type = this.anyType;
                                 }
                                 break;
@@ -1076,8 +1054,8 @@ module TypeScript {
                                 var interfaceSymbol = new TypeSymbol((<Identifier>interfaceDecl.name).text,
                                                                    ast.minChar,
                                                                    ast.limChar - ast.minChar,
-                                                                   this.locationInfo.unitIndex,
-                                                                   interfaceType);
+                                                                   this.locationInfo.fileName,
+                                                                   interfaceType, this.compilationSettings.optimizeModuleCodeGen);
                                 interfaceType.symbol = interfaceSymbol;
                                 interfaceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
 
@@ -1097,11 +1075,11 @@ module TypeScript {
                                     var propSym: Symbol = null;
                                     var addMember = true;
                                     var id: Identifier = null;
-                                    if (propDecl.nodeType == NodeType.FuncDecl) {
+                                    if (propDecl.nodeType === NodeType.FuncDecl) {
                                         var funcDecl = <FuncDecl>propDecl;
                                         id = funcDecl.name;
                                         propSym = interfaceType.members.allMembers.lookup(funcDecl.getNameText());
-                                        addMember = (propSym == null);
+                                        addMember = (propSym === null);
                                         if (funcDecl.isSpecialFn()) {
                                             addMember = false;
                                             propSym = this.resolveFuncDecl(funcDecl, scope, interfaceSymbol);
@@ -1149,7 +1127,7 @@ module TypeScript {
                 for (var count = arrayCount; count > 0; count--) {
                     typeLink.type = this.makeArrayType(typeLink.type);
                 }
-                if (supplyVar && (typeLink.type == null)) {
+                if (supplyVar && (typeLink.type === null)) {
                     typeLink.type = this.anyType;
                 }
                 if (typeLink.ast) {
@@ -1176,7 +1154,7 @@ module TypeScript {
 
         public findMostApplicableSignature(signatures: ApplicableSignature[], args: ASTList): { sig: Signature; ambiguous: bool; } {
 
-            if (signatures.length == 1) {
+            if (signatures.length === 1) {
                 return { sig: signatures[0].signature, ambiguous: false };
             }
 
@@ -1222,7 +1200,7 @@ module TypeScript {
                     }
                 }
 
-                if (!args || i == args.members.length) {
+                if (!args || i === args.members.length) {
                     var collection: ITypeCollection = {
                         getLength: () => { return 2; },
                         setTypeAtIndex: (index: number, type: Type) => { }, // no contextual typing here, so no need to do anything
@@ -1262,11 +1240,11 @@ module TypeScript {
                         memberType = memberType.elementType;
                     }
 
-                    if (memberType == this.anyType) {
+                    if (memberType === this.anyType) {
                         continue;
                     }
-                    else if (args.members[j].nodeType == NodeType.FuncDecl) {
-                        if (this.typeFlow.functionInterfaceType && memberType == this.typeFlow.functionInterfaceType) {
+                    else if (args.members[j].nodeType === NodeType.FuncDecl) {
+                        if (this.typeFlow.functionInterfaceType && memberType === this.typeFlow.functionInterfaceType) {
                             continue;
                         }
                         if (!this.canContextuallyTypeFunction(memberType, <FuncDecl>args.members[j], true)) {
@@ -1310,9 +1288,9 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (args.members[j].nodeType == NodeType.ObjectLit) {
+                    else if (args.members[j].nodeType === NodeType.ObjectLit) {
                         // now actually attempt to typecheck as the contextual type
-                        if (this.typeFlow.objectInterfaceType && memberType == this.typeFlow.objectInterfaceType) {
+                        if (this.typeFlow.objectInterfaceType && memberType === this.typeFlow.objectInterfaceType) {
                             continue;
                         }
 
@@ -1344,9 +1322,9 @@ module TypeScript {
                             break;
                         }
                     }
-                    else if (args.members[j].nodeType == NodeType.ArrayLit) {
+                    else if (args.members[j].nodeType === NodeType.ArrayLit) {
                         // attempt to contextually type the array literal
-                        if (this.typeFlow.arrayInterfaceType && memberType == this.typeFlow.arrayInterfaceType) {
+                        if (this.typeFlow.arrayInterfaceType && memberType === this.typeFlow.arrayInterfaceType) {
                             continue;
                         }
 
@@ -1378,7 +1356,7 @@ module TypeScript {
                     }
                 }
 
-                if (j == args.members.length) {
+                if (j === args.members.length) {
                     applicableSigs[applicableSigs.length] = { signature: signatures[i], hadProvisionalErrors: hadProvisionalErrors };
                 }
                 hadProvisionalErrors = false;
@@ -1399,7 +1377,7 @@ module TypeScript {
                 return false;
             }
 
-            beStringent = beStringent || (this.typeFlow.functionInterfaceType == candidateType);
+            beStringent = beStringent || (this.typeFlow.functionInterfaceType === candidateType);
 
             // At this point, if we're not being stringent, there's no need to check for multiple call sigs
             // or count parameters - we just want to unblock typecheck
@@ -1446,7 +1424,7 @@ module TypeScript {
 
         public canContextuallyTypeObjectLiteral(targetType: Type, objectLit: UnaryExpression): bool {
 
-            if (targetType == this.typeFlow.objectInterfaceType) {
+            if (targetType === this.typeFlow.objectInterfaceType) {
                 return true;
             }
 
@@ -1460,16 +1438,17 @@ module TypeScript {
             var targetMember: Symbol = null;
             var text = "";
             var foundSyms = {};
+            var i = 0;
 
             // Check that each property in the object literal is present in the target
             // type
-            for (var i = 0; i < memberDecls.members.length; i++) {
+            for (i = 0; i < memberDecls.members.length; i++) {
                 id = (<BinaryExpression>memberDecls.members[i]).operand1;
 
-                if (id.nodeType == NodeType.Name) {
+                if (id.nodeType === NodeType.Name) {
                     text = (<Identifier>id).text;
                 }
-                else if (id.nodeType == NodeType.QString) {
+                else if (id.nodeType === NodeType.QString) {
                     // TODO: set text to unescaped string
                     var idText = (<StringLiteral>id).text;
                     text = idText.substring(1, idText.length - 1);
@@ -1490,7 +1469,7 @@ module TypeScript {
             // Check that all members in the target type are present in the object literal
             var targetMembers = targetType.memberScope.getAllValueSymbolNames(true);
 
-            for (var i = 0; i < targetMembers.length; i++) {
+            for (i = 0; i < targetMembers.length; i++) {
                 var memberName = targetMembers[i];
                 var memberSym = targetType.memberScope.find(memberName, true, false);
 
@@ -1504,7 +1483,7 @@ module TypeScript {
         }
 
         public widenType(t: Type) {
-            if (t == this.undefinedType || t == this.nullType) { // REVIEW: not isNullOrUndefinedType for perf reasons
+            if (t === this.undefinedType || t === this.nullType) { // REVIEW: not isNullOrUndefinedType for perf reasons
                 return this.anyType;
             }
 
@@ -1512,7 +1491,7 @@ module TypeScript {
         }
 
         public isNullOrUndefinedType(t: Type) {
-            return t == this.undefinedType || t == this.nullType;
+            return t === this.undefinedType || t === this.nullType;
         }
 
         public findBestCommonType(initialType: Type, targetType: Type, collection: ITypeCollection, acceptVoid:bool, comparisonInfo?: TypeComparisonInfo) {
@@ -1534,7 +1513,7 @@ module TypeScript {
                 for (i = 0; i < len; i++) {
 
                     // no use in comparing a type against itself
-                    if (i == nlastChecked) {
+                    if (i === nlastChecked) {
                         continue;
                     }
 
@@ -1542,7 +1521,7 @@ module TypeScript {
                         convergenceType = bestCommonType;
                     }
 
-                    if (bestCommonType == this.anyType || bestCommonType == null) {
+                    if (bestCommonType === this.anyType || bestCommonType === null) {
                         break;
                     }
                     else if (targetType) { // set the element type to the target type
@@ -1561,7 +1540,7 @@ module TypeScript {
                 }
             }
 
-            return acceptVoid ? bestCommonType : (bestCommonType == this.voidType ? null : bestCommonType);
+            return acceptVoid ? bestCommonType : (bestCommonType === this.voidType ? null : bestCommonType);
         }
 
         // Type Identity
@@ -1570,7 +1549,7 @@ module TypeScript {
 
             // This clause will cover both primitive types (since the type objects are shared),
             // as well as shared brands
-            if (t1 == t2) {
+            if (t1 === t2) {
                 return true;
             }
 
@@ -1688,7 +1667,7 @@ module TypeScript {
         public signatureGroupsAreIdentical(sg1: SignatureGroup, sg2: SignatureGroup) {
 
             // covers the null case
-            if (sg1 == sg2) {
+            if (sg1 === sg2) {
                 return true;
             }
 
@@ -1774,7 +1753,7 @@ module TypeScript {
             //if (this.typesAreIdentical(source, target)) {
             //    return true;
             //}
-            if (source == target) {
+            if (source === target) {
                 return true;
             }
 
@@ -1792,30 +1771,30 @@ module TypeScript {
 
             // this is one difference between subtyping and assignment compatibility
             if (assignableTo) {
-                if (source == this.anyType || target == this.anyType) {
+                if (source === this.anyType || target === this.anyType) {
                     return true;
                 }
             }
             else {
                 // This is one difference between assignment compatibility and subtyping
-                if (target == this.anyType) {
+                if (target === this.anyType) {
                     return true;
                 }
             }
 
-            if (source == this.undefinedType) {
+            if (source === this.undefinedType) {
                 return true;
             }
 
-            if ((source == this.nullType) && (target != this.undefinedType && target != this.voidType)) {
+            if ((source === this.nullType) && (target != this.undefinedType && target != this.voidType)) {
                 return true;
             }
 
             // REVIEW: enum types aren't explicitly covered in the spec
-            if (target == this.numberType && (source.typeFlags & TypeFlags.IsEnum)) {
+            if (target === this.numberType && (source.typeFlags & TypeFlags.IsEnum)) {
                 return true;
             }
-            if (source == this.numberType && (target.typeFlags & TypeFlags.IsEnum)) {
+            if (source === this.numberType && (target.typeFlags & TypeFlags.IsEnum)) {
                 return true;
             }
             if ((source.typeFlags & TypeFlags.IsEnum) || (target.typeFlags & TypeFlags.IsEnum)) {
@@ -1842,14 +1821,14 @@ module TypeScript {
             // since the checks involving primitives occurred above
             if (source.primitiveTypeClass != target.primitiveTypeClass) {
 
-                if (target.primitiveTypeClass == Primitive.None) {
-                    if (source == this.numberType && this.typeFlow.numberInterfaceType) {
+                if (target.primitiveTypeClass === Primitive.None) {
+                    if (source === this.numberType && this.typeFlow.numberInterfaceType) {
                         source = this.typeFlow.numberInterfaceType;
                     }
-                    else if (source == this.stringType && this.typeFlow.stringInterfaceType) {
+                    else if (source === this.stringType && this.typeFlow.stringInterfaceType) {
                         source = this.typeFlow.stringInterfaceType;
                     }
-                    else if (source == this.booleanType && this.typeFlow.booleanInterfaceType) {
+                    else if (source === this.booleanType && this.typeFlow.booleanInterfaceType) {
                         source = this.typeFlow.booleanInterfaceType;
                     }
                     else {
@@ -1868,16 +1847,16 @@ module TypeScript {
                 return true;
             }
 
-            if (this.typeFlow.objectInterfaceType && target == this.typeFlow.objectInterfaceType) {
+            if (this.typeFlow.objectInterfaceType && target === this.typeFlow.objectInterfaceType) {
                 return true;
             }
 
-            if (this.typeFlow.functionInterfaceType && (source.call || source.construct) && target == this.typeFlow.functionInterfaceType) {
+            if (this.typeFlow.functionInterfaceType && (source.call || source.construct) && target === this.typeFlow.functionInterfaceType) {
                 return true;
             }
 
             // REVIEW: We should perhaps do this, though it wouldn't be quite right without generics support
-            //if (this.typeFlow.arrayInterfaceType && (source.index) && target == this.typeFlow.arrayInterfaceType) {
+            //if (this.typeFlow.arrayInterfaceType && (source.index) && target === this.typeFlow.arrayInterfaceType) {
             //    return true;
             //}
 
@@ -1900,17 +1879,17 @@ module TypeScript {
                     nProp = source.memberScope.find(mPropKeys[iMProp], false, false);
 
                     // methods do not have the "arguments" field
-                    if (mProp.name == "arguments" &&
+                    if (mProp.name === "arguments" &&
                         this.typeFlow.iargumentsInterfaceType &&
                         (this.typeFlow.iargumentsInterfaceType.symbol.flags & SymbolFlags.CompilerGenerated) &&
-                        mProp.kind() == SymbolKind.Variable &&
-                        (<VariableSymbol>mProp).variable.typeLink.type == this.typeFlow.iargumentsInterfaceType) {
+                        mProp.kind() === SymbolKind.Variable &&
+                        (<VariableSymbol>mProp).variable.typeLink.type === this.typeFlow.iargumentsInterfaceType) {
                         continue;
                     }
 
                     if (mProp.isInferenceSymbol()) {
                         inferenceSymbol = <InferenceSymbol>mProp;
-                        if (inferenceSymbol.typeCheckStatus == TypeCheckStatus.NotStarted) {
+                        if (inferenceSymbol.typeCheckStatus === TypeCheckStatus.NotStarted) {
                             // REVIEW: TypeChanges: Does this ever really happen?  Maybe for out-of-order typecheck?
                             this.typeFlow.typeCheck(mProp.declAST);
                         }
@@ -1949,7 +1928,7 @@ module TypeScript {
 
                     if (nProp.isInferenceSymbol()) {
                         inferenceSymbol = <InferenceSymbol>nProp;
-                        if (inferenceSymbol.typeCheckStatus == TypeCheckStatus.NotStarted) {
+                        if (inferenceSymbol.typeCheckStatus === TypeCheckStatus.NotStarted) {
                             this.typeFlow.typeCheck(nProp.declAST);
                         }
                     }
@@ -1974,6 +1953,9 @@ module TypeScript {
             }
 
             // check signature groups
+            var hasSig: string;
+            var lacksSig: string;
+            
             if (source.call || target.call) {
                 if (!this.signatureGroupIsRelatableToTarget(source.call, target.call, assignableTo, comparisonCache, comparisonInfo)) {
                     if (comparisonInfo) {
@@ -1981,8 +1963,8 @@ module TypeScript {
                             comparisonInfo.addMessageToFront("Call signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         }
                         else {
-                            var hasSig = target.call ? target.getTypeName() : source.getTypeName();
-                            var lacksSig = !target.call ? target.getTypeName() : source.getTypeName();
+                            hasSig = target.call ? target.getTypeName() : source.getTypeName();
+                            lacksSig = !target.call ? target.getTypeName() : source.getTypeName();
                             comparisonInfo.setMessage("Type '" + hasSig + "' requires a call signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
@@ -1999,8 +1981,8 @@ module TypeScript {
                             comparisonInfo.addMessageToFront("Construct signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         }
                         else {
-                            var hasSig = target.construct ? target.getTypeName() : source.getTypeName();
-                            var lacksSig = !target.construct ? target.getTypeName() : source.getTypeName();
+                            hasSig = target.construct ? target.getTypeName() : source.getTypeName();
+                            lacksSig = !target.construct ? target.getTypeName() : source.getTypeName();
                             comparisonInfo.setMessage("Type '" + hasSig + "' requires a construct signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
@@ -2030,7 +2012,7 @@ module TypeScript {
 
         // REVIEW: TypeChanges: Return an error context object so the user can get better diagnostic info
         public signatureGroupIsRelatableToTarget(sourceSG: SignatureGroup, targetSG: SignatureGroup, assignableTo: bool, comparisonCache: any, comparisonInfo?: TypeComparisonInfo) {
-            if (sourceSG == targetSG) {
+            if (sourceSG === targetSG) {
                 return true;
             }
 
@@ -2106,7 +2088,7 @@ module TypeScript {
                     sourceParamType = (<ParameterSymbol>sourceSig.parameters[iSource]).parameter.typeLink.type;
                     sourceParamName = (<ParameterSymbol>sourceSig.parameters[iSource]).parameter.symbol.name;
                 }
-                else if (iSource == sourceVarArgCount) {
+                else if (iSource === sourceVarArgCount) {
                     sourceParamType = (<ParameterSymbol>sourceSig.parameters[iSource]).parameter.typeLink.type;
                     if (sourceParamType.elementType) {
                         sourceParamType = sourceParamType.elementType;
@@ -2118,7 +2100,7 @@ module TypeScript {
                     targetParamType = (<ParameterSymbol>targetSig.parameters[iTarget]).parameter.typeLink.type;
                     targetParamName = (<ParameterSymbol>targetSig.parameters[iTarget]).parameter.symbol.name;
                 }
-                else if (targetSig.hasVariableArgList && iTarget == targetVarArgCount) {
+                else if (targetSig.hasVariableArgList && iTarget === targetVarArgCount) {
                     targetParamType = (<ParameterSymbol>targetSig.parameters[iTarget]).parameter.typeLink.type;
                     if (targetParamType.elementType) {
                         targetParamType = targetParamType.elementType;

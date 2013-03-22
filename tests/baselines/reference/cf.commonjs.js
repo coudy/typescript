@@ -4,22 +4,22 @@ function f() {
     var y = 3;
     L1:
 for(var i = 0; i < 19; i++) {
-        if(y == 7) {
+        if (y == 7) {
             continue L1;
             x = 11;
         }
-        if(y == 3) {
+        if (y == 3) {
             y++;
         } else {
             y--;
         }
         do {
             y += 2;
-            if(y == 20) {
+            if (y == 20) {
                 break;
                 x = 12;
             }
-        }while(y < 41);
+        } while(y < 41);
         y++;
     }
     while(y > 2) {
@@ -28,7 +28,7 @@ for(var i = 0; i < 19; i++) {
     L2:
 try  {
         L3:
-if(x < y) {
+if (x < y) {
             break L2;
             x = 13;
         } else {
@@ -37,7 +37,7 @@ if(x < y) {
         }
     } catch (e) {
         x++;
-    }finally {
+    } finally {
         x += 3;
     }
     y++;
@@ -46,7 +46,7 @@ if(x < y) {
         break;
     }
     for(k = 0; k < 10; k++) {
-        if(k == 6) {
+        if (k == 6) {
             continue;
         }
         break;

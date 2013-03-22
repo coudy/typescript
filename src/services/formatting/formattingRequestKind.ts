@@ -15,7 +15,7 @@
 
 /// <references path="formatting.ts"/>
 
-module Formatting {
+module TypeScript.Formatting {
     export enum FormattingRequestKind {
         FormatDocument,
         FormatSelection,

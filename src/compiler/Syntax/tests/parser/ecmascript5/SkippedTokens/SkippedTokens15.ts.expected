@@ -1,0 +1,104 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "diagnostics": [
+        {
+            "_position": 21,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_character_0",
+            "_arguments": [
+                "\"\\\""
+            ]
+        },
+        {
+            "_position": 21,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        },
+        {
+            "_position": 24,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_character_0",
+            "_arguments": [
+                "\"\\\""
+            ]
+        },
+        {
+            "_position": 24,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        }
+    ],
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 28,
+        "hasSkippedText": true,
+        "hasZeroWidthToken": true,
+        "moduleElements": [
+            {
+                "kind": "EmptyStatement",
+                "fullWidth": 28,
+                "hasSkippedText": true,
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 28,
+                    "text": ";",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "hasLeadingSkippedText": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/*existing trivia*/"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "\\"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "\\"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0,
+            21,
+            24,
+            27
+        ],
+        "length": 28
+    }
+}

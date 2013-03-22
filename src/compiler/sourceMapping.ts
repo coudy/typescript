@@ -43,8 +43,12 @@ module TypeScript {
         public jsFileName: string;
         public tsFileName: string;
 
-        constructor(tsFileName: string, jsFileName: string, public jsFile: ITextWriter, public sourceMapOut: ITextWriter,
-            public errorReporter: ErrorReporter, emitFullPathOfSourceMap: bool) {
+        constructor(tsFileName: string,
+                    jsFileName: string,
+                    public jsFile: ITextWriter,
+                    public sourceMapOut: ITextWriter,
+                    public errorReporter: SimpleErrorReporter,
+                    emitFullPathOfSourceMap: bool) {
             this.currentMappings.push(this.sourceMappings);
 
             jsFileName = switchToForwardSlashes(jsFileName);
@@ -157,7 +161,7 @@ module TypeScript {
                     }
                 }
 
-                recordSourceMappingSiblings(sourceMapper.sourceMappings, -1);
+                recordSourceMappingSiblings(sourceMapper.sourceMappings);
                 namesCount = namesCount + sourceMapper.names.length;
             }
 
@@ -175,7 +179,7 @@ module TypeScript {
                 // Closing files could result in exceptions, report them if they occur
                 sourceMapOut.Close();
             } catch (ex) {
-                sourceMapper.errorReporter.emitterError(null, ex.message);
+                sourceMapper.errorReporter.emitterError(ex.message);
             }
         }
     }

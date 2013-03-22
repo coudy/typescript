@@ -44,7 +44,7 @@ module TypeScript {
                     var oldSym:ParameterSymbol = this.parameters[i];
                     var paramDef = new ValueLocation();
                     var paramSym = new ParameterSymbol(oldSym.name, oldSym.location,
-                                                     checker.locationInfo.unitIndex,
+                                                     checker.locationInfo.fileName,
                                                      paramDef);
 
                     paramSym.declAST = this.declAST;
@@ -133,7 +133,7 @@ module TypeScript {
         public flags: SignatureFlags = SignatureFlags.None;
         public addSignature(signature: Signature) {
             if (this.signatures == null) {
-                this.signatures = new Signature[];
+                this.signatures = [];
             }
             this.signatures[this.signatures.length] = signature;
             

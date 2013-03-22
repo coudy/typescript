@@ -22,7 +22,7 @@ module TypeScript {
         public resolveBaseTypeLinks(typeLinks: TypeLink[], scope: SymbolScope) {
             var extendsList: Type[] = null;
             if (typeLinks) {
-                extendsList = new Type[];
+                extendsList = [];
                 for (var i = 0, len = typeLinks.length; i < len; i++) {
                     extendsList[i] = this.checker.resolveBaseTypeLink(typeLinks[i], scope);
                 }
@@ -35,10 +35,11 @@ module TypeScript {
 
             var i = 0, len = type.extendsList.length;
             var derivedIsClass = type.isClassInstance();
+            var baseRef: AST = null;
             for (; i < len; i++) {
                 var baseIsClass = type.extendsList[i].isClassInstance();
                 if (type.extendsList[i] != this.checker.anyType) {
-                    var baseRef = type.extendsTypeLinks[i].ast;
+                    baseRef = type.extendsTypeLinks[i].ast;
                     if (derivedIsClass) {
                         if (!baseIsClass) {
                             this.checker.errorReporter.simpleError(baseRef,
@@ -59,7 +60,7 @@ module TypeScript {
             if (type.implementsList) {
                 for (i = 0, len = type.implementsList.length; i < len; i++) {
                     var iface = type.implementsList[i];
-                    var baseRef = type.implementsTypeLinks[i].ast;
+                    baseRef = type.implementsTypeLinks[i].ast;
                     if (iface.isClassInstance()) {
                         if (derivedIsClass) {
                             this.checker.errorReporter.simpleError(baseRef,
@@ -155,8 +156,8 @@ module TypeScript {
         public bindSymbol(scope: SymbolScope, symbol: Symbol) {
             if (!symbol.bound) {
                 var prevLocationInfo = this.checker.locationInfo;
-                if ((this.checker.units) && (symbol.unitIndex >= 0) && (symbol.unitIndex < this.checker.units.length)) {
-                    this.checker.locationInfo = this.checker.units[symbol.unitIndex];
+                if (this.checker.fileNameToLocationInfo && (symbol.fileName != unknownLocationInfo.fileName) && this.checker.fileNameToLocationInfo.lookup(symbol.fileName)) {
+                    this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(symbol.fileName);
                 }
                 switch (symbol.kind()) {
                     case SymbolKind.Type:
@@ -175,7 +176,7 @@ module TypeScript {
                         // context of a given module  (E.g., an outer import statement)
                         if (typeSymbol.aliasLink && !typeSymbol.type && typeSymbol.aliasLink.alias.nodeType == NodeType.Name) {
                             var modPath = (<Identifier>typeSymbol.aliasLink.alias).text;
-                            var modSym = this.checker.findSymbolForDynamicModule(modPath, this.checker.locationInfo.filename, (id) => scope.find(id, false, true));
+                            var modSym = this.checker.findSymbolForDynamicModule(modPath, this.checker.locationInfo.fileName, (id) => scope.find(id, false, true));
                             if (modSym) {
                                 typeSymbol.type = modSym.getType();
                             }

@@ -37,8 +37,7 @@ function foo(fn) {
 function bar() {
     var map;
     foo(function () {
-        map = {
-        };
+        map = {};
     });
 }
 var o1 = {

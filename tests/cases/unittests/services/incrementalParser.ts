@@ -8,7 +8,7 @@ module IncrementalParserTest {
         private logger: TypeScript.BufferedLogger;
         private parser: TypeScript.IncrementalParser;
         private script: TypeScript.Script;
-        private newSourceText: TypeScript.StringSourceText;
+        private newSourceText: TypeScript.IScriptSnapshot;
 
         public applyEditInRange(fileName, startLine, startCol, endLine, endCol, newText) {
             this.initFileName(fileName);
@@ -34,10 +34,10 @@ module IncrementalParserTest {
             var offset2 = this.typescriptLS.lineColToPosition(fileName, endLine, endCol);
             var textEdit = new Services.TextEdit(offset1, offset2, newText);
             var newContent = this.typescriptLS.applyEdits(this.typescriptLS.getScriptContent(1), [textEdit]);
-            this.newSourceText = new TypeScript.StringSourceText(newContent);
+            this.newSourceText = new TypeScript.StringScriptSnapshot(newContent);
 
-            var delta = newText.length - (offset2 - offset1);
-            var result = this.parser.attemptIncrementalUpdateUnit(this.script, fileName, this.newSourceText, new TypeScript.ScriptEditRange(offset1, offset2, delta));
+            var result = this.parser.attemptIncrementalUpdateUnit(this.script, fileName, this.newSourceText,
+                new TypeScript.TextChangeRange(TypeScript.TextSpan.fromBounds(offset1, offset2), newText.length));
             return result;
         }
 

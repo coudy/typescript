@@ -11,10 +11,10 @@ var A = (function () {
 var B = (function (_super) {
     __extends(B, _super);
     function B() {
-        if(true) {
-                _super.call(this, 'a1', 'b1');
+        if (true) {
+            _super.call(this, 'a1', 'b1');
         } else {
-                _super.call(this, 'a2', 'b2');
+            _super.call(this, 'a2', 'b2');
         }
     }
     return B;

@@ -21,7 +21,7 @@ module Services {
         constructor(public host: IClassifierHost) {
         }
 
-        private scanner = new TypeScript.Scanner();
+        private scanner = new TypeScript.Scanner(TypeScript.LanguageVersion.EcmaScript5);
 
         /// COLORIZATION
         public getClassificationsForLine(text: string, lexState: TypeScript.LexState): ClassificationResult {

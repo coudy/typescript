@@ -21,7 +21,7 @@ var Foo;
             for (var _i = 0; _i < (arguments.length - 1); _i++) {
                 restGreetings[_i] = arguments[_i + 1];
             }
-            var greeters = new Array();
+            var greeters = new Greeter[]();
             greeters[0] = new Greeter(greeting);
             for(var i = 0; i < restGreetings.length; i++) {
                 greeters.push(new Greeter(restGreetings[i]));
@@ -37,15 +37,7 @@ var Foo;
 })(Foo || (Foo = {}));
 //@ sourceMappingURL=0.js.map
 ////[0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["Foo","Foo.Bar","Foo.Bar.Greeter","Foo.Bar.Greeter.constructor","Foo.Bar.Greeter.greet","Foo.Bar.foo","Foo.Bar.foo2"],"mappings":"AAAA,IAAO,GAAG;AAkCT,CAlCD,UAAO,GAAG;KAAHA,UAAIA,GAAGA;QACVC,YAAaA;QAEbA;YACIC,SADEA,OAAOA,CACGA,QAAuBA;gBAAvBC,aAAeA,GAARA,QAAQA;AAAQA,YACnCA,CAACA;YAEDD,0BAAAA;gBACIE,OAAOA,MAAMA,GAAGA,IAAIA,CAACA,QAAQA,GAAGA,OAAOA,CAACA;YAC5CA,CAACA;YACLF;AAACA,QAADA,CAACA,IAAAD,QAAAA;QAGDA,SAASA,GAAGA,CAACA,QAAgBA;YACzBI,OAAOA,IAAIA,OAAOA,CAACA,QAAQA,CAACA,CAACA;QACjCA,CAACA;QAEDJ,IAAIA,OAAOA,GAAGA,IAAIA,OAAOA,CAACA,eAAeA,CAACA,CAACA;QAC3CA,IAAIA,GAAGA,GAAGA,OAAOA,CAACA,KAAKA,EAAEA,CAACA;QAE1BA,SAASA,IAAIA,CAACA,QAAgBA;YAAEK,IAAGA,aAAaA;AAAUA,iBAA1BA,WAA0BA,CAA1BA,2BAA0BA,EAA1BA,IAA0BA;gBAA1BA,sCAA0BA;;YACtDA,IAAIA,QAAQA,GAAGA,WAAaA,CAACA;YAC7BA,QAAQA,CAACA,CAACA,CAACA,GAAGA,IAAIA,OAAOA,CAACA,QAAQA,CAACA;YACnCA,IAAKA,IAAIA,CAACA,GAAGA,CAACA,EAAEA,CAACA,GAAGA,aAAaA,CAACA,MAAMA,EAAEA,CAACA,EAAEA,CAAEA;gBAC3CA,QAAQA,CAACA,IAAIA,CAACA,IAAIA,OAAOA,CAACA,aAAaA,CAACA,CAACA,CAACA,CAACA,CAACA;aAC/CA;YAEDA,OAAOA,QAAQA,CAACA;QACpBA,CAACA;QAEDL,IAAIA,CAACA,GAAGA,IAAIA,CAACA,OAAOA,EAAEA,OAAOA,EAAEA,GAAGA,CAACA,CAACA;QACpCA,IAAKA,IAAIA,CAACA,GAAGA,CAACA,EAAEA,CAACA,GAAGA,CAACA,CAACA,MAAMA,EAAEA,CAACA,EAAEA,CAAEA;YAC/BA,CAACA,CAACA,CAACA,CAACA,CAACA,KAAKA,EAAEA;SACfA;IACLA,CAACA,6BAAAD;IAlCMA;AAkCNA,CAAAA,qBAAA"}
-////[strings.js]
-//@ sourceMappingURL=strings.js.map
-////[strings.js.map]
-{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
-////[test.js]
-//@ sourceMappingURL=test.js.map
-////[test.js.map]
-{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
+{"version":3,"file":"0.js","sources":["0.ts"],"names":["Foo","Foo.Bar","Foo.Bar.Greeter","Foo.Bar.Greeter.constructor","Foo.Bar.Greeter.greet","Foo.Bar.foo","Foo.Bar.foo2"],"mappings":"AAAA,IAAO,GAAG;AAkCT,CAlCD,UAAO,GAAG;KAAVA,UAAWA,GAAGA;QACdC,YACAA;QAAAA;YAEAC,SADUA,OAAOA,CACGA,QAAuBA;gBAAvBC,aAAeA,GAARA,QAAQA;AAAQA,aAE3CD;YAAAA,0BAAAA;gBAEAE,OAAmBA,MAAMA,GAAGA,IAAIA,CAACA,QAAQA,GAAGA,OAAOA,CACnDA;aACAF;;SARAD,IASAA,QAAAA;QAAAA,SAEaA,GAAGA,CAACA,QAAgBA;YACjCI,OAAeA,IAAIA,OAAOA,CAACA,QAAQA,CAAAA,CACnCA;SACAJ;QACQA,IAAAA,OAAOA,GAAGA,IAAIA,OAAOA,CAACA,eAAeA,CAAAA,CAACA;QACtCA,IAAAA,GAAGA,GAAGA,OAAOA,CAACA,KAAKA,EAACA,CAACA;QAC7BA,SACaA,IAAIA,CAACA,QAAgBA;YAAEK,IAAGA,aAAaA;AAAUA,iBAA1BA,WAA0BA,CAA1BA,2BAA0BA,EAA1BA,IAA0BA;gBAA1BA,sCAA0BA;;YAClDA,IAAAA,QAAQA,GAAGA,IAAIA,OAAOA,EAAEA,EAAAA,CAAAA;YACpCA,QAAgBA,CAACA,CAACA,CAAEA,GAAEA,IAAIA,OAAOA,CAACA,QAAQA,CAAAA;YAC1CA,IAAiBA,IAAAA,CAACA,GAAGA,CAACA,EAAEA,CAACA,GAAGA,aAAaA,CAACA,MAAMA,EAAEA,CAACA,EAAEA,CAAEA;gBACvDA,QAAoBA,CAACA,IAAIA,CAACA,IAAIA,OAAOA,CAACA,aAAaA,CAACA,CAACA,CAACA,CAAAA,CAACA;aAEvDA;YAAAA,OACeA,QAAQA,CACvBA;SACAL;QACQA,IAAAA,CAACA,GAAGA,IAAIA,CAACA,OAAOA,EAAEA,OAAOA,EAAEA,GAAGA,CAAAA,CAACA;QACvCA,IAAaA,IAAAA,CAACA,GAAGA,CAACA,EAAEA,CAACA,GAAGA,CAACA,CAACA,MAAMA,EAAEA,CAACA,EAAEA,CAAEA;YACvCA,CAASA,CAACA,CAACA,CAACA,CAACA,KAAKA,EAACA;SAEnBA;IAAAA,CAACA,6BAAAD;IAlCDA;AAkCCA,CAAAA,qBAAA"}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]
@@ -70,14 +62,6 @@ var Foo;
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map]
 {"version":3,"file":"duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js","sources":["duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts"],"names":[],"mappings":""}
-////[module1.js]
-//@ sourceMappingURL=module1.js.map
-////[module1.js.map]
-{"version":3,"file":"module1.js","sources":["module1.ts"],"names":[],"mappings":""}
-////[module2.js]
-//@ sourceMappingURL=module2.js.map
-////[module2.js.map]
-{"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[importInsideModule_file1.js.map]
@@ -86,7 +70,3 @@ var Foo;
 //@ sourceMappingURL=importInsideModule_file2.js.map
 ////[importInsideModule_file2.js.map]
 {"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
-////[moduleWithAmbientCallSignatureTest.js]
-//@ sourceMappingURL=moduleWithAmbientCallSignatureTest.js.map
-////[moduleWithAmbientCallSignatureTest.js.map]
-{"version":3,"file":"moduleWithAmbientCallSignatureTest.js","sources":["moduleWithAmbientCallSignatureTest.ts"],"names":[],"mappings":""}

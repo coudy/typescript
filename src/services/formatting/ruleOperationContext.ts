@@ -15,7 +15,7 @@
 
 ///<reference path='formatting.ts' />
 
-module Formatting {
+module TypeScript.Formatting {
 
     export class RuleOperationContext {
         private customContextChecks: { (context: FormattingContext): bool; }[];

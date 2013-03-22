@@ -18,38 +18,22 @@
 
 module Services {
 
-    //
-    // Public interface of of a language service instance shim.
-    //
-    export interface ILanguageServiceShim {
-        host: ILanguageServiceShimHost;
-        languageService: Services.ILanguageService;
-        logger: TypeScript.ILogger;
+    export interface IScriptSnapshotShim {
+        // Get's a portion of the script snapshot specified by [start, end).  
+        getText(start: number, end: number): string;
 
-        dispose(dummy: any): void;
-        refresh(throwOnError: bool): void;
+        // Get's the length of this script snapshot.
+        getLength(): number;
 
-        logAST(fileName: string): void;
-        logSyntaxAST(fileName: string): void;
+        // This call returns the JSON encoded array of the type:
+        //  number[]
+        getLineStartPositions(): string;
 
-        getErrors(maxCount: number): string;
-        getScriptErrors(fileName: string, maxCount: number): string;
-        getTypeAtPosition(fileName: string, pos: number): string;
-        getSignatureAtPosition(fileName: string, pos: number): string;
-        getDefinitionAtPosition(fileName: string, pos: number): string;
-        getBraceMatchingAtPosition(fileName: string, pos: number): string;
-        getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: string/*Services.EditorOptions*/): string;
-        getReferencesAtPosition(fileName: string, pos: number): string;
-        getOccurrencesAtPosition(fileName: string, pos: number): string;
-        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool);
-        getImplementorsAtPosition(fileName: string, pos: number): string;
-        getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
-        getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
-        getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
-        getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: string/*Services.FormatCodeOptions*/): string;
-        getNavigateToItems(searchValue: string): string;
-        getScriptLexicalStructure(fileName: string): string;
-        getOutliningRegions(fileName: string): string;
+        // Returns a JSON encoded value of the type:
+        //  { span: { start: number; length: number }; newLength: number }
+        //
+        // Or null value if there was no change.
+        getTextChangeRangeSinceVersion(scriptVersion: number): string;
     }
 
     //
@@ -57,18 +41,129 @@ module Services {
     //
     export interface ILanguageServiceShimHost extends TypeScript.ILogger {
         getCompilationSettings(): string;
-        getScriptCount(): number;
-        getScriptId(scriptIndex: number): string;
-        getScriptSourceText(scriptIndex: number, start: number, end: number): string;
-        getScriptSourceLength(scriptIndex: number): number;
-        getScriptIsResident(scriptIndex: number): bool;
-        getScriptVersion(scriptIndex: number): number;
-        getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // string[]
+        getScriptFileNames(): string;
+        getScriptVersion(fileName: string): number;
+        getScriptSnapshot(fileName: string): IScriptSnapshotShim;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
     }
 
+    //
+    // Public interface of of a language service instance shim.
+    //
+    export interface IShimFactory {
+        registerShim(shim: IShim): void;
+        unregisterShim(shim: IShim): void;
+    }
+
+    export interface IShim {
+        dispose(dummy: any): void;
+    }
+
+    export class ShimBase implements IShim {
+        constructor(private factory: IShimFactory) {
+            factory.registerShim(this);
+        }
+        public dispose(dummy: any): void {
+            this.factory.unregisterShim(this);
+        }
+    }
+
+    export interface ILanguageServiceShim extends IShim {
+        languageService: Services.ILanguageService;
+
+        dispose(dummy: any): void;
+
+        refresh(throwOnError: bool): void;
+        
+        getSyntacticDiagnostics(fileName: string): string;
+        getSemanticDiagnostics(fileName: string): string;
+
+        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool);
+        getTypeAtPosition(fileName: string, pos: number): string;
+        getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;
+        getBreakpointStatementAtPosition(fileName: string, pos: number): string;
+        getSignatureAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; kind: string; name: string; containerKind: string; containerName: string }
+        //
+        // Or null value if no definition can be found.
+        getDefinitionAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
+        getReferencesAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
+        getOccurrencesAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
+        getImplementorsAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
+        getNavigateToItems(searchValue: string): string;
+
+        // Returns a JSON encoded value of the type:
+        // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
+        getScriptLexicalStructure(fileName: string): string;
+
+        // Returns a JSON encoded value of the type:
+        // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
+        getOutliningRegions(fileName: string): string;
+
+        getBraceMatchingAtPosition(fileName: string, pos: number): string;
+        getSmartIndentAtLineNumber(fileName: string, position: number, options: string/*Services.EditorOptions*/): string;
+
+        getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
+        getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
+        getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
+        getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: string/*Services.FormatCodeOptions*/): string;
+
+        getEmitOutput(fileName: string): string;
+    }
+
+    class ScriptSnapshotShimAdapter implements TypeScript.IScriptSnapshot {
+        private lineStartPositions: number[] = null;
+
+        constructor(private scriptSnapshotShim: IScriptSnapshotShim) {
+        }
+
+        public getText(start: number, end: number): string {
+            return this.scriptSnapshotShim.getText(start, end);
+        }
+
+        public getLength(): number {
+            return this.scriptSnapshotShim.getLength();
+        }
+
+        public getLineStartPositions(): number[]{
+            if (this.lineStartPositions === null) {
+                this.lineStartPositions = JSON.parse(this.scriptSnapshotShim.getLineStartPositions());
+            }
+
+            return this.lineStartPositions;
+        }
+
+        public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
+            var encoded = this.scriptSnapshotShim.getTextChangeRangeSinceVersion(scriptVersion);
+            if (encoded === null) {
+                return null;
+            }
+
+            var decoded: { span: { start: number; length: number; }; newLength: number; } = JSON.parse(encoded);
+            return new TypeScript.TextChangeRange(
+                new TypeScript.TextSpan(decoded.span.start, decoded.span.length), decoded.newLength);
+        }
+    }
+
     export class LanguageServiceShimHostAdapter implements Services.ILanguageServiceHost {
-        constructor (private shimHost: ILanguageServiceShimHost) {
+        constructor(private shimHost: ILanguageServiceShimHost) {
         }
 
         public information(): bool {
@@ -104,38 +199,17 @@ module Services {
             return settings;
         }
 
-        public getScriptCount(): number {
-            return this.shimHost.getScriptCount();
+        public getScriptFileNames(): string[] {
+            var encoded = this.shimHost.getScriptFileNames();
+            return JSON.parse(encoded);
         }
 
-        public getScriptId(scriptIndex: number): string {
-            return this.shimHost.getScriptId(scriptIndex);
+        public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
+            return new ScriptSnapshotShimAdapter(this.shimHost.getScriptSnapshot(fileName));
         }
 
-        public getScriptSourceText(scriptIndex: number, start: number, end: number): string {
-            return this.shimHost.getScriptSourceText(scriptIndex, start, end);
-        }
-
-        public getScriptSourceLength(scriptIndex: number): number {
-            return this.shimHost.getScriptSourceLength(scriptIndex);
-        }
-
-        public getScriptIsResident(scriptIndex: number): bool {
-            return this.shimHost.getScriptIsResident(scriptIndex);
-        }
-
-        public getScriptVersion(scriptIndex: number): number {
-            return this.shimHost.getScriptVersion(scriptIndex);
-        }
-
-        public getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.ScriptEditRange {
-            var rangeText = this.shimHost.getScriptEditRangeSinceVersion(scriptIndex, scriptVersion);
-            if (rangeText === null || rangeText === "") {
-                return null; // "No changes"
-            }
-
-            var minLimDeltaString = rangeText.split(",");
-            return new TypeScript.ScriptEditRange(parseInt(minLimDeltaString[0]), parseInt(minLimDeltaString[1]), parseInt(minLimDeltaString[2]));
+        public getScriptVersion(fileName: string): number {
+            return this.shimHost.getScriptVersion(fileName);
         }
 
         public getDiagnosticsObject(): ILanguageServicesDiagnostics {
@@ -180,17 +254,20 @@ module Services {
     }
 
     function _resultToJSON(result: any): string {
-        return '{"result":' + JSON.stringify(result) + "}";
+        return JSON.stringify({ result: result });
     }
 
     function _errorToJSON(err): string {
-        return '{"error":' + JSON.stringify(err) + "}";
+        return JSON.stringify({ error: err });
     }
 
-    export class LanguageServiceShim implements ILanguageServiceShim {
-        public logger: TypeScript.ILogger;
+    export class LanguageServiceShim extends ShimBase implements ILanguageServiceShim {
+        private logger: TypeScript.ILogger;
 
-        constructor (public host: ILanguageServiceShimHost, public languageService: Services.ILanguageService) {
+        constructor(factory: IShimFactory,
+                    private host: ILanguageServiceShimHost,
+                    public languageService: Services.ILanguageService) {
+            super(factory);
             this.logger = this.host;
         }
 
@@ -209,6 +286,8 @@ module Services {
             this.logger.log("dispose()")
             this.languageService = null;
             this.logger = null;
+
+            super.dispose(dummy);
         }
 
         // REFRESH
@@ -225,23 +304,26 @@ module Services {
 
         /// SQUIGGLES
         ///
-        public getErrors(maxCount: number): string {
+
+        private static realizeDiagnostic(diagnostic: TypeScript.IDiagnostic): { message: string; start: number; length: number; } {
+            return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
+        }
+
+        public getSyntacticDiagnostics(fileName: string): string {
             return this.forwardJSONCall(
-                "getErrors(" + maxCount + ")",
+                "getSyntacticDiagnostics(\"" + fileName + "\")",
                 () => {
-                    var errors = this.languageService.getErrors(maxCount);
-                    return _resultToJSON(errors);
+                    var errors = this.languageService.getSyntacticDiagnostics(fileName);
+                    return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }
 
-        /// SQUIGGLES
-        ///
-        public getScriptErrors(fileName: string, maxCount: number): string {
+        public getSemanticDiagnostics(fileName: string): string {
             return this.forwardJSONCall(
-                "getScriptErrors(" + maxCount + ")",
+                "getSemanticDiagnostics(\"" + fileName + "\")",
                 () => {
-                    var errors = this.languageService.getScriptErrors(fileName, maxCount);
-                    return _resultToJSON(errors);
+                    var errors = this.languageService.getSemanticDiagnostics(fileName);
+                    return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }
 
@@ -300,17 +382,18 @@ module Services {
                 "getDefinitionAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var definition = this.languageService.getDefinitionAtPosition(fileName, pos);
-                    var result = "";
-                    if (definition !== null) {
-                        result = definition.unitIndex + '\t' +
-                            definition.minChar + '\t' +
-                            definition.limChar + '\t' +
-                            definition.kind + '\t' +
-                            definition.name + '\t' +
-                            definition.containerKind + '\t' +
-                            definition.containerName;
+                    if (definition === null) {
+                        return null;
                     }
-                    return result;
+
+                    return JSON.stringify({
+                        fileName: definition.fileName,
+                        minChar: definition.minChar,
+                        limChar: definition.limChar,
+                        kind: definition.kind,
+                        name: definition.name,
+                        containerKind: definition.containerKind,
+                        containerName: definition.containerName });
                 });
         }
 
@@ -325,12 +408,12 @@ module Services {
         }
 
         /// GET SMART INDENT
-        public getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: string /*Services.EditorOptions*/): string {
+        public getSmartIndentAtLineNumber(fileName: string, position: number, options: string /*Services.EditorOptions*/): string {
             return this.forwardJSONCall(
-                "getSmartIndentAtLineNumber(\"" + fileName + "\", " + lineNumber + ")",
+                "getSmartIndentAtLineNumber(\"" + fileName + "\", " + position + ")",
                 () => {
                     var localOptions: Services.EditorOptions = JSON.parse(options);
-                    var columnOffset = this.languageService.getSmartIndentAtLineNumber(fileName, lineNumber, localOptions);
+                    var columnOffset = this.languageService.getSmartIndentAtLineNumber(fileName, position, localOptions);
                     return _resultToJSON({ value: columnOffset });
                 });
         }
@@ -367,14 +450,14 @@ module Services {
                 });
         }
 
-
         private _referencesToResult(entries: Services.ReferenceEntry[]): string {
-            var result = "";
+            var result: { fileName: string; minChar: number; limChar: number; isWriteAccess: bool; }[] = [];
             for (var i = 0; i < entries.length; i++) {
                 var entry = entries[i];
-                result += entry.unitIndex + " " + entry.ast.minChar + " " + entry.ast.limChar + " " + entry.isWriteAccess + "\n";
+                result.push({ fileName: entry.fileName, minChar: entry.ast.minChar, limChar: entry.ast.limChar, isWriteAccess: entry.isWriteAccess });
             }
-            return result;
+
+            return JSON.stringify(result);
         }
 
         /// COMPLETION LISTS
@@ -470,30 +553,7 @@ module Services {
                 "getOutliningRegions(\"" + fileName + "\")",
                 () => {
                     var items = this.languageService.getOutliningRegions(fileName);
-                    var result = this._navigateToItemsToString(items);
-                    return result;
-                });
-        }
-
-        /// LOG AST
-        ///
-        public logAST(fileName: string): void {
-            this.forwardCall(
-                "logAST(\"" + fileName + "\")",
-                () => {
-                    this.languageService.logAST(fileName);
-                    return null;
-                });
-        }
-
-        /// LOG SYNTAX AST
-        ///
-        public logSyntaxAST(fileName: string): void {
-            this.forwardCall(
-                "logSyntaxAST(\"" + fileName + "\")",
-                () => {
-                    this.languageService.logSyntaxAST(fileName);
-                    return null;
+                    return _resultToJSON(items);
                 });
         }
 
@@ -509,28 +569,43 @@ module Services {
         }
 
         private _navigateToItemsToString(items: Services.NavigateToItem[]): string {
-            var result = "";
+            var result: {
+                name: string;
+                kind: string;
+                kindModifiers: string;
+                containerName: string;
+                containerKind: string;
+                matchKind: string;
+                fileName: string;
+                minChar: number;
+                limChar: number;
+            }[] = [];
+
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
 
-                result += item.name + "\t" +
-                    item.kind + "\t" +
-                    item.kindModifiers + "\t" +
-                    item.containerName + "\t" +
-                    item.containerKind + "\t" +
-                    item.matchKind + "\t" +
-                    item.unitIndex + "\t" +
-                    item.minChar + "\t" +
-                    item.limChar + "\n";
+                result.push({
+                    name: item.name,
+                    kind: item.kind,
+                    kindModifiers: item.kindModifiers,
+                    containerName: item.containerName,
+                    containerKind: item.containerKind,
+                    matchKind: item.matchKind,
+                    fileName: item.fileName,
+                    minChar: item.minChar,
+                    limChar: item.limChar
+                });
             }
-            return result;
+
+            return JSON.stringify(result);
         }
     }
 
-    export class ClassifierShim {
+    export class ClassifierShim extends ShimBase {
         public classifier: Services.Classifier;
 
-        constructor (public host: Services.IClassifierHost) {
+        constructor(factory: IShimFactory, public host: Services.IClassifierHost) {
+            super(factory);
             this.classifier = new Services.Classifier(this.host);
         }
 
@@ -548,11 +623,12 @@ module Services {
         }
     }
 
-    export class CoreServicesShim {
+    export class CoreServicesShim extends ShimBase {
         public logger: TypeScript.ILogger;
         public services: Services.CoreServices;
 
-        constructor (public host: Services.ICoreServicesHost) {
+        constructor(factory: IShimFactory, public host: Services.ICoreServicesHost) {
+            super(factory);
             this.logger = this.host.logger;
             this.services = new Services.CoreServices(this.host);
         }
@@ -568,11 +644,11 @@ module Services {
         ///
         /// getPreProcessedFileInfo
         ///
-        public getPreProcessedFileInfo(scriptId: string, sourceText: TypeScript.ISourceText): string {
+        public getPreProcessedFileInfo(fileName: string, sourceText: TypeScript.IScriptSnapshot): string {
             return this.forwardJSONCall(
-                "getPreProcessedFileInfo(\"" + scriptId + "\")",
+                "getPreProcessedFileInfo(\"" + fileName + "\")",
                 () => {
-                    var result = this.services.getPreProcessedFileInfo(scriptId, sourceText);
+                    var result = this.services.getPreProcessedFileInfo(fileName, sourceText);
                     return _resultToJSON(result);
                 });
         }

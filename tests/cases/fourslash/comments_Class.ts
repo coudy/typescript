@@ -59,7 +59,7 @@
 ////var myVar = new m.m2.c/*33*/1();
 
 goTo.marker('1');
-verify.quickInfoIs("new() => c2", "This is class c2 without constuctor", "c2", "class");
+verify.quickInfoIs(undefined, "This is class c2 without constuctor", "c2", "class");
 
 goTo.marker('2');
 verify.quickInfoIs("c2", "", "i2", "var");
@@ -74,7 +74,7 @@ goTo.marker('5');
 verify.quickInfoIs("new() => c2", "This is class c2 without constuctor", "c2", "class");
 
 goTo.marker('6');
-verify.quickInfoIs("new() => c3", "", "c3", "class");
+verify.quickInfoIs(undefined, "", "c3", "class");
 
 goTo.marker('7');
 verify.quickInfoIs("c3", "", "i3", "var");
@@ -89,7 +89,7 @@ goTo.marker('10');
 verify.quickInfoIs("new() => c3", "", "c3", "class");
 
 goTo.marker('11');
-verify.quickInfoIs("new() => c4", "Class comment", "c4", "class");
+verify.quickInfoIs(undefined, "Class comment", "c4", "class");
 
 goTo.marker('12');
 verify.quickInfoIs("c4", "", "i4", "var");
@@ -104,7 +104,7 @@ goTo.marker('15');
 verify.quickInfoIs("new() => c4", "Class comment", "c4", "class");
 
 goTo.marker('16');
-verify.quickInfoIs("{ s1: number; new(): c5; }", "Class with statics", "c5", "class");
+verify.quickInfoIs(undefined, "Class with statics", "c5", "class");
 
 goTo.marker('17');
 verify.quickInfoIs("c5", "", "i5", "var");
@@ -119,7 +119,7 @@ goTo.marker('20');
 verify.quickInfoIs("{ s1: number; new(): c5; }", "Class with statics", "c5", "class");
 
 goTo.marker('21');
-verify.quickInfoIs("{ s1: number; new(): c6; }", "class with statics and constructor", "c6", "class");
+verify.quickInfoIs(undefined, "class with statics and constructor", "c6", "class");
 
 goTo.marker('22');
 verify.quickInfoIs("c6", "", "i6", "var");
@@ -134,19 +134,19 @@ goTo.marker('25');
 verify.quickInfoIs("{ s1: number; new(): c6; }", "class with statics and constructor", "c6", "class");
 
 goTo.marker('26');
-verify.completionListContains("c2", "new() => c2", "This is class c2 without constuctor",  "c2", "class");
+verify.completionListContains("c2", undefined, "This is class c2 without constuctor",  "c2", "class");
 verify.completionListContains("i2", "c2", "", "i2", "var");
 verify.completionListContains("i2_c", "new() => c2", "", "i2_c", "var");
-verify.completionListContains("c3", "new() => c3", "", "c3", "class");
+verify.completionListContains("c3", undefined, "", "c3", "class");
 verify.completionListContains("i3", "c3", "", "i3", "var");
 verify.completionListContains("i3_c", "new() => c3", "", "i3_c", "var");
-verify.completionListContains("c4", "new() => c4", "Class comment", "c4", "class");
+verify.completionListContains("c4", undefined, "Class comment", "c4", "class");
 verify.completionListContains("i4", "c4", "", "i4", "var");
 verify.completionListContains("i4_c", "new() => c4", "", "i4_c", "var");
-verify.completionListContains("c5", "{ s1: number; new(): c5; }", "Class with statics", "c5", "class");
+verify.completionListContains("c5", undefined, "Class with statics", "c5", "class");
 verify.completionListContains("i5", "c5", "","i5", "var");
 verify.completionListContains("i5_c", "{ s1: number; new(): c5; }", "", "i5_c", "var");
-verify.completionListContains("c6", "{ s1: number; new(): c6; }", "class with statics and constructor", "c6", "class");
+verify.completionListContains("c6", undefined, "class with statics and constructor", "c6", "class");
 verify.completionListContains("i6", "c6", "", "i6", "var");
 verify.completionListContains("i6_c", "{ s1: number; new(): c6; }", "", "i6_c", "var");
 
@@ -155,19 +155,19 @@ verify.currentSignatureHelpDocCommentIs("constructor for a");
 verify.currentParameterHelpArgumentDocCommentIs("this is my a");
 
 goTo.marker('28');
-verify.quickInfoIs("() => c2", "", "c2", "constructor");
+verify.quickInfoIs("(): c2", "", "c2", "constructor");
 
 goTo.marker('29');
-verify.quickInfoIs("() => c3", "Constructor comment", "c3", "constructor");
+verify.quickInfoIs("(): c3", "Constructor comment", "c3", "constructor");
 
 goTo.marker('30');
-verify.quickInfoIs("() => c4", "Constructor comment", "c4", "constructor");
+verify.quickInfoIs("(): c4", "Constructor comment", "c4", "constructor");
 
 goTo.marker('31');
-verify.quickInfoIs("() => c5", "", "c5", "constructor");
+verify.quickInfoIs("(): c5", "", "c5", "constructor");
 
 goTo.marker('32');
-verify.quickInfoIs("() => c6", "constructor comment", "c6", "constructor");
+verify.quickInfoIs("(): c6", "constructor comment", "c6", "constructor");
 
 goTo.marker('33');
-verify.quickInfoIs("() => m.m2.c1", "constructor comment", "m.m2.c1", "constructor");
+verify.quickInfoIs("(): m.m2.c1", "constructor comment", "m.m2.c1", "constructor");

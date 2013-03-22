@@ -3,5 +3,5 @@ var s = (null);
 var b = (n);
 function isVoid() {
 }
-if(null === isVoid()) {
+if (null === isVoid()) {
 }

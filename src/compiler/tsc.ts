@@ -17,6 +17,21 @@
 ///<reference path='io.ts'/>
 ///<reference path='optionsParser.ts'/>
 
+declare var localizedDiagnosticMessages: TypeScript.TypeScriptDiagnosticMessages;
+
+class DiagnosticsLogger implements TypeScript.ILogger {
+    constructor(public ioHost: IIO) {
+    }
+    public information(): bool { return false; }
+    public debug(): bool { return false; }
+    public warning(): bool { return false; }
+    public error(): bool { return false; }
+    public fatal(): bool { return false; }
+    public log(s: string): void {
+        this.ioHost.stdout.WriteLine(s);
+    }
+}
+
 class ErrorReporter implements ITextWriter {
     public hasErrors: bool;
 
@@ -50,7 +65,7 @@ class CommandLineHost implements TypeScript.IResolverHost {
     constructor(public compilationSettings: TypeScript.CompilationSettings, public errorReporter: (err:string)=>void) { 
     }
 
-    public getPathIdentifier(path: string) { 
+    public getPathIdentifier(path: string) {
         return this.compilationSettings.useCaseSensitiveFileResolution ? path : path.toLocaleUpperCase();
     }
 
@@ -59,8 +74,8 @@ class CommandLineHost implements TypeScript.IResolverHost {
     }
 
     public resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment,
-        resolver: TypeScript.ICodeResolver,
-        traceDependencies: bool): TypeScript.CompilationEnvironment {
+                                         resolver: TypeScript.ICodeResolver,
+                                         traceDependencies: bool): TypeScript.CompilationEnvironment {
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
@@ -68,14 +83,14 @@ class CommandLineHost implements TypeScript.IResolverHost {
 
         var postResolutionError = 
             (errorFile: string, errorMessage: string) => {
-                this.errorReporter(errorFile + (errorMessage == "" ? "" : ": " + errorMessage));
+                this.errorReporter(errorFile + (errorMessage === "" ? "" : ": " + errorMessage));
             }
 
         var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
-            postResolutionError: (errorFile, line, col, errorMessage) => {
-                this.errorReporter(errorFile + "(" + line + "," + col + ") " + (errorMessage == "" ? "" : ": " + errorMessage));
+            postResolutionError: (errorFile, fileReference, errorMessage) => {
+                this.errorReporter(errorFile + "(" + (fileReference.line + 1) + "," + (fileReference.character + 1) + ") " + (errorMessage === "" ? "" : ": " + errorMessage));
             },
-            postResolution: (path: string, code: TypeScript.ISourceText) => {
+            postResolution: (path: string, code: TypeScript.IScriptSnapshot) => {
                 var pathId = this.getPathIdentifier(path);
                 if (!this.resolvedPaths[pathId]) {
                     resolvedEnv.code.push(<TypeScript.SourceUnit>code);
@@ -98,11 +113,12 @@ class BatchCompiler {
     public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public resolvedEnvironment: TypeScript.CompilationEnvironment = null;
-    public compilerVersion = "0.8.3.0";
+    public hasResolveErrors: bool = false;
+    public compilerVersion = "0.9.0.0";
     public printedVersion = false;
     public errorReporter: ErrorReporter = null;
 
-    constructor (public ioHost: IIO) { 
+    constructor(public ioHost: IIO) {
         this.compilationSettings = new TypeScript.CompilationSettings();
         this.compilationEnvironment = new TypeScript.CompilationEnvironment(this.compilationSettings, this.ioHost);
         this.errorReporter = new ErrorReporter(this.ioHost);
@@ -131,30 +147,24 @@ class BatchCompiler {
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
     public compile(): bool {
-        var compiler: TypeScript.TypeScriptCompiler;
-
-        compiler = new TypeScript.TypeScriptCompiler(this.errorReporter, new TypeScript.NullLogger(), this.compilationSettings);
-        compiler.setErrorOutput(this.errorReporter);
-        compiler.setErrorCallback(
-            (minChar, charLen, message, unitIndex) => {
-                compiler.errorReporter.hasErrors = true;
-                var fname = this.resolvedEnvironment.code[unitIndex].path;
-                var lineCol = { line: -1, col: -1 };
-                compiler.parser.getSourceLineCol(lineCol, minChar);
-                // line is 1-base, col, however, is 0-base. add 1 to the col before printing the message
-                var msg = fname + " (" + lineCol.line + "," + (lineCol.col + 1) + "): " + message;
-                if (this.compilationSettings.errorRecovery) {
-                    this.errorReporter.WriteLine(msg);
-                } else {
-                    throw new SyntaxError(msg);
-                }
-            });
-
-        if (this.compilationSettings.emitComments) {
-            compiler.emitCommentsToOutput();
+        if (typeof localizedDiagnosticMessages === "undefined") {
+            localizedDiagnosticMessages = null;
         }
 
-        var consumeUnit = (code: TypeScript.SourceUnit, addAsResident: bool) => {
+        var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
+        var compiler = new TypeScript.TypeScriptCompiler(
+            this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
+
+        compiler.errorReporter.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.LineMap) => {
+            compiler.errorReporter.hasErrors = true;
+            var lineCol = { line: -1, character: -1 };
+            lineMap.fillLineAndCharacterFromPosition(minChar, lineCol);
+
+            var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
+            this.errorReporter.WriteLine(msg);
+        };
+
+        var consumeUnit = (code: TypeScript.SourceUnit) => {
             try {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
@@ -163,20 +173,25 @@ class BatchCompiler {
                     // If declaration files are going to be emitted, 
                     // preprocess the file contents and add in referenced files as well
                     if (this.compilationSettings.generateDeclarationFiles) {
-                        TypeScript.CompilerDiagnostics.assert(code.referencedFiles == null, "With no resolve option, referenced files need to null");
+                        TypeScript.CompilerDiagnostics.assert(code.referencedFiles === null, "With no resolve option, referenced files need to null");
                         code.referencedFiles = TypeScript.getReferencedFiles(code);
                     }
                 }
 
                 if (code.content != null) {
-                    if (this.compilationSettings.parseOnly) {
-                        compiler.parseUnit(code.content, code.path);
-                    }
-                    else {
-                        if (this.compilationSettings.errorRecovery) {
-                            compiler.parser.setErrorRecovery(this.errorReporter);
+                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), code.referencedFiles);
+
+                    // TODO: remove this code.  This is not how we should be reporting errors.
+                    var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);
+
+                    if (syntaxTree !== null) {
+                        var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
+                        for (var i = 0, n = diagnostics.length; i < n; i++) {
+                            var diagnostic = diagnostics[i];
+                            compiler.pullErrorReporter.reportError(
+                                new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
+                                syntaxTree.lineMap());
                         }
-                        compiler.addUnit(code.content, code.path, addAsResident, code.referencedFiles);
                     }
                 }
             }
@@ -185,13 +200,10 @@ class BatchCompiler {
                 // This includes syntax errors thrown from error callback if not in recovery mode
                 this.errorReporter.WriteLine(err.message);
             }
-
         }
 
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            if (!this.compilationSettings.parseOnly || (iCode > 0)) {
-                consumeUnit(this.resolvedEnvironment.code[iCode], false);
-            }
+            consumeUnit(this.resolvedEnvironment.code[iCode]);
         }
 
         var emitterIOHost = {
@@ -202,17 +214,13 @@ class BatchCompiler {
         };
 
         try {
-            if (!this.compilationSettings.parseOnly) {
-                compiler.typeCheck();
-                var mapInputToOutput = (unitIndex: number, outFile: string): void => {
-                    this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
-                };
-                compiler.emit(emitterIOHost, mapInputToOutput);
-                compiler.emitDeclarations();
-            }
-            else {
-                compiler.emitAST(emitterIOHost);
-            }
+            compiler.pullTypeCheck(true, true);
+
+            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+            };
+            compiler.emit(emitterIOHost, mapInputToOutput);
+            compiler.emitDeclarations();
         } catch (err) {
             compiler.errorReporter.hasErrors = true;
             // Catch emitter exceptions
@@ -225,9 +233,9 @@ class BatchCompiler {
     }
 
     // Execute the provided inputs
-    public run() {
+    private run() {
         for (var i in this.compilationEnvironment.code) {
-            var outputFileName: string = this.compilationEnvironment.inputOutputMap[i];
+            var outputFileName: string = this.compilationEnvironment.inputFileNameToOutputFileName.lookup(i);
             if (this.ioHost.fileExists(outputFileName)) {
                 var unitRes = this.ioHost.readFile(outputFileName)
                 this.ioHost.run(unitRes, outputFileName);
@@ -297,14 +305,6 @@ class BatchCompiler {
             }
         }, 'e');
 
-        opts.flag('parse', {
-            usage: 'Parse only',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.parseOnly = true;
-            }
-        });
-
         opts.flag('minw', {
             usage: 'Minimize whitespace',
             experimental: true,
@@ -316,14 +316,6 @@ class BatchCompiler {
             experimental: true,
             set: () => { this.compilationSettings.propagateConstants = true; }
         });
-
-        opts.flag('errorrecovery', {
-            usage: 'Enable error recovery',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.errorRecovery = true;
-            }
-        }, 'er');
 
         opts.flag('comments', {
             usage: 'Emit comments to output',
@@ -371,7 +363,6 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.resolve = false;
-                this.compilationSettings.preprocess = false;
             }
         });
 
@@ -395,7 +386,7 @@ class BatchCompiler {
             usage: 'Do not optimize module codegen',
             experimental: true,
             set: () => {
-                TypeScript.optimizeModuleCodeGen = false;
+                this.compilationSettings.optimizeModuleCodeGen = false;
             }
         });
 
@@ -406,12 +397,11 @@ class BatchCompiler {
             }
         });
 
-
-        opts.flag('inferProperties', {
-            usage: 'Infer class properties from top-level assignments to \'this\'',
+        opts.flag('diagnostics', {
+            usage: 'gather diagnostic info about the compilation process',
             experimental: true,
             set: () => {
-                this.compilationSettings.inferPropertiesFromThisAssignment = true;
+                this.compilationSettings.gatherDiagnostics = true;
             }
         });
 
@@ -422,9 +412,10 @@ class BatchCompiler {
                 type = type.toLowerCase();
 
                 if (type === 'es3') {
-                    this.compilationSettings.codeGenTarget = TypeScript.CodeGenTarget.ES3;
-                } else if (type === 'es5') {
-                    this.compilationSettings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
+                    this.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript3;
+                }
+                else if (type === 'es5') {
+                    this.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
                 }
                 else {
                     this.errorReporter.WriteLine("ECMAScript target version '" + type + "' not supported.  Using default 'ES3' code generation");
@@ -439,10 +430,12 @@ class BatchCompiler {
                 type = type.toLowerCase();
 
                 if (type === 'commonjs' || type === 'node') {
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-                } else if (type === 'amd') {
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
-                } else {
+                    this.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                }
+                else if (type === 'amd') {
+                    this.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                }
+                else {
                     this.errorReporter.WriteLine("Module code generation '" + type + "' not supported.  Using default 'commonjs' code generation");
                 }
             }
@@ -490,7 +483,7 @@ class BatchCompiler {
         }
 
         // If no source files provided to compiler - print usage information
-        if (this.compilationEnvironment.code.length == (this.compilationSettings.useDefaultLib ? 1 : 0)) {
+        if (this.compilationEnvironment.code.length === (this.compilationSettings.useDefaultLib ? 1 : 0)) {
             if (!printedUsage && !this.printedVersion) {
                 this.printVersion();
                 opts.printUsage();
@@ -533,7 +526,7 @@ class BatchCompiler {
         }
     }
 
-    public watchFiles(soruceFiles: TypeScript.SourceUnit[]) {
+    private watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
             this.errorReporter.WriteLine("Error: Current host does not support -w[atch] option");
             return;
@@ -542,20 +535,20 @@ class BatchCompiler {
         var resolvedFiles: string[] = []
         var watchers: { [x: string]: IFileWatcher; } = {};
 
-        var addWatcher = (filename: string) => {
-            if (!watchers[filename]) {
-                var watcher = this.ioHost.watchFile(filename, onWatchedFileChange);
-                watchers[filename] = watcher;
+        var addWatcher = (fileName: string) => {
+            if (!watchers[fileName]) {
+                var watcher = this.ioHost.watchFile(fileName, onWatchedFileChange);
+                watchers[fileName] = watcher;
             }
             else {
                 TypeScript.CompilerDiagnostics.debugPrint("Cannot watch file, it is already watched.");
             }
         };
 
-        var removeWatcher = (filename: string) => {
-            if (watchers[filename]) {
-                watchers[filename].close();
-                delete watchers[filename];
+        var removeWatcher = (fileName: string) => {
+            if (watchers[fileName]) {
+                watchers[fileName].close();
+                delete watchers[fileName];
             }
             else {
                 TypeScript.CompilerDiagnostics.debugPrint("Cannot stop watching file, it is not being watched.");
@@ -564,7 +557,7 @@ class BatchCompiler {
 
         var onWatchedFileChange = () => {
             // Reset the state
-            this.compilationEnvironment.code = soruceFiles;
+            this.compilationEnvironment.code = sourceFiles;
 
             // Clean errors for previous compilation
             this.errorReporter.reset();
@@ -582,7 +575,7 @@ class BatchCompiler {
             while (i < oldFiles.length && j < newFiles.length) {
 
                 var compareResult = oldFiles[i].localeCompare(newFiles[j]);
-                if (compareResult == 0) {
+                if (compareResult === 0) {
                     // No change here
                     i++;
                     j++;
@@ -605,12 +598,12 @@ class BatchCompiler {
             }
 
             // All remaing unmatched items in the new list have been added
-            for (var k = j; k < newFiles.length; k++) {
+            for (k = j; k < newFiles.length; k++) {
                 addWatcher(newFiles[k]);
             }
 
             // Update the state
-            resolvedFiles = newFiles;;
+            resolvedFiles = newFiles;
 
             // Print header
             this.ioHost.printLine("");

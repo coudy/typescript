@@ -2,13 +2,13 @@ var M;
 (function (M) {
     (function (N) {
         function f(x) {
-            return 2 * x;
+            2 * x;
         }
         N.f = f;
         (function (X) {
             (function (Y) {
                 (function (Z) {
-                    Z.v2 = f(Z.v);
+                    Z.v2 = N.f(Z.v);
                 })(Y.Z || (Y.Z = {}));
                 var Z = Y.Z;
             })(X.Y || (X.Y = {}));

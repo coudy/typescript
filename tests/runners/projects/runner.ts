@@ -10,37 +10,22 @@ class HarnessHost implements TypeScript.IResolverHost {
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
-        var nRCode = preEnv.residentCode.length;
         var resolvedPaths: any = {};
 
         var postResolutionError =
-            function (errorFile: string, line: number, col: number, errorMessage: string) {
+            function (errorFile: string, fileReference: TypeScript.IFileReference, errorMessage: string) {
                 TypeScript.CompilerDiagnostics.debugPrint("Could not resolve file '" + errorFile + "'" + (errorMessage == "" ? "" : ": " + errorMessage));
             }
 
         var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
             postResolutionError: postResolutionError,
-            postResolution: function (path: string, code: TypeScript.ISourceText) {
+            postResolution: function (path: string, code: TypeScript.IScriptSnapshot) {
                 if (!resolvedPaths[path]) {
                     resolvedEnv.code.push(<TypeScript.SourceUnit>code);
                     resolvedPaths[path] = true;
                 }
             }
         };
-
-        var residentResolutionDispatcher: TypeScript.IResolutionDispatcher = {
-            postResolutionError: postResolutionError,
-            postResolution: function (path: string, code: TypeScript.ISourceText) {
-                if (!resolvedPaths[path]) {
-                    resolvedEnv.residentCode.push(<TypeScript.SourceUnit>code);
-                    resolvedPaths[path] = true;
-                }
-            }
-        };
-
-        for (var i = 0; i < nRCode; i++) {
-            resolver.resolveCode(TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.residentCode[i].path)), "", false, residentResolutionDispatcher);
-        }
 
         for (var i = 0; i < nCode; i++) {
             resolver.resolveCode(TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.code[i].path)), "", false, resolutionDispatcher);
@@ -51,15 +36,13 @@ class HarnessHost implements TypeScript.IResolverHost {
 }
 class HarnessBatch {
     public host: IIO;
-    public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public commandLineHost: HarnessHost;
     public resolvedEnvironment: TypeScript.CompilationEnvironment;
     public errout: Harness.Compiler.WriterAggregator;
 
-    constructor(getDeclareFiles: bool, generateMapFiles: bool, outputOption: string) {
+    constructor(getDeclareFiles: bool, generateMapFiles: bool, outputOption: string, public compilationSettings: TypeScript.CompilationSettings) {
         this.host = IO;
-        this.compilationSettings = new TypeScript.CompilationSettings();
         this.compilationSettings.generateDeclarationFiles = getDeclareFiles;
         this.compilationSettings.mapSourceFiles = generateMapFiles;
         this.compilationSettings.outputOption = outputOption;
@@ -109,13 +92,8 @@ class HarnessBatch {
         this.errout.reset();
 
         compiler = new TypeScript.TypeScriptCompiler(this.errout, new TypeScript.NullLogger(), this.compilationSettings);
-        compiler.parser.errorRecovery = true;
 
-        if (this.compilationSettings.emitComments) {
-            compiler.emitCommentsToOutput();
-        }
-
-        function consumeUnit(code: TypeScript.SourceUnit, addAsResident: bool) {
+        function consumeUnit(code: TypeScript.SourceUnit) {
             try {
             // if file resolving is disabled, the file's content will not yet be loaded
                 if (!(_self.compilationSettings.resolve)) {
@@ -128,15 +106,7 @@ class HarnessBatch {
                         bugs.forEach(bug => assert.bug(bug));
                     }
 
-                    if (_self.compilationSettings.parseOnly) {
-                        compiler.parseUnit(code.content, code.path);
-                    }
-                    else {
-                        if (_self.compilationSettings.errorRecovery) {
-                            compiler.parser.setErrorRecovery(this.errorOut);
-                        }
-                        compiler.addUnit(code.content, code.path, addAsResident);
-                    }
+                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content));
                 }
             }
             catch (err) {
@@ -149,29 +119,20 @@ class HarnessBatch {
             }
         }
 
-        for (var iResCode = 0 ; iResCode < this.resolvedEnvironment.residentCode.length; iResCode++) {
-            if (!this.compilationSettings.parseOnly) {
-                consumeUnit(this.resolvedEnvironment.residentCode[iResCode], true);
-            }
-        }
-
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            if (!this.compilationSettings.parseOnly || (iCode > 0)) {
-                consumeUnit(this.resolvedEnvironment.code[iCode], false);
-            }
+            consumeUnit(this.resolvedEnvironment.code[iCode]);
         }
 
-        if (!this.compilationSettings.parseOnly) {
-            compiler.typeCheck();
-            compiler.emit({
-                createFile: createEmitFile,
-                directoryExists: IO.directoryExists,
-                fileExists: IO.fileExists,
-                resolvePath: IO.resolvePath
-            });
-            compiler.emitSettings.ioHost.createFile = createDeclareFile;
-            compiler.emitDeclarations();
-        }
+        // TODO: call pullTypeCheck here?
+        // compiler.typeCheck();
+        compiler.emit({
+            createFile: createEmitFile,
+            directoryExists: IO.directoryExists,
+            fileExists: IO.fileExists,
+            resolvePath: IO.resolvePath
+        });
+        compiler.emitOptions.ioHost.createFile = createDeclareFile;
+        compiler.emitDeclarations();
 
         if (this.errout) {
             this.errout.Close();
@@ -245,8 +206,8 @@ class ProjectRunner extends RunnerBase {
                 }
 
                 var outputFiles = [];
-                for (var i = 0; i < spec.outputFiles.length; i++) {
-                    outputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.outputFiles[i]);
+                for (var j = 0; j < spec.outputFiles.length; j++) {
+                    outputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.outputFiles[j]);
                 }
 
                 var generatedDeclareFiles: { fname: string; file: Harness.Compiler.WriterAggregator;  }[] = [];
@@ -325,9 +286,10 @@ class ProjectRunner extends RunnerBase {
 
                     generatedDeclareFiles = [];
                     generatedEmitFiles = [];
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                    var compilationSettings = new TypeScript.CompilationSettings();
+                    compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
                     codeGenType = "node";
-                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption);
+                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption, compilationSettings);
                     batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile);
                     
                     it("collects the right files", function () {
@@ -389,11 +351,13 @@ class ProjectRunner extends RunnerBase {
 
                     cleanProjectDirectory(spec.projectRoot);
 
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                    var compilationSettings = new TypeScript.CompilationSettings();
+                    compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+
                     generatedDeclareFiles = [];
                     generatedEmitFiles = [];
                     codeGenType = "amd";
-                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption);
+                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption, compilationSettings);
                     batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile);
 
                     it("collects the right files", function () {

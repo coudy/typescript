@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 
 
-module Formatting {
+module TypeScript.Formatting {
     export enum RuleAction {
         Ignore,
         Space,

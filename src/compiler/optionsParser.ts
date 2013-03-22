@@ -60,6 +60,7 @@ class OptionsParser {
 
         var output = [];
         var maxLength = 0;
+        var i = 0;
 
         this.options = this.options.sort(function(a, b) {
             var aName = a.name.toLowerCase();
@@ -75,7 +76,7 @@ class OptionsParser {
         });
 
         // Build up output array
-        for (var i = 0; i < this.options.length; i++) {
+        for (i = 0; i < this.options.length; i++) {
             var option = this.options[i];
 
             if (option.experimental) {
@@ -105,7 +106,7 @@ class OptionsParser {
         output.push(["  @<file>", "Insert command line options and files from a file."]);
 
         // Print padded output
-        for (var i = 0; i < output.length; i++) {
+        for (i = 0; i < output.length; i++) {
             this.host.printLine(output[i][0] + (new Array(maxLength - output[i][0].length + 3)).join(" ") + output[i][1]);
         }
     }

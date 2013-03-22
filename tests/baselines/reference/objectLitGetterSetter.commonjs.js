@@ -1,5 +1,4 @@
-var obj = {
-};
+var obj = {};
 Object.defineProperty(obj, "accProperty", ({
     get: function () {
         eval("public = 1;");

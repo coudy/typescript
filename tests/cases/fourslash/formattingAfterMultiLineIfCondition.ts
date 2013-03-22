@@ -3,7 +3,7 @@
 //// var foo;
 //// if (foo &&
 ////     foo) {
-//// /*comment*/    // This is a comment
+/////*comment*/    // This is a comment
 ////     foo.toString();
 //// /**/
 

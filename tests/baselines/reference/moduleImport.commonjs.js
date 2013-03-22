@@ -4,7 +4,7 @@ var A;
         (function (C) {
             var XYZ = X.Y.Z;
             function ping(x) {
-                if(x > 0) {
+                if (x > 0) {
                     XYZ.pong(x - 1);
                 }
             }
@@ -18,7 +18,7 @@ var X;
 (function (X) {
     var ABC = A.B.C;
     function pong(x) {
-        if(x > 0) {
+        if (x > 0) {
             ABC.ping(x - 1);
         }
     }

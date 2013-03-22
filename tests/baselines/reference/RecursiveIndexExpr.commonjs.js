@@ -10,8 +10,7 @@ function f(g) {
 ;
 function h() {
     f(function () {
-        var k = {
-        }[''].forEach(function () {
+        var k = {}[''].forEach(function () {
             k['any property'];
         });
     });

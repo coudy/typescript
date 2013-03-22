@@ -1,5 +1,5 @@
 var test = (function () {
-    function test() {
+    function test(static) {
     }
     return test;
 })();

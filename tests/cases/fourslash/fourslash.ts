@@ -32,12 +32,49 @@
 module FourSlashInterface {
     declare var FourSlash;
 
+    export interface Marker {
+        fileName: string;
+        position: number;
+        data?: any;
+    }
+
+    export interface Range {
+        fileName: string;
+        start: number;
+        end: number;
+    }
+
+    export interface TextSpan {
+        start: number;
+        end: number;
+    }
+
+    export class test {
+        public markers(): Marker[] {
+            return FourSlash.currentTestState.getMarkers();
+        }
+
+        public ranges(): Range[] {
+            return FourSlash.currentTestState.getRanges();
+        }
+    }
+
+    export class diagnostics {
+        public validateTypesAtPositions(...positions: number[]) {
+            return FourSlash.currentTestState.verifyTypesAgainstFullCheckAtPositions(positions);
+        }
+    }
+
     export class goTo {
         // Moves the caret to the specified marker,
         // or the anonymous marker ('/**/') if no name
         // is given
         public marker(name?: string) {
             FourSlash.currentTestState.goToMarker(name);
+        }
+
+        public position(pos: number) {
+            FourSlash.currentTestState.goToPosition(pos);
         }
 
         public bof() {
@@ -126,7 +163,6 @@ module FourSlashInterface {
         public quickInfoIs(typeName: string, docComment?: string, symbolName?: string, kind?: string) {
             FourSlash.currentTestState.verifyQuickInfo(typeName, this.negative, docComment, symbolName, kind);
         }
-
     }
 
     export class verify extends verifyNegatable {
@@ -171,6 +207,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyCurrentParameterHelpType(expected);
         }
 
+        public currentSignatureParamterCountIs(expected: number) {
+            FourSlash.currentTestState.verifyCurrentSignatureHelpParameterCount(expected);
+        }
+
         public numberOfErrorsInCurrentFile(expected: number) {
             FourSlash.currentTestState.verifyNumberOfErrorsInCurrentFile(expected);
         }
@@ -182,11 +222,39 @@ module FourSlashInterface {
         public nameOrDottedNameSpanTextIs(text: string) {
             FourSlash.currentTestState.verifyCurrentNameOrDottedNameSpanText(text);
         }
-    }
+
+        public outliningSpansInCurrentFile(spans: TextSpan[]) {
+            FourSlash.currentTestState.verifyOutliningSpans(spans);
+        }
+
+        public matchingBracePositionInCurrentFile(bracePosition: number, expectedMatchPosition: number) {
+            FourSlash.currentTestState.verifyMatchingBracePosition(bracePosition, expectedMatchPosition);
+        }
     
+        public noMatchingBracePositionInCurrentFile(bracePosition: number) {
+            FourSlash.currentTestState.verifyNoMatchingBracePosition(bracePosition);
+        }
+
+        public indentationLevelAtPositionIs(position: number, numberOfTabs: number) {
+            FourSlash.currentTestState.verifyIndentationLevelAtPosition(position, numberOfTabs);
+        }
+
+        public indentationLevelIs(numberOfTabs: number) {
+            FourSlash.currentTestState.verifyIndentationLevelAtCurrentPosition(numberOfTabs);
+        }
+
+        public setVerifyDocComments(val: bool) {
+            FourSlash.currentTestState.setVerifyDocComments(val);
+        }
+    }
+   
     export class edit {
         public backspace(count?: number) {
             FourSlash.currentTestState.deleteCharBehindMarker(count);
+        }
+
+        public deleteAtCaret(times?: number) {
+            FourSlash.currentTestState.deleteChar(times);
         }
 
         public insert(text: string) {
@@ -210,6 +278,14 @@ module FourSlashInterface {
                 count = 1;
             }
             FourSlash.currentTestState.moveCaretRight(count*-1);
+        }
+
+        public enableFormatting() {
+            FourSlash.currentTestState.enableFormatting = true;
+        }
+
+        public disableFormatting() {
+            FourSlash.currentTestState.enableFormatting = false;
         }
     }
 
@@ -249,6 +325,10 @@ module FourSlashInterface {
         public printBreakpointLocation(pos: number) {
             FourSlash.currentTestState.printBreakpointLocation(pos);
         }
+
+        public printErrorList() {
+            FourSlash.currentTestState.printErrorList();
+        }
     }
 
     export class format {
@@ -259,15 +339,19 @@ module FourSlashInterface {
 }
 
 module fs {
+    export var test = new FourSlashInterface.test();
     export var goTo = new FourSlashInterface.goTo();
     export var verify = new FourSlashInterface.verify();
     export var edit = new FourSlashInterface.edit();
     export var debug = new FourSlashInterface.debug();
     export var format = new FourSlashInterface.format();
+    export var diagnostics = new FourSlashInterface.diagnostics();
 }
 
+var test = new FourSlashInterface.test();
 var goTo = new FourSlashInterface.goTo();
 var verify = new FourSlashInterface.verify();
 var edit = new FourSlashInterface.edit();
 var debug = new FourSlashInterface.debug();
 var format = new FourSlashInterface.format();
+var diagnostics = new FourSlashInterface.diagnostics();

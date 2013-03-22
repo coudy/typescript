@@ -4,30 +4,34 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var C1 = (function () {
-    function C1(v) {
-        if (typeof v === "undefined") { v = 1; }
-        this.n = 0;
-    }
-    C1.prototype.C1M1 = function () {
-        return 0;
-    };
-    C1.prototype.C1M2 = function (C1M2A1) {
-        return C1M2A1;
-    };
-    C1.prototype.C1M3 = function (C1M3A1, C1M3A2) {
-        if (typeof C1M3A1 === "undefined") { C1M3A1 = 0; }
-        if (typeof C1M3A2 === "undefined") { C1M3A2 = C1M3A1; }
-        return C1M3A1 + C1M3A2;
-    };
-    C1.prototype.C1M4 = function (C1M4A1, C1M4A2) {
-        return C1M4A1 + C1M4A2;
-    };
-    C1.prototype.C1M5 = function (C1M5A1, C1M5A2, C1M5A3) {
-        if (typeof C1M5A2 === "undefined") { C1M5A2 = 0; }
-        return C1M5A1 + C1M5A2;
-    };
-    return C1;
+        return C1;
 })();
+this.p;
+number = 0;
+ {
+}
+n:
+number = 0
+C1M1();
+ {
+    return 0;
+}
+C1M2(C1M2A1, number);
+ {
+    return C1M2A1;
+}
+C1M3(C1M3A1 ?  : number = 0, C1M3A2 ?  : number = C1M3A1);
+ {
+    return C1M3A1 + C1M3A2;
+}
+C1M4(C1M4A1, number, C1M4A2 ?  : number);
+ {
+    return C1M4A1 + C1M4A2;
+}
+C1M5(C1M5A1, number, C1M5A2, number = 0, C1M5A3 ?  : number);
+ {
+    return C1M5A1 + C1M5A2;
+}
 var C2 = (function (_super) {
     __extends(C2, _super);
     function C2(v2) {

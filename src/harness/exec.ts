@@ -15,10 +15,8 @@
 
 // Allows for executing a program with command-line arguments and reading the result
 interface IExec {
-    exec: (filename: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) => void;
+    exec: (fileName: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) => void;
 }
-
-declare var require;
 
 class ExecResult {
     public stdout = "";
@@ -27,11 +25,11 @@ class ExecResult {
 }
 
 class WindowsScriptHostExec implements IExec {
-    public exec(filename: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) : void {
+    public exec(fileName: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) : void {
         var result = new ExecResult();
         var shell = new ActiveXObject('WScript.Shell');
         try {
-            var process = shell.Exec(filename + ' ' + cmdLineArgs.join(' '));
+            var process = shell.Exec(fileName + ' ' + cmdLineArgs.join(' '));
         } catch(e) {
             result.stderr = e.message;
             result.exitCode = 1
@@ -51,12 +49,12 @@ class WindowsScriptHostExec implements IExec {
 }
 
 class NodeExec implements IExec {
-    public exec(filename: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) : void {
+    public exec(fileName: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) : void {
         var nodeExec = require('child_process').exec;
 
         var result = new ExecResult();
         result.exitCode = null;
-        var cmdLine = filename + ' ' + cmdLineArgs.join(' ');
+        var cmdLine = fileName + ' ' + cmdLineArgs.join(' ');
         var process = nodeExec(cmdLine, function(error, stdout, stderr) {
             result.stdout = stdout;
             result.stderr = stderr;

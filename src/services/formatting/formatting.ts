@@ -14,22 +14,14 @@
 //
 
 ///<reference path='..\typescriptServices.ts' />
-///<reference path='interop.ts' />
+///<reference path='ITextSnapshot.ts' />
+///<reference path='ITextSnapshotLine.ts' />
+///<reference path='TextSnapshot.ts' />
+///<reference path='TextSnapshotLine.ts' />
+///<reference path='SnapshotPoint.ts' />
 ///<reference path='formattingContext.ts' />
 ///<reference path='formattingManager.ts' />
 ///<reference path='formattingRequestKind.ts' />
-///<reference path='formattingTask.ts' />
-///<reference path='iformatter.ts' />
-///<reference path='ilineIndentationResolver.ts' />
-///<reference path='indentationBag.ts' />
-///<reference path='indentationEdgeFinder.ts' />
-///<reference path='indentationEditInfo.ts' />
-///<reference path='indentationInfo.ts' />
-///<reference path='indenter.ts' />
-///<reference path='matchingBlockFinderTask.ts' />
-///<reference path='parseNode.ts' />
-///<reference path='parseNodeExtensions.ts' />
-///<reference path='parseTree.ts' />
 ///<reference path='rule.ts' />
 ///<reference path='ruleAction.ts' />
 ///<reference path='ruleDescriptor.ts' />
@@ -39,9 +31,12 @@
 ///<reference path='rules.ts' />
 ///<reference path='rulesMap.ts' />
 ///<reference path='rulesProvider.ts' />
-///<reference path='smartIndentManager.ts' />
-///<reference path='smartIndentTask.ts' />
-///<reference path='statementFinderTask.ts' />
 ///<reference path='textEditInfo.ts' />
 ///<reference path='tokenRange.ts' />
 ///<reference path='tokenSpan.ts' /> 
+///<reference path='IndentationNodeContext.ts' /> 
+///<reference path='IndentationNodeContextPool.ts' /> 
+///<reference path='IndentationTrackingWalker.ts' /> 
+///<reference path='MultipleTokenIndenter.ts' /> 
+///<reference path='SingleTokenIndenter.ts' /> 
+///<reference path='Formatter.ts' /> 

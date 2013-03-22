@@ -150,16 +150,59 @@ module TypeScript {
         }
 
         var tooLong = (value.length > length);
+        var i = 0;
         if (tooLong) {
             var mid = length >> 1;
-            for (var i = 0; i < mid; i++) addChar(i);
+            for (i = 0; i < mid; i++) addChar(i);
             result += "(...)";
-            for (var i = value.length - mid; i < value.length; i++) addChar(i);
+            for (i = value.length - mid; i < value.length; i++) addChar(i);
         }
         else {
             length = value.length;
-            for (var i = 0; i < length; i++) addChar(i);
+            for (i = 0; i < length; i++) addChar(i);
         }
         return result;
+    }
+
+    export function getDiagnosticMessage(diagnosticType: PullDiagnosticMessages, args: any[]): string {
+        var diagnosticName: string = (<any>PullDiagnosticMessages)._map[diagnosticType];
+
+        var diagnostic = <Diagnostic> typescriptDiagnosticMessages[diagnosticName];
+
+        if (!diagnostic) {
+            throw new Error("Invalid diagnostic");
+        }
+        else {
+            var components = diagnosticName.split("_");
+
+            if (components.length) {
+                var argCount = parseInt(components[1]);
+
+                if (argCount != args.length) {
+                    throw new Error("Expected " + argCount + " arguments to diagnostic, got " + args.length + " instead");
+                }
+            }
+        }
+
+        var diagnosticMessage = diagnostic.message.replace(/{(\d+)}/g, function (match, num) {
+            return typeof args[num] !== 'undefined'
+                ? args[num]
+                : match;
+        });
+
+        var message: string;
+
+        if (diagnosticType != PullDiagnosticMessages.error_2 && diagnosticType != PullDiagnosticMessages.warning_2) {
+            var errorOrWarning = diagnostic.category == DiagnosticCategory.Error ?
+                                    PullDiagnosticMessages.error_2 :
+                                    PullDiagnosticMessages.warning_2;
+
+            message = getDiagnosticMessage(errorOrWarning, [diagnostic.code, diagnosticMessage]);
+        }
+        else {
+            message = diagnosticMessage;
+        }
+
+        return message;
     }
 }

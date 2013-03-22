@@ -1,7 +1,6 @@
 var Emitter = (function () {
     function Emitter() {
-        this.listeners = {
-        };
+        this.listeners = {};
     }
     return Emitter;
 })();

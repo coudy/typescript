@@ -1,5 +1,7 @@
 ///<reference path='_project.ts'/>
 
+debugger;
+
 describe('getCompletionsAtPosition', function () {
     var typescriptLS = new Harness.TypeScriptLS();
 
@@ -42,8 +44,8 @@ describe('getCompletionsAtPosition', function () {
 
         assert.is(line >= 1);
         assert.is(col >= 1);
-        assert.is(line < lineMap.length);
-        var offset = lineMap[line] + (col - 1);
+        assert.is(line <= lineMap.length);
+        var offset = lineMap[line - 1] + (col - 1);
 
         assert.is(offset < script.limChar);
         return offset;

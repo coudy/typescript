@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 
 
-module Formatting {
+module TypeScript.Formatting {
     export class RuleOperation {
         public Context: RuleOperationContext;
         public Action: RuleAction;
@@ -32,7 +32,7 @@ module Formatting {
         }
 
         static create1(action: RuleAction) {
-            return create2(RuleOperationContext.Any, action)
+            return RuleOperation.create2(RuleOperationContext.Any, action)
         }
 
         static create2(context: RuleOperationContext, action: RuleAction) {

@@ -1,0 +1,104 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 31,
+        "hasZeroWidthToken": true,
+        "hasRegularExpressionToken": true,
+        "moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 31,
+                "hasRegularExpressionToken": true,
+                "expression": {
+                    "kind": "ElementAccessExpression",
+                    "fullWidth": 30,
+                    "hasRegularExpressionToken": true,
+                    "expression": {
+                        "kind": "InvocationExpression",
+                        "fullWidth": 27,
+                        "hasRegularExpressionToken": true,
+                        "expression": {
+                            "kind": "MemberAccessExpression",
+                            "fullWidth": 10,
+                            "expression": {
+                                "kind": "IdentifierName",
+                                "width": 4,
+                                "text": "href",
+                                "valueText": "href"
+                            },
+                            "dotToken": {
+                                "kind": "DotToken",
+                                "width": 1,
+                                "text": "."
+                            },
+                            "name": {
+                                "kind": "IdentifierName",
+                                "width": 5,
+                                "text": "match",
+                                "valueText": "match"
+                            }
+                        },
+                        "argumentList": {
+                            "kind": "ArgumentList",
+                            "fullWidth": 17,
+                            "hasRegularExpressionToken": true,
+                            "openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "arguments": [
+                                {
+                                    "kind": "RegularExpressionLiteral",
+                                    "width": 15,
+                                    "text": "/:\\/\\/(.[^/]+)/"
+                                }
+                            ],
+                            "closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
+                            }
+                        }
+                    },
+                    "openBracketToken": {
+                        "kind": "OpenBracketToken",
+                        "width": 1,
+                        "text": "["
+                    },
+                    "argumentExpression": {
+                        "kind": "NumericLiteral",
+                        "width": 1,
+                        "text": "1"
+                    },
+                    "closeBracketToken": {
+                        "kind": "CloseBracketToken",
+                        "width": 1,
+                        "text": "]"
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "text": ";"
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0
+        ],
+        "length": 31
+    }
+}

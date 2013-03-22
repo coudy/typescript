@@ -21,72 +21,6 @@ module TypeScript {
         return (val & flag) != 0;
     }
 
-    export enum ErrorRecoverySet {
-        None = 0,
-        Comma = 1, // Comma
-        SColon = 1 << 1, // SColon
-        Asg = 1 << 2, // Asg
-        BinOp = 1 << 3, // Lsh, Rsh, Rs2, Le, Ge, INSTANCEOF, EQ, NE, Eqv, NEqv, LogAnd, LogOr, AsgMul, AsgDiv
-        // AsgMod, AsgAdd, AsgSub, AsgLsh, AsgRsh, AsgRs2, AsgAnd, AsgXor, AsgOr, QMark, Mult, Div, 
-        // Pct, GT, LT, And, Xor, Or
-        RBrack = 1 << 4, // RBrack
-        RCurly = 1 << 5, // RCurly
-        RParen = 1 << 6, // RParen
-        Dot = 1 << 7, // Dot
-        Colon = 1 << 8, // Colon
-        PrimType = 1 << 9, // number, string, bool
-        AddOp = 1 << 10, // Add, Sub
-        LCurly = 1 << 11, // LCurly
-        PreOp = 1 << 12, // Tilde, Bang, Inc, Dec
-        RegExp = 1 << 13, // RegExp
-        LParen = 1 << 14, // LParen
-        LBrack = 1 << 15, // LBrack
-        Scope = 1 << 16, // Scope
-        In = 1 << 17, // IN
-        SCase = 1 << 18, // CASE, DEFAULT
-        Else = 1 << 19, // ELSE
-        Catch = 1 << 20, // CATCH, FINALLY
-        Var = 1 << 21, // 
-        Stmt = 1 << 22, // BREAK, RETURN, THROW, DEBUGGER, FOR, SWITCH, DO, IF, TRY, WITH
-        While = 1 << 23, // WHILE
-        ID = 1 << 24, // ID
-        Prefix = 1 << 25, // VOID, DELETE, TYPEOF, AWAIT
-        Literal = 1 << 26, // IntCon, FltCon, StrCon
-        RLit = 1 << 27, // THIS, TRUE, FALSE, NULL
-        Func = 1 << 28, // FUNCTION
-        EOF = 1 << 29, // EOF
-
-        // REVIEW: Name this something clearer.
-        TypeScriptS = 1 << 30, // PROPERTY, PRIVATE, STATIC, INTERFACE, CLASS, MODULE, EXPORT, IMPORT
-        ExprStart = SColon | AddOp | LCurly | PreOp | RegExp | LParen | LBrack | ID | Prefix | RLit | Func | Literal,
-        StmtStart = ExprStart | SColon | Var | Stmt | While | TypeScriptS,
-        Postfix = Dot | LParen | LBrack,
-    }
-
-    export enum AllowedElements {
-        None = 0,
-        ModuleDeclarations = 1 << 2,
-        ClassDeclarations = 1 << 3,
-        InterfaceDeclarations = 1 << 4,
-        AmbientDeclarations = 1 << 10,
-        Properties = 1 << 11,
-
-        Global = ModuleDeclarations | ClassDeclarations | InterfaceDeclarations | AmbientDeclarations,
-        QuickParse = Global | Properties,
-    }
-
-    export enum Modifiers {
-        None = 0,
-        Private = 1,
-        Public = 1 << 1,
-        Readonly = 1 << 2,
-        Ambient = 1 << 3,
-        Exported = 1 << 4,
-        Getter = 1 << 5,
-        Setter = 1 << 6,
-        Static = 1 << 7,
-    }
-
     export enum ASTFlags {
         None = 0,
         ExplicitSemicolon = 1, // statment terminated by an explicit semicolon
@@ -103,7 +37,8 @@ module TypeScript {
         // REVIEW: This flag is to mark lambda nodes to note that the LParen of an expression has already been matched in the lambda header.
         //         The flag is used to communicate this piece of information to the calling parseTerm, which intern will remove it.
         //         Once we have a better way to associate information with nodes, this flag should not be used.
-        SkipNextRParen = 1 << 11, 
+        SkipNextRParen = 1 << 11,
+        TypeReference = 1 << 12,
     }
 
     export enum DeclFlags {
@@ -244,41 +179,9 @@ module TypeScript {
         IncompatibleParameterTypes = 1 << 6,
     }
 
-    export enum CodeGenTarget {
-        ES3 = 0,
-        ES5 = 1,
-    }
-
     export enum ModuleGenTarget {
         Synchronous = 0,
         Asynchronous = 1,
         Local = 1 << 1,
     }
-
-    // Compiler defaults to generating ES5-compliant code for
-    //  - getters and setters
-    export var codeGenTarget: CodeGenTarget = CodeGenTarget.ES3;
-
-    export var moduleGenTarget: ModuleGenTarget = ModuleGenTarget.Synchronous;
-
-    export var optimizeModuleCodeGen = true;
-
-    export function flagsToString(e, flags: number): string {
-        var builder = "";
-        for (var i = 1; i < (1 << 31) ; i = i << 1) {
-            if ((flags & i) != 0) {
-                for (var k in e) {
-                    if (e[k] == i) {
-                        if (builder.length > 0) {
-                            builder += "|";
-                        }
-                        builder += k;
-                        break;
-                    }
-                }
-            }
-        }
-        return builder;
-    }
-
 }

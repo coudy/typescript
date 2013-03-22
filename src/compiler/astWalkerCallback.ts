@@ -114,6 +114,7 @@ module TypeScript.AstWalkerWithDetailCallback {
         InterfaceDeclarationCallback? (pre, interfaceDecl: InterfaceDeclaration): bool;
         ModuleDeclarationCallback? (pre, moduleDecl: ModuleDeclaration): bool;
         ImportDeclarationCallback? (pre, ast: AST): bool;
+        ExportAssignmentCallback? (pre, ast: AST): bool;
         WithCallback? (pre, ast: AST): bool;
         LabelCallback? (pre, labelAST: AST): bool;
         LabeledStatementCallback? (pre, ast: AST): bool;

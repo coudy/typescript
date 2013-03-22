@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 
 
-module Formatting {
+module TypeScript.Formatting {
     export class Rules {
         public getRuleName(rule: Rule) {
             var o = <any>this;
@@ -40,12 +40,12 @@ module Formatting {
         public SpaceAfterSemicolon: Rule;
 
         // Space/new line after }.
-        public NewLineAfterCloseCurly: Rule;
-        public SpaceAfterCloseCurly: Rule;
+        public NewLineAfterCloseBrace: Rule;
+        public SpaceAfterCloseBrace: Rule;
 
-        // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseCurly rule not applied
-        public SpaceBetweenCloseCurlyAndElse: Rule;
-        public SpaceBetweenCloseCurlyAndWhile: Rule;
+        // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
+        public SpaceBetweenCloseBraceAndElse: Rule;
+        public SpaceBetweenCloseBraceAndWhile: Rule;
 
         // No space for indexer and dot
         public NoSpaceBeforeDot: Rule;
@@ -56,15 +56,15 @@ module Formatting {
         public NoSpaceAfterCloseBracket: Rule;
 
         // Insert after { and before } a space in single-line contexts, but remove space from empty object literals {}.
-        public SpaceAfterOpenCurly: Rule;
-        public SpaceBeforeCloseCurly: Rule;
-        public NoSpaceBetweenEmptyCurlyBrackets: Rule;
+        public SpaceAfterOpenBrace: Rule;
+        public SpaceBeforeCloseBrace: Rule;
+        public NoSpaceBetweenEmptyBraceBrackets: Rule;
 
         // Insert new line after { and before } in multi-line contexts.
-        public NewLineAfterOpenCurlyInBlockContext: Rule;
+        public NewLineAfterOpenBraceInBlockContext: Rule;
 
         // For functions and control block place } on a new line    [multi-line rule]
-        public NewLineBeforeCloseCurlyInFunctionOrControl: Rule;
+        public NewLineBeforeCloseBraceInFunctionOrControl: Rule;
 
         // Special handling of unary operators.
         // Prefix operators generally shouldn't have a space between
@@ -98,7 +98,7 @@ module Formatting {
         // So, we have a rule to add a space for [),Any], [do,Any], [else,Any], and [case,Any]
         public SpaceBetweenStatements: Rule;
 
-        // This low-pri rule takes care of "try {" and "finally {" in case the rule SpaceBeforeOpenCurlyInControl didn't execute on FormatOnEnter.
+        // This low-pri rule takes care of "try {" and "finally {" in case the rule SpaceBeforeOpenBraceInControl didn't execute on FormatOnEnter.
         public SpaceAfterTryFinally: Rule;
 
         // For get/set members, we check for (identifier,identifier) since get/set don't have tokens and they are represented as just an identifier token.
@@ -123,7 +123,7 @@ module Formatting {
         public SpaceAfterCertainTypeScriptKeywords: Rule;
         public SpaceBeforeCertainTypeScriptKeywords: Rule;
 
-        // Treat string literals in module names as identifiers, and add a space between the literal and the opening curly braces, e.g.: module "m2" {
+        // Treat string literals in module names as identifiers, and add a space between the literal and the opening Brace braces, e.g.: module "m2" {
         public SpaceAfterModuleName: Rule;
 
         // Lambda expressions
@@ -134,7 +134,7 @@ module Formatting {
         public NoSpaceAfterOptionalParameters: Rule;
 
         // Remove spaces in empty interface literals. e.g.: x: {}
-        public NoSpaceBetweenEmptyInterfaceCurlyBrackets: Rule;
+        public NoSpaceBetweenEmptyInterfaceBraceBrackets: Rule;
 
         // These rules are higher in priority than user-configurable rules.
         public HighPriorityCommonRules: Rule[];
@@ -142,9 +142,9 @@ module Formatting {
         // These rules are lower in priority than user-configurable rules.
         public LowPriorityCommonRules: Rule[];
 
-        //#endregion
-
-        //#region Rules controlled by user options
+        ///
+        /// Rules controlled by user options
+        ///
 
         // Insert space after comma delimiter
         public SpaceAfterComma: Rule;
@@ -160,22 +160,22 @@ module Formatting {
         public SpaceAfterKeywordInControl: Rule;
         public NoSpaceAfterKeywordInControl: Rule;
 
-        // Open curly braces after function
+        // Open Brace braces after function
         //TypeScript: Function can have return types, which can be made of tons of different token kinds
-        public FunctionOpenCurlyLeftTokenRange: Shared.TokenRange;
-        public FunctionOpenCurlyLeftTokenRange_Js: Shared.TokenRange;
-        public SpaceBeforeOpenCurlyInFunction: Rule;
-        public NewLineBeforeOpenCurlyInFunction: Rule;
+        public FunctionOpenBraceLeftTokenRange: Shared.TokenRange;
+        public FunctionOpenBraceLeftTokenRange_Js: Shared.TokenRange;
+        public SpaceBeforeOpenBraceInFunction: Rule;
+        public NewLineBeforeOpenBraceInFunction: Rule;
 
-        // Open curly braces after TypeScript module/class/interface
-        public TypeScriptOpenCurlyLeftTokenRange: Shared.TokenRange;
-        public SpaceBeforeOpenCurlyInTypeScriptDeclWithBlock: Rule;
-        public NewLineBeforeOpenCurlyInTypeScriptDeclWithBlock: Rule;
+        // Open Brace braces after TypeScript module/class/interface
+        public TypeScriptOpenBraceLeftTokenRange: Shared.TokenRange;
+        public SpaceBeforeOpenBraceInTypeScriptDeclWithBlock: Rule;
+        public NewLineBeforeOpenBraceInTypeScriptDeclWithBlock: Rule;
 
-        // Open curly braces after control block
-        public ControlOpenCurlyLeftTokenRange: Shared.TokenRange;
-        public SpaceBeforeOpenCurlyInControl: Rule;
-        public NewLineBeforeOpenCurlyInControl: Rule;
+        // Open Brace braces after control block
+        public ControlOpenBraceLeftTokenRange: Shared.TokenRange;
+        public SpaceBeforeOpenBraceInControl: Rule;
+        public NewLineBeforeOpenBraceInControl: Rule;
 
         // Insert space after semicolon in for statement
         public SpaceAfterSemicolonInFor: Rule;
@@ -192,90 +192,90 @@ module Formatting {
         public SpaceAfterAnonymousFunctionKeyword: Rule;
         public NoSpaceAfterAnonymousFunctionKeyword: Rule;
 
-
-
         constructor() {
-            //#region Common Rules
+            ///
+            /// Common Rules
+            ///
 
             // Leave comments alone
-            this.IgnoreBeforeComment = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkComment), RuleOperation.create1(RuleAction.Ignore));
-            this.IgnoreAfterLineComment = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkComment, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsFirstTokenLineCommentContext), RuleAction.Ignore));
+            this.IgnoreBeforeComment = new Rule(RuleDescriptor.create4(Shared.TokenRange.Any, Shared.TokenRange.Comments), RuleOperation.create1(RuleAction.Ignore));
+            this.IgnoreAfterLineComment = new Rule(RuleDescriptor.create3(SyntaxKind.SingleLineCommentTrivia, Shared.TokenRange.Any), RuleOperation.create1(RuleAction.Ignore));
 
             // Space after keyword but not before ; or : or ?
-            this.NoSpaceBeforeSemicolon = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkSColon), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), RuleAction.Delete));
-            this.NoSpaceBeforeColon = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkColon), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
-            this.NoSpaceBeforeQMark = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkQMark), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
-            this.SpaceAfterColon = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkColon, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Space));
-            this.SpaceAfterQMark = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkQMark, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Space));
-            this.SpaceAfterSemicolon = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkSColon, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.NoSpaceBeforeSemicolon = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.SemicolonToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeColon = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.ColonToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
+            this.NoSpaceBeforeQMark = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.QuestionToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
+            this.SpaceAfterColon = new Rule(RuleDescriptor.create3(SyntaxKind.ColonToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterQMark = new Rule(RuleDescriptor.create3(SyntaxKind.QuestionToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterSemicolon = new Rule(RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
 
             // Space/new line after }.
-            this.NewLineAfterCloseCurly = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkRCurly, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineChildParentContext), RuleAction.NewLine));
-            this.SpaceAfterCloseCurly = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkRCurly, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineSiblingNodeContext), RuleAction.Space));
+            this.NewLineAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineChildParentContext), RuleAction.NewLine));
+            this.SpaceAfterCloseBrace = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsCodeBlockContext), RuleAction.Space));
 
-            // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseCurly rule not applied
-            this.SpaceBetweenCloseCurlyAndElse = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkRCurly, AuthorTokenKind.atkElse), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
-            this.SpaceBetweenCloseCurlyAndWhile = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkRCurly, AuthorTokenKind.atkWhile), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            // Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
+            this.SpaceBetweenCloseBraceAndElse = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.ElseKeyword), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.SpaceBetweenCloseBraceAndWhile = new Rule(RuleDescriptor.create1(SyntaxKind.CloseBraceToken, SyntaxKind.WhileKeyword), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
 
             // No space for indexer and dot
-            this.NoSpaceBeforeDot = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkDot), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceAfterDot = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkDot, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceBeforeOpenBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkLBrack), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceAfterOpenBracket = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkLBrack, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceBeforeCloseBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkRBrack), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceAfterCloseBracket = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkRBrack, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeDot = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.DotToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterDot = new Rule(RuleDescriptor.create3(SyntaxKind.DotToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeOpenBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenBracketToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterOpenBracket = new Rule(RuleDescriptor.create3(SyntaxKind.OpenBracketToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeCloseBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseBracketToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterCloseBracket = new Rule(RuleDescriptor.create3(SyntaxKind.CloseBracketToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
             // Insert after { and before } a space in single-line contexts, but remove space from empty object literals {}.
-            this.SpaceAfterOpenCurly = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkLCurly, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSingleLineBlockContext), RuleAction.Space));
-            this.SpaceBeforeCloseCurly = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkRCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsSingleLineBlockContext), RuleAction.Space));
-            this.NoSpaceBetweenEmptyCurlyBrackets = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkLCurly, AuthorTokenKind.atkRCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectContext), RuleAction.Delete));
+            this.SpaceAfterOpenBrace = new Rule(RuleDescriptor.create3(SyntaxKind.OpenBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSingleLineBlockContext), RuleAction.Space));
+            this.SpaceBeforeCloseBrace = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSingleLineBlockContext), RuleAction.Space));
+            this.NoSpaceBetweenEmptyBraceBrackets = new Rule(RuleDescriptor.create1(SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectContext), RuleAction.Delete));
 
             // Insert new line after { and before } in multi-line contexts.
-            this.NewLineAfterOpenCurlyInBlockContext = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkLCurly, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineBlockContext), RuleAction.NewLine));
+            this.NewLineAfterOpenBraceInBlockContext = new Rule(RuleDescriptor.create3(SyntaxKind.OpenBraceToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineBlockContext), RuleAction.NewLine));
 
             // For functions and control block place } on a new line    [multi-line rule]
-            this.NewLineBeforeCloseCurlyInFunctionOrControl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkRCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineBlockContext), RuleAction.NewLine));
+            this.NewLineBeforeCloseBraceInFunctionOrControl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsMultilineBlockContext), RuleAction.NewLine));
 
             // Special handling of unary operators.
             // Prefix operators generally shouldn't have a space between
             // them and their target unary expression.
             this.NoSpaceAfterUnaryPrefixOperator = new Rule(RuleDescriptor.create4(Shared.TokenRange.UnaryPrefixOperators, Shared.TokenRange.UnaryPrefixExpressions), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
-            this.NoSpaceAfterUnaryPreincrementOperator = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkInc, Shared.TokenRange.UnaryPreincrementExpressions), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceAfterUnaryPredecrementOperator = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkDec, Shared.TokenRange.UnaryPredecrementExpressions), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceBeforeUnaryPostincrementOperator = new Rule(RuleDescriptor.create2(Shared.TokenRange.UnaryPostincrementExpressions, AuthorTokenKind.atkInc), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceBeforeUnaryPostdecrementOperator = new Rule(RuleDescriptor.create2(Shared.TokenRange.UnaryPostdecrementExpressions, AuthorTokenKind.atkDec), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterUnaryPreincrementOperator = new Rule(RuleDescriptor.create3(SyntaxKind.PlusPlusToken, Shared.TokenRange.UnaryPreincrementExpressions), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterUnaryPredecrementOperator = new Rule(RuleDescriptor.create3(SyntaxKind.MinusMinusToken, Shared.TokenRange.UnaryPredecrementExpressions), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeUnaryPostincrementOperator = new Rule(RuleDescriptor.create2(Shared.TokenRange.UnaryPostincrementExpressions, SyntaxKind.PlusPlusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeUnaryPostdecrementOperator = new Rule(RuleDescriptor.create2(Shared.TokenRange.UnaryPostdecrementExpressions, SyntaxKind.MinusMinusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
             // More unary operator special-casing.
             // DevDiv 181814:  Be careful when removing leading whitespace
             // around unary operators.  Examples:
             //      1 - -2  --X-->  1--2
             //      a + ++b --X-->  a+++b
-            this.SpaceAfterPostincrementWhenFollowedByAdd = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkInc, AuthorTokenKind.atkAdd), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
-            this.SpaceAfterAddWhenFollowedByUnaryPlus = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkAdd, AuthorTokenKind.atkAdd), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
-            this.SpaceAfterAddWhenFollowedByPreincrement = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkAdd, AuthorTokenKind.atkInc), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
-            this.SpaceAfterPostdecrementWhenFollowedBySubtract = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkDec, AuthorTokenKind.atkSub), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
-            this.SpaceAfterSubtractWhenFollowedByUnaryMinus = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkSub, AuthorTokenKind.atkSub), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
-            this.SpaceAfterSubtractWhenFollowedByPredecrement = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkSub, AuthorTokenKind.atkDec), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterPostincrementWhenFollowedByAdd = new Rule(RuleDescriptor.create1(SyntaxKind.PlusPlusToken, SyntaxKind.PlusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterAddWhenFollowedByUnaryPlus = new Rule(RuleDescriptor.create1(SyntaxKind.PlusToken, SyntaxKind.PlusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterAddWhenFollowedByPreincrement = new Rule(RuleDescriptor.create1(SyntaxKind.PlusToken, SyntaxKind.PlusPlusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterPostdecrementWhenFollowedBySubtract = new Rule(RuleDescriptor.create1(SyntaxKind.MinusMinusToken, SyntaxKind.MinusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterSubtractWhenFollowedByUnaryMinus = new Rule(RuleDescriptor.create1(SyntaxKind.MinusToken, SyntaxKind.MinusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
+            this.SpaceAfterSubtractWhenFollowedByPredecrement = new Rule(RuleDescriptor.create1(SyntaxKind.MinusToken, SyntaxKind.MinusMinusToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
 
-            this.NoSpaceBeforeComma = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkComma), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeComma = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CommaToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
-            this.SpaceAfterCertainKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([AuthorTokenKind.atkVar, AuthorTokenKind.atkThrow, AuthorTokenKind.atkNew, AuthorTokenKind.atkDelete, AuthorTokenKind.atkReturn, AuthorTokenKind.atkVoid, AuthorTokenKind.atkTypeof]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
-            this.NoSpaceBeforeOpenParenInFuncCall = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), RuleAction.Delete));
-            this.SpaceAfterFunctionInFuncDecl = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkFunction, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Space));
-            this.NoSpaceBeforeOpenParenInFuncDecl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionOrGetSetDeclContext), RuleAction.Delete));
+            this.SpaceAfterCertainKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([SyntaxKind.VarKeyword, SyntaxKind.ThrowKeyword, SyntaxKind.NewKeyword, SyntaxKind.DeleteKeyword, SyntaxKind.ReturnKeyword, SyntaxKind.VoidKeyword, SyntaxKind.TypeOfKeyword]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.NoSpaceBeforeOpenParenInFuncCall = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), RuleAction.Delete));
+            this.SpaceAfterFunctionInFuncDecl = new Rule(RuleDescriptor.create3(SyntaxKind.FunctionKeyword, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Space));
+            this.NoSpaceBeforeOpenParenInFuncDecl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionOrGetSetDeclContext), RuleAction.Delete));
 
             // Add a space between statements. All keywords except (do,else,case) has open/close parens after them.
             // So, we have a rule to add a space for [),Any], [do,Any], [else,Any], and [case,Any]
-            this.SpaceBetweenStatements = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([AuthorTokenKind.atkRParen, AuthorTokenKind.atkDo, AuthorTokenKind.atkElse, AuthorTokenKind.atkCase]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), RuleAction.Space));
+            this.SpaceBetweenStatements = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.DoKeyword, SyntaxKind.ElseKeyword, SyntaxKind.CaseKeyword]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), RuleAction.Space));
 
-            // This low-pri rule takes care of "try {" and "finally {" in case the rule SpaceBeforeOpenCurlyInControl didn't execute on FormatOnEnter.
-            this.SpaceAfterTryFinally = new Rule(RuleDescriptor.create2(Shared.TokenRange.FromTokens([AuthorTokenKind.atkTry, AuthorTokenKind.atkFinally]), AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            // This low-pri rule takes care of "try {" and "finally {" in case the rule SpaceBeforeOpenBraceInControl didn't execute on FormatOnEnter.
+            this.SpaceAfterTryFinally = new Rule(RuleDescriptor.create2(Shared.TokenRange.FromTokens([SyntaxKind.TryKeyword, SyntaxKind.FinallyKeyword]), SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
 
             // For get/set members, we check for (identifier,identifier) since get/set don't have tokens and they are represented as just an identifier token.
             // Though, we do extra check on the context to make sure we are dealing with get/set node. Example:
             //      get x() {}
             //      set x(val) {}
-            this.SpaceAfterGetSetInMember = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkIdentifier, AuthorTokenKind.atkIdentifier), RuleOperation.create2(new RuleOperationContext(Rules.IsGetSetMemberContext), RuleAction.Space));
+            this.SpaceAfterGetSetInMember = new Rule(RuleDescriptor.create1(SyntaxKind.IdentifierName, SyntaxKind.IdentifierName), RuleOperation.create2(new RuleOperationContext(Rules.IsGetSetMemberContext), RuleAction.Space));
 
             // Special case for binary operators (that are keywords). For these we have to add a space and shouldn't follow any user options.
             this.SpaceBeforeBinaryKeywordOperator = new Rule(RuleDescriptor.create4(Shared.TokenRange.Any, Shared.TokenRange.BinaryKeywordOperators), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
@@ -284,33 +284,33 @@ module Formatting {
             // TypeScript-specific higher priority rules
 
             // Treat constructor as an identifier in a function declaration, and remove spaces between constructor and following left parentheses
-            this.NoSpaceAfterConstructor = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkConstructor, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterConstructor = new Rule(RuleDescriptor.create1(SyntaxKind.ConstructorKeyword, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
             // Use of module as a function call. e.g.: import m2 = module("m2");
-            this.NoSpaceAfterModuleImport = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkModule, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterModuleImport = new Rule(RuleDescriptor.create1(SyntaxKind.ModuleKeyword, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
             // Add a space around certain TypeScript keywords
-            this.SpaceAfterCertainTypeScriptKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([AuthorTokenKind.atkClass, AuthorTokenKind.atkDeclare, AuthorTokenKind.atkEnum, AuthorTokenKind.atkExport, AuthorTokenKind.atkExtends, AuthorTokenKind.atkGet, AuthorTokenKind.atkImplements, AuthorTokenKind.atkImport, AuthorTokenKind.atkInterface, AuthorTokenKind.atkModule, AuthorTokenKind.atkPrivate, AuthorTokenKind.atkPublic, AuthorTokenKind.atkSet, AuthorTokenKind.atkStatic]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
-            this.SpaceBeforeCertainTypeScriptKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.Any, Shared.TokenRange.FromTokens([AuthorTokenKind.atkExtends, AuthorTokenKind.atkImplements])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.SpaceAfterCertainTypeScriptKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.FromTokens([SyntaxKind.ClassKeyword, SyntaxKind.DeclareKeyword, SyntaxKind.EnumKeyword, SyntaxKind.ExportKeyword, SyntaxKind.ExtendsKeyword, SyntaxKind.GetKeyword, SyntaxKind.ImplementsKeyword, SyntaxKind.ImportKeyword, SyntaxKind.InterfaceKeyword, SyntaxKind.ModuleKeyword, SyntaxKind.PrivateKeyword, SyntaxKind.PublicKeyword, SyntaxKind.SetKeyword, SyntaxKind.StaticKeyword]), Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.SpaceBeforeCertainTypeScriptKeywords = new Rule(RuleDescriptor.create4(Shared.TokenRange.Any, Shared.TokenRange.FromTokens([SyntaxKind.ExtendsKeyword, SyntaxKind.ImplementsKeyword])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
 
-            // Treat string literals in module names as identifiers, and add a space between the literal and the opening curly braces, e.g.: module "m2" {
-            this.SpaceAfterModuleName = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkString, AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsModuleDeclContext), RuleAction.Space));
+            // Treat string literals in module names as identifiers, and add a space between the literal and the opening Brace braces, e.g.: module "m2" {
+            this.SpaceAfterModuleName = new Rule(RuleDescriptor.create1(SyntaxKind.StringLiteral, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsModuleDeclContext), RuleAction.Space));
 
             // Lambda expressions
-            this.SpaceAfterArrow = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkArrow, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.SpaceAfterArrow = new Rule(RuleDescriptor.create3(SyntaxKind.EqualsGreaterThanToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
 
             // Optional parameters and var args
-            this.NoSpaceAfterEllipsis = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkEllipsis, AuthorTokenKind.atkIdentifier), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceAfterOptionalParameters = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkQMark, Shared.TokenRange.FromTokens([AuthorTokenKind.atkRParen, AuthorTokenKind.atkComma])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
+            this.NoSpaceAfterEllipsis = new Rule(RuleDescriptor.create1(SyntaxKind.DotDotDotToken, SyntaxKind.IdentifierName), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterOptionalParameters = new Rule(RuleDescriptor.create3(SyntaxKind.QuestionToken, Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.CommaToken])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
 
             // Remove spaces in empty interface literals. e.g.: x: {}
-            this.NoSpaceBetweenEmptyInterfaceCurlyBrackets = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkLCurly, AuthorTokenKind.atkRCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsInterfaceContext), RuleAction.Delete));
+            this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Rule(RuleDescriptor.create1(SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsInterfaceContext), RuleAction.Delete));
 
             // These rules are higher in priority than user-configurable rules.
             this.HighPriorityCommonRules =
             [
                 this.IgnoreBeforeComment, this.IgnoreAfterLineComment,
-                this.NoSpaceBeforeSemicolon, this.NoSpaceBeforeColon, this.SpaceAfterColon, this.NoSpaceBeforeQMark, this.SpaceAfterQMark, this.NewLineAfterCloseCurly,
+                this.NoSpaceBeforeSemicolon, this.NoSpaceBeforeColon, this.SpaceAfterColon, this.NoSpaceBeforeQMark, this.SpaceAfterQMark, this.NewLineAfterCloseBrace,
                 this.NoSpaceBeforeDot, this.NoSpaceAfterDot,
                 this.NoSpaceAfterUnaryPrefixOperator,
                 this.NoSpaceAfterUnaryPreincrementOperator, this.NoSpaceAfterUnaryPredecrementOperator,
@@ -319,9 +319,9 @@ module Formatting {
                 this.SpaceAfterAddWhenFollowedByUnaryPlus, this.SpaceAfterAddWhenFollowedByPreincrement,
                 this.SpaceAfterPostdecrementWhenFollowedBySubtract,
                 this.SpaceAfterSubtractWhenFollowedByUnaryMinus, this.SpaceAfterSubtractWhenFollowedByPredecrement,
-                this.SpaceAfterOpenCurly, this.SpaceBeforeCloseCurly, this.SpaceAfterCloseCurly, this.SpaceBetweenCloseCurlyAndElse, this.SpaceBetweenCloseCurlyAndWhile, this.NoSpaceBetweenEmptyCurlyBrackets,
-                this.NewLineBeforeCloseCurlyInFunctionOrControl,
-                this.SpaceAfterFunctionInFuncDecl, this.NewLineAfterOpenCurlyInBlockContext, this.SpaceAfterGetSetInMember,
+                this.SpaceAfterOpenBrace, this.SpaceBeforeCloseBrace, this.SpaceAfterCloseBrace, this.SpaceBetweenCloseBraceAndElse, this.SpaceBetweenCloseBraceAndWhile, this.NoSpaceBetweenEmptyBraceBrackets,
+                this.NewLineBeforeCloseBraceInFunctionOrControl,
+                this.SpaceAfterFunctionInFuncDecl, this.NewLineAfterOpenBraceInBlockContext, this.SpaceAfterGetSetInMember,
                 this.SpaceAfterCertainKeywords,
                 this.NoSpaceBeforeOpenParenInFuncCall,
                 this.SpaceBeforeBinaryKeywordOperator, this.SpaceAfterBinaryKeywordOperator,
@@ -333,7 +333,7 @@ module Formatting {
                 this.SpaceAfterArrow,
                 this.NoSpaceAfterEllipsis,
                 this.NoSpaceAfterOptionalParameters,
-                this.NoSpaceBetweenEmptyInterfaceCurlyBrackets,
+                this.NoSpaceBetweenEmptyInterfaceBraceBrackets
             ];
 
             // These rules are lower in priority than user-configurable rules.
@@ -347,13 +347,13 @@ module Formatting {
                 this.SpaceBetweenStatements, this.SpaceAfterTryFinally
             ];
 
-            //#endregion
-
-            //#region Rules controlled by user options
+            ///
+            /// Rules controlled by user options
+            ///
 
             // Insert space after comma delimiter
-            this.SpaceAfterComma = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkComma, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
-            this.NoSpaceAfterComma = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkComma, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.SpaceAfterComma = new Rule(RuleDescriptor.create3(SyntaxKind.CommaToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.NoSpaceAfterComma = new Rule(RuleDescriptor.create3(SyntaxKind.CommaToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
             // Insert space before and after binary operators
             this.SpaceBeforeBinaryOperator = new Rule(RuleDescriptor.create4(Shared.TokenRange.Any, Shared.TokenRange.BinaryOperators), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Space));
@@ -362,239 +362,277 @@ module Formatting {
             this.NoSpaceAfterBinaryOperator = new Rule(RuleDescriptor.create4(Shared.TokenRange.BinaryOperators, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), RuleAction.Delete));
 
             // Insert space after keywords in control flow statements
-            this.SpaceAfterKeywordInControl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Keywords, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext), RuleAction.Space));
-            this.NoSpaceAfterKeywordInControl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Keywords, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext), RuleAction.Delete));
+            this.SpaceAfterKeywordInControl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Keywords, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext), RuleAction.Space));
+            this.NoSpaceAfterKeywordInControl = new Rule(RuleDescriptor.create2(Shared.TokenRange.Keywords, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext), RuleAction.Delete));
 
-            // Open curly braces after function
+            // Open Brace braces after function
             //TypeScript: Function can have return types, which can be made of tons of different token kinds
-            this.FunctionOpenCurlyLeftTokenRange = Shared.TokenRange.Any;
-            this.FunctionOpenCurlyLeftTokenRange_Js = Shared.TokenRange.FromTokens([AuthorTokenKind.atkRParen, AuthorTokenKind.atkComment]);
-            this.SpaceBeforeOpenCurlyInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenCurlyLeftTokenRange, AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
-            this.NewLineBeforeOpenCurlyInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenCurlyLeftTokenRange, AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
+            this.FunctionOpenBraceLeftTokenRange = Shared.TokenRange.Any;
+            this.FunctionOpenBraceLeftTokenRange_Js = Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.SingleLineCommentTrivia]);
+            this.SpaceBeforeOpenBraceInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
+            this.NewLineBeforeOpenBraceInFunction = new Rule(RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
 
-            // Open curly braces after TypeScript module/class/interface
-            this.TypeScriptOpenCurlyLeftTokenRange = Shared.TokenRange.FromTokens([AuthorTokenKind.atkIdentifier, AuthorTokenKind.atkComment]);
-            this.SpaceBeforeOpenCurlyInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenCurlyLeftTokenRange, AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
-            this.NewLineBeforeOpenCurlyInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenCurlyLeftTokenRange, AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
+            // Open Brace braces after TypeScript module/class/interface
+            this.TypeScriptOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.SingleLineCommentTrivia]);
+            this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
+            this.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock = new Rule(RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
 
-            // Open curly braces after control block
-            this.ControlOpenCurlyLeftTokenRange = Shared.TokenRange.FromTokens([AuthorTokenKind.atkRParen, AuthorTokenKind.atkComment, AuthorTokenKind.atkDo, AuthorTokenKind.atkTry, AuthorTokenKind.atkFinally, AuthorTokenKind.atkElse]);
-            this.SpaceBeforeOpenCurlyInControl = new Rule(RuleDescriptor.create2(this.ControlOpenCurlyLeftTokenRange, AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
-            this.NewLineBeforeOpenCurlyInControl = new Rule(RuleDescriptor.create2(this.ControlOpenCurlyLeftTokenRange, AuthorTokenKind.atkLCurly), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
+            // Open Brace braces after control block
+            this.ControlOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.SingleLineCommentTrivia, SyntaxKind.DoKeyword, SyntaxKind.TryKeyword, SyntaxKind.FinallyKeyword, SyntaxKind.ElseKeyword]);
+            this.SpaceBeforeOpenBraceInControl = new Rule(RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), RuleAction.Space), RuleFlags.CanDeleteNewLines);
+            this.NewLineBeforeOpenBraceInControl = new Rule(RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, SyntaxKind.OpenBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsControlDeclContext, Rules.IsMultilineBlockContext), RuleAction.NewLine), RuleFlags.CanDeleteNewLines);
 
             // Insert space after semicolon in for statement
-            this.SpaceAfterSemicolonInFor = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkSColon, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), RuleAction.Space));
-            this.NoSpaceAfterSemicolonInFor = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkSColon, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), RuleAction.Delete));
+            this.SpaceAfterSemicolonInFor = new Rule(RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), RuleAction.Space));
+            this.NoSpaceAfterSemicolonInFor = new Rule(RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), RuleAction.Delete));
 
             // Insert space after opening and before closing nonempty parenthesis
-            this.SpaceAfterOpenParen = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkLParen, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
-            this.SpaceBeforeCloseParen = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkRParen), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
-            this.NoSpaceBetweenParens = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkLParen, AuthorTokenKind.atkRParen), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceAfterOpenParen = new Rule(RuleDescriptor.create3(AuthorTokenKind.atkLParen, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
-            this.NoSpaceBeforeCloseParen = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, AuthorTokenKind.atkRParen), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.SpaceAfterOpenParen = new Rule(RuleDescriptor.create3(SyntaxKind.OpenParenToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.SpaceBeforeCloseParen = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Space));
+            this.NoSpaceBetweenParens = new Rule(RuleDescriptor.create1(SyntaxKind.OpenParenToken, SyntaxKind.CloseParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceAfterOpenParen = new Rule(RuleDescriptor.create3(SyntaxKind.OpenParenToken, Shared.TokenRange.Any), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
+            this.NoSpaceBeforeCloseParen = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
 
             // Insert space after function keyword for anonymous functions
-            this.SpaceAfterAnonymousFunctionKeyword = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkFunction, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Space));
-            this.NoSpaceAfterAnonymousFunctionKeyword = new Rule(RuleDescriptor.create1(AuthorTokenKind.atkFunction, AuthorTokenKind.atkLParen), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Delete));
-
-            //#endregion
+            this.SpaceAfterAnonymousFunctionKeyword = new Rule(RuleDescriptor.create1(SyntaxKind.FunctionKeyword, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Space));
+            this.NoSpaceAfterAnonymousFunctionKeyword = new Rule(RuleDescriptor.create1(SyntaxKind.FunctionKeyword, SyntaxKind.OpenParenToken), RuleOperation.create2(new RuleOperationContext(Rules.IsFunctionDeclContext), RuleAction.Delete));
         }
 
-        //#region Contexts
+        ///
+        /// Contexts
+        ///
 
         static IsForContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkFor;
+            return context.contextNode.kind() === SyntaxKind.ForStatement;
         }
 
         static IsNotForContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.Kind != AuthorParseNodeKind.apnkFor;
+            return !Rules.IsForContext(context);
         }
 
         static IsBinaryOpContext(context: FormattingContext): bool {
-            if (context.contextNode.AuthorNode.Details.ast != null) {
-                switch (context.contextNode.AuthorNode.Details.ast.nodeType) {
-                    case TypeScript.NodeType.ImportDeclaration:
-                        return true;
-                }
-            }
 
-            switch (context.contextNode.AuthorNode.Details.Kind) {
-                case AuthorParseNodeKind.apnkAdd:
-                case AuthorParseNodeKind.apnkSub:
-                case AuthorParseNodeKind.apnkMul:
-                case AuthorParseNodeKind.apnkDiv:
-                case AuthorParseNodeKind.apnkMod:
-                case AuthorParseNodeKind.apnkOr:
-                case AuthorParseNodeKind.apnkXor:
-                case AuthorParseNodeKind.apnkAnd:
-                case AuthorParseNodeKind.apnkEq:
-                case AuthorParseNodeKind.apnkNe:
-                case AuthorParseNodeKind.apnkLt:
-                case AuthorParseNodeKind.apnkLe:
-                case AuthorParseNodeKind.apnkGe:
-                case AuthorParseNodeKind.apnkGt:
-
-                case AuthorParseNodeKind.apnkAsg:
-                case AuthorParseNodeKind.apnkInstOf:
-                case AuthorParseNodeKind.apnkIn:
-                case AuthorParseNodeKind.apnkForIn:
-                case AuthorParseNodeKind.apnkEqv:
-                case AuthorParseNodeKind.apnkNEqv:
-
-                case AuthorParseNodeKind.apnkLogOr:
-                case AuthorParseNodeKind.apnkLogAnd:
-                case AuthorParseNodeKind.apnkLsh:
-                case AuthorParseNodeKind.apnkRsh:
-                case AuthorParseNodeKind.apnkRs2:
-
-                case AuthorParseNodeKind.apnkQmark:
-                case AuthorParseNodeKind.apnkAsgAdd:
-                case AuthorParseNodeKind.apnkAsgSub:
-                case AuthorParseNodeKind.apnkAsgMul:
-                case AuthorParseNodeKind.apnkAsgDiv:
-                case AuthorParseNodeKind.apnkAsgMod:
-                case AuthorParseNodeKind.apnkAsgAnd:
-                case AuthorParseNodeKind.apnkAsgXor:
-                case AuthorParseNodeKind.apnkAsgOr:
-                case AuthorParseNodeKind.apnkAsgLsh:
-                case AuthorParseNodeKind.apnkAsgRsh:
-                case AuthorParseNodeKind.apnkAsgRs2:
+            switch (context.contextNode.kind()) {
+                // binary expressions
+                case SyntaxKind.CommaExpression:
+                case SyntaxKind.AssignmentExpression:
+                case SyntaxKind.AddAssignmentExpression:
+                case SyntaxKind.SubtractAssignmentExpression:
+                case SyntaxKind.MultiplyAssignmentExpression:
+                case SyntaxKind.DivideAssignmentExpression:
+                case SyntaxKind.ModuloAssignmentExpression:
+                case SyntaxKind.AndAssignmentExpression:
+                case SyntaxKind.ExclusiveOrAssignmentExpression:
+                case SyntaxKind.OrAssignmentExpression:
+                case SyntaxKind.LeftShiftAssignmentExpression:
+                case SyntaxKind.SignedRightShiftAssignmentExpression:
+                case SyntaxKind.UnsignedRightShiftAssignmentExpression:
+                case SyntaxKind.ConditionalExpression:
+                case SyntaxKind.LogicalOrExpression:
+                case SyntaxKind.LogicalAndExpression:
+                case SyntaxKind.BitwiseOrExpression:
+                case SyntaxKind.BitwiseExclusiveOrExpression:
+                case SyntaxKind.BitwiseAndExpression:
+                case SyntaxKind.EqualsWithTypeConversionExpression:
+                case SyntaxKind.NotEqualsWithTypeConversionExpression:
+                case SyntaxKind.EqualsExpression:
+                case SyntaxKind.NotEqualsExpression:
+                case SyntaxKind.LessThanExpression:
+                case SyntaxKind.GreaterThanExpression:
+                case SyntaxKind.LessThanOrEqualExpression:
+                case SyntaxKind.GreaterThanOrEqualExpression:
+                case SyntaxKind.InstanceOfExpression:
+                case SyntaxKind.InExpression:
+                case SyntaxKind.LeftShiftExpression:
+                case SyntaxKind.SignedRightShiftExpression:
+                case SyntaxKind.UnsignedRightShiftExpression:
+                case SyntaxKind.MultiplyExpression:
+                case SyntaxKind.DivideExpression:
+                case SyntaxKind.ModuloExpression:
+                case SyntaxKind.AddExpression:
+                case SyntaxKind.SubtractExpression:
                     return true;
 
-                case AuthorParseNodeKind.apnkVarDecl:
-                    var varOrArgDecl = <TypeScript.BoundDecl>context.contextNode.AuthorNode.Details.ast;
-
-                    // TypeScript: Special case for "?" tokens: We don't want to format them as 
-                    //         as binary operators unless they are in the initialiation expression
-                    var tokenSpan: Span = null;
-                    if (context.tokenSpan.tokenID === TypeScript.TokenID.Question)
-                        tokenSpan = context.tokenSpan.Span.span;
-                    else if (context.nextTokenSpan.tokenID === TypeScript.TokenID.Question)
-                        tokenSpan = context.nextTokenSpan.Span.span;
-
-                    // TypeScript: Special case for ":" tokens: We don't want to format them as 
-                    //         as binary operators if they are the "type" part of the VarDecl.
-                    if (context.tokenSpan.tokenID === TypeScript.TokenID.Colon)
-                        tokenSpan = context.tokenSpan.Span.span;
-                    else if (context.nextTokenSpan.tokenID === TypeScript.TokenID.Colon)
-                        tokenSpan = context.nextTokenSpan.Span.span;
-
-                    if (tokenSpan != null) {
-                        if (varOrArgDecl != null && (varOrArgDecl.nodeType === TypeScript.NodeType.VarDecl || varOrArgDecl.nodeType === TypeScript.NodeType.ArgDecl)) {
-                            if (TypeScript.isValidAstNode(varOrArgDecl)) {
-                                if (!TypeScript.isValidAstNode(varOrArgDecl.init)) {
-                                    // If no init expression, the token is not part of the binary expression
-                                    return false;
-                                }
-
-                                var initSpan = Span.FromBounds(varOrArgDecl.init.minChar, varOrArgDecl.init.limChar);
-                                return initSpan.Contains(tokenSpan);
-                            }
-                        }
-                    }
-                    return true;
-
-                case AuthorParseNodeKind.apnkFncDecl:
-                    var fncDecl = <TypeScript.FuncDecl>context.contextNode.AuthorNode.Details.ast;
-                    // Treat "=>" as a binary expression
-                    if (context.tokenSpan.tokenID === TypeScript.TokenID.EqualsGreaterThan || context.nextTokenSpan.tokenID === TypeScript.TokenID.EqualsGreaterThan) { 
-                        if (fncDecl != null && TypeScript.hasFlag(fncDecl.fncFlags, TypeScript.FncFlags.IsFunctionExpression)) { 
-                            return true;
-                        }
-                    }
-                    break;
-
-                default:
-                    return false;
+                // equal in import a = module('a');
+                case SyntaxKind.ImportDeclaration:
+                // equal in var a = 0;
+                case SyntaxKind.VariableDeclarator:
+                case SyntaxKind.EqualsValueClause:
+                    return context.currentTokenSpan.kind() === SyntaxKind.EqualsToken || context.nextTokenSpan.kind() === SyntaxKind.EqualsToken;
             }
+
+            //if (context.contextNode.AuthorNode.Details.ast != null) {
+            //    switch (context.contextNode.AuthorNode.Details.ast.nodeType) {
+            //        case TypeScript.NodeType.ImportDeclaration:
+            //            return true;
+            //    }
+            //}
+
+            //switch (context.contextNode.AuthorNode.Details.Kind) {
+            //    case AuthorParseNodeKind.apnkAdd:
+            //    case AuthorParseNodeKind.apnkSub:
+            //    case AuthorParseNodeKind.apnkMul:
+            //    case AuthorParseNodeKind.apnkDiv:
+            //    case AuthorParseNodeKind.apnkMod:
+            //    case AuthorParseNodeKind.apnkOr:
+            //    case AuthorParseNodeKind.apnkXor:
+            //    case AuthorParseNodeKind.apnkAnd:
+            //    case AuthorParseNodeKind.apnkEq:
+            //    case AuthorParseNodeKind.apnkNe:
+            //    case AuthorParseNodeKind.apnkLt:
+            //    case AuthorParseNodeKind.apnkLe:
+            //    case AuthorParseNodeKind.apnkGe:
+            //    case AuthorParseNodeKind.apnkGt:
+
+            //    case AuthorParseNodeKind.apnkAsg:
+            //    case AuthorParseNodeKind.apnkInstOf:
+            //    case AuthorParseNodeKind.apnkIn:
+            //    case AuthorParseNodeKind.apnkForIn:
+            //    case AuthorParseNodeKind.apnkEqv:
+            //    case AuthorParseNodeKind.apnkNEqv:
+
+            //    case AuthorParseNodeKind.apnkLogOr:
+            //    case AuthorParseNodeKind.apnkLogAnd:
+            //    case AuthorParseNodeKind.apnkLsh:
+            //    case AuthorParseNodeKind.apnkRsh:
+            //    case AuthorParseNodeKind.apnkRs2:
+
+            //    case AuthorParseNodeKind.apnkQmark:
+            //    case AuthorParseNodeKind.apnkAsgAdd:
+            //    case AuthorParseNodeKind.apnkAsgSub:
+            //    case AuthorParseNodeKind.apnkAsgMul:
+            //    case AuthorParseNodeKind.apnkAsgDiv:
+            //    case AuthorParseNodeKind.apnkAsgMod:
+            //    case AuthorParseNodeKind.apnkAsgAnd:
+            //    case AuthorParseNodeKind.apnkAsgXor:
+            //    case AuthorParseNodeKind.apnkAsgOr:
+            //    case AuthorParseNodeKind.apnkAsgLsh:
+            //    case AuthorParseNodeKind.apnkAsgRsh:
+            //    case AuthorParseNodeKind.apnkAsgRs2:
+            //        return true;
+
+            //    case AuthorParseNodeKind.apnkVarDecl:
+            //        //var varOrArgDecl = <TypeScript.BoundDecl>context.contextNode.AuthorNode.Details.ast;
+
+            //        //// TypeScript: Special case for "?" tokens: We don't want to format them as 
+            //        ////         as binary operators unless they are in the initialiation expression
+            //        //var tokenSpan: Span = null;
+            //        //if (context.tokenSpan.tokenID === TypeScript.TokenID.Question)
+            //        //    tokenSpan = context.tokenSpan.Span.span;
+            //        //else if (context.nextTokenSpan.tokenID === TypeScript.TokenID.Question)
+            //        //    tokenSpan = context.nextTokenSpan.Span.span;
+
+            //        //// TypeScript: Special case for ":" tokens: We don't want to format them as 
+            //        ////         as binary operators if they are the "type" part of the VarDecl.
+            //        //if (context.tokenSpan.tokenID === TypeScript.TokenID.Colon)
+            //        //    tokenSpan = context.tokenSpan.Span.span;
+            //        //else if (context.nextTokenSpan.tokenID === TypeScript.TokenID.Colon)
+            //        //    tokenSpan = context.nextTokenSpan.Span.span;
+
+            //        //if (tokenSpan != null) {
+            //        //    if (varOrArgDecl != null && (varOrArgDecl.nodeType === TypeScript.NodeType.VarDecl || varOrArgDecl.nodeType === TypeScript.NodeType.ArgDecl)) {
+            //        //        if (TypeScript.isValidAstNode(varOrArgDecl)) {
+            //        //            if (!TypeScript.isValidAstNode(varOrArgDecl.init)) {
+            //        //                // If no init expression, the token is not part of the binary expression
+            //        //                return false;
+            //        //            }
+
+            //        //            var initSpan = Span.FromBounds(varOrArgDecl.init.minChar, varOrArgDecl.init.limChar);
+            //        //            return initSpan.Contains(tokenSpan);
+            //        //        }
+            //        //    }
+            //        //}
+            //        return true;
+
+            //    case AuthorParseNodeKind.apnkFncDecl:
+            //        //var fncDecl = <TypeScript.FuncDecl>context.contextNode.AuthorNode.Details.ast;
+            //        //// Treat "=>" as a binary expression
+            //        //if (context.tokenSpan.tokenID === TypeScript.TokenID.EqualsGreaterThan || context.nextTokenSpan.tokenID === TypeScript.TokenID.EqualsGreaterThan) { 
+            //        //    if (fncDecl != null && TypeScript.hasFlag(fncDecl.fncFlags, TypeScript.FncFlags.IsFunctionExpression)) { 
+            //        //        return true;
+            //        //    }
+            //        //}
+            //        break;
+
+            //    default:
+            //        return false;
+            //}
+            return false;
         }
 
         static IsNotBinaryOpContext(context: FormattingContext): bool {
-            return !IsBinaryOpContext(context);
+            return !Rules.IsBinaryOpContext(context);
         }
 
-        static IsBlockContext(node: ParseNode): bool {
-            if (IsTypeScriptDeclWithBlockContextNode(node))
+        static IsBlockContext(context: FormattingContext): bool {
+            if (Rules.IsTypeScriptDeclWithBlockContext(context)) {
                 return true;
-
-            switch (node.AuthorNode.Details.Kind) {
-                case AuthorParseNodeKind.apnkBlock:
-                case AuthorParseNodeKind.apnkList:
-                case AuthorParseNodeKind.apnkObject:
-
-                case AuthorParseNodeKind.apnkFncDecl:
-
-                case AuthorParseNodeKind.apnkFor:
-                case AuthorParseNodeKind.apnkIf:
-                case AuthorParseNodeKind.apnkWhile:
-                case AuthorParseNodeKind.apnkDoWhile:
-                case AuthorParseNodeKind.apnkForIn:
-                case AuthorParseNodeKind.apnkWith:
-
-                case AuthorParseNodeKind.apnkSwitch:
-
-                case AuthorParseNodeKind.apnkTryCatch:
-                case AuthorParseNodeKind.apnkCatch:
-                case AuthorParseNodeKind.apnkTry:
-                case AuthorParseNodeKind.apnkFinally:
-                case AuthorParseNodeKind.apnkTryFinally:
-                    return true;
-
-                default:
-                    return false;
             }
-        }
 
-        static IsTypeScriptDeclWithBlockContextNode(node: ParseNode): bool {
-            switch (node.AuthorNode.Details.nodeType) {
-                case TypeScript.NodeType.ModuleDeclaration:
-                case TypeScript.NodeType.InterfaceDeclaration:
-                case TypeScript.NodeType.ClassDeclaration:
+            switch (context.contextNode.kind()) {
+                case SyntaxKind.Block:
+                case SyntaxKind.SwitchStatement:
+                case SyntaxKind.ObjectLiteralExpression:
                     return true;
-
-                default:
-                    return false;
             }
+
+            return false;
         }
 
         static IsSingleLineBlockContext(context: FormattingContext): bool {
-            if (!IsBlockContext(context.contextNode))
+            if (!Rules.IsBlockContext(context))
                 return false;
 
             return context.ContextNodeAllOnSameLine();
         }
 
         static IsMultilineBlockContext(context: FormattingContext): bool {
-            if (!IsBlockContext(context.contextNode))
+            if (!Rules.IsBlockContext(context))
                 return false;
 
             return !context.ContextNodeAllOnSameLine();
         }
 
         static IsFunctionDeclContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkFncDecl;
+            switch (context.contextNode.kind()) {
+                case SyntaxKind.FunctionDeclaration:
+                case SyntaxKind.MemberFunctionDeclaration:
+                case SyntaxKind.GetMemberAccessorDeclaration:
+                case SyntaxKind.SetMemberAccessorDeclaration:
+                case SyntaxKind.MethodSignature:
+                case SyntaxKind.CallSignature:
+                case SyntaxKind.FunctionExpression:
+                    return true;
+            }
+
+            return false;
         }
 
         static IsTypeScriptDeclWithBlockContext(context: FormattingContext): bool {
-            return IsTypeScriptDeclWithBlockContextNode(context.contextNode);
+            switch (context.contextNode.kind()) {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.ObjectType:
+                case SyntaxKind.ModuleDeclaration:
+                    return true;
+            }
+            
+            return false;
         }
 
         static IsControlDeclContext(context: FormattingContext): bool {
-            switch (context.contextNode.AuthorNode.Details.Kind) {
-                case AuthorParseNodeKind.apnkFor:
-                case AuthorParseNodeKind.apnkIf:
-                case AuthorParseNodeKind.apnkWhile:
-                case AuthorParseNodeKind.apnkDoWhile:
-                case AuthorParseNodeKind.apnkForIn:
-                case AuthorParseNodeKind.apnkWith:
-
-                case AuthorParseNodeKind.apnkSwitch:
-
-                case AuthorParseNodeKind.apnkTryCatch:
-                case AuthorParseNodeKind.apnkCatch:
-                case AuthorParseNodeKind.apnkTry:
-                case AuthorParseNodeKind.apnkFinally:
-                case AuthorParseNodeKind.apnkTryFinally:
+            switch (context.contextNode.kind()) {
+                case SyntaxKind.IfStatement:
+                case SyntaxKind.SwitchStatement:
+                case SyntaxKind.ForStatement:
+                case SyntaxKind.ForInStatement:
+                case SyntaxKind.WhileStatement:
+                case SyntaxKind.TryStatement:
+                case SyntaxKind.DoStatement:
+                case SyntaxKind.WithStatement:
+                case SyntaxKind.ElseClause:
+                case SyntaxKind.CatchClause:
+                case SyntaxKind.FinallyClause:
                     return true;
 
                 default:
@@ -603,36 +641,47 @@ module Formatting {
         }
 
         static  IsObjectContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkObject;
+            return context.contextNode.kind() === SyntaxKind.ObjectLiteralExpression;
         }
 
         static IsFunctionCallContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkCall;
+            return context.contextNode.kind() === SyntaxKind.InvocationExpression;
         }
 
         static IsNewContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkNew;
+            return context.contextNode.kind() === SyntaxKind.ObjectCreationExpression;
         }
 
         static IsFunctionCallOrNewContext(context: FormattingContext): bool {
-            return IsFunctionCallContext(context) || IsNewContext(context);
+            return Rules.IsFunctionCallContext(context) || Rules.IsNewContext(context);
         }
 
         static IsSameLineTokenContext(context: FormattingContext): bool {
             return context.TokensAreOnSameLine();
         }
 
-        static IsSameLineSiblingNodeContext(context: FormattingContext): bool {
-            return context.TokensAreSiblingNodesOnSameLine();
+        static IsCodeBlockContext(context: FormattingContext): bool {
+            switch (context.currentTokenParent.kind()) {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.ModuleDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.Block:
+                case SyntaxKind.SwitchStatement:
+                    return true;
+            }
+            return false;
         }
 
         static IsMultilineChildParentContext(context: FormattingContext): bool {
-            var parent = context.contextNode.Parent;
+            /// TODO: Figure out if we still need this rule
+            return false;
 
-            if (parent == null)
-                return false;
+            //var parent = context.contextNode.Parent;
 
-            return parent.AuthorNode.Details.EndOffset == context.nextTokenSpan.Span.startPosition() && IsMultilineBlockContext(context);
+            //if (parent == null)
+            //    return false;
+
+            //return parent.AuthorNode.Details.EndOffset == context.nextTokenSpan.Span.startPosition() && IsMultilineBlockContext(context);
         }
 
         static IsNotFormatOnEnter(context: FormattingContext): bool {
@@ -640,7 +689,7 @@ module Formatting {
         }
 
         static IsSameLineTokenOrMultilineBlockContext(context: FormattingContext): bool {
-            //// This check is mainly used inside SpaceBeforeOpenCurlyInControl and SpaceBeforeOpenCurlyInFunction.
+            //// This check is mainly used inside SpaceBeforeOpenBraceInControl and SpaceBeforeOpenBraceInFunction.
             ////
             //// Ex: 
             //// if (1)     { ....
@@ -657,34 +706,31 @@ module Formatting {
             //// }
             ////      * ) and { are on differnet lines. We only need to format if the block is multiline context. So in this case we format.
 
-            return context.TokensAreOnSameLine() || IsMultilineBlockContext(context);
+            return context.TokensAreOnSameLine() || Rules.IsMultilineBlockContext(context);
         }
 
         static IsFunctionOrGetSetDeclContext(context: FormattingContext): bool {
-            return IsFunctionDeclContext(context) || IsGetSetMemberContext(context);
+            return Rules.IsFunctionDeclContext(context) || Rules.IsGetSetMemberContext(context);
         }
 
         static IsGetSetMemberContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkGetMember ||
-                context.contextNode.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkSetMember;
-        }
+            switch (context.contextNode.kind()) {
+                case SyntaxKind.GetAccessorPropertyAssignment:
+                case SyntaxKind.GetMemberAccessorDeclaration:
+                case SyntaxKind.SetAccessorPropertyAssignment:
+                case SyntaxKind.SetMemberAccessorDeclaration:
+                    return true;
+            }
 
-        static IsFirstTokenLineCommentContext(context: FormattingContext): bool {
-            var token = context.tokenSpan;
-            var twoCharSpan = token.Span.Intersection(new Span(token.Span.startPosition(), 2));
-            return twoCharSpan != null && twoCharSpan.GetText() == "//";
+            return false;
         }
 
         static IsModuleDeclContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.nodeType == TypeScript.NodeType.ModuleDeclaration;
+            return context.contextNode.kind() === SyntaxKind.ModuleDeclaration;
         }
 
         static IsInterfaceContext(context: FormattingContext): bool {
-            return context.contextNode.AuthorNode.Details.nodeType == TypeScript.NodeType.List && 
-                   context.contextNode.Parent != null &&
-                   context.contextNode.Parent.AuthorNode.Details.nodeType == TypeScript.NodeType.InterfaceDeclaration;
+            return context.contextNode.kind() === SyntaxKind.ObjectType;
         }
-
-        //#endregion
     }
 }

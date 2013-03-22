@@ -17,15 +17,17 @@
 ///<reference path='..\compiler\typescript.ts' />
 ///<reference path='coreServices.ts' />
 ///<reference path='classifier.ts' />
-///<reference path='compilerState.ts' />
-///<reference path='scriptSyntaxAST.ts' />
-///<reference path='braceMatchingManager.ts' />
+///<reference path='CompilerState.ts' />
 ///<reference path='symbolSet.ts' />
 ///<reference path='symbolTree.ts' />
 ///<reference path='overridesCollector.ts' />
 ///<reference path='languageService.ts' />
+///<reference path='pullLanguageService.ts' />
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />
+///<reference path='outliningElementsCollector.ts' />
+///<reference path='braceMatcher.ts' />
+///<reference path='indenter.ts' />
 
 module Services {
     export function copyDataObject(dst: any, src: any): any {
@@ -54,8 +56,10 @@ module Services {
         return true;
     }
 
-    export class TypeScriptServicesFactory {
-        public createLanguageService(host: Services.ILanguageServiceHost): Services.ILanguageService {
+    export class TypeScriptServicesFactory implements IShimFactory {
+        private _shims: IShim[] = [];
+
+        public createPullLanguageService(host: Services.ILanguageServiceHost): Services.ILanguageService {
             try {
                 return new Services.LanguageService(host);
             }
@@ -68,8 +72,8 @@ module Services {
         public createLanguageServiceShim(host: ILanguageServiceShimHost): ILanguageServiceShim {
             try {
                 var hostAdapter = new LanguageServiceShimHostAdapter(host);
-                var languageService = this.createLanguageService(hostAdapter);
-                return new LanguageServiceShim(host, languageService);
+                var pullLanguageService = this.createPullLanguageService(hostAdapter);
+                return new LanguageServiceShim(this, host, pullLanguageService);
             }
             catch (err) {
                 Services.logInternalError(host, err);
@@ -89,7 +93,7 @@ module Services {
 
         public createClassifierShim(host: Services.IClassifierHost): ClassifierShim {
             try {
-                return new ClassifierShim(host);
+                return new ClassifierShim(this, host);
             }
             catch (err) {
                 Services.logInternalError(host, err);
@@ -109,13 +113,32 @@ module Services {
 
         public createCoreServicesShim(host: Services.ICoreServicesHost): CoreServicesShim {
             try {
-
-                return new CoreServicesShim(host);
+                return new CoreServicesShim(this, host);
             }
             catch (err) {
                 Services.logInternalError(host.logger, err);
                 throw err;
             }
+        }
+
+        public close(): void {
+            // Forget all the registered shims
+            this._shims = [];
+        }
+
+        public registerShim(shim: IShim): void {
+            this._shims.push(shim);
+        }
+
+        public unregisterShim(shim: IShim): void {
+            for(var i =0, n = this._shims.length; i<n; i++) {
+                if (this._shims[i] === shim) {
+                    delete this._shims[i];
+                    return;
+                }
+            }
+
+            throw TypeScript.Errors.invalidOperation();
         }
     }
 }

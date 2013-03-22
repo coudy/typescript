@@ -1,0 +1,68 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "diagnostics": [
+        {
+            "_position": 8,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_character_0",
+            "_arguments": [
+                "\"\\\""
+            ]
+        },
+        {
+            "_position": 8,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "module, class, interface, enum, import or statement"
+            ]
+        }
+    ],
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 17,
+        "hasSkippedText": true,
+        "moduleElements": [],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "fullWidth": 17,
+            "text": "",
+            "hasLeadingTrivia": true,
+            "hasLeadingComment": true,
+            "hasLeadingSkippedText": true,
+            "leadingTrivia": [
+                {
+                    "kind": "MultiLineCommentTrivia",
+                    "text": "/*foo*/"
+                },
+                {
+                    "kind": "WhitespaceTrivia",
+                    "text": " "
+                },
+                {
+                    "kind": "SkippedTextTrivia",
+                    "text": "\\"
+                },
+                {
+                    "kind": "WhitespaceTrivia",
+                    "text": " "
+                },
+                {
+                    "kind": "MultiLineCommentTrivia",
+                    "text": "/*bar*/"
+                }
+            ]
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0
+        ],
+        "length": 17
+    }
+}

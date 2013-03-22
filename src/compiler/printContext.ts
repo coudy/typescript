@@ -23,7 +23,7 @@ module TypeScript {
         public indentStrings: string[] = [];
         public indentAmt = 0;
 
-        constructor (public outfile: ITextWriter, public parser: Parser) {
+        constructor (public outfile: ITextWriter) {
         }
 
         public increaseIndent() {

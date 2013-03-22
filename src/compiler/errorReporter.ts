@@ -16,16 +16,25 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export interface ILineCol {
-        line: number;
-        col: number;
+    export class SimpleErrorReporter {
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
+        public hasErrors = false;
+
+        constructor(public outfile: ITextWriter) {
+        }
+
+        public emitterError(message: string) {
+            this.outfile.WriteLine(message);
+
+            // Emitter errors are not recoverable, stop immediately
+            throw Error("EmitError");
+        }
     }
 
     export class ErrorReporter {
-        public parser: Parser = null;
-        public checker: TypeChecker = null;
-        public lineCol = { line: 0, col: 0 };
-        public emitAsComments = true;
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
+        public locationInfo: LocationInfo = unknownLocationInfo;
+        public lineCol = { line: 0, character: 0 };
         public hasErrors = false;
         public pushToErrorSink = false;
         public errorSink: string[] = [];
@@ -36,16 +45,8 @@ module TypeScript {
         public freeCapturedErrors() { this.errorSink = []; }
         public captureError(emsg: string) { this.errorSink[this.errorSink.length] = emsg; }
 
-        public setErrOut(outerr) {
-            this.outfile = outerr;
-            this.emitAsComments = false;
-        }
-
         public emitPrefix() {
-            if (this.emitAsComments) {
-                this.outfile.Write("// ");
-            }
-            this.outfile.Write(this.checker.locationInfo.filename + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
+            this.outfile.Write(this.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.character + "): ");
         }
 
         public writePrefix(ast: AST): void {
@@ -54,19 +55,21 @@ module TypeScript {
             }
             else {
                 this.lineCol.line = 0;
-                this.lineCol.col = 0;
+                this.lineCol.character = 0;
             }
             this.emitPrefix();
         }
 
         public writePrefixFromSym(symbol: Symbol): void {
-            if (symbol && this.checker.locationInfo.lineMap) {
-                getSourceLineColFromMap(this.lineCol, symbol.location,
-                                        this.checker.locationInfo.lineMap);
+            if (symbol && this.locationInfo.lineMap) {
+                this.locationInfo.lineMap.fillLineAndCharacterFromPosition(symbol.location, this.lineCol);
+                if (this.lineCol.line >= 0) {
+                    this.lineCol.line++;
+                }
             }
             else {
                 this.lineCol.line = -1;
-                this.lineCol.col = -1;
+                this.lineCol.character = -1;
             }
             this.emitPrefix();
         }
@@ -74,8 +77,11 @@ module TypeScript {
         public setError(ast: AST) {
             if (ast) {
                 ast.flags |= ASTFlags.Error;
-                if (this.checker.locationInfo.lineMap) {
-                    getSourceLineColFromMap(this.lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                if (this.locationInfo.lineMap) {
+                    this.locationInfo.lineMap.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
+                    if (this.lineCol.line >= 0) {
+                        this.lineCol.line++;
+                    }
                 }
             }
         }
@@ -87,9 +93,9 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            if (ast && this.parser.errorRecovery && this.parser.errorCallback) {
+            if (ast && this.errorCallback) {
                 var len = (ast.limChar - ast.minChar);
-                this.parser.errorCallback(ast.minChar, len, message, this.checker.locationInfo.unitIndex);
+                this.errorCallback(ast.minChar, len, message, this.locationInfo.fileName, this.locationInfo.lineMap);
             }
             else {
                 this.writePrefix(ast);
@@ -104,8 +110,8 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            if (this.parser.errorRecovery && this.parser.errorCallback) {
-                this.parser.errorCallback(symbol.location, symbol.length, message, this.checker.locationInfo.unitIndex);
+            if (this.errorCallback) {
+                this.errorCallback(symbol.location, symbol.length, message, this.locationInfo.fileName, this.locationInfo.lineMap);
             }
             else {
                 this.writePrefixFromSym(symbol);
@@ -113,22 +119,8 @@ module TypeScript {
             }
         }
 
-        public emitterError(ast: AST, message: string) {
-            this.reportError(ast, message);
-            // Emitter errors are not recoverable, stop immediately
-            throw Error("EmitError");
-        }
-
         public duplicateIdentifier(ast: AST, name: string) {
             this.reportError(ast, "Duplicate identifier '" + name + "'");
-        }
-
-        public showRef(ast: AST, text: string, symbol: Symbol) {
-            var defLineCol = { line: -1, col: -1 };
-            // TODO: multiple def locations
-            this.parser.getSourceLineCol(defLineCol, symbol.location);
-            this.reportError(ast, "symbol " + text + " defined at (" + defLineCol.line + "," +
-                              defLineCol.col + ")");
         }
 
         public unresolvedSymbol(ast: AST, name: string) {
@@ -182,10 +174,10 @@ module TypeScript {
 
         public incompatibleTypes(ast: AST, t1: Type, t2: Type, op: string, scope: SymbolScope, comparisonInfo?:TypeComparisonInfo) {
             if (!t1) {
-                t1 = this.checker.anyType;
+                // t1 = this.checker.anyType;
             }
             if (!t2) {
-                t2 = this.checker.anyType;
+                // t2 = this.checker.anyType;
             }
 
             var reason = comparisonInfo ? comparisonInfo.message : "";

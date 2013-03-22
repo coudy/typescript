@@ -16,28 +16,17 @@
 ///<reference path='formatting.ts' />
 
 
-module Formatting {
-    export class TokenSpan {
-        private _lineNumber: number;
+module TypeScript.Formatting {
+    export class TokenSpan extends TextSpan {
+        private _kind: SyntaxKind;
 
-        constructor(public Token: AuthorTokenKind, public tokenID: TypeScript.TokenID, public Span: SnapshotSpan) {
-            this._lineNumber = null;
+        constructor(kind: SyntaxKind, start: number, length: number) {
+            super(start, length);
+            this._kind = kind;
         }
 
-        public lineNumber(): number {
-            if (this._lineNumber === null) {
-                this._lineNumber = this.Span.snapshot.GetLineNumberFromPosition(this.Span.startPosition());
-            }
-
-            return this._lineNumber;
-        }
-
-        public toString():string {
-            var result = "[tokenKind=" + (<any>AuthorTokenKind)._map[this.Token] + ", " +
-                "tokenID=" + (<any>TypeScript.TokenID)._map[this.tokenID] + ", " +
-                "lineNumber=" + this._lineNumber + ", " +
-                "span=" + this.Span + "]";
-            return result;
+        public kind(): SyntaxKind {
+            return this._kind;
         }
     }
 }

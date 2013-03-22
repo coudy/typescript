@@ -1,0 +1,128 @@
+<html>
+<head>
+    <title>TypeScript Web harness</title>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.js"></script>
+    <script src='perfCompiler.js'></script>
+    <script>
+        var repeat = 10;
+
+        if (!batch) {
+            batch = new BatchCompiler();
+        }
+
+        function appendTime(message, time) {
+            var res = message + ": " + time;
+            var div = document.createElement('div');
+            div.innerText = res;
+            document.body.appendChild(div);
+        }
+
+        function clear1() {
+            $("div").remove();
+        }
+
+        function run(f) {
+            var start = new Date().getTime();
+            for (var i = 0; i < repeat; i++) {
+                f();
+            }
+
+            var end = new Date().getTime();
+            if (repeat > 1) {
+                appendTime("Average", (end - start) / repeat);
+            }
+        }
+
+        function lineMap() {
+            run(function () {
+                var text = TypeScript.TextFactory.createText(compilerString.substr(0, TypeScript.IntegerUtilities.integerDivide(compilerString.length, 10)));
+                var start = new Date().getTime();
+                text.lineCount();
+                var end = new Date().getTime();
+                appendTime("Line map", end - start);
+            });
+        }
+
+        function oldParse() {
+            run(function() {
+                var start = new Date().getTime();
+                batch.oldParse();
+                var end = new Date().getTime();
+                appendTime("Old Parse", end - start);
+            });
+        }
+
+        function newParse() {
+            run(function () {
+                var start = new Date().getTime();
+                batch.newParse();
+                var end = new Date().getTime();
+                appendTime("New Parse", end - start);
+            });
+        }
+
+        function newParseAndAST() {
+            run(function () {
+                var start = new Date().getTime();
+
+                var tree = batch.newParse();
+                TypeScript.TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+
+                var end = new Date().getTime();
+                appendTime("AST", end - start);
+            });
+        }
+
+        function newIncrementalParse() {
+            var tree = batch.newParse();
+
+            run(function () {
+                var start = new Date().getTime();
+                tree = batch.incrementalParse(tree);
+                var end = new Date().getTime();
+                appendTime("Incremental Parse", end - start);
+            });
+        }
+
+        function newIncrementalParseAndAST() {
+            var tree = batch.newParse();
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+
+            run(function () {
+                var start = new Date().getTime();
+                tree = batch.incrementalParse(tree);
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+                var end = new Date().getTime();
+                appendTime("Incremental Parse and AST", end - start);
+            });
+        }
+
+        function typeCheck() {
+            var start = new Date().getTime();
+            batch.reTypeCheck();
+            var end = new Date().getTime();
+            appendTime("Type Check", end - start);
+        }
+
+        //    for (var i = 0; i < 500; i++) {
+        //        service.refresh();
+        //        var res = service.getTypeAtPosition(5);
+        //        document.write(res); // bug: nothing printed here
+        //        document.write("<br>");
+        //        document.write("<br>");
+        //    }
+
+    </script>
+</head>
+<body>
+    <h1>TypeScript Perf Testbed</h1>
+    <button onclick="oldParse()">Old Parse</button>
+    <button onclick="newParse()">New Parse</button>
+    <button onclick="newParseAndAST()">New Parse + AST</button>
+    <button onclick="newIncrementalParse()">New Incremental Parse</button>
+    <button onclick="newIncrementalParseAndAST()">New Incremental Parse + AST</button>
+    <button onclick="lineMap()">Line Map</button>
+    <button onclick="typeCheck()">Type Check</button>
+    <button onclick="clear1()">Clear</button>
+</body>
+</html>

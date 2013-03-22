@@ -7,8 +7,8 @@ module Services {
     }
 
     export interface ICompilerDiagnostics {
-        logNewCompilerUnit(scriptId: string, unitIndex: number): void;
-        logUpdatedCompilerUnit(scriptId: string, unitIndex: number, editRange: TypeScript.ScriptEditRange): void;
+        //logNewCompilerUnit(scriptId: string, unitIndex: number): void;
+        //logUpdatedCompilerUnit(scriptId: string, unitIndex: number, editRange: TypeScript.TextChangeRange): void;
         isLoggingEdits(): bool;
     }
 
@@ -17,29 +17,30 @@ module Services {
         private openEditTag: string = "<Edit>";
         private closeEditTag: string = "<Edit/>";
 
-        constructor(private logger: Services.ILanguageServiceHost) { }
+        constructor(private host: Services.ILanguageServiceHost) { }
 
-        public logNewCompilerUnit(scriptId: string, unitIndex: number) {
-            var sourceText = this.logger.getScriptSourceText(unitIndex, 0, this.logger.getScriptSourceLength(unitIndex));
-            if (scriptId.indexOf(".d.ts") === -1) {
-                this.logger.getDiagnosticsObject().log("//=New=\\\\" + '\r\n' +
-                                                       "scriptId: " + scriptId + '\r\n' +
-                                                       this.openEditTag + sourceText + this.closeEditTag + '\r\n' +
-                                                       "\\\\=====//" + '\r\n');
-            }
-        }
+        //public logNewCompilerUnit(scriptId: string, unitIndex: number) {
+        //    var sourceText = this.host.getScriptSourceText(unitIndex, 0, this.host.getScriptSourceLength(unitIndex));
+        //    if (scriptId.indexOf(".d.ts") === -1) {
+        //        this.host.getDiagnosticsObject().log("//=New=\\\\" + '\r\n' +
+        //                                               "scriptId: " + scriptId + '\r\n' +
+        //                                               this.openEditTag + sourceText + this.closeEditTag + '\r\n' +
+        //                                               "\\\\=====//" + '\r\n');
+        //    }
+        //}
 
-        public logUpdatedCompilerUnit(scriptId: string, unitIndex: number, editRange: TypeScript.ScriptEditRange) {
-            var sourceText = this.logger.getScriptSourceText(unitIndex, editRange.minChar, editRange.limChar + editRange.delta);
-            this.logger.getDiagnosticsObject().log("//=Update=\\\\" + '\r\n' +
-                                                   "scriptId: " + scriptId + '\r\n' +
-                                                   editRange + '\r\n' +
-                                                   this.openEditTag + sourceText + this.closeEditTag + '\r\n' +
-                                                   "\\\\=====//" + '\r\n');
-        }
+        //public logUpdatedCompilerUnit(scriptId: string, unitIndex: number, editRange: TypeScript.TextChangeRange) {
+            
+        //    var sourceText = this.host.getScriptSourceText(unitIndex, editRange.span ..minChar, editRange.limChar + editRange.delta);
+        //    this.host.getDiagnosticsObject().log("//=Update=\\\\" + '\r\n' +
+        //                                           "scriptId: " + scriptId + '\r\n' +
+        //                                           editRange + '\r\n' +
+        //                                           this.openEditTag + sourceText + this.closeEditTag + '\r\n' +
+        //                                           "\\\\=====//" + '\r\n');
+        //}
 
         public isLoggingEdits(): bool {
-            return (this.logger.getDiagnosticsObject() !== null);
+            return (this.host.getDiagnosticsObject() !== null);
         }
 
     }
@@ -50,10 +51,9 @@ module Services {
         private host: Services.ILanguageServiceHost;
         private diagnostics: Services.ILanguageServicesDiagnostics;
 
-        constructor(internal: Services.ILanguageService) {
+        constructor(internal: Services.ILanguageService, host: ILanguageServiceHost) {
             this.internal = internal;
-            this.host = internal.host;
-            this.diagnostics = this.host.getDiagnosticsObject();
+            this.diagnostics = host.getDiagnosticsObject();
         }
 
         private writeFile(content: string): void {
@@ -67,52 +67,23 @@ module Services {
 
         }
 
-        public logAST(fileName: string): void {
+        public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
 
             var args = "fileName: " + this.stringify(fileName);
-            this.writeFile("logAST: " + args+"\n");
+            var result = this.internal.getSyntacticDiagnostics(fileName);
 
-            this.internal.logAST(fileName);
-
-        }
-
-        public logSyntaxAST(fileName: string): void {
-
-            var args = "fileName: " + this.stringify(fileName);
-            this.writeFile("logSyntaxAST: " + args+"\n");
-
-            this.internal.logSyntaxAST(fileName);
-
-        }
-
-        public getErrors(maxCount: number): TypeScript.ErrorEntry[]{
-
-            var args = "maxCount: " + this.stringify(maxCount);
-            var result = this.internal.getErrors(maxCount);
-
-            this.writeFile("getErrors: " + args + " result: " + this.stringify(result) + "\n");
-
-            return result;
-
-        }
-        
-        public getScriptAST(fileName: string): TypeScript.Script {
-
-            var args = "fileName: " + this.stringify(fileName);
-            var result = this.internal.getScriptAST(fileName);
-
-            this.writeFile("getScriptAST: " + args + " result: " + this.stringify(result) + "\n");
+            this.writeFile("getSyntacticDiagnostics: " + args + " result: " + this.stringify(result) + "\n");
 
             return result;
 
         }
 
-        public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[] {
+        public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
 
-            var args = "fileName: " + this.stringify(fileName) + " maxCount: " + this.stringify(maxCount);
-            var result = this.internal.getScriptErrors(fileName, maxCount);
+            var args = "fileName: " + this.stringify(fileName);
+            var result = this.internal.getSemanticDiagnostics(fileName);
 
-            this.writeFile("getScriptErrors: " + args + " result: " + this.stringify(result) + "\n");
+            this.writeFile("getSemanticDiagnostics: " + args + " result: " + this.stringify(result) + "\n");
 
             return result;
 
@@ -239,23 +210,12 @@ module Services {
 
         }
 
-        public getOutliningRegions(fileName: string): Services.NavigateToItem[] {
+        public getOutliningRegions(fileName: string): TypeScript.TextSpan[] {
 
             var args = "fileName: " + this.stringify(fileName);
             var result = this.internal.getOutliningRegions(fileName);
 
             this.writeFile("getOutliningRegions: " + args + " result: " + this.stringify(result) + "\n");
-
-            return result;
-
-        }
-
-        public getScriptSyntaxAST(fileName: string): Services.ScriptSyntaxAST {
-
-            var args = "fileName: " + this.stringify(fileName);
-            var result = this.internal.getScriptSyntaxAST(fileName);
-
-            this.writeFile("getScriptSyntaxAST: " + args + " result: " + this.stringify(result) + "\n");
 
             return result;
 
@@ -309,7 +269,7 @@ module Services {
         }
 
         
-        public getBraceMatchingAtPosition(fileName: string, position: number): Services.TextRange[] {
+        public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[] {
 
             var args = "fileName: " + this.stringify(fileName) + " position: " + this.stringify(position);
             var result = this.internal.getBraceMatchingAtPosition(fileName, position);
@@ -321,10 +281,10 @@ module Services {
         }
 
         
-        public getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: Services.EditorOptions): number {
+        public getSmartIndentAtLineNumber(fileName: string, position: number, options: Services.EditorOptions): number {
 
-            var args = "fileName: " + this.stringify(fileName) + " lineNumber: " + this.stringify(lineNumber) + " options: " + this.stringify(options);
-            var result = this.internal.getSmartIndentAtLineNumber(fileName, lineNumber, options);
+            var args = "fileName: " + this.stringify(fileName) + " position: " + this.stringify(position) + " options: " + this.stringify(options);
+            var result = this.internal.getSmartIndentAtLineNumber(fileName, position, options);
 
             this.writeFile("getSmartIndentAtLineNumber: " + args + " result: " + this.stringify(result) + "\n");
 
@@ -351,18 +311,6 @@ module Services {
             var result = this.internal.getIdentifierPathToPosition(script, pos);
 
             this.writeFile("getIdentifierPathToPosition: " + args + " result: " + this.stringify(result) + "\n");
-
-            return result;
-
-        }
-
-        
-        public getSymbolAtPosition(script: TypeScript.AST, pos: number): TypeScript.Symbol {
-
-            var args = "script: " + this.stringify(script) + " pos: " + this.stringify(pos);
-            var result = this.internal.getSymbolAtPosition(script, pos);
-
-            this.writeFile("getSymbolAtPosition: " + args + " result: " + this.stringify(result) + "\n");
 
             return result;
 
@@ -411,7 +359,7 @@ module Services {
                 }
 
                 for (var i = 0; i < properties.length; i++) {
-                    var key = properties[i];
+                    key = properties[i];
                     properties[i] = (typeof object[key] !== 'undefined' ? key + ": " + this.stringify(object[key]) : this.stringify(key));
                 }
 

@@ -1,0 +1,409 @@
+{
+    "isDeclaration": false,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "diagnostics": [
+        {
+            "_position": 32,
+            "_width": 1,
+            "_diagnosticCode": "Identifier_expected"
+        },
+        {
+            "_position": 47,
+            "_width": 1,
+            "_diagnosticCode": "Identifier_expected"
+        }
+    ],
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 59,
+        "hasSkippedText": true,
+        "hasZeroWidthToken": true,
+        "moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 11,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 8,
+                    "expression": {
+                        "kind": "IdentifierName",
+                        "width": 3,
+                        "text": "Foo",
+                        "valueText": "Foo"
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 5,
+                        "typeArgumentList": {
+                            "kind": "TypeArgumentList",
+                            "fullWidth": 3,
+                            "lessThanToken": {
+                                "kind": "LessThanToken",
+                                "width": 1,
+                                "text": "<"
+                            },
+                            "typeArguments": [
+                                {
+                                    "kind": "IdentifierName",
+                                    "width": 1,
+                                    "text": "T",
+                                    "valueText": "T"
+                                }
+                            ],
+                            "greaterThanToken": {
+                                "kind": "GreaterThanToken",
+                                "width": 1,
+                                "text": ">"
+                            }
+                        },
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 15,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 12,
+                    "expression": {
+                        "kind": "MemberAccessExpression",
+                        "fullWidth": 7,
+                        "expression": {
+                            "kind": "IdentifierName",
+                            "width": 3,
+                            "text": "Foo",
+                            "valueText": "Foo"
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 1,
+                            "text": "."
+                        },
+                        "name": {
+                            "kind": "IdentifierName",
+                            "width": 3,
+                            "text": "Bar",
+                            "valueText": "Bar"
+                        }
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 5,
+                        "typeArgumentList": {
+                            "kind": "TypeArgumentList",
+                            "fullWidth": 3,
+                            "lessThanToken": {
+                                "kind": "LessThanToken",
+                                "width": 1,
+                                "text": "<"
+                            },
+                            "typeArguments": [
+                                {
+                                    "kind": "IdentifierName",
+                                    "width": 1,
+                                    "text": "T",
+                                    "valueText": "T"
+                                }
+                            ],
+                            "greaterThanToken": {
+                                "kind": "GreaterThanToken",
+                                "width": 1,
+                                "text": ">"
+                            }
+                        },
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 7,
+                "hasSkippedText": true,
+                "hasZeroWidthToken": true,
+                "expression": {
+                    "kind": "GreaterThanExpression",
+                    "fullWidth": 7,
+                    "hasSkippedText": true,
+                    "hasZeroWidthToken": true,
+                    "left": {
+                        "kind": "LessThanExpression",
+                        "fullWidth": 5,
+                        "left": {
+                            "kind": "IdentifierName",
+                            "width": 3,
+                            "text": "Foo",
+                            "valueText": "Foo"
+                        },
+                        "operatorToken": {
+                            "kind": "LessThanToken",
+                            "width": 1,
+                            "text": "<"
+                        },
+                        "right": {
+                            "kind": "IdentifierName",
+                            "width": 1,
+                            "text": "T",
+                            "valueText": "T"
+                        }
+                    },
+                    "operatorToken": {
+                        "kind": "GreaterThanToken",
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ">",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingSkippedText": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "."
+                            }
+                        ]
+                    },
+                    "right": {
+                        "kind": "IdentifierName",
+                        "width": 0,
+                        "text": ""
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 8,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 5,
+                    "expression": {
+                        "kind": "IdentifierName",
+                        "width": 3,
+                        "text": "Bar",
+                        "valueText": "Bar"
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 2,
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 7,
+                "hasSkippedText": true,
+                "hasZeroWidthToken": true,
+                "expression": {
+                    "kind": "GreaterThanExpression",
+                    "fullWidth": 7,
+                    "hasSkippedText": true,
+                    "hasZeroWidthToken": true,
+                    "left": {
+                        "kind": "LessThanExpression",
+                        "fullWidth": 5,
+                        "left": {
+                            "kind": "IdentifierName",
+                            "width": 3,
+                            "text": "Foo",
+                            "valueText": "Foo"
+                        },
+                        "operatorToken": {
+                            "kind": "LessThanToken",
+                            "width": 1,
+                            "text": "<"
+                        },
+                        "right": {
+                            "kind": "IdentifierName",
+                            "width": 1,
+                            "text": "T",
+                            "valueText": "T"
+                        }
+                    },
+                    "operatorToken": {
+                        "kind": "GreaterThanToken",
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ">",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingSkippedText": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "."
+                            }
+                        ]
+                    },
+                    "right": {
+                        "kind": "IdentifierName",
+                        "width": 0,
+                        "text": ""
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 11,
+                "expression": {
+                    "kind": "InvocationExpression",
+                    "fullWidth": 8,
+                    "expression": {
+                        "kind": "IdentifierName",
+                        "width": 3,
+                        "text": "Bar",
+                        "valueText": "Bar"
+                    },
+                    "argumentList": {
+                        "kind": "ArgumentList",
+                        "fullWidth": 5,
+                        "typeArgumentList": {
+                            "kind": "TypeArgumentList",
+                            "fullWidth": 3,
+                            "lessThanToken": {
+                                "kind": "LessThanToken",
+                                "width": 1,
+                                "text": "<"
+                            },
+                            "typeArguments": [
+                                {
+                                    "kind": "IdentifierName",
+                                    "width": 1,
+                                    "text": "T",
+                                    "valueText": "T"
+                                }
+                            ],
+                            "greaterThanToken": {
+                                "kind": "GreaterThanToken",
+                                "width": 1,
+                                "text": ">"
+                            }
+                        },
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "arguments": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    }
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0,
+            11,
+            26,
+            41,
+            59
+        ],
+        "length": 59
+    }
+}

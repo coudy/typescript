@@ -4,7 +4,7 @@
 class UnitTestRunner extends RunnerBase {
 
     constructor(public testType?: string) {
-        super();        
+        super(testType);
     }
 
     public runTests() {
@@ -23,7 +23,8 @@ class UnitTestRunner extends RunnerBase {
                 break;
             case 'samples':
                 this.tests = this.enumerateFiles('tests/cases/unittests/samples');
-            default:               
+                break;
+            default:
                 if (this.tests.length === 0) {
                     throw new Error('Unsupported test cases: ' + this.testType);
                 }
@@ -31,26 +32,29 @@ class UnitTestRunner extends RunnerBase {
         }
 
         var outfile = new Harness.Compiler.WriterAggregator()
-      , outerr = new Harness.Compiler.WriterAggregator()
-      , compiler = <TypeScript.TypeScriptCompiler>new TypeScript.TypeScriptCompiler(outerr)
-      , code;
+        var outerr = new Harness.Compiler.WriterAggregator();
 
-        compiler.parser.errorRecovery = true;
-        compiler.addUnit(Harness.Compiler.libText, "lib.d.ts", true);
+        Harness.Compiler.recreate();
 
         for (var i = 0; i < this.tests.length; i++) {
             try {
-                compiler.addUnit(IO.readFile(this.tests[i]), this.tests[i]);
+                Harness.Compiler.addUnit(IO.readFile(this.tests[i]), this.tests[i]);
             } catch (e) {
                 IO.printLine('FATAL ERROR COMPILING TEST: ' + this.tests[i]);
                 throw e;
             }
         }
 
-        compiler.typeCheck();
-        compiler.emitToOutfile(outfile);
-
-        code = outfile.lines.join("\n") + ";";
+        Harness.Compiler.compile();
+        
+        var stdout = new Harness.Compiler.EmitterIOHost();
+        Harness.Compiler.emit(stdout);
+        var results = stdout.toArray();
+        var lines = [];
+        results.forEach(v => lines = lines.concat(v.file.lines));
+        var code = lines.join("\n")
+        //Harness.Compiler.emitToOutfile(outfile);
+        //code = outfile.lines.join("\n") + ";";
 
         if (typeof require !== "undefined") {
             var vm = require('vm');
@@ -67,7 +71,7 @@ class UnitTestRunner extends RunnerBase {
                     Exec: Exec,
                     Services: Services,
                     DumpAST: DumpAST,
-                    Formatting: Formatting,
+                    // Formatting: Formatting,
                     Diff: Diff,
                     FourSlash: FourSlash
                 },

@@ -64,14 +64,14 @@ module DumpAST {
     }
 
     function createDumpTree(script: TypeScript.Script): DumpEntry {
-        var entries = new DumpEntry[];
+        var entries: DumpEntry[] = [];
         var root: DumpEntry = null;
 
         var pre = (cur: TypeScript.AST, parent: TypeScript.AST): TypeScript.AST => {
             //verifyAstNodePositions(script, cur);
 
-            var parent = (entries.length == 0 ? null : entries[entries.length - 1]);
-            var newEntry = createDumpEntry(script, cur, parent);
+            var parent2 = (entries.length == 0 ? null : entries[entries.length - 1]);
+            var newEntry = createDumpEntry(script, cur, parent2);
             if (entries.length == 0) {
                 root = newEntry;
             }
@@ -79,7 +79,7 @@ module DumpAST {
             var dumpComments = function (comments: TypeScript.Comment[]): void {
                 if (comments) {
                     for (var i = 0; i < comments.length; i++) {
-                        entries.push(createDumpEntry(script, comments[i], parent));
+                        entries.push(createDumpEntry(script, comments[i], parent2));
                     }
                 }
             }
@@ -104,17 +104,35 @@ module DumpAST {
         entry.nodeType = (<any>TypeScript.NodeType)._map[ast.nodeType];
         entry.minChar = ast.minChar;
         entry.limChar = ast.limChar;
-        entry.startLine = TypeScript.getLineColumnFromPosition(script, ast.minChar).line;
-        entry.startCol = TypeScript.getLineColumnFromPosition(script, ast.minChar).col;
-        entry.endLine = TypeScript.getLineColumnFromPosition(script, ast.limChar).line;
-        entry.endCol = TypeScript.getLineColumnFromPosition(script, ast.limChar).col;
+
+        var lineMap = script.locationInfo.lineMap;
+        entry.startLine = lineMap.getLineAndCharacterFromPosition(ast.minChar).line();
+        entry.startCol = lineMap.getLineAndCharacterFromPosition(ast.minChar).character();
+        entry.endLine = lineMap.getLineAndCharacterFromPosition(ast.limChar).line();
+        entry.endCol = lineMap.getLineAndCharacterFromPosition(ast.limChar).character();
+
+        if (entry.startLine >= 0) {
+            entry.startLine++;
+        }
+
+        if (entry.startCol >= 0) {
+            entry.startCol++;
+        }
+
+        if (entry.endLine >= 0) {
+            entry.endLine++;
+        }
+
+        if (entry.endCol >= 0) {
+            entry.endCol++;
+        }
         if (parent)
             parent.children.push(entry);
         return entry;
     }
 
     function verifyAstNodePositions(script: TypeScript.Script, ast: TypeScript.AST): void {
-        var fileName = script.locationInfo.filename;
+        var fileName = script.locationInfo.fileName;
         var maxLimChar = script.limChar;
 
         var minChar = ast.minChar;
@@ -180,7 +198,7 @@ module DumpAST {
         result += addKey("children") + ": [";
         if (entry.children !== null && entry.children.length > 0) {
             result += "\r\n";
-            for (var i = 0; i < entry.children.length; i++) {
+            for (i = 0; i < entry.children.length; i++) {
                 result += dumpEntries(entry.children[i], indent + 1);
                 if (i < entry.children.length - 1) {
                     result += ",";
@@ -194,7 +212,7 @@ module DumpAST {
     }
 
     function createDumpContentForFile(typescriptLS: Harness.TypeScriptLS, fileName: string): string {
-        var sourceText = new TypeScript.StringSourceText(IO.readFile(fileName))
+        var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName))
         var script = typescriptLS.parseSourceText(fileName, sourceText);
 
         // Dump source text (as JS comments)
@@ -203,12 +221,14 @@ module DumpAST {
         text += indentStr;
         text += addKey("sourceText");
         text += ": [\r\n";
-        for (var i = 1; i < script.locationInfo.lineMap.length; i++) {
-            if (i > 1) {
+
+        var lineStarts = script.locationInfo.lineMap.lineStarts();
+        for (var i = 0; i < lineStarts.length; i++) {
+            if (i > 0) {
                 text += ",\r\n";
             }
-            var start = script.locationInfo.lineMap[i];
-            var end = (i < script.locationInfo.lineMap.length - 1 ? script.locationInfo.lineMap[i + 1] : sourceText.getLength());
+            var start = lineStarts[i];
+            var end = (i < lineStarts.length - 1 ? lineStarts[i + 1] : sourceText.getLength());
             text += indentStr + indentStr + JSON2.stringify(sourceText.getText(start, end));
         }
         text += "],";

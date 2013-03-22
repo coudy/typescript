@@ -19,7 +19,7 @@ var M;
     }
     M.CompareYeux = CompareYeux;
     function test() {
-        var x = new Array();
+        var x = new IEye[]();
         var result = "";
         x[0] = {
             color: Color.Brown
@@ -35,7 +35,7 @@ var M;
         for(var i = 0, len = z.length; i < len; i++) {
             result += ((Color._map[z[i].color]) + "\r\n");
         }
-        var eeks = new Array();
+        var eeks = new IFrenchEye[]();
         for(var j = z.length = 1; j >= 0; j--) {
             eeks[j] = z[j];
         }

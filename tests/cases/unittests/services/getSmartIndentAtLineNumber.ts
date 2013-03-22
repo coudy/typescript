@@ -21,7 +21,8 @@ describe('getSmartIndentAtLineNumber', function() {
     function getSmartIndent(fileName: string, line: number): number {
         assert.is(line >= 1);
         var options = new Services.EditorOptions();
-        return ls.languageService.getSmartIndentAtLineNumber(fileName, line - 1, options);
+        var position = typescriptLS.lineColToPosition(fileName, line, 1);
+        return ls.languageService.getSmartIndentAtLineNumber(fileName, position, options);
     }
 
     describe("test cases for smart indent", function() {

@@ -8,7 +8,8 @@
 ////    public Foo(x: Bar./**/Blah, y: Bar.Blah) { }
 ////}
 
+debugger;
+
 goTo.marker();
-// Bug 17382: Completion list wont work on a certain position
-verify.not.memberListContains('Blah');
-//verify.memberListContains('Blah');
+// 17382: Completion list wont work on a certain position
+verify.memberListContains('Blah');

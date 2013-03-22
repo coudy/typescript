@@ -63,12 +63,6 @@ module TypeScript {
 
     export function trimModName(modName: string) {
         // in case's it's a declare file...
-        if (modName.length > 6 && modName.substring(modName.length - 6, modName.length) == ".d.str") {
-            return modName.substring(0, modName.length - 6);
-        }
-        if (modName.length > 4 && modName.substring(modName.length - 4, modName.length) == ".str") {
-            return modName.substring(0, modName.length - 4);
-        }
         if (modName.length > 5 && modName.substring(modName.length - 5, modName.length) == ".d.ts") {
             return modName.substring(0, modName.length - 5);
         }
@@ -84,7 +78,7 @@ module TypeScript {
     }
 
     export function getDeclareFilePath(fname: string) {
-        return isSTRFile(fname) ? changePathToDSTR(fname) : isTSFile(fname) ? changePathToDTS(fname) : changePathToDTS(fname);
+        return isTSFile(fname) ? changePathToDTS(fname) : changePathToDTS(fname);
     }
 
     function isFileOfExtension(fname: string, ext: string) {
@@ -98,16 +92,8 @@ module TypeScript {
         return isFileOfExtension(fname, ".js");
     }
 
-    export function isSTRFile(fname: string) {
-        return isFileOfExtension(fname, ".str");
-    }
-
     export function isTSFile(fname: string) {
         return isFileOfExtension(fname, ".ts");
-    }
-
-    export function isDSTRFile(fname: string) {
-        return isFileOfExtension(fname, ".d.str");
     }
 
     export function isDTSFile(fname: string) {
@@ -165,14 +151,6 @@ module TypeScript {
             var fileIndex = components.length > 1 ? 1 : 0;
             return quoteStr(components[fileIndex]);
         }
-    }
-
-    export function changePathToSTR(modPath: string) {
-        return trimModName(stripQuotes(modPath)) + ".str";
-    }
-
-    export function changePathToDSTR(modPath: string) {
-        return trimModName(stripQuotes(modPath)) + ".d.str";
     }
 
     export function changePathToTS(modPath: string) {
