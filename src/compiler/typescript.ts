@@ -529,7 +529,6 @@ module TypeScript {
                 this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
 
                 var declCollectionContext: DeclCollectionContext = null;
-                var semanticInfo: SemanticInfo = null;
                 var i = 0;
 
                 var createDeclsStartTime = new Date().getTime();
@@ -537,7 +536,7 @@ module TypeScript {
                 var fileNames = this.fileNameToScript.getAllKeys();
                 for (; i < fileNames.length; i++) {
                     var fileName = fileNames[i];
-                    semanticInfo = new SemanticInfo(fileName, this.fileNameToLocationInfo.lookup(fileName));
+                    var semanticInfo = new SemanticInfo(fileName, this.fileNameToLocationInfo.lookup(fileName));
 
                     declCollectionContext = new DeclCollectionContext(semanticInfo);
 

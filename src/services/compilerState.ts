@@ -139,8 +139,7 @@ module Services {
             return settings;
         }
 
-        private createCompiler() {
-            var outfile = { Write: (s) => { }, WriteLine: (s) => { }, Close: () => { } };
+        private createCompiler(): void {
             var outerr = { Write: (s) => { }, WriteLine: (s) => { }, Close: () => { } };
 
             // Create and initialize compiler
@@ -161,7 +160,7 @@ module Services {
 
             // Initial typecheck
             this.onTypeCheckStarting();
-            this.compiler.pullTypeCheck(false, true);
+            this.compiler.pullTypeCheck(/*refresh:*/ false, /*reportErrors:*/ true);
         }
 
         public minimalRefresh(): void {
