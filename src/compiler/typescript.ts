@@ -118,7 +118,7 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public errorReporter: ErrorReporter = null;
+        public errorReporter: SimpleErrorReporter = null;
         public pullErrorReporter: PullErrorReporter = null;
 
         public pullTypeChecker: PullTypeChecker = null;
@@ -134,7 +134,7 @@ module TypeScript {
                     public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = defaultSettings,
                     public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
-            this.errorReporter = new ErrorReporter(this.errorOutput);
+            this.errorReporter = new SimpleErrorReporter(this.errorOutput);
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
 
             this.emitSettings = new EmitOptions(this.settings);

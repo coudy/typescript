@@ -20,7 +20,7 @@ module TypeScript {
 
         private locationInfo: LocationInfo = null;
 
-        constructor(private semanticInfoChain: SemanticInfoChain, emitOptions: EmitOptions, errorReporter: ErrorReporter) {
+        constructor(private semanticInfoChain: SemanticInfoChain, emitOptions: EmitOptions, errorReporter: SimpleErrorReporter) {
             super(null, emitOptions, errorReporter);
         }
 

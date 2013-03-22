@@ -54,7 +54,7 @@ module TypeScript {
             return (this.isDottedModuleName.length === 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
         }
 
-        constructor (public checker: TypeChecker, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
+        constructor (public checker: TypeChecker, public emitOptions: EmitOptions, public errorReporter: SimpleErrorReporter) {
         }
 
         public setDeclarationFile(file: ITextWriter) {

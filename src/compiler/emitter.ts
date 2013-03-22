@@ -126,7 +126,11 @@ module TypeScript {
         public captureThisStmtString = "var _this = this;";
         public varListCountStack: number[] = [0];
 
-        constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
+        constructor(public checker: TypeChecker,
+                    public emittingFileName: string,
+                    public outfile: ITextWriter,
+                    public emitOptions: EmitOptions,
+                    public errorReporter: SimpleErrorReporter) {
         }
 
         public setSourceMappings(mapper: SourceMapper) {

@@ -16,6 +16,21 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
+    export class SimpleErrorReporter {
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
+        public hasErrors = false;
+
+        constructor(public outfile: ITextWriter) {
+        }
+
+        public emitterError(message: string) {
+            this.outfile.WriteLine(message);
+
+            // Emitter errors are not recoverable, stop immediately
+            throw Error("EmitError");
+        }
+    }
+
     export class ErrorReporter {
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
         public locationInfo: LocationInfo = unknownLocationInfo;
@@ -102,13 +117,6 @@ module TypeScript {
                 this.writePrefixFromSym(symbol);
                 this.outfile.WriteLine(message);
             }
-        }
-
-        public emitterError(message: string) {
-            this.outfile.WriteLine(message);
-
-            // Emitter errors are not recoverable, stop immediately
-            throw Error("EmitError");
         }
 
         public duplicateIdentifier(ast: AST, name: string) {

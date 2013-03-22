@@ -42,7 +42,7 @@ module TypeScript {
             this.pullTypeChecker.resolver.setUnitPath(fileName);
         }
 
-        constructor(emittingFileName: string, outfile: ITextWriter, emitOptions: EmitOptions, errorReporter: ErrorReporter, private semanticInfoChain: SemanticInfoChain) {
+        constructor(emittingFileName: string, outfile: ITextWriter, emitOptions: EmitOptions, errorReporter: SimpleErrorReporter, private semanticInfoChain: SemanticInfoChain) {
             super(null, emittingFileName, outfile, emitOptions, errorReporter);
 
             this.pullTypeChecker = new PullTypeChecker(semanticInfoChain);
