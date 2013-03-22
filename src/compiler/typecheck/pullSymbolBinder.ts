@@ -751,7 +751,7 @@ module TypeScript {
         public bindObjectTypeDeclarationToPullSymbol(objectDecl: PullDecl) {
             var objectSymbolAST: AST = this.semanticInfo.getASTForDecl(objectDecl);
 
-            var objectSymbol = new PullTypeSymbol("{}", PullElementKind.ObjectType);
+            var objectSymbol = new PullTypeSymbol("", PullElementKind.ObjectType);
 
             objectSymbol.addDeclaration(objectDecl);
             objectDecl.setSymbol(objectSymbol);

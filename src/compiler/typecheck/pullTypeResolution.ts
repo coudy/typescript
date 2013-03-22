@@ -1194,7 +1194,7 @@ module TypeScript {
                         var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol()
 
                         if (!instanceSymbol) {
-                            context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.getName() + "'", decl);
+                            context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", decl);
                             typeExprSymbol = this.semanticInfoChain.anyTypeSymbol;
                         }
                         else {
@@ -2101,7 +2101,7 @@ module TypeScript {
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, "Generic type '" + genericTypeSymbol.getName() + "' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied", enclosingDecl);
+                context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, "Generic type '" + genericTypeSymbol.toString() + "' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied", enclosingDecl);
 
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -2118,7 +2118,7 @@ module TypeScript {
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
                     if (!this.sourceIsAssignableToTarget(typeArgs[iArg], typeConstraint, context)) {
-                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), "Type '" + typeArgs[iArg].getName() + "' does not satisfy the constraint '" + typeConstraint.getName() + "' for type parameter '" + typeParameters[iArg].getName() + "'", enclosingDecl);
+                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), "Type '" + typeArgs[iArg].toString() + "' does not satisfy the constraint '" + typeConstraint.toString() + "' for type parameter '" + typeParameters[iArg].toString() + "'", enclosingDecl);
                     }
                 }
             }
@@ -2931,7 +2931,7 @@ module TypeScript {
                                 // test specialization type for assignment compatibility with the constraint
                                 if (typeConstraint) {
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                        context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].getName() + "' does not satisfy the constraint '" + typeConstraint.getName() + "' for type parameter '" + typeParameters[j].getName() + "'", enclosingDecl);
+                                        context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString() + "' does not satisfy the constraint '" + typeConstraint.toString() + "' for type parameter '" + typeParameters[j].toString() + "'", enclosingDecl);
                                     }
                                 }
                             }
@@ -3106,7 +3106,7 @@ module TypeScript {
                                     // test specialization type for assignment compatibility with the constraint
                                     if (typeConstraint) {
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].getName() + "' does not satisfy the constraint '" + typeConstraint.getName() + "' for type parameter '" + typeParameters[j].getName() + "'", enclosingDecl);
+                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString() + "' does not satisfy the constraint '" + typeConstraint.toString() + "' for type parameter '" + typeParameters[j].toString() + "'", enclosingDecl);
                                         }
                                     }
                                 }
@@ -3833,7 +3833,7 @@ module TypeScript {
                                     comparisonCache[comboId] = undefined;
                                     if (comparisonInfo) { // only surface the first error
                                         comparisonInfo.flags |= TypeRelationshipFlags.RequiredPropertyIsMissing;
-                                        comparisonInfo.addMessageToFront("Type '" + source.getName() + "' is missing property '" + mProp.getName() + "' from type '" + target.getName() + "'");
+                                        comparisonInfo.addMessageToFront("Type '" + source.toString() + "' is missing property '" + mProp.getScopedNameEx().toString() + "' from type '" + target.toString() + "'");
                                     }
                                     return false;
                                 }
@@ -3870,7 +3870,7 @@ module TypeScript {
                         comparisonCache[comboId] = undefined;
                         if (comparisonInfo) { // only surface the first error
                             comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
-                            comparisonInfo.addMessageToFront("Types of property '" + mProp.getName() + "' of types '" + source.getName() + "' and '" + target.getName() + "' are incompatible");
+                            comparisonInfo.addMessageToFront("Types of property '" + mProp.getScopedNameEx().toString() + "' of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
                         }
                         return false;
                     }
@@ -3894,11 +3894,11 @@ module TypeScript {
                 if (!this.signatureGroupIsRelatableToTarget(sourceCallSigs, targetCallSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (sourceCallSigs.length && targetCallSigs.length) {
-                            comparisonInfo.addMessageToFront("Call signatures of types '" + source.getName() + "' and '" + target.getName() + "' are incompatible");
+                            comparisonInfo.addMessageToFront("Call signatures of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
                         }
                         else {
-                            hasSig = targetCallSigs.length ? target.getName() : source.getName();
-                            lacksSig = !targetCallSigs.length ? target.getName() : source.getName();
+                            hasSig = targetCallSigs.length ? target.toString() : source.toString();
+                            lacksSig = !targetCallSigs.length ? target.toString() : source.toString();
                             comparisonInfo.setMessage("Type '" + hasSig + "' requires a call signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
@@ -3912,11 +3912,11 @@ module TypeScript {
                 if (!this.signatureGroupIsRelatableToTarget(sourceConstructSigs, targetConstructSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
-                            comparisonInfo.addMessageToFront("Construct signatures of types '" + source.getName() + "' and '" + target.getName() + "' are incompatible");
+                            comparisonInfo.addMessageToFront("Construct signatures of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
                         }
                         else {
-                            hasSig = targetConstructSigs.length ? target.getName() : source.getName();
-                            lacksSig = !targetConstructSigs.length ? target.getName() : source.getName();
+                            hasSig = targetConstructSigs.length ? target.toString() : source.toString();
+                            lacksSig = !targetConstructSigs.length ? target.toString() : source.toString();
                             comparisonInfo.setMessage("Type '" + hasSig + "' requires a construct signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
@@ -3932,7 +3932,7 @@ module TypeScript {
 
                 if (!this.signatureGroupIsRelatableToTarget(sourceIndex, targetIndex, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
-                        comparisonInfo.addMessageToFront("Index signatures of types '" + source.getName() + "' and '" + target.getName() + "' are incompatible");
+                        comparisonInfo.addMessageToFront("Index signatures of types '" + source.toString() + "' and '" + target.toString() + "' are incompatible");
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
                     }
                     comparisonCache[comboId] = undefined;
@@ -4293,7 +4293,7 @@ module TypeScript {
 
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
-                                    comparisonInfo.setMessage("Could not apply type '" + memberType.getName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
+                                    comparisonInfo.setMessage("Could not apply type '" + memberType.toString() + "' to argument " + (j + 1) + ", which is of type '" + argSym.getTypeName() + "'");
                                 }
                                 miss = true;
                             }
@@ -4320,7 +4320,7 @@ module TypeScript {
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage("Could not apply type '" + memberType.getName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
+                                comparisonInfo.setMessage("Could not apply type '" + memberType.toString() + "' to argument " + (j + 1) + ", which is of type '" + argSym.getTypeName() + "'");
                             }
                             miss = true;
                         }
@@ -4346,7 +4346,7 @@ module TypeScript {
 
                         if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                             if (comparisonInfo) {
-                                comparisonInfo.setMessage("Could not apply type '" + memberType.getName() + "' to argument " + (j + 1) + ", which is of type '" + args.members[j].type.getTypeName() + "'");
+                                comparisonInfo.setMessage("Could not apply type '" + memberType.toString() + "' to argument " + (j + 1) + ", which is of type '" + argSym.getTypeName() + "'");
                             }
                             break;
                         }
