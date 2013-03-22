@@ -71,23 +71,6 @@ module TypeScript {
 
     declare var IO;
 
-    export enum UpdateUnitKind {
-        Unknown,
-        NoEdits,
-    }
-
-    export class UpdateUnitResult {
-        constructor (public kind: UpdateUnitKind, public fileName: string, public script1: Script, public script2: Script) { }
-
-        static noEdits(fileName: string) {
-            return new UpdateUnitResult(UpdateUnitKind.NoEdits, fileName, null, null);
-        }
-
-        static unknownEdits(script1: Script, script2: Script) {
-            return new UpdateUnitResult(UpdateUnitKind.Unknown, script1.locationInfo.fileName, script1, script2);
-        }
-    }
-
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
         createFile(path: string, useUTF8?: bool): ITextWriter;
@@ -149,32 +132,12 @@ module TypeScript {
 
         private updateSourceUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("updateSourceUnit(" + fileName + ")", () => {
-                var updateResult = this.partialUpdateUnit(sourceText, fileName);
-                return this.applyUpdateResult(updateResult);
-            });
-        }
-
-        // Apply changes to compiler state.
-        // Return "false" if the change is empty and nothing was updated.
-        private applyUpdateResult(updateResult: UpdateUnitResult): bool {
-            switch (updateResult.kind) {
-                case UpdateUnitKind.NoEdits:
-                    return false;
-
-                case UpdateUnitKind.Unknown:
-                    this.fileNameToScript.addOrUpdate(updateResult.fileName, updateResult.script2);
-                    this.fileNameToLocationInfo.addOrUpdate(updateResult.fileName, updateResult.script2.locationInfo);
-                    return true;
-            }
-        }
-
-        private partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string): UpdateUnitResult {
-            return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
                 var oldScript = this.fileNameToScript.lookup(fileName);
                 var newScript = SyntaxTreeToAstVisitor.visit(
                     Parser1.parse(new ScriptSnapshotText(sourceText)), fileName, this.emitOptions.compilationSettings);
 
-                return UpdateUnitResult.unknownEdits(oldScript, newScript);
+                this.fileNameToScript.addOrUpdate(fileName, newScript);
+                this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
             });
         }
 
@@ -365,7 +328,7 @@ module TypeScript {
 
             var fileNames = this.fileNameToScript.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
-                var script = <Script>this.fileNameToScript.lookup(fileNames[i]); 
+                var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
                 if (this.emitOptions.outputMany || declarationEmitter === null) {
                     // Create or reuse file
                     declarationEmitter = this.emitDeclarationsUnit(script, !this.emitOptions.outputMany);
@@ -396,7 +359,7 @@ module TypeScript {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
-        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: PullEmitter, inputOutputMapper?: (inputName: string, outputName: string) => void) {
+        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: PullEmitter, inputOutputMapper?: (inputName: string, outputName: string) => void ) {
             if (!script.emitRequired(this.emitOptions)) {
                 return null;
             }
@@ -431,7 +394,7 @@ module TypeScript {
             }
         }
 
-        public emit(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void) {
+        public emit(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ) {
             this.parseEmitOption(ioHost);
 
             var emitter: PullEmitter = null;
@@ -545,7 +508,7 @@ module TypeScript {
 
                     this.semanticInfoChain.addUnit(semanticInfo);
                 }
-                
+
                 var createDeclsEndTime = new Date().getTime();
 
                 // bind declaration symbols
@@ -557,7 +520,7 @@ module TypeScript {
                 for (i = 1; i < this.semanticInfoChain.units.length; i++) {
                     binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
                 }
-                
+
                 var bindEndTime = new Date().getTime();
                 //var typeCheckStartTime = new Date().getTime();
 
@@ -574,16 +537,16 @@ module TypeScript {
                 for (i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
 
-                    if ( reportErrors ) {
-                        this.logger.log( "Type checking " + fileName );
-                        this.pullTypeChecker.typeCheckScript( <Script>this.fileNameToScript.lookup( fileName ), fileName, this );
+                    if (reportErrors) {
+                        this.logger.log("Type checking " + fileName);
+                        this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
                     }
                     else {
-                        this.logger.log( "Resolving " + fileName );
+                        this.logger.log("Resolving " + fileName);
                         this.pullResolveFile(fileName);
                     }
                 }
-                var findErrorsEndTime = new Date().getTime();                
+                var findErrorsEndTime = new Date().getTime();
 
                 this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
@@ -595,11 +558,11 @@ module TypeScript {
                 }
             });
         }
-        
+
         // returns 'true' if diffs were detected
         private pullUpdateScript(oldScript: Script, newScript: Script): bool {
             return this.timeFunction("pullUpdateScript: ", () => {
-                
+
                 var declDiffer = new PullDeclDiffer();
 
                 // want to name the new script semantic info the same as the old one
@@ -665,7 +628,7 @@ module TypeScript {
                             graphUpdater.removeDecl(diff.oldDecl);
                         }
                         else if (diff.kind === PullDeclEdit.DeclAdded) {
-                            graphUpdater.addDecl(diff.newDecl);                        
+                            graphUpdater.addDecl(diff.newDecl);
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
                         }
                         else {
@@ -710,7 +673,7 @@ module TypeScript {
             var resolutionContext = new PullTypeResolutionContext();
             return this.pullTypeChecker.resolver.resolveDeclaration(ast, resolutionContext, enlosingDecl);
         }
-        
+
         public resolvePosition(pos: number, script: Script, scriptName?: string): PullTypeInfoAtPositionInfo {
 
             // find the enclosing decl
@@ -844,7 +807,7 @@ module TypeScript {
                         for (i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType === NodeType.Dot &&
                                 (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
-                                foundAST = resultASTs[i];   
+                                foundAST = resultASTs[i];
                             }
                             else if ((resultASTs[i].nodeType === NodeType.Call || resultASTs[i].nodeType === NodeType.New) &&
                                 (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
@@ -1085,7 +1048,7 @@ module TypeScript {
                 isTypedAssignment: isTypedAssignment
             };
         }
-        
+
         public pullGetSymbolInformationFromPath(path: AstPath, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; } {
             var context = this.extractResolutionContextFromPath(path, script, scriptName);
             if (!context) {
@@ -1137,7 +1100,7 @@ module TypeScript {
             if (!symbols) {
                 return null;
             }
-            
+
             return {
                 symbols: symbols,
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
@@ -1163,7 +1126,7 @@ module TypeScript {
 
         public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): PullTypeInfoAtPositionInfo {
             return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", () => {
-                
+
                 var info = this.resolvePosition(pos, script, scriptName);
                 return info;
             });
@@ -1171,8 +1134,6 @@ module TypeScript {
 
         public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
-                var updateResult: UpdateUnitResult;
-
                 var oldScript = <Script>this.fileNameToScript.lookup(fileName);
 
                 var syntaxTree = Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), LanguageVersion.EcmaScript5);
