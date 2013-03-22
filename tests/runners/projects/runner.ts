@@ -95,10 +95,6 @@ class HarnessBatch {
 
         compiler = new TypeScript.TypeScriptCompiler(this.errout, new TypeScript.NullLogger(), this.compilationSettings);
 
-        if (this.compilationSettings.emitComments) {
-            compiler.emitCommentsToOutput();
-        }
-
         function consumeUnit(code: TypeScript.SourceUnit) {
             try {
             // if file resolving is disabled, the file's content will not yet be loaded

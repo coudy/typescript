@@ -151,15 +151,7 @@ module TypeScript {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
-        public emitCommentsToOutput() {
-            this.emitSettings = new EmitOptions(this.settings);
-        }
-
-        public updateUnit(prog: string, fileName: string) {
-            return this.updateSourceUnit(new StringScriptSnapshot(prog), fileName);
-        }
-
-        public updateSourceUnit(sourceText: IScriptSnapshot, fileName: string): bool {
+        private updateSourceUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("updateSourceUnit(" + fileName + ")", () => {
                 var updateResult = this.partialUpdateUnit(sourceText, fileName);
                 return this.applyUpdateResult(updateResult);
@@ -168,7 +160,7 @@ module TypeScript {
 
         // Apply changes to compiler state.
         // Return "false" if the change is empty and nothing was updated.
-        public applyUpdateResult(updateResult: UpdateUnitResult): bool {
+        private applyUpdateResult(updateResult: UpdateUnitResult): bool {
             switch (updateResult.kind) {
                 case UpdateUnitKind.NoEdits:
                     return false;
@@ -180,7 +172,7 @@ module TypeScript {
             }
         }
 
-        public partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string): UpdateUnitResult {
+        private partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string): UpdateUnitResult {
             return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
                 var oldScript = this.fileNameToScript.lookup(fileName);
                 var newScript = SyntaxTreeToAstVisitor.visit(
@@ -193,8 +185,6 @@ module TypeScript {
         public addUnit(prog: string, fileName: string, referencedFiles?: IFileReference[] = []): Script {
             return this.addSourceUnit(new StringScriptSnapshot(prog), fileName, referencedFiles);
         }
-
-        private typeCollectionTime = 0;
 
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
@@ -313,7 +303,7 @@ module TypeScript {
             return result;
         }
 
-        public useUTF8ForFile(script: Script) {
+        private useUTF8ForFile(script: Script) {
             if (this.emitSettings.outputMany) {
                 return this.outputScriptToUTF8(script);
             } else {
@@ -338,7 +328,7 @@ module TypeScript {
             return true;
         }
 
-        public emitDeclarationsUnit(script: Script, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
+        private emitDeclarationsUnit(script: Script, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
             if (!this.canEmitDeclarations(script)) {
                 return null;
             }
@@ -493,7 +483,7 @@ module TypeScript {
         // Pull typecheck infrastructure
         //
 
-        public pullResolveFile(fileName: string): bool {
+        private pullResolveFile(fileName: string): bool {
             if (!this.pullTypeChecker) {
                 return false;
             }
@@ -612,7 +602,7 @@ module TypeScript {
         }
         
         // returns 'true' if diffs were detected
-        public pullUpdateScript(oldScript: Script, newScript: Script): bool {
+        private pullUpdateScript(oldScript: Script, newScript: Script): bool {
             return this.timeFunction("pullUpdateScript: ", () => {
                 
                 var declDiffer = new PullDeclDiffer();

@@ -164,10 +164,6 @@ class BatchCompiler {
             this.errorReporter.WriteLine(msg);
         };
 
-        if (this.compilationSettings.emitComments) {
-            compiler.emitCommentsToOutput();
-        }
-
         var consumeUnit = (code: TypeScript.SourceUnit) => {
             try {
                 // if file resolving is disabled, the file's content will not yet be loaded
