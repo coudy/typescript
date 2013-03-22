@@ -3026,10 +3026,14 @@ module TypeScript.Parser {
         }
 
         private parseForStatementWithVariableDeclarationOrInitializer(
-                forKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                variableDeclaration: VariableDeclarationSyntax,
-                initializer: IExpressionSyntax): ForStatementSyntax {
+                    forKeyword: ISyntaxToken,
+                    openParenToken: ISyntaxToken,
+                    variableDeclaration: VariableDeclarationSyntax,
+                    initializer: IExpressionSyntax): ForStatementSyntax {
+
+            // NOTE: From the es5 section on Automatic Semicolon Insertion.
+            // a semicolon is never inserted automatically if the semicolon would then ... become 
+            // one of the two semicolons in the header of a for statement
             var firstSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
 
             var condition: IExpressionSyntax = null;
@@ -3039,6 +3043,8 @@ module TypeScript.Parser {
                 condition = this.parseExpression(/*allowIn:*/ true);
             }
 
+            // NOTE: See above.  Semicolons in for statements don't participate in automatic 
+            // semicolon insertion.
             var secondSemicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
 
             var incrementor: IExpressionSyntax = null;
