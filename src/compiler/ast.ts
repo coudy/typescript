@@ -872,7 +872,7 @@ module TypeScript {
             var mod = <ModuleType>this.alias.type;
             // REVIEW: Only modules may be aliased for now, though there's no real
             // restriction on what the type symbol may be
-            if (!this.isDynamicImport || (this.id.sym && !(<TypeSymbol>this.id.sym).onlyReferencedAsTypeRef)) {
+            if (emitter.importStatementShouldBeEmitted(this)) {
                 var prevModAliasId = emitter.modAliasId;
                 var prevFirstModAlias = emitter.firstModAlias;
 
@@ -881,7 +881,9 @@ module TypeScript {
                 emitter.writeToOutput("var " + this.id.actualText + " = ");
                 emitter.modAliasId = this.id.actualText;
                 emitter.firstModAlias = this.firstAliasedModToString();
-                emitter.emitJavascript(this.alias, TokenID.Tilde, false);
+                var aliasAST = this.alias.nodeType == NodeType.TypeRef ? (<TypeReference>this.alias).term : this.alias;
+
+                emitter.emitJavascript(aliasAST, TokenID.Tilde, false);
                 // the dynamic import case will insert the semi-colon automatically
                 if (!this.isDynamicImport) {
                     emitter.writeToOutput(";");
@@ -912,8 +914,8 @@ module TypeScript {
                 return (<Identifier>this.alias).actualText;
             }
             else {
-                var dotExpr = <BinaryExpression>this.alias;
-                var firstMod = <Identifier>dotExpr.operand1;
+                var dotExpr = <TypeReference>this.alias;
+                var firstMod = <Identifier>(<BinaryExpression>dotExpr.term).operand1;
                 return firstMod.actualText;
             }
         }

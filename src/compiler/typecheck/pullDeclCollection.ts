@@ -44,7 +44,7 @@ module TypeScript {
         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>ast;
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).text;
-        var isDynamic = isQuoted(modName);
+        var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.modFlags, ModuleFlags.IsDynamic);
         var kind: PullElementKind = PullElementKind.Container;
 
         if (hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {

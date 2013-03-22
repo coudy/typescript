@@ -168,6 +168,8 @@ module TypeScript {
 
             var moduleInstanceDecl: PullDecl = moduleContainerDecl.getValueDecl();
 
+            var moduleKind = moduleContainerDecl.getKind();
+
             var parent = this.getParent();
             var parentInstanceSymbol = this.getParent(true);
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleContainerDecl);
@@ -182,7 +184,7 @@ module TypeScript {
                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
             }
 
-            if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != PullElementKind.Container) {
+            if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {
                 // duplicate symbol error
                 moduleContainerDecl.addDiagnostic(new PullDiagnostic(
                     moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [modName])));
@@ -193,8 +195,8 @@ module TypeScript {
             if (moduleContainerTypeSymbol) {
                 moduleInstanceSymbol = moduleContainerTypeSymbol.getInstanceSymbol();
             }
-            else {
-                moduleContainerTypeSymbol = new PullContainerTypeSymbol(modName);
+            else { 
+                moduleContainerTypeSymbol = new PullContainerTypeSymbol(modName, moduleKind);
                 createdNewSymbol = true;
             }
 
@@ -288,6 +290,77 @@ module TypeScript {
             }
 
             this.popParent();
+        }
+
+        // aliases
+        public bindImportDeclaration(importDeclaration: PullDecl) {
+            var declFlags = importDeclaration.getFlags();
+            var declKind = importDeclaration.getKind();
+            var importDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(importDeclaration);
+
+            var isExported = false;
+            var linkKind = SymbolLinkKind.PrivateMember;
+            var importSymbol: PullTypeAliasSymbol = null;
+            var declName = importDeclaration.getName();
+            var parentHadSymbol = false;
+            var parent = this.getParent(true);
+
+            if (parent) {
+                importSymbol = <PullTypeAliasSymbol>parent.findMember(declName);
+
+                if (!importSymbol) {
+                    importSymbol = <PullTypeAliasSymbol>parent.findContainedMember(declName);
+                }
+            }
+            else if (!(importDeclaration.getFlags() & PullElementFlags.Exported)) {
+                importSymbol = <PullTypeAliasSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
+            }
+
+            if (importSymbol) {
+                parentHadSymbol = true;
+            }
+
+            if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
+                importDeclaration.addError(new PullError(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
+                importSymbol = null;
+            }
+
+            if (this.reBindingAfterChange && importSymbol) {
+
+                // prune out-of-date decls...
+                var decls = importSymbol.getDeclarations();
+                var scriptName = importDeclaration.getScriptName();
+
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        importSymbol.removeDeclaration(decls[j]);
+                    }
+                }
+
+                importSymbol.setUnresolved();
+            }
+
+            if (!importSymbol) {
+                importSymbol = new PullTypeAliasSymbol(declName);
+            }
+
+            importSymbol.addDeclaration(importDeclaration);
+            importDeclaration.setSymbol(importSymbol);
+
+            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
+
+            if (parent && !parentHadSymbol) {
+
+                if (declFlags & PullElementFlags.Exported) {
+                    parent.addMember(importSymbol, SymbolLinkKind.PublicMember);
+                }
+                else {
+                    importSymbol.setContainer(parent);
+                }
+            }
+            this.recordNonInterfaceParentModule();
+
+            importSymbol.setIsBound(this.bindingPhase);
         }
 
         // enums
@@ -1214,86 +1287,6 @@ module TypeScript {
             }
 
             propertySymbol.setIsBound(this.bindingPhase);
-        }
-
-        public bindImportDeclaration(importDeclaration: PullDecl) {
-            var declFlags = importDeclaration.getFlags();
-            var declKind = importDeclaration.getKind();
-            var importDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(importDeclaration);
-
-            var isExported = false;
-            var linkKind = SymbolLinkKind.PrivateMember;
-            var importSymbol: PullSymbol = null;
-            var declName = importDeclaration.getName();
-            var parentHadSymbol = false;
-            var parent = this.getParent(true);
-
-            // The code below accounts for the variable symbol being a type because
-            // modules may create instance variables
-
-            if (parent) {
-                importSymbol = parent.findMember(declName);
-
-                if (!importSymbol) {
-                    importSymbol = parent.findContainedMember(declName);
-                }
-            }
-            else if (!(importDeclaration.getFlags() & PullElementFlags.Exported)) {
-                importSymbol = this.findSymbolInContext(declName, PullElementKind.SomeValue, []);
-            }
-
-            if (importSymbol) {
-                parentHadSymbol = true;
-            }
-
-            if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
-
-                // if it's an implicit variable, then this variable symbol will actually be a class constructor
-                // or container type that was just defined, so we don't want to raise an error
-                if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
-                    importDeclaration.addDiagnostic(new PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(),
-                        getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
-                    importSymbol = null;
-                }
-            }
-
-            if (this.reBindingAfterChange && importSymbol) {
-
-                // prune out-of-date decls...
-                var decls = importSymbol.getDeclarations();
-                var scriptName = importDeclaration.getScriptName();
-
-                for (var j = 0; j < decls.length; j++) {
-                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                        importSymbol.removeDeclaration(decls[j]);
-                    }
-                }
-
-                importSymbol.setUnresolved();
-            }
-
-            if (!importSymbol) {
-                importSymbol = new PullSymbol(declName, declKind);
-            }
-
-            importSymbol.addDeclaration(importDeclaration);
-            importDeclaration.setSymbol(importSymbol);
-
-            this.semanticInfo.setSymbolForAST(importDeclAST.id, importSymbol);
-            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
-
-            if (parent && !parentHadSymbol) {
-
-                if (declFlags & PullElementFlags.Exported) {
-                    parent.addMember(importSymbol, SymbolLinkKind.PublicMember);
-                }
-                else {
-                    importSymbol.setContainer(parent);
-                }
-            }
-            this.recordNonInterfaceParentModule();
-
-            importSymbol.setIsBound(this.bindingPhase);
         }
 
         // parameters
@@ -2510,6 +2503,7 @@ module TypeScript {
                     }
                     break;
 
+                case PullElementKind.DynamicModule:
                 case PullElementKind.Container:
                     this.bindModuleDeclarationToPullSymbol(decl);
                     break;
@@ -2580,6 +2574,10 @@ module TypeScript {
 
                 case PullElementKind.FunctionExpression:
                     this.bindFunctionExpressionToPullSymbol(decl);
+                    break;
+
+                case PullElementKind.TypeAlias:
+                    this.bindImportDeclaration(decl);
                     break;
 
                 case PullElementKind.Parameter:

@@ -123,6 +123,12 @@ module TypeScript {
                     public errorReporter: SimpleErrorReporter) {
         }
 
+        public isPull() { return false; }
+
+        public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration): bool {
+            return !importDeclAST.isDynamicImport || (importDeclAST.id.sym && !(<TypeSymbol>importDeclAST.id.sym).onlyReferencedAsTypeRef);
+        }
+
         public setSourceMappings(mapper: SourceMapper) {
             this.allSourceMappers.push(mapper);
             this.sourceMapper = mapper;

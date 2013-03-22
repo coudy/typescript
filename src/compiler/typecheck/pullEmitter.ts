@@ -52,6 +52,21 @@ module TypeScript {
             this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
 
+        public isPull() { return true; }
+
+        public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?:string): bool {
+            
+            if (!importDeclAST.isDynamicImport) {
+                return true;
+            }
+
+            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.locationInfo.fileName);
+
+            var pullSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+
+            return pullSymbol.isUsedAsValue;
+        }
+
         public setUnit(locationInfo: LocationInfo) {
             this.locationInfo = locationInfo;
         }
@@ -183,21 +198,23 @@ module TypeScript {
             var dependencyList = "";
             var i = 0;
 
-            // all dependencies are quoted
-            if (moduleDecl.mod) {
-                for (i = 0; i < moduleDecl.mod.importedModules.length; i++) {
-                    var importStatement = moduleDecl.mod.importedModules[i]
+            var semanticInfo = this.semanticInfoChain.getUnit(this.locationInfo.fileName);
+            var imports = semanticInfo.getDynamicModuleImports();
 
-                    // if the imported module is only used in a type position, do not add it as a requirement
-                    if (importStatement.id.sym &&
-                        !(<TypeSymbol>importStatement.id.sym).onlyReferencedAsTypeRef) {
-                        if (i <= (<ModuleType>moduleDecl.mod).importedModules.length - 1) {
+            // all dependencies are quoted
+            if (imports.length) {
+                for (i = 0; i < imports.length; i++) {
+                    var importStatement = imports[i];
+                    var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(importStatement.getDeclarations()[0]);
+
+                    if (importStatement.getIsUsedAsValue()) {
+                        if (i <= imports.length - 1) {
                             dependencyList += ", ";
                             importList += ", ";
                         }
 
-                        importList += "__" + importStatement.id.actualText + "__";
-                        dependencyList += importStatement.firstAliasedModToString();
+                        importList += "__" + importStatement.getName() + "__";
+                        dependencyList += importStatementAST.firstAliasedModToString();
                     }
                 }
             }
