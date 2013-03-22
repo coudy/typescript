@@ -24,6 +24,6 @@ function use() {
   var p1: provide.Provide; 
   var p2: foo.Provide;
   var p3:booz.bar;
-  var p2= new provide.Provide();
+  var p22 = new provide.Provide();
 }
 

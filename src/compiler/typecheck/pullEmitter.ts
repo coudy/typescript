@@ -77,7 +77,7 @@ module TypeScript {
             return enclosingDecl;
         }
 
-        private symbolIsUsedInItsEnclosingContainer(symbol: PullSymbol) {            
+        private symbolIsUsedInItsEnclosingContainer(symbol: PullSymbol, dynamic=false) {            
 
             var symDecls = symbol.getDeclarations();
 
@@ -97,7 +97,7 @@ module TypeScript {
                         // compute the closing container of the symbol's declaration
                         while (symbolDeclarationEnclosingContainer) {
 
-                            if (symbolDeclarationEnclosingContainer.getKind() == PullElementKind.Container) {
+                            if (symbolDeclarationEnclosingContainer.getKind() == (dynamic ? PullElementKind.DynamicModule : PullElementKind.Container)) {
                                 break;
                             }
 
@@ -109,7 +109,7 @@ module TypeScript {
                         if (symbolDeclarationEnclosingContainer) {
 
                             while(enclosingContainer) {
-                                if (enclosingContainer.getKind() == PullElementKind.Container) {
+                                if (enclosingContainer.getKind() == (dynamic ? PullElementKind.DynamicModule : PullElementKind.Container)) {
                                     break;
                                 }
 
@@ -285,7 +285,7 @@ module TypeScript {
 
             if (symbol) {
                 parentSymbol = symbol.getContainer();
-                if (parentSymbol && parentSymbol.getKind() == PullElementKind.Enum) {
+                if (parentSymbol && (parentSymbol.getKind() == PullElementKind.Enum || parentSymbol.getKind() == PullElementKind.DynamicModule)) {
                     return true;
                 }
 
@@ -364,7 +364,13 @@ module TypeScript {
                         else if (pullSymbolContainerKind == PullElementKind.DynamicModule) {
                             if (pullSymbolKind == PullElementKind.Property || pullSymbol.hasFlag(PullElementFlags.Exported)) {
                                 // If dynamic module
-                                this.writeToOutput("exports.");
+                                if (pullSymbolKind == PullElementKind.Property) {
+                                    this.writeToOutput("exports.");
+                                }
+                                else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
+                                    !this.symbolIsUsedInItsEnclosingContainer(pullSymbol, true)) {
+                                    this.writeToOutput("exports.");
+                                }
                             }
                         }
                         else if (pullSymbolKind == PullElementKind.Property) {
