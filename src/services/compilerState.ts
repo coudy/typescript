@@ -123,7 +123,7 @@ module Services {
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
             // Keep track of the version of script we're adding to the compiler.
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
-            compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
+            compiler.addSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName));
         }
 
         private getHostCompilationSettings(): TypeScript.CompilationSettings {
@@ -262,13 +262,7 @@ module Services {
         }
 
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var syntaxTree = this.compiler.fileNameToSyntaxTree.lookup(fileName);
-            if (syntaxTree === null) {
-                syntaxTree = TypeScript.Parser1.parse(TypeScript.SimpleText.fromScriptSnapshot(this.getScriptSnapshot(fileName)));
-                this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-            }
-
-            return syntaxTree;
+            return <TypeScript.SyntaxTree>this.compiler.fileNameToSyntaxTree.lookup(fileName);
         }
 
         public getLineMap(fileName: string): number[] {

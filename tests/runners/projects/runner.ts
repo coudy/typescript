@@ -106,7 +106,7 @@ class HarnessBatch {
                         bugs.forEach(bug => assert.bug(bug));
                     }
 
-                    compiler.addSourceUnit(TypeScript.ScriptSnapshot.fromString(code.content), code.path);
+                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content));
                 }
             }
             catch (err) {

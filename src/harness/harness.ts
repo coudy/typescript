@@ -768,7 +768,7 @@ module Harness {
             compiler.settings.controlFlowUseDef = true;
             compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             compiler.parseEmitOption(stdout);
-            compiler.addSourceUnit(TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText), "lib.d.ts");
+            compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText));
             return compiler;
         }
 
@@ -1162,7 +1162,7 @@ module Harness {
                 // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
                 // of persistent typecheck state
                 //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
-                script = compiler.addSourceUnit(TypeScript.ScriptSnapshot.fromString(code), uName, references);
+                script = compiler.addSourceUnit(uName, TypeScript.ScriptSnapshot.fromString(code), references);
                 needsFullTypeCheck = true;
             }
 
@@ -1600,7 +1600,7 @@ module Harness {
         /** Parse file given its source text */
         public parseSourceText(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.Script {
             return TypeScript.SyntaxTreeToAstVisitor.visit(
-                TypeScript.Parser1.parse(TypeScript.SimpleText.fromScriptSnapshot(sourceText)), fileName, new TypeScript.CompilationSettings());
+                TypeScript.Parser.parse(TypeScript.SimpleText.fromScriptSnapshot(sourceText)), fileName, new TypeScript.CompilationSettings());
         }
 
         /** Parse a file on disk given its fileName */

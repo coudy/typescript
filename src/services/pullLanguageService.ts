@@ -1161,7 +1161,7 @@ module Services {
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
-            var syntaxTree = TypeScript.Parser1.parse(segmentedScriptSnapshot);
+            var syntaxTree = TypeScript.Parser.parse(segmentedScriptSnapshot);
 
             return syntaxTree
         }
@@ -1179,7 +1179,7 @@ module Services {
             var newScriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var newSegmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(newScriptSnapshot);
 
-            var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
+            var nextSyntaxTree = TypeScript.Parser.incrementalParse(
                 previousSyntaxTree, editRange, newSegmentedScriptSnapshot);
 
             return nextSyntaxTree;

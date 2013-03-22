@@ -1,6 +1,6 @@
 ///<reference path='References.ts' />
 
-module TypeScript.Parser1 {
+module TypeScript.Parser {
     // Information the parser needs to effectively rewind.
     interface IParserRewindPoint {
         // Information used by normal parser source.
