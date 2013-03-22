@@ -214,7 +214,7 @@ class BatchCompiler {
         };
 
         try {
-            compiler.pullTypeCheck(true, this.compilationSettings.usePullTC);
+            compiler.pullTypeCheck(true, true);
 
             var mapInputToOutput = (inputFile: string, outputFile: string): void => {
                 this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
@@ -402,22 +402,6 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.gatherDiagnostics = true;
-            }
-        });
-
-        opts.flag('nopull', {
-            usage: 'use the 0.8.3 parser, type checker and emitter',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.usePull = false;
-            }
-        });
-
-        opts.flag('nopulltc', {
-            usage: 'When using "pull", resolve only',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.usePullTC = false;
             }
         });
 

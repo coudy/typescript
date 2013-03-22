@@ -135,7 +135,7 @@ module Services {
             // Set "ES5" target by default for language service
             settings = new TypeScript.CompilationSettings();
             settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
-            settings.usePull = true;
+
             return settings;
         }
 
@@ -148,7 +148,6 @@ module Services {
             this._compilationSettings = new TypeScript.CompilationSettings();
 
             Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
-            this._compilationSettings.usePull = true;
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings());
             this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
 

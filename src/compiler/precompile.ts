@@ -112,9 +112,6 @@ module TypeScript {
         public generateDeclarationFiles = false;
 
         public useCaseSensitiveFileResolution = false;
-        public usePull = true;
-        public usePullTC = true;
-
         public gatherDiagnostics = false;
 
         public setStyleOptions(str: string) {
