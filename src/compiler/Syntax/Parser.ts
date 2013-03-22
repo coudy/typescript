@@ -1587,7 +1587,9 @@ module TypeScript.Parser {
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             if (allDiagnostics.length === 0) {
                 // If we have no scanner/parser errors, then also check for grammar errors as well.
-                // sourceUnit.accept(new GrammarErrorWalker(allDiagnostics));
+                if (isDeclaration) {
+                    // sourceUnit.accept(new DeclarationCheckerWalker(allDiagnostics));
+                }
             }
 
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
@@ -5608,10 +5610,6 @@ module TypeScript.Parser {
             }
         }
     }
-
-    //class GrammarErrorWalker extends PositionTrackingWalker {
-
-    //}
 
     export function parse(text: ISimpleText,
                           isDeclaration: bool,
