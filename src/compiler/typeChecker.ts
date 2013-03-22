@@ -831,19 +831,9 @@ module TypeScript {
                     symbol = search(idText);
                 }
 
-                if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".str";
-                    symbol = search(idText);
-                }
-
                 // Check check for .d.str
                 if (!symbol) {
                     idText = stripQuotes(originalIdText) + ".d.ts";
-                    symbol = search(idText);
-                }
-
-                if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".d.str";
                     symbol = search(idText);
                 }
 
@@ -862,31 +852,19 @@ module TypeScript {
                         idText = normalizePath(path + strippedIdText + ".ts");
                         symbol = search(idText);
 
-                        // check for .str
-                        if (symbol === null) {
-                            idText = changePathToSTR(idText);
-                            symbol = search(idText);
-                        }
-
                         // check for .d.ts
                         if (symbol === null) {
                             idText = changePathToDTS(idText);
                             symbol = search(idText);
                         }
 
-                        // check for .d.str
                         if (symbol === null) {
-                            idText = changePathToDSTR(idText);
-                            symbol = search(idText);
-                        }
-
-                        if (symbol === null) {
-							if(path === '/') {
-								path = '';
-							} else {
-								path = normalizePath(path + "..");
-								path = path && path != '/' ? path + '/' : path;
-							}
+                            if (path === '/') {
+                                path = '';
+                            } else {
+                                path = normalizePath(path + "..");
+                                path = path && path != '/' ? path + '/' : path;
+                            }
                         }
                     }
                 }

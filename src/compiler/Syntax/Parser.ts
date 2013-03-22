@@ -1581,13 +1581,18 @@ module TypeScript.Parser {
             }
         }
 
-        public parseSyntaxTree(): SyntaxTree {
+        public parseSyntaxTree(isDeclaration: bool): SyntaxTree {
             var sourceUnit = this.parseSourceUnit();
 
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
+            if (allDiagnostics.length === 0) {
+                // If we have no scanner/parser errors, then also check for grammar errors as well.
+                // sourceUnit.accept(new GrammarErrorWalker(allDiagnostics));
+            }
+
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 
-            return new SyntaxTree(sourceUnit, allDiagnostics, this.lineMap, this.source.languageVersion(), this.parseOptions);
+            return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.lineMap, this.source.languageVersion(), this.parseOptions);
         }
 
         private setStrictMode(isInStrictMode: bool) {
@@ -5619,13 +5624,18 @@ module TypeScript.Parser {
         }
     }
 
+    class GrammarErrorWalker extends PositionTrackingWalker {
+
+    }
+
     export function parse(text: ISimpleText,
+                          isDeclaration: bool,
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                           options?: ParseOptions = null): SyntaxTree {
         var source = new NormalParserSource(text, languageVersion);
         options = options || new ParseOptions();
 
-        return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree();
+        return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
     }
 
     export function incrementalParse(oldSyntaxTree: SyntaxTree,
@@ -5638,6 +5648,6 @@ module TypeScript.Parser {
         var source = new IncrementalParserSource(
             oldSyntaxTree.sourceUnit(), textChangeRange, newText, oldSyntaxTree.languageVersion());
 
-        return new ParserImpl(newText.lineMap(), source, oldSyntaxTree.parseOptions()).parseSyntaxTree();
+        return new ParserImpl(newText.lineMap(), source, oldSyntaxTree.parseOptions()).parseSyntaxTree(oldSyntaxTree.isDeclaration());
     }
 }

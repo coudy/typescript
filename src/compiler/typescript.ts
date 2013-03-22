@@ -132,7 +132,7 @@ module TypeScript {
 
         public addSourceUnit(fileName: string, sourceText: IScriptSnapshot, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var syntaxTree = Parser.parse(SimpleText.fromScriptSnapshot(sourceText), LanguageVersion.EcmaScript5);
+                var syntaxTree = Parser.parse(SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
                 var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
                 script.referencedFiles = referencedFiles;
 
@@ -152,7 +152,7 @@ module TypeScript {
                 var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
 
                 var syntaxTree = textChangeRange === null
-                    ? TypeScript.Parser.parse(text)
+                    ? TypeScript.Parser.parse(text, TypeScript.isDTSFile(fileName))
                     : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
                 var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);

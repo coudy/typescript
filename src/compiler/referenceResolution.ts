@@ -109,47 +109,29 @@ module TypeScript {
                 (isRootedPath || !parentPath || performSearch ? referencePath : parentPath + "/" + referencePath);
 
             // We use +=.ts to make sure we don't accidentally pick up ".js" files or the like
-            if (!isSTRFile(normalizedPath) && !isTSFile(normalizedPath)) {
+            if (!isTSFile(normalizedPath)) {
                 normalizedPath += ".ts";  //changePathToSTR(normalizedPath);
             }
 
             normalizedPath = switchToForwardSlashes(stripQuotes(normalizedPath));
             var absoluteModuleID = this.environment.compilationSettings.useCaseSensitiveFileResolution ? normalizedPath : normalizedPath.toLocaleUpperCase();
+
             // read the file contents - if it doesn't exist, trigger a resolution error
             if (!this.visited[absoluteModuleID]) {
-
                 // if the path is relative, or came from a reference tag, we don't perform a search
                 if (isRelativePath || isRootedPath || !performSearch) {
                     try {
                         CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
                             
-                        // Look for the .ts file first - if not present, use the .ts, the .d.str and the .d.ts
+                        // Look for the .ts file first - if not present, the .d.ts
                         try {
                             resolvedFile.content = ioHost.readFile(normalizedPath);
                         }
                         catch (err1) {
-                            try {
-                                if (isSTRFile(normalizedPath)) {
-                                    normalizedPath = changePathToTS(normalizedPath);
-                                }
-                                else if (isTSFile(normalizedPath)) {
-                                    normalizedPath = changePathToSTR(normalizedPath);
-                                }
+                            if (isTSFile(normalizedPath)) {
+                                normalizedPath = changePathToDTS(normalizedPath);
                                 CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
                                 resolvedFile.content = ioHost.readFile(normalizedPath);
-                            }
-                            catch (err2) {
-                                normalizedPath = changePathToDSTR(normalizedPath);
-                                CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
-
-                                try {
-                                    resolvedFile.content = ioHost.readFile(normalizedPath);
-                                }
-                                catch (err3) {
-                                    normalizedPath = changePathToDTS(normalizedPath);
-                                    CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
-                                    resolvedFile.content = ioHost.readFile(normalizedPath);
-                                }
                             }
                         }
                         CompilerDiagnostics.debugPrint("   Found code at " + normalizedPath);
@@ -169,20 +151,8 @@ module TypeScript {
                     resolvedFile = ioHost.findFile(parentPath, normalizedPath);
 
                     if (!resolvedFile) {
-                        if (isSTRFile(normalizedPath)) {
-                            normalizedPath = changePathToTS(normalizedPath);
-                        }
-                        else if (isTSFile(normalizedPath)) {
-                            normalizedPath = changePathToSTR(normalizedPath);
-                        }
-                        resolvedFile = ioHost.findFile(parentPath, normalizedPath);
-                    }
-
-                    if (!resolvedFile) {
-                        normalizedPath = changePathToDTS(normalizedPath);
-                        resolvedFile = ioHost.findFile(parentPath, normalizedPath);
-                        if (!resolvedFile) {
-                            normalizedPath = changePathToDSTR(normalizedPath);
+                        if (isTSFile(normalizedPath)) {
+                            normalizedPath = changePathToDTS(normalizedPath);
                             resolvedFile = ioHost.findFile(parentPath, normalizedPath);
                         }
                     }

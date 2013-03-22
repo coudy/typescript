@@ -72,7 +72,7 @@ module TypeScript {
                     private fileName: string,
                     private lineMap: LineMap,
                     private compilationSettings: CompilationSettings) {
-            this.isParsingDeclareFile = isDSTRFile(fileName) || isDTSFile(fileName);
+            this.isParsingDeclareFile = isDTSFile(fileName);
         }
 
         public static visit(syntaxTree: SyntaxTree, fileName: string, compilationSettings: CompilationSettings): Script {

@@ -3,17 +3,20 @@
 module TypeScript {
     export class SyntaxTree {
         private _sourceUnit: SourceUnitSyntax;
+        private _isDeclaration: bool;
         private _diagnostics: SyntaxDiagnostic[];
         private _lineMap: LineMap;
         private _languageVersion: LanguageVersion;
         private _parseOptions: ParseOptions;
 
         constructor(sourceUnit: SourceUnitSyntax,
+                    isDeclaration: bool,
                     diagnostics: SyntaxDiagnostic[],
                     lineMap: LineMap,
                     languageVersion: LanguageVersion,
                     parseOtions: ParseOptions) {
             this._sourceUnit = sourceUnit;
+            this._isDeclaration = isDeclaration;
             this._diagnostics = diagnostics;
             this._lineMap = lineMap;
             this._languageVersion = languageVersion;
@@ -35,6 +38,10 @@ module TypeScript {
 
         public sourceUnit(): SourceUnitSyntax {
             return this._sourceUnit;
+        }
+
+        public isDeclaration(): bool {
+            return this._isDeclaration;
         }
 
         public diagnostics(): SyntaxDiagnostic[] {

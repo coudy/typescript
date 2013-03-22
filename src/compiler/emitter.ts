@@ -748,9 +748,6 @@ module TypeScript {
             if (isTSFile(modName)) {
                 moduleDecl.name.setText(modName.substring(0, modName.length - 3));
             }
-            else if (isSTRFile(modName)) {
-                moduleDecl.name.setText(modName.substring(0, modName.length - 4));
-            }
 
             if (!hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {
                 var isDynamicMod = hasFlag(moduleDecl.modFlags, ModuleFlags.IsDynamic);

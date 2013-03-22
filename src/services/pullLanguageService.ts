@@ -1161,7 +1161,7 @@ module Services {
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
-            var syntaxTree = TypeScript.Parser.parse(segmentedScriptSnapshot);
+            var syntaxTree = TypeScript.Parser.parse(segmentedScriptSnapshot, TypeScript.isDTSFile(fileName));
 
             return syntaxTree
         }

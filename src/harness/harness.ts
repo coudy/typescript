@@ -1600,7 +1600,8 @@ module Harness {
         /** Parse file given its source text */
         public parseSourceText(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.Script {
             return TypeScript.SyntaxTreeToAstVisitor.visit(
-                TypeScript.Parser.parse(TypeScript.SimpleText.fromScriptSnapshot(sourceText)), fileName, new TypeScript.CompilationSettings());
+                TypeScript.Parser.parse(TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName)),
+                fileName, new TypeScript.CompilationSettings());
         }
 
         /** Parse a file on disk given its fileName */
