@@ -125,8 +125,14 @@ module TypeScript {
     /// Preprocessing
     ///
     export interface IPreProcessedFileInfo {
+        settings: CompilationSettings;
         referencedFiles: IFileReference[];
         importedFiles: IFileReference[];
+        isLibFile: bool;
+    }
+
+    export interface ITripleSlashDirectiveProperties {
+        noDefaultLib: bool;
     }
 
     function getFileReferenceFromReferencePath(comment: string): IFileReference {
@@ -144,6 +150,8 @@ module TypeScript {
             return {
                 line: 0,
                 character: 0,
+                position: 0,
+                length: 0,
                 path: switchToForwardSlashes(adjustedPath),
                 isResident: isResident
             };
@@ -242,6 +250,7 @@ module TypeScript {
                             token = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);
 
                             if (token.tokenKind === SyntaxKind.OpenParenToken) {
+                                var afterOpenParenPosition = scanner.absoluteIndex();
                                 token = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);
 
                                 lineMap.fillLineAndCharacterFromPosition(importStart, lineChar);
@@ -250,6 +259,8 @@ module TypeScript {
                                     var ref = {
                                         line: lineChar.line,
                                         character: lineChar.character,
+                                        position: afterOpenParenPosition + token.leadingTriviaWidth(),
+                                        length: token.width(),
                                         path: stripQuotes(switchToForwardSlashes(token.text())),
                                         isResident: false
                                     };
@@ -266,12 +277,13 @@ module TypeScript {
         }
     }
 
-    export function processTripleSlashDirectives(lineMap: ILineMap, firstToken: ISyntaxToken, settings: CompilationSettings, referencedFiles: IFileReference[]): void {
+    export function processTripleSlashDirectives(lineMap: ILineMap, firstToken: ISyntaxToken, settings: CompilationSettings, referencedFiles: IFileReference[]): ITripleSlashDirectiveProperties {
         var leadingTrivia = firstToken.leadingTrivia();
 
         var position = 0;
         var lineChar = { line: -1, character: -1 };
-        
+        var noDefaultLib = false;
+
         for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
             var trivia = leadingTrivia.syntaxTriviaAt(i);
 
@@ -289,15 +301,23 @@ module TypeScript {
 
                 if (settings) {
                     getStyleSettings(triviaText, settings.styleSettings);
+
+                    // is it a lib file?
+                    var isNoDefaultLibRegex = /^(\/\/\/\s*<reference\s+no-default-lib=)('|")(.+?)\2\s*\/>/gim;
+                    var isNoDefaultLibMatch: any = isNoDefaultLibRegex.exec(triviaText);
+                    if (isNoDefaultLibMatch) {
+                        noDefaultLib = (isNoDefaultLibMatch[3] == "true");
+                    }
                 }
             }
 
             position += trivia.fullWidth();
         }
-        
+
+        return { noDefaultLib: noDefaultLib};
     }
 
-    export function preProcessFile(sourceText: IScriptSnapshot, settings: CompilationSettings = null, readImportFiles? = true): IPreProcessedFileInfo {
+    export function preProcessFile(sourceText: IScriptSnapshot, settings?: CompilationSettings = new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
         var text = new ScriptSnapshotText(sourceText);
         var scanner = new Scanner1(text, LanguageVersion.EcmaScript5, scannerWindow);
 
@@ -316,7 +336,7 @@ module TypeScript {
         processTripleSlashDirectives(text.lineMap(), firstToken, settings, referencedFiles);
 
         scannerDiagnostics.length = 0;
-        return { referencedFiles: referencedFiles, importedFiles: importedFiles };
+        return { settings:settings, referencedFiles: referencedFiles, importedFiles: importedFiles };
     }
 
 } // Tools

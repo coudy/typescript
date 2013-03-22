@@ -1357,6 +1357,8 @@ module Harness {
                         var ref = {
                             line:0,
                             character:0,
+                            position:0,
+                            length:0,
                             path: isRef[1],
                             isResident: false
                         };
