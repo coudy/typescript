@@ -20,7 +20,6 @@ module TypeScript {
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
         public checker: TypeChecker = null;
         public lineCol = { line: 0, character: 0 };
-        public emitAsComments = true;
         public hasErrors = false;
         public pushToErrorSink = false;
         public errorSink: string[] = [];
@@ -33,13 +32,9 @@ module TypeScript {
 
         public setErrOut(outerr) {
             this.outfile = outerr;
-            this.emitAsComments = false;
         }
 
         public emitPrefix() {
-            if (this.emitAsComments) {
-                this.outfile.Write("// ");
-            }
             this.outfile.Write(this.checker.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.character + "): ");
         }
 

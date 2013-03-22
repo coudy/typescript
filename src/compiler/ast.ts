@@ -1150,8 +1150,11 @@ module TypeScript {
     }
 
     export class LocationInfo {
-        constructor(public fileName: string,
+        public fileName: string;
+
+        constructor(fileName: string,
                     public lineMap: ILineMap) {
+            this.fileName = fileName;
         }
     }
 
