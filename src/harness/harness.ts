@@ -763,7 +763,7 @@ module Harness {
 
         export function makeDefaultCompilerForTest(c?: TypeScript.TypeScriptCompiler) {
             var compiler = c || new TypeScript.TypeScriptCompiler(stderr);
-            compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
+            compiler.settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
             compiler.parseEmitOption(stdout);

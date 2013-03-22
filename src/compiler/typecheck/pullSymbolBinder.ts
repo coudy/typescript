@@ -2154,7 +2154,7 @@ module TypeScript {
                 }
             }
 
-            if (codeGenTarget < CodeGenTarget.ES5) {
+            if (codeGenTarget < LanguageVersion.EcmaScript5) {
                 getAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
             }
 
@@ -2338,7 +2338,7 @@ module TypeScript {
                 }
             }
 
-            if (codeGenTarget < CodeGenTarget.ES5) {
+            if (codeGenTarget < LanguageVersion.EcmaScript5) {
                 setAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
             }
 

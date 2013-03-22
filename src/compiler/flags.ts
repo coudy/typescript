@@ -179,11 +179,6 @@ module TypeScript {
         IncompatibleParameterTypes = 1 << 6,
     }
 
-    export enum CodeGenTarget {
-        ES3 = 0,
-        ES5 = 1,
-    }
-
     export enum ModuleGenTarget {
         Synchronous = 0,
         Asynchronous = 1,
@@ -192,7 +187,7 @@ module TypeScript {
 
     // Compiler defaults to generating ES5-compliant code for
     //  - getters and setters
-    export var codeGenTarget: CodeGenTarget = CodeGenTarget.ES3;
+    export var codeGenTarget: LanguageVersion = LanguageVersion.EcmaScript3;
 
     export var moduleGenTarget: ModuleGenTarget = ModuleGenTarget.Synchronous;
 

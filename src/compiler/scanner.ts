@@ -177,7 +177,7 @@ module TypeScript {
     }
 
     export function LexIsUnicodeDigit(code: number): bool {
-        if (codeGenTarget === CodeGenTarget.ES3) {
+        if (codeGenTarget === LanguageVersion.EcmaScript3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdCont);
         } else {
             return LexLookUpUnicodeMap(code, unicodeES5IdCont);
@@ -185,7 +185,7 @@ module TypeScript {
     }
 
     export function LexIsUnicodeIdStart(code: number): bool {
-        if (codeGenTarget === CodeGenTarget.ES3) {
+        if (codeGenTarget === LanguageVersion.EcmaScript3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdStart);
         } else {
             return LexLookUpUnicodeMap(code, unicodeES5IdStart);

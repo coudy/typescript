@@ -100,7 +100,7 @@ module TypeScript {
 
         public useDefaultLib = true;
 
-        public codeGenTarget = CodeGenTarget.ES3;
+        public codeGenTarget = LanguageVersion.EcmaScript3;
         public moduleGenTarget = ModuleGenTarget.Synchronous;
 
         // --out option passed. 

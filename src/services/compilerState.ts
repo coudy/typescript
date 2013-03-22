@@ -134,7 +134,7 @@ module Services {
 
             // Set "ES5" target by default for language service
             settings = new TypeScript.CompilationSettings();
-            settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
+            settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
             settings.usePull = true;
             return settings;
         }

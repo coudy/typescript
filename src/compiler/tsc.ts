@@ -432,9 +432,10 @@ class BatchCompiler {
                 type = type.toLowerCase();
 
                 if (type === 'es3') {
-                    this.compilationSettings.codeGenTarget = TypeScript.CodeGenTarget.ES3;
-                } else if (type === 'es5') {
-                    this.compilationSettings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
+                    this.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript3;
+                }
+                else if (type === 'es5') {
+                    this.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
                 }
                 else {
                     this.errorReporter.WriteLine("ECMAScript target version '" + type + "' not supported.  Using default 'ES3' code generation");
