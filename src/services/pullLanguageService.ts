@@ -838,7 +838,12 @@ module Services {
                 entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
                 entry.kind = this.mapPullElementKind(symbol, true);
                 entry.fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
-                entry.docComment = this.compilerState.getDocComments(symbol, true);
+                var type = symbol.getType();
+                var symbolForDocComments = symbol;
+                if (type && type.hasOnlyOverloadCallSignatures()) {
+                    symbolForDocComments = type.getCallSignatures()[0];
+                }
+                entry.docComment = this.compilerState.getDocComments(symbolForDocComments, true);
                 entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
                 result.push(entry);
             });

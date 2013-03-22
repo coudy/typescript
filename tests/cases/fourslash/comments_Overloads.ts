@@ -301,10 +301,10 @@ verify.currentSignatureHelpDocCommentIs("this is signature 4 - with number param
 verify.currentParameterHelpArgumentDocCommentIs("param a");
 
 goTo.marker('17');
-//verify.completionListContains('f1', '(a: number): number (+ 1 overload(s))', 'this is signature 1', "f1", "function");
-//verify.completionListContains('f2', '(a: number): number (+ 1 overload(s))', '', "f2", "function");
-//verify.completionListContains('f3', '(a: number): number (+ 1 overload(s))', '', "f3", "function");
-//verify.completionListContains('f4', '(a: number): number (+ 1 overload(s))', 'this is signature 4 - with number parameter', "f4", "function");
+verify.completionListContains('f1', '(a: number): number (+ 1 overload(s))', 'this is signature 1', "f1", "function");
+verify.completionListContains('f2', '(a: number): number (+ 1 overload(s))', '', "f2", "function");
+verify.completionListContains('f3', '(a: number): number (+ 1 overload(s))', '', "f3", "function");
+verify.completionListContains('f4', '(a: number): number (+ 1 overload(s))', 'this is signature 4 - with number parameter', "f4", "function");
 
 goTo.marker('18');
 verify.completionListContains('i1', 'i1', '', "i1", "interface");
@@ -340,11 +340,11 @@ verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('22q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 2", "i1", "function");
 
-//goTo.marker('23');
-//verify.memberListContains('foo', '(a: number): number (+ 1 overload(s))', 'foo 1', "i1.foo", "method");
-//verify.memberListContains('foo2', '(a: number): number (+ 1 overload(s))', '', "i1.foo2", "method");
-//verify.memberListContains('foo3', '(a: number): number (+ 1 overload(s))', '', "i1.foo3", "method");
-//verify.memberListContains('foo4', '(a: number): number (+ 1 overload(s))', 'foo4 1', "i1.foo4", "method");
+goTo.marker('23');
+verify.memberListContains('foo', '(a: number): number (+ 1 overload(s))', 'foo 1', "i1.foo", "method");
+verify.memberListContains('foo2', '(a: number): number (+ 1 overload(s))', '', "i1.foo2", "method");
+verify.memberListContains('foo3', '(a: number): number (+ 1 overload(s))', '', "i1.foo3", "method");
+verify.memberListContains('foo4', '(a: number): number (+ 1 overload(s))', 'foo4 1', "i1.foo4", "method");
 
 goTo.marker('24');
 verify.currentSignatureHelpDocCommentIs("foo 1");
@@ -466,12 +466,12 @@ verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('43q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "i4", "function");
 
-//goTo.marker('44');
-//verify.memberListContains('prop1', '(a: number): number (+ 1 overload(s))', '', "c.prop1", "method");
-//verify.memberListContains('prop2', '(a: number): number (+ 1 overload(s))', 'prop2 1', "c.prop2", "method");
-//verify.memberListContains('prop3', '(a: number): number (+ 1 overload(s))', '', "c.prop3", "method");
-//verify.memberListContains('prop4', '(a: number): number (+ 1 overload(s))', 'prop4 1', "c.prop4", "method");
-//verify.memberListContains('prop5', '(a: number): number (+ 1 overload(s))', 'prop5 1', "c.prop5", "method");
+goTo.marker('44');
+verify.memberListContains('prop1', '(a: number): number (+ 1 overload(s))', '', "c.prop1", "method");
+verify.memberListContains('prop2', '(a: number): number (+ 1 overload(s))', 'prop2 1', "c.prop2", "method");
+verify.memberListContains('prop3', '(a: number): number (+ 1 overload(s))', '', "c.prop3", "method");
+verify.memberListContains('prop4', '(a: number): number (+ 1 overload(s))', 'prop4 1', "c.prop4", "method");
+verify.memberListContains('prop5', '(a: number): number (+ 1 overload(s))', 'prop5 1', "c.prop5", "method");
 
 goTo.marker('45');
 verify.currentSignatureHelpDocCommentIs("");
@@ -593,26 +593,26 @@ verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('64q');
 verify.quickInfoIs("(b: string): c5 (+ 1 overload(s))", "c5 2", "c5", "constructor");
 
-//goTo.marker('65');
-//verify.completionListContains("c", "new(): c", "", "c", "class");
-//verify.completionListContains("c1", "{ new(a: number): c1; new(b: string): c1; }", "", "c1", "class");
-//verify.completionListContains("c2", "{ new(a: number): c2; new(b: string): c2; }", "", "c2", "class");
-//verify.completionListContains("c3", "{ new(a: number): c3; new(b: string): c3; }", "", "c3", "class");
-//verify.completionListContains("c4", "{ new(a: number): c4; new(b: string): c4; }", "", "c4", "class");
-//verify.completionListContains("c5", "{ new(a: number): c5; new(b: string): c5; }", "", "c5", "class");
-//verify.completionListContains("c_i", "c", "", "c_i", "var");
-//verify.completionListContains("c1_i_1", "c1", "", "c1_i_1", "var");
-//verify.completionListContains("c2_i_1", "c2", "", "c2_i_1", "var");
-//verify.completionListContains("c3_i_1", "c3", "", "c3_i_1", "var");
-//verify.completionListContains("c4_i_1", "c4", "", "c4_i_1", "var");
-//verify.completionListContains("c5_i_1", "c5", "", "c5_i_1", "var");
-//verify.completionListContains("c1_i_2", "c1", "", "c1_i_2", "var");
-//verify.completionListContains("c2_i_2", "c2", "", "c2_i_2", "var");
-//verify.completionListContains("c3_i_2", "c3", "", "c3_i_2", "var");
-//verify.completionListContains("c4_i_2", "c4", "", "c4_i_2", "var");
-//verify.completionListContains("c5_i_2", "c5", "", "c5_i_2", "var");
-//verify.completionListContains('multiOverload', '(a: number): string (+ 2 overload(s))', 'This is multiOverload F1 1', "multiOverload", "function");
-//verify.completionListContains('ambientF1', '(a: number): string (+ 2 overload(s))', 'This is ambient F1 1', "ambientF1", "function");
+goTo.marker('65');
+verify.completionListContains("c", undefined, "", "c", "class");
+verify.completionListContains("c1", undefined, "", "c1", "class");
+verify.completionListContains("c2", undefined, "", "c2", "class");
+verify.completionListContains("c3", undefined, "", "c3", "class");
+verify.completionListContains("c4", undefined, "", "c4", "class");
+verify.completionListContains("c5", undefined, "", "c5", "class");
+verify.completionListContains("c_i", "c", "", "c_i", "var");
+verify.completionListContains("c1_i_1", "c1", "", "c1_i_1", "var");
+verify.completionListContains("c2_i_1", "c2", "", "c2_i_1", "var");
+verify.completionListContains("c3_i_1", "c3", "", "c3_i_1", "var");
+verify.completionListContains("c4_i_1", "c4", "", "c4_i_1", "var");
+verify.completionListContains("c5_i_1", "c5", "", "c5_i_1", "var");
+verify.completionListContains("c1_i_2", "c1", "", "c1_i_2", "var");
+verify.completionListContains("c2_i_2", "c2", "", "c2_i_2", "var");
+verify.completionListContains("c3_i_2", "c3", "", "c3_i_2", "var");
+verify.completionListContains("c4_i_2", "c4", "", "c4_i_2", "var");
+verify.completionListContains("c5_i_2", "c5", "", "c5_i_2", "var");
+verify.completionListContains('multiOverload', '(a: number): string (+ 2 overload(s))', 'This is multiOverload F1 1', "multiOverload", "function");
+verify.completionListContains('ambientF1', '(a: number): string (+ 2 overload(s))', 'This is ambient F1 1', "ambientF1", "function");
 
 goTo.marker('66');
 verify.quickInfoIs("c1", "", "c1_i_1", "var");

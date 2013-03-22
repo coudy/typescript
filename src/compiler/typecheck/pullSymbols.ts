@@ -1620,6 +1620,13 @@ module TypeScript {
             return super.getScopedNameEx(scopeSymbol, getPrettyTypeName);
         }
 
+        public hasOnlyOverloadCallSignatures() {
+            var members = this.getMembers();
+            var callSignatures = this.getCallSignatures();
+            var constructSignatures = this.getConstructSignatures();
+            return members.length == 0 && constructSignatures.length == 0 && callSignatures.length > 1;
+        }
+
         public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
             var members = this.getMembers();
             var callSignatures = this.getCallSignatures();
@@ -1630,7 +1637,6 @@ module TypeScript {
                 var allMemberNames = new MemberNameArray();
                 var curlies = !topLevel || indexSignatures.length != 0;
                 var delim = "; ";
-                var memberCount = 0;
                 for (var i = 0; i < members.length; i++) {
                     var memberTypeName = members[i].getNameAndTypeNameEx(scopeSymbol);
 
@@ -1640,15 +1646,13 @@ module TypeScript {
                         allMemberNames.add(memberTypeName);
                     }
                     curlies = true;
-                    memberCount++;
                 }
 
                 // Use pretty Function overload signature if this is just a call overload
-                var getPrettyFunctionOverload = getPrettyTypeName && !curlies &&
-                    memberCount == 0 && constructSignatures.length == 0 && callSignatures.length > 1;
+                var getPrettyFunctionOverload = getPrettyTypeName && !curlies && this.hasOnlyOverloadCallSignatures();
 
                 var signatureCount = callSignatures.length + constructSignatures.length + indexSignatures.length;
-                if (signatureCount != 0 || memberCount != 0) {
+                if (signatureCount != 0 || members.length != 0) {
                     var useShortFormSignature = !curlies && (signatureCount == 1);
                     var signatureMemberName: MemberName[];
 
@@ -1692,7 +1696,7 @@ module TypeScript {
         }
 
         public isResolved() { return true; }
-
+        
         public invalidate() {
             // do nothing...
         }

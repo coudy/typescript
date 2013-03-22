@@ -377,7 +377,10 @@ module TypeScript {
                     var n = decls.length;
                     for (var j = 0; j < n; j++) {
                         if (decls[j].getKind() & declSearchKind) {
-                            symbols.push(decls[j].getSymbol());
+                            var symbol = decls[j].getSymbol();
+                            if (symbol) {
+                                symbols.push(symbol);
+                            }
                         }
                     }
                 }
