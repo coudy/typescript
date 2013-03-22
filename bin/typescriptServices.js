@@ -4261,23 +4261,6 @@ var TypeScript;
         return ctx.path;
     }
     TypeScript.getAstPathToPosition = getAstPathToPosition;
-    function getTokenizationOffset(script, position) {
-        var bestOffset = 0;
-        var pre = function (cur, parent, walker) {
-            if (TypeScript.isValidAstNode(cur)) {
-                if (cur.minChar <= position) {
-                    bestOffset = max(bestOffset, cur.minChar);
-                }
-                if (cur.minChar > position || cur.limChar < bestOffset) {
-                    walker.options.goChildren = false;
-                }
-            }
-            return cur;
-        };
-        TypeScript.getAstWalkerFactory().walk(script, pre);
-        return bestOffset;
-    }
-    TypeScript.getTokenizationOffset = getTokenizationOffset;
     function walkAST(ast, callback) {
         var pre = function (cur, parent, walker) {
             var path = walker.state;
@@ -9598,53 +9581,6 @@ while(this.pos < this.len) {
         return Scanner;
     })();
     TypeScript.Scanner = Scanner;    
-    function convertTokToIDName(tok) {
-        return convertTokToIDBase(tok, true, false);
-    }
-    TypeScript.convertTokToIDName = convertTokToIDName;
-    function convertTokToID(tok, strictMode) {
-        return convertTokToIDBase(tok, false, strictMode);
-    }
-    TypeScript.convertTokToID = convertTokToID;
-    function convertTokToIDBase(tok, identifierName, strictMode) {
-        if (tok.tokenId <= 53 /* LimKeyword */ ) {
-            var tokInfo = TypeScript.lookupToken(tok.tokenId);
-            if (tokInfo != undefined) {
-                var resFlags = 1 /* Javascript */  | 2 /* JavascriptFuture */ ;
-                if (strictMode) {
-                    resFlags |= 8 /* JavascriptFutureStrict */ ;
-                }
-                if (identifierName || !TypeScript.hasFlag(tokInfo.reservation, resFlags)) {
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-    function isPrimitiveTypeToken(token) {
-        switch(token.tokenId) {
-            case 0 /* Any */ :
-            case 1 /* Bool */ :
-            case 32 /* Number */ :
-            case 41 /* String */ :
-                return true;
-        }
-        return false;
-    }
-    TypeScript.isPrimitiveTypeToken = isPrimitiveTypeToken;
-    function isModifier(token) {
-        switch(token.tokenId) {
-            case 37 /* Public */ :
-            case 35 /* Private */ :
-            case 40 /* Static */ :
-                return true;
-        }
-        return false;
-    }
-    TypeScript.isModifier = isModifier;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -18288,19 +18224,19 @@ var TypeScript;
                         normalizedPath = TypeScript.isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
                         if (resolvedFilePath == normalizedPath) {
-                            resolutionDispatcher.postResolutionError(normalizedPath, fileReference.startLine, fileReference.startCol, "Incorrect reference: File contains reference to itself.");
+                            resolutionDispatcher.postResolutionError(normalizedPath, fileReference, "Incorrect reference: File contains reference to itself.");
                             continue;
                         }
                         resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
                         if (!resolutionResult) {
-                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileReference.startLine, fileReference.startCol, "Incorrect reference: referenced file: \"" + fileReference.path + "\" cannot be resolved.");
+                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileReference, "Incorrect reference: referenced file: \"" + fileReference.path + "\" cannot be resolved.");
                         }
                     }
                     for(i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
                         var fileImport = preProcessedFileInfo.importedFiles[i];
                         resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
                         if (!resolutionResult) {
-                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileImport.startLine, fileImport.startCol, "Incorrect reference: imported file: \"" + fileImport.path + "\" cannot be resolved.");
+                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileImport, "Incorrect reference: imported file: \"" + fileImport.path + "\" cannot be resolved.");
                         }
                     }
                     resolutionDispatcher.postResolution(sourceUnit.path, sourceUnit);
@@ -19864,10 +19800,8 @@ var TypeScript;
                 TypeScript.CompilerDiagnostics.debugPrint(path + " is resident");
             }
             return {
-                minChar: 0,
-                limChar: 0,
-                startLine: 0,
-                startCol: 0,
+                line: 0,
+                character: 0,
                 path: TypeScript.switchToForwardSlashes(adjustedPath),
                 isResident: isResident
             };
@@ -19959,38 +19893,32 @@ var TypeScript;
         return preProcessInfo.referencedFiles;
     }
     TypeScript.getReferencedFiles = getReferencedFiles;
-    function preProcessFile(sourceText, options, readImportFiles) {
-        if (typeof options === "undefined") { options = new CompilationSettings(); }
-        if (typeof readImportFiles === "undefined") { readImportFiles = true; }
-        var scanner = new TypeScript.Scanner();
-        scanner.resetComments();
-        scanner.setSourceText(sourceText, 1 /* File */ );
-        var tok = scanner.scan();
-        var comments = [];
-        var comment = null;
-        var leftCurlies = [];
-        var settings = options;
-        var referencedFiles = [];
-        var importedFiles = [];
-        var isLibFile = false;
-        while(tok.tokenId != 104 /* EndOfFile */ ) {
-            if (readImportFiles && tok.tokenId == 25 /* Import */ ) {
-                tok = scanner.scan();
-                if (tok.tokenId == 106 /* Identifier */  || TypeScript.convertTokToID(tok, false)) {
-                    tok = scanner.scan();
-                    if (tok.tokenId == 62 /* Equals */ ) {
-                        tok = scanner.scan();
-                        if (tok.tokenId == 30 /* Module */ ) {
-                            tok = scanner.scan();
-                            if (tok.tokenId == 55 /* OpenParen */ ) {
-                                tok = scanner.scan();
-                                if (tok.tokenId == 107 /* StringLiteral */ ) {
+    var scannerWindow = TypeScript.ArrayUtilities.createArray(2048, 0);
+    var scannerDiagnostics = [];
+    function processImports(lineMap, scanner, token, importedFiles) {
+        var position = 0;
+        var lineChar = {
+            line: -1,
+            character: -1
+        };
+        while(token.tokenKind !== 10 /* EndOfFileToken */ ) {
+            if (token.tokenKind === 49 /* ImportKeyword */ ) {
+                var importStart = position + token.leadingTriviaWidth();
+                token = scanner.scan(scannerDiagnostics, false);
+                if (TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token)) {
+                    token = scanner.scan(scannerDiagnostics, false);
+                    if (token.tokenKind === 107 /* EqualsToken */ ) {
+                        token = scanner.scan(scannerDiagnostics, false);
+                        if (token.tokenKind === 66 /* ModuleKeyword */ ) {
+                            token = scanner.scan(scannerDiagnostics, false);
+                            if (token.tokenKind === 72 /* OpenParenToken */ ) {
+                                token = scanner.scan(scannerDiagnostics, false);
+                                lineMap.fillLineAndCharacterFromPosition(importStart, lineChar);
+                                if (token.tokenKind === 14 /* StringLiteral */ ) {
                                     var ref = {
-                                        minChar: scanner.startPos,
-                                        limChar: scanner.pos,
-                                        startLine: scanner.line,
-                                        startCol: scanner.col,
-                                        path: TypeScript.stripQuotes(TypeScript.switchToForwardSlashes(tok.getText())),
+                                        line: lineChar.line,
+                                        character: lineChar.character,
+                                        path: TypeScript.stripQuotes(TypeScript.switchToForwardSlashes(token.text())),
                                         isResident: false
                                     };
                                     importedFiles.push(ref);
@@ -20000,52 +19928,52 @@ var TypeScript;
                     }
                 }
             }
-            if (tok.tokenId == 59 /* OpenBrace */ ) {
-                leftCurlies.push(tok);
-            }
-            if (tok.tokenId == 60 /* CloseBrace */ ) {
-                leftCurlies.pop();
-            }
-            tok = scanner.scan();
+            position = scanner.absoluteIndex();
+            token = scanner.scan(scannerDiagnostics, false);
         }
-        comments = scanner.getComments();
-        for(var iComment = 0; iComment < comments.length; iComment++) {
-            comment = comments[iComment];
-            if (!comment.isBlock) {
-                var referencedCode = getFileReferenceFromReferencePath(comment.getText());
+    }
+    function processTripleSlashDirectives(lineMap, firstToken, settings, referencedFiles) {
+        var leadingTrivia = firstToken.leadingTrivia();
+        var position = 0;
+        var lineChar = {
+            line: -1,
+            character: -1
+        };
+        for(var i = 0, n = leadingTrivia.count(); i < n; i++) {
+            var trivia = leadingTrivia.syntaxTriviaAt(i);
+            if (trivia.kind() === 7 /* SingleLineCommentTrivia */ ) {
+                var triviaText = trivia.fullText();
+                var referencedCode = getFileReferenceFromReferencePath(triviaText);
                 if (referencedCode) {
-                    referencedCode.minChar = comment.startPos;
-                    referencedCode.limChar = referencedCode.minChar + comment.value.length;
-                    var result = {
-                        line: -1,
-                        character: -1
-                    };
-                    scanner.lineMap.fillLineAndCharacterFromPosition(comment.startPos, result);
-                    if (result.line >= 0) {
-                        result.line++;
-                    }
-                    if (result.character >= 0) {
-                        result.character++;
-                    }
-                    referencedCode.startLine = result.line;
-                    referencedCode.startCol = result.character;
+                    lineMap.fillLineAndCharacterFromPosition(position, lineChar);
+                    referencedCode.line = lineChar.line;
+                    referencedCode.character = lineChar.character;
                     referencedFiles.push(referencedCode);
                 }
                 if (settings) {
-                    getStyleSettings(comment.getText(), settings.styleSettings);
-                    var isNoLibRegex = /^(\/\/\/\s*<reference\s+no-default-lib=)('|")(.+?)\2\s*\/>/gim;
-                    var isNoLibMatch = isNoLibRegex.exec(comment.getText());
-                    if (isNoLibMatch) {
-                        isLibFile = (isNoLibMatch[3] == "true");
-                    }
+                    getStyleSettings(triviaText, settings.styleSettings);
                 }
             }
+            position += trivia.fullWidth();
         }
+    }
+    TypeScript.processTripleSlashDirectives = processTripleSlashDirectives;
+    function preProcessFile(sourceText, settings, readImportFiles) {
+        if (typeof settings === "undefined") { settings = null; }
+        if (typeof readImportFiles === "undefined") { readImportFiles = true; }
+        var text = new TypeScript.ScriptSnapshotText(sourceText);
+        var scanner = new TypeScript.Scanner1(text, 1 /* EcmaScript5 */ , scannerWindow);
+        var firstToken = scanner.scan(scannerDiagnostics, false);
+        var importedFiles = [];
+        if (readImportFiles) {
+            processImports(text.lineMap(), scanner, firstToken, importedFiles);
+        }
+        var referencedFiles = [];
+        processTripleSlashDirectives(text.lineMap(), firstToken, settings, referencedFiles);
+        scannerDiagnostics.length = 0;
         return {
-            settings: settings,
             referencedFiles: referencedFiles,
-            importedFiles: importedFiles,
-            isLibFile: isLibFile
+            importedFiles: importedFiles
         };
     }
     TypeScript.preProcessFile = preProcessFile;
@@ -21535,10 +21463,6 @@ var TypeScript;
                 }
                 return this.createMissingToken(kind, token);
             };
-            ParserImpl.isIdentifierNameOrAnyKeyword = function isIdentifierNameOrAnyKeyword(token) {
-                var tokenKind = token.tokenKind;
-                return tokenKind === 11 /* IdentifierName */  || TypeScript.SyntaxFacts.isAnyKeyword(tokenKind);
-            };
             ParserImpl.prototype.isIdentifier = function (token) {
                 var tokenKind = token.tokenKind;
                 if (tokenKind === 11 /* IdentifierName */ ) {
@@ -21936,7 +21860,7 @@ var TypeScript;
                 var current = this.eatIdentifierToken();
                 while(shouldContinue && this.currentToken().tokenKind === 76 /* DotToken */ ) {
                     var dotToken = this.eatToken(76 /* DotToken */ );
-                    shouldContinue = ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
+                    shouldContinue = TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken());
                     var identifier = this.eatIdentifierNameToken();
                     current = this.factory.qualifiedName(current, dotToken, identifier);
                 }
@@ -21969,7 +21893,7 @@ var TypeScript;
                     return true;
                 }
                 var token0 = this.currentToken();
-                return ParserImpl.isIdentifierNameOrAnyKeyword(token0) || token0.tokenKind === 14 /* StringLiteral */ ;
+                return TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token0) || token0.tokenKind === 14 /* StringLiteral */ ;
             };
             ParserImpl.prototype.parseEnumElement = function () {
                 if (this.currentNode() !== null && (this.currentNode().kind() === 240 /* EnumElement */  || this.currentNode().kind() === 223 /* VariableDeclarator */ )) {
@@ -21978,7 +21902,7 @@ var TypeScript;
                 var token0 = this.currentToken();
                 var identifier = null;
                 var stringLiteral = null;
-                if (ParserImpl.isIdentifierNameOrAnyKeyword(token0)) {
+                if (TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token0)) {
                     if (this.peekToken(1).tokenKind === 107 /* EqualsToken */ ) {
                         return this.parseVariableDeclarator(true, true);
                     }
@@ -22089,7 +22013,7 @@ var TypeScript;
                         return true;
                     }
                 }
-                if (!ParserImpl.isIdentifierNameOrAnyKeyword(this.peekToken(index))) {
+                if (!TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(index))) {
                     return false;
                 }
                 if (this.isIdentifier(this.peekToken(index))) {
@@ -22387,7 +22311,7 @@ var TypeScript;
                 return this.currentToken().tokenKind === 74 /* OpenBracketToken */ ;
             };
             ParserImpl.prototype.isMethodSignature = function () {
-                if (ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken())) {
+                if (TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())) {
                     if (this.isCallSignature(1)) {
                         return true;
                     }
@@ -22398,7 +22322,7 @@ var TypeScript;
                 return false;
             };
             ParserImpl.prototype.isPropertySignature = function () {
-                return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
+                return TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken());
             };
             ParserImpl.prototype.isExtendsClause = function () {
                 return this.currentToken().tokenKind === 48 /* ExtendsKeyword */ ;
@@ -23452,7 +23376,7 @@ var TypeScript;
                 return this.isPropertyName(this.currentToken(), inErrorRecovery);
             };
             ParserImpl.prototype.eatPropertyName = function () {
-                return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken()) ? this.eatIdentifierNameToken() : this.eatAnyToken();
+                return TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken()) ? this.eatIdentifierNameToken() : this.eatAnyToken();
             };
             ParserImpl.prototype.parseSimplePropertyAssignment = function () {
                 var propertyName = this.eatPropertyName();
@@ -23461,7 +23385,7 @@ var TypeScript;
                 return this.factory.simplePropertyAssignment(propertyName, colonToken, expression);
             };
             ParserImpl.prototype.isPropertyName = function (token, inErrorRecovery) {
-                if (ParserImpl.isIdentifierNameOrAnyKeyword(token)) {
+                if (TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token)) {
                     if (inErrorRecovery) {
                         return this.isIdentifier(token);
                     } else {
@@ -24440,6 +24364,9 @@ var TypeScript;
         };
         Scanner1.prototype.currentCharCode = function () {
             return this.slidingWindow.currentItem(null);
+        };
+        Scanner1.prototype.absoluteIndex = function () {
+            return this.slidingWindow.absoluteIndex();
         };
         Scanner1.prototype.setAbsoluteIndex = function (index) {
             this.slidingWindow.setAbsoluteIndex(index);
@@ -27178,6 +27105,11 @@ var TypeScript;
             return text === '"use strict"' || text === "'use strict'";
         }
         SyntaxFacts.isUseStrictDirective = isUseStrictDirective;
+        function isIdentifierNameOrAnyKeyword(token) {
+            var tokenKind = token.tokenKind;
+            return tokenKind === 11 /* IdentifierName */  || TypeScript.SyntaxFacts.isAnyKeyword(tokenKind);
+        }
+        SyntaxFacts.isIdentifierNameOrAnyKeyword = isIdentifierNameOrAnyKeyword;
     })(TypeScript.SyntaxFacts || (TypeScript.SyntaxFacts = {}));
     var SyntaxFacts = TypeScript.SyntaxFacts;
 })(TypeScript || (TypeScript = {}));
@@ -40609,7 +40541,7 @@ var TypeScript;
             }
             var bPath;
             if (b) {
-                bPath = this.pathToRoot();
+                bPath = b.pathToRoot();
             } else {
                 return aPath;
             }
@@ -43591,7 +43523,7 @@ var TypeScript;
                         }
                     };
                     var returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, true, context, new TypeScript.TypeComparisonInfo());
-                    signature.setReturnType(returnType ? returnType : this.semanticInfoChain.anyTypeSymbol);
+                    signature.setReturnType(returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol);
                     for(i = 0; i < returnExpressionSymbols.length; i++) {
                         returnExpressionSymbols[i].addOutgoingLink(signature, 2 /* ProvidesInferredType */ );
                     }
@@ -50328,6 +50260,8 @@ var TypeScript;
             this.staticsLists = [];
             this.requiresExtendsBlock = false;
             this.previousTokenTrailingComments = null;
+            this.isParsingAmbientModule = false;
+            this.isParsingDeclareFile = TypeScript.isDSTRFile(fileName) || TypeScript.isDTSFile(fileName);
         }
         SyntaxTreeToAstVisitor.checkPositions = false;
         SyntaxTreeToAstVisitor.visit = function visit(syntaxTree, fileName) {
@@ -50559,7 +50493,6 @@ var TypeScript;
             var start = this.position;
             var members;
             this.pushDeclLists();
-            var isParsingDeclareFile = TypeScript.isDSTRFile(this.fileName) || TypeScript.isDTSFile(this.fileName);
             var bod = this.visitSyntaxList(node.moduleElements);
             if (this.hasUseStrictDirective(node.moduleElements)) {
                 bod.flags |= 128 /* StrictMode */ ;
@@ -50573,7 +50506,7 @@ var TypeScript;
                 topLevelMod.modFlags |= 2048 /* IsDynamic */ ;
                 topLevelMod.modFlags |= 1024 /* IsWholeFile */ ;
                 topLevelMod.modFlags |= 1 /* Exported */ ;
-                if (isParsingDeclareFile) {
+                if (this.isParsingDeclareFile) {
                     topLevelMod.modFlags |= 8 /* Ambient */ ;
                 }
                 topLevelMod.prettyName = TypeScript.getPrettyName(correctedFileName);
@@ -50587,7 +50520,7 @@ var TypeScript;
             result.bod = bod;
             result.locationInfo = new TypeScript.LocationInfo(this.fileName, this.lineMap);
             result.topLevelMod = topLevelMod;
-            result.isDeclareFile = TypeScript.isDSTRFile(this.fileName) || TypeScript.isDTSFile(this.fileName);
+            result.isDeclareFile = this.isParsingDeclareFile;
             result.requiresExtendsBlock = this.requiresExtendsBlock;
             return result;
         };
@@ -50622,10 +50555,10 @@ var TypeScript;
             this.setSpan(result, start, this.position);
             result.preComments = preComments;
             result.postComments = postComments;
-            if (node.exportKeyword) {
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 result.varFlags |= 1 /* Exported */ ;
             }
-            if (node.declareKeyword) {
+            if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.varFlags |= 8 /* Ambient */ ;
             }
             result.varFlags |= 2048 /* Class */ ;
@@ -50681,7 +50614,7 @@ var TypeScript;
             this.setSpan(result, start, this.position);
             result.preComments = preComments;
             result.postComments = postComments;
-            if (node.exportKeyword) {
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 result.varFlags |= 1 /* Exported */ ;
             }
             return result;
@@ -50754,7 +50687,12 @@ var TypeScript;
             this.movePast(node.moduleKeyword);
             var names = this.getModuleNames(node);
             this.movePast(node.openBraceToken);
+            var svIsParsingAmbientModule = this.isParsingAmbientModule;
+            if (node.declareKeyword || this.isParsingDeclareFile) {
+                this.isParsingAmbientModule = true;
+            }
             var members = this.visitSyntaxList(node.moduleElements);
+            this.isParsingAmbientModule = svIsParsingAmbientModule;
             var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
             var moduleDecl = null;
@@ -50771,18 +50709,17 @@ var TypeScript;
                 postComments = null;
                 if (i) {
                     moduleDecl.modFlags |= 1 /* Exported */ ;
+                } else if (node.exportKeyword || this.isParsingAmbientModule) {
+                    moduleDecl.modFlags |= 1 /* Exported */ ;
+                }
+                if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                    moduleDecl.modFlags |= 8 /* Ambient */ ;
                 }
                 if (i === 0) {
                     this.popDeclLists();
                 }
                 members = new TypeScript.ASTList();
                 members.append(moduleDecl);
-            }
-            if (node.declareKeyword) {
-                moduleDecl.modFlags |= 8 /* Ambient */ ;
-            }
-            if (node.exportKeyword) {
-                moduleDecl.modFlags |= 1 /* Exported */ ;
             }
             return moduleDecl;
         };
@@ -50834,10 +50771,10 @@ var TypeScript;
             funcDecl.postComments = postComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
-            if (node.exportKeyword) {
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 funcDecl.fncFlags |= 1 /* Exported */ ;
             }
-            if (node.declareKeyword) {
+            if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 funcDecl.fncFlags |= 8 /* Ambient */ ;
             }
             if (node.semicolonToken) {
@@ -50938,7 +50875,7 @@ var TypeScript;
             modDecl.postComments = postComments;
             modDecl.modFlags |= 256 /* IsEnum */ ;
             modDecl.recordNonInterface();
-            if (node.exportKeyword) {
+            if (node.exportKeyword || this.isParsingAmbientModule) {
                 modDecl.modFlags |= 1 /* Exported */ ;
             }
             this.popDeclLists();
@@ -51000,10 +50937,10 @@ var TypeScript;
                 if (i === 0) {
                     varDecl.preComments = this.mergeComments(preComments, varDecl.preComments);
                 }
-                if (node.exportKeyword) {
+                if (node.exportKeyword || this.isParsingAmbientModule) {
                     varDecl.varFlags |= 1 /* Exported */ ;
                 }
-                if (node.declareKeyword) {
+                if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                     varDecl.varFlags |= 8 /* Ambient */ ;
                 }
             }
@@ -51729,12 +51666,10 @@ var TypeScript;
             if (node.semicolonToken) {
                 result.fncFlags |= 512 /* Signature */ ;
             }
-            if (node.publicOrPrivateKeyword) {
-                if (node.publicOrPrivateKeyword.kind() === 55 /* PrivateKeyword */ ) {
-                    result.fncFlags |= 2 /* Private */ ;
-                } else {
-                    result.fncFlags |= 4 /* Public */ ;
-                }
+            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === 55 /* PrivateKeyword */ ) {
+                result.fncFlags |= 2 /* Private */ ;
+            } else {
+                result.fncFlags |= 4 /* Public */ ;
             }
             if (node.staticKeyword) {
                 result.fncFlags |= 16 /* Static */ ;
@@ -51766,12 +51701,10 @@ var TypeScript;
             result.postComments = postComments;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
-            if (node.publicOrPrivateKeyword) {
-                if (node.publicOrPrivateKeyword.kind() === 55 /* PrivateKeyword */ ) {
-                    result.fncFlags |= 2 /* Private */ ;
-                } else {
-                    result.fncFlags |= 4 /* Public */ ;
-                }
+            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === 55 /* PrivateKeyword */ ) {
+                result.fncFlags |= 2 /* Private */ ;
+            } else {
+                result.fncFlags |= 4 /* Public */ ;
             }
             if (node.staticKeyword) {
                 result.fncFlags |= 16 /* Static */ ;
@@ -51813,12 +51746,10 @@ var TypeScript;
             if (node.staticKeyword) {
                 varDecl.varFlags |= 16 /* Static */ ;
             }
-            if (node.publicOrPrivateKeyword) {
-                if (node.publicOrPrivateKeyword.kind() === 55 /* PrivateKeyword */ ) {
-                    varDecl.varFlags |= 2 /* Private */ ;
-                } else {
-                    varDecl.varFlags |= 4 /* Public */ ;
-                }
+            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === 55 /* PrivateKeyword */ ) {
+                varDecl.varFlags |= 2 /* Private */ ;
+            } else {
+                varDecl.varFlags |= 4 /* Public */ ;
             }
             varDecl.varFlags |= 4096 /* ClassProperty */ ;
             return varDecl;
@@ -52434,16 +52365,6 @@ var TypeScript;
         return UpdateUnitResult;
     })();
     TypeScript.UpdateUnitResult = UpdateUnitResult;    
-    var ErrorEntry = (function () {
-        function ErrorEntry(fileName, minChar, limChar, message) {
-            this.fileName = fileName;
-            this.minChar = minChar;
-            this.limChar = limChar;
-            this.message = message;
-        }
-        return ErrorEntry;
-    })();
-    TypeScript.ErrorEntry = ErrorEntry;    
     TypeScript.defaultSettings = new TypeScript.CompilationSettings();
     var TypeScriptCompiler = (function () {
         function TypeScriptCompiler(errorOutput, logger, settings, diagnosticMessages) {
@@ -52454,6 +52375,7 @@ var TypeScript;
             this.logger = logger;
             this.settings = settings;
             this.diagnosticMessages = diagnosticMessages;
+            this.typeChecker = null;
             this.typeFlow = null;
             this.pullTypeChecker = null;
             this.semanticInfoChain = null;
@@ -52537,94 +52459,6 @@ var TypeScript;
                 _this.fileNameToLocationInfo.addOrUpdate(fileName, script.locationInfo);
                 _this.fileNameToScript.addOrUpdate(fileName, script);
                 return script;
-            });
-        };
-        TypeScriptCompiler.prototype.typeCheck = function () {
-            var _this = this;
-            return this.timeFunction("typeCheck()", function () {
-                var binder = new TypeScript.Binder(_this.typeChecker);
-                _this.typeChecker.fileNameToLocationInfo = _this.fileNameToLocationInfo;
-                binder.bind(_this.typeChecker.globalScope, _this.typeChecker.globals);
-                binder.bind(_this.typeChecker.globalScope, _this.typeChecker.ambientGlobals);
-                binder.bind(_this.typeChecker.globalScope, _this.typeChecker.globalTypes);
-                binder.bind(_this.typeChecker.globalScope, _this.typeChecker.ambientGlobalTypes);
-                _this.typeFlow = new TypeScript.TypeFlow(_this.logger, _this.typeChecker.globalScope, _this.typeChecker);
-                var i = 0;
-                var script = null;
-                _this.persistentTypeState.setCollectionMode(1 /* Transient */ );
-                var fileNames = _this.fileNameToScript.getAllKeys();
-                var len = fileNames.length;
-                for(i = 0; i < len; i++) {
-                    script = _this.fileNameToScript.lookup(fileNames[i]);
-                    _this.typeFlow.assignScopes(script);
-                    _this.typeFlow.initLibs();
-                }
-                for(i = 0; i < len; i++) {
-                    script = _this.fileNameToScript.lookup(fileNames[i]);
-                    _this.typeFlow.typeCheck(script);
-                }
-                _this.logger.log("Total type collection time: " + _this.typeCollectionTime);
-                return null;
-            });
-        };
-        TypeScriptCompiler.prototype.cleanASTTypesForReTypeCheck = function (ast) {
-            function cleanASTType(ast, parent) {
-                ast.type = null;
-                if (ast.nodeType === 75 /* VarDecl */ ) {
-                    var vardecl = ast;
-                    vardecl.sym = null;
-                } else if (ast.nodeType === 76 /* ArgDecl */ ) {
-                    var argdecl = ast;
-                    argdecl.sym = null;
-                } else if (ast.nodeType === 25 /* Name */ ) {
-                    var name = ast;
-                    name.sym = null;
-                } else if (ast.nodeType === 73 /* FuncDecl */ ) {
-                    var funcdecl = ast;
-                    funcdecl.signature = null;
-                    funcdecl.freeVariables = [];
-                    funcdecl.symbols = null;
-                    funcdecl.accessorSymbol = null;
-                    funcdecl.scopeType = null;
-                } else if (ast.nodeType === 98 /* ModuleDeclaration */ ) {
-                    var modDecl = ast;
-                    modDecl.mod = null;
-                } else if (ast.nodeType === 101 /* With */ ) {
-                    (ast).withSym = null;
-                } else if (ast.nodeType === 93 /* Catch */ ) {
-                    (ast).containedScope = null;
-                } else if (ast.nodeType === 95 /* Script */ ) {
-                    (ast).externallyVisibleImportedSymbols = [];
-                }
-                return ast;
-            }
-            TypeScript.getAstWalkerFactory().walk(ast, cleanASTType);
-        };
-        TypeScriptCompiler.prototype.cleanTypesForReTypeCheck = function () {
-            var _this = this;
-            return this.timeFunction("cleanTypesForReTypeCheck()", function () {
-                var fileNames = _this.fileNameToScript.getAllKeys();
-                for(var i = 0, len = fileNames.length; i < len; i++) {
-                    var script = _this.fileNameToScript.lookup(fileNames[i]);
-                    _this.cleanASTTypesForReTypeCheck(script);
-                    _this.typeChecker.collectTypes(script);
-                }
-                return null;
-            });
-        };
-        TypeScriptCompiler.prototype.attemptIncrementalTypeCheck = function (updateResult) {
-            return this.timeFunction("attemptIncrementalTypeCheck()", function () {
-                return false;
-            });
-        };
-        TypeScriptCompiler.prototype.reTypeCheck = function () {
-            var _this = this;
-            return this.timeFunction("reTypeCheck()", function () {
-                TypeScript.CompilerDiagnostics.analysisPass++;
-                _this.initTypeChecker(_this.errorOutput);
-                _this.persistentTypeState.setCollectionMode(1 /* Transient */ );
-                _this.cleanTypesForReTypeCheck();
-                return _this.typeCheck();
             });
         };
         TypeScriptCompiler.prototype.isDynamicModuleCompilation = function () {
@@ -52722,18 +52556,14 @@ var TypeScript;
             }
             return true;
         };
-        TypeScriptCompiler.prototype.emitDeclarationsUnit = function (script, usePullEmitter, reuseEmitter, declarationEmitter) {
+        TypeScriptCompiler.prototype.emitDeclarationsUnit = function (script, reuseEmitter, declarationEmitter) {
             if (!this.canEmitDeclarations(script)) {
                 return null;
             }
             if (!declarationEmitter) {
                 var declareFileName = this.emitSettings.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                 var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
-                if (usePullEmitter) {
-                    declarationEmitter = new TypeScript.PullDeclarationEmitter(this.semanticInfoChain, this.emitSettings, this.errorReporter);
-                } else {
-                    declarationEmitter = new TypeScript.DeclarationEmitter(this.typeChecker, this.emitSettings, this.errorReporter);
-                }
+                declarationEmitter = new TypeScript.PullDeclarationEmitter(this.semanticInfoChain, this.emitSettings, this.errorReporter);
                 declarationEmitter.setDeclarationFile(declareFile);
             }
             declarationEmitter.emitDeclarations(script);
@@ -52744,7 +52574,7 @@ var TypeScript;
                 return declarationEmitter;
             }
         };
-        TypeScriptCompiler.prototype.emitDeclarations = function (usePullEmitter) {
+        TypeScriptCompiler.prototype.emitDeclarations = function () {
             if (!this.canEmitDeclarations()) {
                 return;
             }
@@ -52759,9 +52589,9 @@ var TypeScript;
             for(var i = 0, len = fileNames.length; i < len; i++) {
                 var script = this.fileNameToScript.lookup(fileNames[i]);
                 if (this.emitSettings.outputMany || declarationEmitter === null) {
-                    declarationEmitter = this.emitDeclarationsUnit(script, usePullEmitter, !this.emitSettings.outputMany);
+                    declarationEmitter = this.emitDeclarationsUnit(script, !this.emitSettings.outputMany);
                 } else {
-                    this.emitDeclarationsUnit(script, usePullEmitter, true, declarationEmitter);
+                    this.emitDeclarationsUnit(script, true, declarationEmitter);
                 }
             }
             if (declarationEmitter) {
@@ -52831,24 +52661,6 @@ var TypeScript;
             this.logger.log("Emit: " + ((new Date()).getTime() - startEmitTime));
             if (emitter) {
                 emitter.Close();
-            }
-        };
-        TypeScriptCompiler.prototype.emitToOutfile = function (outputFile) {
-            if (this.settings.mapSourceFiles) {
-                throw Error("Cannot generate source map");
-            }
-            if (this.settings.generateDeclarationFiles) {
-                throw Error("Cannot generate declaration files");
-            }
-            if (this.settings.outputOption != "") {
-                throw Error("Cannot parse output option");
-            }
-            var emitter = emitter = new TypeScript.Emitter(this.typeChecker, "stdout", outputFile, this.emitSettings, this.errorReporter);
-            var fileNames = this.fileNameToScript.getAllKeys();
-            for(var i = 0, len = fileNames.length; i < len; i++) {
-                var script = this.fileNameToScript.lookup(fileNames[i]);
-                this.typeChecker.locationInfo = script.locationInfo;
-                emitter.emitJavascript(script, 61 /* Comma */ , false);
             }
         };
         TypeScriptCompiler.prototype.outputScriptToUTF8 = function (script) {
@@ -53379,81 +53191,6 @@ var TypeScript;
         return TypeScriptCompiler;
     })();
     TypeScript.TypeScriptCompiler = TypeScriptCompiler;    
-    var ScopeEntry = (function () {
-        function ScopeEntry(name, type, sym) {
-            this.name = name;
-            this.type = type;
-            this.sym = sym;
-        }
-        return ScopeEntry;
-    })();
-    TypeScript.ScopeEntry = ScopeEntry;    
-    var ScopeTraversal = (function () {
-        function ScopeTraversal(compiler) {
-            this.compiler = compiler;
-        }
-        ScopeTraversal.prototype.getScope = function (enclosingScopeContext) {
-            if (enclosingScopeContext.enclosingObjectLit && enclosingScopeContext.isMemberCompletion) {
-                return enclosingScopeContext.getObjectLiteralScope();
-            } else if (enclosingScopeContext.isMemberCompletion) {
-                if (enclosingScopeContext.useFullAst) {
-                    return this.compiler.typeFlow.findMemberScopeAtFullAst(enclosingScopeContext);
-                } else {
-                    return this.compiler.typeFlow.findMemberScopeAt(enclosingScopeContext);
-                }
-            } else {
-                return enclosingScopeContext.getScope();
-            }
-        };
-        ScopeTraversal.prototype.getScopeEntries = function (enclosingScopeContext, getPrettyTypeName) {
-            var scope = this.getScope(enclosingScopeContext);
-            if (scope === null) {
-                return [];
-            }
-            var inScopeNames = new TypeScript.StringHashTable();
-            var allSymbolNames = scope.getAllSymbolNames(enclosingScopeContext.isMemberCompletion);
-            for(var i = 0; i < allSymbolNames.length; i++) {
-                var name = allSymbolNames[i];
-                if (name === TypeScript.globalId || name === "_Core" || name === "_element") {
-                    continue;
-                }
-                inScopeNames.add(name, "");
-            }
-            var svModuleDecl = this.compiler.typeChecker.currentModDecl;
-            this.compiler.typeChecker.currentModDecl = enclosingScopeContext.deepestModuleDecl;
-            var result = this.getTypeNamesForNames(enclosingScopeContext, inScopeNames.getAllKeys(), scope, getPrettyTypeName);
-            this.compiler.typeChecker.currentModDecl = svModuleDecl;
-            return result;
-        };
-        ScopeTraversal.prototype.getTypeNamesForNames = function (enclosingScopeContext, allNames, scope, getPrettyTypeName) {
-            var result = [];
-            var enclosingScope = enclosingScopeContext.getScope();
-            for(var i = 0; i < allNames.length; i++) {
-                var name = allNames[i];
-                var publicsOnly = enclosingScopeContext.publicsOnly && enclosingScopeContext.isMemberCompletion;
-                var symbol = scope.find(name, publicsOnly, false);
-                if (symbol === null) {
-                    symbol = scope.find(name, publicsOnly, true);
-                }
-                var displayThisMember = symbol && symbol.flags & 2 /* Private */  ? symbol.container === scope.container : true;
-                if (symbol) {
-                    if (displayThisMember && !TypeScript.isQuoted(symbol.name) && !TypeScript.isRelative(symbol.name)) {
-                        var getPrettyOverload = getPrettyTypeName && symbol.declAST && symbol.declAST.nodeType === 73 /* FuncDecl */ ;
-                        var type = symbol.getType();
-                        var typeName = type ? type.getScopedTypeName(enclosingScope, getPrettyOverload) : "";
-                        result.push(new ScopeEntry(name, typeName, symbol));
-                    }
-                } else {
-                    if (name === "true" || name === "false") {
-                        result.push(new ScopeEntry(name, "bool", this.compiler.typeChecker.booleanType.symbol));
-                    }
-                }
-            }
-            return result;
-        };
-        return ScopeTraversal;
-    })();
-    TypeScript.ScopeTraversal = ScopeTraversal;    
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -53885,63 +53622,6 @@ var Services;
         return ReferenceEntry;
     })();
     Services.ReferenceEntry = ReferenceEntry;    
-    var ReferenceEntrySet = (function () {
-        function ReferenceEntrySet() {
-            this.entries = [];
-            this.hashTable = new TypeScript.HashTable(101, function (r) {
-                return r.getHashCode();
-            }, function (r1, r2) {
-                return r1.equals(r2);
-            });
-        }
-        ReferenceEntrySet.prototype.getEntries = function () {
-            return this.entries;
-        };
-        ReferenceEntrySet.prototype.addAst = function (fileName, ast, isWriteAccess) {
-            var reference = new ReferenceEntry(fileName, ast, isWriteAccess);
-            if (this.hashTable.lookup(reference) !== null) {
-                return;
-            }
-            this.hashTable.add(reference, reference);
-            this.entries.push(reference);
-        };
-        ReferenceEntrySet.prototype.addSymbol = function (sym) {
-            var fileName = sym.fileName;
-            if (fileName === TypeScript.unknownLocationInfo.fileName) {
-                return;
-            }
-            var ast = sym.declAST;
-            if (ast === null) {
-                return;
-            }
-            var symbolLocation;
-            switch(ast.nodeType) {
-                case 97 /* InterfaceDeclaration */ :
-                    symbolLocation = (ast).name;
-                    break;
-                case 96 /* ClassDeclaration */ :
-                    symbolLocation = (ast).name;
-                    break;
-                case 98 /* ModuleDeclaration */ :
-                    symbolLocation = (ast).name;
-                    break;
-                case 75 /* VarDecl */ :
-                    symbolLocation = (ast).id;
-                    break;
-                case 73 /* FuncDecl */ :
-                    symbolLocation = (ast).name;
-                    break;
-                default:
-                    symbolLocation = ast;
-            }
-            if (symbolLocation === null) {
-                symbolLocation = ast;
-            }
-            this.addAst(fileName, symbolLocation, false);
-        };
-        return ReferenceEntrySet;
-    })();
-    Services.ReferenceEntrySet = ReferenceEntrySet;    
     var NavigateToItem = (function () {
         function NavigateToItem() {
             this.name = "";
@@ -53970,14 +53650,6 @@ var Services;
         return NavigateToContext;
     })();
     Services.NavigateToContext = NavigateToContext;    
-    var TextRange = (function () {
-        function TextRange(minChar, limChar) {
-            this.minChar = minChar;
-            this.limChar = limChar;
-        }
-        return TextRange;
-    })();
-    Services.TextRange = TextRange;    
     var TextEdit = (function () {
         function TextEdit(minChar, limChar, text) {
             this.minChar = minChar;
@@ -54023,13 +53695,6 @@ var Services;
         return FormatCodeOptions;
     })(EditorOptions);
     Services.FormatCodeOptions = FormatCodeOptions;    
-    var GetReferencesContext = (function () {
-        function GetReferencesContext() {
-            this.scope = [];
-        }
-        return GetReferencesContext;
-    })();
-    Services.GetReferencesContext = GetReferencesContext;    
     var DefinitionInfo = (function () {
         function DefinitionInfo(fileName, minChar, limChar, kind, name, containerKind, containerName, overloads) {
             this.fileName = fileName;
@@ -54171,1577 +53836,11 @@ var Services;
     var ScriptSyntaxASTState = (function () {
         function ScriptSyntaxASTState() {
             this.version = -1;
-            this.syntaxAST = null;
             this.fileName = null;
         }
         return ScriptSyntaxASTState;
     })();
     Services.ScriptSyntaxASTState = ScriptSyntaxASTState;    
-    var LanguageService = (function () {
-        function LanguageService(host) {
-            this.host = host;
-            this.logger = this.host;
-            this.compilerState = new Services.CompilerState(this.host);
-            this.syntaxASTState = new ScriptSyntaxASTState();
-            this.formattingRulesProvider = new Formatting.RulesProvider(this.logger);
-        }
-        LanguageService.prototype.refresh = function () {
-            var _this = this;
-            TypeScript.timeFunction(this.logger, "refresh()", function () {
-                _this.compilerState.refresh();
-            });
-        };
-        LanguageService.prototype.minimalRefresh = function () {
-            var _this = this;
-            TypeScript.timeFunction(this.logger, "minimalRefresh()", function () {
-                _this.compilerState.minimalRefresh();
-            });
-        };
-        LanguageService.prototype.getSymbolTree = function () {
-            this.refresh();
-            return this.compilerState.getSymbolTree();
-        };
-        LanguageService.prototype.getScriptSyntaxAST = function (fileName) {
-            this.minimalRefresh();
-            return this._getScriptSyntaxAST(fileName);
-        };
-        LanguageService.prototype._getScriptSyntaxAST = function (fileName) {
-            var _this = this;
-            return TypeScript.timeFunction(this.logger, "getScriptSyntaxAST(\"" + fileName + "\")", function () {
-                var version = _this.compilerState.getScriptVersion(fileName);
-                var syntaxAST = _this.syntaxASTState.syntaxAST;
-                if (syntaxAST === null || _this.syntaxASTState.fileName !== fileName) {
-                    syntaxAST = _this.compilerState.getScriptSyntaxAST(fileName);
-                } else if (_this.syntaxASTState.version !== version) {
-                    syntaxAST = _this.attemptIncrementalSyntaxAST(_this.syntaxASTState);
-                    if (syntaxAST === null) {
-                        syntaxAST = _this.compilerState.getScriptSyntaxAST(fileName);
-                    }
-                }
-                _this.syntaxASTState.version = version;
-                _this.syntaxASTState.fileName = fileName;
-                _this.syntaxASTState.syntaxAST = syntaxAST;
-                return _this.syntaxASTState.syntaxAST;
-            });
-        };
-        LanguageService.prototype.attemptIncrementalSyntaxAST = function (syntaxASTState) {
-            var syntaxAST = syntaxASTState.syntaxAST;
-            var fileName = syntaxAST.getScriptFileName();
-            var newSourceText = this.compilerState.getScriptSnapshot(fileName);
-            var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, syntaxASTState.version);
-            if (editRange === null) {
-                return syntaxAST;
-            }
-            return null;
-        };
-        LanguageService.prototype.getTypeInfo = function (type, symbol, typeInfoAtPosition, enclosingScopeContext) {
-            var memberName = null;
-            var kind = "";
-            var docComment = "";
-            var symbolName = "";
-            var scopeSymbol = enclosingScopeContext.getScope();
-            if (typeInfoAtPosition.ast.nodeType === 19 /* Dot */ ) {
-                return null;
-            }
-            if (symbol.declAST && symbol.declAST.nodeType === 73 /* FuncDecl */  && (symbol.declAST).accessorSymbol) {
-                symbol = (symbol.declAST).accessorSymbol;
-                type = symbol.getType();
-            }
-            if (typeInfoAtPosition.callSignature) {
-                var signatureGroup = null;
-                if (typeInfoAtPosition.isNew) {
-                    signatureGroup = type.construct;
-                } else {
-                    signatureGroup = type.call;
-                }
-                var memberNames = new TypeScript.MemberNameArray();
-                memberNames.addAll(signatureGroup.toStrings("", true, scopeSymbol, true, typeInfoAtPosition.callSignature));
-                memberName = memberNames;
-                if (typeInfoAtPosition.callSignature.declAST) {
-                    docComment = TypeScript.Comment.getDocCommentText(typeInfoAtPosition.callSignature.declAST.getDocComments());
-                    if (typeInfoAtPosition.callSignature.declAST.type.symbol.name != "_anonymous") {
-                        symbol = typeInfoAtPosition.callSignature.declAST.type.symbol;
-                    }
-                } else {
-                    docComment = "";
-                }
-                kind = this.getSymbolElementKind(symbol, scopeSymbol, false);
-                if (kind === ScriptElementKind.interfaceElement || kind === ScriptElementKind.classElement) {
-                    kind = typeInfoAtPosition.isNew ? ScriptElementKind.constructorImplementationElement : ScriptElementKind.functionElement;
-                }
-            } else {
-                memberName = type.getScopedTypeNameEx(scopeSymbol, true);
-                docComment = this.getDocCommentOfSymbol(symbol);
-                kind = this.getSymbolElementKind(symbol, scopeSymbol, true);
-            }
-            symbolName = symbol ? this.getFullNameOfSymbol(symbol, enclosingScopeContext) : "";
-            return new TypeInfo(memberName, docComment, symbolName, kind, typeInfoAtPosition.ast.minChar, typeInfoAtPosition.ast.limChar);
-        };
-        LanguageService.prototype.getTypeAtPosition = function (fileName, pos) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            var sourceText = this.compilerState.getScriptSnapshot(fileName);
-            var typeInfo = this.getTypeInfoAtPosition(pos, script, true);
-            if (typeInfo === null) {
-                this.logger.log("No type found at the specified location.");
-                return null;
-            }
-            var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, false);
-            if (enclosingScopeContext === null) {
-                this.logger.log("No context found at the specified location.");
-                return null;
-            }
-            if (typeInfo.symbol) {
-                return this.getTypeInfo(typeInfo.symbol.getType(), typeInfo.symbol, typeInfo, enclosingScopeContext);
-            } else if (typeInfo.ast.type) {
-                return this.getTypeInfo(typeInfo.ast.type, typeInfo.ast.type.symbol, typeInfo, enclosingScopeContext);
-            } else {
-                this.logger.log("No type found at the specified location.");
-                return null;
-            }
-        };
-        LanguageService.prototype.getNameOrDottedNameSpan = function (fileName, startPos, endPos) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            var typeAndSpanInfo = this.getTypeInfoAtPosition(startPos, script);
-            if (typeAndSpanInfo === null) {
-                this.logger.log("No name or dotted name found at the specified location.");
-                return null;
-            }
-            return typeAndSpanInfo.spanInfo;
-        };
-        LanguageService.prototype.getBreakpointInStatement = function (pos, astSpan, verifyASTPos, existingResult, forceFirstStatement, isAst) {
-            if (existingResult || !astSpan || (verifyASTPos && pos > astSpan.limChar)) {
-                return existingResult;
-            }
-            if (!isAst) {
-                return astSpan;
-            }
-            var ast = astSpan;
-            var astList = null;
-            if (ast.nodeType === 86 /* Block */ ) {
-                var block = ast;
-                astList = block.statements;
-            } else if (ast.nodeType === 94 /* List */ ) {
-                astList = ast;
-            } else {
-                return ast;
-            }
-            if (astList.members.length > 0) {
-                var lastAST = astList.members[astList.members.length - 1];
-                if (!forceFirstStatement && pos > lastAST.limChar) {
-                    return lastAST;
-                } else {
-                    return astList.members[0];
-                }
-            }
-            return null;
-        };
-        LanguageService.prototype.getBreakpointStatementAtPosition = function (fileName, pos) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            var containerASTs = [];
-            var pre = function (cur, parent, walker) {
-                if (TypeScript.isValidAstNode(cur)) {
-                    if (pos >= cur.minChar && pos <= cur.limChar) {
-                        switch(cur.nodeType) {
-                            case 98 /* ModuleDeclaration */ :
-                            case 96 /* ClassDeclaration */ :
-                            case 73 /* FuncDecl */ :
-                            case 78 /* Break */ :
-                            case 79 /* Continue */ :
-                                containerASTs.push(cur);
-                                break;
-                            case 95 /* Script */ :
-                            case 94 /* List */ :
-                            case 24 /* NumberLit */ :
-                            case 8 /* Regex */ :
-                            case 7 /* QString */ :
-                            case 10 /* ArrayLit */ :
-                            case 11 /* ObjectLit */ :
-                            case 72 /* TypeAssertion */ :
-                            case 14 /* Pos */ :
-                            case 15 /* Neg */ :
-                            case 66 /* Not */ :
-                            case 67 /* LogNot */ :
-                            case 86 /* Block */ :
-                                break;
-                            case 28 /* TypeRef */ :
-                                walker.options.goChildren = false;
-                                break;
-                            default:
-                                if (cur.isStatementOrExpression() && (!cur.isExpression() || containerASTs.length === 0 || (!containerASTs[containerASTs.length - 1].isExpression() && containerASTs[containerASTs.length - 1].nodeType != 75 /* VarDecl */  || containerASTs[containerASTs.length - 1].nodeType === 44 /* ConditionalExpression */ ))) {
-                                    containerASTs.push(cur);
-                                }
-                                break;
-                        }
-                    } else {
-                        walker.options.goChildren = false;
-                    }
-                }
-                return cur;
-            };
-            TypeScript.getAstWalkerFactory().walk(script, pre);
-            if (containerASTs.length === 0) {
-                return null;
-            }
-            var resultAST = null;
-            var cur = containerASTs[containerASTs.length - 1];
-            var customSpan = null;
-            var tryCatch;
-            switch(cur.nodeType) {
-                case 98 /* ModuleDeclaration */ :
-                    var moduleDecl = cur;
-                    if (containerASTs.length > 1) {
-                        resultAST = moduleDecl;
-                    } else {
-                        resultAST = this.getBreakpointInStatement(pos, moduleDecl.members, false, null, false, true);
-                    }
-                    customSpan = moduleDecl.endingToken;
-                    break;
-                case 73 /* FuncDecl */ :
-                    var funcDecl = cur;
-                    if (containerASTs.length > 1) {
-                        resultAST = funcDecl;
-                    } else {
-                        resultAST = this.getBreakpointInStatement(pos, funcDecl.bod, false, null, false, true);
-                    }
-                    customSpan = funcDecl.endingToken;
-                    break;
-                case 96 /* ClassDeclaration */ :
-                    var classDecl = cur;
-                    if (containerASTs.length > 1) {
-                        resultAST = classDecl;
-                    } else {
-                        resultAST = this.getBreakpointInStatement(pos, classDecl.members, false, null, false, true);
-                    }
-                    customSpan = classDecl.endingToken;
-                    break;
-                case 75 /* VarDecl */ :
-                    var varDecl = cur;
-                    if (varDecl.init) {
-                        resultAST = varDecl;
-                    }
-                    break;
-                case 83 /* If */ :
-                    var ifStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, ifStatement.statement, true, resultAST, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, ifStatement.thenBod, true, resultAST, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, ifStatement.elseBod, false, resultAST, false, true);
-                    break;
-                case 82 /* ForIn */ :
-                    var forInStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, forInStatement.statement, true, resultAST, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, forInStatement.body, false, resultAST, false, true);
-                    break;
-                case 81 /* For */ :
-                    var forStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.init, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.cond, true, resultAST, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.incr, true, resultAST, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.body, false, resultAST, false, true);
-                    break;
-                case 84 /* While */ :
-                    var whileStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, whileStatement.cond, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, whileStatement.body, false, resultAST, false, true);
-                    break;
-                case 85 /* DoWhile */ :
-                    var doWhileStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, doWhileStatement.body, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, doWhileStatement.cond, false, resultAST, false, true);
-                    break;
-                case 88 /* Switch */ :
-                    var switchStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, switchStatement.statement, true, resultAST, false, false);
-                    var caseListCount = switchStatement.caseList.members.length;
-                    var caseToUse;
-                    if (caseListCount > 0) {
-                        var lastCase = switchStatement.caseList.members[caseListCount - 1];
-                        if (pos >= lastCase.limChar) {
-                            caseToUse = lastCase;
-                            resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, false, true);
-                        } else {
-                            caseToUse = switchStatement.caseList.members[0];
-                            resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, true, true);
-                        }
-                    }
-                    break;
-                case 87 /* Case */ :
-                    var caseStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, caseStatement.body.members[0], false, null, false, true);
-                    break;
-                case 101 /* With */ :
-                    var withStatement = cur;
-                    resultAST = this.getBreakpointInStatement(pos, withStatement.body, false, null, false, true);
-                    break;
-                case 89 /* Try */ :
-                    var tryNode = cur;
-                    resultAST = this.getBreakpointInStatement(pos, tryNode.body, false, null, false, true);
-                    break;
-                case 93 /* Catch */ :
-                    var catchNode = cur;
-                    resultAST = this.getBreakpointInStatement(pos, catchNode.statement, true, null, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, catchNode.body, false, resultAST, false, true);
-                    break;
-                case 92 /* Finally */ :
-                    var finallyNode = cur;
-                    resultAST = this.getBreakpointInStatement(pos, finallyNode, false, null, false, true);
-                    break;
-                case 90 /* TryCatch */ :
-                    tryCatch = cur;
-                    resultAST = this.getBreakpointInStatement(pos, tryCatch.tryNode.body, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.statement, true, resultAST, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.body, false, resultAST, false, true);
-                    break;
-                case 91 /* TryFinally */ :
-                    var tryFinally = cur;
-                    if (tryFinally.nodeType === 89 /* Try */ ) {
-                        resultAST = this.getBreakpointInStatement(pos, (tryFinally.tryNode).body, true, null, false, true);
-                    } else {
-                        tryCatch = tryFinally.tryNode;
-                        resultAST = this.getBreakpointInStatement(pos, tryCatch.tryNode.body, true, null, false, true);
-                        resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.statement, true, resultAST, false, false);
-                        resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.body, true, resultAST, false, true);
-                    }
-                    resultAST = this.getBreakpointInStatement(pos, tryFinally.finallyNode, false, resultAST, false, true);
-                    break;
-                default:
-                    resultAST = cur;
-                    break;
-            }
-            if (TypeScript.isValidAstNode(customSpan) && pos >= customSpan.minChar && pos <= customSpan.limChar) {
-                resultAST = customSpan;
-            }
-            if (resultAST) {
-                var result = new SpanInfo(resultAST.minChar, resultAST.limChar);
-                return result;
-            }
-            return null;
-        };
-        LanguageService.prototype.getSignatureAtPosition = function (fileName, pos) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            var atEOF = (pos === script.limChar);
-            var path = this.getAstPathToPosition(script, pos);
-            if (path.count() === 0) {
-                return null;
-            }
-            if (path.nodeType() === 108 /* Comment */ ) {
-                this.logger.log("position is inside a comment");
-                return null;
-            }
-            var callExpr = null;
-            while(path.count() >= 2) {
-                if (path.isArgumentListOfCall() || path.isArgumentListOfNew()) {
-                    if (atEOF || pos > path.ast().minChar) {
-                        path.pop();
-                        callExpr = path.pop();
-                    }
-                    break;
-                }
-                if (pos > path.ast().minChar) {
-                    if (path.ast().nodeType !== 107 /* Error */  && path.ast().nodeType !== 94 /* List */ ) {
-                        break;
-                    }
-                }
-                path.pop();
-            }
-            if (!callExpr || !callExpr.target || !callExpr.target.type) {
-                this.logger.log("No call expression for the given position");
-                return null;
-            }
-            if (callExpr.target.type === this.compilerState.anyType()) {
-                this.logger.log("Call expression is of type 'any'");
-                return null;
-            }
-            var sourceText = this.compilerState.getScriptSnapshot(fileName);
-            var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, false);
-            if (enclosingScopeContext === null) {
-                this.logger.log("No context found at the specified location.");
-                return null;
-            }
-            var getNameFromSymbol = function (symbol) {
-                if (symbol != null && symbol.name != "_anonymous") {
-                    return symbol.name;
-                }
-                return "";
-            };
-            var getDocCommentFromSymbol = function (symbol) {
-                if (symbol != null) {
-                    return TypeScript.Comment.getDocCommentText(symbol.getDocComments());
-                }
-                return "";
-            };
-            var convertSignatureGroupToSignatureInfo = function (symbol, isNew, group) {
-                var result = new FormalSignatureInfo();
-                result.isNew = false;
-                result.name = getNameFromSymbol(symbol);
-                result.docComment = getDocCommentFromSymbol(symbol);
-                result.openParen = (group.flags & 1 /* IsIndexer */  ? "[" : "(");
-                result.closeParen = (group.flags & 1 /* IsIndexer */  ? "]" : ")");
-                var hasOverloads = group.signatures.length > 1;
-                group.signatures.filter(function (signature) {
-                    return !(hasOverloads && signature === group.definitionSignature && !_this.compilerState.getCompilationSettings().canCallDefinitionSignature);
-                }).forEach(function (signature) {
-                    var signatureGroupInfo = new FormalSignatureItemInfo();
-                    signatureGroupInfo.docComment = (signature.declAST != null) ? TypeScript.Comment.getDocCommentText(signature.declAST.getDocComments()) : "";
-                    signatureGroupInfo.returnType = (signature.returnType === null ? "any" : signature.returnType.type.getScopedTypeName(enclosingScopeContext.getScope()));
-                    signature.parameters.forEach(function (p, i) {
-                        var signatureParameterInfo = new FormalParameterInfo();
-                        signatureParameterInfo.isVariable = (signature.hasVariableArgList) && (i === signature.parameters.length - 1);
-                        signatureParameterInfo.isOptional = p.isOptional();
-                        signatureParameterInfo.name = p.name;
-                        signatureParameterInfo.docComment = p.getParameterDocComments();
-                        signatureParameterInfo.type = p.getType().getScopedTypeName(enclosingScopeContext.getScope());
-                        signatureGroupInfo.parameters.push(signatureParameterInfo);
-                    });
-                    result.signatureGroup.push(signatureGroupInfo);
-                });
-                return result;
-            };
-            var convertCallExprToActualSignatureInfo = function (ast, caretPosition) {
-                if (!TypeScript.isValidAstNode(ast)) {
-                    return null;
-                }
-                if (!TypeScript.isValidAstNode(ast.arguments)) {
-                    return null;
-                }
-                var result = new ActualSignatureInfo();
-                result.currentParameter = -1;
-                result.openParenMinChar = ast.arguments.minChar;
-                result.closeParenLimChar = Math.max(ast.arguments.minChar, ast.arguments.limChar);
-                ast.arguments.members.forEach(function (arg, index) {
-                    var parameter = new ActualParameterInfo();
-                    parameter.minChar = arg.minChar;
-                    parameter.limChar = Math.max(arg.minChar, arg.limChar);
-                    result.parameters.push(parameter);
-                });
-                result.parameters.forEach(function (p, index) {
-                    var minChar = (index === 0 ? result.openParenMinChar : result.parameters[index - 1].limChar + 1);
-                    var limChar = (index === result.parameters.length - 1 ? result.closeParenLimChar : result.parameters[index + 1].minChar);
-                    if (caretPosition >= minChar && (atEOF ? caretPosition <= limChar : caretPosition < limChar)) {
-                        result.currentParameter = index;
-                    }
-                });
-                return result;
-            };
-            var getSignatureIndex = function (ast, group) {
-                if (ast === null || group === null || group.signatures === null) {
-                    return -1;
-                }
-                return group.signatures.indexOf(ast.signature);
-            };
-            var getTargetSymbolWithName = function (callExpr) {
-                var sym = null;
-                if ((callExpr.target).sym != null) {
-                    sym = (callExpr.target).sym;
-                } else if (callExpr.target.type.symbol !== null) {
-                    sym = callExpr.target.type.symbol;
-                }
-                if (sym != null) {
-                    if (sym.kind() === 1 /* Type */  && ((sym).isMethod || (sym).isClass() || (sym).isFunction()) && (sym.name != null)) {
-                        return sym;
-                    } else if (sym.kind() === 3 /* Parameter */ ) {
-                        return sym;
-                    } else if (sym.kind() === 4 /* Variable */ ) {
-                        return sym;
-                    } else if (sym.kind() === 2 /* Field */ ) {
-                        return sym;
-                    }
-                }
-                return null;
-            };
-            var symbol = getTargetSymbolWithName(callExpr);
-            var result = new SignatureInfo();
-            if (callExpr.nodeType === 30 /* Call */  && callExpr.target.type.call !== null) {
-                result.formal = convertSignatureGroupToSignatureInfo(symbol, false, callExpr.target.type.call);
-                result.actual = convertCallExprToActualSignatureInfo(callExpr, pos);
-                result.activeFormal = getSignatureIndex(callExpr, callExpr.target.type.call);
-            } else if (callExpr.nodeType === 31 /* New */  && callExpr.target.type.construct !== null) {
-                result.formal = convertSignatureGroupToSignatureInfo(symbol, true, callExpr.target.type.construct);
-                result.actual = convertCallExprToActualSignatureInfo(callExpr, pos);
-                result.activeFormal = getSignatureIndex(callExpr, callExpr.target.type.construct);
-            } else if (callExpr.target.nodeType === 6 /* Super */  && callExpr.target.type.symbol && callExpr.target.type.symbol.declAST) {
-                var classType = callExpr.target.type.symbol.declAST.type;
-                if (classType && classType.construct !== null) {
-                    result.formal = convertSignatureGroupToSignatureInfo(symbol, true, classType.construct);
-                    result.actual = convertCallExprToActualSignatureInfo(callExpr, pos);
-                    result.activeFormal = getSignatureIndex(callExpr, classType.construct);
-                } else {
-                    this.logger.log("No signature group found for the target class type constructor");
-                    return null;
-                }
-            } else {
-                this.logger.log("No signature group found for the target of the call expression");
-                return null;
-            }
-            if (result.actual === null || result.formal === null || result.activeFormal === null) {
-                this.logger.log("Can't compute actual and/or formal signature of the call expression");
-                return null;
-            }
-            return result;
-        };
-        LanguageService.prototype.getDefinitionAtPosition = function (fileName, pos) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            var sym = this.getSymbolAtPosition(script, pos);
-            if (sym === null) {
-                this.logger.log("No identifier at the specified location.");
-                return null;
-            }
-            if (!TypeScript.isValidAstNode(sym.declAST)) {
-                this.logger.log("No symbol location for identifier at the specified location.");
-                return null;
-            }
-            var minChar = sym.declAST.minChar;
-            var limChar = sym.declAST.limChar;
-            return new DefinitionInfo(sym.fileName, minChar, limChar, this.getSymbolElementKind(sym), sym.name, this.getSymbolContainerKind(sym), this.getSymbolContainerName(sym), null);
-        };
-        LanguageService.prototype.getSmartIndentAtLineNumber = function (fileName, position, options) {
-            this.minimalRefresh();
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var lineNumber = position < 0 ? -1 : syntaxAST.getScript().locationInfo.lineMap.getLineNumberFromPosition(position);
-            var manager = new Formatting.SmartIndentManager(syntaxAST, options);
-            return manager.getSmartIndentAtLineNumber(lineNumber);
-        };
-        LanguageService.prototype.getBraceMatchingAtPosition = function (fileName, position) {
-            this.minimalRefresh();
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Services.BraceMatchingManager(syntaxAST);
-            return this.textRangesToTextSpans(manager.getBraceMatchingAtPosition(position));
-        };
-        LanguageService.prototype.textRangesToTextSpans = function (items) {
-            if (!items) {
-                return null;
-            }
-            var result = [];
-            for(var i = 0; i < items.length; i++) {
-                result.push(TypeScript.TextSpan.fromBounds(items[i].minChar, items[i].limChar));
-            }
-            return result;
-        };
-        LanguageService.prototype.getFullNameOfSymbol = function (symbol, enclosingScopeContext) {
-            if (symbol && symbol.container && symbol.container.declAST && symbol.container.declAST.nodeType === 73 /* FuncDecl */ ) {
-                var funcDecl = symbol.container.declAST;
-                if (funcDecl.symbols.lookup(symbol.name) === symbol) {
-                    return symbol.getPrettyName(enclosingScopeContext.getScope().container);
-                }
-            }
-            if (symbol && symbol.kind() === 1 /* Type */ ) {
-                var typeSymbol = symbol;
-                if (typeSymbol.type && typeSymbol.type.symbol === symbol && typeSymbol.type.primitiveTypeClass != 0 /* None */ ) {
-                    return "";
-                }
-            }
-            return symbol.fullName(enclosingScopeContext.getScope());
-        };
-        LanguageService.prototype.getSymbolElementKind = function (sym, scopeSymbol, useConstructorAsClass) {
-            if (!sym) {
-                return ScriptElementKind.unknown;
-            }
-            if (sym.declAST === null) {
-                return ScriptElementKind.keyword;
-            }
-            var isLocal = function () {
-                if (sym.container && sym.container.declAST && sym.container.declAST.nodeType === 73 /* FuncDecl */ ) {
-                    if (scopeSymbol && scopeSymbol.container === sym.container) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-            var ast = sym.declAST;
-            switch(ast.nodeType) {
-                case 97 /* InterfaceDeclaration */ :
-                    return ScriptElementKind.interfaceElement;
-                case 96 /* ClassDeclaration */ :
-                    return ScriptElementKind.classElement;
-                case 98 /* ModuleDeclaration */ :
-                    var moduleDecl = ast;
-                    var isEnum = moduleDecl.isEnum();
-                    return isEnum ? ScriptElementKind.enumElement : ScriptElementKind.moduleElement;
-                case 99 /* ImportDeclaration */ :
-                    return ScriptElementKind.moduleElement;
-                case 75 /* VarDecl */ :
-                    var varDecl = ast;
-                    if (varDecl.isProperty()) {
-                        return ScriptElementKind.memberVariableElement;
-                    }
-                    return isLocal() ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
-                case 76 /* ArgDecl */ :
-                    var argDecl = ast;
-                    if (sym.kind() === 3 /* Parameter */ ) {
-                        return ScriptElementKind.parameterElement;
-                    }
-                    return (argDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
-                case 73 /* FuncDecl */ :
-                    var funcDecl = ast;
-                    if (funcDecl.isGetAccessor()) {
-                        return ScriptElementKind.memberGetAccessorElement;
-                    } else if (funcDecl.isSetAccessor()) {
-                        return ScriptElementKind.memberSetAccessorElement;
-                    } else if (funcDecl.isCallMember()) {
-                        return ScriptElementKind.callSignatureElement;
-                    } else if (funcDecl.isIndexerMember()) {
-                        return ScriptElementKind.indexSignatureElement;
-                    } else if (funcDecl.isConstructMember()) {
-                        return ScriptElementKind.constructSignatureElement;
-                    } else if (funcDecl.isConstructor) {
-                        return useConstructorAsClass ? ScriptElementKind.classElement : ScriptElementKind.constructorImplementationElement;
-                    } else if (funcDecl.isMethod()) {
-                        return ScriptElementKind.memberFunctionElement;
-                    } else if (isLocal()) {
-                        return ScriptElementKind.localFunctionElement;
-                    } else {
-                        return ScriptElementKind.functionElement;
-                    }
-                default:
-                    if (this.logger.warning()) {
-                        this.logger.log("Warning: unrecognized AST node type: " + (TypeScript.NodeType)._map[ast.nodeType]);
-                    }
-                    return ScriptElementKind.unknown;
-            }
-        };
-        LanguageService.prototype.getSymbolElementKindModifiers = function (sym) {
-            if (sym.declAST === null) {
-                return ScriptElementKindModifier.none;
-            }
-            return this.getDeclNodeElementKindModifiers(sym.declAST);
-        };
-        LanguageService.prototype.getSymbolContainerKind = function (sym) {
-            return "";
-        };
-        LanguageService.prototype.getSymbolContainerName = function (sym) {
-            return sym.container === null ? "<global>" : sym.container.fullName();
-        };
-        LanguageService.prototype.getReferencesAtPosition = function (fileName, pos) {
-            this.refresh();
-            var context = new GetReferencesContext();
-            var fileNames = this.compilerState.getFileNames();
-            for(var i = 0, len = fileNames.length; i < len; i++) {
-                context.scope.push(fileNames[i]);
-            }
-            return this.getReferencesForSourceLocation(context, fileName, pos);
-        };
-        LanguageService.prototype.getOccurrencesAtPosition = function (fileName, pos) {
-            this.refresh();
-            var context = new GetReferencesContext();
-            context.scope.push(fileName);
-            return this.getReferencesForSourceLocation(context, fileName, pos);
-        };
-        LanguageService.prototype.getImplementorsAtPosition = function (fileName, position) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            var path = this.getIdentifierPathToPosition(script, position);
-            if (path === null) {
-                this.logger.log("No identifier at the specified location.");
-                return [];
-            }
-            var name = path.ast();
-            var sym = name.sym;
-            if (sym === null) {
-                this.logger.log("No symbol annotation on the identifier AST.");
-                return [];
-            }
-            var collector = new Services.OverridesCollector(this.getSymbolTree());
-            var symbolSet = collector.findImplementors(sym);
-            var references = new ReferenceEntrySet();
-            symbolSet.getAll().forEach(function (x) {
-                references.addSymbol(x);
-            });
-            return references.getEntries();
-        };
-        LanguageService.prototype.getReferencesForSourceLocation = function (context, fileName, position) {
-            var script = this.compilerState.getScript(fileName);
-            var path = this.getIdentifierPathToPosition(script, position);
-            if (path === null) {
-                this.logger.log("No identifier at the specified location.");
-                return [];
-            }
-            var name = path.ast();
-            var sym = name.sym;
-            if (sym === null) {
-                this.logger.log("No symbol annotation on the identifier AST.");
-                return [];
-            }
-            return this.getReferencesForSymbol(context, sym);
-        };
-        LanguageService.prototype.isWriteAccess = function (parent, cur) {
-            var write = false;
-            if (parent !== null) {
-                var pnt = parent.nodeType;
-                switch(pnt) {
-                    case 75 /* VarDecl */ :
-                        if ((parent).init != null) {
-                            write = true;
-                        }
-                        break;
-                    case 76 /* ArgDecl */ :
-                        write = true;
-                        break;
-                    case 32 /* Asg */ :
-                    case 33 /* AsgAdd */ :
-                    case 34 /* AsgSub */ :
-                    case 36 /* AsgMul */ :
-                    case 35 /* AsgDiv */ :
-                    case 37 /* AsgMod */ :
-                    case 40 /* AsgOr */ :
-                    case 38 /* AsgAnd */ :
-                    case 39 /* AsgXor */ :
-                    case 41 /* AsgLsh */ :
-                    case 42 /* AsgRsh */ :
-                    case 43 /* AsgRs2 */ :
-                        if ((parent).operand1 === cur) {
-                            write = true;
-                        }
-                        break;
-                    case 70 /* IncPost */ :
-                    case 68 /* IncPre */ :
-                    case 71 /* DecPost */ :
-                    case 69 /* DecPre */ :
-                        write = true;
-                        break;
-                }
-            }
-            return write;
-        };
-        LanguageService.prototype.getReferencesForSymbol = function (context, sym) {
-            var _this = this;
-            var collector = new Services.OverridesCollector(this.getSymbolTree());
-            var symbolSet = collector.findMemberOverrides(sym);
-            var references = new ReferenceEntrySet();
-            var match = function (fileName, parent, cur) {
-                references.addAst(fileName, cur, _this.isWriteAccess(parent, cur));
-            };
-            if (sym.kind() === 2 /* Field */ ) {
-                this.logger.log("getReferencesToField");
-                this.getReferencesToField(context, symbolSet, match);
-            } else if (sym.kind() === 3 /* Parameter */ ) {
-                this.logger.log("getReferencesToParameter");
-                this.getReferencesToParameter(context, symbolSet, match);
-            } else if (sym.kind() === 1 /* Type */ ) {
-                this.logger.log("getReferencesToType");
-                this.getReferencesToType(context, symbolSet, match);
-            } else if (sym.kind() === 4 /* Variable */ ) {
-                this.logger.log("getReferencesToVariable");
-                this.getReferencesToVariable(context, symbolSet, match);
-            } else {
-                this.logger.log("No recognized symbol at the specified location (" + sym.kind() + ").");
-            }
-            return references.getEntries();
-        };
-        LanguageService.prototype.getCompletionsAtPosition = function (fileName, pos, isMemberCompletion) {
-            this.refresh();
-            var result = new CompletionInfo();
-            result.maybeInaccurate = false;
-            result.isMemberCompletion = isMemberCompletion;
-            var script = this.compilerState.getScriptAST(fileName);
-            var sourceText = this.compilerState.getScriptSnapshot(fileName);
-            var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, isMemberCompletion);
-            if (enclosingScopeContext === null) {
-                this.logger.log("No context found at the specified location.");
-                return result;
-            }
-            this.logger.log("Found scope context in up-to-date script AST: pos=" + pos + ", scopePos=" + enclosingScopeContext.getScopePosition());
-            enclosingScopeContext.useFullAst = true;
-            this.getCompletionsFromEnclosingScopeContext(enclosingScopeContext, result);
-            return result;
-        };
-        LanguageService.prototype.getDocCommentOfSymbol = function (symbol) {
-            if (!symbol) {
-                return "";
-            }
-            var type = symbol.getType();
-            if (type && type.isClass() && type.symbol.name === symbol.name) {
-                return TypeScript.Comment.getDocCommentText(type.getDocComments());
-            }
-            if (symbol.declAST && symbol.declAST.nodeType === 73 /* FuncDecl */  && type.call && type.call.signatures.length > 1) {
-                return TypeScript.Comment.getDocCommentFirstOverloadSignature(type.call);
-            }
-            if (symbol.kind() === 3 /* Parameter */ ) {
-                return (symbol).getParameterDocComments();
-            }
-            if (symbol.declAST && symbol.declAST.nodeType === 76 /* ArgDecl */  && (symbol.declAST).isProperty()) {
-                return ((symbol.declAST).sym).getParameterDocComments();
-            }
-            return TypeScript.Comment.getDocCommentText(symbol.getDocComments());
-        };
-        LanguageService.prototype.getCompletionsFromEnclosingScopeContext = function (enclosingScopeContext, result) {
-            var _this = this;
-            var getCompletions = function (isMemberCompletion) {
-                result.isMemberCompletion = isMemberCompletion;
-                enclosingScopeContext.isMemberCompletion = isMemberCompletion;
-                var entries = _this.compilerState.getScopeEntries(enclosingScopeContext, true);
-                entries.forEach(function (x) {
-                    var entry = new CompletionEntry();
-                    entry.name = x.name;
-                    entry.type = x.type;
-                    entry.kind = _this.getSymbolElementKind(x.sym, enclosingScopeContext.getScope(), true);
-                    entry.fullSymbolName = _this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
-                    entry.docComment = _this.getDocCommentOfSymbol(x.sym);
-                    entry.kindModifiers = _this.getSymbolElementKindModifiers(x.sym);
-                    result.entries.push(entry);
-                });
-            };
-            var scriptFragment = enclosingScopeContext.getScriptFragment();
-            try  {
-                var path = this.getAstPathToPosition(scriptFragment, enclosingScopeContext.pos - enclosingScopeContext.getScriptFragmentPosition(), 1 /* EdgeInclusive */  | 2 /* DontPruneSearchBasedOnPosition */ );
-                if (this.isCompletionListBlocker(path)) {
-                    this.logger.log("Returning an empty list because position is inside a comment");
-                } else if (this.isObjectLiteralMemberNameCompletion(enclosingScopeContext)) {
-                    this.logger.log("Completion list for members of object literal");
-                    return getCompletions(true);
-                } else if (enclosingScopeContext.isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
-                    return getCompletions(enclosingScopeContext.isMemberCompletion);
-                } else {
-                    this.logger.log("Returning an empty list because position is not a valid position for displaying a completion list");
-                }
-            } finally {
-                this.compilerState.cleanASTTypesForReTypeCheck(scriptFragment);
-            }
-        };
-        LanguageService.prototype.isObjectLiteralMemberNameCompletion = function (enclosingScopeContext) {
-            if (enclosingScopeContext.enclosingObjectLit === null) {
-                return false;
-            }
-            if (enclosingScopeContext.isMemberCompletion) {
-                return false;
-            }
-            var objectLit = enclosingScopeContext.enclosingObjectLit;
-            var script = enclosingScopeContext.script;
-            var pos = enclosingScopeContext.pos;
-            if (!TypeScript.isValidAstNode(objectLit)) {
-                return false;
-            }
-            if (!TypeScript.isValidAstNode(objectLit.operand)) {
-                return false;
-            }
-            if (objectLit.operand.nodeType !== 94 /* List */ ) {
-                return false;
-            }
-            var memberList = objectLit.operand;
-            var isInsideList = (memberList.minChar < pos && pos < memberList.limChar);
-            if (!isInsideList) {
-                return false;
-            }
-            if (memberList.members.length === 0) {
-                return true;
-            }
-            var syntaxAST = new Services.ScriptSyntaxAST(this.logger, script, enclosingScopeContext.text);
-            var tokenStream = new Services.TokenStreamHelper(syntaxAST.getTokenStream(memberList.minChar, memberList.limChar));
-            var nameAreaMinChar = tokenStream.tokenEndPos();
-            var isNameArea = false;
-            var cancelSearch = false;
-            if (!tokenStream.expect(59 /* OpenBrace */ )) {
-                return false;
-            }
-            memberList.members.forEach(function (x, i) {
-                if (cancelSearch) {
-                    return;
-                }
-                if (x.nodeType !== 74 /* Member */ ) {
-                    nameAreaMinChar = -1;
-                    return;
-                }
-                var member = x;
-                if (!TypeScript.isValidAstNode(member.operand1)) {
-                    nameAreaMinChar = -1;
-                    return;
-                }
-                if (nameAreaMinChar < 0) {
-                    nameAreaMinChar = member.operand1.minChar;
-                }
-                if (!tokenStream.skipToOffset(member.operand1.limChar)) {
-                    nameAreaMinChar = -1;
-                    cancelSearch = true;
-                    return;
-                }
-                if (tokenStream.tokenId() !== 75 /* Colon */ ) {
-                    nameAreaMinChar = -1;
-                    return;
-                }
-                if ((nameAreaMinChar) >= 0 && (nameAreaMinChar <= pos) && (pos <= tokenStream.tokenStartPos())) {
-                    isNameArea = true;
-                    cancelSearch = true;
-                    return;
-                }
-                nameAreaMinChar = -1;
-                if (TypeScript.isValidAstNode(member.operand2)) {
-                    if (tokenStream.skipToOffset(member.operand2.limChar)) {
-                        if (tokenStream.tokenId() === 61 /* Comma */ ) {
-                            nameAreaMinChar = tokenStream.tokenEndPos();
-                            tokenStream.moveNext();
-                        }
-                    }
-                }
-            });
-            if (nameAreaMinChar < 0) {
-                return false;
-            }
-            if (isNameArea) {
-                return true;
-            }
-            if (tokenStream.tokenId() !== 60 /* CloseBrace */ ) {
-                return false;
-            }
-            return (nameAreaMinChar <= pos) && (pos <= tokenStream.tokenStartPos());
-        };
-        LanguageService.prototype.isCompletionListBlocker = function (path) {
-            var asts = path.asts;
-            var isNodeType = function (nodeType) {
-                return (path.count() >= 1) && (path.ast().nodeType === nodeType);
-            };
-            if (isNodeType(108 /* Comment */ ) || isNodeType(8 /* Regex */ ) || isNodeType(7 /* QString */ )) {
-                return true;
-            }
-            return false;
-        };
-        LanguageService.prototype.isCompletionListTriggerPoint = function (path) {
-            var asts = path.asts;
-            var isNodeType = function (nodeType) {
-                return (path.count() >= 1) && (path.ast().nodeType === nodeType);
-            };
-            var isDecl = function (nodeType) {
-                if (isNodeType(nodeType)) {
-                    return true;
-                }
-                if (asts.length > 1 && (asts[asts.length - 2].nodeType === nodeType) && (asts[asts.length - 1].nodeType === 25 /* Name */ )) {
-                    return true;
-                }
-                return false;
-            };
-            if (path.isNameOfVariable() || path.isNameOfFunction() || path.isNameOfArgument() || path.isArgumentListOfFunction() || path.isNameOfInterface() || path.isNameOfClass() || path.isNameOfModule()) {
-                return false;
-            }
-            if (isNodeType(74 /* Member */ ) || isNodeType(90 /* TryCatch */ ) || isNodeType(93 /* Catch */ ) || isNodeType(108 /* Comment */ ) || isNodeType(8 /* Regex */ ) || isNodeType(7 /* QString */ )) {
-                return false;
-            }
-            return true;
-        };
-        LanguageService.prototype.getFormattingEditsForRange = function (fileName, minChar, limChar, options) {
-            this.minimalRefresh();
-            this.formattingRulesProvider.ensureUptodate(options);
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatSelection(minChar, limChar);
-            if (this.logger.information()) {
-                this.logFormatCodeOptions(options);
-                this.logEditResults(syntaxAST, result);
-            }
-            return result;
-        };
-        LanguageService.prototype.getFormattingEditsForDocument = function (fileName, minChar, limChar, options) {
-            this.minimalRefresh();
-            this.formattingRulesProvider.ensureUptodate(options);
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatDocument(minChar, limChar);
-            if (this.logger.information()) {
-                this.logEditResults(syntaxAST, result);
-            }
-            return result;
-        };
-        LanguageService.prototype.getFormattingEditsOnPaste = function (fileName, minChar, limChar, options) {
-            this.minimalRefresh();
-            this.formattingRulesProvider.ensureUptodate(options);
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatOnPaste(minChar, limChar);
-            if (this.logger.information()) {
-                this.logEditResults(syntaxAST, result);
-            }
-            return result;
-        };
-        LanguageService.prototype.getFormattingEditsAfterKeystroke = function (fileName, position, key, options) {
-            this.minimalRefresh();
-            this.formattingRulesProvider.ensureUptodate(options);
-            var syntaxAST;
-            var manager;
-            if (key === "}") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnClosingCurlyBrace(position);
-            } else if (key === ";") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnSemicolon(position);
-            } else if (key === "\n") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnEnter(position);
-            }
-            return [];
-        };
-        LanguageService.prototype.getNavigateToItems = function (searchValue) {
-            this.refresh();
-            var i = 0;
-            var len = 0;
-            var terms = searchValue.split(" ");
-            for(i = 0; i < terms.length; i++) {
-                terms[i] = terms[i].trim().toLocaleLowerCase();
-            }
-            var match = function (ast, parent, name) {
-                name = name.toLocaleLowerCase();
-                for(i = 0; i < terms.length; i++) {
-                    var term = terms[i];
-                    if (name === term) {
-                        return MatchKind.exact;
-                    }
-                    if (name.indexOf(term) === 0) {
-                        return MatchKind.prefix;
-                    }
-                    if (name.indexOf(term) > 0) {
-                        return MatchKind.subString;
-                    }
-                }
-                return null;
-            };
-            var result = [];
-            var fileNames = this.compilerState.getFileNames();
-            for(i = 0, len = fileNames.length; i < len; i++) {
-                var fileName = fileNames[i];
-                var script = this.compilerState.getScript(fileName);
-                fileName = script.locationInfo.fileName;
-                var matchKind = match(null, script, fileName);
-                if (matchKind != null) {
-                    var item = new NavigateToItem();
-                    item.name = fileName;
-                    item.matchKind = matchKind;
-                    item.kind = ScriptElementKind.scriptElement;
-                    item.fileName = fileName;
-                    item.minChar = script.minChar;
-                    item.limChar = script.limChar;
-                    result.push(item);
-                }
-                var items = this.getASTItems(fileName, script, match);
-                for(var j = 0; j < items.length; j++) {
-                    result.push(items[j]);
-                }
-            }
-            return result;
-        };
-        LanguageService.prototype.getScriptLexicalStructure = function (fileName) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            return this.getASTItems(script.locationInfo.fileName, script, function (name) {
-                return MatchKind.exact;
-            });
-        };
-        LanguageService.prototype.getOutliningRegions = function (fileName) {
-            this.refresh();
-            var script = this.compilerState.getScriptAST(fileName);
-            var maxLim = function (current) {
-                var asts = [];
-                for (var _i = 0; _i < (arguments.length - 1); _i++) {
-                    asts[_i] = arguments[_i + 1];
-                }
-                var maxLim1 = function (current, asts) {
-                    var result = current;
-                    for(var i = 0; i < asts.length; i++) {
-                        var ast = asts[i];
-                        if (ast != null && ast.limChar != 0 && ast.limChar > result) {
-                            result = ast.limChar;
-                        }
-                    }
-                    return result;
-                };
-                var result = maxLim1(current, asts);
-                for(var i = 0; i < asts.length; i++) {
-                    var ast = asts[i];
-                    if (ast != null && ast.nodeType === 94 /* List */ ) {
-                        result = maxLim1(result, (ast).members);
-                    }
-                }
-                return result;
-            };
-            var findMinChar = function (parent, ast) {
-                var result = ast.minChar;
-                switch(ast.nodeType) {
-                    case 73 /* FuncDecl */ :
-                        result = maxLim(result, (ast).name, (ast).arguments, (ast).returnTypeAnnotation);
-                        break;
-                    case 98 /* ModuleDeclaration */ :
-                        result = maxLim(result, (ast).name);
-                        break;
-                    case 96 /* ClassDeclaration */ :
-                        result = maxLim(result, (ast).name, (ast).extendsList, (ast).implementsList);
-                        break;
-                    case 97 /* InterfaceDeclaration */ :
-                        result = maxLim(result, (ast).name, (ast).extendsList, (ast).implementsList);
-                        break;
-                }
-                return result;
-            };
-            var findLimChar = function (parent, ast) {
-                return ast.limChar;
-            };
-            var match = function (parent, ast, name) {
-                switch(ast.nodeType) {
-                    case 73 /* FuncDecl */ :
-                        if ((ast).bod === null) {
-                            return MatchKind.none;
-                        }
-                    case 96 /* ClassDeclaration */ :
-                    case 98 /* ModuleDeclaration */ :
-                    case 97 /* InterfaceDeclaration */ :
-                        return MatchKind.exact;
-                    default:
-                        return null;
-                }
-            };
-            return this.navigateToItemsToTextSpans(this.getASTItems(script.locationInfo.fileName, script, match, findMinChar, findLimChar));
-        };
-        LanguageService.prototype.navigateToItemsToTextSpans = function (items) {
-            if (!items) {
-                return null;
-            }
-            var result = [];
-            for(var i = 0; i < items.length; i++) {
-                result.push(TypeScript.TextSpan.fromBounds(items[i].minChar, items[i].limChar));
-            }
-            return result;
-        };
-        LanguageService.prototype.getEmitOutput = function (fileName) {
-            this.refresh();
-            return this.compilerState.getEmitOutput(fileName);
-        };
-        LanguageService.prototype.getTypeInfoAtPosition = function (pos, script, constructorIsValid) {
-            var result = null;
-            var callExpr = [];
-            var createTypeInfoAtPosition = function (minChar, limChar, ast, type, forceNew) {
-                var typeInfoAtPosition = {
-                    spanInfo: new SpanInfo(minChar, limChar),
-                    ast: ast
-                };
-                if (callExpr.length > 0) {
-                    var curCallExpr = callExpr[callExpr.length - 1];
-                    if (curCallExpr.target.type === type) {
-                        typeInfoAtPosition.callSignature = curCallExpr.signature;
-                        typeInfoAtPosition.isNew = forceNew || curCallExpr.nodeType === 31 /* New */ ;
-                    }
-                }
-                return typeInfoAtPosition;
-            };
-            var pre = function (cur, parent) {
-                if (TypeScript.isValidAstNode(cur)) {
-                    if (pos >= cur.minChar && pos < cur.limChar) {
-                        switch(cur.nodeType) {
-                            case 30 /* Call */ :
-                            case 31 /* New */ :
-                                var curCallExpr = cur;
-                                if (pos >= curCallExpr.target.minChar && pos < curCallExpr.target.limChar) {
-                                    callExpr.push(curCallExpr);
-                                }
-                                break;
-                            case 19 /* Dot */ :
-                                if (result === null) {
-                                    result = createTypeInfoAtPosition(cur.minChar, cur.limChar, cur, cur.type);
-                                }
-                                break;
-                            case 25 /* Name */ :
-                                result = createTypeInfoAtPosition(result === null ? cur.minChar : result.spanInfo.minChar, cur.limChar, cur, (cur).sym ? (cur).sym.getType() : cur.type);
-                                result.symbol = (cur).sym;
-                                break;
-                            case 73 /* FuncDecl */ :
-                                var funcDecl = cur;
-                                if (constructorIsValid && funcDecl.constructorSpan && pos >= funcDecl.constructorSpan.minChar && pos < funcDecl.constructorSpan.limChar) {
-                                    result = {
-                                        spanInfo: new SpanInfo(funcDecl.constructorSpan.minChar, funcDecl.constructorSpan.limChar),
-                                        ast: cur,
-                                        callSignature: funcDecl.signature,
-                                        isNew: true
-                                    };
-                                }
-                                break;
-                            case 6 /* Super */ :
-                                result = createTypeInfoAtPosition(cur.minChar, cur.limChar, cur, cur.type, true);
-                                result.symbol = cur.type.symbol;
-                                break;
-                            case 7 /* QString */ :
-                            case 5 /* This */ :
-                                result = createTypeInfoAtPosition(cur.minChar, cur.limChar, cur, cur.type);
-                                break;
-                        }
-                    } else if (result && callExpr.length > 0) {
-                        curCallExpr = callExpr[callExpr.length - 1];
-                        if (curCallExpr.target.minChar >= cur.minChar && curCallExpr.target.minChar < cur.limChar) {
-                            result.callSignature = null;
-                        }
-                    }
-                }
-                return cur;
-            };
-            var post = function (cur, parent) {
-                var callExprLength = callExpr.length;
-                if (callExprLength > 0 && callExpr[callExprLength - 1] === parent) {
-                    callExpr.pop();
-                }
-                return cur;
-            };
-            TypeScript.getAstWalkerFactory().walk(script, pre, post);
-            return result;
-        };
-        LanguageService.prototype.getReferencesToField = function (context, symbolSet, match) {
-            var fieldMatch = function (fileName, parent, cur) {
-                if (cur.nodeType === 25 /* Name */ ) {
-                    match(fileName, parent, cur);
-                }
-            };
-            return this.getReferencesToSymbolSet(context, symbolSet, fieldMatch);
-        };
-        LanguageService.prototype.getReferencesToType = function (context, symbolSet, match) {
-            var typeMatch = function (fileName, parent, cur) {
-                if (cur.nodeType === 25 /* Name */ ) {
-                    match(fileName, parent, cur);
-                }
-            };
-            return this.getReferencesToSymbolSet(context, symbolSet, typeMatch);
-        };
-        LanguageService.prototype.getReferencesToParameter = function (context, symbolSet, match) {
-            var parameterMatch = function (fileName, parent, cur) {
-                if (cur.nodeType === 25 /* Name */ ) {
-                    match(fileName, parent, cur);
-                }
-            };
-            return this.getReferencesToSymbolSet(context, symbolSet, parameterMatch);
-        };
-        LanguageService.prototype.getReferencesToVariable = function (context, symbolSet, match) {
-            var variableMatch = function (fileName, parent, cur) {
-                if (cur.nodeType === 25 /* Name */ ) {
-                    match(fileName, parent, cur);
-                }
-            };
-            return this.getReferencesToSymbolSet(context, symbolSet, variableMatch);
-        };
-        LanguageService.prototype.getReferencesToSymbolSet = function (context, symbolSet, match) {
-            var _this = this;
-            var processScript = function (fileName) {
-                var pre = function (cur, parent) {
-                    if (TypeScript.isValidAstNode(cur)) {
-                        var sym = (cur).sym;
-                        if (sym != null && symbolSet.contains(sym)) {
-                            match(fileName, parent, cur);
-                        }
-                    }
-                    return cur;
-                };
-                TypeScript.getAstWalkerFactory().walk(_this.compilerState.getScript(fileName), pre);
-            };
-            for(var i = 0, len = context.scope.length; i < len; i++) {
-                processScript(context.scope[i]);
-            }
-        };
-        LanguageService.prototype.getDeclNodeElementKindModifiers = function (ast) {
-            var addModifier = function (result, testValue, value) {
-                if (!testValue) {
-                    return result;
-                }
-                if (result === ScriptElementKindModifier.none) {
-                    return value;
-                } else {
-                    return result + "," + value;
-                }
-            };
-            var typeDeclToKindModifiers = function (decl) {
-                var result = ScriptElementKindModifier.none;
-                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                return result;
-            };
-            var classDeclToKindModifiers = function (decl) {
-                var result = ScriptElementKindModifier.none;
-                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                return result;
-            };
-            var moduleDeclToKindModifiers = function (decl) {
-                var result = ScriptElementKindModifier.none;
-                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                return result;
-            };
-            var varDeclToKindModifiers = function (decl) {
-                var result = ScriptElementKindModifier.none;
-                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                result = addModifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addModifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                result = addModifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
-                return result;
-            };
-            var argDeclToKindModifiers = function (decl) {
-                var result = ScriptElementKindModifier.none;
-                result = addModifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addModifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                return result;
-            };
-            var funcDeclToKindModifiers = function (decl) {
-                var result = ScriptElementKindModifier.none;
-                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                result = addModifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addModifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                result = addModifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
-                return result;
-            };
-            switch(ast.nodeType) {
-                case 97 /* InterfaceDeclaration */ :
-                    var typeDecl = ast;
-                    return typeDeclToKindModifiers(typeDecl);
-                case 96 /* ClassDeclaration */ :
-                    var classDecl = ast;
-                    return classDeclToKindModifiers(classDecl);
-                case 98 /* ModuleDeclaration */ :
-                    var moduleDecl = ast;
-                    return moduleDeclToKindModifiers(moduleDecl);
-                case 75 /* VarDecl */ :
-                    var varDecl = ast;
-                    return varDeclToKindModifiers(varDecl);
-                case 76 /* ArgDecl */ :
-                    var argDecl = ast;
-                    return argDeclToKindModifiers(argDecl);
-                case 73 /* FuncDecl */ :
-                    var funcDecl = ast;
-                    return funcDeclToKindModifiers(funcDecl);
-                default:
-                    if (this.logger.warning()) {
-                        this.logger.log("Warning: unrecognized AST node type: " + (TypeScript.NodeType)._map[ast.nodeType]);
-                    }
-                    return ScriptElementKindModifier.none;
-            }
-        };
-        LanguageService.prototype.getASTItems = function (fileName, ast, match, findMinChar, findLimChar) {
-            var _this = this;
-            if (findMinChar === null) {
-                findMinChar = function (parent, ast) {
-                    return ast.minChar;
-                };
-            }
-            if (findLimChar === null) {
-                findLimChar = function (parent, ast) {
-                    return ast.limChar;
-                };
-            }
-            var context = new NavigateToContext();
-            context.fileName = fileName;
-            var addItem = function (parent, ast, name, kind) {
-                if (!TypeScript.isValidAstNode(ast)) {
-                    return null;
-                }
-                var matchKind = match(parent, ast, name);
-                var minChar = findMinChar(parent, ast);
-                var limChar = findLimChar(parent, ast);
-                if (matchKind != null && minChar >= 0 && limChar >= 0 && limChar >= minChar) {
-                    var item = new NavigateToItem();
-                    item.name = name;
-                    item.matchKind = matchKind;
-                    item.kind = kind;
-                    item.kindModifiers = _this.getDeclNodeElementKindModifiers(ast);
-                    item.fileName = context.fileName;
-                    item.minChar = minChar;
-                    item.limChar = limChar;
-                    item.containerName = (TypeScript.lastOf(context.containerSymbols) === null ? "" : TypeScript.lastOf(context.containerSymbols).fullName());
-                    item.containerKind = TypeScript.lastOf(context.containerKinds) === null ? "" : TypeScript.lastOf(context.containerKinds);
-                    return item;
-                }
-                return null;
-            };
-            var getLimChar = function (ast) {
-                return (ast === null ? -1 : ast.limChar);
-            };
-            var pre = function (ast, parent, walker) {
-                context.path.push(ast);
-                if (!TypeScript.isValidAstNode(ast)) {
-                    return ast;
-                }
-                var item = null;
-                switch(ast.nodeType) {
-                    case 97 /* InterfaceDeclaration */ :
- {
-                            var typeDecl = ast;
-                            item = addItem(parent, typeDecl, typeDecl.name.actualText, ScriptElementKind.interfaceElement);
-                            context.containerASTs.push(ast);
-                            context.containerSymbols.push(typeDecl.type.symbol);
-                            context.containerKinds.push("interface");
-                        }
-                        break;
-                    case 96 /* ClassDeclaration */ :
- {
-                            var classDecl = ast;
-                            item = addItem(parent, classDecl, classDecl.name.actualText, ScriptElementKind.classElement);
-                            context.containerASTs.push(ast);
-                            context.containerSymbols.push(classDecl.type.symbol);
-                            context.containerKinds.push("class");
-                        }
-                        break;
-                    case 98 /* ModuleDeclaration */ :
- {
-                            var moduleDecl = ast;
-                            var isEnum = moduleDecl.isEnum();
-                            var kind = isEnum ? ScriptElementKind.enumElement : ScriptElementKind.moduleElement;
-                            item = addItem(parent, moduleDecl, moduleDecl.name.actualText, kind);
-                            context.containerASTs.push(ast);
-                            context.containerSymbols.push(moduleDecl.mod.symbol);
-                            context.containerKinds.push(kind);
-                        }
-                        break;
-                    case 75 /* VarDecl */ :
- {
-                            var varDecl = ast;
-                            if (varDecl.id !== null) {
-                                if (varDecl.isProperty()) {
-                                    item = addItem(parent, varDecl, varDecl.id.actualText, ScriptElementKind.memberVariableElement);
-                                } else if (context.path.isChildOfScript() || context.path.isChildOfModule()) {
-                                    item = addItem(parent, varDecl, varDecl.id.actualText, ScriptElementKind.variableElement);
-                                }
-                            }
-                        }
-                        walker.options.goChildren = false;
-                        break;
-                    case 76 /* ArgDecl */ :
- {
-                            var argDecl = ast;
-                            if (argDecl.id !== null) {
-                                if (context.path.isArgumentOfClassConstructor()) {
-                                    if (argDecl.isProperty()) {
-                                        item = addItem(parent, argDecl, argDecl.id.actualText, ScriptElementKind.memberVariableElement);
-                                    }
-                                }
-                            }
-                        }
-                        walker.options.goChildren = false;
-                        break;
-                    case 73 /* FuncDecl */ :
- {
-                            var funcDecl = ast;
-                            kind = null;
-                            var name = (funcDecl.name !== null ? funcDecl.name.actualText : null);
-                            if (funcDecl.isGetAccessor()) {
-                                kind = ScriptElementKind.memberGetAccessorElement;
-                            } else if (funcDecl.isSetAccessor()) {
-                                kind = ScriptElementKind.memberSetAccessorElement;
-                            } else if (funcDecl.isCallMember()) {
-                                kind = ScriptElementKind.callSignatureElement;
-                                name = "()";
-                            } else if (funcDecl.isIndexerMember()) {
-                                kind = ScriptElementKind.indexSignatureElement;
-                                name = "[]";
-                            } else if (funcDecl.isConstructMember()) {
-                                kind = ScriptElementKind.constructSignatureElement;
-                                name = "new()";
-                            } else if (funcDecl.isConstructor) {
-                                kind = ScriptElementKind.constructorImplementationElement;
-                                name = "constructor";
-                            } else if (funcDecl.isMethod()) {
-                                kind = ScriptElementKind.memberFunctionElement;
-                            } else if (context.path.isChildOfScript() || context.path.isChildOfModule()) {
-                                kind = ScriptElementKind.functionElement;
-                            }
-                            if (kind !== null && name !== null) {
-                                item = addItem(parent, funcDecl, name, kind);
-                            }
-                        }
-                        break;
-                    case 11 /* ObjectLit */ :
-                        walker.options.goChildren = false;
-                        break;
-                }
-                if (item !== null) {
-                    context.result.push(item);
-                }
-                return ast;
-            };
-            var post = function (ast, parent) {
-                context.path.pop();
-                if (ast === TypeScript.lastOf(context.containerASTs)) {
-                    context.containerASTs.pop();
-                    context.containerSymbols.pop();
-                    context.containerKinds.pop();
-                }
-                return ast;
-            };
-            TypeScript.getAstWalkerFactory().walk(ast, pre, post);
-            return context.result;
-        };
-        LanguageService.prototype.getAstPathToPosition = function (script, pos, options) {
-            if (typeof options === "undefined") { options = 0 /* Default */ ; }
-            if (this.logger.information()) {
-                this.logger.log("getAstPathToPosition(" + script + ", " + pos + ")");
-            }
-            return TypeScript.getAstPathToPosition(script, pos, options);
-        };
-        LanguageService.prototype.getIdentifierPathToPosition = function (script, pos) {
-            this.logger.log("getIdentifierPathToPosition(" + script + ", " + pos + ")");
-            var path = this.getAstPathToPosition(script, pos, 1 /* EdgeInclusive */ );
-            if (path.count() === 0) {
-                return null;
-            }
-            if (path.nodeType() !== 25 /* Name */ ) {
-                return null;
-            }
-            return path;
-        };
-        LanguageService.prototype.getSymbolAtPosition = function (script, pos) {
-            this.logger.log("getSymbolAtPosition(" + script + ", " + pos + ")");
-            var path = this.getAstPathToPosition(script, pos);
-            if (path.count() === 0) {
-                return null;
-            }
-            var finalAST = path.ast();
-            if (finalAST === null) {
-                return null;
-            }
-            if (finalAST.sym) {
-                return finalAST.sym;
-            }
-            if (finalAST.nodeType === 19 /* Dot */  && finalAST.operand2.sym) {
-                return finalAST.operand2.sym;
-            }
-            if (finalAST.signature && finalAST.signature.returnType && finalAST.signature.returnType.type && finalAST.signature.returnType.type.symbol) {
-                return finalAST.signature.returnType.type.symbol;
-            }
-            if (finalAST.type && finalAST.type.symbol) {
-                return finalAST.type.symbol;
-            }
-            return null;
-        };
-        LanguageService.prototype.logFormatCodeOptions = function (options) {
-            if (this.logger.information()) {
-                this.logger.log("options.InsertSpaceAfterCommaDelimiter=" + options.InsertSpaceAfterCommaDelimiter);
-                this.logger.log("options.InsertSpaceAfterSemicolonInForStatements=" + options.InsertSpaceAfterSemicolonInForStatements);
-                this.logger.log("options.InsertSpaceBeforeAndAfterBinaryOperators=" + options.InsertSpaceBeforeAndAfterBinaryOperators);
-                this.logger.log("options.InsertSpaceAfterKeywordsInControlFlowStatements=" + options.InsertSpaceAfterKeywordsInControlFlowStatements);
-                this.logger.log("options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions=" + options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions);
-                this.logger.log("options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis=" + options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis);
-                this.logger.log("options.PlaceOpenBraceOnNewLineForFunctions=" + options.PlaceOpenBraceOnNewLineForFunctions);
-                this.logger.log("options.PlaceOpenBraceOnNewLineForControlBlocks=" + options.PlaceOpenBraceOnNewLineForControlBlocks);
-            }
-        };
-        LanguageService.prototype.logEditResults = function (syntaxAST, result) {
-            var _this = this;
-            if (this.logger.information()) {
-                var logSourceText = function (text) {
-                    var textLines = text.replace(/^\s+|\s+$/g, "").replace(/\r\n?/g, "\n").split(/\n/);
-                    for(var i = 0; i < textLines.length; i++) {
-                        var textLine = textLines[i];
-                        var msg = "line #" + i + "(length=" + textLine.length + "): \"" + textLine + "\"";
-                        _this.logger.log(msg);
-                    }
-                };
-                var sourceText = syntaxAST.getScriptSnapshot();
-                logSourceText(sourceText.getText(0, sourceText.getLength()));
-                for(var i = 0; i < result.length; i++) {
-                    var edit = result[i];
-                    var oldSourceText = sourceText.getText(edit.minChar, edit.limChar);
-                    var text = "edit #" + i + ": minChar=" + edit.minChar + ", " + "limChar=" + edit.limChar + ", " + "oldText=\"" + TypeScript.stringToLiteral(oldSourceText, 30) + "\", " + "textLength=" + edit.text.length + ", " + "text=\"" + TypeScript.stringToLiteral(edit.text, 30) + "\"";
-                    this.logger.log(text);
-                }
-            }
-        };
-        return LanguageService;
-    })();
-    Services.LanguageService = LanguageService;    
 })(Services || (Services = {}));
 var debugObjectHost = (this);
 var Services;
@@ -55790,8 +53889,49 @@ var Services;
 })(Services || (Services = {}));
 var Services;
 (function (Services) {
-    var PullCompilerState = (function () {
-        function PullCompilerState(host) {
+    var HostCacheEntry = (function () {
+        function HostCacheEntry(fileName, host, version) {
+            this.fileName = fileName;
+            this.host = host;
+            this.version = version;
+            this._sourceText = null;
+        }
+        HostCacheEntry.prototype.getScriptSnapshot = function () {
+            if (this._sourceText === null) {
+                this._sourceText = this.host.getScriptSnapshot(this.fileName);
+            }
+            return this._sourceText;
+        };
+        return HostCacheEntry;
+    })();
+    Services.HostCacheEntry = HostCacheEntry;    
+    var HostCache = (function () {
+        function HostCache(host) {
+            this.host = host;
+            this.map = new TypeScript.StringHashTable();
+            var fileNames = this.host.getScriptFileNames();
+            for(var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
+                this.map.add(fileName, new HostCacheEntry(fileName, this.host, this.host.getScriptVersion(fileName)));
+            }
+        }
+        HostCache.prototype.contains = function (fileName) {
+            return this.map.lookup(fileName) !== null;
+        };
+        HostCache.prototype.getFileNames = function () {
+            return this.map.getAllKeys();
+        };
+        HostCache.prototype.getVersion = function (fileName) {
+            return this.map.lookup(fileName).version;
+        };
+        HostCache.prototype.getScriptSnapshot = function (fileName) {
+            return this.map.lookup(fileName).getScriptSnapshot();
+        };
+        return HostCache;
+    })();
+    Services.HostCache = HostCache;    
+    var CompilerState = (function () {
+        function CompilerState(host) {
             this.host = host;
             this.compiler = null;
             this.fileNameToCompilerScriptVersion = null;
@@ -55800,32 +53940,32 @@ var Services;
             this._compilationSettings = null;
             this.logger = this.host;
         }
-        PullCompilerState.prototype.compilationSettings = function () {
+        CompilerState.prototype.compilationSettings = function () {
             return this._compilationSettings;
         };
-        PullCompilerState.prototype.onTypeCheckStarting = function () {
+        CompilerState.prototype.onTypeCheckStarting = function () {
             this.symbolTree = new Services.SymbolTree(this);
         };
-        PullCompilerState.prototype.getSymbolTree = function () {
+        CompilerState.prototype.getSymbolTree = function () {
             return this.symbolTree;
         };
-        PullCompilerState.prototype.getFileNames = function () {
+        CompilerState.prototype.getFileNames = function () {
             return this.compiler.fileNameToScript.getAllKeys();
         };
-        PullCompilerState.prototype.getScript = function (fileName) {
+        CompilerState.prototype.getScript = function (fileName) {
             return this.compiler.fileNameToScript.lookup(fileName);
         };
-        PullCompilerState.prototype.getScripts = function () {
+        CompilerState.prototype.getScripts = function () {
             return this.compiler.getScripts();
         };
-        PullCompilerState.prototype.getScriptVersion = function (fileName) {
+        CompilerState.prototype.getScriptVersion = function (fileName) {
             return this.hostCache.getVersion(fileName);
         };
-        PullCompilerState.prototype.addCompilerUnit = function (compiler, fileName) {
+        CompilerState.prototype.addCompilerUnit = function (compiler, fileName) {
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
             compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         };
-        PullCompilerState.prototype.getHostCompilationSettings = function () {
+        CompilerState.prototype.getHostCompilationSettings = function () {
             var settings = this.host.getCompilationSettings();
             if (settings !== null) {
                 return settings;
@@ -55835,7 +53975,7 @@ var Services;
             settings.usePull = true;
             return settings;
         };
-        PullCompilerState.prototype.createCompiler = function () {
+        CompilerState.prototype.createCompiler = function () {
             var outfile = {
                 Write: function (s) {
                 },
@@ -55865,11 +54005,11 @@ var Services;
             this.onTypeCheckStarting();
             this.compiler.pullTypeCheck(false, true);
         };
-        PullCompilerState.prototype.minimalRefresh = function () {
-            this.hostCache = new Services.HostCache(this.host);
+        CompilerState.prototype.minimalRefresh = function () {
+            this.hostCache = new HostCache(this.host);
         };
-        PullCompilerState.prototype.refresh = function () {
-            this.hostCache = new Services.HostCache(this.host);
+        CompilerState.prototype.refresh = function () {
+            this.hostCache = new HostCache(this.host);
             if (!this.fullRefresh()) {
                 this.partialRefresh();
             }
@@ -55885,7 +54025,7 @@ var Services;
                 }
             }
         };
-        PullCompilerState.prototype.fullRefresh = function () {
+        CompilerState.prototype.fullRefresh = function () {
             if (this.compiler == null) {
                 this.logger.log("Creating new compiler instance because there is no currently active instance");
                 this.createCompiler();
@@ -55902,7 +54042,7 @@ var Services;
             }
             return false;
         };
-        PullCompilerState.prototype.partialRefresh = function () {
+        CompilerState.prototype.partialRefresh = function () {
             this.logger.log("Updating files...");
             var fileAdded = false;
             var fileNames = this.host.getScriptFileNames();
@@ -55919,15 +54059,15 @@ var Services;
                 this.compiler.pullTypeCheck(true);
             }
         };
-        PullCompilerState.prototype.getScriptAST = function (fileName) {
+        CompilerState.prototype.getScriptAST = function (fileName) {
             return this.compiler.fileNameToScript.lookup(fileName);
         };
-        PullCompilerState.prototype.createSyntaxTree = function (fileName) {
+        CompilerState.prototype.createSyntaxTree = function (fileName) {
             var sourceText = this.getScriptSnapshot(fileName);
             var text = new TypeScript.ScriptSnapshotText(sourceText);
             return TypeScript.Parser1.parse(text);
         };
-        PullCompilerState.prototype.getSyntaxTree = function (fileName) {
+        CompilerState.prototype.getSyntaxTree = function (fileName) {
             var syntaxTree = this.compiler.fileNameToSyntaxTree.lookup(fileName);
             if (syntaxTree === null) {
                 syntaxTree = this.createSyntaxTree(fileName);
@@ -55935,26 +54075,20 @@ var Services;
             }
             return syntaxTree;
         };
-        PullCompilerState.prototype.setSyntaxTree = function (fileName, syntaxTree) {
+        CompilerState.prototype.setSyntaxTree = function (fileName, syntaxTree) {
             this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
         };
-        PullCompilerState.prototype.getLineMap = function (fileName) {
+        CompilerState.prototype.getLineMap = function (fileName) {
             return this.compiler.fileNameToLocationInfo.lookup(fileName).lineMap;
         };
-        PullCompilerState.prototype.getScopeEntries = function (enclosingScopeContext) {
-            return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext);
-        };
-        PullCompilerState.prototype.pullGetErrorsForFile = function (fileName) {
+        CompilerState.prototype.pullGetErrorsForFile = function (fileName) {
             return this.compiler.pullGetErrorsForFile(fileName);
         };
-        PullCompilerState.prototype.cleanASTTypesForReTypeCheck = function (ast) {
-            this.compiler.cleanASTTypesForReTypeCheck(ast);
-        };
-        PullCompilerState.prototype.getScriptTextChangeRange = function (fileName) {
+        CompilerState.prototype.getScriptTextChangeRange = function (fileName) {
             var lastKnownVersion = this.fileNameToCompilerScriptVersion.lookup(fileName);
             return this.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         };
-        PullCompilerState.prototype.getScriptTextChangeRangeSinceVersion = function (fileName, lastKnownVersion) {
+        CompilerState.prototype.getScriptTextChangeRangeSinceVersion = function (fileName, lastKnownVersion) {
             var currentVersion = this.hostCache.getVersion(fileName);
             if (lastKnownVersion === currentVersion) {
                 return TypeScript.TextChangeRange.unchanged;
@@ -55962,28 +54096,28 @@ var Services;
             var scriptSnapshot = this.hostCache.getScriptSnapshot(fileName);
             return scriptSnapshot.getTextChangeRangeSinceVersion(lastKnownVersion);
         };
-        PullCompilerState.prototype.getScriptSnapshot = function (fileName) {
+        CompilerState.prototype.getScriptSnapshot = function (fileName) {
             return this.hostCache.getScriptSnapshot(fileName);
         };
-        PullCompilerState.prototype.getPullTypeInfoAtPosition = function (pos, script) {
+        CompilerState.prototype.getPullTypeInfoAtPosition = function (pos, script) {
             return this.compiler.pullGetTypeInfoAtPosition(pos, script);
         };
-        PullCompilerState.prototype.getPullSymbolAtPosition = function (pos, script) {
+        CompilerState.prototype.getPullSymbolAtPosition = function (pos, script) {
             return this.compiler.resolvePosition(pos, script);
         };
-        PullCompilerState.prototype.getSymbolInformationFromPath = function (path, script) {
+        CompilerState.prototype.getSymbolInformationFromPath = function (path, script) {
             return this.compiler.pullGetSymbolInformationFromPath(path, script);
         };
-        PullCompilerState.prototype.getCallInformationFromPath = function (path, script) {
+        CompilerState.prototype.getCallInformationFromPath = function (path, script) {
             return this.compiler.pullGetCallInformationFromPath(path, script);
         };
-        PullCompilerState.prototype.getVisibleMemberSymbolsFromPath = function (path, script) {
+        CompilerState.prototype.getVisibleMemberSymbolsFromPath = function (path, script) {
             return this.compiler.pullGetVisibleMemberSymbolsFromPath(path, script);
         };
-        PullCompilerState.prototype.getVisibleSymbolsFromPath = function (path, script) {
+        CompilerState.prototype.getVisibleSymbolsFromPath = function (path, script) {
             return this.compiler.pullGetVisibleSymbolsFromPath(path, script);
         };
-        PullCompilerState.prototype.updateCompilerUnit = function (compiler, fileName) {
+        CompilerState.prototype.updateCompilerUnit = function (compiler, fileName) {
             var compilerScriptVersion = this.fileNameToCompilerScriptVersion.lookup(fileName);
             var version = this.hostCache.getVersion(fileName);
             if (compilerScriptVersion === version) {
@@ -55993,7 +54127,7 @@ var Services;
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
             return compiler.pullUpdateUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         };
-        PullCompilerState.prototype.updateSyntaxTree = function (fileName) {
+        CompilerState.prototype.updateSyntaxTree = function (fileName) {
             var newText = new TypeScript.ScriptSnapshotText(this.getScriptSnapshot(fileName));
             var editRange = this.getScriptTextChangeRange(fileName);
             if (editRange === null) {
@@ -56002,14 +54136,14 @@ var Services;
                 this.setSyntaxTree(fileName, TypeScript.Parser1.incrementalParse(this.getSyntaxTree(fileName), editRange, newText));
             }
         };
-        PullCompilerState.prototype.getDocCommentsOfDecl = function (decl) {
+        CompilerState.prototype.getDocCommentsOfDecl = function (decl) {
             var ast = TypeScript.PullHelpers.getASTForDecl(decl, this.compiler.semanticInfoChain);
             if (ast && (ast.nodeType != 98 /* ModuleDeclaration */  || decl.getKind() != 2048 /* Variable */ )) {
                 return ast.getDocComments();
             }
             return [];
         };
-        PullCompilerState.prototype.getDocCommentArray = function (symbol) {
+        CompilerState.prototype.getDocCommentArray = function (symbol) {
             var docComments = [];
             if (!symbol) {
                 return docComments;
@@ -56020,7 +54154,7 @@ var Services;
             }
             return docComments;
         };
-        PullCompilerState.prototype.getDocComments = function (symbol, useConstructorAsClass) {
+        CompilerState.prototype.getDocComments = function (symbol, useConstructorAsClass) {
             if (!symbol) {
                 return "";
             }
@@ -56084,632 +54218,9 @@ var Services;
             }
             return symbol.docComments;
         };
-        return PullCompilerState;
-    })();
-    Services.PullCompilerState = PullCompilerState;    
-})(Services || (Services = {}));
-var Services;
-(function (Services) {
-    var HostCacheEntry = (function () {
-        function HostCacheEntry(fileName, host, version) {
-            this.fileName = fileName;
-            this.host = host;
-            this.version = version;
-            this._sourceText = null;
-        }
-        HostCacheEntry.prototype.getScriptSnapshot = function () {
-            if (this._sourceText === null) {
-                this._sourceText = this.host.getScriptSnapshot(this.fileName);
-            }
-            return this._sourceText;
-        };
-        return HostCacheEntry;
-    })();
-    Services.HostCacheEntry = HostCacheEntry;    
-    var HostCache = (function () {
-        function HostCache(host) {
-            this.host = host;
-            this.map = new TypeScript.StringHashTable();
-            var fileNames = this.host.getScriptFileNames();
-            for(var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = fileNames[i];
-                this.map.add(fileName, new HostCacheEntry(fileName, this.host, this.host.getScriptVersion(fileName)));
-            }
-        }
-        HostCache.prototype.contains = function (fileName) {
-            return this.map.lookup(fileName) !== null;
-        };
-        HostCache.prototype.getFileNames = function () {
-            return this.map.getAllKeys();
-        };
-        HostCache.prototype.getVersion = function (fileName) {
-            return this.map.lookup(fileName).version;
-        };
-        HostCache.prototype.getScriptSnapshot = function (fileName) {
-            return this.map.lookup(fileName).getScriptSnapshot();
-        };
-        return HostCache;
-    })();
-    Services.HostCache = HostCache;    
-    var UnitErrors = (function () {
-        function UnitErrors() {
-            this.parseErrors = [];
-            this.typeCheckErrors = [];
-        }
-        return UnitErrors;
-    })();
-    Services.UnitErrors = UnitErrors;    
-    var CompilerErrorCollector = (function () {
-        function CompilerErrorCollector(logger) {
-            this.logger = logger;
-            this.parseMode = false;
-            this.fileNameToUnitErrors = new TypeScript.StringHashTable();
-        }
-        CompilerErrorCollector.prototype.getOrCreateUnitErrors = function (fileName) {
-            var unitErrors = this.fileNameToUnitErrors.lookup(fileName);
-            if (unitErrors === null) {
-                unitErrors = new UnitErrors();
-                this.fileNameToUnitErrors.add(fileName, unitErrors);
-            }
-            return unitErrors;
-        };
-        CompilerErrorCollector.prototype.startParsing = function (fileName) {
-            this.parseMode = true;
-            var unitErrors = this.getOrCreateUnitErrors(fileName);
-            unitErrors.parseErrors.length = 0;
-        };
-        CompilerErrorCollector.prototype.startTypeChecking = function () {
-            this.parseMode = false;
-            var fileNames = this.fileNameToUnitErrors.getAllKeys();
-            for(var i = 0; i < fileNames.length; i++) {
-                var errors = this.getOrCreateUnitErrors(fileNames[i]);
-                errors.typeCheckErrors.length = 0;
-            }
-        };
-        CompilerErrorCollector.prototype.reportError = function (pos, len, message, fileName, lineMap) {
-            var entry = new TypeScript.ErrorEntry(fileName, pos, pos + len, message);
-            var unitErrors = this.getOrCreateUnitErrors(fileName);
-            if (this.parseMode) {
-                unitErrors.parseErrors.push(entry);
-            } else {
-                unitErrors.typeCheckErrors.push(entry);
-            }
-        };
-        return CompilerErrorCollector;
-    })();
-    Services.CompilerErrorCollector = CompilerErrorCollector;    
-    var TextWriter = (function () {
-        function TextWriter(name, useUTF8encoding) {
-            this.name = name;
-            this.useUTF8encoding = useUTF8encoding;
-            this.text = "";
-        }
-        TextWriter.prototype.Write = function (s) {
-            this.text += s;
-        };
-        TextWriter.prototype.WriteLine = function (s) {
-            this.text += s + '\n';
-        };
-        TextWriter.prototype.Close = function () {
-        };
-        return TextWriter;
-    })();    
-    var CompilerState = (function () {
-        function CompilerState(host) {
-            this.host = host;
-            this.compiler = null;
-            this.errorCollector = null;
-            this.fileNameToCompilerScriptVersion = null;
-            this.hostCache = null;
-            this.symbolTree = null;
-            this.compilationSettings = null;
-            this.logger = this.host;
-        }
-        CompilerState.prototype.getCompilationSettings = function () {
-            return this.compilationSettings;
-        };
-        CompilerState.prototype.onTypeCheckStarting = function () {
-            this.errorCollector.startTypeChecking();
-            this.symbolTree = new Services.SymbolTree(this);
-        };
-        CompilerState.prototype.getSymbolTree = function () {
-            return this.symbolTree;
-        };
-        CompilerState.prototype.anyType = function () {
-            return this.compiler.typeFlow.anyType;
-        };
-        CompilerState.prototype.getFileNames = function () {
-            return this.compiler.fileNameToScript.getAllKeys();
-        };
-        CompilerState.prototype.getScript = function (fileName) {
-            return this.compiler.fileNameToScript.lookup(fileName);
-        };
-        CompilerState.prototype.getScripts = function () {
-            return this.compiler.getScripts();
-        };
-        CompilerState.prototype.getScriptVersion = function (fileName) {
-            return this.hostCache.getVersion(fileName);
-        };
-        CompilerState.prototype.addCompilerUnit = function (compiler, fileName) {
-            this.errorCollector.startParsing(fileName);
-            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
-            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
-        };
-        CompilerState.prototype.updateCompilerUnit = function (compiler, fileName) {
-            var compilerScriptVersion = this.fileNameToCompilerScriptVersion.lookup(fileName);
-            var version = this.hostCache.getVersion(fileName);
-            if (compilerScriptVersion === version) {
-                return TypeScript.UpdateUnitResult.noEdits(fileName);
-            }
-            if (this.compilationSettings.usePull) {
-                this.updateSyntaxTree(fileName);
-            }
-            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
-            return compiler.partialUpdateUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
-        };
-        CompilerState.prototype.updateSyntaxTree = function (fileName) {
-            var newText = new TypeScript.ScriptSnapshotText(this.getScriptSnapshot(fileName));
-            var editRange = this.getScriptTextChangeRange(fileName);
-            if (editRange === null) {
-                this.setSyntaxTree(fileName, TypeScript.Parser1.parse(newText));
-            } else {
-                this.setSyntaxTree(fileName, TypeScript.Parser1.incrementalParse(this.getSyntaxTree(fileName), editRange, newText));
-            }
-        };
-        CompilerState.prototype.getHostCompilationSettings = function () {
-            var settings = this.host.getCompilationSettings();
-            if (settings !== null) {
-                return settings;
-            }
-            settings = new TypeScript.CompilationSettings();
-            settings.codeGenTarget = 1 /* ES5 */ ;
-            return settings;
-        };
-        CompilerState.prototype.createCompiler = function () {
-            var outerr = {
-                Write: function (s) {
-                },
-                WriteLine: function (s) {
-                },
-                Close: function () {
-                }
-            };
-            this.logger.log("Initializing compiler");
-            this.compilationSettings = new TypeScript.CompilationSettings();
-            Services.copyDataObject(this.compilationSettings, this.getHostCompilationSettings());
-            this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
-            this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
-            this.errorCollector = new CompilerErrorCollector(this.logger);
-            this.compiler.errorReporter.errorCallback = function (a, b, c, d, e) {
-                _this.errorCollector.reportError(a, b, c, d, e);
-            };
-            var fileNames = this.host.getScriptFileNames();
-            for(var i = 0, n = fileNames.length; i < n; i++) {
-                this.addCompilerUnit(this.compiler, fileNames[i]);
-            }
-            this.onTypeCheckStarting();
-            this.compiler.typeCheck();
-        };
-        CompilerState.prototype.minimalRefresh = function () {
-            if (this.compiler === null) {
-                this.refresh();
-                return;
-            }
-            this.hostCache = new HostCache(this.host);
-        };
-        CompilerState.prototype.refresh = function (throwOnError) {
-            if (typeof throwOnError === "undefined") { throwOnError = true; }
-            this.hostCache = new HostCache(this.host);
-            if (!this.fullRefresh()) {
-                this.partialRefresh();
-            }
-            if (this.logger.information()) {
-                var fileNames = this.compiler.fileNameToLocationInfo.getAllKeys();
-                for(var i = 0; i < fileNames.length; i++) {
-                    this.logger.log("compiler unit[" + i + "].fileName='" + fileNames[i] + "'");
-                }
-                fileNames = this.hostCache.getFileNames();
-                for(var j = 0; j < fileNames.length; j++) {
-                    var fileName = fileNames[j];
-                    this.logger.log("host script[" + j + "].fileName='" + fileName + "', version=" + this.hostCache.getVersion(fileName));
-                }
-            }
-        };
-        CompilerState.prototype.fullRefresh = function () {
-            if (this.compiler === null) {
-                this.logger.log("Creating new compiler instance because there is no currently active instance");
-                this.createCompiler();
-                return true;
-            }
-            if (!Services.compareDataObjects(this.compilationSettings, this.getHostCompilationSettings())) {
-                this.logger.log("Creating new compiler instance because compilation settings have changed.");
-                this.createCompiler();
-                return true;
-            }
-            var fileNames = this.compiler.fileNameToLocationInfo.getAllKeys();
-            for(var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
-                var fileName = fileNames[unitIndex];
-                if (!this.hostCache.contains(fileName)) {
-                    this.logger.log("Creating new compiler instance because of unit is not part of program anymore: " + unitIndex + "-" + fileName);
-                    this.createCompiler();
-                    return true;
-                }
-            }
-            return false;
-        };
-        CompilerState.prototype.partialRefresh = function () {
-            this.logger.log("Updating files...");
-            var updateResults = [];
-            var fileAdded = false;
-            var fileNames = this.host.getScriptFileNames();
-            for(var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = fileNames[i];
-                if (this.compiler.fileNameToLocationInfo.lookup(fileName)) {
-                    var updateResult = this.updateCompilerUnit(this.compiler, fileName);
-                    updateResults.push(updateResult);
-                } else {
-                    this.addCompilerUnit(this.compiler, fileName);
-                    fileAdded = true;
-                }
-            }
-            var incrementalTypeCheckSuccessful = false;
-            var anythingUpdated = false;
-            var j = 0;
-            for(j = 0, n = updateResults.length; j < n; j++) {
-                var entry = updateResults[i];
-                if (this.applyUpdateResult(entry)) {
-                    anythingUpdated = true;
-                }
-            }
-            if (anythingUpdated) {
-                this.logger.log("Incremental type check not applicable, processing unit updates");
-                this.onTypeCheckStarting();
-                this.compiler.reTypeCheck();
-            } else {
-                this.logger.log("No updates to source files, no typecheck needed");
-            }
-        };
-        CompilerState.prototype.attemptIncrementalTypeCheck = function (updateResult) {
-            var success = this.compiler.attemptIncrementalTypeCheck(updateResult);
-            if (success) {
-                this.applyUpdateResult(updateResult);
-            }
-            return success;
-        };
-        CompilerState.prototype.applyUpdateResult = function (updateResult) {
-            switch(updateResult.kind) {
-                case 1 /* NoEdits */ :
-                    return false;
-                case 0 /* Unknown */ :
-                    this.errorCollector.startParsing(updateResult.fileName);
-                    return this.compiler.applyUpdateResult(updateResult);
-            }
-        };
-        CompilerState.prototype.getScriptAST = function (fileName) {
-            return this.compiler.fileNameToScript.lookup(fileName);
-        };
-        CompilerState.prototype.getSyntaxTree = function (fileName) {
-            return this.compiler.fileNameToSyntaxTree.lookup(fileName);
-        };
-        CompilerState.prototype.setSyntaxTree = function (fileName, syntaxTree) {
-            this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-        };
-        CompilerState.prototype.getLineMap = function (fileName) {
-            return this.compiler.fileNameToLocationInfo.lookup(fileName);
-        };
-        CompilerState.prototype.getScopeEntries = function (enclosingScopeContext, getPrettyTypeName) {
-            return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext, getPrettyTypeName);
-        };
-        CompilerState.prototype.getErrorEntries = function (maxCount, filter) {
-            var entries = [];
-            var count = 0;
-            var addError = function (error) {
-                error.message = error.message;
-                entries.push(error);
-                count++;
-                return (count < maxCount);
-            };
-            var fileNames = this.errorCollector.fileNameToUnitErrors.getAllKeys();
-            for(var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
-                var fileName = fileNames[unitIndex];
-                var errors = this.errorCollector.fileNameToUnitErrors.lookup(fileName);
-                if (errors !== undefined) {
-                    for(var i = 0; i < errors.parseErrors.length; i++) {
-                        var error = errors.parseErrors[i];
-                        if (filter(fileName, error)) {
-                            if (!addError(error)) {
-                                break;
-                            }
-                        }
-                    }
-                    for(i = 0; i < errors.typeCheckErrors.length; i++) {
-                        error = errors.typeCheckErrors[i];
-                        if (filter(fileName, error)) {
-                            if (!addError(error)) {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            var result = [];
-            for(i = 0; i < entries.length; i++) {
-                var e = entries[i];
-                var ne = new TypeScript.ErrorEntry(e.fileName, e.minChar, e.limChar, e.message);
-                result.push(ne);
-            }
-            return result;
-        };
-        CompilerState.prototype.cleanASTTypesForReTypeCheck = function (ast) {
-            this.compiler.cleanASTTypesForReTypeCheck(ast);
-        };
-        CompilerState.prototype.getScriptTextChangeRange = function (fileName) {
-            var lastKnownVersion = this.fileNameToCompilerScriptVersion.lookup(fileName);
-            return this.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
-        };
-        CompilerState.prototype.getScriptTextChangeRangeSinceVersion = function (fileName, lastKnownVersion) {
-            var currentVersion = this.hostCache.getVersion(fileName);
-            if (lastKnownVersion === currentVersion) {
-                return TypeScript.TextChangeRange.unchanged;
-            }
-            var scriptSnapshot = this.hostCache.getScriptSnapshot(fileName);
-            return scriptSnapshot.getTextChangeRangeSinceVersion(lastKnownVersion);
-        };
-        CompilerState.prototype.getScriptSnapshot = function (fileName) {
-            return this.hostCache.getScriptSnapshot(fileName);
-        };
-        CompilerState.prototype.getScriptSyntaxAST = function (fileName) {
-            var sourceText = this.hostCache.getScriptSnapshot(fileName);
-            var script = TypeScript.SyntaxTreeToAstVisitor.visit(TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText)), fileName);
-            return new Services.ScriptSyntaxAST(this.logger, script, sourceText);
-        };
-        CompilerState.prototype.getEmitOutput = function (fileName) {
-            var result = [];
-            var errors = this.errorCollector.fileNameToUnitErrors.lookup(fileName);
-            if (errors !== undefined && errors.parseErrors.length > 0) {
-                return result;
-            }
-            var emitterIOHost = {
-                createFile: function (fileName, useUTF8encoding) {
-                    if (typeof useUTF8encoding === "undefined") { useUTF8encoding = false; }
-                    var outputFile = new TextWriter(fileName, useUTF8encoding);
-                    result.push(outputFile);
-                    return outputFile;
-                },
-                directoryExists: function (fname) {
-                    return true;
-                },
-                fileExists: function (fname) {
-                    return false;
-                },
-                resolvePath: function (fname) {
-                    return fname;
-                }
-            };
-            var script = this.compiler.fileNameToScript.lookup(fileName);
-            this.compiler.parseEmitOption(emitterIOHost);
-            this.compiler.emitUnit(script);
-            if (errors === undefined || errors.typeCheckErrors.length === 0) {
-                this.compiler.emitDeclarationsUnit(script);
-            }
-            return result;
-        };
         return CompilerState;
     })();
     Services.CompilerState = CompilerState;    
-})(Services || (Services = {}));
-var Services;
-(function (Services) {
-    var ScriptSyntaxAST = (function () {
-        function ScriptSyntaxAST(logger, script, sourceText) {
-            this.logger = logger;
-            this.script = script;
-            this.sourceText = sourceText;
-        }
-        ScriptSyntaxAST.prototype.getLogger = function () {
-            return this.logger;
-        };
-        ScriptSyntaxAST.prototype.getScriptFileName = function () {
-            return this.script.locationInfo.fileName;
-        };
-        ScriptSyntaxAST.prototype.getScript = function () {
-            return this.script;
-        };
-        ScriptSyntaxAST.prototype.getScriptSnapshot = function () {
-            return this.sourceText;
-        };
-        ScriptSyntaxAST.prototype.getTokenStream = function (minChar, limChar) {
-            if (typeof minChar === "undefined") { minChar = 0; }
-            if (minChar > 0) {
-                minChar = this.getTokenizationOffset(minChar);
-            }
-            if (!limChar) {
-                limChar = this.getScriptSnapshot().getLength();
-            }
-            var scannerSourceText = this.getScriptSnapshot();
-            if (minChar > 0 || limChar < scannerSourceText.getLength()) {
-                scannerSourceText = new TypeScript.StringScriptSnapshot(scannerSourceText.getText(minChar, limChar));
-            }
-            var scanner = new TypeScript.Scanner();
-            scanner.resetComments();
-            scanner.setSourceText(scannerSourceText, 1 /* File */ );
-            scanner.setScanComments(true);
-            var tokenStream = new TokenStream(scanner, minChar);
-            return tokenStream;
-        };
-        ScriptSyntaxAST.prototype.getTokenizationOffset = function (position) {
-            return TypeScript.getTokenizationOffset(this.script, position);
-        };
-        ScriptSyntaxAST.prototype.getAstPathToPosition = function (pos, options) {
-            if (typeof options === "undefined") { options = 0 /* Default */ ; }
-            return TypeScript.getAstPathToPosition(this.script, pos, options);
-        };
-        return ScriptSyntaxAST;
-    })();
-    Services.ScriptSyntaxAST = ScriptSyntaxAST;    
-    var TokenStream = (function () {
-        function TokenStream(scanner, offset) {
-            this.scanner = scanner;
-            this.offset = offset;
-            this.currentToken = null;
-        }
-        TokenStream.prototype.moveNext = function () {
-            this.currentToken = this.scanner.scan();
-            if (this.currentToken.tokenId === 104 /* EndOfFile */ ) {
-                return false;
-            }
-            return true;
-        };
-        TokenStream.prototype.sourceTextOffset = function () {
-            return this.offset;
-        };
-        TokenStream.prototype.tokenId = function () {
-            return this.currentToken.tokenId;
-        };
-        TokenStream.prototype.tokenStartPos = function () {
-            return this.offset + this.scanner.startPos;
-        };
-        TokenStream.prototype.tokenEndPos = function () {
-            return this.offset + this.scanner.pos;
-        };
-        return TokenStream;
-    })();
-    Services.TokenStream = TokenStream;    
-    var TokenStreamHelper = (function () {
-        function TokenStreamHelper(stream) {
-            this.stream = stream;
-            this.moveNext();
-        }
-        TokenStreamHelper.prototype.moveNext = function () {
-            do {
-                if (!this.stream.moveNext()) {
-                    return false;
-                }
-            } while(this.tokenId() === 111 /* Comment */ );
-            return true;
-        };
-        TokenStreamHelper.prototype.expect = function (token) {
-            if (this.stream.tokenId() === token) {
-                this.moveNext();
-                return true;
-            }
-            return false;
-        };
-        TokenStreamHelper.prototype.skipToOffset = function (pos) {
-            while(this.tokenStartPos() < pos) {
-                if (!this.moveNext()) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        TokenStreamHelper.prototype.tokenId = function () {
-            return this.stream.tokenId();
-        };
-        TokenStreamHelper.prototype.tokenStartPos = function () {
-            return this.stream.tokenStartPos();
-        };
-        TokenStreamHelper.prototype.tokenEndPos = function () {
-            return this.stream.tokenEndPos();
-        };
-        return TokenStreamHelper;
-    })();
-    Services.TokenStreamHelper = TokenStreamHelper;    
-})(Services || (Services = {}));
-var Services;
-(function (Services) {
-    var BraceMatchingManager = (function () {
-        function BraceMatchingManager(scriptSyntaxAST) {
-            this.scriptSyntaxAST = scriptSyntaxAST;
-        }
-        BraceMatchingManager.prototype.getBraceMatchingAtPosition = function (position) {
-            var openBraces = "{([";
-            var openBracesTokens = [
-                59 /* OpenBrace */ , 
-                55 /* OpenParen */ , 
-                57 /* OpenBracket */ 
-            ];
-            var closeBraces = "})]";
-            var closeBracesTokens = [
-                60 /* CloseBrace */ , 
-                56 /* CloseParen */ , 
-                58 /* CloseBracket */ 
-            ];
-            var result = [];
-            var character = this.scriptSyntaxAST.getScriptSnapshot().getText(position, position + 1);
-            var openBraceIndex = openBraces.indexOf(character);
-            if (openBraceIndex >= 0) {
-                var closeBracePos = this.getMatchingBraceForward(position, openBracesTokens[openBraceIndex], closeBracesTokens[openBraceIndex]);
-                if (closeBracePos >= 0) {
-                    var range1 = new Services.TextRange(position, position + 1);
-                    var range2 = new Services.TextRange(closeBracePos, closeBracePos + 1);
-                    result.push(range1, range2);
-                }
-            }
-            character = this.scriptSyntaxAST.getScriptSnapshot().getText(position - 1, position);
-            var closeBraceIndex = closeBraces.indexOf(character);
-            if (closeBraceIndex >= 0) {
-                var openBracePos = this.getMatchingBraceBackward(position - 1, closeBracesTokens[closeBraceIndex], openBracesTokens[closeBraceIndex]);
-                if (openBracePos >= 0) {
-                    range1 = new Services.TextRange(position - 1, position);
-                    range2 = new Services.TextRange(openBracePos, openBracePos + 1);
-                    result.push(range1, range2);
-                }
-            }
-            return result;
-        };
-        BraceMatchingManager.prototype.getMatchingBraceForward = function (position, openToken, closeToken) {
-            var tokenStream = this.scriptSyntaxAST.getTokenStream();
-            var balanceCount = 0;
-            var foundOpenToken = false;
-            while(tokenStream.moveNext()) {
-                if (tokenStream.tokenStartPos() === position) {
-                    if (tokenStream.tokenId() === openToken) {
-                        foundOpenToken = true;
-                    } else {
-                        break;
-                    }
-                }
-                if (foundOpenToken) {
-                    if (tokenStream.tokenId() === openToken) {
-                        balanceCount++;
-                    } else if (tokenStream.tokenId() === closeToken) {
-                        balanceCount--;
-                        if (balanceCount === 0) {
-                            return tokenStream.tokenStartPos();
-                        }
-                    }
-                }
-            }
-            return -1;
-        };
-        BraceMatchingManager.prototype.getMatchingBraceBackward = function (position, closeToken, openToken) {
-            var tokenStream = this.scriptSyntaxAST.getTokenStream();
-            var openTokenPositions = [];
-            var foundOpenToken = false;
-            while(tokenStream.moveNext()) {
-                if (tokenStream.tokenStartPos() > position) {
-                    break;
-                }
-                if (tokenStream.tokenStartPos() === position && tokenStream.tokenId() === closeToken) {
-                    if (openTokenPositions.length > 0) {
-                        return openTokenPositions[openTokenPositions.length - 1];
-                    }
-                    break;
-                }
-                if (tokenStream.tokenId() === openToken) {
-                    openTokenPositions.push(tokenStream.tokenStartPos());
-                } else if (tokenStream.tokenId() === closeToken) {
-                    if (openTokenPositions.length > 0) {
-                        openTokenPositions.pop();
-                    }
-                }
-            }
-            return -1;
-        };
-        return BraceMatchingManager;
-    })();
-    Services.BraceMatchingManager = BraceMatchingManager;    
 })(Services || (Services = {}));
 var Services;
 (function (Services) {
@@ -57007,70 +54518,72 @@ var Services;
 })(Services || (Services = {}));
 var Services;
 (function (Services) {
-    var PullLanguageService = (function () {
-        function PullLanguageService(host) {
+    var LanguageService = (function () {
+        function LanguageService(host) {
             this.host = host;
+            this.currentFileName = "";
+            this.currentFileVersion = -1;
+            this.currentFileSyntaxTree = null;
             this.logger = this.host;
-            this.pullCompilerState = new Services.PullCompilerState(this.host);
-            this.singleFileSyntaxTreeState = new Services.ScriptSyntaxASTState();
-            this.formattingRulesProvider = new TypeScript.Formatting2.RulesProvider(this.logger);
+            this.compilerState = new Services.CompilerState(this.host);
+            this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
         }
-        PullLanguageService.prototype.refresh = function () {
+        LanguageService.prototype.refresh = function () {
             var _this = this;
             TypeScript.timeFunction(this.logger, "refresh()", function () {
-                _this.pullCompilerState.refresh();
+                _this.compilerState.refresh();
             });
         };
-        PullLanguageService.prototype.minimalRefresh = function () {
+        LanguageService.prototype.minimalRefresh = function () {
             var _this = this;
             TypeScript.timeFunction(this.logger, "minimalRefresh()", function () {
-                _this.pullCompilerState.minimalRefresh();
+                _this.compilerState.minimalRefresh();
             });
         };
-        PullLanguageService.prototype.getSymbolTree = function () {
+        LanguageService.prototype.getSymbolTree = function () {
             this.refresh();
-            return this.pullCompilerState.getSymbolTree();
+            return this.compilerState.getSymbolTree();
         };
-        PullLanguageService.prototype.getReferencesAtPosition = function (fileName, pos) {
+        LanguageService.prototype.getReferencesAtPosition = function (fileName, pos) {
             this.refresh();
             var result = [];
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
             var path = this.getAstPathToPosition(script, pos);
             if (path.ast() === null || path.ast().nodeType !== 25 /* Name */ ) {
                 this.logger.log("No name found at the given position");
                 return result;
             }
-            var symbolInfoAtPosition = this.pullCompilerState.getSymbolInformationFromPath(path, script);
+            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, script);
             if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
                 this.logger.log("No symbol found at the given position");
                 return result;
             }
             var symbol = symbolInfoAtPosition.symbol;
-            var fileNames = this.pullCompilerState.getFileNames();
+            var fileNames = this.compilerState.getFileNames();
             for(var i = 0, len = fileNames.length; i < len; i++) {
                 result = result.concat(this.getReferencesInFile(fileNames[i], symbol));
             }
             return result;
         };
-        PullLanguageService.prototype.getOccurrencesAtPosition = function (fileName, pos) {
+        LanguageService.prototype.getOccurrencesAtPosition = function (fileName, pos) {
             return [];
         };
-        PullLanguageService.prototype.getImplementorsAtPosition = function (fileName, position) {
+        LanguageService.prototype.getImplementorsAtPosition = function (fileName, position) {
             return [];
         };
-        PullLanguageService.prototype.getReferencesInFile = function (fileName, symbol) {
+        LanguageService.prototype.getReferencesInFile = function (fileName, symbol) {
             var _this = this;
             var result = [];
             var symbolName = symbol.getName();
             var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbol);
             if (possiblePositions && possiblePositions.length > 0) {
-                var searchScript = this.pullCompilerState.getScript(fileName);
+                var searchScript = this.compilerState.getScript(fileName);
                 possiblePositions.forEach(function (p) {
                     var path = _this.getAstPathToPosition(searchScript, p);
                     if (path.ast() === null || path.ast().nodeType !== 25 /* Name */ ) {
                         return;
                     }
-                    var searchSymbolInfoAtPosition = _this.pullCompilerState.getSymbolInformationFromPath(path, searchScript);
+                    var searchSymbolInfoAtPosition = _this.compilerState.getSymbolInformationFromPath(path, searchScript);
                     if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
                         var isWriteAccess = false;
                         result.push(new Services.ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast, isWriteAccess));
@@ -57079,9 +54592,9 @@ var Services;
             }
             return result;
         };
-        PullLanguageService.prototype.getPossibleSymbolReferencePositions = function (fileName, symbol) {
+        LanguageService.prototype.getPossibleSymbolReferencePositions = function (fileName, symbol) {
             var positions = [];
-            var sourceText = this.pullCompilerState.getScriptSnapshot(fileName);
+            var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var text = sourceText.getText(0, sourceText.getLength());
             var symbolName = symbol.getName();
             var position = text.indexOf(symbolName);
@@ -57091,9 +54604,9 @@ var Services;
             }
             return positions;
         };
-        PullLanguageService.prototype.getSignatureAtPosition = function (fileName, position) {
+        LanguageService.prototype.getSignatureAtPosition = function (fileName, position) {
             this.refresh();
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
             var atEOF = (position === script.limChar);
             var path = this.getAstPathToPosition(script, position);
             if (path.count() == 0) {
@@ -57125,7 +54638,7 @@ var Services;
             }
             var callExpression = path.ast();
             var isNew = (callExpression.nodeType === 31 /* New */ );
-            var callSymbolInfo = this.pullCompilerState.getCallInformationFromPath(path, script);
+            var callSymbolInfo = this.compilerState.getCallInformationFromPath(path, script);
             if (!callSymbolInfo || !callSymbolInfo.targetSymbol || !callSymbolInfo.resolvedSignatures) {
                 this.logger.log("Could not find symbol for call expression");
                 return null;
@@ -57140,20 +54653,20 @@ var Services;
             }
             return result;
         };
-        PullLanguageService.prototype.convertSignatureSymbolToSignatureInfo = function (symbol, isNew, signatures, enclosingScopeSymbol) {
+        LanguageService.prototype.convertSignatureSymbolToSignatureInfo = function (symbol, isNew, signatures, enclosingScopeSymbol) {
             var _this = this;
             var result = new Services.FormalSignatureInfo();
             result.isNew = isNew;
             result.name = symbol.getName();
-            result.docComment = this.pullCompilerState.getDocComments(symbol);
+            result.docComment = this.compilerState.getDocComments(symbol);
             result.openParen = "(";
             result.closeParen = ")";
             var hasOverloads = signatures.length > 1;
             signatures.filter(function (signature) {
-                return !(hasOverloads && signature.isDefinition() && !_this.pullCompilerState.compilationSettings().canCallDefinitionSignature);
+                return !(hasOverloads && signature.isDefinition() && !_this.compilerState.compilationSettings().canCallDefinitionSignature);
             }).forEach(function (signature) {
                 var signatureGroupInfo = new Services.FormalSignatureItemInfo();
-                signatureGroupInfo.docComment = _this.pullCompilerState.getDocComments(signature);
+                signatureGroupInfo.docComment = _this.compilerState.getDocComments(signature);
                 signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getScopedNameEx(enclosingScopeSymbol).toString();
                 var parameters = signature.getParameters();
                 parameters.forEach(function (p, i) {
@@ -57161,7 +54674,7 @@ var Services;
                     signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
                     signatureParameterInfo.isOptional = p.getIsOptional();
                     signatureParameterInfo.name = p.getName();
-                    signatureParameterInfo.docComment = _this.pullCompilerState.getDocComments(p);
+                    signatureParameterInfo.docComment = _this.compilerState.getDocComments(p);
                     signatureParameterInfo.type = p.getTypeName(enclosingScopeSymbol);
                     signatureGroupInfo.parameters.push(signatureParameterInfo);
                 });
@@ -57169,7 +54682,7 @@ var Services;
             });
             return result;
         };
-        PullLanguageService.prototype.convertCallExprToActualSignatureInfo = function (ast, caretPosition, atEOF) {
+        LanguageService.prototype.convertCallExprToActualSignatureInfo = function (ast, caretPosition, atEOF) {
             if (!TypeScript.isValidAstNode(ast)) {
                 return null;
             }
@@ -57195,15 +54708,15 @@ var Services;
             });
             return result;
         };
-        PullLanguageService.prototype.getDefinitionAtPosition = function (fileName, position) {
+        LanguageService.prototype.getDefinitionAtPosition = function (fileName, position) {
             this.refresh();
             var result = null;
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
             var path = this.getAstPathToPosition(script, position);
             if (path.count() == 0) {
                 return null;
             }
-            var symbolInfo = this.pullCompilerState.getSymbolInformationFromPath(path, script);
+            var symbolInfo = this.compilerState.getSymbolInformationFromPath(path, script);
             if (symbolInfo == null || symbolInfo.symbol == null) {
                 this.logger.log("No identifier at the specified location.");
                 return result;
@@ -57236,7 +54749,7 @@ var Services;
             }
             return result;
         };
-        PullLanguageService.prototype.getNavigateToItems = function (searchValue) {
+        LanguageService.prototype.getNavigateToItems = function (searchValue) {
             this.refresh();
             var terms = searchValue.split(" ");
             for(var i = 0; i < terms.length; i++) {
@@ -57260,10 +54773,10 @@ var Services;
             };
             var result = [];
             var len = 0;
-            var fileNames = this.pullCompilerState.getFileNames();
+            var fileNames = this.compilerState.getFileNames();
             for(i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = fileNames[i];
-                var script = this.pullCompilerState.getScript(fileName);
+                var script = this.compilerState.getScript(fileName);
                 var matchKind = match(null, script, fileName);
                 if (matchKind != null) {
                     var item = new Services.NavigateToItem();
@@ -57282,26 +54795,26 @@ var Services;
             }
             return result;
         };
-        PullLanguageService.prototype.getScriptLexicalStructure = function (fileName) {
+        LanguageService.prototype.getScriptLexicalStructure = function (fileName) {
             this.refresh();
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
             return this.getASTItems(script.locationInfo.fileName, script, function (name) {
                 return Services.MatchKind.exact;
             });
         };
-        PullLanguageService.prototype.getSyntacticDiagnostics = function (fileName) {
-            this.pullCompilerState.refresh();
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+        LanguageService.prototype.getSyntacticDiagnostics = function (fileName) {
+            this.compilerState.refresh();
+            var syntaxTree = this.compilerState.getSyntaxTree(fileName);
             return syntaxTree.diagnostics();
         };
-        PullLanguageService.prototype.getSemanticDiagnostics = function (fileName) {
-            this.pullCompilerState.refresh();
-            return this.pullCompilerState.pullGetErrorsForFile(fileName);
+        LanguageService.prototype.getSemanticDiagnostics = function (fileName) {
+            this.compilerState.refresh();
+            return this.compilerState.pullGetErrorsForFile(fileName);
         };
-        PullLanguageService.prototype.getEmitOutput = function (fileName) {
+        LanguageService.prototype.getEmitOutput = function (fileName) {
             return [];
         };
-        PullLanguageService.prototype.getDeclNodeElementKindModifiers = function (ast) {
+        LanguageService.prototype.getDeclNodeElementKindModifiers = function (ast) {
             var addMofifier = function (result, testValue, value) {
                 if (!testValue) {
                     return result;
@@ -57380,7 +54893,7 @@ var Services;
                     return Services.ScriptElementKindModifier.none;
             }
         };
-        PullLanguageService.prototype.getASTItems = function (fileName, ast, match, findMinChar, findLimChar) {
+        LanguageService.prototype.getASTItems = function (fileName, ast, match, findMinChar, findLimChar) {
             var _this = this;
             if (findMinChar == null) {
                 findMinChar = function (parent, ast) {
@@ -57530,14 +55043,14 @@ var Services;
             TypeScript.getAstWalkerFactory().walk(ast, pre, post);
             return context.result;
         };
-        PullLanguageService.prototype.getAstPathToPosition = function (script, pos, options) {
+        LanguageService.prototype.getAstPathToPosition = function (script, pos, options) {
             if (typeof options === "undefined") { options = 0 /* Default */ ; }
             if (this.logger.information()) {
                 this.logger.log("getAstPathToPosition(" + script + ", " + pos + ")");
             }
             return TypeScript.getAstPathToPosition(script, pos, options);
         };
-        PullLanguageService.prototype.getIdentifierPathToPosition = function (script, pos) {
+        LanguageService.prototype.getIdentifierPathToPosition = function (script, pos) {
             this.logger.log("getIdentifierPathToPosition(" + script + ", " + pos + ")");
             var path = this.getAstPathToPosition(script, pos, 1 /* EdgeInclusive */ );
             if (path.count() == 0) {
@@ -57548,7 +55061,7 @@ var Services;
             }
             return path;
         };
-        PullLanguageService.prototype.getFullNameOfSymbol = function (symbol, enclosingScopeSymbol) {
+        LanguageService.prototype.getFullNameOfSymbol = function (symbol, enclosingScopeSymbol) {
             var container = symbol.getContainer();
             if (this.isLocal(symbol) || symbol.getKind() == 4096 /* Parameter */ ) {
                 return symbol.getScopedName(enclosingScopeSymbol);
@@ -57558,10 +55071,10 @@ var Services;
             }
             return symbol.fullName();
         };
-        PullLanguageService.prototype.getTypeAtPosition = function (fileName, pos) {
+        LanguageService.prototype.getTypeAtPosition = function (fileName, pos) {
             this.refresh();
-            var script = this.pullCompilerState.getScriptAST(fileName);
-            var typeInfoAtPosition = this.pullCompilerState.getPullTypeInfoAtPosition(pos, script);
+            var script = this.compilerState.getScriptAST(fileName);
+            var typeInfoAtPosition = this.compilerState.getPullTypeInfoAtPosition(pos, script);
             if (!typeInfoAtPosition.symbol) {
                 return null;
             }
@@ -57580,7 +55093,7 @@ var Services;
             var limChar = -1;
             var kind = this.mapPullElementKind(typeInfoAtPosition.symbol, !typeInfoAtPosition.callSignatures, !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.ast && typeInfoAtPosition.ast.nodeType == 31 /* New */ );
             var symbolForDocComment = typeInfoAtPosition.candidateSignature ? typeInfoAtPosition.candidateSignature : typeInfoAtPosition.symbol;
-            var docComment = this.pullCompilerState.getDocComments(symbolForDocComment, !typeInfoAtPosition.callSignatures);
+            var docComment = this.compilerState.getDocComments(symbolForDocComment, !typeInfoAtPosition.callSignatures);
             var symbolName = this.getFullNameOfSymbol(typeInfoAtPosition.symbol, typeInfoAtPosition.enclosingScopeSymbol);
             if (typeInfoAtPosition.ast) {
                 minChar = typeInfoAtPosition.ast.minChar;
@@ -57588,10 +55101,10 @@ var Services;
             }
             return new Services.TypeInfo(memberName, docComment, symbolName, kind, minChar, limChar);
         };
-        PullLanguageService.prototype.getCompletionsAtPosition = function (fileName, position, isMemberCompletion) {
+        LanguageService.prototype.getCompletionsAtPosition = function (fileName, position, isMemberCompletion) {
             this.refresh();
             var completions = new Services.CompletionInfo();
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
             var path = this.getAstPathToPosition(script, position);
             if (this.isCompletionListBlocker(path)) {
                 this.logger.log("Returning an empty list because position is inside a comment, string or regular expression");
@@ -57607,7 +55120,7 @@ var Services;
                 path.push((path.asts[path.top]).operand1);
             }
             if (isRightOfDot) {
-                var members = this.pullCompilerState.getVisibleMemberSymbolsFromPath(path, script);
+                var members = this.compilerState.getVisibleMemberSymbolsFromPath(path, script);
                 if (!members) {
                     return null;
                 }
@@ -57615,12 +55128,12 @@ var Services;
                 completions.entries = this.getCompletionEntriesFromSymbols(members);
             } else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
                 completions.isMemberCompletion = false;
-                var symbols = this.pullCompilerState.getVisibleSymbolsFromPath(path, script);
+                var symbols = this.compilerState.getVisibleSymbolsFromPath(path, script);
                 completions.entries = this.getCompletionEntriesFromSymbols(symbols);
             }
             return completions;
         };
-        PullLanguageService.prototype.getCompletionEntriesFromSymbols = function (symbolInfo) {
+        LanguageService.prototype.getCompletionEntriesFromSymbols = function (symbolInfo) {
             var _this = this;
             var result = [];
             symbolInfo.symbols.forEach(function (symbol) {
@@ -57629,16 +55142,16 @@ var Services;
                 entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
                 entry.kind = _this.mapPullElementKind(symbol, true);
                 entry.fullSymbolName = _this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
-                entry.docComment = _this.pullCompilerState.getDocComments(symbol, true);
+                entry.docComment = _this.compilerState.getDocComments(symbol, true);
                 entry.kindModifiers = _this.getScriptElementKindModifiers(symbol);
                 result.push(entry);
             });
             return result;
         };
-        PullLanguageService.prototype.isRightOfDot = function (path, position) {
+        LanguageService.prototype.isRightOfDot = function (path, position) {
             return (path.count() >= 1 && path.asts[path.top].nodeType === 19 /* Dot */  && (path.asts[path.top]).operand1.limChar < position) || (path.count() >= 2 && path.asts[path.top].nodeType === 25 /* Name */  && path.asts[path.top - 1].nodeType === 19 /* Dot */  && (path.asts[path.top - 1]).operand2 === path.asts[path.top]);
         };
-        PullLanguageService.prototype.isCompletionListBlocker = function (path) {
+        LanguageService.prototype.isCompletionListBlocker = function (path) {
             var asts = path.asts;
             var node = path.count() >= 1 && path.ast();
             if (node) {
@@ -57648,7 +55161,7 @@ var Services;
             }
             return false;
         };
-        PullLanguageService.prototype.isCompletionListTriggerPoint = function (path) {
+        LanguageService.prototype.isCompletionListTriggerPoint = function (path) {
             if (path.isNameOfVariable() || path.isNameOfArgument() || path.isArgumentListOfFunction() || path.ast().nodeType === 76 /* ArgDecl */ ) {
                 return false;
             }
@@ -57657,7 +55170,7 @@ var Services;
             }
             return true;
         };
-        PullLanguageService.prototype.isLocal = function (symbol) {
+        LanguageService.prototype.isLocal = function (symbol) {
             var container = symbol.getContainer();
             if (container) {
                 var containerKind = container.getKind();
@@ -57670,7 +55183,7 @@ var Services;
             }
             return false;
         };
-        PullLanguageService.prototype.isModule = function (symbol) {
+        LanguageService.prototype.isModule = function (symbol) {
             var decls = symbol.getDeclarations();
             for(var i = 0; i < decls.length; i++) {
                 if (decls[i].getKind() == 8 /* Container */ ) {
@@ -57679,7 +55192,7 @@ var Services;
             }
             return false;
         };
-        PullLanguageService.prototype.mapPullElementKind = function (symbol, useConstructorAsClass, varIsFunction, functionIsConstructor) {
+        LanguageService.prototype.mapPullElementKind = function (symbol, useConstructorAsClass, varIsFunction, functionIsConstructor) {
             if (functionIsConstructor) {
                 return Services.ScriptElementKind.constructorImplementationElement;
             }
@@ -57757,7 +55270,7 @@ var Services;
             }
             return Services.ScriptElementKind.unknown;
         };
-        PullLanguageService.prototype.getScriptElementKindModifiers = function (symbol) {
+        LanguageService.prototype.getScriptElementKindModifiers = function (symbol) {
             var result = [];
             if (symbol.hasFlag(1 /* Exported */ )) {
                 result.push(Services.ScriptElementKindModifier.exportedModifier);
@@ -57776,28 +55289,28 @@ var Services;
             }
             return result.length > 0 ? result.join(',') : Services.ScriptElementKindModifier.none;
         };
-        PullLanguageService.prototype.getNameOrDottedNameSpan = function (fileName, startPos, endPos) {
+        LanguageService.prototype.getNameOrDottedNameSpan = function (fileName, startPos, endPos) {
             return null;
         };
-        PullLanguageService.prototype.getBreakpointStatementAtPosition = function (fileName, pos) {
+        LanguageService.prototype.getBreakpointStatementAtPosition = function (fileName, pos) {
             return null;
         };
-        PullLanguageService.prototype.getFormattingEditsForRange = function (fileName, minChar, limChar, options) {
+        LanguageService.prototype.getFormattingEditsForRange = function (fileName, minChar, limChar, options) {
             this.minimalRefresh();
             var manager = this.getFormattingManager(fileName, options);
             return manager.formatSelection(minChar, limChar);
         };
-        PullLanguageService.prototype.getFormattingEditsForDocument = function (fileName, minChar, limChar, options) {
+        LanguageService.prototype.getFormattingEditsForDocument = function (fileName, minChar, limChar, options) {
             this.minimalRefresh();
             var manager = this.getFormattingManager(fileName, options);
             return manager.formatDocument(minChar, limChar);
         };
-        PullLanguageService.prototype.getFormattingEditsOnPaste = function (fileName, minChar, limChar, options) {
+        LanguageService.prototype.getFormattingEditsOnPaste = function (fileName, minChar, limChar, options) {
             this.minimalRefresh();
             var manager = this.getFormattingManager(fileName, options);
             return manager.formatOnPaste(minChar, limChar);
         };
-        PullLanguageService.prototype.getFormattingEditsAfterKeystroke = function (fileName, position, key, options) {
+        LanguageService.prototype.getFormattingEditsAfterKeystroke = function (fileName, position, key, options) {
             this.minimalRefresh();
             var manager = this.getFormattingManager(fileName, options);
             if (key === "}") {
@@ -57809,78 +55322,82 @@ var Services;
             }
             return [];
         };
-        PullLanguageService.prototype.getFormattingManager = function (fileName, options) {
+        LanguageService.prototype.getFormattingManager = function (fileName, options) {
             this.formattingRulesProvider.ensureUptodate(options);
             var syntaxTree = this.getSyntaxTree(fileName);
-            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting2.TextSnapshot(segmentedScriptSnapshot);
-            var manager = new TypeScript.Formatting2.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
+            var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
+            var manager = new TypeScript.Formatting.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
             return manager;
         };
-        PullLanguageService.prototype.getOutliningRegions = function (fileName) {
+        LanguageService.prototype.getOutliningRegions = function (fileName) {
             this.minimalRefresh();
             var syntaxTree = this.getSyntaxTree(fileName);
             return Services.OutliningElementsCollector.collectElements(syntaxTree.sourceUnit());
         };
-        PullLanguageService.prototype.getSmartIndentAtLineNumber = function (fileName, position, editorOptions) {
+        LanguageService.prototype.getSmartIndentAtLineNumber = function (fileName, position, editorOptions) {
             this.minimalRefresh();
             var syntaxTree = this.getSyntaxTree(fileName);
-            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting2.TextSnapshot(segmentedScriptSnapshot);
+            var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
             var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter);
-            return TypeScript.Formatting2.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
+            return TypeScript.Formatting.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
         };
-        PullLanguageService.prototype.getBraceMatchingAtPosition = function (fileName, position) {
+        LanguageService.prototype.getBraceMatchingAtPosition = function (fileName, position) {
             this.minimalRefresh();
             var syntaxTree = this.getSyntaxTree(fileName);
             return Services.BraceMatcher.getMatchSpans(syntaxTree, position);
         };
-        PullLanguageService.prototype.logSyntaxTree = function (fileName) {
-            this.minimalRefresh();
-            var syntaxTree = this.getSyntaxTree(fileName);
-            var serializedTree = Services.SyntaxNodeSerializer.serialize(syntaxTree.sourceUnit());
-            this.logger.log("");
-            this.logger.log(serializedTree);
-        };
-        PullLanguageService.prototype.getSyntaxTree = function (fileName) {
-            var version = this.pullCompilerState.getScriptVersion(fileName);
+        LanguageService.prototype.getSyntaxTree = function (fileName) {
+            var version = this.compilerState.getScriptVersion(fileName);
             var syntaxTree = null;
-            if (this.singleFileSyntaxTreeState.syntaxTree === null || this.singleFileSyntaxTreeState.fileName !== fileName) {
+            if (this.currentFileSyntaxTree === null || this.currentFileName !== fileName) {
                 syntaxTree = this.createSyntaxTree(fileName);
-            } else if (this.singleFileSyntaxTreeState.version !== version) {
-                syntaxTree = this.updateSyntaxTree(fileName, this.singleFileSyntaxTreeState.syntaxTree, this.singleFileSyntaxTreeState.version);
+            } else if (this.currentFileVersion !== version) {
+                syntaxTree = this.updateSyntaxTree(fileName, this.currentFileSyntaxTree, this.currentFileVersion);
             }
             if (syntaxTree !== null) {
-                this.singleFileSyntaxTreeState.version = version;
-                this.singleFileSyntaxTreeState.fileName = fileName;
-                this.singleFileSyntaxTreeState.syntaxTree = syntaxTree;
+                this.currentFileVersion = version;
+                this.currentFileName = fileName;
+                this.currentFileSyntaxTree = syntaxTree;
             }
-            return this.singleFileSyntaxTreeState.syntaxTree;
+            return this.currentFileSyntaxTree;
         };
-        PullLanguageService.prototype.createSyntaxTree = function (fileName) {
-            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+        LanguageService.prototype.createSyntaxTree = function (fileName) {
+            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
             var syntaxTree = TypeScript.Parser1.parse(segmentedScriptSnapshot);
             return syntaxTree;
         };
-        PullLanguageService.prototype.updateSyntaxTree = function (fileName, previousSyntaxTree, previousFileVersion) {
-            var editRange = this.pullCompilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
+        LanguageService.prototype.updateSyntaxTree = function (fileName, previousSyntaxTree, previousFileVersion) {
+            var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
             if (editRange === null) {
                 return previousSyntaxTree;
             }
-            var newScriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var newScriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var newSegmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(newScriptSnapshot);
             var nextSyntaxTree = TypeScript.Parser1.incrementalParse(previousSyntaxTree, editRange, newSegmentedScriptSnapshot);
             return nextSyntaxTree;
         };
-        return PullLanguageService;
+        return LanguageService;
     })();
-    Services.PullLanguageService = PullLanguageService;    
+    Services.LanguageService = LanguageService;    
 })(Services || (Services = {}));
 var Services;
 (function (Services) {
+    var ShimBase = (function () {
+        function ShimBase(factory) {
+            this.factory = factory;
+            factory.registerShim(this);
+        }
+        ShimBase.prototype.dispose = function (dummy) {
+            this.factory.unregisterShim(this);
+        };
+        return ShimBase;
+    })();
+    Services.ShimBase = ShimBase;    
     var ScriptSnapshotShimAdapter = (function () {
         function ScriptSnapshotShimAdapter(scriptSnapshotShim) {
             this.scriptSnapshotShim = scriptSnapshotShim;
@@ -57948,14 +55465,6 @@ var Services;
         LanguageServiceShimHostAdapter.prototype.getScriptVersion = function (fileName) {
             return this.shimHost.getScriptVersion(fileName);
         };
-        LanguageServiceShimHostAdapter.prototype.getHostSettings = function () {
-            var settingsJson = this.shimHost.getHostSettings();
-            if (settingsJson == null) {
-                return null;
-            }
-            var settings = JSON.parse(settingsJson);
-            return settings;
-        };
         return LanguageServiceShimHostAdapter;
     })();
     Services.LanguageServiceShimHostAdapter = LanguageServiceShimHostAdapter;    
@@ -58004,11 +55513,12 @@ var Services;
             error: err
         });
     }
-    var LanguageServiceShim = (function () {
-        function LanguageServiceShim(host, languageService, pullLanguageService) {
+    var LanguageServiceShim = (function (_super) {
+        __extends(LanguageServiceShim, _super);
+        function LanguageServiceShim(factory, host, languageService) {
+            _super.call(this, factory);
             this.host = host;
             this.languageService = languageService;
-            this.pullLanguageService = pullLanguageService;
             this.logger = this.host;
         }
         LanguageServiceShim.prototype.forwardCall = function (actionDescription, action, throwOnError) {
@@ -58021,8 +55531,8 @@ var Services;
         LanguageServiceShim.prototype.dispose = function (dummy) {
             this.logger.log("dispose()");
             this.languageService = null;
-            this.pullLanguageService = null;
             this.logger = null;
+            _super.prototype.dispose.call(this, dummy);
         };
         LanguageServiceShim.prototype.refresh = function (throwOnError) {
             var _this = this;
@@ -58041,14 +55551,14 @@ var Services;
         LanguageServiceShim.prototype.getSyntacticDiagnostics = function (fileName) {
             var _this = this;
             return this.forwardJSONCall("getSyntacticDiagnostics(\"" + fileName + "\")", function () {
-                var errors = _this.pullLanguageService.getSyntacticDiagnostics(fileName);
+                var errors = _this.languageService.getSyntacticDiagnostics(fileName);
                 return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
             });
         };
         LanguageServiceShim.prototype.getSemanticDiagnostics = function (fileName) {
             var _this = this;
             return this.forwardJSONCall("getSemanticDiagnostics(\"" + fileName + "\")", function () {
-                var errors = _this.pullLanguageService.getSemanticDiagnostics(fileName);
+                var errors = _this.languageService.getSemanticDiagnostics(fileName);
                 return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
             });
         };
@@ -58243,10 +55753,12 @@ var Services;
             return JSON.stringify(result);
         };
         return LanguageServiceShim;
-    })();
+    })(ShimBase);
     Services.LanguageServiceShim = LanguageServiceShim;    
-    var ClassifierShim = (function () {
-        function ClassifierShim(host) {
+    var ClassifierShim = (function (_super) {
+        __extends(ClassifierShim, _super);
+        function ClassifierShim(factory, host) {
+            _super.call(this, factory);
             this.host = host;
             this.classifier = new Services.Classifier(this.host);
         }
@@ -58262,10 +55774,12 @@ var Services;
             return result;
         };
         return ClassifierShim;
-    })();
+    })(ShimBase);
     Services.ClassifierShim = ClassifierShim;    
-    var CoreServicesShim = (function () {
-        function CoreServicesShim(host) {
+    var CoreServicesShim = (function (_super) {
+        __extends(CoreServicesShim, _super);
+        function CoreServicesShim(factory, host) {
+            _super.call(this, factory);
             this.host = host;
             this.logger = this.host.logger;
             this.services = new Services.CoreServices(this.host);
@@ -58305,18 +55819,422 @@ var Services;
             });
         };
         return CoreServicesShim;
-    })();
+    })(ShimBase);
     Services.CoreServicesShim = CoreServicesShim;    
+})(Services || (Services = {}));
+var Services;
+(function (Services) {
+    var OutliningElementsCollector = (function (_super) {
+        __extends(OutliningElementsCollector, _super);
+        function OutliningElementsCollector() {
+            _super.call(this, OutliningElementsCollector.MaximumDepth);
+            this.elements = [];
+        }
+        OutliningElementsCollector.MaximumDepth = 10;
+        OutliningElementsCollector.prototype.visitClassDeclaration = function (node) {
+            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
+            _super.prototype.visitClassDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitInterfaceDeclaration = function (node) {
+            this.addOutlineRange(node, node.body, node.body);
+            _super.prototype.visitInterfaceDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitModuleDeclaration = function (node) {
+            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
+            _super.prototype.visitModuleDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitEnumDeclaration = function (node) {
+            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
+            _super.prototype.visitEnumDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitFunctionDeclaration = function (node) {
+            this.addOutlineRange(node, node.block, node.block);
+            _super.prototype.visitFunctionDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitFunctionExpression = function (node) {
+            this.addOutlineRange(node, node.block, node.block);
+            _super.prototype.visitFunctionExpression.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitConstructorDeclaration = function (node) {
+            this.addOutlineRange(node, node.block, node.block);
+            _super.prototype.visitConstructorDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitMemberFunctionDeclaration = function (node) {
+            this.addOutlineRange(node, node.block, node.block);
+            _super.prototype.visitMemberFunctionDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitGetMemberAccessorDeclaration = function (node) {
+            this.addOutlineRange(node, node.block, node.block);
+            _super.prototype.visitGetMemberAccessorDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.visitSetMemberAccessorDeclaration = function (node) {
+            this.addOutlineRange(node, node.block, node.block);
+            _super.prototype.visitSetMemberAccessorDeclaration.call(this, node);
+        };
+        OutliningElementsCollector.prototype.addOutlineRange = function (node, startElement, endElement) {
+            if (startElement && endElement) {
+                var start = this.position() + TypeScript.Syntax.childOffset(node, startElement);
+                var end = this.position() + TypeScript.Syntax.childOffset(node, endElement) + endElement.leadingTriviaWidth() + endElement.width();
+                this.elements.push(TypeScript.TextSpan.fromBounds(start, end));
+            }
+        };
+        OutliningElementsCollector.collectElements = function collectElements(node) {
+            var collector = new OutliningElementsCollector();
+            node.accept(collector);
+            return collector.elements;
+        };
+        return OutliningElementsCollector;
+    })(TypeScript.DepthLimitedWalker);
+    Services.OutliningElementsCollector = OutliningElementsCollector;    
+})(Services || (Services = {}));
+var Services;
+(function (Services) {
+    var BraceMatcher = (function () {
+        function BraceMatcher() { }
+        BraceMatcher.getMatchSpans = function getMatchSpans(syntaxTree, position) {
+            var result = [];
+            var currentToken = syntaxTree.sourceUnit().findToken(position);
+            BraceMatcher.getMatchingCloseBrace(currentToken, position, result);
+            BraceMatcher.getMatchingOpenBrace(currentToken, position, result);
+            return result;
+        };
+        BraceMatcher.getMatchingCloseBrace = function getMatchingCloseBrace(currentToken, position, result) {
+            if (currentToken.start() === position) {
+                var closingBraceKind = BraceMatcher.getMatchingCloseBraceTokenKind(currentToken);
+                if (closingBraceKind !== null) {
+                    var parentElement = currentToken.parentElement();
+                    var currentPosition = currentToken.parent().fullStart();
+                    for(var i = 0, n = parentElement.childCount(); i < n; i++) {
+                        var element = parentElement.childAt(i);
+                        if (element !== null && element.fullWidth() > 0) {
+                            if (element.kind() === closingBraceKind) {
+                                var range1 = new TypeScript.TextSpan(position, currentToken.token().width());
+                                var range2 = new TypeScript.TextSpan(currentPosition + element.leadingTriviaWidth(), element.width());
+                                result.push(range1, range2);
+                                break;
+                            }
+                            currentPosition += element.fullWidth();
+                        }
+                    }
+                }
+            }
+        };
+        BraceMatcher.getMatchingOpenBrace = function getMatchingOpenBrace(currentToken, position, result) {
+            if (currentToken.fullStart() === position) {
+                currentToken = currentToken.previousToken();
+            }
+            if (currentToken !== null && currentToken.start() === (position - 1)) {
+                var openBraceKind = BraceMatcher.getMatchingOpenBraceTokenKind(currentToken);
+                if (openBraceKind !== null) {
+                    var parentElement = currentToken.parentElement();
+                    var currentPosition = currentToken.parent().fullStart() + parentElement.fullWidth();
+                    for(var i = parentElement.childCount() - 1; i >= 0; i--) {
+                        var element = parentElement.childAt(i);
+                        if (element !== null && element.fullWidth() > 0) {
+                            if (element.kind() === openBraceKind) {
+                                var range1 = new TypeScript.TextSpan(position - 1, currentToken.token().width());
+                                var range2 = new TypeScript.TextSpan(currentPosition - element.trailingTriviaWidth() - element.width(), element.width());
+                                result.push(range1, range2);
+                                break;
+                            }
+                            currentPosition -= element.fullWidth();
+                        }
+                    }
+                }
+            }
+        };
+        BraceMatcher.getMatchingCloseBraceTokenKind = function getMatchingCloseBraceTokenKind(positionedElement) {
+            var element = positionedElement !== null && positionedElement.element();
+            switch(element.kind()) {
+                case 70 /* OpenBraceToken */ :
+                    return 71 /* CloseBraceToken */ ;
+                case 72 /* OpenParenToken */ :
+                    return 73 /* CloseParenToken */ ;
+                case 74 /* OpenBracketToken */ :
+                    return 75 /* CloseBracketToken */ ;
+                case 80 /* LessThanToken */ :
+                    return TypeScript.SyntaxUtilities.isAngleBracket(positionedElement) ? 81 /* GreaterThanToken */  : null;
+            }
+            return null;
+        };
+        BraceMatcher.getMatchingOpenBraceTokenKind = function getMatchingOpenBraceTokenKind(positionedElement) {
+            var element = positionedElement !== null && positionedElement.element();
+            switch(element.kind()) {
+                case 71 /* CloseBraceToken */ :
+                    return 70 /* OpenBraceToken */ ;
+                case 73 /* CloseParenToken */ :
+                    return 72 /* OpenParenToken */ ;
+                case 75 /* CloseBracketToken */ :
+                    return 74 /* OpenBracketToken */ ;
+                case 81 /* GreaterThanToken */ :
+                    return TypeScript.SyntaxUtilities.isAngleBracket(positionedElement) ? 80 /* LessThanToken */  : null;
+            }
+            return null;
+        };
+        return BraceMatcher;
+    })();
+    Services.BraceMatcher = BraceMatcher;    
+})(Services || (Services = {}));
+var Services;
+(function (Services) {
+    var Indenter = (function () {
+        function Indenter() { }
+        Indenter.getIndentation = function getIndentation(node, soruceText, position, editorOptions) {
+            var indentation = 0;
+            var currentToken = node.findToken(position);
+            var currentNode = currentToken;
+            if (currentToken.token().kind() === 10 /* EndOfFileToken */ ) {
+                currentNode = currentToken.previousToken();
+            } else if (Indenter.belongsToBracket(soruceText, currentToken, position)) {
+                currentNode = currentToken.parent();
+            }
+            if (currentNode === null) {
+                return indentation;
+            }
+            if (currentNode.kind() === 14 /* StringLiteral */  || currentNode.kind() === 12 /* RegularExpressionLiteral */ ) {
+                return indentation;
+            }
+            var currentElement = currentNode.element();
+            var parent = currentNode.parent();
+            while(parent !== null) {
+                if (parent.fullStart() !== currentNode.fullStart()) {
+                    if (Indenter.isInContainerNode(parent.element(), currentElement)) {
+                        indentation += editorOptions.IndentSize;
+                    } else {
+                        var listIndentation = Indenter.getCustomListIndentation(parent.element(), currentElement);
+                        if (listIndentation !== -1) {
+                            return indentation + listIndentation;
+                        }
+                    }
+                }
+                currentNode = parent;
+                currentElement = parent.element();
+                parent = parent.parent();
+            }
+            return indentation;
+        };
+        Indenter.belongsToBracket = function belongsToBracket(sourceText, token, position) {
+            switch(token.token().kind()) {
+                case 70 /* OpenBraceToken */ :
+                case 71 /* CloseBraceToken */ :
+                case 72 /* OpenParenToken */ :
+                case 73 /* CloseParenToken */ :
+                case 74 /* OpenBracketToken */ :
+                case 75 /* CloseBracketToken */ :
+                    if (position < token.start()) {
+                        var text = sourceText.getText(position, token.start());
+                        for(var i = 0; i < text.length; i++) {
+                            if (TypeScript.CharacterInfo.isLineTerminator(text.charCodeAt(i))) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+            }
+            return false;
+        };
+        Indenter.isInContainerNode = function isInContainerNode(parent, element) {
+            switch(parent.kind()) {
+                case 130 /* ClassDeclaration */ :
+                case 129 /* ModuleDeclaration */ :
+                case 131 /* EnumDeclaration */ :
+                case 132 /* ImportDeclaration */ :
+                case 144 /* Block */ :
+                case 149 /* SwitchStatement */ :
+                case 232 /* CaseSwitchClause */ :
+                case 233 /* DefaultSwitchClause */ :
+                    return true;
+                case 122 /* ObjectType */ :
+                    return true;
+                case 127 /* InterfaceDeclaration */ :
+                    return element.kind() !== 122 /* ObjectType */ ;
+                case 128 /* FunctionDeclaration */ :
+                case 134 /* MemberFunctionDeclaration */ :
+                case 137 /* GetMemberAccessorDeclaration */ :
+                case 138 /* SetMemberAccessorDeclaration */ :
+                case 245 /* GetAccessorPropertyAssignment */ :
+                case 246 /* SetAccessorPropertyAssignment */ :
+                case 220 /* FunctionExpression */ :
+                case 235 /* CatchClause */ :
+                case 236 /* FinallyClause */ :
+                case 128 /* FunctionDeclaration */ :
+                case 136 /* ConstructorDeclaration */ :
+                case 152 /* ForStatement */ :
+                case 153 /* ForInStatement */ :
+                case 156 /* WhileStatement */ :
+                case 159 /* DoStatement */ :
+                case 161 /* WithStatement */ :
+                case 145 /* IfStatement */ :
+                case 234 /* ElseClause */ :
+                    return element.kind() !== 144 /* Block */ ;
+                case 157 /* TryStatement */ :
+                    return false;
+                default:
+                    return parent.isNode() && (parent).isStatement();
+            }
+        };
+        Indenter.getCustomListIndentation = function getCustomListIndentation(list, element) {
+            switch(list.kind()) {
+                case 2 /* SeparatedList */ :
+                    for(var i = 0, n = list.childCount(); i < n; i++) {
+                        var child = list.childAt(i);
+                        if (child !== null && child === element) {
+                            return Indenter.getListItemIndentation(list, i - 1);
+                        }
+                    }
+                    break;
+                case 224 /* ArgumentList */ :
+                    var argumentList = list;
+                    var arguments = argumentList.arguments;
+                    if (arguments !== null && argumentList.closeParenToken === element) {
+                        return Indenter.getListItemIndentation(arguments, arguments.childCount() - 1);
+                    }
+                    break;
+                case 225 /* ParameterList */ :
+                    var parameterList = list;
+                    var parameters = parameterList.parameters;
+                    if (parameters !== null && parameterList.closeParenToken === element) {
+                        return Indenter.getListItemIndentation(parameters, parameters.childCount() - 1);
+                    }
+                    break;
+                case 226 /* TypeArgumentList */ :
+                    var typeArgumentList = list;
+                    var typeArguments = typeArgumentList.typeArguments;
+                    if (typeArguments !== null && typeArgumentList.greaterThanToken === element) {
+                        return Indenter.getListItemIndentation(typeArguments, typeArguments.childCount() - 1);
+                    }
+                    break;
+                case 227 /* TypeParameterList */ :
+                    var typeParameterList = list;
+                    var typeParameters = typeParameterList.typeParameters;
+                    if (typeParameters !== null && typeParameterList.greaterThanToken === element) {
+                        return Indenter.getListItemIndentation(typeParameters, typeParameters.childCount() - 1);
+                    }
+                    break;
+            }
+            return -1;
+        };
+        Indenter.getListItemIndentation = function getListItemIndentation(list, elementIndex) {
+            for(var i = elementIndex; i > 0; i--) {
+                var child = list.childAt(i);
+                var previousChild = list.childAt(i - 1);
+                if ((child !== null && child.leadingTrivia().hasNewLine()) || (previousChild !== null && previousChild.trailingTrivia().hasNewLine())) {
+                    return child.leadingTriviaWidth();
+                }
+            }
+            return -1;
+        };
+        return Indenter;
+    })();
+    Services.Indenter = Indenter;    
+})(Services || (Services = {}));
+var Services;
+(function (Services) {
+    function copyDataObject(dst, src) {
+        for(var e in dst) {
+            if (typeof dst[e] == "object") {
+                copyDataObject(dst[e], src[e]);
+            } else if (typeof dst[e] != "function") {
+                dst[e] = src[e];
+            }
+        }
+        return dst;
+    }
+    Services.copyDataObject = copyDataObject;
+    function compareDataObjects(dst, src) {
+        for(var e in dst) {
+            if (typeof dst[e] == "object") {
+                if (!compareDataObjects(dst[e], src[e])) {
+                    return false;
+                }
+            } else if (typeof dst[e] != "function") {
+                if (dst[e] !== src[e]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    Services.compareDataObjects = compareDataObjects;
+    var TypeScriptServicesFactory = (function () {
+        function TypeScriptServicesFactory() {
+            this._shims = [];
+        }
+        TypeScriptServicesFactory.prototype.createPullLanguageService = function (host) {
+            try  {
+                return new Services.LanguageService(host);
+            } catch (err) {
+                Services.logInternalError(host, err);
+                throw err;
+            }
+        };
+        TypeScriptServicesFactory.prototype.createLanguageServiceShim = function (host) {
+            try  {
+                var hostAdapter = new Services.LanguageServiceShimHostAdapter(host);
+                var pullLanguageService = this.createPullLanguageService(hostAdapter);
+                return new Services.LanguageServiceShim(this, host, pullLanguageService);
+            } catch (err) {
+                Services.logInternalError(host, err);
+                throw err;
+            }
+        };
+        TypeScriptServicesFactory.prototype.createClassifier = function (host) {
+            try  {
+                return new Services.Classifier(host);
+            } catch (err) {
+                Services.logInternalError(host, err);
+                throw err;
+            }
+        };
+        TypeScriptServicesFactory.prototype.createClassifierShim = function (host) {
+            try  {
+                return new Services.ClassifierShim(this, host);
+            } catch (err) {
+                Services.logInternalError(host, err);
+                throw err;
+            }
+        };
+        TypeScriptServicesFactory.prototype.createCoreServices = function (host) {
+            try  {
+                return new Services.CoreServices(host);
+            } catch (err) {
+                Services.logInternalError(host.logger, err);
+                throw err;
+            }
+        };
+        TypeScriptServicesFactory.prototype.createCoreServicesShim = function (host) {
+            try  {
+                return new Services.CoreServicesShim(this, host);
+            } catch (err) {
+                Services.logInternalError(host.logger, err);
+                throw err;
+            }
+        };
+        TypeScriptServicesFactory.prototype.close = function () {
+            this._shims = [];
+        };
+        TypeScriptServicesFactory.prototype.registerShim = function (shim) {
+            this._shims.push(shim);
+        };
+        TypeScriptServicesFactory.prototype.unregisterShim = function (shim) {
+            for(var i = 0, n = this._shims.length; i < n; i++) {
+                if (this._shims[i] === shim) {
+                    delete this._shims[i];
+                    return;
+                }
+            }
+            throw TypeScript.Errors.invalidOperation();
+        };
+        return TypeScriptServicesFactory;
+    })();
+    Services.TypeScriptServicesFactory = TypeScriptServicesFactory;    
 })(Services || (Services = {}));
 var TypeScript;
 (function (TypeScript) {
     })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    })(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var TextSnapshot = (function () {
             function TextSnapshot(snapshot) {
                 this.snapshot = snapshot;
@@ -58363,18 +56281,18 @@ var TypeScript;
                     end = p + 1;
                     lineBreak = this.snapshot.substr(end, endIncludingLineBreak - end, false);
                 }
-                var result = new Formatting2.TextSnapshotLine(this, lineNumber, start, end, lineBreak);
+                var result = new Formatting.TextSnapshotLine(this, lineNumber, start, end, lineBreak);
                 return result;
             };
             return TextSnapshot;
         })();
-        Formatting2.TextSnapshot = TextSnapshot;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.TextSnapshot = TextSnapshot;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var TextSnapshotLine = (function () {
             function TextSnapshotLine(_snapshot, _lineNumber, _start, _end, _lineBreak) {
                 this._snapshot = _snapshot;
@@ -58387,19 +56305,19 @@ var TypeScript;
                 return this._snapshot;
             };
             TextSnapshotLine.prototype.start = function () {
-                return new Formatting2.SnapshotPoint(this._snapshot, this._start);
+                return new Formatting.SnapshotPoint(this._snapshot, this._start);
             };
             TextSnapshotLine.prototype.startPosition = function () {
                 return this._start;
             };
             TextSnapshotLine.prototype.end = function () {
-                return new Formatting2.SnapshotPoint(this._snapshot, this._end);
+                return new Formatting.SnapshotPoint(this._snapshot, this._end);
             };
             TextSnapshotLine.prototype.endPosition = function () {
                 return this._end;
             };
             TextSnapshotLine.prototype.endIncludingLineBreak = function () {
-                return new Formatting2.SnapshotPoint(this._snapshot, this._end + this._lineBreak.length);
+                return new Formatting.SnapshotPoint(this._snapshot, this._end + this._lineBreak.length);
             };
             TextSnapshotLine.prototype.endIncludingLineBreakPosition = function () {
                 return this._end + this._lineBreak.length;
@@ -58415,13 +56333,13 @@ var TypeScript;
             };
             return TextSnapshotLine;
         })();
-        Formatting2.TextSnapshotLine = TextSnapshotLine;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.TextSnapshotLine = TextSnapshotLine;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var SnapshotPoint = (function () {
             function SnapshotPoint(snapshot, position) {
                 this.snapshot = snapshot;
@@ -58435,13 +56353,13 @@ var TypeScript;
             };
             return SnapshotPoint;
         })();
-        Formatting2.SnapshotPoint = SnapshotPoint;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.SnapshotPoint = SnapshotPoint;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var FormattingContext = (function () {
             function FormattingContext(snapshot, formattingRequestKind) {
                 this.snapshot = snapshot;
@@ -58489,13 +56407,13 @@ var TypeScript;
             };
             return FormattingContext;
         })();
-        Formatting2.FormattingContext = FormattingContext;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.FormattingContext = FormattingContext;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var FormattingManager = (function () {
             function FormattingManager(syntaxTree, snapshot, rulesProvider, editorOptions) {
                 this.syntaxTree = syntaxTree;
@@ -58555,7 +56473,7 @@ var TypeScript;
                 var startLine = this.snapshot.getLineFromPosition(span.start());
                 span = TypeScript.TextSpan.fromBounds(startLine.startPosition(), span.end());
                 var result = [];
-                var formattingEdits = Formatting2.Formatter.getEdits(span, this.syntaxTree.sourceUnit(), this.options, true, this.snapshot, this.rulesProvider, formattingRequestKind);
+                var formattingEdits = Formatting.Formatter.getEdits(span, this.syntaxTree.sourceUnit(), this.options, true, this.snapshot, this.rulesProvider, formattingRequestKind);
                 formattingEdits.forEach(function (item) {
                     var edit = new Services.TextEdit(item.position, item.position + item.length, item.replaceWith);
                     result.push(edit);
@@ -58564,13 +56482,13 @@ var TypeScript;
             };
             return FormattingManager;
         })();
-        Formatting2.FormattingManager = FormattingManager;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.FormattingManager = FormattingManager;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         (function (FormattingRequestKind) {
             FormattingRequestKind._map = [];
             FormattingRequestKind._map[0] = "FormatDocument";
@@ -58585,14 +56503,14 @@ var TypeScript;
             FormattingRequestKind.FormatOnClosingCurlyBrace = 4;
             FormattingRequestKind._map[5] = "FormatOnPaste";
             FormattingRequestKind.FormatOnPaste = 5;
-        })(Formatting2.FormattingRequestKind || (Formatting2.FormattingRequestKind = {}));
-        var FormattingRequestKind = Formatting2.FormattingRequestKind;
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        })(Formatting.FormattingRequestKind || (Formatting.FormattingRequestKind = {}));
+        var FormattingRequestKind = Formatting.FormattingRequestKind;
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var Rule = (function () {
             function Rule(Descriptor, Operation, Flag) {
                 if (typeof Flag === "undefined") { Flag = 0 /* None */ ; }
@@ -58605,13 +56523,13 @@ var TypeScript;
             };
             return Rule;
         })();
-        Formatting2.Rule = Rule;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.Rule = Rule;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         (function (RuleAction) {
             RuleAction._map = [];
             RuleAction._map[0] = "Ignore";
@@ -58622,14 +56540,14 @@ var TypeScript;
             RuleAction.NewLine = 2;
             RuleAction._map[3] = "Delete";
             RuleAction.Delete = 3;
-        })(Formatting2.RuleAction || (Formatting2.RuleAction = {}));
-        var RuleAction = Formatting2.RuleAction;
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        })(Formatting.RuleAction || (Formatting.RuleAction = {}));
+        var RuleAction = Formatting.RuleAction;
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var RuleDescriptor = (function () {
             function RuleDescriptor(LeftTokenRange, RightTokenRange) {
                 this.LeftTokenRange = LeftTokenRange;
@@ -58639,40 +56557,40 @@ var TypeScript;
                 return "[leftRange=" + this.LeftTokenRange + "," + "rightRange=" + this.RightTokenRange + "]";
             };
             RuleDescriptor.create1 = function create1(left, right) {
-                return RuleDescriptor.create4(Formatting2.Shared.TokenRange.FromToken(left), Formatting2.Shared.TokenRange.FromToken(right));
+                return RuleDescriptor.create4(Formatting.Shared.TokenRange.FromToken(left), Formatting.Shared.TokenRange.FromToken(right));
             };
             RuleDescriptor.create2 = function create2(left, right) {
-                return RuleDescriptor.create4(left, Formatting2.Shared.TokenRange.FromToken(right));
+                return RuleDescriptor.create4(left, Formatting.Shared.TokenRange.FromToken(right));
             };
             RuleDescriptor.create3 = function create3(left, right) {
-                return RuleDescriptor.create4(Formatting2.Shared.TokenRange.FromToken(left), right);
+                return RuleDescriptor.create4(Formatting.Shared.TokenRange.FromToken(left), right);
             };
             RuleDescriptor.create4 = function create4(left, right) {
                 return new RuleDescriptor(left, right);
             };
             return RuleDescriptor;
         })();
-        Formatting2.RuleDescriptor = RuleDescriptor;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.RuleDescriptor = RuleDescriptor;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         (function (RuleFlags) {
             RuleFlags._map = [];
             RuleFlags._map[0] = "None";
             RuleFlags.None = 0;
             RuleFlags._map[1] = "CanDeleteNewLines";
             RuleFlags.CanDeleteNewLines = 1;
-        })(Formatting2.RuleFlags || (Formatting2.RuleFlags = {}));
-        var RuleFlags = Formatting2.RuleFlags;
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        })(Formatting.RuleFlags || (Formatting.RuleFlags = {}));
+        var RuleFlags = Formatting.RuleFlags;
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var RuleOperation = (function () {
             function RuleOperation() {
                 this.Context = null;
@@ -58682,7 +56600,7 @@ var TypeScript;
                 return "[context=" + this.Context + "," + "action=" + this.Action + "]";
             };
             RuleOperation.create1 = function create1(action) {
-                return RuleOperation.create2(Formatting2.RuleOperationContext.Any, action);
+                return RuleOperation.create2(Formatting.RuleOperationContext.Any, action);
             };
             RuleOperation.create2 = function create2(context, action) {
                 var result = new RuleOperation();
@@ -58692,13 +56610,13 @@ var TypeScript;
             };
             return RuleOperation;
         })();
-        Formatting2.RuleOperation = RuleOperation;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.RuleOperation = RuleOperation;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var RuleOperationContext = (function () {
             function RuleOperationContext() {
                 var funcs = [];
@@ -58726,51 +56644,51 @@ var TypeScript;
             };
             return RuleOperationContext;
         })();
-        Formatting2.RuleOperationContext = RuleOperationContext;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.RuleOperationContext = RuleOperationContext;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var Rules = (function () {
             function Rules() {
-                this.IgnoreBeforeComment = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.Any, Formatting2.Shared.TokenRange.Comments), Formatting2.RuleOperation.create1(0 /* Ignore */ ));
-                this.IgnoreAfterLineComment = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(7 /* SingleLineCommentTrivia */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create1(0 /* Ignore */ ));
-                this.NoSpaceBeforeSemicolon = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 78 /* SemicolonToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceBeforeColon = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 106 /* ColonToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-                this.NoSpaceBeforeQMark = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 105 /* QuestionToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-                this.SpaceAfterColon = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(106 /* ColonToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterQMark = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(105 /* QuestionToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterSemicolon = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(78 /* SemicolonToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.NewLineAfterCloseBrace = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(71 /* CloseBraceToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsMultilineChildParentContext), 2 /* NewLine */ ));
-                this.SpaceAfterCloseBrace = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(71 /* CloseBraceToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsCodeBlockContext), 1 /* Space */ ));
-                this.SpaceBetweenCloseBraceAndElse = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(71 /* CloseBraceToken */ , 23 /* ElseKeyword */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.SpaceBetweenCloseBraceAndWhile = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(71 /* CloseBraceToken */ , 42 /* WhileKeyword */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.NoSpaceBeforeDot = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 76 /* DotToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceAfterDot = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(76 /* DotToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceBeforeOpenBracket = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 74 /* OpenBracketToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceAfterOpenBracket = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(74 /* OpenBracketToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceBeforeCloseBracket = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 75 /* CloseBracketToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceAfterCloseBracket = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(75 /* CloseBracketToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.SpaceAfterOpenBrace = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(70 /* OpenBraceToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */ ));
-                this.SpaceBeforeCloseBrace = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 71 /* CloseBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */ ));
-                this.NoSpaceBetweenEmptyBraceBrackets = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(70 /* OpenBraceToken */ , 71 /* CloseBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectContext), 3 /* Delete */ ));
-                this.NewLineAfterOpenBraceInBlockContext = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(70 /* OpenBraceToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */ ));
-                this.NewLineBeforeCloseBraceInFunctionOrControl = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 71 /* CloseBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */ ));
-                this.NoSpaceAfterUnaryPrefixOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.UnaryPrefixOperators, Formatting2.Shared.TokenRange.UnaryPrefixExpressions), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-                this.NoSpaceAfterUnaryPreincrementOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(93 /* PlusPlusToken */ , Formatting2.Shared.TokenRange.UnaryPreincrementExpressions), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceAfterUnaryPredecrementOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(94 /* MinusMinusToken */ , Formatting2.Shared.TokenRange.UnaryPredecrementExpressions), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceBeforeUnaryPostincrementOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.UnaryPostincrementExpressions, 93 /* PlusPlusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceBeforeUnaryPostdecrementOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.UnaryPostdecrementExpressions, 94 /* MinusMinusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.SpaceAfterPostincrementWhenFollowedByAdd = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(93 /* PlusPlusToken */ , 89 /* PlusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterAddWhenFollowedByUnaryPlus = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(89 /* PlusToken */ , 89 /* PlusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterAddWhenFollowedByPreincrement = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(89 /* PlusToken */ , 93 /* PlusPlusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterPostdecrementWhenFollowedBySubtract = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(94 /* MinusMinusToken */ , 90 /* MinusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterSubtractWhenFollowedByUnaryMinus = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(90 /* MinusToken */ , 90 /* MinusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterSubtractWhenFollowedByPredecrement = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(90 /* MinusToken */ , 94 /* MinusMinusToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.NoSpaceBeforeComma = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 79 /* CommaToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.SpaceAfterCertainKeywords = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.FromTokens([
+                this.IgnoreBeforeComment = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.Comments), Formatting.RuleOperation.create1(0 /* Ignore */ ));
+                this.IgnoreAfterLineComment = new Formatting.Rule(Formatting.RuleDescriptor.create3(7 /* SingleLineCommentTrivia */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create1(0 /* Ignore */ ));
+                this.NoSpaceBeforeSemicolon = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 78 /* SemicolonToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceBeforeColon = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 106 /* ColonToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
+                this.NoSpaceBeforeQMark = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 105 /* QuestionToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
+                this.SpaceAfterColon = new Formatting.Rule(Formatting.RuleDescriptor.create3(106 /* ColonToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterQMark = new Formatting.Rule(Formatting.RuleDescriptor.create3(105 /* QuestionToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterSemicolon = new Formatting.Rule(Formatting.RuleDescriptor.create3(78 /* SemicolonToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.NewLineAfterCloseBrace = new Formatting.Rule(Formatting.RuleDescriptor.create3(71 /* CloseBraceToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineChildParentContext), 2 /* NewLine */ ));
+                this.SpaceAfterCloseBrace = new Formatting.Rule(Formatting.RuleDescriptor.create3(71 /* CloseBraceToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsCodeBlockContext), 1 /* Space */ ));
+                this.SpaceBetweenCloseBraceAndElse = new Formatting.Rule(Formatting.RuleDescriptor.create1(71 /* CloseBraceToken */ , 23 /* ElseKeyword */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.SpaceBetweenCloseBraceAndWhile = new Formatting.Rule(Formatting.RuleDescriptor.create1(71 /* CloseBraceToken */ , 42 /* WhileKeyword */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.NoSpaceBeforeDot = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 76 /* DotToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceAfterDot = new Formatting.Rule(Formatting.RuleDescriptor.create3(76 /* DotToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceBeforeOpenBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 74 /* OpenBracketToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceAfterOpenBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(74 /* OpenBracketToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceBeforeCloseBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 75 /* CloseBracketToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceAfterCloseBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(75 /* CloseBracketToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.SpaceAfterOpenBrace = new Formatting.Rule(Formatting.RuleDescriptor.create3(70 /* OpenBraceToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */ ));
+                this.SpaceBeforeCloseBrace = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 71 /* CloseBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */ ));
+                this.NoSpaceBetweenEmptyBraceBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */ , 71 /* CloseBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectContext), 3 /* Delete */ ));
+                this.NewLineAfterOpenBraceInBlockContext = new Formatting.Rule(Formatting.RuleDescriptor.create3(70 /* OpenBraceToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */ ));
+                this.NewLineBeforeCloseBraceInFunctionOrControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 71 /* CloseBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */ ));
+                this.NoSpaceAfterUnaryPrefixOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.UnaryPrefixOperators, Formatting.Shared.TokenRange.UnaryPrefixExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
+                this.NoSpaceAfterUnaryPreincrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(93 /* PlusPlusToken */ , Formatting.Shared.TokenRange.UnaryPreincrementExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceAfterUnaryPredecrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(94 /* MinusMinusToken */ , Formatting.Shared.TokenRange.UnaryPredecrementExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceBeforeUnaryPostincrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.UnaryPostincrementExpressions, 93 /* PlusPlusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceBeforeUnaryPostdecrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.UnaryPostdecrementExpressions, 94 /* MinusMinusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.SpaceAfterPostincrementWhenFollowedByAdd = new Formatting.Rule(Formatting.RuleDescriptor.create1(93 /* PlusPlusToken */ , 89 /* PlusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterAddWhenFollowedByUnaryPlus = new Formatting.Rule(Formatting.RuleDescriptor.create1(89 /* PlusToken */ , 89 /* PlusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterAddWhenFollowedByPreincrement = new Formatting.Rule(Formatting.RuleDescriptor.create1(89 /* PlusToken */ , 93 /* PlusPlusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterPostdecrementWhenFollowedBySubtract = new Formatting.Rule(Formatting.RuleDescriptor.create1(94 /* MinusMinusToken */ , 90 /* MinusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterSubtractWhenFollowedByUnaryMinus = new Formatting.Rule(Formatting.RuleDescriptor.create1(90 /* MinusToken */ , 90 /* MinusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterSubtractWhenFollowedByPredecrement = new Formatting.Rule(Formatting.RuleDescriptor.create1(90 /* MinusToken */ , 94 /* MinusMinusToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.NoSpaceBeforeComma = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 79 /* CommaToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.SpaceAfterCertainKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([
                     40 /* VarKeyword */ , 
                     36 /* ThrowKeyword */ , 
                     31 /* NewKeyword */ , 
@@ -58778,26 +56696,26 @@ var TypeScript;
                     33 /* ReturnKeyword */ , 
                     41 /* VoidKeyword */ , 
                     39 /* TypeOfKeyword */ 
-                ]), Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.NoSpaceBeforeOpenParenInFuncCall = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), 3 /* Delete */ ));
-                this.SpaceAfterFunctionInFuncDecl = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(27 /* FunctionKeyword */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */ ));
-                this.NoSpaceBeforeOpenParenInFuncDecl = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionOrGetSetDeclContext), 3 /* Delete */ ));
-                this.SpaceBetweenStatements = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.FromTokens([
+                ]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.NoSpaceBeforeOpenParenInFuncCall = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), 3 /* Delete */ ));
+                this.SpaceAfterFunctionInFuncDecl = new Formatting.Rule(Formatting.RuleDescriptor.create3(27 /* FunctionKeyword */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */ ));
+                this.NoSpaceBeforeOpenParenInFuncDecl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionOrGetSetDeclContext), 3 /* Delete */ ));
+                this.SpaceBetweenStatements = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([
                     73 /* CloseParenToken */ , 
                     22 /* DoKeyword */ , 
                     23 /* ElseKeyword */ , 
                     16 /* CaseKeyword */ 
-                ]), Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), 1 /* Space */ ));
-                this.SpaceAfterTryFinally = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.FromTokens([
+                ]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), 1 /* Space */ ));
+                this.SpaceAfterTryFinally = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.FromTokens([
                     38 /* TryKeyword */ , 
                     25 /* FinallyKeyword */ 
-                ]), 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.SpaceAfterGetSetInMember = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(11 /* IdentifierName */ , 11 /* IdentifierName */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsGetSetMemberContext), 1 /* Space */ ));
-                this.SpaceBeforeBinaryKeywordOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.Any, Formatting2.Shared.TokenRange.BinaryKeywordOperators), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterBinaryKeywordOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.BinaryKeywordOperators, Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.NoSpaceAfterConstructor = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(63 /* ConstructorKeyword */ , 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceAfterModuleImport = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(66 /* ModuleKeyword */ , 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.SpaceAfterCertainTypeScriptKeywords = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.FromTokens([
+                ]), 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.SpaceAfterGetSetInMember = new Formatting.Rule(Formatting.RuleDescriptor.create1(11 /* IdentifierName */ , 11 /* IdentifierName */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsGetSetMemberContext), 1 /* Space */ ));
+                this.SpaceBeforeBinaryKeywordOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryKeywordOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterBinaryKeywordOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryKeywordOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.NoSpaceAfterConstructor = new Formatting.Rule(Formatting.RuleDescriptor.create1(63 /* ConstructorKeyword */ , 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceAfterModuleImport = new Formatting.Rule(Formatting.RuleDescriptor.create1(66 /* ModuleKeyword */ , 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.SpaceAfterCertainTypeScriptKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([
                     44 /* ClassKeyword */ , 
                     64 /* DeclareKeyword */ , 
                     46 /* EnumKeyword */ , 
@@ -58812,19 +56730,19 @@ var TypeScript;
                     57 /* PublicKeyword */ , 
                     68 /* SetKeyword */ , 
                     58 /* StaticKeyword */ 
-                ]), Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.SpaceBeforeCertainTypeScriptKeywords = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.Any, Formatting2.Shared.TokenRange.FromTokens([
+                ]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.SpaceBeforeCertainTypeScriptKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.FromTokens([
                     48 /* ExtendsKeyword */ , 
                     51 /* ImplementsKeyword */ 
-                ])), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.SpaceAfterModuleName = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(14 /* StringLiteral */ , 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsModuleDeclContext), 1 /* Space */ ));
-                this.SpaceAfterArrow = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(85 /* EqualsGreaterThanToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.NoSpaceAfterEllipsis = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(77 /* DotDotDotToken */ , 11 /* IdentifierName */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceAfterOptionalParameters = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(105 /* QuestionToken */ , Formatting2.Shared.TokenRange.FromTokens([
+                ])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.SpaceAfterModuleName = new Formatting.Rule(Formatting.RuleDescriptor.create1(14 /* StringLiteral */ , 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsModuleDeclContext), 1 /* Space */ ));
+                this.SpaceAfterArrow = new Formatting.Rule(Formatting.RuleDescriptor.create3(85 /* EqualsGreaterThanToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.NoSpaceAfterEllipsis = new Formatting.Rule(Formatting.RuleDescriptor.create1(77 /* DotDotDotToken */ , 11 /* IdentifierName */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceAfterOptionalParameters = new Formatting.Rule(Formatting.RuleDescriptor.create3(105 /* QuestionToken */ , Formatting.Shared.TokenRange.FromTokens([
                     73 /* CloseParenToken */ , 
                     79 /* CommaToken */ 
-                ])), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-                this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(70 /* OpenBraceToken */ , 71 /* CloseBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsInterfaceContext), 3 /* Delete */ ));
+                ])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
+                this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */ , 71 /* CloseBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsInterfaceContext), 3 /* Delete */ ));
                 this.HighPriorityCommonRules = [
                     this.IgnoreBeforeComment, 
                     this.IgnoreAfterLineComment, 
@@ -58882,28 +56800,28 @@ var TypeScript;
                     this.SpaceBetweenStatements, 
                     this.SpaceAfterTryFinally
                 ];
-                this.SpaceAfterComma = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(79 /* CommaToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.NoSpaceAfterComma = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(79 /* CommaToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.SpaceBeforeBinaryOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.Any, Formatting2.Shared.TokenRange.BinaryOperators), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.SpaceAfterBinaryOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.BinaryOperators, Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-                this.NoSpaceBeforeBinaryOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.Any, Formatting2.Shared.TokenRange.BinaryOperators), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */ ));
-                this.NoSpaceAfterBinaryOperator = new Formatting2.Rule(Formatting2.RuleDescriptor.create4(Formatting2.Shared.TokenRange.BinaryOperators, Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */ ));
-                this.SpaceAfterKeywordInControl = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Keywords, 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsControlDeclContext), 1 /* Space */ ));
-                this.NoSpaceAfterKeywordInControl = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Keywords, 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsControlDeclContext), 3 /* Delete */ ));
-                this.FunctionOpenBraceLeftTokenRange = Formatting2.Shared.TokenRange.Any;
-                this.FunctionOpenBraceLeftTokenRange_Js = Formatting2.Shared.TokenRange.FromTokens([
+                this.SpaceAfterComma = new Formatting.Rule(Formatting.RuleDescriptor.create3(79 /* CommaToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.NoSpaceAfterComma = new Formatting.Rule(Formatting.RuleDescriptor.create3(79 /* CommaToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.SpaceBeforeBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.SpaceAfterBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
+                this.NoSpaceBeforeBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */ ));
+                this.NoSpaceAfterBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */ ));
+                this.SpaceAfterKeywordInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Keywords, 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext), 1 /* Space */ ));
+                this.NoSpaceAfterKeywordInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Keywords, 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext), 3 /* Delete */ ));
+                this.FunctionOpenBraceLeftTokenRange = Formatting.Shared.TokenRange.Any;
+                this.FunctionOpenBraceLeftTokenRange_Js = Formatting.Shared.TokenRange.FromTokens([
                     73 /* CloseParenToken */ , 
                     7 /* SingleLineCommentTrivia */ 
                 ]);
-                this.SpaceBeforeOpenBraceInFunction = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
-                this.NewLineBeforeOpenBraceInFunction = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
-                this.TypeScriptOpenBraceLeftTokenRange = Formatting2.Shared.TokenRange.FromTokens([
+                this.SpaceBeforeOpenBraceInFunction = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
+                this.NewLineBeforeOpenBraceInFunction = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
+                this.TypeScriptOpenBraceLeftTokenRange = Formatting.Shared.TokenRange.FromTokens([
                     11 /* IdentifierName */ , 
                     7 /* SingleLineCommentTrivia */ 
                 ]);
-                this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
-                this.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
-                this.ControlOpenBraceLeftTokenRange = Formatting2.Shared.TokenRange.FromTokens([
+                this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
+                this.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
+                this.ControlOpenBraceLeftTokenRange = Formatting.Shared.TokenRange.FromTokens([
                     73 /* CloseParenToken */ , 
                     7 /* SingleLineCommentTrivia */ , 
                     22 /* DoKeyword */ , 
@@ -58911,17 +56829,17 @@ var TypeScript;
                     25 /* FinallyKeyword */ , 
                     23 /* ElseKeyword */ 
                 ]);
-                this.SpaceBeforeOpenBraceInControl = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
-                this.NewLineBeforeOpenBraceInControl = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
-                this.SpaceAfterSemicolonInFor = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(78 /* SemicolonToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 1 /* Space */ ));
-                this.NoSpaceAfterSemicolonInFor = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(78 /* SemicolonToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 3 /* Delete */ ));
-                this.SpaceAfterOpenParen = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(72 /* OpenParenToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.SpaceBeforeCloseParen = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 73 /* CloseParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-                this.NoSpaceBetweenParens = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(72 /* OpenParenToken */ , 73 /* CloseParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceAfterOpenParen = new Formatting2.Rule(Formatting2.RuleDescriptor.create3(72 /* OpenParenToken */ , Formatting2.Shared.TokenRange.Any), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.NoSpaceBeforeCloseParen = new Formatting2.Rule(Formatting2.RuleDescriptor.create2(Formatting2.Shared.TokenRange.Any, 73 /* CloseParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-                this.SpaceAfterAnonymousFunctionKeyword = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(27 /* FunctionKeyword */ , 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */ ));
-                this.NoSpaceAfterAnonymousFunctionKeyword = new Formatting2.Rule(Formatting2.RuleDescriptor.create1(27 /* FunctionKeyword */ , 72 /* OpenParenToken */ ), Formatting2.RuleOperation.create2(new Formatting2.RuleOperationContext(Rules.IsFunctionDeclContext), 3 /* Delete */ ));
+                this.SpaceBeforeOpenBraceInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
+                this.NewLineBeforeOpenBraceInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
+                this.SpaceAfterSemicolonInFor = new Formatting.Rule(Formatting.RuleDescriptor.create3(78 /* SemicolonToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 1 /* Space */ ));
+                this.NoSpaceAfterSemicolonInFor = new Formatting.Rule(Formatting.RuleDescriptor.create3(78 /* SemicolonToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 3 /* Delete */ ));
+                this.SpaceAfterOpenParen = new Formatting.Rule(Formatting.RuleDescriptor.create3(72 /* OpenParenToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.SpaceBeforeCloseParen = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 73 /* CloseParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
+                this.NoSpaceBetweenParens = new Formatting.Rule(Formatting.RuleDescriptor.create1(72 /* OpenParenToken */ , 73 /* CloseParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceAfterOpenParen = new Formatting.Rule(Formatting.RuleDescriptor.create3(72 /* OpenParenToken */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.NoSpaceBeforeCloseParen = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 73 /* CloseParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
+                this.SpaceAfterAnonymousFunctionKeyword = new Formatting.Rule(Formatting.RuleDescriptor.create1(27 /* FunctionKeyword */ , 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */ ));
+                this.NoSpaceAfterAnonymousFunctionKeyword = new Formatting.Rule(Formatting.RuleDescriptor.create1(27 /* FunctionKeyword */ , 72 /* OpenParenToken */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 3 /* Delete */ ));
             }
             Rules.prototype.getRuleName = function (rule) {
                 var o = this;
@@ -59109,13 +57027,13 @@ var TypeScript;
             };
             return Rules;
         })();
-        Formatting2.Rules = Rules;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.Rules = Rules;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var RulesMap = (function () {
             function RulesMap() {
                 this.map = [];
@@ -59145,7 +57063,7 @@ var TypeScript;
             };
             RulesMap.prototype.FillRule = function (rule, rulesBucketConstructionStateList) {
                 var _this = this;
-                var specificRule = rule.Descriptor.LeftTokenRange != Formatting2.Shared.TokenRange.Any && rule.Descriptor.RightTokenRange != Formatting2.Shared.TokenRange.Any;
+                var specificRule = rule.Descriptor.LeftTokenRange != Formatting.Shared.TokenRange.Any && rule.Descriptor.RightTokenRange != Formatting.Shared.TokenRange.Any;
                 rule.Descriptor.LeftTokenRange.GetTokens().forEach(function (left) {
                     rule.Descriptor.RightTokenRange.GetTokens().forEach(function (right) {
                         var rulesBucketIndex = _this.GetRuleBucketIndex(left, right);
@@ -59172,7 +57090,7 @@ var TypeScript;
             };
             return RulesMap;
         })();
-        Formatting2.RulesMap = RulesMap;        
+        Formatting.RulesMap = RulesMap;        
         var MaskBitSize = 5;
         var Mask = 0x1f;
         (function (RulesPosition) {
@@ -59183,8 +57101,8 @@ var TypeScript;
             RulesPosition.ContextRulesAny = MaskBitSize * 3;
             RulesPosition.NoContextRulesSpecific = MaskBitSize * 4;
             RulesPosition.NoContextRulesAny = MaskBitSize * 5;
-        })(Formatting2.RulesPosition || (Formatting2.RulesPosition = {}));
-        var RulesPosition = Formatting2.RulesPosition;
+        })(Formatting.RulesPosition || (Formatting.RulesPosition = {}));
+        var RulesPosition = Formatting.RulesPosition;
         var RulesBucketConstructionState = (function () {
             function RulesBucketConstructionState() {
                 this.rulesInsertionIndexBitmap = 0;
@@ -59210,7 +57128,7 @@ var TypeScript;
             };
             return RulesBucketConstructionState;
         })();
-        Formatting2.RulesBucketConstructionState = RulesBucketConstructionState;        
+        Formatting.RulesBucketConstructionState = RulesBucketConstructionState;        
         var RulesBucket = (function () {
             function RulesBucket() {
                 this.rules = [];
@@ -59237,17 +57155,17 @@ var TypeScript;
             };
             return RulesBucket;
         })();
-        Formatting2.RulesBucket = RulesBucket;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.RulesBucket = RulesBucket;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var RulesProvider = (function () {
             function RulesProvider(logger) {
                 this.logger = logger;
-                this.globalRules = new Formatting2.Rules();
+                this.globalRules = new Formatting.Rules();
             }
             RulesProvider.prototype.getRuleName = function (rule) {
                 return this.globalRules.getRuleName(rule);
@@ -59257,7 +57175,7 @@ var TypeScript;
             };
             RulesProvider.prototype.setActiveRules = function (staticList) {
                 this.activeRules = staticList;
-                this.rulesMap = Formatting2.RulesMap.create(this.activeRules);
+                this.rulesMap = Formatting.RulesMap.create(this.activeRules);
             };
             RulesProvider.prototype.getActiveRules = function () {
                 return this.activeRules;
@@ -59272,7 +57190,7 @@ var TypeScript;
                         return _this.createActiveRules(options);
                     });
                     var rulesMap = TypeScript.timeFunction(this.logger, "RulesProvider: RulesMap.create()", function () {
-                        return Formatting2.RulesMap.create(activeRules);
+                        return Formatting.RulesMap.create(activeRules);
                     });
                     this.activeRules = activeRules;
                     this.rulesMap = rulesMap;
@@ -59334,13 +57252,13 @@ var TypeScript;
             };
             return RulesProvider;
         })();
-        Formatting2.RulesProvider = RulesProvider;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.RulesProvider = RulesProvider;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var TextEditInfo = (function () {
             function TextEditInfo(position, length, replaceWith) {
                 this.position = position;
@@ -59356,13 +57274,13 @@ var TypeScript;
             };
             return TextEditInfo;
         })();
-        Formatting2.TextEditInfo = TextEditInfo;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.TextEditInfo = TextEditInfo;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         (function (Shared) {
             var TokenRangeAccess = (function () {
                 function TokenRangeAccess(from, to, except) {
@@ -59515,14 +57433,14 @@ var TypeScript;
                 return TokenRange;
             })();
             Shared.TokenRange = TokenRange;            
-        })(Formatting2.Shared || (Formatting2.Shared = {}));
-        var Shared = Formatting2.Shared;
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        })(Formatting.Shared || (Formatting.Shared = {}));
+        var Shared = Formatting.Shared;
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var TokenSpan = (function (_super) {
             __extends(TokenSpan, _super);
             function TokenSpan(kind, start, length) {
@@ -59534,13 +57452,13 @@ var TypeScript;
             };
             return TokenSpan;
         })(TypeScript.TextSpan);
-        Formatting2.TokenSpan = TokenSpan;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.TokenSpan = TokenSpan;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var IndentationNodeContext = (function () {
             function IndentationNodeContext(parent, node, fullStart, indentationLevel, childIndentationLevelDelta) {
                 this.update(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
@@ -59596,13 +57514,13 @@ var TypeScript;
             };
             return IndentationNodeContext;
         })();
-        Formatting2.IndentationNodeContext = IndentationNodeContext;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.IndentationNodeContext = IndentationNodeContext;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var IndentationNodeContextPool = (function () {
             function IndentationNodeContextPool() {
                 this.nodes = [];
@@ -59613,7 +57531,7 @@ var TypeScript;
                     cachedNode.update(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
                     return cachedNode;
                 }
-                return new Formatting2.IndentationNodeContext(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
+                return new Formatting.IndentationNodeContext(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
             };
             IndentationNodeContextPool.prototype.releaseNode = function (node, recursive) {
                 if (typeof recursive === "undefined") { recursive = false; }
@@ -59627,20 +57545,20 @@ var TypeScript;
             };
             return IndentationNodeContextPool;
         })();
-        Formatting2.IndentationNodeContextPool = IndentationNodeContextPool;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.IndentationNodeContextPool = IndentationNodeContextPool;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var IndentationTrackingWalker = (function (_super) {
             __extends(IndentationTrackingWalker, _super);
             function IndentationTrackingWalker(textSpan, sourceUnit, snapshot, indentFirstToken) {
                 _super.call(this);
                 this._position = 0;
                 this._parent = null;
-                this._indentationNodeContextPool = new Formatting2.IndentationNodeContextPool();
+                this._indentationNodeContextPool = new Formatting.IndentationNodeContextPool();
                 this._textSpan = textSpan;
                 this._snapshot = snapshot;
                 this._parent = this._indentationNodeContextPool.getNode(null, sourceUnit, 0, 0, 0);
@@ -59790,13 +57708,13 @@ var TypeScript;
             };
             return IndentationTrackingWalker;
         })(TypeScript.SyntaxWalker);
-        Formatting2.IndentationTrackingWalker = IndentationTrackingWalker;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        Formatting.IndentationTrackingWalker = IndentationTrackingWalker;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var MultipleTokenIndenter = (function (_super) {
             __extends(MultipleTokenIndenter, _super);
             function MultipleTokenIndenter(textSpan, sourceUnit, snapshot, indentFirstToken, options) {
@@ -59822,7 +57740,7 @@ var TypeScript;
                 return this._edits;
             };
             MultipleTokenIndenter.prototype.recordEdit = function (position, length, replaceWith) {
-                this._edits.push(new Formatting2.TextEditInfo(position, length, replaceWith));
+                this._edits.push(new Formatting.TextEditInfo(position, length, replaceWith));
             };
             MultipleTokenIndenter.prototype.recordIndentationEditsForToken = function (token, indentationString, commentIndentationString) {
                 var position = this.position();
@@ -59901,14 +57819,14 @@ var TypeScript;
                 this.recordEdit(fullStart, firstNonWhitespacePosition, indentationString);
             };
             return MultipleTokenIndenter;
-        })(Formatting2.IndentationTrackingWalker);
-        Formatting2.MultipleTokenIndenter = MultipleTokenIndenter;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        })(Formatting.IndentationTrackingWalker);
+        Formatting.MultipleTokenIndenter = MultipleTokenIndenter;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var SingleTokenIndenter = (function (_super) {
             __extends(SingleTokenIndenter, _super);
             function SingleTokenIndenter(indentationPosition, sourceUnit, snapshot, indentFirstToken, options) {
@@ -59930,14 +57848,14 @@ var TypeScript;
                 }
             };
             return SingleTokenIndenter;
-        })(Formatting2.IndentationTrackingWalker);
-        Formatting2.SingleTokenIndenter = SingleTokenIndenter;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        })(Formatting.IndentationTrackingWalker);
+        Formatting.SingleTokenIndenter = SingleTokenIndenter;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (Formatting2) {
+    (function (Formatting) {
         var Formatter = (function (_super) {
             __extends(Formatter, _super);
             function Formatter(textSpan, sourceUnit, indentFirstToken, options, snapshot, rulesProvider, formattingRequestKind) {
@@ -59948,7 +57866,7 @@ var TypeScript;
                 this.previousTokenParent = this.parent().clone(this.indentationNodeContextPool());
                 this.rulesProvider = rulesProvider;
                 this.formattingRequestKind = formattingRequestKind;
-                this.formattingContext = new Formatting2.FormattingContext(this.snapshot(), this.formattingRequestKind);
+                this.formattingContext = new Formatting.FormattingContext(this.snapshot(), this.formattingRequestKind);
             }
             Formatter.getEdits = function getEdits(textSpan, sourceUnit, options, indentFirstToken, snapshot, rulesProvider, formattingRequestKind) {
                 var walker = new Formatter(textSpan, sourceUnit, indentFirstToken, options, snapshot, rulesProvider, formattingRequestKind);
@@ -59971,7 +57889,7 @@ var TypeScript;
                     position += token.leadingTriviaWidth();
                 }
                 if (token.kind() !== 10 /* EndOfFileToken */ ) {
-                    var currentTokenSpan = new Formatting2.TokenSpan(token.kind(), position, token.width());
+                    var currentTokenSpan = new Formatting.TokenSpan(token.kind(), position, token.width());
                     if (this.previousTokenSpan) {
                         this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
                     }
@@ -59991,7 +57909,7 @@ var TypeScript;
                 for(var i = 0, n = triviaList.count(); i < n; i++) {
                     var trivia = triviaList.syntaxTriviaAt(i);
                     if (trivia.isComment()) {
-                        var currentTokenSpan = new Formatting2.TokenSpan(trivia.kind(), position, trivia.fullWidth());
+                        var currentTokenSpan = new Formatting.TokenSpan(trivia.kind(), position, trivia.fullWidth());
                         if (this.previousTokenSpan) {
                             this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
                         }
@@ -60151,5717 +58069,11 @@ var TypeScript;
                 }
             };
             return Formatter;
-        })(Formatting2.MultipleTokenIndenter);
-        Formatting2.Formatter = Formatter;        
-    })(TypeScript.Formatting2 || (TypeScript.Formatting2 = {}));
-    var Formatting2 = TypeScript.Formatting2;
+        })(Formatting.MultipleTokenIndenter);
+        Formatting.Formatter = Formatter;        
+    })(TypeScript.Formatting || (TypeScript.Formatting = {}));
+    var Formatting = TypeScript.Formatting;
 })(TypeScript || (TypeScript = {}));
-var Services;
-(function (Services) {
-    var OutliningElementsCollector = (function (_super) {
-        __extends(OutliningElementsCollector, _super);
-        function OutliningElementsCollector() {
-            _super.call(this, OutliningElementsCollector.MaximumDepth);
-            this.elements = [];
-        }
-        OutliningElementsCollector.MaximumDepth = 10;
-        OutliningElementsCollector.prototype.visitClassDeclaration = function (node) {
-            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
-            _super.prototype.visitClassDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitInterfaceDeclaration = function (node) {
-            this.addOutlineRange(node, node.body, node.body);
-            _super.prototype.visitInterfaceDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitModuleDeclaration = function (node) {
-            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
-            _super.prototype.visitModuleDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitEnumDeclaration = function (node) {
-            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
-            _super.prototype.visitEnumDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitFunctionDeclaration = function (node) {
-            this.addOutlineRange(node, node.block, node.block);
-            _super.prototype.visitFunctionDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitFunctionExpression = function (node) {
-            this.addOutlineRange(node, node.block, node.block);
-            _super.prototype.visitFunctionExpression.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitConstructorDeclaration = function (node) {
-            this.addOutlineRange(node, node.block, node.block);
-            _super.prototype.visitConstructorDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitMemberFunctionDeclaration = function (node) {
-            this.addOutlineRange(node, node.block, node.block);
-            _super.prototype.visitMemberFunctionDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitGetMemberAccessorDeclaration = function (node) {
-            this.addOutlineRange(node, node.block, node.block);
-            _super.prototype.visitGetMemberAccessorDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.visitSetMemberAccessorDeclaration = function (node) {
-            this.addOutlineRange(node, node.block, node.block);
-            _super.prototype.visitSetMemberAccessorDeclaration.call(this, node);
-        };
-        OutliningElementsCollector.prototype.addOutlineRange = function (node, startElement, endElement) {
-            if (startElement && endElement) {
-                var start = this.position() + TypeScript.Syntax.childOffset(node, startElement);
-                var end = this.position() + TypeScript.Syntax.childOffset(node, endElement) + endElement.leadingTriviaWidth() + endElement.width();
-                this.elements.push(TypeScript.TextSpan.fromBounds(start, end));
-            }
-        };
-        OutliningElementsCollector.collectElements = function collectElements(node) {
-            var collector = new OutliningElementsCollector();
-            node.accept(collector);
-            return collector.elements;
-        };
-        return OutliningElementsCollector;
-    })(TypeScript.DepthLimitedWalker);
-    Services.OutliningElementsCollector = OutliningElementsCollector;    
-})(Services || (Services = {}));
-var Services;
-(function (Services) {
-    var BraceMatcher = (function () {
-        function BraceMatcher() { }
-        BraceMatcher.getMatchSpans = function getMatchSpans(syntaxTree, position) {
-            var result = [];
-            var currentToken = syntaxTree.sourceUnit().findToken(position);
-            BraceMatcher.getMatchingCloseBrace(currentToken, position, result);
-            BraceMatcher.getMatchingOpenBrace(currentToken, position, result);
-            return result;
-        };
-        BraceMatcher.getMatchingCloseBrace = function getMatchingCloseBrace(currentToken, position, result) {
-            if (currentToken.start() === position) {
-                var closingBraceKind = BraceMatcher.getMatchingCloseBraceTokenKind(currentToken);
-                if (closingBraceKind !== null) {
-                    var parentElement = currentToken.parentElement();
-                    var currentPosition = currentToken.parent().fullStart();
-                    for(var i = 0, n = parentElement.childCount(); i < n; i++) {
-                        var element = parentElement.childAt(i);
-                        if (element !== null && element.fullWidth() > 0) {
-                            if (element.kind() === closingBraceKind) {
-                                var range1 = new TypeScript.TextSpan(position, currentToken.token().width());
-                                var range2 = new TypeScript.TextSpan(currentPosition + element.leadingTriviaWidth(), element.width());
-                                result.push(range1, range2);
-                                break;
-                            }
-                            currentPosition += element.fullWidth();
-                        }
-                    }
-                }
-            }
-        };
-        BraceMatcher.getMatchingOpenBrace = function getMatchingOpenBrace(currentToken, position, result) {
-            if (currentToken.fullStart() === position) {
-                currentToken = currentToken.previousToken();
-            }
-            if (currentToken !== null && currentToken.start() === (position - 1)) {
-                var openBraceKind = BraceMatcher.getMatchingOpenBraceTokenKind(currentToken);
-                if (openBraceKind !== null) {
-                    var parentElement = currentToken.parentElement();
-                    var currentPosition = currentToken.parent().fullStart() + parentElement.fullWidth();
-                    for(var i = parentElement.childCount() - 1; i >= 0; i--) {
-                        var element = parentElement.childAt(i);
-                        if (element !== null && element.fullWidth() > 0) {
-                            if (element.kind() === openBraceKind) {
-                                var range1 = new TypeScript.TextSpan(position - 1, currentToken.token().width());
-                                var range2 = new TypeScript.TextSpan(currentPosition - element.trailingTriviaWidth() - element.width(), element.width());
-                                result.push(range1, range2);
-                                break;
-                            }
-                            currentPosition -= element.fullWidth();
-                        }
-                    }
-                }
-            }
-        };
-        BraceMatcher.getMatchingCloseBraceTokenKind = function getMatchingCloseBraceTokenKind(positionedElement) {
-            var element = positionedElement !== null && positionedElement.element();
-            switch(element.kind()) {
-                case 70 /* OpenBraceToken */ :
-                    return 71 /* CloseBraceToken */ ;
-                case 72 /* OpenParenToken */ :
-                    return 73 /* CloseParenToken */ ;
-                case 74 /* OpenBracketToken */ :
-                    return 75 /* CloseBracketToken */ ;
-                case 80 /* LessThanToken */ :
-                    return TypeScript.SyntaxUtilities.isAngleBracket(positionedElement) ? 81 /* GreaterThanToken */  : null;
-            }
-            return null;
-        };
-        BraceMatcher.getMatchingOpenBraceTokenKind = function getMatchingOpenBraceTokenKind(positionedElement) {
-            var element = positionedElement !== null && positionedElement.element();
-            switch(element.kind()) {
-                case 71 /* CloseBraceToken */ :
-                    return 70 /* OpenBraceToken */ ;
-                case 73 /* CloseParenToken */ :
-                    return 72 /* OpenParenToken */ ;
-                case 75 /* CloseBracketToken */ :
-                    return 74 /* OpenBracketToken */ ;
-                case 81 /* GreaterThanToken */ :
-                    return TypeScript.SyntaxUtilities.isAngleBracket(positionedElement) ? 80 /* LessThanToken */  : null;
-            }
-            return null;
-        };
-        return BraceMatcher;
-    })();
-    Services.BraceMatcher = BraceMatcher;    
-})(Services || (Services = {}));
-var Services;
-(function (Services) {
-    var SyntaxNodeSerializer = (function (_super) {
-        __extends(SyntaxNodeSerializer, _super);
-        function SyntaxNodeSerializer() {
-            _super.apply(this, arguments);
-
-            this.position = 0;
-            this.level = 0;
-            this.serializedAST = "";
-        }
-        SyntaxNodeSerializer.prototype.visitToken = function (token) {
-            this.position += token.fullWidth();
-            _super.prototype.visitToken.call(this, token);
-        };
-        SyntaxNodeSerializer.prototype.visitNode = function (node) {
-            this.logNode(node);
-            this.level++;
-            _super.prototype.visitNode.call(this, node);
-            this.level--;
-        };
-        SyntaxNodeSerializer.prototype.getNodeKindName = function (node) {
-            return (TypeScript.SyntaxKind)._map[node.kind()];
-        };
-        SyntaxNodeSerializer.prototype.getNodeName = function (node) {
-            return node.identifier && node.identifier() ? node.identifier().value() : null;
-        };
-        SyntaxNodeSerializer.prototype.logNode = function (node) {
-            var start = this.position + node.leadingTriviaWidth();
-            var end = this.position + node.leadingTriviaWidth() + node.width();
-            var name = this.getNodeName(node);
-            var indent = this.level * 2;
-            var msg = this.addPadding("", indent, "| ", true);
-            msg = msg.concat("+ " + this.getNodeKindName(node));
-            if (name) {
-                msg = msg.concat(" " + name);
-            }
-            msg = this.addPadding(msg, 70, " ", false);
-            msg = msg.concat("[" + this.addPadding(start.toString(), 1, " ", true) + ", " + this.addPadding(end.toString(), 1, " ", true) + "]");
-            msg = msg.concat("\r\n");
-            this.serializedAST += msg;
-        };
-        SyntaxNodeSerializer.prototype.addPadding = function (s, targetLength, paddingString, leftPadding) {
-            var result = (leftPadding ? "" : s);
-            for(var i = s.length; i < targetLength; i++) {
-                result = result + paddingString;
-            }
-            result = result + (leftPadding ? s : "");
-            return result;
-        };
-        SyntaxNodeSerializer.serialize = function serialize(node) {
-            var serializer = new SyntaxNodeSerializer();
-            node.accept(serializer);
-            return serializer.serializedAST;
-        };
-        return SyntaxNodeSerializer;
-    })(TypeScript.SyntaxWalker);
-    Services.SyntaxNodeSerializer = SyntaxNodeSerializer;    
-})(Services || (Services = {}));
-var Services;
-(function (Services) {
-    var Indenter = (function () {
-        function Indenter() { }
-        Indenter.getIndentation = function getIndentation(node, soruceText, position, editorOptions) {
-            var indentation = 0;
-            var currentToken = node.findToken(position);
-            var currentNode = currentToken;
-            if (currentToken.token().kind() === 10 /* EndOfFileToken */ ) {
-                currentNode = currentToken.previousToken();
-            } else if (Indenter.belongsToBracket(soruceText, currentToken, position)) {
-                currentNode = currentToken.parent();
-            }
-            if (currentNode === null) {
-                return indentation;
-            }
-            if (currentNode.kind() === 14 /* StringLiteral */  || currentNode.kind() === 12 /* RegularExpressionLiteral */ ) {
-                return indentation;
-            }
-            var currentElement = currentNode.element();
-            var parent = currentNode.parent();
-            while(parent !== null) {
-                if (parent.fullStart() !== currentNode.fullStart()) {
-                    if (Indenter.isInContainerNode(parent.element(), currentElement)) {
-                        indentation += editorOptions.IndentSize;
-                    } else {
-                        var listIndentation = Indenter.getCustomListIndentation(parent.element(), currentElement);
-                        if (listIndentation !== -1) {
-                            return indentation + listIndentation;
-                        }
-                    }
-                }
-                currentNode = parent;
-                currentElement = parent.element();
-                parent = parent.parent();
-            }
-            return indentation;
-        };
-        Indenter.belongsToBracket = function belongsToBracket(sourceText, token, position) {
-            switch(token.token().kind()) {
-                case 70 /* OpenBraceToken */ :
-                case 71 /* CloseBraceToken */ :
-                case 72 /* OpenParenToken */ :
-                case 73 /* CloseParenToken */ :
-                case 74 /* OpenBracketToken */ :
-                case 75 /* CloseBracketToken */ :
-                    if (position < token.start()) {
-                        var text = sourceText.getText(position, token.start());
-                        for(var i = 0; i < text.length; i++) {
-                            if (TypeScript.CharacterInfo.isLineTerminator(text.charCodeAt(i))) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-            }
-            return false;
-        };
-        Indenter.isInContainerNode = function isInContainerNode(parent, element) {
-            switch(parent.kind()) {
-                case 130 /* ClassDeclaration */ :
-                case 129 /* ModuleDeclaration */ :
-                case 131 /* EnumDeclaration */ :
-                case 132 /* ImportDeclaration */ :
-                case 144 /* Block */ :
-                case 149 /* SwitchStatement */ :
-                case 232 /* CaseSwitchClause */ :
-                case 233 /* DefaultSwitchClause */ :
-                    return true;
-                case 122 /* ObjectType */ :
-                    return true;
-                case 127 /* InterfaceDeclaration */ :
-                    return element.kind() !== 122 /* ObjectType */ ;
-                case 128 /* FunctionDeclaration */ :
-                case 134 /* MemberFunctionDeclaration */ :
-                case 137 /* GetMemberAccessorDeclaration */ :
-                case 138 /* SetMemberAccessorDeclaration */ :
-                case 245 /* GetAccessorPropertyAssignment */ :
-                case 246 /* SetAccessorPropertyAssignment */ :
-                case 220 /* FunctionExpression */ :
-                case 235 /* CatchClause */ :
-                case 236 /* FinallyClause */ :
-                case 128 /* FunctionDeclaration */ :
-                case 136 /* ConstructorDeclaration */ :
-                case 152 /* ForStatement */ :
-                case 153 /* ForInStatement */ :
-                case 156 /* WhileStatement */ :
-                case 159 /* DoStatement */ :
-                case 161 /* WithStatement */ :
-                case 145 /* IfStatement */ :
-                case 234 /* ElseClause */ :
-                    return element.kind() !== 144 /* Block */ ;
-                case 157 /* TryStatement */ :
-                    return false;
-                default:
-                    return parent.isNode() && (parent).isStatement();
-            }
-        };
-        Indenter.getCustomListIndentation = function getCustomListIndentation(list, element) {
-            switch(list.kind()) {
-                case 2 /* SeparatedList */ :
-                    for(var i = 0, n = list.childCount(); i < n; i++) {
-                        var child = list.childAt(i);
-                        if (child !== null && child === element) {
-                            return Indenter.getListItemIndentation(list, i - 1);
-                        }
-                    }
-                    break;
-                case 224 /* ArgumentList */ :
-                    var argumentList = list;
-                    var arguments = argumentList.arguments;
-                    if (arguments !== null && argumentList.closeParenToken === element) {
-                        return Indenter.getListItemIndentation(arguments, arguments.childCount() - 1);
-                    }
-                    break;
-                case 225 /* ParameterList */ :
-                    var parameterList = list;
-                    var parameters = parameterList.parameters;
-                    if (parameters !== null && parameterList.closeParenToken === element) {
-                        return Indenter.getListItemIndentation(parameters, parameters.childCount() - 1);
-                    }
-                    break;
-                case 226 /* TypeArgumentList */ :
-                    var typeArgumentList = list;
-                    var typeArguments = typeArgumentList.typeArguments;
-                    if (typeArguments !== null && typeArgumentList.greaterThanToken === element) {
-                        return Indenter.getListItemIndentation(typeArguments, typeArguments.childCount() - 1);
-                    }
-                    break;
-                case 227 /* TypeParameterList */ :
-                    var typeParameterList = list;
-                    var typeParameters = typeParameterList.typeParameters;
-                    if (typeParameters !== null && typeParameterList.greaterThanToken === element) {
-                        return Indenter.getListItemIndentation(typeParameters, typeParameters.childCount() - 1);
-                    }
-                    break;
-            }
-            return -1;
-        };
-        Indenter.getListItemIndentation = function getListItemIndentation(list, elementIndex) {
-            for(var i = elementIndex; i > 0; i--) {
-                var child = list.childAt(i);
-                var previousChild = list.childAt(i - 1);
-                if ((child !== null && child.leadingTrivia().hasNewLine()) || (previousChild !== null && previousChild.trailingTrivia().hasNewLine())) {
-                    return child.leadingTriviaWidth();
-                }
-            }
-            return -1;
-        };
-        return Indenter;
-    })();
-    Services.Indenter = Indenter;    
-})(Services || (Services = {}));
-var Services;
-(function (Services) {
-    function copyDataObject(dst, src) {
-        for(var e in dst) {
-            if (typeof dst[e] == "object") {
-                copyDataObject(dst[e], src[e]);
-            } else if (typeof dst[e] != "function") {
-                dst[e] = src[e];
-            }
-        }
-        return dst;
-    }
-    Services.copyDataObject = copyDataObject;
-    function compareDataObjects(dst, src) {
-        for(var e in dst) {
-            if (typeof dst[e] == "object") {
-                if (!compareDataObjects(dst[e], src[e])) {
-                    return false;
-                }
-            } else if (typeof dst[e] != "function") {
-                if (dst[e] !== src[e]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    Services.compareDataObjects = compareDataObjects;
-    var TypeScriptServicesFactory = (function () {
-        function TypeScriptServicesFactory() {
-            this._shims = [];
-        }
-        TypeScriptServicesFactory.prototype.createLanguageService = function (host) {
-            try  {
-                return new Services.LanguageService(host);
-            } catch (err) {
-                Services.logInternalError(host, err);
-                throw err;
-            }
-        };
-        TypeScriptServicesFactory.prototype.createPullLanguageService = function (host) {
-            try  {
-                return new Services.PullLanguageService(host);
-            } catch (err) {
-                Services.logInternalError(host, err);
-                throw err;
-            }
-        };
-        TypeScriptServicesFactory.prototype.createLanguageServiceShim = function (host) {
-            try  {
-                var hostAdapter = new Services.LanguageServiceShimHostAdapter(host);
-                var pullLanguageService = this.createPullLanguageService(hostAdapter);
-                var languageService = null;
-                var hostSettings = hostAdapter.getHostSettings();
-                if (hostSettings && hostSettings.usePullLanguageService) {
-                    languageService = pullLanguageService;
-                } else {
-                    languageService = this.createLanguageService(hostAdapter);
-                }
-                var shim = new Services.LanguageServiceShim(host, languageService, pullLanguageService);
-                this._shims.push(shim);
-                return shim;
-            } catch (err) {
-                Services.logInternalError(host, err);
-                throw err;
-            }
-        };
-        TypeScriptServicesFactory.prototype.createClassifier = function (host) {
-            try  {
-                return new Services.Classifier(host);
-            } catch (err) {
-                Services.logInternalError(host, err);
-                throw err;
-            }
-        };
-        TypeScriptServicesFactory.prototype.createClassifierShim = function (host) {
-            try  {
-                var shim = new Services.ClassifierShim(host);
-                this._shims.push(shim);
-                return shim;
-            } catch (err) {
-                Services.logInternalError(host, err);
-                throw err;
-            }
-        };
-        TypeScriptServicesFactory.prototype.createCoreServices = function (host) {
-            try  {
-                return new Services.CoreServices(host);
-            } catch (err) {
-                Services.logInternalError(host.logger, err);
-                throw err;
-            }
-        };
-        TypeScriptServicesFactory.prototype.createCoreServicesShim = function (host) {
-            try  {
-                var shim = new Services.CoreServicesShim(host);
-                this._shims.push(shim);
-                return shim;
-            } catch (err) {
-                Services.logInternalError(host.logger, err);
-                throw err;
-            }
-        };
-        TypeScriptServicesFactory.prototype.close = function () {
-            this._shims = [];
-        };
-        return TypeScriptServicesFactory;
-    })();
-    Services.TypeScriptServicesFactory = TypeScriptServicesFactory;    
-})(Services || (Services = {}));
-var Formatting;
-(function (Formatting) {
-    var SnapshotSpan = (function () {
-        function SnapshotSpan(snapshot, span) {
-            this.snapshot = snapshot;
-            this.span = span;
-            this._startPoint = null;
-            this._endPoint = null;
-        }
-        SnapshotSpan.prototype.start = function () {
-            if (this._startPoint == null) {
-                this._startPoint = new SnapshotPoint(this.snapshot, this.span.start());
-            }
-            return this._startPoint;
-        };
-        SnapshotSpan.prototype.end = function () {
-            if (this._endPoint == null) {
-                this._endPoint = new SnapshotPoint(this.snapshot, this.span.end());
-            }
-            return this._endPoint;
-        };
-        SnapshotSpan.prototype.startPosition = function () {
-            return this.span.start();
-        };
-        SnapshotSpan.prototype.endPosition = function () {
-            return this.span.end();
-        };
-        SnapshotSpan.prototype.GetText = function () {
-            return this.snapshot.GetText(this.span);
-        };
-        SnapshotSpan.prototype.IsEmpty = function () {
-            return this.span.length() === 0;
-        };
-        SnapshotSpan.prototype.OverlapsWith = function (spanArg) {
-            return this.span.OverlapsWith(spanArg);
-        };
-        SnapshotSpan.prototype.Intersection = function (simpleSpan) {
-            var nullable = this.span.Intersection(simpleSpan);
-            if (nullable !== null) {
-                return new SnapshotSpan(this.snapshot, nullable);
-            }
-            return null;
-        };
-        return SnapshotSpan;
-    })();
-    Formatting.SnapshotSpan = SnapshotSpan;    
-    var SnapshotPoint = (function () {
-        function SnapshotPoint(snapshot, position) {
-            this.snapshot = snapshot;
-            this.position = position;
-        }
-        SnapshotPoint.prototype.GetContainingLine = function () {
-            return this.snapshot.GetLineFromPosition(this.position);
-        };
-        SnapshotPoint.prototype.Add = function (offset) {
-            return new SnapshotPoint(this.snapshot, this.position + offset);
-        };
-        return SnapshotPoint;
-    })();
-    Formatting.SnapshotPoint = SnapshotPoint;    
-    var FileAuthoringProxy = (function () {
-        function FileAuthoringProxy(scriptSyntaxAST) {
-            this.scriptSyntaxAST = scriptSyntaxAST;
-        }
-        FileAuthoringProxy.prototype.GetASTCursor = function () {
-            return new AuthorParseNodeCursor(this);
-        };
-        return FileAuthoringProxy;
-    })();
-    Formatting.FileAuthoringProxy = FileAuthoringProxy;    
-    var AuthorParseNodeCursor = (function () {
-        function AuthorParseNodeCursor(fileAuthoringProxy) {
-            this.fileAuthoringProxy = fileAuthoringProxy;
-            this.logger = this.fileAuthoringProxy.scriptSyntaxAST.getLogger();
-            this.path = new TypeScript.AstPath();
-        }
-        AuthorParseNodeCursor.prototype.fixupPath = function (newPath) {
-            var temp = new TypeScript.AstPath();
-            for(var i = 0; i < newPath.count(); i++) {
-                temp.push(newPath.asts[i]);
-                if (temp.isBodyOfCase()) {
-                    var fakeBlock = this.mapBodyOfCase(temp.ast());
-                    var previousBody = temp.pop();
-                    temp.push(fakeBlock);
-                    temp.push(previousBody);
-                }
-            }
-            return temp;
-        };
-        AuthorParseNodeCursor.prototype.mapNodeType = function (path) {
-            var nodeType = path.ast().nodeType;
-            var mapList = function () {
-                if (path.isBodyOfScript() || path.isBodyOfModule() || path.isBodyOfClass() || path.isBodyOfInterface() || path.isBodyOfFor() || path.isBodyOfForIn() || path.isBodyOfWhile() || path.isBodyOfDoWhile() || path.isBodyOfTry() || path.isBodyOfCatch() || path.isBodyOfFinally() || path.isBodyOfFunction() || path.isBodyOfWith() || path.isBodyOfSwitch() || false) {
-                    return 87 /* apnkBlock */ ;
-                } else {
-                    return 75 /* apnkList */ ;
-                }
-            };
-            switch(nodeType) {
-                case 0 /* None */ :
-                    return 0 /* apnkEmptyNode */ ;
-                case 1 /* Empty */ :
-                    return 11 /* apnkEmpty */ ;
-                case 2 /* EmptyExpr */ :
-                    return 0 /* apnkEmptyNode */ ;
-                case 3 /* True */ :
-                    return 10 /* apnkTrue */ ;
-                case 4 /* False */ :
-                    return 9 /* apnkFalse */ ;
-                case 5 /* This */ :
-                    return 7 /* apnkThis */ ;
-                case 6 /* Super */ :
-                    return 7 /* apnkThis */ ;
-                case 7 /* QString */ :
-                    return 5 /* apnkStr */ ;
-                case 8 /* Regex */ :
-                    return 6 /* apnkRegExp */ ;
-                case 9 /* Null */ :
-                    return 8 /* apnkNull */ ;
-                case 10 /* ArrayLit */ :
-                    return 26 /* apnkArray */ ;
-                case 11 /* ObjectLit */ :
-                    return 27 /* apnkObject */ ;
-                case 12 /* Void */ :
-                    return 8 /* apnkNull */ ;
-                case 13 /* Comma */ :
-                    return 51 /* apnkComma */ ;
-                case 14 /* Pos */ :
-                    return 17 /* apnkPos */ ;
-                case 15 /* Neg */ :
-                    return 16 /* apnkNeg */ ;
-                case 16 /* Delete */ :
-                    return 25 /* apnkDelete */ ;
-                case 17 /* Await */ :
-                    return 11 /* apnkEmpty */ ;
-                case 18 /* In */ :
-                    return 48 /* apnkIn */ ;
-                case 19 /* Dot */ :
-                    return 45 /* apnkDot */ ;
-                case 20 /* From */ :
-                    return 11 /* apnkEmpty */ ;
-                case 21 /* Is */ :
-                    return 11 /* apnkEmpty */ ;
-                case 22 /* InstOf */ :
-                    return 47 /* apnkInstOf */ ;
-                case 23 /* Typeof */ :
-                    return 23 /* apnkTypeof */ ;
-                case 24 /* NumberLit */ :
-                    return 3 /* apnkInt */ ;
-                case 25 /* Name */ :
-                    return 2 /* apnkName */ ;
-                case 28 /* TypeRef */ :
-                    return 11 /* apnkEmpty */ ;
-                case 29 /* Index */ :
-                    return 58 /* apnkIndex */ ;
-                case 30 /* Call */ :
-                    return 44 /* apnkCall */ ;
-                case 31 /* New */ :
-                    return 57 /* apnkNew */ ;
-                case 32 /* Asg */ :
-                    return 46 /* apnkAsg */ ;
-                case 33 /* AsgAdd */ :
-                    return 60 /* apnkAsgAdd */ ;
-                case 34 /* AsgSub */ :
-                    return 63 /* apnkAsgDiv */ ;
-                case 35 /* AsgDiv */ :
-                    return 62 /* apnkAsgMul */ ;
-                case 36 /* AsgMul */ :
-                    return 62 /* apnkAsgMul */ ;
-                case 37 /* AsgMod */ :
-                    return 64 /* apnkAsgMod */ ;
-                case 38 /* AsgAnd */ :
-                    return 65 /* apnkAsgAnd */ ;
-                case 39 /* AsgXor */ :
-                    return 66 /* apnkAsgXor */ ;
-                case 40 /* AsgOr */ :
-                    return 67 /* apnkAsgOr */ ;
-                case 41 /* AsgLsh */ :
-                    return 68 /* apnkAsgLsh */ ;
-                case 42 /* AsgRsh */ :
-                    return 69 /* apnkAsgRsh */ ;
-                case 43 /* AsgRs2 */ :
-                    return 70 /* apnkAsgRs2 */ ;
-                case 44 /* ConditionalExpression */ :
-                    return 59 /* apnkQmark */ ;
-                case 45 /* LogOr */ :
-                    return 52 /* apnkLogOr */ ;
-                case 46 /* LogAnd */ :
-                    return 53 /* apnkLogAnd */ ;
-                case 47 /* Or */ :
-                    return 35 /* apnkOr */ ;
-                case 48 /* Xor */ :
-                    return 36 /* apnkXor */ ;
-                case 49 /* And */ :
-                    return 37 /* apnkAnd */ ;
-                case 50 /* Eq */ :
-                    return 38 /* apnkEq */ ;
-                case 51 /* Ne */ :
-                    return 39 /* apnkNe */ ;
-                case 52 /* Eqv */ :
-                    return 49 /* apnkEqv */ ;
-                case 53 /* NEqv */ :
-                    return 50 /* apnkNEqv */ ;
-                case 54 /* Lt */ :
-                    return 40 /* apnkLt */ ;
-                case 55 /* Le */ :
-                    return 41 /* apnkLe */ ;
-                case 56 /* Gt */ :
-                    return 43 /* apnkGt */ ;
-                case 57 /* Ge */ :
-                    return 42 /* apnkGe */ ;
-                case 58 /* Add */ :
-                    return 30 /* apnkAdd */ ;
-                case 59 /* Sub */ :
-                    return 31 /* apnkSub */ ;
-                case 60 /* Mul */ :
-                    return 32 /* apnkMul */ ;
-                case 61 /* Div */ :
-                    return 33 /* apnkDiv */ ;
-                case 62 /* Mod */ :
-                    return 34 /* apnkMod */ ;
-                case 63 /* Lsh */ :
-                    return 54 /* apnkLsh */ ;
-                case 64 /* Rsh */ :
-                    return 55 /* apnkRsh */ ;
-                case 65 /* Rs2 */ :
-                    return 56 /* apnkRs2 */ ;
-                case 66 /* Not */ :
-                    return 15 /* apnkNot */ ;
-                case 67 /* LogNot */ :
-                    return 18 /* apnkLogNot */ ;
-                case 68 /* IncPre */ :
-                    return 21 /* apnkIncPre */ ;
-                case 69 /* DecPre */ :
-                    return 22 /* apnkDecPre */ ;
-                case 70 /* IncPost */ :
-                    return 19 /* apnkIncPost */ ;
-                case 71 /* DecPost */ :
-                    return 20 /* apnkDecPost */ ;
-                case 72 /* TypeAssertion */ :
-                    return 11 /* apnkEmpty */ ;
-                case 73 /* FuncDecl */ :
-                    return 78 /* apnkFncDecl */ ;
-                case 74 /* Member */ :
-                    return 72 /* apnkMember */ ;
-                case 75 /* VarDecl */ :
-                    return 76 /* apnkVarDecl */ ;
-                case 76 /* ArgDecl */ :
-                    return 76 /* apnkVarDecl */ ;
-                case 77 /* Return */ :
-                    return 96 /* apnkReturn */ ;
-                case 78 /* Break */ :
-                    return 89 /* apnkBreak */ ;
-                case 79 /* Continue */ :
-                    return 90 /* apnkContinue */ ;
-                case 80 /* Throw */ :
-                    return 98 /* apnkThrow */ ;
-                case 81 /* For */ :
-                    return 82 /* apnkFor */ ;
-                case 82 /* ForIn */ :
-                    return 86 /* apnkForIn */ ;
-                case 83 /* If */ :
-                    return 83 /* apnkIf */ ;
-                case 84 /* While */ :
-                    return 84 /* apnkWhile */ ;
-                case 85 /* DoWhile */ :
-                    return 85 /* apnkDoWhile */ ;
-                case 86 /* Block */ :
-                    return (path.ast()).isStatementBlock ? 87 /* apnkBlock */  : 104 /* apnkVarDeclList */ ;
-                case 87 /* Case */ :
-                    return 93 /* apnkCase */ ;
-                case 88 /* Switch */ :
-                    return 92 /* apnkSwitch */ ;
-                case 89 /* Try */ :
-                    return 97 /* apnkTry */ ;
-                case 90 /* TryCatch */ :
-                    return 94 /* apnkTryCatch */ ;
-                case 91 /* TryFinally */ :
-                    return 100 /* apnkTryFinally */ ;
-                case 92 /* Finally */ :
-                    return 99 /* apnkFinally */ ;
-                case 93 /* Catch */ :
-                    return 95 /* apnkCatch */ ;
-                case 94 /* List */ :
-                    return mapList();
-                case 95 /* Script */ :
-                    return 79 /* apnkProg */ ;
-                case 96 /* ClassDeclaration */ :
-                    return 11 /* apnkEmpty */ ;
-                case 97 /* InterfaceDeclaration */ :
-                    return 11 /* apnkEmpty */ ;
-                case 98 /* ModuleDeclaration */ :
-                    return 11 /* apnkEmpty */ ;
-                case 99 /* ImportDeclaration */ :
-                    return 11 /* apnkEmpty */ ;
-                case 101 /* With */ :
-                    return 88 /* apnkWith */ ;
-                case 102 /* Label */ :
-                    return 91 /* apnkLabel */ ;
-                case 103 /* LabeledStatement */ :
-                    return 91 /* apnkLabel */ ;
-                case 104 /* EBStart */ :
-                    return 11 /* apnkEmpty */ ;
-                case 105 /* GotoEB */ :
-                    return 11 /* apnkEmpty */ ;
-                case 106 /* EndCode */ :
-                    return 80 /* apnkEndCode */ ;
-                case 107 /* Error */ :
-                    return 11 /* apnkEmpty */ ;
-                case 108 /* Comment */ :
-                    return 11 /* apnkEmpty */ ;
-                case 109 /* Debugger */ :
-                    return 81 /* apnkDebugger */ ;
-                default:
-                    throw new Error("Invalid node kind: " + nodeType);
-            }
-        };
-        AuthorParseNodeCursor.prototype.mapNodeFlags = function (path) {
-            var result = 0 /* apnfNone */ ;
-            if (path.isSynthesizedBlock()) {
-                result = result | 256 /* apnfSyntheticNode */ ;
-            }
-            return result;
-        };
-        AuthorParseNodeCursor.prototype.getDetails = function (path) {
-            var ast = path.ast();
-            var result = new AuthorParseNodeDetails();
-            if (path.isListOfObjectLit()) {
-                if (!path.parent().isParenthesized) {
-                    Formatting.Debug.Assert(path.parent().minChar == path.ast().minChar, "Assumption about AST minChar position is not verified");
-                    Formatting.Debug.Assert(path.parent().limChar == path.ast().limChar, "Assumption about AST limChar position is not verified");
-                }
-                result.StartOffset = ast.minChar + 1;
-                result.EndOffset = ast.limChar - 1;
-            } else {
-                result.StartOffset = ast.minChar;
-                result.EndOffset = ast.limChar;
-            }
-            result.Flags = this.mapNodeFlags(path);
-            result.Kind = this.mapNodeType(path);
-            result.nodeType = ast.nodeType;
-            result.ast = ast;
-            return result;
-        };
-        AuthorParseNodeCursor.prototype.getEdgeLabel = function (path) {
-            if (path.isBodyOfScript() || path.isBodyOfModule() || path.isBodyOfClass() || path.isBodyOfInterface() || path.isBodyOfFunction() || path.isBodyOfFor() || path.isBodyOfForIn() || path.isBodyOfWhile() || path.isBodyOfDoWhile() || path.isBodyOfWith() || path.isBodyOfSwitch() || this.isBodyOfCase(path) || path.isBodyOfTry() || path.isBodyOfCatch() || path.isBodyOfFinally()) {
-                return 9 /* apneBody */ ;
-            }
-            if (path.isThenOfIf()) {
-                return 5 /* apneThen */ ;
-            }
-            if (path.isElseOfIf()) {
-                return 6 /* apneElse */ ;
-            }
-            if (path.isBodyOfBlock() || this.isBodyOfBlock(path)) {
-                return 10 /* apneBlockBody */ ;
-            }
-            if (path.isDefaultCaseOfSwitch()) {
-                return 22 /* apneDefaultCase */ ;
-            }
-            if (path.isCaseOfSwitch()) {
-                return 21 /* apneCase */ ;
-            }
-            if (path.isListOfObjectLit()) {
-                return 15 /* apneMembers */ ;
-            }
-            if (path.isListOfArrayLit()) {
-                return 23 /* apneElements */ ;
-            }
-            if (path.isMemberOfMember()) {
-                return 25 /* apneMember */ ;
-            }
-            if (path.isTargetOfMember()) {
-                return 12 /* apneTarget */ ;
-            }
-            if (path.isArgumentOfFunction()) {
-                return 13 /* apneArgument */ ;
-            }
-            if (path.isItemOfList()) {
-                return 24 /* apneListItem */ ;
-            }
-            return 0 /* apneNone */ ;
-        };
-        AuthorParseNodeCursor.prototype.getEmptyNodeDetails = function () {
-            var result = new AuthorParseNodeDetails();
-            result.StartOffset = 0;
-            result.EndOffset = 0;
-            result.Flags = 0 /* apnfNone */ ;
-            result.Kind = 0 /* apnkEmptyNode */ ;
-            result.nodeType = 1 /* Empty */ ;
-            result.ast = null;
-            return result;
-        };
-        AuthorParseNodeCursor.prototype.getAstPath = function (position, options) {
-            if (typeof options === "undefined") { options = 0 /* Default */ ; }
-            var path = this.fileAuthoringProxy.scriptSyntaxAST.getAstPathToPosition(position, options);
-            while(path.count() >= 1 && this.skipNode(path)) {
-                path.up();
-            }
-            return path;
-        };
-        AuthorParseNodeCursor.prototype.moveToParent = function (path) {
-            while(path.count() >= 1) {
-                path.up();
-                if (!this.skipNode(path)) {
-                    break;
-                }
-            }
-        };
-        AuthorParseNodeCursor.prototype.getAuthorParseNodeDetails = function (path) {
-            if (path.count() === 0) {
-                return this.getEmptyNodeDetails();
-            } else {
-                return this.getDetails(path);
-            }
-        };
-        AuthorParseNodeCursor.prototype.Current = function () {
-            return this.getAuthorParseNodeDetails(this.path);
-        };
-        AuthorParseNodeCursor.prototype.Parent = function () {
-            var temp = this.path.clone();
-            this.moveToParent(temp);
-            return this.getAuthorParseNodeDetails(temp);
-        };
-        AuthorParseNodeCursor.prototype.MoveToChild = function (edgeLabel, index) {
-            var _this = this;
-            var pushIfNotNull = function (node) {
-                if (node != null) {
-                    _this.path.push(node);
-                    return _this.getAuthorParseNodeDetails(_this.path);
-                } else {
-                    return _this.getEmptyNodeDetails();
-                }
-            };
-            if (this.path.count() >= 1) {
-                var ast = this.path.ast();
-                switch(ast.nodeType) {
-                    case 10 /* ArrayLit */ :
- {
-                            switch(edgeLabel) {
-                                case 23 /* apneElements */ :
-                                    return pushIfNotNull((ast).operand);
-                            }
-                        }
-                        break;
-                }
-            }
-            var empty = new TypeScript.AST(1 /* Empty */ );
-            this.path.push(empty);
-            return this.getAuthorParseNodeDetails(this.path);
-        };
-        AuthorParseNodeCursor.prototype.MoveUp = function () {
-            this.moveToParent(this.path);
-            return this.getAuthorParseNodeDetails(this.path);
-        };
-        AuthorParseNodeCursor.prototype.SeekToOffset = function (offset, excludeEndOffset) {
-            var newPath = this.getAstPath(offset, excludeEndOffset ? 0 /* Default */  : 1 /* EdgeInclusive */ );
-            this.path = this.fixupPath(newPath);
-            if (this.path.count() == 0) {
-                return null;
-            }
-            return this.getDetails(this.path);
-        };
-        AuthorParseNodeCursor.prototype.MoveToEnclosingNode = function (startOffset, endOffset) {
-            if (startOffset > endOffset) {
-                throw new Error("Invalid offsets");
-            }
-            var start = this.getAstPath(startOffset);
-            var end = this.getAstPath(endOffset - 1);
-            if (start.count() == 0 || end.count() == 0) {
-                throw new Error("No nodes enclosing span");
-            }
-            var startIndex = 0;
-            var endIndex = 0;
-            while(startIndex < start.count() && endIndex < end.count()) {
-                if (start.get(startIndex) !== end.get(endIndex)) {
-                    break;
-                }
-                startIndex++;
-                endIndex++;
-            }
-            start.top = startIndex - 1;
-            while(this.skipNode(start)) {
-                start.up();
-            }
-            this.path = this.fixupPath(start);
-            return this.getDetails(this.path);
-        };
-        AuthorParseNodeCursor.prototype.skipNode = function (path) {
-            return path.isBodyOfSwitch() || path.isTopLevelImplicitModule() || path.isBodyOfTopLevelImplicitModule() || (path.isBodyOfBlock() && path.isSingleStatementList()) || (path.isBodyOfCase() && path.isSingleStatementList()) || (path.isArgumentListOfFunction());
-        };
-        AuthorParseNodeCursor.prototype.mapAstNode = function (path, depth) {
-            if (!TypeScript.isValidAstNode(path.ast())) {
-                return null;
-            }
-            if (this.skipNode(path)) {
-                return null;
-            }
-            var result = new AuthorParseNode();
-            result.Details = this.getDetails(path);
-            result.Level = depth;
-            result.Label = 0;
-            result.Name = 0;
-            result.EdgeLabel = this.getEdgeLabel(path);
-            return result;
-        };
-        AuthorParseNodeCursor.prototype.isBodyOfBlock = function (path) {
-            var result = false;
-            if (path.count() >= 2) {
-                if (path.ast().nodeType == 94 /* List */  && !path.isSingleStatementList() && path.isBodyOfCase()) {
-                    result = true;
-                }
-                path.up();
-                if (path.ast().nodeType == 94 /* List */  && path.isSingleStatementList() && path.isBodyOfCase()) {
-                    result = true;
-                }
-                path.down();
-            }
-            return result;
-        };
-        AuthorParseNodeCursor.prototype.isBodyOfCase = function (path) {
-            var asts = path.asts;
-            var top = path.top;
-            return path.count() >= 2 && asts[top - 1].nodeType === 87 /* Case */  && asts[top - 0].nodeType === 86 /* Block */  && (asts[top - 1]).body == (asts[top - 0]).statements;
-        };
-        AuthorParseNodeCursor.prototype.mapBodyOfCase = function (body) {
-            var fakeBlock = new TypeScript.Block(body, false);
-            fakeBlock.minChar = body.minChar;
-            fakeBlock.limChar = body.limChar;
-            return fakeBlock;
-        };
-        AuthorParseNodeCursor.prototype.GetSubTree = function (depth) {
-            var _this = this;
-            if (this.path.count() == 0) {
-                return new AuthorParseNodeSet([]);
-            }
-            var context = {
-                path: new TypeScript.AstPath(),
-                nodes: [],
-                curDepth: 0,
-                curDepths: []
-            };
-            var pre = function (cur, parent, walker) {
-                context.curDepths.push(context.curDepth);
-                context.path.push(cur);
-                if (context.path.isBodyOfCase()) {
-                    var fakeBlock = _this.mapBodyOfCase(cur);
-                    var previousBody = context.path.pop();
-                    context.path.push(fakeBlock);
-                    context.nodes.push(_this.mapAstNode(context.path, context.curDepth));
-                    context.curDepth++;
-                    context.path.pop();
-                    context.path.push(previousBody);
-                }
-                var node = _this.mapAstNode(context.path, context.curDepth);
-                if (node !== null) {
-                    context.nodes.push(node);
-                    context.curDepth++;
-                }
-                walker.options.goChildren = (depth < 0 || context.curDepth <= depth);
-                return cur;
-            };
-            var post = function (cur, parent, walker) {
-                context.curDepth = context.curDepths.pop();
-                context.path.pop();
-                return cur;
-            };
-            TypeScript.getAstWalkerFactory().walk(this.path.ast(), pre, post);
-            if (this.logger.information()) {
-                this.logger.log("getSubTree(" + depth + ")");
-                for(var i = 0; i < context.nodes.length; i++) {
-                    var authorNode = context.nodes[i];
-                    var text = authorNode.Level + ": " + (AuthorParseNodeKind)._map[authorNode.Details.Kind] + " - " + (TypeScript.NodeType)._map[authorNode.Details.nodeType] + "(" + (AuthorParseNodeEdge)._map[authorNode.EdgeLabel] + ")" + "(" + authorNode.Details.StartOffset + "," + authorNode.Details.EndOffset + ")" + " -- F:(" + authorNode.Details.Flags + ")";
-                    this.logger.log(text);
-                }
-            }
-            return new AuthorParseNodeSet(context.nodes);
-        };
-        AuthorParseNodeCursor.prototype.GetNodeProperty = function (nodeProperty) {
-            var bod;
-            if (this.path.count() == 0) {
-                return 0;
-            }
-            var authorNode = this.mapAstNode(this.path, 0);
-            if (authorNode.Details.ast === null) {
-                return 0;
-            }
-            switch(authorNode.Details.ast.nodeType) {
-                case 73 /* FuncDecl */ :
- {
-                        var funcDecl = (authorNode.Details.ast);
-                        bod = funcDecl.bod;
-                        switch(nodeProperty) {
-                            case 7 /* apnpFunctionKeywordMin */ :
-                                return funcDecl.minChar;
-                            case 0 /* apnpLCurlyMin */ :
-                                if (bod !== null && bod.minChar > 0) {
-                                    return bod.minChar;
-                                } else {
-                                    return 0;
-                                }
-                            case 1 /* apnpRCurlyMin */ :
-                                if (bod !== null && bod.limChar > 0) {
-                                    return bod.limChar - 1;
-                                } else {
-                                    return 0;
-                                }
-                            case 3 /* apnpRParenMin */ :
-                                if (funcDecl.arguments != null && funcDecl.arguments.limChar > 0) {
-                                    return funcDecl.arguments.limChar - 1;
-                                }
-                        }
-                    }
-                    break;
-                case 96 /* ClassDeclaration */ :
- {
-                        var classDecl = authorNode.Details.ast;
-                        bod = classDecl.members;
-                        switch(nodeProperty) {
-                            case 0 /* apnpLCurlyMin */ :
-                                if (bod !== null) {
-                                    return bod.minChar;
-                                } else {
-                                    return 0;
-                                }
-                            case 1 /* apnpRCurlyMin */ :
-                                if (bod !== null) {
-                                    return bod.limChar - 1;
-                                } else {
-                                    return 0;
-                                }
-                        }
-                    }
-                    break;
-            }
-            if (this.logger.warning()) {
-                this.logger.log("NYI:GetNodeProperty " + "(nodeType=" + (TypeScript.NodeType)._map[authorNode.Details.ast.nodeType] + ", " + "propperty= " + (AuthorParseNodeProperty)._map[nodeProperty] + ")");
-            }
-            return 0;
-        };
-        AuthorParseNodeCursor.prototype.GetEdgeLabel = function () {
-            return this.mapAstNode(this.path, 0).EdgeLabel;
-        };
-        return AuthorParseNodeCursor;
-    })();
-    Formatting.AuthorParseNodeCursor = AuthorParseNodeCursor;    
-    var TextSnapshot = (function () {
-        function TextSnapshot(script, sourceText) {
-            this.script = script;
-            this.sourceText = sourceText;
-            this.lines = [];
-        }
-        TextSnapshot.prototype.GetText = function (span) {
-            return this.sourceText.getText(span.start(), span.end());
-        };
-        TextSnapshot.prototype.GetLineNumberFromPosition = function (position) {
-            return this.script.locationInfo.lineMap.getLineNumberFromPosition(position);
-        };
-        TextSnapshot.prototype.GetLineFromPosition = function (position) {
-            var lineNumber = this.GetLineNumberFromPosition(position);
-            return this.GetLineFromLineNumber(lineNumber);
-        };
-        TextSnapshot.prototype.GetLineFromLineNumber = function (lineNumber) {
-            var line = this.lines[lineNumber];
-            if (line === undefined) {
-                line = this.GetLineFromLineNumberWorker(lineNumber);
-                this.lines[lineNumber] = line;
-            }
-            return line;
-        };
-        TextSnapshot.prototype.GetLineFromLineNumberWorker = function (lineNumber) {
-            var lineMap = this.script.locationInfo.lineMap;
-            var lineMapIndex = lineNumber;
-            var lineStarts = lineMap.lineStarts();
-            if (lineMapIndex < 0 || lineMapIndex >= lineStarts.length) {
-                throw new Error("invalid line number (" + lineMapIndex + ")");
-            }
-            var start = lineMap.getLineStartPosition(lineMapIndex);
-            var end;
-            var endIncludingLineBreak;
-            var lineBreak = "";
-            if (lineMapIndex == lineStarts.length) {
-                end = endIncludingLineBreak = this.sourceText.getLength();
-            } else {
-                endIncludingLineBreak = (lineMapIndex >= lineStarts.length - 1 ? this.sourceText.getLength() : lineStarts[lineMapIndex + 1]);
-                for(var p = endIncludingLineBreak - 1; p >= start; p--) {
-                    var c = this.sourceText.getText(p, p + 1);
-                    if (c != "\r" && c != "\n") {
-                        break;
-                    }
-                }
-                end = p + 1;
-                lineBreak = this.sourceText.getText(end, endIncludingLineBreak);
-            }
-            var result = new TextSnapshotLine(this, lineNumber, start, end, lineBreak);
-            return result;
-        };
-        return TextSnapshot;
-    })();
-    Formatting.TextSnapshot = TextSnapshot;    
-    var TextSnapshotLine = (function () {
-        function TextSnapshotLine(_snapshot, _lineNumber, _start, _end, _lineBreak) {
-            this._snapshot = _snapshot;
-            this._lineNumber = _lineNumber;
-            this._start = _start;
-            this._end = _end;
-            this._lineBreak = _lineBreak;
-        }
-        TextSnapshotLine.prototype.snapshot = function () {
-            return this._snapshot;
-        };
-        TextSnapshotLine.prototype.start = function () {
-            return new SnapshotPoint(this._snapshot, this._start);
-        };
-        TextSnapshotLine.prototype.startPosition = function () {
-            return this._start;
-        };
-        TextSnapshotLine.prototype.end = function () {
-            return new SnapshotPoint(this._snapshot, this._end);
-        };
-        TextSnapshotLine.prototype.endPosition = function () {
-            return this._end;
-        };
-        TextSnapshotLine.prototype.endIncludingLineBreak = function () {
-            return new SnapshotPoint(this._snapshot, this._end + this._lineBreak.length);
-        };
-        TextSnapshotLine.prototype.endIncludingLineBreakPosition = function () {
-            return this._end + this._lineBreak.length;
-        };
-        TextSnapshotLine.prototype.length = function () {
-            return this._end - this._start;
-        };
-        TextSnapshotLine.prototype.lineNumber = function () {
-            return this._lineNumber;
-        };
-        TextSnapshotLine.prototype.getText = function () {
-            return this._snapshot.GetText(Span.FromBounds(this._start, this._end));
-        };
-        return TextSnapshotLine;
-    })();
-    Formatting.TextSnapshotLine = TextSnapshotLine;    
-    var Span = (function () {
-        function Span(_start, _length) {
-            this._start = _start;
-            this._length = _length;
-            if (this._start < 0) {
-                throw new Error("Invalid start value");
-            }
-            if (this._length < 0) {
-                throw new Error("Invalid length value");
-            }
-        }
-        Span.prototype.start = function () {
-            return this._start;
-        };
-        Span.prototype.end = function () {
-            return this._start + this._length;
-        };
-        Span.prototype.length = function () {
-            return this._length;
-        };
-        Span.prototype.Intersection = function (span) {
-            var start = Math.Max(this.start(), span.start());
-            var end = Math.Min(this.end(), span.end());
-            if (start <= end) {
-                return Span.FromBounds(start, end);
-            }
-            return null;
-        };
-        Span.prototype.OverlapsWith = function (span) {
-            var num = Math.Max(this.start(), span.start());
-            var num2 = Math.Min(this.end(), span.end());
-            return (num < num2);
-        };
-        Span.prototype.Contains = function (span) {
-            return ((span.start() >= this.start()) && (span.end() <= this.end()));
-        };
-        Span.FromBounds = function FromBounds(start, end) {
-            return new Span(start, end - start);
-        };
-        return Span;
-    })();
-    Formatting.Span = Span;    
-    var ListEnumerator = (function () {
-        function ListEnumerator(list) {
-            this.list = list;
-            this.index = -1;
-        }
-        ListEnumerator.prototype.MoveNext = function () {
-            if (this.index < this.list.count() - 1) {
-                this.index++;
-                return true;
-            }
-            return false;
-        };
-        ListEnumerator.prototype.Current = function () {
-            return this.list.get(this.index);
-        };
-        return ListEnumerator;
-    })();
-    Formatting.ListEnumerator = ListEnumerator;    
-    var List = (function () {
-        function List() {
-            this.items = List.empty;
-        }
-        List.empty = [];
-        List.prototype.copyOnWrite = function () {
-            if (this.items === List.empty) {
-                this.items = [];
-            }
-        };
-        List.prototype.count = function () {
-            return this.items.length;
-        };
-        List.prototype.get = function (index) {
-            var result = this.items[index];
-            if (result === undefined) {
-                throw new Error("Invalid list index " + index + " (valid range is 0 to " + (this.items.length - 1) + ")");
-            }
-            return result;
-        };
-        List.prototype.add = function (item) {
-            if (item === undefined) {
-                throw new Error("Cannot add an undefined value in a list");
-            }
-            this.copyOnWrite();
-            this.items.push(item);
-        };
-        List.prototype.addAll = function (range) {
-            var _this = this;
-            range.forEach(function (item) {
-                _this.add(item);
-            });
-        };
-        List.prototype.insert = function (index, item) {
-            if (item === undefined) {
-                throw new Error("Cannot add an undefined value in a list");
-            }
-            if (index < 0 || index > this.items.length) {
-                throw new Error("Invalid index when inserting into array" + " (valid range is 0 to " + this.items.length + ")");
-            }
-            this.copyOnWrite();
-            this.items.splice(index, 0, item);
-        };
-        List.prototype.contains = function (item) {
-            var found = false;
-            this.foreach(function (i) {
-                if (i === item) {
-                    found = true;
-                }
-            });
-            return found;
-        };
-        List.prototype.foreach = function (action) {
-            var list = this;
-            for(var i = 0, len = list.count(); i < len; i++) {
-                action(list.get(i));
-            }
-        };
-        List.prototype.GetEnumerator = function () {
-            return new ListEnumerator(this);
-        };
-        List.prototype.Where = function (pred) {
-            var result = new List();
-            this.foreach(function (item) {
-                if (pred(item)) {
-                    result.add(item);
-                }
-            });
-            return result;
-        };
-        return List;
-    })();
-    Formatting.List = List;    
-    var List_TokenSpan = (function (_super) {
-        __extends(List_TokenSpan, _super);
-        function List_TokenSpan() {
-            _super.apply(this, arguments);
-
-        }
-        List_TokenSpan.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_TokenSpan.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        return List_TokenSpan;
-    })(List);
-    Formatting.List_TokenSpan = List_TokenSpan;    
-    var List_AuthorTokenKind = (function (_super) {
-        __extends(List_AuthorTokenKind, _super);
-        function List_AuthorTokenKind() {
-            _super.apply(this, arguments);
-
-        }
-        List_AuthorTokenKind.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_AuthorTokenKind.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        return List_AuthorTokenKind;
-    })(List);
-    Formatting.List_AuthorTokenKind = List_AuthorTokenKind;    
-    var List_IndentationInfo = (function (_super) {
-        __extends(List_IndentationInfo, _super);
-        function List_IndentationInfo() {
-            _super.apply(this, arguments);
-
-        }
-        List_IndentationInfo.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_IndentationInfo.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        return List_IndentationInfo;
-    })(List);
-    Formatting.List_IndentationInfo = List_IndentationInfo;    
-    var List_IndentationEditInfo = (function (_super) {
-        __extends(List_IndentationEditInfo, _super);
-        function List_IndentationEditInfo() {
-            _super.apply(this, arguments);
-
-        }
-        List_IndentationEditInfo.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_IndentationEditInfo.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        return List_IndentationEditInfo;
-    })(List);
-    Formatting.List_IndentationEditInfo = List_IndentationEditInfo;    
-    var List_ParseNode = (function (_super) {
-        __extends(List_ParseNode, _super);
-        function List_ParseNode() {
-            _super.apply(this, arguments);
-
-        }
-        List_ParseNode.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_ParseNode.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        return List_ParseNode;
-    })(List);
-    Formatting.List_ParseNode = List_ParseNode;    
-    var List_TextEditInfo = (function (_super) {
-        __extends(List_TextEditInfo, _super);
-        function List_TextEditInfo(item) {
-            if (typeof item === "undefined") { item = null; }
-            _super.call(this);
-            if (item != null) {
-                this.add(item);
-            }
-        }
-        List_TextEditInfo.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_TextEditInfo.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        return List_TextEditInfo;
-    })(List);
-    Formatting.List_TextEditInfo = List_TextEditInfo;    
-    var List_Rule = (function (_super) {
-        __extends(List_Rule, _super);
-        function List_Rule() {
-            _super.apply(this, arguments);
-
-        }
-        List_Rule.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_Rule.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        List_Rule.prototype.Add = function (item) {
-            _super.prototype.add.call(this, item);
-        };
-        List_Rule.prototype.AddRange = function (items) {
-            var _this = this;
-            items.forEach(function (item) {
-                _this.Add(item);
-            });
-        };
-        return List_Rule;
-    })(List);
-    Formatting.List_Rule = List_Rule;    
-    var List_ITextSnapshotLine = (function (_super) {
-        __extends(List_ITextSnapshotLine, _super);
-        function List_ITextSnapshotLine() {
-            _super.apply(this, arguments);
-
-        }
-        List_ITextSnapshotLine.prototype.get = function (index) {
-            return _super.prototype.get.call(this, index);
-        };
-        List_ITextSnapshotLine.prototype.foreach = function (action) {
-            _super.prototype.foreach.call(this, action);
-        };
-        return List_ITextSnapshotLine;
-    })(List);
-    Formatting.List_ITextSnapshotLine = List_ITextSnapshotLine;    
-    var Stack = (function () {
-        function Stack() {
-            this.items = [];
-        }
-        Stack.prototype.Count = function () {
-            return this.items.length;
-        };
-        Stack.prototype.Push = function (item) {
-            if (item === undefined) {
-                throw new Error("Cannot add an undefined value in a list");
-            }
-            this.items.push(item);
-        };
-        Stack.prototype.Pop = function () {
-            if (this.items.length === 0) {
-                throw new Error("Cannot pop from an empty stack");
-            }
-            return this.items.pop();
-        };
-        return Stack;
-    })();
-    Formatting.Stack = Stack;    
-    var Stack_ParseNode = (function (_super) {
-        __extends(Stack_ParseNode, _super);
-        function Stack_ParseNode() {
-            _super.apply(this, arguments);
-
-        }
-        Stack_ParseNode.prototype.Pop = function () {
-            return _super.prototype.Pop.call(this);
-        };
-        return Stack_ParseNode;
-    })(Stack);
-    Formatting.Stack_ParseNode = Stack_ParseNode;    
-    function BinarySearch(list, searchValue, comparer) {
-        var low = 0;
-        var high = list.count();
-        while(low < high) {
-            var median = (low + high) >> 1;
-            var compareResult = comparer(searchValue, list.get(median));
-            if (compareResult > 0) {
-                low = median + 1;
-            } else {
-                high = median;
-            }
-        }
-        Debug.Assert(low >= 0 && low <= list.count(), "Incorrect implementation of BinarySearch");
-        if (low == list.count() || comparer(searchValue, list.get(low)) != 0) {
-            return ~low;
-        }
-        return low;
-    }
-    Formatting.BinarySearch = BinarySearch;
-    function FirstOrDefault(list, pred) {
-        for(var i = 0, len = list.count(); i < len; i++) {
-            if (pred(list.get(i))) {
-                return list.get(i);
-            }
-        }
-        return null;
-    }
-    Formatting.FirstOrDefault = FirstOrDefault;
-    function LastOrDefault(list, pred) {
-        for(var len = list.count(), i = len - 1; i >= 0; i--) {
-            if (pred(list.get(i))) {
-                return list.get(i);
-            }
-        }
-        return null;
-    }
-    Formatting.LastOrDefault = LastOrDefault;
-    var AuthorParseNode = (function () {
-        function AuthorParseNode() {
-        }
-        return AuthorParseNode;
-    })();
-    Formatting.AuthorParseNode = AuthorParseNode;    
-    var AuthorParseNodeDetails = (function () {
-        function AuthorParseNodeDetails() {
-        }
-        AuthorParseNodeDetails.prototype.Equals = function (other) {
-            if (other == null) {
-                return false;
-            }
-            return this.Kind == other.Kind && this.nodeType == other.nodeType && this.StartOffset == other.StartOffset && this.EndOffset == other.EndOffset && this.Flags == other.Flags;
-        };
-        return AuthorParseNodeDetails;
-    })();
-    Formatting.AuthorParseNodeDetails = AuthorParseNodeDetails;    
-    (function (AuthorParseNodeFlags) {
-        AuthorParseNodeFlags._map = [];
-        AuthorParseNodeFlags.apnfNone = 0x0000;
-        AuthorParseNodeFlags.apnfSyntheticNode = 0x0100;
-    })(Formatting.AuthorParseNodeFlags || (Formatting.AuthorParseNodeFlags = {}));
-    var AuthorParseNodeFlags = Formatting.AuthorParseNodeFlags;
-    (function (AuthorParseNodeKind) {
-        AuthorParseNodeKind._map = [];
-        AuthorParseNodeKind._map[0] = "apnkEmptyNode";
-        AuthorParseNodeKind.apnkEmptyNode = 0;
-        AuthorParseNodeKind._map[1] = "apnkNone";
-        AuthorParseNodeKind.apnkNone = 1;
-        AuthorParseNodeKind._map[2] = "apnkName";
-        AuthorParseNodeKind.apnkName = 2;
-        AuthorParseNodeKind._map[3] = "apnkInt";
-        AuthorParseNodeKind.apnkInt = 3;
-        AuthorParseNodeKind._map[4] = "apnkFlt";
-        AuthorParseNodeKind.apnkFlt = 4;
-        AuthorParseNodeKind._map[5] = "apnkStr";
-        AuthorParseNodeKind.apnkStr = 5;
-        AuthorParseNodeKind._map[6] = "apnkRegExp";
-        AuthorParseNodeKind.apnkRegExp = 6;
-        AuthorParseNodeKind._map[7] = "apnkThis";
-        AuthorParseNodeKind.apnkThis = 7;
-        AuthorParseNodeKind._map[8] = "apnkNull";
-        AuthorParseNodeKind.apnkNull = 8;
-        AuthorParseNodeKind._map[9] = "apnkFalse";
-        AuthorParseNodeKind.apnkFalse = 9;
-        AuthorParseNodeKind._map[10] = "apnkTrue";
-        AuthorParseNodeKind.apnkTrue = 10;
-        AuthorParseNodeKind._map[11] = "apnkEmpty";
-        AuthorParseNodeKind.apnkEmpty = 11;
-        AuthorParseNodeKind._map[12] = "apnkLdFncSlot";
-        AuthorParseNodeKind.apnkLdFncSlot = 12;
-        AuthorParseNodeKind._map[13] = "apnkArgRef";
-        AuthorParseNodeKind.apnkArgRef = 13;
-        AuthorParseNodeKind._map[14] = "apnkHelperCall3";
-        AuthorParseNodeKind.apnkHelperCall3 = 14;
-        AuthorParseNodeKind._map[15] = "apnkNot";
-        AuthorParseNodeKind.apnkNot = 15;
-        AuthorParseNodeKind._map[16] = "apnkNeg";
-        AuthorParseNodeKind.apnkNeg = 16;
-        AuthorParseNodeKind._map[17] = "apnkPos";
-        AuthorParseNodeKind.apnkPos = 17;
-        AuthorParseNodeKind._map[18] = "apnkLogNot";
-        AuthorParseNodeKind.apnkLogNot = 18;
-        AuthorParseNodeKind._map[19] = "apnkIncPost";
-        AuthorParseNodeKind.apnkIncPost = 19;
-        AuthorParseNodeKind._map[20] = "apnkDecPost";
-        AuthorParseNodeKind.apnkDecPost = 20;
-        AuthorParseNodeKind._map[21] = "apnkIncPre";
-        AuthorParseNodeKind.apnkIncPre = 21;
-        AuthorParseNodeKind._map[22] = "apnkDecPre";
-        AuthorParseNodeKind.apnkDecPre = 22;
-        AuthorParseNodeKind._map[23] = "apnkTypeof";
-        AuthorParseNodeKind.apnkTypeof = 23;
-        AuthorParseNodeKind._map[24] = "apnkVoid";
-        AuthorParseNodeKind.apnkVoid = 24;
-        AuthorParseNodeKind._map[25] = "apnkDelete";
-        AuthorParseNodeKind.apnkDelete = 25;
-        AuthorParseNodeKind._map[26] = "apnkArray";
-        AuthorParseNodeKind.apnkArray = 26;
-        AuthorParseNodeKind._map[27] = "apnkObject";
-        AuthorParseNodeKind.apnkObject = 27;
-        AuthorParseNodeKind._map[28] = "apnkTempRef";
-        AuthorParseNodeKind.apnkTempRef = 28;
-        AuthorParseNodeKind._map[29] = "apnkStFncSlot";
-        AuthorParseNodeKind.apnkStFncSlot = 29;
-        AuthorParseNodeKind._map[30] = "apnkAdd";
-        AuthorParseNodeKind.apnkAdd = 30;
-        AuthorParseNodeKind._map[31] = "apnkSub";
-        AuthorParseNodeKind.apnkSub = 31;
-        AuthorParseNodeKind._map[32] = "apnkMul";
-        AuthorParseNodeKind.apnkMul = 32;
-        AuthorParseNodeKind._map[33] = "apnkDiv";
-        AuthorParseNodeKind.apnkDiv = 33;
-        AuthorParseNodeKind._map[34] = "apnkMod";
-        AuthorParseNodeKind.apnkMod = 34;
-        AuthorParseNodeKind._map[35] = "apnkOr";
-        AuthorParseNodeKind.apnkOr = 35;
-        AuthorParseNodeKind._map[36] = "apnkXor";
-        AuthorParseNodeKind.apnkXor = 36;
-        AuthorParseNodeKind._map[37] = "apnkAnd";
-        AuthorParseNodeKind.apnkAnd = 37;
-        AuthorParseNodeKind._map[38] = "apnkEq";
-        AuthorParseNodeKind.apnkEq = 38;
-        AuthorParseNodeKind._map[39] = "apnkNe";
-        AuthorParseNodeKind.apnkNe = 39;
-        AuthorParseNodeKind._map[40] = "apnkLt";
-        AuthorParseNodeKind.apnkLt = 40;
-        AuthorParseNodeKind._map[41] = "apnkLe";
-        AuthorParseNodeKind.apnkLe = 41;
-        AuthorParseNodeKind._map[42] = "apnkGe";
-        AuthorParseNodeKind.apnkGe = 42;
-        AuthorParseNodeKind._map[43] = "apnkGt";
-        AuthorParseNodeKind.apnkGt = 43;
-        AuthorParseNodeKind._map[44] = "apnkCall";
-        AuthorParseNodeKind.apnkCall = 44;
-        AuthorParseNodeKind._map[45] = "apnkDot";
-        AuthorParseNodeKind.apnkDot = 45;
-        AuthorParseNodeKind._map[46] = "apnkAsg";
-        AuthorParseNodeKind.apnkAsg = 46;
-        AuthorParseNodeKind._map[47] = "apnkInstOf";
-        AuthorParseNodeKind.apnkInstOf = 47;
-        AuthorParseNodeKind._map[48] = "apnkIn";
-        AuthorParseNodeKind.apnkIn = 48;
-        AuthorParseNodeKind._map[49] = "apnkEqv";
-        AuthorParseNodeKind.apnkEqv = 49;
-        AuthorParseNodeKind._map[50] = "apnkNEqv";
-        AuthorParseNodeKind.apnkNEqv = 50;
-        AuthorParseNodeKind._map[51] = "apnkComma";
-        AuthorParseNodeKind.apnkComma = 51;
-        AuthorParseNodeKind._map[52] = "apnkLogOr";
-        AuthorParseNodeKind.apnkLogOr = 52;
-        AuthorParseNodeKind._map[53] = "apnkLogAnd";
-        AuthorParseNodeKind.apnkLogAnd = 53;
-        AuthorParseNodeKind._map[54] = "apnkLsh";
-        AuthorParseNodeKind.apnkLsh = 54;
-        AuthorParseNodeKind._map[55] = "apnkRsh";
-        AuthorParseNodeKind.apnkRsh = 55;
-        AuthorParseNodeKind._map[56] = "apnkRs2";
-        AuthorParseNodeKind.apnkRs2 = 56;
-        AuthorParseNodeKind._map[57] = "apnkNew";
-        AuthorParseNodeKind.apnkNew = 57;
-        AuthorParseNodeKind._map[58] = "apnkIndex";
-        AuthorParseNodeKind.apnkIndex = 58;
-        AuthorParseNodeKind._map[59] = "apnkQmark";
-        AuthorParseNodeKind.apnkQmark = 59;
-        AuthorParseNodeKind._map[60] = "apnkAsgAdd";
-        AuthorParseNodeKind.apnkAsgAdd = 60;
-        AuthorParseNodeKind._map[61] = "apnkAsgSub";
-        AuthorParseNodeKind.apnkAsgSub = 61;
-        AuthorParseNodeKind._map[62] = "apnkAsgMul";
-        AuthorParseNodeKind.apnkAsgMul = 62;
-        AuthorParseNodeKind._map[63] = "apnkAsgDiv";
-        AuthorParseNodeKind.apnkAsgDiv = 63;
-        AuthorParseNodeKind._map[64] = "apnkAsgMod";
-        AuthorParseNodeKind.apnkAsgMod = 64;
-        AuthorParseNodeKind._map[65] = "apnkAsgAnd";
-        AuthorParseNodeKind.apnkAsgAnd = 65;
-        AuthorParseNodeKind._map[66] = "apnkAsgXor";
-        AuthorParseNodeKind.apnkAsgXor = 66;
-        AuthorParseNodeKind._map[67] = "apnkAsgOr";
-        AuthorParseNodeKind.apnkAsgOr = 67;
-        AuthorParseNodeKind._map[68] = "apnkAsgLsh";
-        AuthorParseNodeKind.apnkAsgLsh = 68;
-        AuthorParseNodeKind._map[69] = "apnkAsgRsh";
-        AuthorParseNodeKind.apnkAsgRsh = 69;
-        AuthorParseNodeKind._map[70] = "apnkAsgRs2";
-        AuthorParseNodeKind.apnkAsgRs2 = 70;
-        AuthorParseNodeKind._map[71] = "apnkScope";
-        AuthorParseNodeKind.apnkScope = 71;
-        AuthorParseNodeKind._map[72] = "apnkMember";
-        AuthorParseNodeKind.apnkMember = 72;
-        AuthorParseNodeKind._map[73] = "apnkSetMember";
-        AuthorParseNodeKind.apnkSetMember = 73;
-        AuthorParseNodeKind._map[74] = "apnkGetMember";
-        AuthorParseNodeKind.apnkGetMember = 74;
-        AuthorParseNodeKind._map[75] = "apnkList";
-        AuthorParseNodeKind.apnkList = 75;
-        AuthorParseNodeKind._map[76] = "apnkVarDecl";
-        AuthorParseNodeKind.apnkVarDecl = 76;
-        AuthorParseNodeKind._map[77] = "apnkTemp";
-        AuthorParseNodeKind.apnkTemp = 77;
-        AuthorParseNodeKind._map[78] = "apnkFncDecl";
-        AuthorParseNodeKind.apnkFncDecl = 78;
-        AuthorParseNodeKind._map[79] = "apnkProg";
-        AuthorParseNodeKind.apnkProg = 79;
-        AuthorParseNodeKind._map[80] = "apnkEndCode";
-        AuthorParseNodeKind.apnkEndCode = 80;
-        AuthorParseNodeKind._map[81] = "apnkDebugger";
-        AuthorParseNodeKind.apnkDebugger = 81;
-        AuthorParseNodeKind._map[82] = "apnkFor";
-        AuthorParseNodeKind.apnkFor = 82;
-        AuthorParseNodeKind._map[83] = "apnkIf";
-        AuthorParseNodeKind.apnkIf = 83;
-        AuthorParseNodeKind._map[84] = "apnkWhile";
-        AuthorParseNodeKind.apnkWhile = 84;
-        AuthorParseNodeKind._map[85] = "apnkDoWhile";
-        AuthorParseNodeKind.apnkDoWhile = 85;
-        AuthorParseNodeKind._map[86] = "apnkForIn";
-        AuthorParseNodeKind.apnkForIn = 86;
-        AuthorParseNodeKind._map[87] = "apnkBlock";
-        AuthorParseNodeKind.apnkBlock = 87;
-        AuthorParseNodeKind._map[88] = "apnkWith";
-        AuthorParseNodeKind.apnkWith = 88;
-        AuthorParseNodeKind._map[89] = "apnkBreak";
-        AuthorParseNodeKind.apnkBreak = 89;
-        AuthorParseNodeKind._map[90] = "apnkContinue";
-        AuthorParseNodeKind.apnkContinue = 90;
-        AuthorParseNodeKind._map[91] = "apnkLabel";
-        AuthorParseNodeKind.apnkLabel = 91;
-        AuthorParseNodeKind._map[92] = "apnkSwitch";
-        AuthorParseNodeKind.apnkSwitch = 92;
-        AuthorParseNodeKind._map[93] = "apnkCase";
-        AuthorParseNodeKind.apnkCase = 93;
-        AuthorParseNodeKind._map[94] = "apnkTryCatch";
-        AuthorParseNodeKind.apnkTryCatch = 94;
-        AuthorParseNodeKind._map[95] = "apnkCatch";
-        AuthorParseNodeKind.apnkCatch = 95;
-        AuthorParseNodeKind._map[96] = "apnkReturn";
-        AuthorParseNodeKind.apnkReturn = 96;
-        AuthorParseNodeKind._map[97] = "apnkTry";
-        AuthorParseNodeKind.apnkTry = 97;
-        AuthorParseNodeKind._map[98] = "apnkThrow";
-        AuthorParseNodeKind.apnkThrow = 98;
-        AuthorParseNodeKind._map[99] = "apnkFinally";
-        AuthorParseNodeKind.apnkFinally = 99;
-        AuthorParseNodeKind._map[100] = "apnkTryFinally";
-        AuthorParseNodeKind.apnkTryFinally = 100;
-        AuthorParseNodeKind._map[101] = "apnkStruct";
-        AuthorParseNodeKind.apnkStruct = 101;
-        AuthorParseNodeKind._map[102] = "apnkEnum";
-        AuthorParseNodeKind.apnkEnum = 102;
-        AuthorParseNodeKind._map[103] = "apnkTyped";
-        AuthorParseNodeKind.apnkTyped = 103;
-        AuthorParseNodeKind._map[104] = "apnkVarDeclList";
-        AuthorParseNodeKind.apnkVarDeclList = 104;
-        AuthorParseNodeKind._map[105] = "apnkDefaultCase";
-        AuthorParseNodeKind.apnkDefaultCase = 105;
-    })(Formatting.AuthorParseNodeKind || (Formatting.AuthorParseNodeKind = {}));
-    var AuthorParseNodeKind = Formatting.AuthorParseNodeKind;
-    (function (AuthorTokenKind) {
-        AuthorTokenKind._map = [];
-        AuthorTokenKind._map[0] = "atkEnd";
-        AuthorTokenKind.atkEnd = 0;
-        AuthorTokenKind._map[1] = "atkText";
-        AuthorTokenKind.atkText = 1;
-        AuthorTokenKind._map[2] = "atkIdentifier";
-        AuthorTokenKind.atkIdentifier = 2;
-        AuthorTokenKind._map[3] = "atkComment";
-        AuthorTokenKind.atkComment = 3;
-        AuthorTokenKind._map[4] = "atkNumber";
-        AuthorTokenKind.atkNumber = 4;
-        AuthorTokenKind._map[5] = "atkString";
-        AuthorTokenKind.atkString = 5;
-        AuthorTokenKind._map[6] = "atkRegexp";
-        AuthorTokenKind.atkRegexp = 6;
-        AuthorTokenKind._map[7] = "atkConditionalComp";
-        AuthorTokenKind.atkConditionalComp = 7;
-        AuthorTokenKind._map[8] = "atkScanError";
-        AuthorTokenKind.atkScanError = 8;
-        AuthorTokenKind._map[9] = "atkSColon";
-        AuthorTokenKind.atkSColon = 9;
-        AuthorTokenKind._map[10] = "atkLParen";
-        AuthorTokenKind.atkLParen = 10;
-        AuthorTokenKind._map[11] = "atkRParen";
-        AuthorTokenKind.atkRParen = 11;
-        AuthorTokenKind._map[12] = "atkLBrack";
-        AuthorTokenKind.atkLBrack = 12;
-        AuthorTokenKind._map[13] = "atkRBrack";
-        AuthorTokenKind.atkRBrack = 13;
-        AuthorTokenKind._map[14] = "atkLCurly";
-        AuthorTokenKind.atkLCurly = 14;
-        AuthorTokenKind._map[15] = "atkRCurly";
-        AuthorTokenKind.atkRCurly = 15;
-        AuthorTokenKind._map[16] = "atkComma";
-        AuthorTokenKind.atkComma = 16;
-        AuthorTokenKind._map[17] = "atkArrow";
-        AuthorTokenKind.atkArrow = 17;
-        AuthorTokenKind._map[18] = "atkAsg";
-        AuthorTokenKind.atkAsg = 18;
-        AuthorTokenKind._map[19] = "atkAsgAdd";
-        AuthorTokenKind.atkAsgAdd = 19;
-        AuthorTokenKind._map[20] = "atkAsgSub";
-        AuthorTokenKind.atkAsgSub = 20;
-        AuthorTokenKind._map[21] = "atkAsgMul";
-        AuthorTokenKind.atkAsgMul = 21;
-        AuthorTokenKind._map[22] = "atkAsgDiv";
-        AuthorTokenKind.atkAsgDiv = 22;
-        AuthorTokenKind._map[23] = "atkAsgMod";
-        AuthorTokenKind.atkAsgMod = 23;
-        AuthorTokenKind._map[24] = "atkAsgAnd";
-        AuthorTokenKind.atkAsgAnd = 24;
-        AuthorTokenKind._map[25] = "atkAsgXor";
-        AuthorTokenKind.atkAsgXor = 25;
-        AuthorTokenKind._map[26] = "atkAsgOr";
-        AuthorTokenKind.atkAsgOr = 26;
-        AuthorTokenKind._map[27] = "atkAsgLsh";
-        AuthorTokenKind.atkAsgLsh = 27;
-        AuthorTokenKind._map[28] = "atkAsgRsh";
-        AuthorTokenKind.atkAsgRsh = 28;
-        AuthorTokenKind._map[29] = "atkAsgRs2";
-        AuthorTokenKind.atkAsgRs2 = 29;
-        AuthorTokenKind._map[30] = "atkQMark";
-        AuthorTokenKind.atkQMark = 30;
-        AuthorTokenKind._map[31] = "atkColon";
-        AuthorTokenKind.atkColon = 31;
-        AuthorTokenKind._map[32] = "atkLogOr";
-        AuthorTokenKind.atkLogOr = 32;
-        AuthorTokenKind._map[33] = "atkLogAnd";
-        AuthorTokenKind.atkLogAnd = 33;
-        AuthorTokenKind._map[34] = "atkOr";
-        AuthorTokenKind.atkOr = 34;
-        AuthorTokenKind._map[35] = "atkXor";
-        AuthorTokenKind.atkXor = 35;
-        AuthorTokenKind._map[36] = "atkAnd";
-        AuthorTokenKind.atkAnd = 36;
-        AuthorTokenKind._map[37] = "atkEQ";
-        AuthorTokenKind.atkEQ = 37;
-        AuthorTokenKind._map[38] = "atkNE";
-        AuthorTokenKind.atkNE = 38;
-        AuthorTokenKind._map[39] = "atkEqv";
-        AuthorTokenKind.atkEqv = 39;
-        AuthorTokenKind._map[40] = "atkNEqv";
-        AuthorTokenKind.atkNEqv = 40;
-        AuthorTokenKind._map[41] = "atkLT";
-        AuthorTokenKind.atkLT = 41;
-        AuthorTokenKind._map[42] = "atkLE";
-        AuthorTokenKind.atkLE = 42;
-        AuthorTokenKind._map[43] = "atkGT";
-        AuthorTokenKind.atkGT = 43;
-        AuthorTokenKind._map[44] = "atkGE";
-        AuthorTokenKind.atkGE = 44;
-        AuthorTokenKind._map[45] = "atkLsh";
-        AuthorTokenKind.atkLsh = 45;
-        AuthorTokenKind._map[46] = "atkRsh";
-        AuthorTokenKind.atkRsh = 46;
-        AuthorTokenKind._map[47] = "atkRs2";
-        AuthorTokenKind.atkRs2 = 47;
-        AuthorTokenKind._map[48] = "atkAdd";
-        AuthorTokenKind.atkAdd = 48;
-        AuthorTokenKind._map[49] = "atkSub";
-        AuthorTokenKind.atkSub = 49;
-        AuthorTokenKind._map[50] = "atkMult";
-        AuthorTokenKind.atkMult = 50;
-        AuthorTokenKind._map[51] = "atkDiv";
-        AuthorTokenKind.atkDiv = 51;
-        AuthorTokenKind._map[52] = "atkPct";
-        AuthorTokenKind.atkPct = 52;
-        AuthorTokenKind._map[53] = "atkTilde";
-        AuthorTokenKind.atkTilde = 53;
-        AuthorTokenKind._map[54] = "atkBang";
-        AuthorTokenKind.atkBang = 54;
-        AuthorTokenKind._map[55] = "atkInc";
-        AuthorTokenKind.atkInc = 55;
-        AuthorTokenKind._map[56] = "atkDec";
-        AuthorTokenKind.atkDec = 56;
-        AuthorTokenKind._map[57] = "atkDot";
-        AuthorTokenKind.atkDot = 57;
-        AuthorTokenKind._map[58] = "atkScope";
-        AuthorTokenKind.atkScope = 58;
-        AuthorTokenKind._map[59] = "atkEllipsis";
-        AuthorTokenKind.atkEllipsis = 59;
-        AuthorTokenKind._map[60] = "atkBreak";
-        AuthorTokenKind.atkBreak = 60;
-        AuthorTokenKind._map[61] = "atkCase";
-        AuthorTokenKind.atkCase = 61;
-        AuthorTokenKind._map[62] = "atkCatch";
-        AuthorTokenKind.atkCatch = 62;
-        AuthorTokenKind._map[63] = "atkClass";
-        AuthorTokenKind.atkClass = 63;
-        AuthorTokenKind._map[64] = "atkConst";
-        AuthorTokenKind.atkConst = 64;
-        AuthorTokenKind._map[65] = "atkContinue";
-        AuthorTokenKind.atkContinue = 65;
-        AuthorTokenKind._map[66] = "atkDebugger";
-        AuthorTokenKind.atkDebugger = 66;
-        AuthorTokenKind._map[67] = "atkDefault";
-        AuthorTokenKind.atkDefault = 67;
-        AuthorTokenKind._map[68] = "atkDelete";
-        AuthorTokenKind.atkDelete = 68;
-        AuthorTokenKind._map[69] = "atkDo";
-        AuthorTokenKind.atkDo = 69;
-        AuthorTokenKind._map[70] = "atkElse";
-        AuthorTokenKind.atkElse = 70;
-        AuthorTokenKind._map[71] = "atkEnum";
-        AuthorTokenKind.atkEnum = 71;
-        AuthorTokenKind._map[72] = "atkExport";
-        AuthorTokenKind.atkExport = 72;
-        AuthorTokenKind._map[73] = "atkExtends";
-        AuthorTokenKind.atkExtends = 73;
-        AuthorTokenKind._map[74] = "atkFalse";
-        AuthorTokenKind.atkFalse = 74;
-        AuthorTokenKind._map[75] = "atkFinally";
-        AuthorTokenKind.atkFinally = 75;
-        AuthorTokenKind._map[76] = "atkFor";
-        AuthorTokenKind.atkFor = 76;
-        AuthorTokenKind._map[77] = "atkFunction";
-        AuthorTokenKind.atkFunction = 77;
-        AuthorTokenKind._map[78] = "atkIf";
-        AuthorTokenKind.atkIf = 78;
-        AuthorTokenKind._map[79] = "atkImport";
-        AuthorTokenKind.atkImport = 79;
-        AuthorTokenKind._map[80] = "atkIn";
-        AuthorTokenKind.atkIn = 80;
-        AuthorTokenKind._map[81] = "atkInstanceof";
-        AuthorTokenKind.atkInstanceof = 81;
-        AuthorTokenKind._map[82] = "atkNew";
-        AuthorTokenKind.atkNew = 82;
-        AuthorTokenKind._map[83] = "atkNull";
-        AuthorTokenKind.atkNull = 83;
-        AuthorTokenKind._map[84] = "atkReturn";
-        AuthorTokenKind.atkReturn = 84;
-        AuthorTokenKind._map[85] = "atkSuper";
-        AuthorTokenKind.atkSuper = 85;
-        AuthorTokenKind._map[86] = "atkSwitch";
-        AuthorTokenKind.atkSwitch = 86;
-        AuthorTokenKind._map[87] = "atkThis";
-        AuthorTokenKind.atkThis = 87;
-        AuthorTokenKind._map[88] = "atkThrow";
-        AuthorTokenKind.atkThrow = 88;
-        AuthorTokenKind._map[89] = "atkTrue";
-        AuthorTokenKind.atkTrue = 89;
-        AuthorTokenKind._map[90] = "atkTry";
-        AuthorTokenKind.atkTry = 90;
-        AuthorTokenKind._map[91] = "atkTypeof";
-        AuthorTokenKind.atkTypeof = 91;
-        AuthorTokenKind._map[92] = "atkVar";
-        AuthorTokenKind.atkVar = 92;
-        AuthorTokenKind._map[93] = "atkVoid";
-        AuthorTokenKind.atkVoid = 93;
-        AuthorTokenKind._map[94] = "atkWhile";
-        AuthorTokenKind.atkWhile = 94;
-        AuthorTokenKind._map[95] = "atkWith";
-        AuthorTokenKind.atkWith = 95;
-        AuthorTokenKind._map[96] = "atkConstructor";
-        AuthorTokenKind.atkConstructor = 96;
-        AuthorTokenKind._map[97] = "atkDeclare";
-        AuthorTokenKind.atkDeclare = 97;
-        AuthorTokenKind._map[98] = "atkModule";
-        AuthorTokenKind.atkModule = 98;
-        AuthorTokenKind._map[99] = "atkGet";
-        AuthorTokenKind.atkGet = 99;
-        AuthorTokenKind._map[100] = "atkSet";
-        AuthorTokenKind.atkSet = 100;
-        AuthorTokenKind._map[101] = "atkImplements";
-        AuthorTokenKind.atkImplements = 101;
-        AuthorTokenKind._map[102] = "atkInterface";
-        AuthorTokenKind.atkInterface = 102;
-        AuthorTokenKind._map[103] = "atkLet";
-        AuthorTokenKind.atkLet = 103;
-        AuthorTokenKind._map[104] = "atkPackage";
-        AuthorTokenKind.atkPackage = 104;
-        AuthorTokenKind._map[105] = "atkPrivate";
-        AuthorTokenKind.atkPrivate = 105;
-        AuthorTokenKind._map[106] = "atkProtected";
-        AuthorTokenKind.atkProtected = 106;
-        AuthorTokenKind._map[107] = "atkPublic";
-        AuthorTokenKind.atkPublic = 107;
-        AuthorTokenKind._map[108] = "atkStatic";
-        AuthorTokenKind.atkStatic = 108;
-        AuthorTokenKind._map[109] = "atkYield";
-        AuthorTokenKind.atkYield = 109;
-        AuthorTokenKind._map[110] = "Length";
-        AuthorTokenKind.Length = 110;
-    })(Formatting.AuthorTokenKind || (Formatting.AuthorTokenKind = {}));
-    var AuthorTokenKind = Formatting.AuthorTokenKind;
-    (function (AuthorParseNodeEdge) {
-        AuthorParseNodeEdge._map = [];
-        AuthorParseNodeEdge._map[0] = "apneNone";
-        AuthorParseNodeEdge.apneNone = 0;
-        AuthorParseNodeEdge._map[1] = "apneOperand";
-        AuthorParseNodeEdge.apneOperand = 1;
-        AuthorParseNodeEdge._map[2] = "apneLeft";
-        AuthorParseNodeEdge.apneLeft = 2;
-        AuthorParseNodeEdge._map[3] = "apneRight";
-        AuthorParseNodeEdge.apneRight = 3;
-        AuthorParseNodeEdge._map[4] = "apneCondition";
-        AuthorParseNodeEdge.apneCondition = 4;
-        AuthorParseNodeEdge._map[5] = "apneThen";
-        AuthorParseNodeEdge.apneThen = 5;
-        AuthorParseNodeEdge._map[6] = "apneElse";
-        AuthorParseNodeEdge.apneElse = 6;
-        AuthorParseNodeEdge._map[7] = "apneInitialization";
-        AuthorParseNodeEdge.apneInitialization = 7;
-        AuthorParseNodeEdge._map[8] = "apneIncrement";
-        AuthorParseNodeEdge.apneIncrement = 8;
-        AuthorParseNodeEdge._map[9] = "apneBody";
-        AuthorParseNodeEdge.apneBody = 9;
-        AuthorParseNodeEdge._map[10] = "apneBlockBody";
-        AuthorParseNodeEdge.apneBlockBody = 10;
-        AuthorParseNodeEdge._map[11] = "apneValue";
-        AuthorParseNodeEdge.apneValue = 11;
-        AuthorParseNodeEdge._map[12] = "apneTarget";
-        AuthorParseNodeEdge.apneTarget = 12;
-        AuthorParseNodeEdge._map[13] = "apneArgument";
-        AuthorParseNodeEdge.apneArgument = 13;
-        AuthorParseNodeEdge._map[14] = "apneArguments";
-        AuthorParseNodeEdge.apneArguments = 14;
-        AuthorParseNodeEdge._map[15] = "apneMembers";
-        AuthorParseNodeEdge.apneMembers = 15;
-        AuthorParseNodeEdge._map[16] = "apneVariable";
-        AuthorParseNodeEdge.apneVariable = 16;
-        AuthorParseNodeEdge._map[17] = "apneObject";
-        AuthorParseNodeEdge.apneObject = 17;
-        AuthorParseNodeEdge._map[18] = "apneTry";
-        AuthorParseNodeEdge.apneTry = 18;
-        AuthorParseNodeEdge._map[19] = "apneCatch";
-        AuthorParseNodeEdge.apneCatch = 19;
-        AuthorParseNodeEdge._map[20] = "apneFinally";
-        AuthorParseNodeEdge.apneFinally = 20;
-        AuthorParseNodeEdge._map[21] = "apneCase";
-        AuthorParseNodeEdge.apneCase = 21;
-        AuthorParseNodeEdge._map[22] = "apneDefaultCase";
-        AuthorParseNodeEdge.apneDefaultCase = 22;
-        AuthorParseNodeEdge._map[23] = "apneElements";
-        AuthorParseNodeEdge.apneElements = 23;
-        AuthorParseNodeEdge._map[24] = "apneListItem";
-        AuthorParseNodeEdge.apneListItem = 24;
-        AuthorParseNodeEdge._map[25] = "apneMember";
-        AuthorParseNodeEdge.apneMember = 25;
-        AuthorParseNodeEdge._map[26] = "apneType";
-        AuthorParseNodeEdge.apneType = 26;
-    })(Formatting.AuthorParseNodeEdge || (Formatting.AuthorParseNodeEdge = {}));
-    var AuthorParseNodeEdge = Formatting.AuthorParseNodeEdge;
-    var AuthorParseNodeSet = (function () {
-        function AuthorParseNodeSet(nodes) {
-            this.nodes = nodes;
-        }
-        AuthorParseNodeSet.prototype.Count = function () {
-            return this.nodes.length;
-        };
-        AuthorParseNodeSet.prototype.GetItems = function (startIndex, count) {
-            if (startIndex == 0 && count == this.nodes.length) {
-                return this.nodes;
-            }
-            throw new Error("Invalid call to GetItems");
-        };
-        return AuthorParseNodeSet;
-    })();
-    Formatting.AuthorParseNodeSet = AuthorParseNodeSet;    
-    (function (AuthorParseNodeProperty) {
-        AuthorParseNodeProperty._map = [];
-        AuthorParseNodeProperty._map[0] = "apnpLCurlyMin";
-        AuthorParseNodeProperty.apnpLCurlyMin = 0;
-        AuthorParseNodeProperty._map[1] = "apnpRCurlyMin";
-        AuthorParseNodeProperty.apnpRCurlyMin = 1;
-        AuthorParseNodeProperty._map[2] = "apnpLParenMin";
-        AuthorParseNodeProperty.apnpLParenMin = 2;
-        AuthorParseNodeProperty._map[3] = "apnpRParenMin";
-        AuthorParseNodeProperty.apnpRParenMin = 3;
-        AuthorParseNodeProperty._map[4] = "apnpLBrackMin";
-        AuthorParseNodeProperty.apnpLBrackMin = 4;
-        AuthorParseNodeProperty._map[5] = "apnpRBrackMin";
-        AuthorParseNodeProperty.apnpRBrackMin = 5;
-        AuthorParseNodeProperty._map[6] = "apnpIdentifierMin";
-        AuthorParseNodeProperty.apnpIdentifierMin = 6;
-        AuthorParseNodeProperty._map[7] = "apnpFunctionKeywordMin";
-        AuthorParseNodeProperty.apnpFunctionKeywordMin = 7;
-    })(Formatting.AuthorParseNodeProperty || (Formatting.AuthorParseNodeProperty = {}));
-    var AuthorParseNodeProperty = Formatting.AuthorParseNodeProperty;
-    var AuthorTokenKindMap = (function () {
-        function AuthorTokenKindMap() {
-            this.tokenMap = [];
-            this.init();
-        }
-        AuthorTokenKindMap.instance = null;
-        AuthorTokenKindMap.getInstance = function getInstance() {
-            if (AuthorTokenKindMap.instance === null) {
-                AuthorTokenKindMap.instance = new AuthorTokenKindMap();
-            }
-            return AuthorTokenKindMap.instance;
-        };
-        AuthorTokenKindMap.prototype.init = function () {
-            for(var i = 0, len = 112 /* Lim */ ; i < len; i++) {
-                this.tokenMap[i] = this.mapTokenID(i);
-            }
-        };
-        AuthorTokenKindMap.prototype.getTokenKind = function (kind) {
-            return this.tokenMap[kind];
-        };
-        AuthorTokenKindMap.prototype.mapTokenID = function (kind) {
-            switch(kind) {
-                case 0 /* Any */ :
-                    return 2 /* atkIdentifier */ ;
-                case 1 /* Bool */ :
-                    return 2 /* atkIdentifier */ ;
-                case 2 /* Break */ :
-                    return 60 /* atkBreak */ ;
-                case 3 /* Case */ :
-                    return 61 /* atkCase */ ;
-                case 4 /* Catch */ :
-                    return 62 /* atkCatch */ ;
-                case 5 /* Class */ :
-                    return 63 /* atkClass */ ;
-                case 6 /* Const */ :
-                    return 64 /* atkConst */ ;
-                case 7 /* Continue */ :
-                    return 65 /* atkContinue */ ;
-                case 8 /* Debugger */ :
-                    return 66 /* atkDebugger */ ;
-                case 9 /* Default */ :
-                    return 67 /* atkDefault */ ;
-                case 10 /* Delete */ :
-                    return 68 /* atkDelete */ ;
-                case 11 /* Do */ :
-                    return 69 /* atkDo */ ;
-                case 12 /* Else */ :
-                    return 70 /* atkElse */ ;
-                case 13 /* Enum */ :
-                    return 71 /* atkEnum */ ;
-                case 14 /* Export */ :
-                    return 72 /* atkExport */ ;
-                case 15 /* Extends */ :
-                    return 73 /* atkExtends */ ;
-                case 16 /* Declare */ :
-                    return 97 /* atkDeclare */ ;
-                case 17 /* False */ :
-                    return 74 /* atkFalse */ ;
-                case 18 /* Finally */ :
-                    return 75 /* atkFinally */ ;
-                case 19 /* For */ :
-                    return 76 /* atkFor */ ;
-                case 21 /* Constructor */ :
-                    return 96 /* atkConstructor */ ;
-                case 20 /* Function */ :
-                    return 77 /* atkFunction */ ;
-                case 22 /* Get */ :
-                    return 99 /* atkGet */ ;
-                case 23 /* If */ :
-                    return 78 /* atkIf */ ;
-                case 24 /* Implements */ :
-                    return 101 /* atkImplements */ ;
-                case 25 /* Import */ :
-                    return 79 /* atkImport */ ;
-                case 26 /* In */ :
-                    return 80 /* atkIn */ ;
-                case 27 /* InstanceOf */ :
-                    return 81 /* atkInstanceof */ ;
-                case 28 /* Interface */ :
-                    return 102 /* atkInterface */ ;
-                case 29 /* Let */ :
-                    return 103 /* atkLet */ ;
-                case 30 /* Module */ :
-                    return 98 /* atkModule */ ;
-                case 31 /* New */ :
-                    return 82 /* atkNew */ ;
-                case 32 /* Number */ :
-                    return 2 /* atkIdentifier */ ;
-                case 33 /* Null */ :
-                    return 83 /* atkNull */ ;
-                case 34 /* Package */ :
-                    return 104 /* atkPackage */ ;
-                case 35 /* Private */ :
-                    return 105 /* atkPrivate */ ;
-                case 36 /* Protected */ :
-                    return 106 /* atkProtected */ ;
-                case 37 /* Public */ :
-                    return 107 /* atkPublic */ ;
-                case 51 /* With */ :
-                    return 95 /* atkWith */ ;
-                case 38 /* Return */ :
-                    return 84 /* atkReturn */ ;
-                case 39 /* Set */ :
-                    return 100 /* atkSet */ ;
-                case 40 /* Static */ :
-                    return 108 /* atkStatic */ ;
-                case 41 /* String */ :
-                    return 2 /* atkIdentifier */ ;
-                case 42 /* Super */ :
-                    return 85 /* atkSuper */ ;
-                case 43 /* Switch */ :
-                    return 86 /* atkSwitch */ ;
-                case 44 /* This */ :
-                    return 87 /* atkThis */ ;
-                case 45 /* Throw */ :
-                    return 88 /* atkThrow */ ;
-                case 46 /* True */ :
-                    return 89 /* atkTrue */ ;
-                case 47 /* Try */ :
-                    return 90 /* atkTry */ ;
-                case 48 /* TypeOf */ :
-                    return 91 /* atkTypeof */ ;
-                case 49 /* Var */ :
-                    return 92 /* atkVar */ ;
-                case 50 /* Void */ :
-                    return 93 /* atkVoid */ ;
-                case 52 /* While */ :
-                    return 94 /* atkWhile */ ;
-                case 53 /* Yield */ :
-                    return 109 /* atkYield */ ;
-                case 54 /* Semicolon */ :
-                    return 9 /* atkSColon */ ;
-                case 55 /* OpenParen */ :
-                    return 10 /* atkLParen */ ;
-                case 56 /* CloseParen */ :
-                    return 11 /* atkRParen */ ;
-                case 57 /* OpenBracket */ :
-                    return 12 /* atkLBrack */ ;
-                case 58 /* CloseBracket */ :
-                    return 13 /* atkRBrack */ ;
-                case 59 /* OpenBrace */ :
-                    return 14 /* atkLCurly */ ;
-                case 60 /* CloseBrace */ :
-                    return 15 /* atkRCurly */ ;
-                case 61 /* Comma */ :
-                    return 16 /* atkComma */ ;
-                case 62 /* Equals */ :
-                    return 18 /* atkAsg */ ;
-                case 63 /* PlusEquals */ :
-                    return 19 /* atkAsgAdd */ ;
-                case 64 /* MinusEquals */ :
-                    return 20 /* atkAsgSub */ ;
-                case 65 /* AsteriskEquals */ :
-                    return 21 /* atkAsgMul */ ;
-                case 66 /* SlashEquals */ :
-                    return 22 /* atkAsgDiv */ ;
-                case 67 /* PercentEquals */ :
-                    return 23 /* atkAsgMod */ ;
-                case 68 /* AmpersandEquals */ :
-                    return 24 /* atkAsgAnd */ ;
-                case 69 /* CaretEquals */ :
-                    return 25 /* atkAsgXor */ ;
-                case 70 /* BarEquals */ :
-                    return 26 /* atkAsgOr */ ;
-                case 71 /* LessThanLessThanEquals */ :
-                    return 27 /* atkAsgLsh */ ;
-                case 72 /* GreaterThanGreaterThanEquals */ :
-                    return 28 /* atkAsgRsh */ ;
-                case 73 /* GreaterThanGreaterThanGreaterThanEquals */ :
-                    return 29 /* atkAsgRs2 */ ;
-                case 74 /* Question */ :
-                    return 30 /* atkQMark */ ;
-                case 75 /* Colon */ :
-                    return 31 /* atkColon */ ;
-                case 76 /* BarBar */ :
-                    return 32 /* atkLogOr */ ;
-                case 77 /* AmpersandAmpersand */ :
-                    return 33 /* atkLogAnd */ ;
-                case 78 /* Bar */ :
-                    return 34 /* atkOr */ ;
-                case 79 /* Caret */ :
-                    return 35 /* atkXor */ ;
-                case 80 /* And */ :
-                    return 36 /* atkAnd */ ;
-                case 81 /* EqualsEquals */ :
-                    return 37 /* atkEQ */ ;
-                case 82 /* ExclamationEquals */ :
-                    return 38 /* atkNE */ ;
-                case 83 /* EqualsEqualsEquals */ :
-                    return 39 /* atkEqv */ ;
-                case 84 /* ExclamationEqualsEquals */ :
-                    return 40 /* atkNEqv */ ;
-                case 85 /* LessThan */ :
-                    return 41 /* atkLT */ ;
-                case 86 /* LessThanEquals */ :
-                    return 42 /* atkLE */ ;
-                case 87 /* GreaterThan */ :
-                    return 43 /* atkGT */ ;
-                case 88 /* GreaterThanEquals */ :
-                    return 44 /* atkGE */ ;
-                case 89 /* LessThanLessThan */ :
-                    return 45 /* atkLsh */ ;
-                case 90 /* GreaterThanGreaterThan */ :
-                    return 46 /* atkRsh */ ;
-                case 91 /* GreaterThanGreaterThanGreaterThan */ :
-                    return 47 /* atkRs2 */ ;
-                case 92 /* Plus */ :
-                    return 48 /* atkAdd */ ;
-                case 93 /* Minus */ :
-                    return 49 /* atkSub */ ;
-                case 94 /* Asterisk */ :
-                    return 50 /* atkMult */ ;
-                case 95 /* Slash */ :
-                    return 51 /* atkDiv */ ;
-                case 96 /* Percent */ :
-                    return 52 /* atkPct */ ;
-                case 97 /* Tilde */ :
-                    return 53 /* atkTilde */ ;
-                case 98 /* Exclamation */ :
-                    return 54 /* atkBang */ ;
-                case 99 /* PlusPlus */ :
-                    return 55 /* atkInc */ ;
-                case 100 /* MinusMinus */ :
-                    return 56 /* atkDec */ ;
-                case 101 /* Dot */ :
-                    return 57 /* atkDot */ ;
-                case 102 /* DotDotDot */ :
-                    return 59 /* atkEllipsis */ ;
-                case 103 /* Error */ :
-                    return 2 /* atkIdentifier */ ;
-                case 104 /* EndOfFile */ :
-                    return 0 /* atkEnd */ ;
-                case 105 /* EqualsGreaterThan */ :
-                    return 17 /* atkArrow */ ;
-                case 106 /* Identifier */ :
-                    return 2 /* atkIdentifier */ ;
-                case 107 /* StringLiteral */ :
-                    return 5 /* atkString */ ;
-                case 108 /* RegularExpressionLiteral */ :
-                    return 6 /* atkRegexp */ ;
-                case 109 /* NumberLiteral */ :
-                    return 4 /* atkNumber */ ;
-                case 110 /* Whitespace */ :
-                    return 2 /* atkIdentifier */ ;
-                case 111 /* Comment */ :
-                    return 3 /* atkComment */ ;
-                default:
-                    throw new Error("Invalid token kind:" + kind + " (" + (TypeScript.TokenID)._map[kind] + ")");
-            }
-        };
-        return AuthorTokenKindMap;
-    })();
-    Formatting.AuthorTokenKindMap = AuthorTokenKindMap;    
-    var Debug = (function () {
-        function Debug() { }
-        Debug.Assert = function Assert(cond, msg) {
-            if (!cond) {
-                throw new Error("assertion failure: " + msg);
-            }
-        };
-        Debug.Fail = function Fail(msg) {
-            Debug.Assert(false, msg);
-        };
-        return Debug;
-    })();
-    Formatting.Debug = Debug;    
-    var HashSet_int = (function () {
-        function HashSet_int() {
-            this.items = [];
-        }
-        HashSet_int.prototype.Contains = function (item) {
-            return this.items[item] !== undefined;
-        };
-        HashSet_int.prototype.Add = function (item) {
-            this.items[item] = item;
-        };
-        return HashSet_int;
-    })();
-    Formatting.HashSet_int = HashSet_int;    
-    var Dictionary_int_List_IndentationEditInfo = (function () {
-        function Dictionary_int_List_IndentationEditInfo() {
-            this.items = [];
-        }
-        Dictionary_int_List_IndentationEditInfo.prototype.GetValue = function (key) {
-            var result = this.items[key];
-            return result === undefined ? null : result;
-        };
-        Dictionary_int_List_IndentationEditInfo.prototype.Add = function (key, value) {
-            this.items[key] = value;
-        };
-        return Dictionary_int_List_IndentationEditInfo;
-    })();
-    Formatting.Dictionary_int_List_IndentationEditInfo = Dictionary_int_List_IndentationEditInfo;    
-    var Dictionary_int_int = (function () {
-        function Dictionary_int_int() {
-            this.items = [];
-        }
-        Dictionary_int_int.prototype.GetValue = function (key) {
-            var result = this.items[key];
-            return result === undefined ? null : result;
-        };
-        Dictionary_int_int.prototype.Add = function (key, value) {
-            this.items[key] = value;
-        };
-        return Dictionary_int_int;
-    })();
-    Formatting.Dictionary_int_int = Dictionary_int_int;    
-    var Math = (function () {
-        function Math() { }
-        Math.Max = function Max(x, y) {
-            return (x > y ? x : y);
-        };
-        Math.Min = function Min(x, y) {
-            return (x < y ? x : y);
-        };
-        return Math;
-    })();
-    Formatting.Math = Math;    
-    var StringUtils = (function () {
-        function StringUtils() { }
-        StringUtils.IndexOf = function IndexOf(value, search, startIndex) {
-            if (typeof startIndex === "undefined") { startIndex = 0; }
-            return value.indexOf(search, startIndex);
-        };
-        StringUtils.Equals = function Equals(x, y) {
-            return x == y;
-        };
-        StringUtils.IsNullOrEmpty = function IsNullOrEmpty(x) {
-            return x === null || x === "";
-        };
-        StringUtils.IsWhiteSpace = function IsWhiteSpace(charCode) {
-            return EditorUtilities.IsWhitespace(charCode);
-        };
-        StringUtils.create = function create(value, count) {
-            var result = "";
-            for(var i = 0; i < count; i++) {
-                result += value;
-            }
-            return result;
-        };
-        StringUtils.foreach = function foreach(x, action) {
-            for(var i = 0; i < x.length; i++) {
-                action(x.charAt(i));
-            }
-        };
-        return StringUtils;
-    })();
-    Formatting.StringUtils = StringUtils;    
-    var EditorUtilities = (function () {
-        function EditorUtilities() { }
-        EditorUtilities.IsWhitespace = function IsWhitespace(charCode) {
-            switch(charCode) {
-                case 0x0009:
-                case 0x000b:
-                case 0x000c:
-                case 0xfeff:
-                case 0x0020:
-                case 0x00a0:
-                case 0x1680:
-                case 0x2000:
-                case 0x2001:
-                case 0x2002:
-                case 0x2003:
-                case 0x2004:
-                case 0x2005:
-                case 0x2006:
-                case 0x2007:
-                case 0x2008:
-                case 0x2009:
-                case 0x200a:
-                case 0x202f:
-                case 0x200b:
-                case 0x3000:
-                case 0x180e:
-                case 0x205f:
-                    return true;
-                default:
-                    return false;
-            }
-        };
-        return EditorUtilities;
-    })();
-    Formatting.EditorUtilities = EditorUtilities;    
-    function getTokensInSpan(logger, scriptSyntaxAST, tokenKindMap, span) {
-        var tokens = new List_TokenSpan();
-        var tokenStream = scriptSyntaxAST.getTokenStream(span.startPosition());
-        while(tokenStream.moveNext()) {
-            if (logger.information()) {
-                var text = "token: " + (TypeScript.TokenID)._map[tokenStream.tokenId()] + " - startPos=" + tokenStream.tokenStartPos() + ", pos=" + tokenStream.tokenEndPos();
-                logger.log(text);
-            }
-            var endPos = tokenStream.tokenEndPos();
-            if (endPos < span.startPosition()) {
-                continue;
-            }
-            var startPos = tokenStream.tokenStartPos();
-            if (startPos > span.endPosition()) {
-                break;
-            }
-            var kind = tokenKindMap.getTokenKind(tokenStream.tokenId());
-            var tokenSpan = new Formatting.TokenSpan(kind, tokenStream.tokenId(), new SnapshotSpan(span.snapshot, Span.FromBounds(startPos, endPos)));
-            tokens.add(tokenSpan);
-        }
-        logger.log("GetTokens([" + span.startPosition() + "," + span.endPosition() + "]): returned " + tokens.count() + " tokens from source text offset " + tokenStream.sourceTextOffset());
-        return tokens;
-    }
-    Formatting.getTokensInSpan = getTokensInSpan;
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var FormattingContext = (function () {
-        function FormattingContext(fileAuthoringProxy, snapshot, tokens, formattingRequestKind) {
-            this.fileAuthoringProxy = fileAuthoringProxy;
-            this.snapshot = snapshot;
-            this.tokens = tokens;
-            this.formattingRequestKind = formattingRequestKind;
-            this.contextNode = null;
-            this.tokenSpan = null;
-            this.nextTokenSpan = null;
-            this.contextNodeAllOnSameLine = undefined;
-            this.tokensAreOnSameLine = undefined;
-            this.tokensAreSiblingNodesOnSameLine = undefined;
-            Formatting.Debug.Assert(this.snapshot != null, "snapshot is null");
-            Formatting.Debug.Assert(this.tokens != null, "tokens is null");
-        }
-        FormattingContext.prototype.findTokenAtPosition = function (position) {
-            var index = Formatting.BinarySearch(this.tokens, position, function (position, tokenSpan) {
-                if (position < tokenSpan.Span.startPosition()) {
-                    return -1;
-                } else if (position < tokenSpan.Span.endPosition()) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            });
-            if (index < 0) {
-                return null;
-            } else {
-                return this.tokens.get(index);
-            }
-        };
-        FormattingContext.prototype.setContext = function (node, t1, t2) {
-            Formatting.Debug.Assert(node != null, "node is null");
-            Formatting.Debug.Assert(t1 != null, "t1 is null");
-            Formatting.Debug.Assert(t2 != null, "t2 is null");
-            this.contextNode = node;
-            this.tokenSpan = t1;
-            this.nextTokenSpan = t2;
-            this.contextNodeAllOnSameLine = undefined;
-            this.tokensAreOnSameLine = undefined;
-            this.tokensAreSiblingNodesOnSameLine = undefined;
-        };
-        FormattingContext.prototype.ContextNodeAllOnSameLine = function () {
-            if (this.contextNodeAllOnSameLine === undefined) {
-                var blockSpan = this.contextNode.GetBlockSpan(this.fileAuthoringProxy, this.tokens);
-                var openToken = this.findTokenAtPosition(blockSpan.start());
-                if (openToken != null && openToken.tokenID == 59 /* OpenBrace */ ) {
-                    var closeToken = this.findTokenAtPosition(blockSpan.end() - 1);
-                    if (closeToken == null || closeToken.tokenID != 60 /* CloseBrace */ ) {
-                        for(var position = blockSpan.end() - 2; position > openToken.Span.endPosition(); position--) {
-                            closeToken = this.findTokenAtPosition(position);
-                            if (closeToken != null) {
-                                blockSpan = Formatting.Span.FromBounds(openToken.Span.startPosition(), closeToken.Span.endPosition());
-                                break;
-                            }
-                        }
-                    }
-                }
-                var startLine = this.snapshot.GetLineNumberFromPosition(blockSpan.start());
-                var endLine = this.snapshot.GetLineNumberFromPosition(blockSpan.end());
-                this.contextNodeAllOnSameLine = (startLine == endLine);
-            }
-            return this.contextNodeAllOnSameLine;
-        };
-        FormattingContext.prototype.TokensAreOnSameLine = function () {
-            if (this.tokensAreOnSameLine === undefined) {
-                var startLine = this.tokenSpan.lineNumber();
-                var endLine = this.nextTokenSpan.lineNumber();
-                this.tokensAreOnSameLine = (startLine == endLine);
-            }
-            return this.tokensAreOnSameLine;
-        };
-        FormattingContext.prototype.TokensAreSiblingNodesOnSameLine = function () {
-            if (this.tokensAreSiblingNodesOnSameLine === undefined) {
-                this.tokensAreSiblingNodesOnSameLine = this.AreTokensSiblingNodesOnSameLine();
-            }
-            return this.tokensAreSiblingNodesOnSameLine;
-        };
-        FormattingContext.prototype.AreTokensSiblingNodesOnSameLine = function () {
-            if (this.contextNode.children() == null || this.contextNode.children().count() < 2) {
-                return false;
-            }
-            var current = null;
-            var sibling = null;
-            var nodeIndex = Formatting.ParseNodeExtensions.TryFindNodeIndexForStartOffset(this.contextNode.children(), this.nextTokenSpan.Span.startPosition());
-            if (nodeIndex < 0) {
-                return false;
-            }
-            sibling = this.contextNode.children().get(nodeIndex);
-            for(var i = nodeIndex - 1; i >= 0; --i) {
-                var child = this.contextNode.children().get(i);
-                if (child.AuthorNode.Details.EndOffset == this.tokenSpan.Span.endPosition()) {
-                    current = child;
-                    break;
-                }
-            }
-            if (current == null) {
-                return false;
-            }
-            var startLine = this.snapshot.GetLineNumberFromPosition(current.AuthorNode.Details.EndOffset);
-            var endLine = this.snapshot.GetLineNumberFromPosition(sibling.AuthorNode.Details.StartOffset);
-            return startLine == endLine;
-        };
-        return FormattingContext;
-    })();
-    Formatting.FormattingContext = FormattingContext;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var FormattingManager = (function () {
-        function FormattingManager(scriptSyntaxAST, rulesProvider, editorOptions) {
-            this.scriptSyntaxAST = scriptSyntaxAST;
-            this.rulesProvider = rulesProvider;
-            this.editorOptions = editorOptions;
-            this.logger = new TypeScript.LoggerAdapter(this.scriptSyntaxAST.getLogger());
-            this.sourceText = this.scriptSyntaxAST.getScriptSnapshot();
-            this.snapshot = new Formatting.TextSnapshot(this.scriptSyntaxAST.getScript(), this.sourceText);
-            this.fileAuthoringProxy = new Formatting.FileAuthoringProxy(this.scriptSyntaxAST);
-            this.tokenKindMap = Formatting.AuthorTokenKindMap.getInstance();
-        }
-        FormattingManager.prototype.FormatSelection = function (minChar, limChar) {
-            var span = new Formatting.SnapshotSpan(this.snapshot, Formatting.Span.FromBounds(minChar, limChar));
-            return this.Format(span, 1 /* FormatSelection */ , function (a, b) {
-                return true;
-            });
-        };
-        FormattingManager.prototype.FormatDocument = function (minChar, limChar) {
-            var span = new Formatting.SnapshotSpan(this.snapshot, Formatting.Span.FromBounds(minChar, limChar));
-            return this.Format(span, 0 /* FormatDocument */ , function (a, b) {
-                return true;
-            });
-        };
-        FormattingManager.prototype.FormatOnPaste = function (minChar, limChar) {
-            var span = new Formatting.SnapshotSpan(this.snapshot, Formatting.Span.FromBounds(minChar, limChar));
-            return this.Format(span, 5 /* FormatOnPaste */ , function (a, b) {
-                return true;
-            });
-        };
-        FormattingManager.prototype.CanFormatSpan = function (span) {
-            return true;
-        };
-        FormattingManager.prototype.FormatOnSemicolon = function (caretPosition) {
-            var caret = new Formatting.SnapshotPoint(this.snapshot, caretPosition);
-            var semicolonPoint = caret.Add(-1);
-            var mappedPoint = this.MapDownSnapshotPoint(semicolonPoint);
-            if (mappedPoint !== null) {
-                var span = this.FindStatementSpan(mappedPoint, 3 /* FormatOnSemicolon */ );
-                if (span != null) {
-                    return this.Format(span, 3 /* FormatOnSemicolon */ , function (tokens, requestKind) {
-                        return !_this.IsInsideStringLiteralOrComment(mappedPoint, tokens);
-                    });
-                }
-            }
-            return [];
-        };
-        FormattingManager.prototype.FormatOnClosingCurlyBrace = function (caretPosition) {
-            var caret = new Formatting.SnapshotPoint(this.snapshot, caretPosition);
-            var closeBracePoint = caret.Add(-1);
-            var mappedPoint = this.MapDownSnapshotPoint(closeBracePoint);
-            if (mappedPoint !== null) {
-                var span = this.FindMatchingBlockSpan(mappedPoint, 4 /* FormatOnClosingCurlyBrace */ );
-                if (span != null) {
-                    return this.Format(span, 4 /* FormatOnClosingCurlyBrace */ , function (tokens, requestKind) {
-                        return !_this.IsInsideStringLiteralOrComment(mappedPoint, tokens);
-                    });
-                }
-            }
-            return [];
-        };
-        FormattingManager.prototype.FormatOnEnter = function (caretPosition) {
-            var lineNumber = this.snapshot.GetLineNumberFromPosition(caretPosition);
-            if (lineNumber > 0) {
-                var prevLine = this.snapshot.GetLineFromLineNumber(lineNumber - 1);
-                var currentLine = this.snapshot.GetLineFromLineNumber(lineNumber);
-                var span = new Formatting.SnapshotSpan(this.snapshot, Formatting.Span.FromBounds(prevLine.startPosition(), currentLine.endPosition()));
-                if (span != null) {
-                    var caret = new Formatting.SnapshotPoint(this.snapshot, caretPosition);
-                    var mappedPoint = this.MapDownSnapshotPoint(caret);
-                    return this.Format(span, 2 /* FormatOnEnter */ , function (tokens, requestKind) {
-                        return !_this.IsInsideStringLiteralOrComment(mappedPoint, tokens);
-                    });
-                }
-            }
-            return [];
-        };
-        FormattingManager.prototype.FindMatchingBlockSpan = function (bracePoint, formattingRequestKind) {
-            var authoringProxy = this.fileAuthoringProxy;
-            var matchingBlockTask = new Formatting.MatchingBlockFinderTask(bracePoint, authoringProxy);
-            var blockSpan = matchingBlockTask.Run();
-            if (blockSpan !== null) {
-                return new Formatting.SnapshotSpan(bracePoint.snapshot, blockSpan);
-            } else {
-                return null;
-            }
-        };
-        FormattingManager.prototype.FindStatementSpan = function (semicolonPoint, formattingRequestKind) {
-            var authoringProxy = this.fileAuthoringProxy;
-            var statementFinderTask = new Formatting.StatementFinderTask(this.logger, semicolonPoint, authoringProxy);
-            statementFinderTask.Run();
-            if (statementFinderTask.BlockSpan != null) {
-                return new Formatting.SnapshotSpan(semicolonPoint.snapshot, statementFinderTask.BlockSpan);
-            } else {
-                return null;
-            }
-        };
-        FormattingManager.prototype.MapDownSnapshotSpan = function (snapshotSpan) {
-            return snapshotSpan;
-        };
-        FormattingManager.prototype.MapDownSnapshotPoint = function (snapshotPoint) {
-            return snapshotPoint;
-        };
-        FormattingManager.prototype.GetTokens = function (span) {
-            return Formatting.getTokensInSpan(this.logger, this.scriptSyntaxAST, this.tokenKindMap, span);
-        };
-        FormattingManager.prototype.IsInsideStringLiteralOrComment = function (point, tokens) {
-            if (point !== null) {
-                var span = new Formatting.Span(point.position, 1);
-                for(var i = 0; i < tokens.count(); i++) {
-                    var token = tokens.get(i);
-                    if (token.Span.OverlapsWith(span)) {
-                        return token.Token == 5 /* atkString */  || token.Token == 3 /* atkComment */ ;
-                    }
-                }
-            }
-            return false;
-        };
-        FormattingManager.prototype.Format = function (span, formattingRequestKind, prerequisiteTokenTest) {
-            var _this = this;
-            if (span.IsEmpty() || !this.CanFormatSpan(span)) {
-                return [];
-            }
-            var scriptHasErrors = false;
-            if (scriptHasErrors) {
-                return [];
-            }
-            var startLinePoint = span.start().GetContainingLine().start();
-            span = new Formatting.SnapshotSpan(startLinePoint.snapshot, Formatting.Span.FromBounds(startLinePoint.position, span.endPosition()));
-            var tokens = TypeScript.timeFunction(this.logger, "FormattingManager: GetTokens()", function () {
-                return _this.GetTokens(span);
-            });
-            if (prerequisiteTokenTest != null && !prerequisiteTokenTest(tokens, formattingRequestKind)) {
-                return [];
-            }
-            var languageHostIndentation = null;
-            var editorOptions = this.editorOptions;
-            var formattingTask = new Formatting.FormattingTask(this.logger, this.snapshot, span, tokens, this.fileAuthoringProxy, this.rulesProvider, editorOptions, languageHostIndentation, scriptHasErrors, formattingRequestKind);
-            formattingTask.Run();
-            var result = [];
-            formattingTask.EditCommands.foreach(function (item) {
-                var edit = new Services.TextEdit(item.position, item.position + item.Length, item.replaceWith);
-                result.push(edit);
-            });
-            return result;
-        };
-        return FormattingManager;
-    })();
-    Formatting.FormattingManager = FormattingManager;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    (function (FormattingRequestKind) {
-        FormattingRequestKind._map = [];
-        FormattingRequestKind._map[0] = "FormatDocument";
-        FormattingRequestKind.FormatDocument = 0;
-        FormattingRequestKind._map[1] = "FormatSelection";
-        FormattingRequestKind.FormatSelection = 1;
-        FormattingRequestKind._map[2] = "FormatOnEnter";
-        FormattingRequestKind.FormatOnEnter = 2;
-        FormattingRequestKind._map[3] = "FormatOnSemicolon";
-        FormattingRequestKind.FormatOnSemicolon = 3;
-        FormattingRequestKind._map[4] = "FormatOnClosingCurlyBrace";
-        FormattingRequestKind.FormatOnClosingCurlyBrace = 4;
-        FormattingRequestKind._map[5] = "FormatOnPaste";
-        FormattingRequestKind.FormatOnPaste = 5;
-    })(Formatting.FormattingRequestKind || (Formatting.FormattingRequestKind = {}));
-    var FormattingRequestKind = Formatting.FormattingRequestKind;
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var FormattingTask = (function () {
-        function FormattingTask(logger, Snapshot, span, tokens, fileAuthoringProxy, rulesProvider, editorOptions, languageHostIndentation, scriptHasErrors, formattingRequestKind) {
-            this.logger = logger;
-            this.Snapshot = Snapshot;
-            this.span = span;
-            this.tokens = tokens;
-            this.fileAuthoringProxy = fileAuthoringProxy;
-            this.rulesProvider = rulesProvider;
-            this.editorOptions = editorOptions;
-            this.languageHostIndentation = languageHostIndentation;
-            this.scriptHasErrors = scriptHasErrors;
-            this.formattingRequestKind = formattingRequestKind;
-            this.snapshotSpan = this.span;
-            this.tokenTags = this.tokens;
-            this.EditCommands = new Formatting.List_TextEditInfo();
-        }
-        FormattingTask.prototype.Run = function () {
-            var _this = this;
-            if (this.tokenTags.count() == 0) {
-                return;
-            }
-            var tree = TypeScript.timeFunction(this.logger, "FormattingTask: new ParseTree()", function () {
-                return new Formatting.ParseTree(_this.fileAuthoringProxy, _this.snapshotSpan.span, _this.tokenTags, false);
-            });
-            if (tree.Root == null) {
-                return;
-            }
-            TypeScript.timeFunction(this.logger, "FormattingTask: FillIndentationLevels()", function () {
-                Formatting.IndentationEdgeFinder.FillIndentationLevels(tree.Root);
-            });
-            TypeScript.timeFunction(this.logger, "FormattingTask: Format()", function () {
-                _this.Format(tree);
-            });
-        };
-        FormattingTask.prototype.Format = function (tree) {
-            var _this = this;
-            var tokenIndex = 0;
-            var token1Line = 0;
-            var currentLineNumber = -1;
-            var context = tree.Root;
-            Formatting.ParseTree.DumpTree(this.logger, tree.Root);
-            var sameLineIndent = false;
-            var t1 = this.tokenTags.get(0);
-            token1Line = t1.lineNumber();
-            var indenter = new Formatting.Indenter(this.logger, tree, this.Snapshot, this.languageHostIndentation, this.editorOptions, t1, false);
-            if (!this.scriptHasErrors) {
-                this.TrimWhitespaceInLineRange(t1, this.Snapshot.GetLineNumberFromPosition(this.snapshotSpan.startPosition()), token1Line - 1);
-            }
-            if (this.tokenTags.count() == 1) {
-                context = Formatting.ParseTree.FindCommonParentNode(t1.Span.span, t1.Span.span, context);
-            }
-            var formattingContext = new Formatting.FormattingContext(this.fileAuthoringProxy, this.Snapshot, this.tokenTags, this.formattingRequestKind);
-            for(tokenIndex = 1; tokenIndex < this.tokenTags.count(); tokenIndex++) {
-                if (this.logger.information()) {
-                    this.logger.log("Processing token #" + tokenIndex + ": tokenId=" + (TypeScript.TokenID)._map[t1.tokenID] + ", span=[" + t1.Span.startPosition() + "," + t1.Span.endPosition() + "]");
-                }
-                var t2 = this.tokenTags.get(tokenIndex);
-                var token2Line = t2.lineNumber();
-                context = Formatting.ParseTree.FindCommonParentNode(t1.Span.span, t2.Span.span, context);
-                if (context.TokenTagIndex == null && context.AuthorNode.Details.StartOffset == t1.Span.span.start()) {
-                    context.TokenTagIndex = tokenIndex - 1;
-                }
-                if (token1Line != currentLineNumber) {
-                    var node = this.FindTokenNode(t1.Span.span, context);
-                    var edits = indenter.GetIndentationEdits(t1, t2, node, sameLineIndent);
-                    for(var i = 0; i < edits.count(); i++) {
-                        this.EditCommands.add(edits.get(i));
-                    }
-                    currentLineNumber = token1Line;
-                    sameLineIndent = false;
-                }
-                if (t1.Token == 3 /* atkComment */  || t1.Token == 5 /* atkString */ ) {
-                    currentLineNumber = this.Snapshot.GetLineNumberFromPosition(t1.Span.endPosition());
-                }
-                if (this.logger.information()) {
-                    this.logger.log("Context node: " + context.toString());
-                }
-                if (!this.scriptHasErrors) {
-                    formattingContext.setContext(context, t1, t2);
-                    var rule = this.rulesProvider.getRulesMap().GetRule(formattingContext);
-                    if (rule != null) {
-                        this.GetRuleEdits(rule, t1, t2).foreach(function (edit) {
-                            _this.EditCommands.add(edit);
-                        });
-                        if ((rule.Operation.Action == 1 /* Space */  || rule.Operation.Action == 3 /* Delete */ ) && token1Line != token2Line) {
-                            var indent = indenter.GetLineIndentationForOffset(t1.Span.startPosition());
-                            indenter.RegisterIndentation2(t2.Span.startPosition(), indent);
-                            currentLineNumber = token2Line;
-                        }
-                        if (rule.Operation.Action == 2 /* NewLine */  && token1Line == token2Line) {
-                            currentLineNumber = token2Line - 1;
-                            sameLineIndent = true;
-                        }
-                    }
-                    if (token1Line != token2Line) {
-                        this.TrimWhitespaceInLineRange(t1, token1Line, token2Line - 1);
-                    }
-                }
-                t1 = t2;
-                token1Line = token2Line;
-            }
-            if (token1Line != currentLineNumber) {
-                context = Formatting.ParseTree.FindCommonParentNode(t1.Span.span, t1.Span.span, context);
-                indenter.GetIndentationEdits(t1, null, context, sameLineIndent).foreach(function (edit) {
-                    _this.EditCommands.add(edit);
-                });
-            }
-            if (!this.scriptHasErrors) {
-                var projectionEndLineSet = this.GetProjectionLineEndPositionSet();
-                if (!projectionEndLineSet.Contains(token1Line)) {
-                    this.TrimWhitespace(t1);
-                    var endlineNumber = this.Snapshot.GetLineNumberFromPosition(this.snapshotSpan.endPosition());
-                    if (projectionEndLineSet.Contains(endlineNumber)) {
-                        endlineNumber--;
-                    }
-                    this.TrimWhitespaceInLineRange(t1, token1Line + 1, endlineNumber);
-                }
-            }
-        };
-        FormattingTask.prototype.GetProjectionEndLines = function () {
-            var result = new Formatting.List_ITextSnapshotLine();
-            return result;
-        };
-        FormattingTask.prototype.GetProjectionLineEndPositionSet = function () {
-            var projectionEndLineSet = new Formatting.HashSet_int();
-            this.GetProjectionEndLines().foreach(function (line) {
-                if (!projectionEndLineSet.Contains(line.lineNumber())) {
-                    projectionEndLineSet.Add(line.lineNumber());
-                }
-            });
-            return projectionEndLineSet;
-        };
-        FormattingTask.prototype.TrimWhitespaceInLineRange = function (token, startLine, endLine) {
-            for(var lineNumber = startLine; lineNumber <= endLine; ++lineNumber) {
-                var line = this.Snapshot.GetLineFromLineNumber(lineNumber);
-                this.TrimWhitespace2(token, line);
-            }
-        };
-        FormattingTask.prototype.TrimWhitespace = function (token) {
-            var line = this.Snapshot.GetLineFromPosition(token.Span.startPosition());
-            this.TrimWhitespace2(token, line);
-        };
-        FormattingTask.prototype.TrimWhitespace2 = function (token, line) {
-            if (token.Token == 3 /* atkComment */  && token.Span.startPosition() <= line.endPosition() && token.Span.endPosition() >= line.endPosition()) {
-                return;
-            }
-            var text = line.getText();
-            var index = 0;
-            for(index = text.length - 1; index >= 0; --index) {
-                if (!Formatting.EditorUtilities.IsWhitespace(text.charCodeAt(index))) {
-                    break;
-                }
-            }
-            ++index;
-            if (index < text.length) {
-                var edit = new Formatting.TextEditInfo(line.startPosition() + index, line.length() - index, "");
-                if (this.logger.information()) {
-                    this.logger.log("TrimWhiteSpace2()");
-                    this.logger.log("edit: minChar=" + edit.position + ", limChar=" + (edit.position + edit.length) + ", text=\"" + TypeScript.stringToLiteral(edit.replaceWith, 30) + "\"");
-                }
-                this.EditCommands.add(edit);
-            }
-        };
-        FormattingTask.prototype.GetRuleEdits = function (rule, t1, t2) {
-            if (this.logger.information()) {
-                this.logger.log("GetRuleEdits(" + this.rulesProvider.getRuleName(rule) + ", " + "t1=[" + t1.Span.startPosition() + "," + t1.Span.endPosition() + "], " + "t2=[" + t2.Span.startPosition() + "," + t2.Span.endPosition() + "]" + ")");
-            }
-            var result = this.GetRuleEditsWorker(rule, t1, t2);
-            if (this.logger.information()) {
-                for(var i = 0; i < result.count(); i++) {
-                    var edit = result.get(i);
-                    this.logger.log("edit: minChar=" + edit.position + ", limChar=" + (edit.position + edit.length) + ", text=\"" + TypeScript.stringToLiteral(edit.replaceWith, 30) + "\"");
-                }
-            }
-            return result;
-        };
-        FormattingTask.prototype.GetRuleEditsWorker = function (rule, t1, t2) {
-            var emptyResult = new Formatting.List_TextEditInfo();
-            var lengthBetween;
-            if (rule.Operation.Action == 0 /* Ignore */ ) {
-                return emptyResult;
-            }
-            var betweenSpan;
-            switch(rule.Operation.Action) {
-                case 3 /* Delete */ :
- {
-                        betweenSpan = new Formatting.Span(t1.Span.endPosition(), t2.Span.startPosition() - t1.Span.endPosition());
-                        if (betweenSpan.length() > 0) {
-                            return new Formatting.List_TextEditInfo(new Formatting.TextEditInfo(betweenSpan.start(), betweenSpan.length(), ""));
-                        }
-                    }
-                    break;
-                case 2 /* NewLine */ :
- {
-                        if (rule.Flag == 1 /* CanDeleteNewLines */ ) {
-                            betweenSpan = new Formatting.Span(t1.Span.endPosition(), t2.Span.startPosition() - t1.Span.endPosition());
-                        } else {
-                            if (t1.lineNumber() == t2.lineNumber()) {
-                                lengthBetween = t2.Span.startPosition() - t1.Span.endPosition();
-                            } else {
-                                lengthBetween = t1.Span.end().GetContainingLine().endIncludingLineBreakPosition() - t1.Span.endPosition();
-                            }
-                            betweenSpan = new Formatting.Span(t1.Span.endPosition(), Formatting.Math.Max(0, lengthBetween));
-                        }
-                        var doEdit = false;
-                        var betweenText = this.Snapshot.GetText(betweenSpan);
-                        var lineFeedLoc = Formatting.StringUtils.IndexOf(betweenText, this.editorOptions.NewLineCharacter);
-                        if (lineFeedLoc < 0) {
-                            doEdit = true;
-                        } else {
-                            lineFeedLoc = Formatting.StringUtils.IndexOf(betweenText, this.editorOptions.NewLineCharacter, lineFeedLoc + 1);
-                            if (lineFeedLoc >= 0) {
-                                doEdit = true;
-                            }
-                        }
-                        if (doEdit) {
-                            return new Formatting.List_TextEditInfo(new Formatting.TextEditInfo(betweenSpan.start(), betweenSpan.length(), this.editorOptions.NewLineCharacter));
-                        }
-                    }
-                    break;
-                case 1 /* Space */ :
- {
-                        if (rule.Flag == 1 /* CanDeleteNewLines */ ) {
-                            betweenSpan = new Formatting.Span(t1.Span.endPosition(), t2.Span.startPosition() - t1.Span.endPosition());
-                        } else {
-                            if (t1.lineNumber() == t2.lineNumber()) {
-                                lengthBetween = t2.Span.startPosition() - t1.Span.endPosition();
-                            } else {
-                                lengthBetween = t1.Span.end().GetContainingLine().endPosition() - t1.Span.endPosition();
-                            }
-                            betweenSpan = new Formatting.Span(t1.Span.endPosition(), Formatting.Math.Max(0, lengthBetween));
-                        }
-                        if (betweenSpan.length() > 1 || this.Snapshot.GetText(betweenSpan) != " ") {
-                            return new Formatting.List_TextEditInfo(new Formatting.TextEditInfo(betweenSpan.start(), betweenSpan.length(), " "));
-                        }
-                    }
-                    break;
-            }
-            return emptyResult;
-        };
-        FormattingTask.prototype.FindTokenNode = function (span, helperNode) {
-            if (helperNode.CoverSpan(span)) {
-                if (helperNode.children() != null) {
-                    var child = Formatting.ParseNodeExtensions.TryFindNodeForSpan(helperNode.children(), span);
-                    if (child != null) {
-                        return this.FindTokenNode(span, child);
-                    }
-                }
-                return helperNode;
-            } else {
-                if (helperNode.Parent == null) {
-                    return helperNode;
-                } else {
-                    return this.FindTokenNode(span, helperNode.Parent);
-                }
-            }
-        };
-        return FormattingTask;
-    })();
-    Formatting.FormattingTask = FormattingTask;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var IndentationBag = (function () {
-        function IndentationBag(snapshot) {
-            this.snapshot = snapshot;
-            this.indentationEdits = new Formatting.Dictionary_int_List_IndentationEditInfo();
-        }
-        IndentationBag.prototype.AddIndent = function (edit) {
-            var line = this.snapshot.GetLineNumberFromPosition(edit.Position());
-            var lineIndents = this.indentationEdits.GetValue(line);
-            if (lineIndents === null) {
-                lineIndents = new Formatting.List_IndentationEditInfo();
-                this.indentationEdits.Add(line, lineIndents);
-            }
-            lineIndents.add(edit);
-        };
-        IndentationBag.prototype.FindIndent = function (position) {
-            var line = this.snapshot.GetLineNumberFromPosition(position);
-            var lineIndents = this.indentationEdits.GetValue(line);
-            if (lineIndents !== null) {
-                for(var i = lineIndents.count() - 1; i >= 0; i--) {
-                    if (position >= lineIndents.get(i).Position()) {
-                        return lineIndents.get(i);
-                    }
-                }
-            }
-            return null;
-        };
-        return IndentationBag;
-    })();
-    Formatting.IndentationBag = IndentationBag;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var IndentationEdgeFinder = (function () {
-        function IndentationEdgeFinder() { }
-        IndentationEdgeFinder.FillIndentationLevels = function FillIndentationLevels(node) {
-            var nodeStack = new Formatting.Stack_ParseNode();
-            nodeStack.Push(node);
-            while(nodeStack.Count() > 0) {
-                IndentationEdgeFinder.FillIndentationLevels2(nodeStack.Pop(), nodeStack);
-            }
-        };
-        IndentationEdgeFinder.FillBodyIndentation = function FillBodyIndentation(node, nextNodesToVisit) {
-            node.IsIndentationOverrideEdge = true;
-            node.ChildrenIndentationDelta = 1;
-            Formatting.ParseNodeExtensions.ForAllChildren(Formatting.ParseNodeExtensions.FindChildWithEdge(node, 9 /* apneBody */ ), function (child) {
-                if (child.AuthorNode.Details.Kind != 80 /* apnkEndCode */ ) {
-                    child.IndentationDelta = 1;
-                }
-                nextNodesToVisit.Push(child);
-            });
-        };
-        IndentationEdgeFinder.FillIndentationLevels2 = function FillIndentationLevels2(node, nextNodesToVisit) {
-            var child;
-            switch(node.AuthorNode.Details.nodeType) {
-                case 98 /* ModuleDeclaration */ :
-                case 96 /* ClassDeclaration */ :
-                case 97 /* InterfaceDeclaration */ :
-                    IndentationEdgeFinder.FillBodyIndentation(node, nextNodesToVisit);
-                    Formatting.ParseNodeExtensions.ForAllChildren(node, function (child) {
-                        nextNodesToVisit.Push(child);
-                    });
-                    return;
-                case 99 /* ImportDeclaration */ :
-                    node.ChildrenIndentationDelta = 1;
-                    Formatting.ParseNodeExtensions.ForAllChildren(node, function (child) {
-                        nextNodesToVisit.Push(child);
-                    });
-                    return;
-            }
-            switch(node.AuthorNode.Details.Kind) {
-                case 79 /* apnkProg */ :
- {
-                        node.IndentationDelta = 0;
-                        node.ChildrenIndentationDelta = 0;
-                        child = Formatting.ParseNodeExtensions.FindChildWithEdge(node, 9 /* apneBody */ );
-                        Formatting.ParseNodeExtensions.ForAllChildren(child, function (child) {
-                            child.IndentationDelta = 0;
-                            child.ChildrenIndentationDelta = 0;
-                            nextNodesToVisit.Push(child);
-                        });
-                    }
-                    break;
-                case 87 /* apnkBlock */ :
- {
-                        if ((node.AuthorNode.Details.Flags & 256 /* apnfSyntheticNode */ ) != 256 /* apnfSyntheticNode */ ) {
-                            IndentationEdgeFinder.FillIndentationEdgesForBlock(node, 1);
-                        } else {
-                            Formatting.ParseNodeExtensions.ForAllChildren(node, function (child) {
-                                IndentationEdgeFinder.FillIndentationLevels(child);
-                            });
-                            node.IndentationDelta = null;
-                            node.ChildrenIndentationDelta = null;
-                        }
-                    }
-                    break;
-                case 94 /* apnkTryCatch */ :
-                case 100 /* apnkTryFinally */ :
- {
-                        Formatting.ParseNodeExtensions.ForAllChildren(node, function (child) {
-                            IndentationEdgeFinder.FillIndentationLevels(child);
-                        });
-                        node.IndentationDelta = null;
-                        node.ChildrenIndentationDelta = null;
-                    }
-                    break;
-                case 78 /* apnkFncDecl */ :
- {
-                        IndentationEdgeFinder.FillBodyIndentation(node, nextNodesToVisit);
-                    }
-                    break;
-                case 92 /* apnkSwitch */ :
- {
-                        node.ChildrenIndentationDelta = 1;
-                        var col = Formatting.ParseNodeExtensions.GetChildren(node).Where(function (c) {
-                            return c.AuthorNode.EdgeLabel == 21 /* apneCase */  || c.AuthorNode.EdgeLabel == 22 /* apneDefaultCase */ ;
-                        });
-                        col.foreach(function (caseNode) {
-                            caseNode.IndentationDelta = 1;
-                            caseNode.ChildrenIndentationDelta = 1;
-                            nextNodesToVisit.Push(caseNode);
-                        });
-                    }
-                    break;
-                case 93 /* apnkCase */ :
-                case 105 /* apnkDefaultCase */ :
- {
-                        child = Formatting.ParseNodeExtensions.FindChildWithEdge(Formatting.ParseNodeExtensions.FindChildWithEdge(node, 9 /* apneBody */ ), 10 /* apneBlockBody */ );
-                        if (child != null) {
-                            if (child.AuthorNode.Details.Kind == 75 /* apnkList */ ) {
-                                Formatting.ParseNodeExtensions.ForAllChildren(child, function (grandChild) {
-                                    grandChild.IndentationDelta = 1;
-                                    nextNodesToVisit.Push(grandChild);
-                                });
-                            } else if (child.AuthorNode.Details.Kind == 87 /* apnkBlock */ ) {
-                                child.IndentationDelta = 1;
-                                IndentationEdgeFinder.FillIndentationEdgesForBlock(child, 1);
-                            } else {
-                                child.IndentationDelta = 1;
-                                nextNodesToVisit.Push(child);
-                            }
-                        }
-                    }
-                    break;
-                case 83 /* apnkIf */ :
- {
-                        node.ChildrenIndentationDelta = 1;
-                        var thenChild = Formatting.ParseNodeExtensions.FindChildWithEdge(node, 5 /* apneThen */ );
-                        IndentationEdgeFinder.FillIndentationEdgesForBlockOrNot(thenChild, 1);
-                        var elseChild = Formatting.ParseNodeExtensions.FindChildWithEdge(node, 6 /* apneElse */ );
-                        IndentationEdgeFinder.FillIndentationEdgesForBlockOrNot(elseChild, 1);
-                    }
-                    break;
-                case 82 /* apnkFor */ :
-                case 86 /* apnkForIn */ :
-                case 84 /* apnkWhile */ :
-                case 88 /* apnkWith */ :
-                case 85 /* apnkDoWhile */ :
- {
-                        node.ChildrenIndentationDelta = 1;
-                        child = Formatting.ParseNodeExtensions.FindChildWithEdge(node, 9 /* apneBody */ );
-                        IndentationEdgeFinder.FillIndentationEdgesForBlockOrNot(child, 1);
-                    }
-                    break;
-                case 27 /* apnkObject */ :
- {
-                        node.IsIndentationOverrideEdge = true;
-                        node.ChildrenIndentationDelta = 1;
-                        var members = Formatting.ParseNodeExtensions.FindChildWithEdge(node, 15 /* apneMembers */ );
-                        if (members != null) {
-                            if (members.AuthorNode.Details.Kind == 75 /* apnkList */ ) {
-                                Formatting.ParseNodeExtensions.ForAllChildren(members, function (grandChild) {
-                                    grandChild.ChildrenIndentationDelta = 1;
-                                    grandChild.IndentationDelta = 1;
-                                    nextNodesToVisit.Push(grandChild);
-                                });
-                            } else {
-                                members.ChildrenIndentationDelta = 1;
-                                members.IndentationDelta = 1;
-                                nextNodesToVisit.Push(members);
-                            }
-                        }
-                    }
-                    break;
-                case 26 /* apnkArray */ :
- {
-                        node.IsIndentationOverrideEdge = true;
-                        node.ChildrenIndentationDelta = 1;
-                        var elements = Formatting.ParseNodeExtensions.FindChildWithEdge(node, 23 /* apneElements */ );
-                        if (elements != null) {
-                            if (elements.AuthorNode.Details.Kind == 75 /* apnkList */ ) {
-                                Formatting.ParseNodeExtensions.ForAllChildren(elements, function (grandChild) {
-                                    grandChild.IsIndentationOverrideEdge = true;
-                                    nextNodesToVisit.Push(grandChild);
-                                });
-                            } else {
-                                elements.IsIndentationOverrideEdge = true;
-                                nextNodesToVisit.Push(elements);
-                            }
-                        }
-                    }
-                    break;
-                case 97 /* apnkTry */ :
-                case 95 /* apnkCatch */ :
-                case 99 /* apnkFinally */ :
- {
-                        node.ChildrenIndentationDelta = 1;
-                        var body = Formatting.ParseNodeExtensions.FindChildWithEdge(node, 9 /* apneBody */ );
-                        if (body == null || (body != null && body.AuthorNode.Details.Kind != 94 /* apnkTryCatch */  && body.AuthorNode.Details.Kind != 100 /* apnkTryFinally */ )) {
-                            var parent = node.Parent;
-                            while(parent != null) {
-                                if ((parent.AuthorNode.Details.Kind == 94 /* apnkTryCatch */  || parent.AuthorNode.Details.Kind == 100 /* apnkTryFinally */ ) && parent.IndentationDelta != null) {
-                                    node.IndentationDelta = parent.IndentationDelta;
-                                    break;
-                                }
-                                parent = parent.Parent;
-                            }
-                        }
-                        if (body != null && body.AuthorNode.Details.Kind == 87 /* apnkBlock */ ) {
-                            IndentationEdgeFinder.FillIndentationEdgesForBlock(body, 1);
-                        } else {
-                            Formatting.ParseNodeExtensions.ForAllChildren(node, function (child) {
-                                nextNodesToVisit.Push(child);
-                            });
-                        }
-                    }
-                    break;
-                case 46 /* apnkAsg */ :
-                case 60 /* apnkAsgAdd */ :
-                case 61 /* apnkAsgSub */ :
-                case 62 /* apnkAsgMul */ :
-                case 63 /* apnkAsgDiv */ :
-                case 64 /* apnkAsgMod */ :
-                case 65 /* apnkAsgAnd */ :
-                case 66 /* apnkAsgXor */ :
-                case 67 /* apnkAsgOr */ :
-                case 68 /* apnkAsgLsh */ :
-                case 69 /* apnkAsgRsh */ :
-                case 70 /* apnkAsgRs2 */ :
-                case 76 /* apnkVarDecl */ :
-                case 104 /* apnkVarDeclList */ :
-                case 44 /* apnkCall */ :
-                case 57 /* apnkNew */ :
-                case 25 /* apnkDelete */ :
-                case 96 /* apnkReturn */ :
-                case 45 /* apnkDot */ :
-                case 58 /* apnkIndex */ :
- {
-                        if (node.AuthorNode.Details.Kind == 76 /* apnkVarDecl */  && node.Parent != null && node.Parent.AuthorNode.Details.Kind == 104 /* apnkVarDeclList */ ) {
-                        } else {
-                            node.ChildrenIndentationDelta = 1;
-                        }
-                        Formatting.ParseNodeExtensions.ForAllChildren(node, function (child) {
-                            nextNodesToVisit.Push(child);
-                        });
-                    }
-                    break;
-                default:
- {
-                        Formatting.ParseNodeExtensions.ForAllChildren(node, function (child) {
-                            nextNodesToVisit.Push(child);
-                        });
-                    }
-                    break;
-            }
-        };
-        IndentationEdgeFinder.FillIndentationEdgesForBlockOrNot = function FillIndentationEdgesForBlockOrNot(node, childrenLevel) {
-            if (node == null) {
-                return;
-            }
-            node.ChildrenIndentationDelta = childrenLevel;
-            if (node.AuthorNode.Details.Kind == 87 /* apnkBlock */ ) {
-                IndentationEdgeFinder.FillIndentationEdgesForBlock(node, childrenLevel);
-            } else {
-                node.IndentationDelta = childrenLevel;
-                IndentationEdgeFinder.FillIndentationLevels(node);
-            }
-        };
-        IndentationEdgeFinder.FillIndentationEdgesForBlock = function FillIndentationEdgesForBlock(node, childrenLevel) {
-            if (node == null) {
-                return;
-            }
-            Formatting.Debug.Assert(node.AuthorNode.Details.Kind == 87 /* apnkBlock */ , "Expecting a node of kind block.");
-            if ((node.AuthorNode.Details.Flags & 256 /* apnfSyntheticNode */ ) != 256 /* apnfSyntheticNode */ ) {
-                node.ChildrenIndentationDelta = childrenLevel;
-            }
-            var child = Formatting.FirstOrDefault(Formatting.ParseNodeExtensions.GetChildren(node), function () {
-                return true;
-            });
-            if (child != null) {
-                if (child.AuthorNode.Details.Kind == 75 /* apnkList */ ) {
-                    Formatting.ParseNodeExtensions.ForAllChildren(child, function (grandChild) {
-                        grandChild.IndentationDelta = node.ChildrenIndentationDelta;
-                        IndentationEdgeFinder.FillIndentationLevels(grandChild);
-                    });
-                } else {
-                    child.IndentationDelta = node.ChildrenIndentationDelta;
-                    IndentationEdgeFinder.FillIndentationLevels(child);
-                }
-            }
-        };
-        return IndentationEdgeFinder;
-    })();
-    Formatting.IndentationEdgeFinder = IndentationEdgeFinder;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var IndentationEditInfo = (function () {
-        function IndentationEditInfo(textEditInfo) {
-            this.textEditInfo = textEditInfo;
-            this.OrigIndentPosition = this.textEditInfo.Position;
-        }
-        IndentationEditInfo.prototype.Position = function () {
- {
-                return this.textEditInfo.Position;
-            }
-        };
-        IndentationEditInfo.prototype.Indentation = function () {
- {
-                return this.textEditInfo.ReplaceWith;
-            }
-        };
-        IndentationEditInfo.prototype.OrigIndentLength = function () {
- {
-                return this.textEditInfo.Length;
-            }
-        };
-        IndentationEditInfo.create1 = function create1(textEditInfo) {
-            return new IndentationEditInfo(textEditInfo);
-        };
-        IndentationEditInfo.create2 = function create2(position, indentString, origPosition, origIndentLength) {
-            var textEditInfo = new Formatting.TextEditInfo(position, origIndentLength, indentString);
-            var result = new IndentationEditInfo(textEditInfo);
-            result.OrigIndentPosition = origPosition;
-            return result;
-        };
-        return IndentationEditInfo;
-    })();
-    Formatting.IndentationEditInfo = IndentationEditInfo;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var IndentationInfo = (function () {
-        function IndentationInfo(Prefix, Level) {
-            if (typeof Prefix === "undefined") { Prefix = null; }
-            if (typeof Level === "undefined") { Level = 0; }
-            this.Prefix = Prefix;
-            this.Level = Level;
-        }
-        return IndentationInfo;
-    })();
-    Formatting.IndentationInfo = IndentationInfo;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var Indenter = (function () {
-        function Indenter(logger, tree, snapshot, languageHostIndentation, editorOptions, firstToken, smartIndent) {
-            this.logger = logger;
-            this.tree = tree;
-            this.snapshot = snapshot;
-            this.languageHostIndentation = languageHostIndentation;
-            this.editorOptions = editorOptions;
-            this.firstToken = firstToken;
-            this.smartIndent = smartIndent;
-            this.indentationBag = new Formatting.IndentationBag(this.snapshot);
-            this.scriptBlockBeginLineNumber = -1;
-            this.offsetIndentationDeltas = new Formatting.Dictionary_int_int();
-            this.tree.Root.SetIndentationOverride("");
-            this.ApplyScriptBlockIndentation(this.languageHostIndentation, this.tree);
-            this.FillInheritedIndentation(this.tree);
-        }
-        Indenter.prototype.GetIndentationEdits = function (token, nextToken, node, sameLineIndent) {
-            if (this.logger.information()) {
-                this.logger.log("GetIndentationEdits(" + "t1=[" + token.Span.startPosition() + "," + token.Span.endPosition() + "], " + "t2=[" + (nextToken == null ? "null" : (nextToken.Span.startPosition() + "," + nextToken.Span.endPosition())) + "]" + ")");
-            }
-            var result = this.GetIndentationEditsWorker(token, nextToken, node, sameLineIndent);
-            if (this.logger.information()) {
-                for(var i = 0; i < result.count(); i++) {
-                    var edit = result.get(i);
-                    this.logger.log("edit: minChar=" + edit.position + ", limChar=" + (edit.position + edit.length) + ", text=\"" + TypeScript.stringToLiteral(edit.replaceWith, 30) + "\"");
-                }
-            }
-            return result;
-        };
-        Indenter.prototype.GetIndentationEditsWorker = function (token, nextToken, node, sameLineIndent) {
-            var result = new Formatting.List_TextEditInfo();
-            var indentationInfo = null;
-            this.AdjustStartOffsetIfNeeded(token, node);
-            if (this.scriptBlockBeginLineNumber == token.lineNumber()) {
-                return result;
-            }
-            if (!sameLineIndent && this.IsMultiLineString(token)) {
-                return result;
-            }
-            indentationInfo = this.GetSpecialCaseIndentation(token, node);
-            if (indentationInfo == null) {
-                while(!node.CanIndent() && node.Parent != null && token.Span.span.start() == node.Parent.AuthorNode.Details.StartOffset) {
-                    node = node.Parent;
-                }
-                if (node.CanIndent() && token.Span.span.start() == node.AuthorNode.Details.StartOffset) {
-                    indentationInfo = node.GetEffectiveIndentation(this);
-                } else {
-                    if (token.Token == 2 /* atkIdentifier */  && nextToken != null && nextToken.Token == 31 /* atkColon */ ) {
-                        indentationInfo = node.GetEffectiveChildrenIndentation(this);
-                    } else {
-                        indentationInfo = this.ApplyIndentationDeltaFromParent(token, node);
-                    }
-                }
-            }
-            if (indentationInfo != null) {
-                var edit = this.GetIndentEdit(indentationInfo, token.Span.startPosition(), sameLineIndent);
-                if (edit != null) {
-                    this.RegisterIndentation(edit, sameLineIndent);
-                    result.add(edit);
-                    if (token.Token == 3 /* atkComment */ ) {
-                        var commentEdits = this.GetCommentIndentationEdits(token);
-                        commentEdits.foreach(function (item) {
-                            result.add(item);
-                        });
-                    }
-                }
-            }
-            return result;
-        };
-        Indenter.prototype.GetCommentIndentationEdits = function (token) {
-            var result = new Formatting.List_TextEditInfo();
-            if (token.Token != 3 /* atkComment */ ) {
-                return result;
-            }
-            var commentLastLineNumber = this.snapshot.GetLineNumberFromPosition(token.Span.endPosition());
-            if (token.lineNumber() == commentLastLineNumber) {
-                return result;
-            }
-            var commentFirstLineIndentationDelta = this.GetIndentationDelta(token.Span.startPosition(), null);
-            if (commentFirstLineIndentationDelta != undefined) {
-                for(var line = token.lineNumber() + 1; line <= commentLastLineNumber; line++) {
-                    var lineStartPosition = this.snapshot.GetLineFromLineNumber(line).startPosition();
-                    var lineIndent = this.GetLineIndentationForOffset(lineStartPosition);
-                    var commentIndentationInfo = this.ApplyIndentationDelta2(lineIndent, commentFirstLineIndentationDelta);
-                    if (commentIndentationInfo != null) {
-                        var tokenStartPosition = lineStartPosition + lineIndent.length;
-                        var commentIndentationEdit = this.GetIndentEdit(commentIndentationInfo, tokenStartPosition, false);
-                        if (commentIndentationEdit != null) {
-                            result.add(commentIndentationEdit);
-                        }
-                    }
-                }
-            }
-            return result;
-        };
-        Indenter.GetIndentSizeFromIndentText = function GetIndentSizeFromIndentText(indentText, editorOptions) {
-            return Indenter.GetIndentSizeFromText(indentText, editorOptions, false);
-        };
-        Indenter.GetIndentSizeFromText = function GetIndentSizeFromText(text, editorOptions, includeNonIndentChars) {
-            var indentSize = 0;
-            for(var i = 0; i < text.length; i++) {
-                var c = text.charAt(i);
-                if (c == '\t') {
-                    indentSize = (indentSize + editorOptions.TabSize) - (indentSize % editorOptions.TabSize);
-                } else if (c == ' ') {
-                    indentSize += 1;
-                } else {
-                    if (includeNonIndentChars) {
-                        indentSize += 1;
-                    } else {
-                        break;
-                    }
-                }
-            }
-            return indentSize;
-        };
-        Indenter.prototype.GetSpecialCaseIndentation = function (token, node) {
-            var indentationInfo = null;
-            switch(token.Token) {
-                case 14 /* atkLCurly */ :
-                    indentationInfo = this.GetSpecialCaseIndentationForLCurly(node);
-                    return indentationInfo;
-                case 70 /* atkElse */ :
-                case 13 /* atkRBrack */ :
-                    indentationInfo = node.GetNodeStartLineIndentation(this);
-                    return indentationInfo;
-                case 15 /* atkRCurly */ :
-                    if (node.AuthorNode.Details.Kind == 87 /* apnkBlock */  && node.AuthorNode.EdgeLabel == 9 /* apneBody */ ) {
-                        node = node.Parent;
-                    }
-                    indentationInfo = node.GetNodeStartLineIndentation(this);
-                    return indentationInfo;
-                case 94 /* atkWhile */ :
-                    if (node.AuthorNode.Details.Kind == 85 /* apnkDoWhile */ ) {
-                        indentationInfo = node.GetNodeStartLineIndentation(this);
-                        return indentationInfo;
-                    }
-                    return null;
-                case 9 /* atkSColon */ :
-                    return this.GetSpecialCaseIndentationForSemicolon(token, node);
-                case 3 /* atkComment */ :
-                    return this.GetSpecialCaseIndentationForComment(token, node);
-                default:
-                    return indentationInfo;
-            }
-        };
-        Indenter.prototype.GetSpecialCaseIndentationForLCurly = function (node) {
-            var indentationInfo = null;
-            if (node.AuthorNode.Details.Kind == 78 /* apnkFncDecl */  || node.AuthorNode.EdgeLabel == 5 /* apneThen */  || node.AuthorNode.EdgeLabel == 6 /* apneElse */ ) {
-                indentationInfo = node.GetNodeStartLineIndentation(this);
-                return indentationInfo;
-            } else if (node.AuthorNode.Details.Kind == 27 /* apnkObject */  && !node.CanIndent()) {
-                return null;
-            }
-            indentationInfo = node.GetEffectiveIndentation(this);
-            return indentationInfo;
-        };
-        Indenter.prototype.GetSpecialCaseIndentationForSemicolon = function (token, node) {
-            var indentationInfo = null;
-            if (this.smartIndent) {
-                indentationInfo = node.GetEffectiveChildrenIndentation(this);
-                return indentationInfo;
-            } else {
-                if (node.AuthorNode.Details.Kind != 82 /* apnkFor */ ) {
-                    var semiColonStartSpan = new Formatting.Span(token.Span.startPosition(), 0);
-                    node = Formatting.ParseTree.FindCommonParentNode(semiColonStartSpan, semiColonStartSpan, node);
-                    indentationInfo = node.GetEffectiveChildrenIndentation(this);
-                    return indentationInfo;
-                }
-            }
-            return null;
-        };
-        Indenter.prototype.GetSpecialCaseIndentationForComment = function (token, node) {
-            var indentationInfo = null;
-            var twoCharSpan = token.Span.Intersection(new Formatting.Span(token.Span.startPosition(), 2));
-            if (twoCharSpan != null && (twoCharSpan.GetText() == "//" || twoCharSpan.GetText() == "/*")) {
-                while(node.ChildrenIndentationDelta == null && node.Parent != null) {
-                    node = node.Parent;
-                }
-                if (this.CanIndentComment(token, node)) {
-                    indentationInfo = node.GetEffectiveChildrenIndentationForComment(this);
-                } else {
-                    indentationInfo = this.ApplyIndentationDeltaFromParent(token, node);
-                }
-            }
-            return indentationInfo;
-        };
-        Indenter.prototype.CanIndentComment = function (token, node) {
-            switch(node.AuthorNode.Details.Kind) {
-                case 79 /* apnkProg */ :
-                case 87 /* apnkBlock */ :
-                case 92 /* apnkSwitch */ :
-                case 93 /* apnkCase */ :
-                case 105 /* apnkDefaultCase */ :
-                case 83 /* apnkIf */ :
-                case 82 /* apnkFor */ :
-                case 86 /* apnkForIn */ :
-                case 84 /* apnkWhile */ :
-                case 88 /* apnkWith */ :
-                case 85 /* apnkDoWhile */ :
-                case 27 /* apnkObject */ :
-                    return true;
-                case 78 /* apnkFncDecl */ :
-                    var result = true;
-                    var children = Formatting.ParseNodeExtensions.FindChildrenWithEdge(node, 13 /* apneArgument */ );
-                    children.foreach(function (argumentNode) {
-                        if (token.Span.startPosition() < argumentNode.AuthorNode.Details.StartOffset) {
-                            result = false;
-                        }
-                    });
-                    return result;
-            }
-            return false;
-        };
-        Indenter.prototype.ApplyScriptBlockIndentation = function (languageHostIndentation, tree) {
-            if (languageHostIndentation == null || tree.StartNodeSelf == null) {
-                return;
-            }
-            var scriptBlockIndentation = this.ApplyIndentationLevel(languageHostIndentation, 1);
-            tree.Root.SetIndentationOverride(scriptBlockIndentation);
-        };
-        Indenter.prototype.GetIndentEdit = function (indentInfo, tokenStartPosition, sameLineIndent) {
-            var indentText = this.ApplyIndentationLevel(indentInfo.Prefix, indentInfo.Level);
-            if (sameLineIndent) {
-                return new Formatting.TextEditInfo(tokenStartPosition, 0, indentText);
-            } else {
-                var snapshotLine = this.snapshot.GetLineFromPosition(tokenStartPosition);
-                var currentIndentSpan = new Formatting.Span(snapshotLine.startPosition(), tokenStartPosition - snapshotLine.startPosition());
-                var currentIndentText = this.snapshot.GetText(currentIndentSpan);
-                if (currentIndentText !== indentText) {
-                    if (this.logger.debug()) {
-                        for(var i = 0, len = currentIndentText.length; i < len; i++) {
-                            var c = currentIndentText.charCodeAt(i);
-                            if (!Formatting.StringUtils.IsWhiteSpace(c)) {
-                                Formatting.Debug.Fail("Formatting error: Will remove user code when indenting the line: " + snapshotLine.getText());
-                                break;
-                            }
-                        }
-                    }
-                    return new Formatting.TextEditInfo(currentIndentSpan.start(), currentIndentSpan.length(), indentText);
-                }
-            }
-            return null;
-        };
-        Indenter.prototype.ApplyIndentationLevel = function (existingIndentation, level) {
-            var indentSize = this.editorOptions.IndentSize;
-            var tabSize = this.editorOptions.TabSize;
-            var convertTabsToSpaces = this.editorOptions.ConvertTabsToSpaces;
-            if (level < 0) {
-                if (Formatting.StringUtils.IsNullOrEmpty(existingIndentation)) {
-                    return "";
-                }
-                var totalIndent = 0;
-                Formatting.StringUtils.foreach(existingIndentation, function (c) {
-                    if (c == '\t') {
-                        totalIndent += tabSize;
-                    } else {
-                        totalIndent++;
-                    }
-                });
-                totalIndent += level * indentSize;
-                if (totalIndent < 0) {
-                    return "";
-                } else {
-                    return this.GetIndentString(null, totalIndent, tabSize, convertTabsToSpaces);
-                }
-            }
-            var totalIndentSize = level * indentSize;
-            return this.GetIndentString(existingIndentation, totalIndentSize, tabSize, convertTabsToSpaces);
-        };
-        Indenter.prototype.GetIndentString = function (prefix, totalIndentSize, tabSize, convertTabsToSpaces) {
-            var tabString = convertTabsToSpaces ? Formatting.StringUtils.create(' ', tabSize) : "\t";
-            var text = "";
-            if (!Formatting.StringUtils.IsNullOrEmpty(prefix)) {
-                text += prefix;
-            }
-            var pos = 0;
-            while(pos <= totalIndentSize - tabSize) {
-                text += tabString;
-                pos += tabSize;
-            }
-            while(pos < totalIndentSize) {
-                text += ' ';
-                pos++;
-            }
-            return text;
-        };
-        Indenter.prototype.ApplyIndentationDeltaFromParent = function (token, node) {
-            var indentationInfo = null;
-            var indentableParent = node;
-            while(indentableParent != null && !indentableParent.CanIndent()) {
-                indentableParent = indentableParent.Parent;
-            }
-            if (indentableParent != null && indentableParent.AuthorNode.Details.Kind != 79 /* apnkProg */ ) {
-                var parentIndentationDeltaSize = this.GetIndentationDelta(indentableParent.AuthorNode.Details.StartOffset, token.Span.startPosition());
-                if (parentIndentationDeltaSize !== undefined) {
-                    indentationInfo = this.ApplyIndentationDelta1(token.Span.startPosition(), parentIndentationDeltaSize);
-                }
-            }
-            return indentationInfo;
-        };
-        Indenter.prototype.ApplyIndentationDelta1 = function (tokenStartPosition, delta) {
-            var snapshotLine = this.snapshot.GetLineFromPosition(tokenStartPosition);
-            var currentIndentSpan = new Formatting.Span(snapshotLine.startPosition(), tokenStartPosition - snapshotLine.startPosition());
-            var currentIndent = this.snapshot.GetText(currentIndentSpan);
-            return this.ApplyIndentationDelta2(currentIndent, delta);
-        };
-        Indenter.prototype.ApplyIndentationDelta2 = function (currentIndent, delta) {
-            if (delta == 0) {
-                return null;
-            }
-            var currentIndentSize = Indenter.GetIndentSizeFromIndentText(currentIndent, this.editorOptions);
-            var newIndentSize = currentIndentSize + delta;
-            if (newIndentSize < 0) {
-                newIndentSize = 0;
-            }
-            var newIndent = this.GetIndentString(null, newIndentSize, this.editorOptions.TabSize, this.editorOptions.ConvertTabsToSpaces);
-            if (newIndent != null) {
-                return new Formatting.IndentationInfo(newIndent, 0);
-            }
-            return null;
-        };
-        Indenter.prototype.GetIndentationDelta = function (tokenStartPosition, childTokenStartPosition) {
-            Formatting.Debug.Assert(childTokenStartPosition !== undefined, "Error: caller must pass 'null' for undefined position");
-            var indentationDeltaSize = this.offsetIndentationDeltas.GetValue(tokenStartPosition);
-            if (indentationDeltaSize === null) {
-                var indentEditInfo = this.indentationBag.FindIndent(tokenStartPosition);
-                if (indentEditInfo == null) {
-                    return null;
-                }
-                var origIndentText = this.snapshot.GetText(new Formatting.Span(indentEditInfo.OrigIndentPosition, indentEditInfo.OrigIndentLength()));
-                var newIndentText = indentEditInfo.Indentation();
-                var origIndentSize = Indenter.GetIndentSizeFromText(origIndentText, this.editorOptions, true);
-                var newIndentSize = Indenter.GetIndentSizeFromIndentText(newIndentText, this.editorOptions);
-                if (childTokenStartPosition !== null) {
-                    var childTokenLineStartPosition = this.snapshot.GetLineFromPosition(childTokenStartPosition).startPosition();
-                    var childIndentText = this.snapshot.GetText(new Formatting.Span(childTokenLineStartPosition, childTokenStartPosition - childTokenLineStartPosition));
-                    var childIndentSize = Indenter.GetIndentSizeFromIndentText(childIndentText, this.editorOptions);
-                    if (childIndentSize < origIndentSize) {
-                        origIndentSize = Indenter.GetIndentSizeFromIndentText(origIndentText, this.editorOptions);
-                    }
-                }
-                indentationDeltaSize = newIndentSize - origIndentSize;
-                this.offsetIndentationDeltas.Add(tokenStartPosition, indentationDeltaSize);
-            }
-            return indentationDeltaSize;
-        };
-        Indenter.prototype.FillInheritedIndentation = function (tree) {
-            var offset = -1;
-            var indentNode = null;
-            if (tree.StartNodeSelf != null) {
-                if (!this.smartIndent && tree.StartNodePreviousSibling !== null && tree.StartNodeSelf.AuthorNode.Label == 0 && tree.StartNodePreviousSibling.Label == 0) {
-                    indentNode = tree.StartNodeSelf;
-                    offset = tree.StartNodePreviousSibling.Details.StartOffset;
-                    var lineNum = this.snapshot.GetLineNumberFromPosition(offset);
-                    var node = indentNode;
-                    while(node.Parent != null && this.snapshot.GetLineNumberFromPosition(node.Parent.AuthorNode.Details.StartOffset) == lineNum) {
-                        node = node.Parent;
-                        if (node.CanIndent()) {
-                            indentNode = node;
-                            indentNode.IndentationDelta = 0;
-                        }
-                    }
-                } else {
-                    var parent;
-                    if (this.smartIndent) {
-                        parent = tree.StartNodeSelf;
-                        while(parent != null && parent.AuthorNode.Details.StartOffset == this.firstToken.Span.startPosition()) {
-                            parent = parent.Parent;
-                        }
-                    } else {
-                        var startNodeLineNumber = this.snapshot.GetLineNumberFromPosition(tree.StartNodeSelf.AuthorNode.Details.StartOffset);
-                        parent = tree.StartNodeSelf.Parent;
-                        while(parent != null && startNodeLineNumber == this.snapshot.GetLineNumberFromPosition(parent.AuthorNode.Details.StartOffset)) {
-                            parent = parent.Parent;
-                        }
-                    }
-                    while(parent != null && !parent.CanIndent()) {
-                        parent = parent.Parent;
-                    }
-                    if (parent != null && parent.AuthorNode.Details.Kind != 79 /* apnkProg */ ) {
-                        offset = parent.AuthorNode.Details.StartOffset;
-                        indentNode = parent;
-                    }
-                }
-            }
-            if (indentNode != null) {
-                var indentOverride = this.GetLineIndentationForOffset(offset);
-                if (!this.smartIndent && tree.StartNodePreviousSibling !== null && indentNode.Parent != null) {
-                    Formatting.ParseNodeExtensions.GetChildren(indentNode.Parent).foreach(function (sibling) {
-                        if (sibling !== indentNode) {
-                            if (sibling.CanIndent()) {
-                                sibling.SetIndentationOverride(indentOverride);
-                            }
-                        }
-                    });
-                }
-                var lastDelta = 0;
-                var lastLine = this.snapshot.GetLineNumberFromPosition(indentNode.AuthorNode.Details.StartOffset);
-                do {
-                    var currentLine = this.snapshot.GetLineNumberFromPosition(indentNode.AuthorNode.Details.StartOffset);
-                    if (lastLine != currentLine) {
-                        lastLine = currentLine;
-                        indentOverride = this.ApplyIndentationLevel(indentOverride, -lastDelta);
-                        lastDelta = 0;
-                    }
-                    if (indentNode.CanIndent()) {
-                        indentNode.SetIndentationOverride(indentOverride);
-                        lastDelta = indentNode.IndentationDelta;
-                    }
-                    indentNode = indentNode.Parent;
-                } while(indentNode != null);
-            }
-        };
-        Indenter.prototype.GetLineIndentationForOffset = function (offset) {
-            var indentationEdit;
-            indentationEdit = this.indentationBag.FindIndent(offset);
-            if (indentationEdit != null) {
-                return indentationEdit.Indentation();
-            } else {
-                var line = this.snapshot.GetLineFromPosition(offset);
-                var lineText = line.getText();
-                var index = 0;
-                while(index < lineText.length && (lineText.charAt(index) == ' ' || lineText.charAt(index) == '\t')) {
-                    ++index;
-                }
-                return lineText.substr(0, index);
-            }
-        };
-        Indenter.prototype.RegisterIndentation = function (indent, sameLineIndent) {
-            var indentationInfo = null;
-            if (sameLineIndent) {
-                var lineStartPosition = this.snapshot.GetLineFromPosition(indent.Position).startPosition();
-                var lineIndentLength = indent.Position - lineStartPosition;
-                indentationInfo = Formatting.IndentationEditInfo.create2(indent.Position, indent.ReplaceWith, lineStartPosition, lineIndentLength);
-            } else {
-                indentationInfo = new Formatting.IndentationEditInfo(indent);
-            }
-            this.indentationBag.AddIndent(indentationInfo);
-        };
-        Indenter.prototype.RegisterIndentation2 = function (position, indent) {
-            this.RegisterIndentation(new Formatting.TextEditInfo(position, 0, indent), false);
-        };
-        Indenter.prototype.AdjustStartOffsetIfNeeded = function (token, node) {
-            if (token == null) {
-                return;
-            }
-            var updateStartOffset = false;
-            switch(token.Token) {
-                case 77 /* atkFunction */ :
-                    updateStartOffset = node.AuthorNode.Details.Kind == 78 /* apnkFncDecl */ ;
-                    break;
-                case 14 /* atkLCurly */ :
-                    updateStartOffset = node.AuthorNode.Details.Kind == 27 /* apnkObject */ ;
-                    break;
-                case 12 /* atkLBrack */ :
-                    updateStartOffset = node.AuthorNode.Details.Kind == 26 /* apnkArray */ ;
-                    break;
-            }
-            if (updateStartOffset) {
-                Formatting.ParseNodeExtensions.SetNodeSpan(node, token.Span.startPosition(), node.AuthorNode.Details.EndOffset);
-            }
-        };
-        Indenter.prototype.IsMultiLineString = function (token) {
-            return token.tokenID === 107 /* StringLiteral */  && this.snapshot.GetLineNumberFromPosition(token.Span.endPosition()) > this.snapshot.GetLineNumberFromPosition(token.Span.startPosition());
-        };
-        return Indenter;
-    })();
-    Formatting.Indenter = Indenter;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var MatchingBlockFinderTask = (function () {
-        function MatchingBlockFinderTask(bracePoint, FileAuthoringProxy) {
-            this.bracePoint = bracePoint;
-            this.FileAuthoringProxy = FileAuthoringProxy;
-        }
-        MatchingBlockFinderTask.prototype.Run = function () {
-            var parseCursor = this.FileAuthoringProxy.GetASTCursor();
-            parseCursor.SeekToOffset(this.bracePoint.position, true);
-            return this.FindMatchingBlockSpan(parseCursor);
-        };
-        MatchingBlockFinderTask.prototype.FindMatchingBlockSpan = function (parser) {
-            var currentNode = parser.Current();
-            while(currentNode.Kind != 0 /* apnkEmptyNode */ ) {
-                if (currentNode.ast != null) {
-                    switch(currentNode.ast.nodeType) {
-                        case 97 /* InterfaceDeclaration */ :
-                        case 96 /* ClassDeclaration */ :
-                        case 98 /* ModuleDeclaration */ :
-                            return Formatting.Span.FromBounds(currentNode.ast.minChar, currentNode.ast.limChar);
-                        case 99 /* ImportDeclaration */ :
-                            return new Formatting.Span(currentNode.StartOffset, currentNode.EndOffset - currentNode.StartOffset);
-                    }
-                }
-                switch(currentNode.Kind) {
-                    case 79 /* apnkProg */ :
-                        return null;
-                    case 76 /* apnkVarDecl */ :
-                    case 92 /* apnkSwitch */ :
-                    case 93 /* apnkCase */ :
-                    case 105 /* apnkDefaultCase */ :
-                    case 97 /* apnkTry */ :
-                    case 95 /* apnkCatch */ :
-                    case 99 /* apnkFinally */ :
-                    case 83 /* apnkIf */ :
-                    case 82 /* apnkFor */ :
-                    case 86 /* apnkForIn */ :
-                    case 84 /* apnkWhile */ :
-                    case 85 /* apnkDoWhile */ :
-                    case 88 /* apnkWith */ :
-                    case 44 /* apnkCall */ :
-                    case 96 /* apnkReturn */ :
-                    case 46 /* apnkAsg */ :
-                    case 60 /* apnkAsgAdd */ :
-                    case 61 /* apnkAsgSub */ :
-                    case 62 /* apnkAsgMul */ :
-                    case 63 /* apnkAsgDiv */ :
-                    case 64 /* apnkAsgMod */ :
-                    case 65 /* apnkAsgAnd */ :
-                    case 66 /* apnkAsgXor */ :
-                    case 67 /* apnkAsgOr */ :
-                    case 68 /* apnkAsgLsh */ :
-                    case 69 /* apnkAsgRsh */ :
-                    case 70 /* apnkAsgRs2 */ :
-                        return new Formatting.Span(currentNode.StartOffset, currentNode.EndOffset - currentNode.StartOffset);
-                    case 87 /* apnkBlock */ :
-                        if ((currentNode.Flags & 256 /* apnfSyntheticNode */ ) != 256 /* apnfSyntheticNode */ ) {
-                            var parent = parser.Parent();
-                            switch(parent.Kind) {
-                                case 87 /* apnkBlock */ :
-                                case 75 /* apnkList */ :
-                                    return new Formatting.Span(currentNode.StartOffset, currentNode.EndOffset - currentNode.StartOffset);
-                            }
-                        }
-                        currentNode = parser.MoveUp();
-                        continue;
-                    case 78 /* apnkFncDecl */ : {
-                        var start = parser.GetNodeProperty(7 /* apnpFunctionKeywordMin */ );
-                        start = (start == 0) ? currentNode.StartOffset : start;
-                        var end = parser.GetNodeProperty(1 /* apnpRCurlyMin */ );
-                        end = (end == 0) ? currentNode.EndOffset : end + 1;
-                        return new Formatting.Span(start, end - start);
-                    }
-                    case 27 /* apnkObject */ : {
-                        start = parser.GetNodeProperty(0 /* apnpLCurlyMin */ );
-                        start = (start == 0) ? currentNode.StartOffset : start;
-                        end = parser.GetNodeProperty(1 /* apnpRCurlyMin */ );
-                        end = (end == 0) ? currentNode.EndOffset : end + 1;
-                        return new Formatting.Span(start, end - start);
-                    }
-                    default:
-                        currentNode = parser.MoveUp();
-                        continue;
-                }
-            }
-            return null;
-        };
-        return MatchingBlockFinderTask;
-    })();
-    Formatting.MatchingBlockFinderTask = MatchingBlockFinderTask;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var ParseNode = (function () {
-        function ParseNode() {
-            this._children = null;
-            this.blockSpan = null;
-            this.indentationOverride = null;
-            this.Parent = null;
-            this.AuthorNode = null;
-            this.IsIndentationOverrideEdge = false;
-            this.IndentationDelta = null;
-            this.ChildrenIndentationDelta = null;
-            this.TokenTagIndex = null;
-        }
-        ParseNode.prototype.children = function () {
-            return this._children;
-        };
-        ParseNode.prototype.addChildNode = function (node) {
-            if (this._children === null) {
-                this._children = new Formatting.List_ParseNode();
-            }
-            var count = this._children.count();
-            if (count === 0) {
-                this._children.add(node);
-            } else {
-                var startOffset = node.AuthorNode.Details.StartOffset;
-                var maxOffset = this._children.get(count - 1).AuthorNode.Details.StartOffset;
-                if (startOffset >= maxOffset) {
-                    this._children.add(node);
-                } else {
-                    var pivot = Formatting.ParseNodeExtensions.findNodeInsertionPivot(this._children, node.AuthorNode.Details.StartOffset);
-                    if (pivot < 0) {
-                        this._children.insert(~pivot, node);
-                    } else {
-                        this._children.insert(pivot + 1, node);
-                    }
-                }
-            }
-        };
-        ParseNode.prototype.CanIndent = function () {
- {
-                return this.IndentationDelta != null;
-            }
-        };
-        ParseNode.prototype.CoverSpan = function (span) {
-            var details = this.AuthorNode.Details;
-            return span.start() >= details.StartOffset && span.end() <= details.EndOffset;
-        };
-        ParseNode.prototype.SetIndentationOverride = function (newIndentationOverride) {
-            this.indentationOverride = newIndentationOverride;
-        };
-        ParseNode.prototype.GetNodeStartLineIndentation = function (indentResolver) {
-            var node = this;
-            var prefix = null;
-            while(node != null && !node.CanIndent() && !node.IsIndentationOverrideEdge) {
-                node = node.Parent;
-            }
-            if (node != null) {
-                if (node.indentationOverride == null) {
-                    node.indentationOverride = indentResolver.GetLineIndentationForOffset(node.AuthorNode.Details.StartOffset);
-                }
-                prefix = node.indentationOverride;
-            }
-            return new Formatting.IndentationInfo(prefix, 0);
-        };
-        ParseNode.prototype.GetEffectiveIndentation = function (indentResolver) {
-            var node = this;
-            var prefix = null;
-            var level = 0;
-            while(node != null && !node.CanIndent() && !node.IsIndentationOverrideEdge) {
-                node = node.Parent;
-            }
-            if (node != null) {
-                if (node.indentationOverride != null) {
-                    prefix = node.indentationOverride;
-                } else {
-                    if (node.CanIndent()) {
-                        level = node.IndentationDelta;
-                        if (!!node.AuthorNode.Label) {
-                            level++;
-                        }
-                        node = node.Parent;
-                        while(node != null) {
-                            if (node.indentationOverride != null) {
-                                prefix = node.indentationOverride;
-                                break;
-                            }
-                            if (node.CanIndent() || node.IsIndentationOverrideEdge) {
-                                node.indentationOverride = indentResolver.GetLineIndentationForOffset(node.AuthorNode.Details.StartOffset);
-                                prefix = node.indentationOverride;
-                                break;
-                            }
-                            node = node.Parent;
-                        }
-                    } else if (node.IsIndentationOverrideEdge) {
-                        node.indentationOverride = indentResolver.GetLineIndentationForOffset(node.AuthorNode.Details.StartOffset);
-                        prefix = node.indentationOverride;
-                    }
-                }
-            }
-            return new Formatting.IndentationInfo(prefix, level);
-        };
-        ParseNode.prototype.GetEffectiveChildrenIndentation = function (indentResolver) {
-            var node = this;
-            var indentation = null;
-            while(node.ChildrenIndentationDelta == null && node.Parent != null) {
-                node = node.Parent;
-            }
-            if (node.ChildrenIndentationDelta != null) {
-                indentation = node.GetEffectiveIndentation(indentResolver);
-                indentation.Level += node.ChildrenIndentationDelta;
-            }
-            return indentation;
-        };
-        ParseNode.prototype.GetEffectiveChildrenIndentationForComment = function (indentResolver) {
-            var node = this;
-            var indentation = null;
-            while(node.Parent != null && (node.ChildrenIndentationDelta == null || node.IndentationDelta == null) && !ParseNode.IsNonIndentableException(node)) {
-                node = node.Parent;
-            }
-            if (node.ChildrenIndentationDelta != null) {
-                indentation = new Formatting.IndentationInfo();
-                indentation.Level = node.ChildrenIndentationDelta;
-                if (this.AuthorNode.Details.Kind != 79 /* apnkProg */ ) {
-                    indentation.Prefix = indentResolver.GetLineIndentationForOffset(node.AuthorNode.Details.StartOffset);
-                }
-            }
-            return indentation;
-        };
-        ParseNode.IsNonIndentableException = function IsNonIndentableException(node) {
-            return node.IndentationDelta == null && (node.AuthorNode.Details.Kind == 27 /* apnkObject */  || node.AuthorNode.Details.Kind == 78 /* apnkFncDecl */ );
-        };
-        ParseNode.prototype.GetBlockSpan = function (fileAuthoringProxy, tokens) {
-            if (this.blockSpan != null) {
-                return this.blockSpan;
-            }
-            var start = this.AuthorNode.Details.StartOffset;
-            var end = this.AuthorNode.Details.EndOffset;
-            var implicitBlockNode = null;
-            if (this.AuthorNode.Details.Kind == 78 /* apnkFncDecl */  || this.AuthorNode.Details.Kind == 92 /* apnkSwitch */ ) {
-                implicitBlockNode = this;
-            } else if (this.AuthorNode.Details.Kind == 75 /* apnkList */  && this.Parent != null && this.Parent.AuthorNode.Details.Kind == 78 /* apnkFncDecl */ ) {
-                implicitBlockNode = this.Parent;
-            }
-            if (implicitBlockNode != null) {
-                if (implicitBlockNode.TokenTagIndex != null) {
-                    var functionTokenIndex = implicitBlockNode.TokenTagIndex;
-                    for(var i = functionTokenIndex + 1; i < tokens.count(); i++) {
-                        if (tokens.get(i).Token == 14 /* atkLCurly */  && tokens.get(i).Span.startPosition() <= end) {
-                            start = tokens.get(i).Span.startPosition();
-                            break;
-                        }
-                    }
-                } else {
-                    var astCursor = fileAuthoringProxy.GetASTCursor();
- {
-                        astCursor.MoveToEnclosingNode(implicitBlockNode.AuthorNode.Details.StartOffset, implicitBlockNode.AuthorNode.Details.EndOffset);
-                        var leftCurlyPos = astCursor.GetNodeProperty(0 /* apnpLCurlyMin */ );
-                        if (leftCurlyPos != 0 && leftCurlyPos <= end) {
-                            start = leftCurlyPos;
-                        }
-                    }
-                }
-            } else if (this.AuthorNode.Details.Kind != 87 /* apnkBlock */ ) {
-                var found = false;
-                Formatting.ParseNodeExtensions.GetChildren(this).foreach(function (child) {
-                    if (child.AuthorNode.Details.Kind == 87 /* apnkBlock */ ) {
-                        if (!found) {
-                            found = true;
-                            start = child.AuthorNode.Details.StartOffset;
-                            end = child.AuthorNode.Details.EndOffset;
-                        }
-                    }
-                });
-            }
-            Formatting.Debug.Assert(start <= end, "Expecting start to be before end.");
-            this.blockSpan = new Formatting.Span(start, end - start);
-            return this.blockSpan;
-        };
-        ParseNode.prototype.toString = function () {
-            var text = this.AuthorNode.Level + ": " + (Formatting.AuthorParseNodeKind)._map[this.AuthorNode.Details.Kind] + " - " + (TypeScript.NodeType)._map[this.AuthorNode.Details.nodeType] + " (" + (Formatting.AuthorParseNodeEdge)._map[this.AuthorNode.EdgeLabel] + ") -- I:" + this.IndentationDelta + ",IC:" + this.ChildrenIndentationDelta + " -- (" + this.AuthorNode.Details.StartOffset + "," + this.AuthorNode.Details.EndOffset + ") -- F:(" + this.AuthorNode.Details.Flags + ")";
-            return text;
-        };
-        return ParseNode;
-    })();
-    Formatting.ParseNode = ParseNode;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var ParseNodeExtensions = (function () {
-        function ParseNodeExtensions() { }
-        ParseNodeExtensions.GetChildren = function GetChildren(node) {
-            if (node == null || node.children() == null) {
-                return new Formatting.List_ParseNode();
-            }
-            return node.children();
-        };
-        ParseNodeExtensions.FindChildrenWithEdge = function FindChildrenWithEdge(node, edge) {
-            var result = new Formatting.List_ParseNode();
-            ParseNodeExtensions.GetChildren(node).foreach(function (item) {
-                if (item.AuthorNode.EdgeLabel == edge) {
-                    result.add(item);
-                }
-            });
-            return result;
-        };
-        ParseNodeExtensions.FindChildWithEdge = function FindChildWithEdge(node, edge) {
-            return Formatting.FirstOrDefault(ParseNodeExtensions.GetChildren(node).Where(function (c) {
-                return c.AuthorNode.EdgeLabel == edge;
-            }), function () {
-                return true;
-            });
-        };
-        ParseNodeExtensions.ForAllChildren = function ForAllChildren(node, action) {
-            ParseNodeExtensions.GetChildren(node).foreach(action);
-        };
-        ParseNodeExtensions.comparer = function comparer(position, item) {
-            return position - item.AuthorNode.Details.StartOffset;
-        };
-        ParseNodeExtensions.findNodeInsertionPivot = function findNodeInsertionPivot(nodes, startOffset) {
-            if (nodes.count() == 0) {
-                return 0;
-            }
-            return Formatting.BinarySearch(nodes, startOffset, ParseNodeExtensions.comparer);
-        };
-        ParseNodeExtensions.TryFindNodeIndexForStartOffset = function TryFindNodeIndexForStartOffset(nodes, startOffset) {
-            var targetNodeIndex = -1;
-            if (nodes.count() > 0) {
-                var pivot = Formatting.BinarySearch(nodes, startOffset, ParseNodeExtensions.comparer);
-                if (pivot < 0) {
-                    pivot = ~pivot - 1;
-                    targetNodeIndex = pivot;
-                } else {
-                    targetNodeIndex = pivot;
-                }
-            }
-            return targetNodeIndex;
-        };
-        ParseNodeExtensions.TryFindNodeForSpan = function TryFindNodeForSpan(nodes, span) {
-            var nodeIndex = ParseNodeExtensions.TryFindNodeIndexForStartOffset(nodes, span.start());
-            if (nodeIndex >= 0 && nodeIndex < nodes.count()) {
-                var node = nodes.get(nodeIndex);
-                if (node.CoverSpan(span)) {
-                    return node;
-                }
-            }
-            return null;
-        };
-        ParseNodeExtensions.SetNodeSpan = function SetNodeSpan(node, newStartOffset, newEndOffset) {
-            var authorParseNode = node.AuthorNode;
-            if (newStartOffset != authorParseNode.Details.StartOffset || newEndOffset != authorParseNode.Details.EndOffset) {
-                var newAuthorNode = new Formatting.AuthorParseNode();
-                newAuthorNode.Details = new Formatting.AuthorParseNodeDetails();
-                newAuthorNode.Details.StartOffset = newStartOffset;
-                newAuthorNode.Details.EndOffset = newEndOffset;
-                newAuthorNode.Details.Flags = authorParseNode.Details.Flags;
-                newAuthorNode.Details.Kind = authorParseNode.Details.Kind;
-                newAuthorNode.Details.nodeType = authorParseNode.Details.nodeType;
-                newAuthorNode.Details.ast = authorParseNode.Details.ast;
-                newAuthorNode.EdgeLabel = authorParseNode.EdgeLabel;
-                newAuthorNode.Label = authorParseNode.Label;
-                newAuthorNode.Level = authorParseNode.Level;
-                newAuthorNode.Name = authorParseNode.Name;
-                node.AuthorNode = newAuthorNode;
-            }
-        };
-        return ParseNodeExtensions;
-    })();
-    Formatting.ParseNodeExtensions = ParseNodeExtensions;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var ParseTree = (function () {
-        function ParseTree(fileAuthoringProxy, span, tokens, onlySelfAndAncestors) {
-            this.StartNodeSelf = null;
-            this.StartNodePreviousSibling = null;
-            if (tokens != null) {
-                var firstToken = Formatting.FirstOrDefault(tokens, function (t) {
-                    return t.Span.startPosition() >= span.start() && t.Token != 3 /* atkComment */  && t.Token != 9 /* atkSColon */  && t.Token != 16 /* atkComma */ ;
-                });
-                if (firstToken != null) {
-                    var firstTokenStart = firstToken.Span.Start;
-                    var lastToken = Formatting.LastOrDefault(tokens, function (t) {
-                        return t.Span.endPosition() <= span.end() && t.Token != 3 /* atkComment */  && t.Token != 9 /* atkSColon */  && t.Token != 16 /* atkComma */ ;
-                    });
-                    if (lastToken != null) {
-                        var lastTokenEnd = lastToken.Span.End;
-                        if (firstTokenStart < lastTokenEnd) {
-                            span = new Formatting.Span(firstTokenStart, lastTokenEnd - firstTokenStart);
-                        }
-                    }
-                }
-            }
-            this.Initialize(fileAuthoringProxy, span, onlySelfAndAncestors);
-        }
-        ParseTree.FindCommonParentNode = function FindCommonParentNode(leftSpan, rightSpan, context) {
-            if (context.CoverSpan(leftSpan) && context.CoverSpan(rightSpan)) {
-                Formatting.Debug.Assert(leftSpan.start() <= rightSpan.start(), "left token should be before the right token");
-                if (context.children() != null) {
-                    var child = Formatting.ParseNodeExtensions.TryFindNodeForSpan(context.children(), leftSpan);
-                    if (child != null && child.CoverSpan(rightSpan)) {
-                        return ParseTree.FindCommonParentNode(leftSpan, rightSpan, child);
-                    }
-                }
-                return context;
-            } else {
-                if (context.Parent == null) {
-                    return context;
-                } else {
-                    return ParseTree.FindCommonParentNode(leftSpan, rightSpan, context.Parent);
-                }
-            }
-        };
-        ParseTree.prototype.Initialize = function (fileAuthoringProxy, span, onlySelfAndAncestors) {
-            var astCursor = fileAuthoringProxy.GetASTCursor();
- {
-                if (span.length() == 0) {
-                    astCursor.SeekToOffset(span.start(), false);
-                } else {
-                    astCursor.MoveToEnclosingNode(span.start(), span.end());
-                }
-                var selfAndDescendantsNodes = new Formatting.List_ParseNode();
-                var parseNodeSet = astCursor.GetSubTree(onlySelfAndAncestors ? 0 : -1);
- {
-                    if (parseNodeSet.Count() > 0) {
-                        var authorNodes = parseNodeSet.GetItems(0, parseNodeSet.Count());
-                        if (authorNodes[0].Details.Kind != 80 /* apnkEndCode */ ) {
-                            var nodeEdge = astCursor.GetEdgeLabel();
-                            if (nodeEdge != 0 /* apneNone */ ) {
-                                var newAuthorNode = new Formatting.AuthorParseNode();
-                                newAuthorNode.Level = 0;
-                                newAuthorNode.Label = authorNodes[0].Label;
-                                newAuthorNode.Name = authorNodes[0].Name;
-                                newAuthorNode.Details = authorNodes[0].Details;
-                                newAuthorNode.EdgeLabel = nodeEdge;
-                                authorNodes[0] = newAuthorNode;
-                            }
-                        }
-                        authorNodes.forEach(function (authorParseNode) {
-                            if (authorParseNode.Details.Kind != 80 /* apnkEndCode */ ) {
-                                var node = new Formatting.ParseNode();
-                                node.AuthorNode = authorParseNode;
-                                selfAndDescendantsNodes.add(node);
-                            }
-                        });
-                        ParseTree.AdjustNodeSpanIfNeeded(astCursor, selfAndDescendantsNodes.get(0));
-                    }
-                }
-                this.StartNodeSelf = ParseTree.FindStartSelfNode(selfAndDescendantsNodes, span);
-                var nodeLevel = 0;
-                var ancestorNodes = new Formatting.List_ParseNode();
-                var ancestorNodeDetails = astCursor.MoveUp();
-                if (!onlySelfAndAncestors && this.StartNodeSelf != null) {
-                    if (this.StartNodeSelf.AuthorNode.Level > 0) {
-                        for(var i = selfAndDescendantsNodes.count() - 1; i >= 0; --i) {
-                            var sibling = selfAndDescendantsNodes.get(i).AuthorNode;
-                            if (sibling.Level == this.StartNodeSelf.AuthorNode.Level && ParseTree.IsSiblingEdge(sibling.EdgeLabel) && sibling.Details.EndOffset < this.StartNodeSelf.AuthorNode.Details.StartOffset) {
-                                this.StartNodePreviousSibling = sibling;
-                                break;
-                            }
-                        }
-                    } else if (this.StartNodeSelf.AuthorNode.Level == 0) {
-                        parseNodeSet = astCursor.GetSubTree(2);
- {
-                            if (parseNodeSet.Count() > 0) {
-                                var nodes = parseNodeSet.GetItems(0, parseNodeSet.Count());
-                                var previousSibling = ParseTree.GetPreviousSibling(this.StartNodeSelf.AuthorNode, nodes);
-                                if (previousSibling !== null) {
-                                    this.StartNodePreviousSibling = previousSibling;
-                                }
-                            }
-                        }
-                    }
-                }
-                while(ancestorNodeDetails.Kind != 0 /* apnkEmptyNode */ ) {
-                    nodeEdge = astCursor.GetEdgeLabel();
-                    var node = new Formatting.ParseNode();
-                    node.AuthorNode = new Formatting.AuthorParseNode();
-                    node.AuthorNode.Details = ancestorNodeDetails;
-                    node.AuthorNode.Level = --nodeLevel;
-                    node.AuthorNode.EdgeLabel = nodeEdge;
-                    ParseTree.AdjustNodeSpanIfNeeded(astCursor, node);
-                    ancestorNodes.add(node);
-                    ancestorNodeDetails = astCursor.MoveUp();
-                }
-                for(i = 0; i < ancestorNodes.count(); i++) {
-                    selfAndDescendantsNodes.insert(0, ancestorNodes.get(i));
-                }
-                this.Root = ParseTree.BuildTree(selfAndDescendantsNodes);
-            }
-        };
-        ParseTree.GetPreviousSibling = function GetPreviousSibling(startNodeSelf, nodes) {
-            var previousSibling = null;
-            var siblingLevel = -1;
-            var i = nodes.length - 1;
-            for(; i > 0; i--) {
-                if (nodes[i].Details.Equals(startNodeSelf.Details)) {
-                    siblingLevel = nodes[i].Level;
-                    break;
-                }
-            }
-            for(; i > 0; i--) {
-                var node = nodes[i];
-                if (node.Level == siblingLevel && ParseTree.IsSiblingEdge(node.EdgeLabel) && node.Details.EndOffset < startNodeSelf.Details.StartOffset) {
-                    previousSibling = node;
-                    break;
-                }
-            }
-            return previousSibling;
-        };
-        ParseTree.FindStartSelfNode = function FindStartSelfNode(selfAndDescendantsNodes, span) {
-            var candidateNodes = selfAndDescendantsNodes.Where(function (node) {
-                return node.AuthorNode.Details.StartOffset >= span.start() && node.AuthorNode.Details.StartOffset < span.end();
-            });
-            if (candidateNodes.count() == 0) {
-                return Formatting.FirstOrDefault(selfAndDescendantsNodes, function () {
-                    return true;
-                });
-            }
-            return candidateNodes.get(0);
-        };
-        ParseTree.IsSiblingEdge = function IsSiblingEdge(edge) {
-            return edge == 13 /* apneArgument */  || edge == 24 /* apneListItem */  || edge == 25 /* apneMember */ ;
-        };
-        ParseTree.BuildTree = function BuildTree(parseNodes) {
-            var nodesEnumerator = parseNodes.GetEnumerator();
-            if (!nodesEnumerator.MoveNext()) {
-                return null;
-            }
-            var root = nodesEnumerator.Current();
-            var lastNode = root;
-            lastNode.Parent = null;
-            var lastLevel = lastNode.AuthorNode.Level;
-            while(nodesEnumerator.MoveNext()) {
-                var currentNode = nodesEnumerator.Current();
-                if (currentNode.AuthorNode.Level == lastLevel) {
-                    currentNode.Parent = lastNode.Parent;
-                    lastNode.Parent.addChildNode(currentNode);
-                    lastNode = currentNode;
-                } else if (currentNode.AuthorNode.Level > lastLevel) {
-                    currentNode.Parent = lastNode;
-                    lastNode.addChildNode(currentNode);
-                    lastNode = currentNode;
-                    lastLevel = currentNode.AuthorNode.Level;
-                } else {
-                    while(lastLevel > currentNode.AuthorNode.Level) {
-                        lastNode = lastNode.Parent;
-                        lastLevel--;
-                    }
-                    currentNode.Parent = lastNode.Parent;
-                    lastNode.Parent.addChildNode(currentNode);
-                    lastNode = currentNode;
-                }
-            }
-            return root;
-        };
-        ParseTree.DumpTree = function DumpTree(logger, parseNode) {
-            if (logger.information()) {
-                var text = "";
-                for(var i = -2; i <= parseNode.AuthorNode.Level; i++) {
-                    text += " ";
-                }
-                text += parseNode.toString();
-                logger.log(text);
-                Formatting.ParseNodeExtensions.GetChildren(parseNode).foreach(function (child) {
-                    ParseTree.DumpTree(logger, child);
-                });
-            }
-        };
-        ParseTree.AdjustNodeSpanIfNeeded = function AdjustNodeSpanIfNeeded(astCursor, node) {
-            var propertyToGetStart = null;
-            var propertyToGetEnd = null;
-            var authorParseNode = node.AuthorNode;
-            if (authorParseNode.Details.Kind == 27 /* apnkObject */ ) {
-                propertyToGetStart = 0 /* apnpLCurlyMin */ ;
-                propertyToGetEnd = 1 /* apnpRCurlyMin */ ;
-            } else if (authorParseNode.Details.Kind == 26 /* apnkArray */ ) {
-                propertyToGetStart = 4 /* apnpLBrackMin */ ;
-                propertyToGetEnd = 5 /* apnpRBrackMin */ ;
-            } else if (authorParseNode.Details.Kind == 78 /* apnkFncDecl */ ) {
-                propertyToGetStart = 7 /* apnpFunctionKeywordMin */ ;
-                propertyToGetEnd = 1 /* apnpRCurlyMin */ ;
-            }
-            if (propertyToGetStart != null && propertyToGetEnd != null) {
-                var newStartOffset = astCursor.GetNodeProperty(propertyToGetStart);
-                if (newStartOffset == 0) {
-                    newStartOffset = node.AuthorNode.Details.StartOffset;
-                }
-                var newEndOffset = astCursor.GetNodeProperty(propertyToGetEnd);
-                if (newEndOffset == 0) {
-                    newEndOffset = node.AuthorNode.Details.EndOffset;
-                } else {
-                    newEndOffset += 1;
-                }
-                Formatting.ParseNodeExtensions.SetNodeSpan(node, newStartOffset, newEndOffset);
-            }
-        };
-        return ParseTree;
-    })();
-    Formatting.ParseTree = ParseTree;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var Rule = (function () {
-        function Rule(Descriptor, Operation, Flag) {
-            if (typeof Flag === "undefined") { Flag = 0 /* None */ ; }
-            this.Descriptor = Descriptor;
-            this.Operation = Operation;
-            this.Flag = Flag;
-        }
-        Rule.prototype.toString = function () {
-            return "[desc=" + this.Descriptor + "," + "operation=" + this.Operation + "," + "flag=" + this.Flag + "]";
-        };
-        return Rule;
-    })();
-    Formatting.Rule = Rule;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    (function (RuleAction) {
-        RuleAction._map = [];
-        RuleAction._map[0] = "Ignore";
-        RuleAction.Ignore = 0;
-        RuleAction._map[1] = "Space";
-        RuleAction.Space = 1;
-        RuleAction._map[2] = "NewLine";
-        RuleAction.NewLine = 2;
-        RuleAction._map[3] = "Delete";
-        RuleAction.Delete = 3;
-    })(Formatting.RuleAction || (Formatting.RuleAction = {}));
-    var RuleAction = Formatting.RuleAction;
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var RuleDescriptor = (function () {
-        function RuleDescriptor(LeftTokenRange, RightTokenRange) {
-            this.LeftTokenRange = LeftTokenRange;
-            this.RightTokenRange = RightTokenRange;
-        }
-        RuleDescriptor.prototype.toString = function () {
-            return "[leftRange=" + this.LeftTokenRange + "," + "rightRange=" + this.RightTokenRange + "]";
-        };
-        RuleDescriptor.create1 = function create1(left, right) {
-            return RuleDescriptor.create4(Formatting.Shared.TokenRange.FromToken(left), Formatting.Shared.TokenRange.FromToken(right));
-        };
-        RuleDescriptor.create2 = function create2(left, right) {
-            return RuleDescriptor.create4(left, Formatting.Shared.TokenRange.FromToken(right));
-        };
-        RuleDescriptor.create3 = function create3(left, right) {
-            return RuleDescriptor.create4(Formatting.Shared.TokenRange.FromToken(left), right);
-        };
-        RuleDescriptor.create4 = function create4(left, right) {
-            return new RuleDescriptor(left, right);
-        };
-        return RuleDescriptor;
-    })();
-    Formatting.RuleDescriptor = RuleDescriptor;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    (function (RuleFlags) {
-        RuleFlags._map = [];
-        RuleFlags._map[0] = "None";
-        RuleFlags.None = 0;
-        RuleFlags._map[1] = "CanDeleteNewLines";
-        RuleFlags.CanDeleteNewLines = 1;
-    })(Formatting.RuleFlags || (Formatting.RuleFlags = {}));
-    var RuleFlags = Formatting.RuleFlags;
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var RuleOperation = (function () {
-        function RuleOperation() {
-            this.Context = null;
-            this.Action = null;
-        }
-        RuleOperation.prototype.toString = function () {
-            return "[context=" + this.Context + "," + "action=" + this.Action + "]";
-        };
-        RuleOperation.create1 = function create1(action) {
-            return RuleOperation.create2(Formatting.RuleOperationContext.Any, action);
-        };
-        RuleOperation.create2 = function create2(context, action) {
-            var result = new RuleOperation();
-            result.Context = context;
-            result.Action = action;
-            return result;
-        };
-        return RuleOperation;
-    })();
-    Formatting.RuleOperation = RuleOperation;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var RuleOperationContext = (function () {
-        function RuleOperationContext() {
-            var funcs = [];
-            for (var _i = 0; _i < (arguments.length - 0); _i++) {
-                funcs[_i] = arguments[_i + 0];
-            }
-            this.customContextChecks = funcs;
-        }
-        RuleOperationContext.Any = new RuleOperationContext();
-        RuleOperationContext.prototype.IsAny = function () {
- {
-                return this == RuleOperationContext.Any;
-            }
-        };
-        RuleOperationContext.prototype.InContext = function (context) {
-            if (this.IsAny()) {
-                return true;
-            }
-            for(var i = 0, len = this.customContextChecks.length; i < len; i++) {
-                if (!this.customContextChecks[i](context)) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        return RuleOperationContext;
-    })();
-    Formatting.RuleOperationContext = RuleOperationContext;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var Rules = (function () {
-        function Rules() {
-            this.IgnoreBeforeComment = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 3 /* atkComment */ ), Formatting.RuleOperation.create1(0 /* Ignore */ ));
-            this.IgnoreAfterLineComment = new Formatting.Rule(Formatting.RuleDescriptor.create3(3 /* atkComment */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFirstTokenLineCommentContext), 0 /* Ignore */ ));
-            this.NoSpaceBeforeSemicolon = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 9 /* atkSColon */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), 3 /* Delete */ ));
-            this.NoSpaceBeforeColon = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 31 /* atkColon */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-            this.NoSpaceBeforeQMark = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 30 /* atkQMark */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-            this.SpaceAfterColon = new Formatting.Rule(Formatting.RuleDescriptor.create3(31 /* atkColon */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterQMark = new Formatting.Rule(Formatting.RuleDescriptor.create3(30 /* atkQMark */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterSemicolon = new Formatting.Rule(Formatting.RuleDescriptor.create3(9 /* atkSColon */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.NewLineAfterCloseCurly = new Formatting.Rule(Formatting.RuleDescriptor.create3(15 /* atkRCurly */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineChildParentContext), 2 /* NewLine */ ));
-            this.SpaceAfterCloseCurly = new Formatting.Rule(Formatting.RuleDescriptor.create3(15 /* atkRCurly */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineSiblingNodeContext), 1 /* Space */ ));
-            this.SpaceBetweenCloseCurlyAndElse = new Formatting.Rule(Formatting.RuleDescriptor.create1(15 /* atkRCurly */ , 70 /* atkElse */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.SpaceBetweenCloseCurlyAndWhile = new Formatting.Rule(Formatting.RuleDescriptor.create1(15 /* atkRCurly */ , 94 /* atkWhile */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.NoSpaceBeforeDot = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 57 /* atkDot */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceAfterDot = new Formatting.Rule(Formatting.RuleDescriptor.create3(57 /* atkDot */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceBeforeOpenBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 12 /* atkLBrack */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceAfterOpenBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(12 /* atkLBrack */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceBeforeCloseBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 13 /* atkRBrack */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceAfterCloseBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(13 /* atkRBrack */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.SpaceAfterOpenCurly = new Formatting.Rule(Formatting.RuleDescriptor.create3(14 /* atkLCurly */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */ ));
-            this.SpaceBeforeCloseCurly = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 15 /* atkRCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */ ));
-            this.NoSpaceBetweenEmptyCurlyBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(14 /* atkLCurly */ , 15 /* atkRCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectContext), 3 /* Delete */ ));
-            this.NewLineAfterOpenCurlyInBlockContext = new Formatting.Rule(Formatting.RuleDescriptor.create3(14 /* atkLCurly */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */ ));
-            this.NewLineBeforeCloseCurlyInFunctionOrControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 15 /* atkRCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */ ));
-            this.NoSpaceAfterUnaryPrefixOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.UnaryPrefixOperators, Formatting.Shared.TokenRange.UnaryPrefixExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-            this.NoSpaceAfterUnaryPreincrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(55 /* atkInc */ , Formatting.Shared.TokenRange.UnaryPreincrementExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceAfterUnaryPredecrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(56 /* atkDec */ , Formatting.Shared.TokenRange.UnaryPredecrementExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceBeforeUnaryPostincrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.UnaryPostincrementExpressions, 55 /* atkInc */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceBeforeUnaryPostdecrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.UnaryPostdecrementExpressions, 56 /* atkDec */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.SpaceAfterPostincrementWhenFollowedByAdd = new Formatting.Rule(Formatting.RuleDescriptor.create1(55 /* atkInc */ , 48 /* atkAdd */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterAddWhenFollowedByUnaryPlus = new Formatting.Rule(Formatting.RuleDescriptor.create1(48 /* atkAdd */ , 48 /* atkAdd */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterAddWhenFollowedByPreincrement = new Formatting.Rule(Formatting.RuleDescriptor.create1(48 /* atkAdd */ , 55 /* atkInc */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterPostdecrementWhenFollowedBySubtract = new Formatting.Rule(Formatting.RuleDescriptor.create1(56 /* atkDec */ , 49 /* atkSub */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterSubtractWhenFollowedByUnaryMinus = new Formatting.Rule(Formatting.RuleDescriptor.create1(49 /* atkSub */ , 49 /* atkSub */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterSubtractWhenFollowedByPredecrement = new Formatting.Rule(Formatting.RuleDescriptor.create1(49 /* atkSub */ , 56 /* atkDec */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.NoSpaceBeforeComma = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 16 /* atkComma */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.SpaceAfterCertainKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([
-                92 /* atkVar */ , 
-                88 /* atkThrow */ , 
-                82 /* atkNew */ , 
-                68 /* atkDelete */ , 
-                84 /* atkReturn */ , 
-                93 /* atkVoid */ , 
-                91 /* atkTypeof */ 
-            ]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.NoSpaceBeforeOpenParenInFuncCall = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), 3 /* Delete */ ));
-            this.SpaceAfterFunctionInFuncDecl = new Formatting.Rule(Formatting.RuleDescriptor.create3(77 /* atkFunction */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */ ));
-            this.NoSpaceBeforeOpenParenInFuncDecl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionOrGetSetDeclContext), 3 /* Delete */ ));
-            this.SpaceBetweenStatements = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([
-                11 /* atkRParen */ , 
-                69 /* atkDo */ , 
-                70 /* atkElse */ , 
-                61 /* atkCase */ 
-            ]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), 1 /* Space */ ));
-            this.SpaceAfterTryFinally = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.FromTokens([
-                90 /* atkTry */ , 
-                75 /* atkFinally */ 
-            ]), 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.SpaceAfterGetSetInMember = new Formatting.Rule(Formatting.RuleDescriptor.create1(2 /* atkIdentifier */ , 2 /* atkIdentifier */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsGetSetMemberContext), 1 /* Space */ ));
-            this.SpaceBeforeBinaryKeywordOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryKeywordOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterBinaryKeywordOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryKeywordOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.NoSpaceAfterConstructor = new Formatting.Rule(Formatting.RuleDescriptor.create1(96 /* atkConstructor */ , 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceAfterModuleImport = new Formatting.Rule(Formatting.RuleDescriptor.create1(98 /* atkModule */ , 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.SpaceAfterCertainTypeScriptKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([
-                63 /* atkClass */ , 
-                97 /* atkDeclare */ , 
-                71 /* atkEnum */ , 
-                72 /* atkExport */ , 
-                73 /* atkExtends */ , 
-                99 /* atkGet */ , 
-                101 /* atkImplements */ , 
-                79 /* atkImport */ , 
-                102 /* atkInterface */ , 
-                98 /* atkModule */ , 
-                105 /* atkPrivate */ , 
-                107 /* atkPublic */ , 
-                100 /* atkSet */ , 
-                108 /* atkStatic */ 
-            ]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.SpaceBeforeCertainTypeScriptKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.FromTokens([
-                73 /* atkExtends */ , 
-                101 /* atkImplements */ 
-            ])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.SpaceAfterModuleName = new Formatting.Rule(Formatting.RuleDescriptor.create1(5 /* atkString */ , 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsModuleDeclContext), 1 /* Space */ ));
-            this.SpaceAfterArrow = new Formatting.Rule(Formatting.RuleDescriptor.create3(17 /* atkArrow */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.NoSpaceAfterEllipsis = new Formatting.Rule(Formatting.RuleDescriptor.create1(59 /* atkEllipsis */ , 2 /* atkIdentifier */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceAfterOptionalParameters = new Formatting.Rule(Formatting.RuleDescriptor.create3(30 /* atkQMark */ , Formatting.Shared.TokenRange.FromTokens([
-                11 /* atkRParen */ , 
-                16 /* atkComma */ 
-            ])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */ ));
-            this.NoSpaceBetweenEmptyInterfaceCurlyBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(14 /* atkLCurly */ , 15 /* atkRCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsInterfaceContext), 3 /* Delete */ ));
-            this.HighPriorityCommonRules = [
-                this.IgnoreBeforeComment, 
-                this.IgnoreAfterLineComment, 
-                this.NoSpaceBeforeSemicolon, 
-                this.NoSpaceBeforeColon, 
-                this.SpaceAfterColon, 
-                this.NoSpaceBeforeQMark, 
-                this.SpaceAfterQMark, 
-                this.NewLineAfterCloseCurly, 
-                this.NoSpaceBeforeDot, 
-                this.NoSpaceAfterDot, 
-                this.NoSpaceAfterUnaryPrefixOperator, 
-                this.NoSpaceAfterUnaryPreincrementOperator, 
-                this.NoSpaceAfterUnaryPredecrementOperator, 
-                this.NoSpaceBeforeUnaryPostincrementOperator, 
-                this.NoSpaceBeforeUnaryPostdecrementOperator, 
-                this.SpaceAfterPostincrementWhenFollowedByAdd, 
-                this.SpaceAfterAddWhenFollowedByUnaryPlus, 
-                this.SpaceAfterAddWhenFollowedByPreincrement, 
-                this.SpaceAfterPostdecrementWhenFollowedBySubtract, 
-                this.SpaceAfterSubtractWhenFollowedByUnaryMinus, 
-                this.SpaceAfterSubtractWhenFollowedByPredecrement, 
-                this.SpaceAfterOpenCurly, 
-                this.SpaceBeforeCloseCurly, 
-                this.SpaceAfterCloseCurly, 
-                this.SpaceBetweenCloseCurlyAndElse, 
-                this.SpaceBetweenCloseCurlyAndWhile, 
-                this.NoSpaceBetweenEmptyCurlyBrackets, 
-                this.NewLineBeforeCloseCurlyInFunctionOrControl, 
-                this.SpaceAfterFunctionInFuncDecl, 
-                this.NewLineAfterOpenCurlyInBlockContext, 
-                this.SpaceAfterGetSetInMember, 
-                this.SpaceAfterCertainKeywords, 
-                this.NoSpaceBeforeOpenParenInFuncCall, 
-                this.SpaceBeforeBinaryKeywordOperator, 
-                this.SpaceAfterBinaryKeywordOperator, 
-                this.NoSpaceAfterConstructor, 
-                this.NoSpaceAfterModuleImport, 
-                this.SpaceAfterCertainTypeScriptKeywords, 
-                this.SpaceBeforeCertainTypeScriptKeywords, 
-                this.SpaceAfterModuleName, 
-                this.SpaceAfterArrow, 
-                this.NoSpaceAfterEllipsis, 
-                this.NoSpaceAfterOptionalParameters, 
-                this.NoSpaceBetweenEmptyInterfaceCurlyBrackets
-            ];
-            this.LowPriorityCommonRules = [
-                this.NoSpaceBeforeComma, 
-                this.NoSpaceBeforeOpenBracket, 
-                this.NoSpaceAfterOpenBracket, 
-                this.NoSpaceBeforeCloseBracket, 
-                this.NoSpaceAfterCloseBracket, 
-                this.SpaceAfterSemicolon, 
-                this.NoSpaceBeforeOpenParenInFuncDecl, 
-                this.SpaceBetweenStatements, 
-                this.SpaceAfterTryFinally
-            ];
-            this.SpaceAfterComma = new Formatting.Rule(Formatting.RuleDescriptor.create3(16 /* atkComma */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.NoSpaceAfterComma = new Formatting.Rule(Formatting.RuleDescriptor.create3(16 /* atkComma */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.SpaceBeforeBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.SpaceAfterBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */ ));
-            this.NoSpaceBeforeBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */ ));
-            this.NoSpaceAfterBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */ ));
-            this.SpaceAfterKeywordInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Keywords, 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext), 1 /* Space */ ));
-            this.NoSpaceAfterKeywordInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Keywords, 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext), 3 /* Delete */ ));
-            this.FunctionOpenCurlyLeftTokenRange = Formatting.Shared.TokenRange.Any;
-            this.FunctionOpenCurlyLeftTokenRange_Js = Formatting.Shared.TokenRange.FromTokens([
-                11 /* atkRParen */ , 
-                3 /* atkComment */ 
-            ]);
-            this.SpaceBeforeOpenCurlyInFunction = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.FunctionOpenCurlyLeftTokenRange, 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
-            this.NewLineBeforeOpenCurlyInFunction = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.FunctionOpenCurlyLeftTokenRange, 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
-            this.TypeScriptOpenCurlyLeftTokenRange = Formatting.Shared.TokenRange.FromTokens([
-                2 /* atkIdentifier */ , 
-                3 /* atkComment */ 
-            ]);
-            this.SpaceBeforeOpenCurlyInTypeScriptDeclWithBlock = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.TypeScriptOpenCurlyLeftTokenRange, 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
-            this.NewLineBeforeOpenCurlyInTypeScriptDeclWithBlock = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.TypeScriptOpenCurlyLeftTokenRange, 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
-            this.ControlOpenCurlyLeftTokenRange = Formatting.Shared.TokenRange.FromTokens([
-                11 /* atkRParen */ , 
-                3 /* atkComment */ , 
-                69 /* atkDo */ , 
-                90 /* atkTry */ , 
-                75 /* atkFinally */ , 
-                70 /* atkElse */ 
-            ]);
-            this.SpaceBeforeOpenCurlyInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.ControlOpenCurlyLeftTokenRange, 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrMultilineBlockContext), 1 /* Space */ ), 1 /* CanDeleteNewLines */ );
-            this.NewLineBeforeOpenCurlyInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.ControlOpenCurlyLeftTokenRange, 14 /* atkLCurly */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsMultilineBlockContext), 2 /* NewLine */ ), 1 /* CanDeleteNewLines */ );
-            this.SpaceAfterSemicolonInFor = new Formatting.Rule(Formatting.RuleDescriptor.create3(9 /* atkSColon */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 1 /* Space */ ));
-            this.NoSpaceAfterSemicolonInFor = new Formatting.Rule(Formatting.RuleDescriptor.create3(9 /* atkSColon */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 3 /* Delete */ ));
-            this.SpaceAfterOpenParen = new Formatting.Rule(Formatting.RuleDescriptor.create3(10 /* atkLParen */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.SpaceBeforeCloseParen = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 11 /* atkRParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */ ));
-            this.NoSpaceBetweenParens = new Formatting.Rule(Formatting.RuleDescriptor.create1(10 /* atkLParen */ , 11 /* atkRParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceAfterOpenParen = new Formatting.Rule(Formatting.RuleDescriptor.create3(10 /* atkLParen */ , Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.NoSpaceBeforeCloseParen = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 11 /* atkRParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */ ));
-            this.SpaceAfterAnonymousFunctionKeyword = new Formatting.Rule(Formatting.RuleDescriptor.create1(77 /* atkFunction */ , 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */ ));
-            this.NoSpaceAfterAnonymousFunctionKeyword = new Formatting.Rule(Formatting.RuleDescriptor.create1(77 /* atkFunction */ , 10 /* atkLParen */ ), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 3 /* Delete */ ));
-        }
-        Rules.prototype.getRuleName = function (rule) {
-            var o = this;
-            for(var name in o) {
-                if (o[name] === rule) {
-                    return name;
-                }
-            }
-            throw new Error("Unknown rule");
-        };
-        Rules.IsForContext = function IsForContext(context) {
-            return context.contextNode.AuthorNode.Details.Kind == 82 /* apnkFor */ ;
-        };
-        Rules.IsNotForContext = function IsNotForContext(context) {
-            return context.contextNode.AuthorNode.Details.Kind != 82 /* apnkFor */ ;
-        };
-        Rules.IsBinaryOpContext = function IsBinaryOpContext(context) {
-            if (context.contextNode.AuthorNode.Details.ast != null) {
-                switch(context.contextNode.AuthorNode.Details.ast.nodeType) {
-                    case 99 /* ImportDeclaration */ :
-                        return true;
-                }
-            }
-            switch(context.contextNode.AuthorNode.Details.Kind) {
-                case 30 /* apnkAdd */ :
-                case 31 /* apnkSub */ :
-                case 32 /* apnkMul */ :
-                case 33 /* apnkDiv */ :
-                case 34 /* apnkMod */ :
-                case 35 /* apnkOr */ :
-                case 36 /* apnkXor */ :
-                case 37 /* apnkAnd */ :
-                case 38 /* apnkEq */ :
-                case 39 /* apnkNe */ :
-                case 40 /* apnkLt */ :
-                case 41 /* apnkLe */ :
-                case 42 /* apnkGe */ :
-                case 43 /* apnkGt */ :
-                case 46 /* apnkAsg */ :
-                case 47 /* apnkInstOf */ :
-                case 48 /* apnkIn */ :
-                case 86 /* apnkForIn */ :
-                case 49 /* apnkEqv */ :
-                case 50 /* apnkNEqv */ :
-                case 52 /* apnkLogOr */ :
-                case 53 /* apnkLogAnd */ :
-                case 54 /* apnkLsh */ :
-                case 55 /* apnkRsh */ :
-                case 56 /* apnkRs2 */ :
-                case 59 /* apnkQmark */ :
-                case 60 /* apnkAsgAdd */ :
-                case 61 /* apnkAsgSub */ :
-                case 62 /* apnkAsgMul */ :
-                case 63 /* apnkAsgDiv */ :
-                case 64 /* apnkAsgMod */ :
-                case 65 /* apnkAsgAnd */ :
-                case 66 /* apnkAsgXor */ :
-                case 67 /* apnkAsgOr */ :
-                case 68 /* apnkAsgLsh */ :
-                case 69 /* apnkAsgRsh */ :
-                case 70 /* apnkAsgRs2 */ :
-                    return true;
-                case 76 /* apnkVarDecl */ :
-                    var varOrArgDecl = context.contextNode.AuthorNode.Details.ast;
-                    var tokenSpan = null;
-                    if (context.tokenSpan.tokenID === 74 /* Question */ ) {
-                        tokenSpan = context.tokenSpan.Span.span;
-                    } else if (context.nextTokenSpan.tokenID === 74 /* Question */ ) {
-                        tokenSpan = context.nextTokenSpan.Span.span;
-                    }
-                    if (context.tokenSpan.tokenID === 75 /* Colon */ ) {
-                        tokenSpan = context.tokenSpan.Span.span;
-                    } else if (context.nextTokenSpan.tokenID === 75 /* Colon */ ) {
-                        tokenSpan = context.nextTokenSpan.Span.span;
-                    }
-                    if (tokenSpan != null) {
-                        if (varOrArgDecl != null && (varOrArgDecl.nodeType === 75 /* VarDecl */  || varOrArgDecl.nodeType === 76 /* ArgDecl */ )) {
-                            if (TypeScript.isValidAstNode(varOrArgDecl)) {
-                                if (!TypeScript.isValidAstNode(varOrArgDecl.init)) {
-                                    return false;
-                                }
-                                var initSpan = Formatting.Span.FromBounds(varOrArgDecl.init.minChar, varOrArgDecl.init.limChar);
-                                return initSpan.Contains(tokenSpan);
-                            }
-                        }
-                    }
-                    return true;
-                case 78 /* apnkFncDecl */ :
-                    var fncDecl = context.contextNode.AuthorNode.Details.ast;
-                    if (context.tokenSpan.tokenID === 105 /* EqualsGreaterThan */  || context.nextTokenSpan.tokenID === 105 /* EqualsGreaterThan */ ) {
-                        if (fncDecl != null && TypeScript.hasFlag(fncDecl.fncFlags, 131072 /* IsFunctionExpression */ )) {
-                            return true;
-                        }
-                    }
-                    break;
-                default:
-                    return false;
-            }
-        };
-        Rules.IsNotBinaryOpContext = function IsNotBinaryOpContext(context) {
-            return !IsBinaryOpContext(context);
-        };
-        Rules.IsBlockContext = function IsBlockContext(node) {
-            if (Rules.IsTypeScriptDeclWithBlockContextNode(node)) {
-                return true;
-            }
-            switch(node.AuthorNode.Details.Kind) {
-                case 87 /* apnkBlock */ :
-                case 75 /* apnkList */ :
-                case 27 /* apnkObject */ :
-                case 78 /* apnkFncDecl */ :
-                case 82 /* apnkFor */ :
-                case 83 /* apnkIf */ :
-                case 84 /* apnkWhile */ :
-                case 85 /* apnkDoWhile */ :
-                case 86 /* apnkForIn */ :
-                case 88 /* apnkWith */ :
-                case 92 /* apnkSwitch */ :
-                case 94 /* apnkTryCatch */ :
-                case 95 /* apnkCatch */ :
-                case 97 /* apnkTry */ :
-                case 99 /* apnkFinally */ :
-                case 100 /* apnkTryFinally */ :
-                    return true;
-                default:
-                    return false;
-            }
-        };
-        Rules.IsTypeScriptDeclWithBlockContextNode = function IsTypeScriptDeclWithBlockContextNode(node) {
-            switch(node.AuthorNode.Details.nodeType) {
-                case 98 /* ModuleDeclaration */ :
-                case 97 /* InterfaceDeclaration */ :
-                case 96 /* ClassDeclaration */ :
-                    return true;
-                default:
-                    return false;
-            }
-        };
-        Rules.IsSingleLineBlockContext = function IsSingleLineBlockContext(context) {
-            if (!IsBlockContext(context.contextNode)) {
-                return false;
-            }
-            return context.ContextNodeAllOnSameLine();
-        };
-        Rules.IsMultilineBlockContext = function IsMultilineBlockContext(context) {
-            if (!IsBlockContext(context.contextNode)) {
-                return false;
-            }
-            return !context.ContextNodeAllOnSameLine();
-        };
-        Rules.IsFunctionDeclContext = function IsFunctionDeclContext(context) {
-            return context.contextNode.AuthorNode.Details.Kind == 78 /* apnkFncDecl */ ;
-        };
-        Rules.IsTypeScriptDeclWithBlockContext = function IsTypeScriptDeclWithBlockContext(context) {
-            return Rules.IsTypeScriptDeclWithBlockContextNode(context.contextNode);
-        };
-        Rules.IsControlDeclContext = function IsControlDeclContext(context) {
-            switch(context.contextNode.AuthorNode.Details.Kind) {
-                case 82 /* apnkFor */ :
-                case 83 /* apnkIf */ :
-                case 84 /* apnkWhile */ :
-                case 85 /* apnkDoWhile */ :
-                case 86 /* apnkForIn */ :
-                case 88 /* apnkWith */ :
-                case 92 /* apnkSwitch */ :
-                case 94 /* apnkTryCatch */ :
-                case 95 /* apnkCatch */ :
-                case 97 /* apnkTry */ :
-                case 99 /* apnkFinally */ :
-                case 100 /* apnkTryFinally */ :
-                    return true;
-                default:
-                    return false;
-            }
-        };
-        Rules.IsObjectContext = function IsObjectContext(context) {
-            return context.contextNode.AuthorNode.Details.Kind == 27 /* apnkObject */ ;
-        };
-        Rules.IsFunctionCallContext = function IsFunctionCallContext(context) {
-            return context.contextNode.AuthorNode.Details.Kind == 44 /* apnkCall */ ;
-        };
-        Rules.IsNewContext = function IsNewContext(context) {
-            return context.contextNode.AuthorNode.Details.Kind == 57 /* apnkNew */ ;
-        };
-        Rules.IsFunctionCallOrNewContext = function IsFunctionCallOrNewContext(context) {
-            return Rules.IsFunctionCallContext(context) || Rules.IsNewContext(context);
-        };
-        Rules.IsSameLineTokenContext = function IsSameLineTokenContext(context) {
-            return context.TokensAreOnSameLine();
-        };
-        Rules.IsSameLineSiblingNodeContext = function IsSameLineSiblingNodeContext(context) {
-            return context.TokensAreSiblingNodesOnSameLine();
-        };
-        Rules.IsMultilineChildParentContext = function IsMultilineChildParentContext(context) {
-            var parent = context.contextNode.Parent;
-            if (parent == null) {
-                return false;
-            }
-            return parent.AuthorNode.Details.EndOffset == context.nextTokenSpan.Span.startPosition() && Rules.IsMultilineBlockContext(context);
-        };
-        Rules.IsNotFormatOnEnter = function IsNotFormatOnEnter(context) {
-            return context.formattingRequestKind != 2 /* FormatOnEnter */ ;
-        };
-        Rules.IsSameLineTokenOrMultilineBlockContext = function IsSameLineTokenOrMultilineBlockContext(context) {
-            return context.TokensAreOnSameLine() || Rules.IsMultilineBlockContext(context);
-        };
-        Rules.IsFunctionOrGetSetDeclContext = function IsFunctionOrGetSetDeclContext(context) {
-            return Rules.IsFunctionDeclContext(context) || Rules.IsGetSetMemberContext(context);
-        };
-        Rules.IsGetSetMemberContext = function IsGetSetMemberContext(context) {
-            return context.contextNode.AuthorNode.Details.Kind == 74 /* apnkGetMember */  || context.contextNode.AuthorNode.Details.Kind == 73 /* apnkSetMember */ ;
-        };
-        Rules.IsFirstTokenLineCommentContext = function IsFirstTokenLineCommentContext(context) {
-            var token = context.tokenSpan;
-            var twoCharSpan = token.Span.Intersection(new Formatting.Span(token.Span.startPosition(), 2));
-            return twoCharSpan != null && twoCharSpan.GetText() == "//";
-        };
-        Rules.IsModuleDeclContext = function IsModuleDeclContext(context) {
-            return context.contextNode.AuthorNode.Details.nodeType == 98 /* ModuleDeclaration */ ;
-        };
-        Rules.IsInterfaceContext = function IsInterfaceContext(context) {
-            return context.contextNode.AuthorNode.Details.nodeType == 94 /* List */  && context.contextNode.Parent != null && context.contextNode.Parent.AuthorNode.Details.nodeType == 97 /* InterfaceDeclaration */ ;
-        };
-        return Rules;
-    })();
-    Formatting.Rules = Rules;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var RulesMap = (function () {
-        function RulesMap() {
-            this.map = [];
-            this.mapRowLength = 0;
-        }
-        RulesMap.create = function create(rules) {
-            var result = new RulesMap();
-            result.Initialize(rules);
-            return result;
-        };
-        RulesMap.prototype.Initialize = function (rules) {
-            this.mapRowLength = 110 /* Length */ ;
-            this.map = new Array(this.mapRowLength * this.mapRowLength);
-            var rulesBucketConstructionStateList = new Array(this.map.length);
-            this.FillRules(rules, rulesBucketConstructionStateList);
-            return this.map;
-        };
-        RulesMap.prototype.FillRules = function (rules, rulesBucketConstructionStateList) {
-            var _this = this;
-            rules.foreach(function (rule) {
-                _this.FillRule(rule, rulesBucketConstructionStateList);
-            });
-        };
-        RulesMap.prototype.GetRuleBucketIndex = function (row, column) {
-            var rulesBucketIndex = (row * this.mapRowLength) + column;
-            return rulesBucketIndex;
-        };
-        RulesMap.prototype.FillRule = function (rule, rulesBucketConstructionStateList) {
-            var _this = this;
-            var specificRule = rule.Descriptor.LeftTokenRange != Formatting.Shared.TokenRange.Any && rule.Descriptor.RightTokenRange != Formatting.Shared.TokenRange.Any;
-            rule.Descriptor.LeftTokenRange.GetTokens().foreach(function (left) {
-                rule.Descriptor.RightTokenRange.GetTokens().foreach(function (right) {
-                    var rulesBucketIndex = _this.GetRuleBucketIndex(left, right);
-                    var rulesBucket = _this.map[rulesBucketIndex];
-                    if (rulesBucket == undefined) {
-                        rulesBucket = _this.map[rulesBucketIndex] = new RulesBucket();
-                    }
-                    rulesBucket.AddRule(rule, specificRule, rulesBucketConstructionStateList, rulesBucketIndex);
-                });
-            });
-        };
-        RulesMap.prototype.GetRule = function (context) {
-            var bucketIndex = this.GetRuleBucketIndex(context.tokenSpan.Token, context.nextTokenSpan.Token);
-            var bucket = this.map[bucketIndex];
-            if (bucket != null) {
-                for(var i = 0, len = bucket.Rules().count(); i < len; i++) {
-                    var rule = bucket.Rules().get(i);
-                    if (rule.Operation.Context.InContext(context)) {
-                        return rule;
-                    }
-                }
-            }
-            return null;
-        };
-        return RulesMap;
-    })();
-    Formatting.RulesMap = RulesMap;    
-    var MaskBitSize = 5;
-    var Mask = 0x1f;
-    (function (RulesPosition) {
-        RulesPosition._map = [];
-        RulesPosition.IgnoreRulesSpecific = 0;
-        RulesPosition.IgnoreRulesAny = MaskBitSize * 1;
-        RulesPosition.ContextRulesSpecific = MaskBitSize * 2;
-        RulesPosition.ContextRulesAny = MaskBitSize * 3;
-        RulesPosition.NoContextRulesSpecific = MaskBitSize * 4;
-        RulesPosition.NoContextRulesAny = MaskBitSize * 5;
-    })(Formatting.RulesPosition || (Formatting.RulesPosition = {}));
-    var RulesPosition = Formatting.RulesPosition;
-    var RulesBucketConstructionState = (function () {
-        function RulesBucketConstructionState() {
-            this.rulesInsertionIndexBitmap = 0;
-        }
-        RulesBucketConstructionState.prototype.GetInsertionIndex = function (maskPosition) {
-            var index = 0;
-            var pos = 0;
-            var indexBitmap = this.rulesInsertionIndexBitmap;
-            while(pos <= maskPosition) {
-                index += (indexBitmap & Mask);
-                indexBitmap >>= MaskBitSize;
-                pos += MaskBitSize;
-            }
-            return index;
-        };
-        RulesBucketConstructionState.prototype.IncreaseInsertionIndex = function (maskPosition) {
-            var value = (this.rulesInsertionIndexBitmap >> maskPosition) & Mask;
-            value++;
-            Formatting.Debug.Assert((value & Mask) == value, "Adding more rules into the sub-bucket than allowed. Maximum allowed is 32 rules.");
-            var temp = this.rulesInsertionIndexBitmap & ~(Mask << maskPosition);
-            temp |= value << maskPosition;
-            this.rulesInsertionIndexBitmap = temp;
-        };
-        return RulesBucketConstructionState;
-    })();
-    Formatting.RulesBucketConstructionState = RulesBucketConstructionState;    
-    var RulesBucket = (function () {
-        function RulesBucket() {
-            this.rules = new Formatting.List_Rule();
-        }
-        RulesBucket.prototype.Rules = function () {
-            return this.rules;
-        };
-        RulesBucket.prototype.AddRule = function (rule, specificTokens, constructionState, rulesBucketIndex) {
-            var position;
-            if (rule.Operation.Action == 0 /* Ignore */ ) {
-                position = specificTokens ? 0 /* IgnoreRulesSpecific */  : RulesPosition.IgnoreRulesAny;
-            } else if (!rule.Operation.Context.IsAny()) {
-                position = specificTokens ? RulesPosition.ContextRulesSpecific : RulesPosition.ContextRulesAny;
-            } else {
-                position = specificTokens ? RulesPosition.NoContextRulesSpecific : RulesPosition.NoContextRulesAny;
-            }
-            var state = constructionState[rulesBucketIndex];
-            if (state === undefined) {
-                state = constructionState[rulesBucketIndex] = new RulesBucketConstructionState();
-            }
-            var index = state.GetInsertionIndex(position);
-            this.rules.insert(index, rule);
-            state.IncreaseInsertionIndex(position);
-        };
-        return RulesBucket;
-    })();
-    Formatting.RulesBucket = RulesBucket;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var RulesProvider = (function () {
-        function RulesProvider(logger) {
-            this.logger = logger;
-            this.globalRules = new Formatting.Rules();
-        }
-        RulesProvider.prototype.getRuleName = function (rule) {
-            return this.globalRules.getRuleName(rule);
-        };
-        RulesProvider.prototype.getRuleByName = function (name) {
-            return this.globalRules[name];
-        };
-        RulesProvider.prototype.setActiveRules = function (staticList) {
-            this.activeRules = staticList;
-            this.rulesMap = Formatting.RulesMap.create(this.activeRules);
-        };
-        RulesProvider.prototype.getActiveRules = function () {
-            return this.activeRules;
-        };
-        RulesProvider.prototype.getRulesMap = function () {
-            return this.rulesMap;
-        };
-        RulesProvider.prototype.ensureUptodate = function (options) {
-            var _this = this;
-            if (this.options == null || !Services.compareDataObjects(this.options, options)) {
-                var activeRules = TypeScript.timeFunction(this.logger, "RulesProvider: createActiveRules()", function () {
-                    return _this.createActiveRules(options);
-                });
-                var rulesMap = TypeScript.timeFunction(this.logger, "RulesProvider: RulesMap.create()", function () {
-                    return Formatting.RulesMap.create(activeRules);
-                });
-                this.activeRules = activeRules;
-                this.rulesMap = rulesMap;
-                this.options = options;
-            }
-        };
-        RulesProvider.prototype.createActiveRules = function (options) {
-            var rules = new Formatting.List_Rule();
-            rules.AddRange(this.globalRules.HighPriorityCommonRules);
-            if (options.InsertSpaceAfterCommaDelimiter) {
-                rules.Add(this.globalRules.SpaceAfterComma);
-            } else {
-                rules.Add(this.globalRules.NoSpaceAfterComma);
-            }
-            if (options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions) {
-                rules.Add(this.globalRules.SpaceAfterAnonymousFunctionKeyword);
-            } else {
-                rules.Add(this.globalRules.NoSpaceAfterAnonymousFunctionKeyword);
-            }
-            if (options.InsertSpaceAfterKeywordsInControlFlowStatements) {
-                rules.Add(this.globalRules.SpaceAfterKeywordInControl);
-            } else {
-                rules.Add(this.globalRules.NoSpaceAfterKeywordInControl);
-            }
-            if (options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis) {
-                rules.Add(this.globalRules.SpaceAfterOpenParen);
-                rules.Add(this.globalRules.SpaceBeforeCloseParen);
-                rules.Add(this.globalRules.NoSpaceBetweenParens);
-            } else {
-                rules.Add(this.globalRules.NoSpaceAfterOpenParen);
-                rules.Add(this.globalRules.NoSpaceBeforeCloseParen);
-                rules.Add(this.globalRules.NoSpaceBetweenParens);
-            }
-            if (options.InsertSpaceAfterSemicolonInForStatements) {
-                rules.Add(this.globalRules.SpaceAfterSemicolonInFor);
-            } else {
-                rules.Add(this.globalRules.NoSpaceAfterSemicolonInFor);
-            }
-            if (options.InsertSpaceBeforeAndAfterBinaryOperators) {
-                rules.Add(this.globalRules.SpaceBeforeBinaryOperator);
-                rules.Add(this.globalRules.SpaceAfterBinaryOperator);
-            } else {
-                rules.Add(this.globalRules.NoSpaceBeforeBinaryOperator);
-                rules.Add(this.globalRules.NoSpaceAfterBinaryOperator);
-            }
-            if (options.PlaceOpenBraceOnNewLineForControlBlocks) {
-                rules.Add(this.globalRules.NewLineBeforeOpenCurlyInControl);
-            } else {
-                rules.Add(this.globalRules.SpaceBeforeOpenCurlyInControl);
-            }
-            if (options.PlaceOpenBraceOnNewLineForFunctions) {
-                rules.Add(this.globalRules.NewLineBeforeOpenCurlyInFunction);
-                rules.Add(this.globalRules.NewLineBeforeOpenCurlyInTypeScriptDeclWithBlock);
-            } else {
-                rules.Add(this.globalRules.SpaceBeforeOpenCurlyInFunction);
-                rules.Add(this.globalRules.SpaceBeforeOpenCurlyInTypeScriptDeclWithBlock);
-            }
-            rules.AddRange(this.globalRules.LowPriorityCommonRules);
-            return rules;
-        };
-        return RulesProvider;
-    })();
-    Formatting.RulesProvider = RulesProvider;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var SmartIndentManager = (function () {
-        function SmartIndentManager(scriptSyntaxAST, editorOptions) {
-            this.scriptSyntaxAST = scriptSyntaxAST;
-            this.editorOptions = editorOptions;
-            this.logger = new TypeScript.LoggerAdapter(this.scriptSyntaxAST.getLogger());
-            this.sourceText = this.scriptSyntaxAST.getScriptSnapshot();
-            this.snapshot = new Formatting.TextSnapshot(this.scriptSyntaxAST.getScript(), this.sourceText);
-            this.fileAuthoringProxy = new Formatting.FileAuthoringProxy(this.scriptSyntaxAST);
-            this.tokenKindMap = Formatting.AuthorTokenKindMap.getInstance();
-        }
-        SmartIndentManager.prototype.getSmartIndentAtLineNumber = function (lineNumber) {
-            var line = this.snapshot.GetLineFromLineNumber(lineNumber);
-            var caretPosition = new Formatting.SnapshotSpan(this.snapshot, new Formatting.Span(line.startPosition(), 0));
-            var tokensSpan = this.getPossibleTokenSpan(caretPosition);
-            var tokens = this.gtTokens(tokensSpan);
-            var languageHostIndentation = null;
-            var task = new Formatting.SmartIndentTask(this.logger, caretPosition, tokens, this.fileAuthoringProxy, this.editorOptions, languageHostIndentation);
-            task.Run();
-            if (task.DesiredIndentation === null) {
-                return this.getBlockIndent(line);
-            } else {
-                return Formatting.Indenter.GetIndentSizeFromIndentText(task.DesiredIndentation, this.editorOptions);
-            }
-        };
-        SmartIndentManager.prototype.getPossibleTokenSpan = function (caretPosition) {
-            var startPosition = caretPosition.start().GetContainingLine().startPosition();
-            var endPosition = caretPosition.start().GetContainingLine().endPosition();
-            endPosition = Formatting.Math.Min(endPosition, startPosition + 100);
-            return new Formatting.SnapshotSpan(caretPosition.snapshot, Formatting.Span.FromBounds(startPosition, endPosition));
-        };
-        SmartIndentManager.prototype.gtTokens = function (span) {
-            return Formatting.getTokensInSpan(this.logger, this.scriptSyntaxAST, this.tokenKindMap, span);
-        };
-        SmartIndentManager.prototype.getBlockIndent = function (line) {
-            var previousLine = null;
-            for(var lineNumber = line.lineNumber() - 1; lineNumber >= 0; --lineNumber) {
-                previousLine = line.snapshot().GetLineFromLineNumber(lineNumber);
-                var text = previousLine.getText();
-                if (text.length > 0) {
-                    return Formatting.Indenter.GetIndentSizeFromIndentText(text, this.editorOptions);
-                }
-            }
-            return null;
-        };
-        return SmartIndentManager;
-    })();
-    Formatting.SmartIndentManager = SmartIndentManager;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var SmartIndentTask = (function () {
-        function SmartIndentTask(logger, snapshotSpan, tokens, fileAuthoringProxy, editorOptions, languageHostIndentation) {
-            this.logger = logger;
-            this.snapshotSpan = snapshotSpan;
-            this.tokens = tokens;
-            this.fileAuthoringProxy = fileAuthoringProxy;
-            this.editorOptions = editorOptions;
-            this.languageHostIndentation = languageHostIndentation;
-            this.snapshot = this.snapshotSpan.snapshot;
-            this.DesiredIndentation = null;
-        }
-        SmartIndentTask.prototype.Run = function () {
-            var _this = this;
-            var tree = TypeScript.timeFunction(this.logger, "SmartIndentTask: new ParseTree()", function () {
-                return new Formatting.ParseTree(_this.fileAuthoringProxy, _this.snapshotSpan.span, null, true);
-            });
-            if (tree.Root == null) {
-                return;
-            }
-            Formatting.IndentationEdgeFinder.FillIndentationLevels(tree.Root);
-            Formatting.ParseTree.DumpTree(this.logger, tree.Root);
-            this.FindIndentation(tree);
-        };
-        SmartIndentTask.prototype.FindIndentation = function (tree) {
-            var caretSpan = this.snapshotSpan.span;
-            var context = Formatting.ParseTree.FindCommonParentNode(caretSpan, caretSpan, tree.Root);
-            if (context && context.AuthorNode.Details.nodeType == 7 /* QString */ ) {
-                var nodeSpan = Formatting.Span.FromBounds(context.AuthorNode.Details.StartOffset, context.AuthorNode.Details.EndOffset);
-                if (nodeSpan.Contains(caretSpan)) {
-                    this.DesiredIndentation = "";
-                    return;
-                }
-            }
-            while(context != null && context.AuthorNode.Details.StartOffset == caretSpan.start() && !(context.AuthorNode.Details.Kind == 87 /* apnkBlock */  && context.AuthorNode.Details.Flags != 256 /* apnfSyntheticNode */ )) {
-                context = context.Parent;
-            }
-            if (context == null) {
-                return;
-            }
-            var firstToken = Formatting.FirstOrDefault(this.tokens, function (item) {
-                return true;
-            });
-            if (firstToken == null) {
-                firstToken = new Formatting.TokenSpan(9 /* atkSColon */ , 54 /* Semicolon */ , this.snapshotSpan);
-            } else if (firstToken.Token != 70 /* atkElse */  && firstToken.Token != 94 /* atkWhile */  && firstToken.Token != 14 /* atkLCurly */  && firstToken.Token != 15 /* atkRCurly */ ) {
-                firstToken = new Formatting.TokenSpan(9 /* atkSColon */ , 54 /* Semicolon */ , this.snapshotSpan);
-            }
-            if (this.CanDoSmartIndent(context, {
-                token: firstToken
-            })) {
-                var indenter = new Formatting.Indenter(this.logger, tree, this.snapshot, this.languageHostIndentation, this.editorOptions, firstToken, true);
-                var edit = Formatting.FirstOrDefault(indenter.GetIndentationEdits(firstToken, null, context, true), function (item) {
-                    return true;
-                });
-                if (edit != null) {
-                    this.DesiredIndentation = edit.ReplaceWith;
-                }
-            }
-        };
-        SmartIndentTask.prototype.CanDoSmartIndent = function (context, firstToken) {
-            var node = context;
-            while(node != null && node.ChildrenIndentationDelta == null) {
-                node = node.Parent;
-            }
-            if (node == null) {
-                return false;
-            }
-            if (Formatting.Rules.IsTypeScriptDeclWithBlockContextNode(node)) {
-                return this.CanDoSmartIndentInStatementWithBlock(node, firstToken);
-            }
-            if (node.AuthorNode.Details.ast != null) {
-                switch(node.AuthorNode.Details.ast.nodeType) {
-                    case 99 /* ImportDeclaration */ :
-                        return this.CanDoSmartIndentInStatement(node);
-                }
-            }
-            switch(node.AuthorNode.Details.Kind) {
-                case 46 /* apnkAsg */ :
-                case 60 /* apnkAsgAdd */ :
-                case 61 /* apnkAsgSub */ :
-                case 62 /* apnkAsgMul */ :
-                case 63 /* apnkAsgDiv */ :
-                case 64 /* apnkAsgMod */ :
-                case 65 /* apnkAsgAnd */ :
-                case 66 /* apnkAsgXor */ :
-                case 67 /* apnkAsgOr */ :
-                case 68 /* apnkAsgLsh */ :
-                case 69 /* apnkAsgRsh */ :
-                case 70 /* apnkAsgRs2 */ :
-                case 76 /* apnkVarDecl */ :
-                case 104 /* apnkVarDeclList */ :
-                case 44 /* apnkCall */ :
-                case 26 /* apnkArray */ :
-                case 72 /* apnkMember */ :
-                    return this.CanDoSmartIndentInStatement(node);
-                case 82 /* apnkFor */ :
-                    return this.CanDoSmartIndentInFor(node);
-                case 78 /* apnkFncDecl */ :
-                    return this.CanDoSmartIndentInFunction(node, firstToken);
-                case 97 /* apnkTry */ :
-                case 99 /* apnkFinally */ :
-                    return this.CanDoSmartIndentInStatementWithBlock(node, firstToken);
-                case 95 /* apnkCatch */ :
-                case 92 /* apnkSwitch */ :
-                    return this.CanDoSmartIndentInStatementWithParenAndBlock(node, firstToken);
-                default:
-                    return true;
-            }
-        };
-        SmartIndentTask.prototype.CanDoSmartIndentInStatement = function (node) {
-            var contextLine = this.snapshot.GetLineNumberFromPosition(node.AuthorNode.Details.StartOffset);
-            var newLine = this.snapshot.GetLineNumberFromPosition(this.snapshotSpan.startPosition());
-            return SmartIndentTask.IsEmptyRegion(this.snapshot, contextLine + 1, newLine - 1);
-        };
-        SmartIndentTask.prototype.CanDoSmartIndentInFunction = function (node, firstToken) {
-            var astCursor = this.fileAuthoringProxy.GetASTCursor();
- {
-                astCursor.SeekToOffset(node.AuthorNode.Details.StartOffset, false);
-                var rightParenPos = astCursor.GetNodeProperty(3 /* apnpRParenMin */ );
-                if (rightParenPos == 0 || this.snapshotSpan.startPosition() <= rightParenPos) {
-                    return this.CanDoSmartIndentInStatement(node);
-                }
-                var leftCurlyPos = astCursor.GetNodeProperty(0 /* apnpLCurlyMin */ );
-                if (leftCurlyPos == 0 || this.snapshotSpan.startPosition() <= leftCurlyPos) {
-                    firstToken = {
-                        token: new Formatting.TokenSpan(14 /* atkLCurly */ , 59 /* OpenBrace */ , this.snapshotSpan)
-                    };
-                }
-                return true;
-            }
-        };
-        SmartIndentTask.prototype.CanDoSmartIndentInStatementWithBlock = function (node, firstToken) {
-            var astCursor = this.fileAuthoringProxy.GetASTCursor();
- {
-                astCursor.SeekToOffset(node.AuthorNode.Details.StartOffset, false);
-                var leftCurlyPos = astCursor.GetNodeProperty(0 /* apnpLCurlyMin */ );
-                if (leftCurlyPos == 0 || this.snapshotSpan.startPosition() <= leftCurlyPos) {
-                    firstToken = {
-                        token: new Formatting.TokenSpan(14 /* atkLCurly */ , 59 /* OpenBrace */ , this.snapshotSpan)
-                    };
-                }
-                return true;
-            }
-        };
-        SmartIndentTask.prototype.CanDoSmartIndentInStatementWithParenAndBlock = function (node, firstToken) {
-            var astCursor = this.fileAuthoringProxy.GetASTCursor();
- {
-                astCursor.SeekToOffset(node.AuthorNode.Details.StartOffset, false);
-                var rightParenPos = astCursor.GetNodeProperty(3 /* apnpRParenMin */ );
-                var leftCurlyPos = astCursor.GetNodeProperty(0 /* apnpLCurlyMin */ );
-                if (rightParenPos > 0 && this.snapshotSpan.startPosition() > rightParenPos && (leftCurlyPos == 0 || this.snapshotSpan.startPosition() <= leftCurlyPos)) {
-                    firstToken = {
-                        token: new Formatting.TokenSpan(14 /* atkLCurly */ , 59 /* OpenBrace */ , this.snapshotSpan)
-                    };
-                }
-                return true;
-            }
-        };
-        SmartIndentTask.prototype.CanDoSmartIndentInFor = function (node) {
-            var astCursor = this.fileAuthoringProxy.GetASTCursor();
- {
-                astCursor.SeekToOffset(node.AuthorNode.Details.StartOffset, false);
-                var rightParenPos = astCursor.GetNodeProperty(3 /* apnpRParenMin */ );
-                if (rightParenPos == 0 || this.snapshotSpan.startPosition() <= rightParenPos) {
-                    return this.CanDoSmartIndentInStatement(node);
-                }
-                return true;
-            }
-        };
-        SmartIndentTask.IsEmptyRegion = function IsEmptyRegion(snapshot, startLine, endLine) {
-            var empty = true;
-            var lineNum = startLine;
-            while(lineNum <= endLine) {
-                var line = snapshot.GetLineFromLineNumber(lineNum);
-                var lineText = line.getText();
-                if (!IsEmptyString(lineText)) {
-                    empty = false;
-                    break;
-                }
-                lineNum++;
-            }
-            return empty;
-        };
-        SmartIndentTask.IsEmptyString = function IsEmptyString(lineText) {
-            for(var i = 0, len = lineText.length; i < len; i++) {
-                if (!Formatting.EditorUtilities.IsWhitespace(lineText.charCodeAt(i))) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        return SmartIndentTask;
-    })();
-    Formatting.SmartIndentTask = SmartIndentTask;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var StatementFinderTask = (function () {
-        function StatementFinderTask(logger, semicolonPoint, fileAuthoringProxy) {
-            this.logger = logger;
-            this.semicolonPoint = semicolonPoint;
-            this.fileAuthoringProxy = fileAuthoringProxy;
-            this.BlockSpan = null;
-        }
-        StatementFinderTask.prototype.Run = function () {
-            var parseCursor = this.fileAuthoringProxy.GetASTCursor();
- {
-                var startPos = -1;
-                var node = parseCursor.SeekToOffset(this.semicolonPoint.position, true);
-                while(node && node.Kind !== 11 /* apnkEmpty */  && node.nodeType !== 94 /* List */ ) {
-                    if ((node.EndOffset - 1) === this.semicolonPoint.position) {
-                        startPos = node.StartOffset;
-                    }
-                    node = parseCursor.MoveUp();
-                }
-                if (startPos !== -1) {
-                    this.BlockSpan = new Formatting.Span(startPos, this.semicolonPoint.position - startPos + 1);
-                }
-            }
-        };
-        return StatementFinderTask;
-    })();
-    Formatting.StatementFinderTask = StatementFinderTask;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var TextEditInfo = (function () {
-        function TextEditInfo(position, length, replaceWith) {
-            this.position = position;
-            this.length = length;
-            this.replaceWith = replaceWith;
-            this.Position = this.position;
-            this.Length = length;
-            this.ReplaceWith = this.replaceWith;
-        }
-        return TextEditInfo;
-    })();
-    Formatting.TextEditInfo = TextEditInfo;    
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    (function (Shared) {
-        var TokenRangeAccess = (function () {
-            function TokenRangeAccess(from, to, except) {
-                this.tokens = new Formatting.List_AuthorTokenKind();
-                for(var token = from; token <= to; token++) {
-                    if (except.indexOf(token) < 0) {
-                        this.tokens.add(token);
-                    }
-                }
-            }
-            TokenRangeAccess.prototype.GetTokens = function () {
-                return this.tokens;
-            };
-            TokenRangeAccess.prototype.Contains = function (token) {
-                return this.tokens.contains(token);
-            };
-            TokenRangeAccess.prototype.toString = function () {
-                return "[tokenRangeStart=" + (Formatting.AuthorTokenKind)._map[this.tokens.get(0)] + "," + "tokenRangeEnd=" + (Formatting.AuthorTokenKind)._map[this.tokens.get(this.tokens.count() - 1)] + "]";
-            };
-            return TokenRangeAccess;
-        })();
-        Shared.TokenRangeAccess = TokenRangeAccess;        
-        var TokenValuesAccess = (function () {
-            function TokenValuesAccess(tks) {
-                this.tokens = new Formatting.List_AuthorTokenKind();
-                this.tokens.addAll(tks);
-            }
-            TokenValuesAccess.prototype.GetTokens = function () {
-                return this.tokens;
-            };
-            TokenValuesAccess.prototype.Contains = function (token) {
-                return this.GetTokens().contains(token);
-            };
-            return TokenValuesAccess;
-        })();
-        Shared.TokenValuesAccess = TokenValuesAccess;        
-        var TokenSingleValueAccess = (function () {
-            function TokenSingleValueAccess(token) {
-                this.token = token;
-            }
-            TokenSingleValueAccess.prototype.GetTokens = function () {
-                var result = new Formatting.List_AuthorTokenKind();
-                result.add(this.token);
-                return result;
-            };
-            TokenSingleValueAccess.prototype.Contains = function (tokenValue) {
-                return tokenValue == this.token;
-            };
-            TokenSingleValueAccess.prototype.toString = function () {
-                return "[singleTokenKind=" + (Formatting.AuthorTokenKind)._map[this.token] + "]";
-            };
-            return TokenSingleValueAccess;
-        })();
-        Shared.TokenSingleValueAccess = TokenSingleValueAccess;        
-        var TokenAllAccess = (function () {
-            function TokenAllAccess() { }
-            TokenAllAccess.prototype.GetTokens = function () {
-                var result = new Formatting.List_AuthorTokenKind();
-                for(var token = 0 /* atkEnd */ ; token < 110 /* Length */ ; token++) {
-                    result.add(token);
-                }
-                return result;
-            };
-            TokenAllAccess.prototype.Contains = function (tokenValue) {
-                return true;
-            };
-            TokenAllAccess.prototype.toString = function () {
-                return "[allTokens]";
-            };
-            return TokenAllAccess;
-        })();
-        Shared.TokenAllAccess = TokenAllAccess;        
-        var TokenRange = (function () {
-            function TokenRange(tokenAccess) {
-                this.tokenAccess = tokenAccess;
-            }
-            TokenRange.FromToken = function FromToken(token) {
-                return new TokenRange(new TokenSingleValueAccess(token));
-            };
-            TokenRange.FromTokens = function FromTokens(tokens) {
-                return new TokenRange(new TokenValuesAccess(tokens));
-            };
-            TokenRange.FromRange = function FromRange(f, to, except) {
-                if (typeof except === "undefined") { except = []; }
-                return new TokenRange(new TokenRangeAccess(f, to, except));
-            };
-            TokenRange.AllTokens = function AllTokens() {
-                return new TokenRange(new TokenAllAccess());
-            };
-            TokenRange.prototype.GetTokens = function () {
-                return this.tokenAccess.GetTokens();
-            };
-            TokenRange.prototype.Contains = function (token) {
-                return this.tokenAccess.Contains(token);
-            };
-            TokenRange.prototype.toString = function () {
-                return this.tokenAccess.toString();
-            };
-            TokenRange.Any = TokenRange.AllTokens();
-            TokenRange.Keywords = TokenRange.FromRange(60 /* atkBreak */ , 95 /* atkWith */ );
-            TokenRange.Operators = TokenRange.FromRange(9 /* atkSColon */ , 58 /* atkScope */ );
-            TokenRange.BinaryOperators = TokenRange.FromRange(17 /* atkArrow */ , 52 /* atkPct */ );
-            TokenRange.BinaryKeywordOperators = TokenRange.FromTokens([
-                80 /* atkIn */ , 
-                81 /* atkInstanceof */ 
-            ]);
-            TokenRange.ReservedKeywords = TokenRange.FromRange(101 /* atkImplements */ , 109 /* atkYield */ );
-            TokenRange.UnaryPrefixOperators = TokenRange.FromTokens([
-                48 /* atkAdd */ , 
-                49 /* atkSub */ , 
-                53 /* atkTilde */ , 
-                54 /* atkBang */ 
-            ]);
-            TokenRange.UnaryPrefixExpressions = TokenRange.FromTokens([
-                4 /* atkNumber */ , 
-                2 /* atkIdentifier */ , 
-                10 /* atkLParen */ , 
-                12 /* atkLBrack */ , 
-                14 /* atkLCurly */ , 
-                87 /* atkThis */ , 
-                82 /* atkNew */ 
-            ]);
-            TokenRange.UnaryPreincrementExpressions = TokenRange.FromTokens([
-                2 /* atkIdentifier */ , 
-                10 /* atkLParen */ , 
-                87 /* atkThis */ , 
-                82 /* atkNew */ 
-            ]);
-            TokenRange.UnaryPostincrementExpressions = TokenRange.FromTokens([
-                2 /* atkIdentifier */ , 
-                11 /* atkRParen */ , 
-                13 /* atkRBrack */ , 
-                82 /* atkNew */ 
-            ]);
-            TokenRange.UnaryPredecrementExpressions = TokenRange.FromTokens([
-                2 /* atkIdentifier */ , 
-                10 /* atkLParen */ , 
-                87 /* atkThis */ , 
-                82 /* atkNew */ 
-            ]);
-            TokenRange.UnaryPostdecrementExpressions = TokenRange.FromTokens([
-                2 /* atkIdentifier */ , 
-                11 /* atkRParen */ , 
-                13 /* atkRBrack */ , 
-                82 /* atkNew */ 
-            ]);
-            return TokenRange;
-        })();
-        Shared.TokenRange = TokenRange;        
-    })(Formatting.Shared || (Formatting.Shared = {}));
-    var Shared = Formatting.Shared;
-})(Formatting || (Formatting = {}));
-var Formatting;
-(function (Formatting) {
-    var TokenSpan = (function () {
-        function TokenSpan(Token, tokenID, Span) {
-            this.Token = Token;
-            this.tokenID = tokenID;
-            this.Span = Span;
-            this._lineNumber = null;
-        }
-        TokenSpan.prototype.lineNumber = function () {
-            if (this._lineNumber === null) {
-                this._lineNumber = this.Span.snapshot.GetLineNumberFromPosition(this.Span.startPosition());
-            }
-            return this._lineNumber;
-        };
-        TokenSpan.prototype.toString = function () {
-            var result = "[tokenKind=" + (Formatting.AuthorTokenKind)._map[this.Token] + ", " + "tokenID=" + (TypeScript.TokenID)._map[this.tokenID] + ", " + "lineNumber=" + this._lineNumber + ", " + "span=" + this.Span + "]";
-            return result;
-        };
-        return TokenSpan;
-    })();
-    Formatting.TokenSpan = TokenSpan;    
-})(Formatting || (Formatting = {}));
+var TypeScript;
+(function (TypeScript) {
+    })(TypeScript || (TypeScript = {}));
