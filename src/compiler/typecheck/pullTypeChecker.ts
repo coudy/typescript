@@ -120,8 +120,6 @@ module TypeScript {
                     return this.typeCheckTypeReference(ast, typeCheckContext);
 
                 // boolean operations
-                case NodeType.Not:
-                case NodeType.LogNot:
                 case NodeType.Ne:
                 case NodeType.Eq:
                 case NodeType.Eqv:
@@ -148,6 +146,8 @@ module TypeScript {
                 case NodeType.AsgAnd:
                     return this.typeCheckBinaryArithmeticOperation(ast, typeCheckContext);
 
+                case NodeType.Not:
+                case NodeType.LogNot:
                 case NodeType.Pos:
                 case NodeType.Neg:
                 case NodeType.IncPost:

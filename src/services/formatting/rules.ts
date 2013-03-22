@@ -407,7 +407,7 @@ module TypeScript.Formatting {
         }
 
         static IsNotForContext(context: FormattingContext): bool {
-            return !IsForContext(context);
+            return !Rules.IsForContext(context);
         }
 
         static IsBinaryOpContext(context: FormattingContext): bool {
@@ -561,7 +561,7 @@ module TypeScript.Formatting {
         }
 
         static IsNotBinaryOpContext(context: FormattingContext): bool {
-            return !IsBinaryOpContext(context);
+            return !Rules.IsBinaryOpContext(context);
         }
 
         static IsBlockContext(context: FormattingContext): bool {
@@ -580,14 +580,14 @@ module TypeScript.Formatting {
         }
 
         static IsSingleLineBlockContext(context: FormattingContext): bool {
-            if (!IsBlockContext(context))
+            if (!Rules.IsBlockContext(context))
                 return false;
 
             return context.ContextNodeAllOnSameLine();
         }
 
         static IsMultilineBlockContext(context: FormattingContext): bool {
-            if (!IsBlockContext(context))
+            if (!Rules.IsBlockContext(context))
                 return false;
 
             return !context.ContextNodeAllOnSameLine();

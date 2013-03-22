@@ -100,7 +100,7 @@ module Diff {
                 currentLength = 0;
 
                 //...read until we hit a delimiter
-                while (index < length && !isDelimiter(content.substr(index, 1), delimiters)) {
+                while (index < length && !Chunk.isDelimiter(content.substr(index, 1), delimiters)) {
                     currentLength++;
                     index++;
                 }
