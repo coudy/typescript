@@ -5624,9 +5624,9 @@ module TypeScript.Parser {
         }
     }
 
-    class GrammarErrorWalker extends PositionTrackingWalker {
+    //class GrammarErrorWalker extends PositionTrackingWalker {
 
-    }
+    //}
 
     export function parse(text: ISimpleText,
                           isDeclaration: bool,

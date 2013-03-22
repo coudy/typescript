@@ -51,7 +51,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ true, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
@@ -110,7 +110,7 @@ class Program {
         // Environment.standardOut.WriteLine(filePath);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser1.parse(text, TypeScript.LanguageVersion.EcmaScript5);
+        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), TypeScript.LanguageVersion.EcmaScript5);
 
         var totalIncrementalTime = 0;
         var count = 1000;
@@ -120,8 +120,8 @@ class Program {
             timer.start();
             
             var changeLength = i * 2;
-            var tree2 = TypeScript.Parser1.incrementalParse(
-                tree, new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength), text, TypeScript.LanguageVersion.EcmaScript5);
+            var tree2 = TypeScript.Parser.incrementalParse(tree,
+                new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength), text);
             
             timer.end();
 
@@ -236,7 +236,7 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
 
-        var tree = TypeScript.Parser1.parse(text, languageVersion);
+        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
         var emitted = TypeScript.Emitter1.emit(<TypeScript.SourceUnitSyntax>tree.sourceUnit());
 
         var result = justText
@@ -264,7 +264,7 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
         
-        var tree = TypeScript.Parser1.parse(text, languageVersion);
+        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
         var result = TypeScript.PrettyPrinter.prettyPrint(tree.sourceUnit());
 
         this.checkResult(filePath, result, verify, generateBaseline, true);
@@ -292,13 +292,13 @@ class Program {
         var text = TypeScript.TextFactory.createText(contents);
 
         timer.start();
-        var tree = TypeScript.Parser1.parse(text, languageVersion);
+        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
         timer.end();
 
         TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
 
         TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
-        TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+        TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
 
         this.checkResult(filePath, tree, verify, generateBaseline, false);
 
@@ -320,11 +320,11 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
 
-        var tree1 = TypeScript.Parser1.parse(text, languageVersion);
-        var tree2 = TypeScript.Parser1.incrementalParse(
-            new TypeScript.SyntaxTree(TypeScript.Syntax.emptySourceUnit(), [], null),
+        var tree1 = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
+        var tree2 = TypeScript.Parser.incrementalParse(
+            new TypeScript.SyntaxTree(TypeScript.Syntax.emptySourceUnit(), TypeScript.isDTSFile(filePath), [], null, languageVersion, tree1.parseOptions()),
             new TypeScript.TextChangeRange(new TypeScript.TextSpan(0, 0), text.length()),
-            text, languageVersion);
+            text);
 
         TypeScript.Debug.assert(tree1.structuralEquals(tree2));
     }
@@ -343,7 +343,7 @@ class Program {
         // Environment.standardOut.WriteLine(filePath);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser1.parse(text, languageVersion);
+        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
         var sourceUnit = tree.sourceUnit();
 
         TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
@@ -497,7 +497,7 @@ class Program {
 
             try {
                 var stringText = TypeScript.TextFactory.createText(contents);
-                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5);
+                var tree = TypeScript.Parser.parse(stringText, TypeScript.isDTSFile(filePath), TypeScript.LanguageVersion.EcmaScript5);
 
                 if (isNegative) {
                     var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -567,7 +567,7 @@ class Program {
 
             try {
                 var stringText = TypeScript.TextFactory.createText(contents);
-                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5);
+                var tree = TypeScript.Parser.parse(stringText, false, TypeScript.LanguageVersion.EcmaScript5);
 
             //Environment.standardOut.WriteLine(filePath);
             // Environment.standardOut.Write(".");
