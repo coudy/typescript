@@ -487,12 +487,12 @@ verify.quickInfoIs("(): void", "c2 f1", "c2.f1", "method");
 goTo.marker('33q');
 verify.quickInfoIs("(): void", "", "c2.nc_f1", "method");
 
-//goTo.marker('34');
-//verify.currentSignatureHelpDocCommentIs("c2 constructor");
+goTo.marker('34');
+verify.currentSignatureHelpDocCommentIs("c2 constructor");
 goTo.marker('34iq');
 verify.quickInfoIs("c4", "", "c4_i", "var");
-//goTo.marker('34q');
-//verify.quickInfoIs("(a: number): c4", "c2 constructor", "c2", "constructor");
+goTo.marker('34q');
+verify.quickInfoIs("(a: number): c4", "c2 constructor", "c4", "constructor");
 
 goTo.marker('35');
 verify.completionListContains("c2", undefined, "", "c2", "class");

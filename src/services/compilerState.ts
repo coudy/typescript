@@ -397,6 +397,18 @@ module Services {
             return docComments;
         }
 
+        static getDefaultConstructorSymbolForDocComments(classSymbol: TypeScript.PullClassTypeSymbol) {
+            if (classSymbol.getHasDefaultConstructor()) {
+                // get from parent if possible
+                var extendedTypes = classSymbol.getExtendedTypes();
+                if (extendedTypes.length) {
+                    return CompilerState.getDefaultConstructorSymbolForDocComments(<TypeScript.PullClassTypeSymbol>extendedTypes[0]);
+                }
+            }
+
+            return classSymbol.getType().getConstructSignatures()[0];
+        }
+
         public getDocComments(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool): string {
             if (!symbol) {
                 return "";
@@ -407,15 +419,18 @@ module Services {
                 return TypeScript.Comment.getDocCommentText(this.getDocCommentsOfDecl(classDecl));
             }
 
-            if (!useConstructorAsClass && symbol.getKind() == TypeScript.PullElementKind.ConstructSignature &&
-                decls.length && decls[0].getKind() == TypeScript.PullElementKind.Class) {
-                // Class without constructor with implicit constructor signature
-                return "";
-            }
-
             if (symbol.docComments === null) {
                 var docComments: string = "";
-                if (symbol.getKind() == TypeScript.PullElementKind.Parameter) {
+                if (!useConstructorAsClass && symbol.getKind() == TypeScript.PullElementKind.ConstructSignature &&
+                    decls.length && decls[0].getKind() == TypeScript.PullElementKind.Class) {
+                    var classSymbol = <TypeScript.PullClassTypeSymbol>(<TypeScript.PullSignatureSymbol>symbol).getReturnType();
+                    var extendedTypes = classSymbol.getExtendedTypes();
+                    if (extendedTypes.length) {
+                        docComments = this.getDocComments((<TypeScript.PullClassTypeSymbol>extendedTypes[0]).getConstructorMethod());
+                    } else {
+                        docComments = "";
+                    }
+                } else if (symbol.getKind() == TypeScript.PullElementKind.Parameter) {
                     var parameterComments: string[] = [];
                     var funcContainerList = symbol.findIncomingLinks(link => link.kind == TypeScript.SymbolLinkKind.Parameter);
                     for (var i = 0; i < funcContainerList.length; i++) {
