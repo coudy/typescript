@@ -178,7 +178,7 @@ module TypeScript {
         }
 
         typeSymbol = new TypeSymbol(importDecl.id.text, importDecl.id.minChar, importDecl.limChar - importDecl.minChar,
-                                    context.checker.locationInfo.fileName, modType);
+                                    context.checker.locationInfo.fileName, modType, context.checker.compilationSettings.optimizeModuleCodeGen);
 
         typeSymbol.aliasLink = importDecl;
 
@@ -246,7 +246,7 @@ module TypeScript {
             }
 
             typeSymbol = new TypeSymbol(modName, moduleDecl.name.minChar, modName.length,
-                                        context.checker.locationInfo.fileName, modType);
+                                        context.checker.locationInfo.fileName, modType, context.checker.compilationSettings.optimizeModuleCodeGen);
             typeSymbol.isDynamic = isQuoted(moduleDecl.prettyName);
 
             if (context.scopeChain.moduleDecl) {
@@ -379,7 +379,7 @@ module TypeScript {
             instanceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             instanceType.ambientMembers = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             typeSymbol = new TypeSymbol(className, classDecl.name.minChar, className.length,
-                                        context.checker.locationInfo.fileName, classType);
+                                        context.checker.locationInfo.fileName, classType, context.checker.compilationSettings.optimizeModuleCodeGen);
             typeSymbol.declAST = classDecl;
             typeSymbol.instanceType = instanceType;
             classType.symbol = typeSymbol;
@@ -465,7 +465,7 @@ module TypeScript {
                                         interfaceDecl.name.minChar,
                                         interfaceName.length,
                                         context.checker.locationInfo.fileName,
-                                        interfaceType);
+                                        interfaceType, context.checker.compilationSettings.optimizeModuleCodeGen);
             interfaceType.symbol = interfaceSymbol;
             // REVIEW: Shouldn't allocate another table for interface privates
             interfaceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));

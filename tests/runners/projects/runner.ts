@@ -36,15 +36,13 @@ class HarnessHost implements TypeScript.IResolverHost {
 }
 class HarnessBatch {
     public host: IIO;
-    public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public commandLineHost: HarnessHost;
     public resolvedEnvironment: TypeScript.CompilationEnvironment;
     public errout: Harness.Compiler.WriterAggregator;
 
-    constructor(getDeclareFiles: bool, generateMapFiles: bool, outputOption: string) {
+    constructor(getDeclareFiles: bool, generateMapFiles: bool, outputOption: string, public compilationSettings: TypeScript.CompilationSettings) {
         this.host = IO;
-        this.compilationSettings = new TypeScript.CompilationSettings();
         this.compilationSettings.generateDeclarationFiles = getDeclareFiles;
         this.compilationSettings.mapSourceFiles = generateMapFiles;
         this.compilationSettings.outputOption = outputOption;
@@ -133,7 +131,7 @@ class HarnessBatch {
             fileExists: IO.fileExists,
             resolvePath: IO.resolvePath
         });
-        compiler.emitSettings.ioHost.createFile = createDeclareFile;
+        compiler.emitOptions.ioHost.createFile = createDeclareFile;
         compiler.emitDeclarations();
 
         if (this.errout) {
@@ -288,9 +286,10 @@ class ProjectRunner extends RunnerBase {
 
                     generatedDeclareFiles = [];
                     generatedEmitFiles = [];
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                    var compilationSettings = new TypeScript.CompilationSettings();
+                    compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
                     codeGenType = "node";
-                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption);
+                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption, compilationSettings);
                     batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile);
                     
                     it("collects the right files", function () {
@@ -352,11 +351,13 @@ class ProjectRunner extends RunnerBase {
 
                     cleanProjectDirectory(spec.projectRoot);
 
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                    var compilationSettings = new TypeScript.CompilationSettings();
+                    compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+
                     generatedDeclareFiles = [];
                     generatedEmitFiles = [];
                     codeGenType = "amd";
-                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption);
+                    var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption, compilationSettings);
                     batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile);
 
                     it("collects the right files", function () {

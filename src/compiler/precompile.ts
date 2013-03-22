@@ -102,6 +102,7 @@ module TypeScript {
 
         public codeGenTarget = LanguageVersion.EcmaScript3;
         public moduleGenTarget = ModuleGenTarget.Synchronous;
+        public optimizeModuleCodeGen = true;
 
         // --out option passed. 
         // Default is the "" which leads to multiple files generated next to the.ts files

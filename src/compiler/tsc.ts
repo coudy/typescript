@@ -386,7 +386,7 @@ class BatchCompiler {
             usage: 'Do not optimize module codegen',
             experimental: true,
             set: () => {
-                TypeScript.optimizeModuleCodeGen = false;
+                this.compilationSettings.optimizeModuleCodeGen = false;
             }
         });
 
@@ -446,10 +446,12 @@ class BatchCompiler {
                 type = type.toLowerCase();
 
                 if (type === 'commonjs' || type === 'node') {
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-                } else if (type === 'amd') {
-                    TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
-                } else {
+                    this.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                }
+                else if (type === 'amd') {
+                    this.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                }
+                else {
                     this.errorReporter.WriteLine("Module code generation '" + type + "' not supported.  Using default 'commonjs' code generation");
                 }
             }

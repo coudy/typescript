@@ -70,13 +70,14 @@ module TypeScript {
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
-                    private lineMap: ILineMap) {
+                    private lineMap: ILineMap,
+                    private compilationSettings: CompilationSettings) {
             this.isParsingDeclareFile = isDSTRFile(fileName) || isDTSFile(fileName);
         }
 
-        public static visit(syntaxTree: SyntaxTree, fileName: string): Script {
+        public static visit(syntaxTree: SyntaxTree, fileName: string, compilationSettings: CompilationSettings): Script {
             var map = SyntaxTreeToAstVisitor.checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
-            var visitor = new SyntaxTreeToAstVisitor(map, fileName, syntaxTree.lineMap());
+            var visitor = new SyntaxTreeToAstVisitor(map, fileName, syntaxTree.lineMap(), compilationSettings);
             return syntaxTree.sourceUnit().accept(visitor);
         }
 
@@ -399,7 +400,7 @@ module TypeScript {
             }
 
             var topLevelMod: ModuleDeclaration = null;
-            if (moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
+            if (this.compilationSettings.moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName);
                 topLevelMod = new ModuleDeclaration(id, bod, this.topVarList(), null);

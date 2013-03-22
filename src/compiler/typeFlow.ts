@@ -661,7 +661,10 @@ module TypeScript {
         public nestingLevel = 0;
         public inSuperCall = false;
 
-        constructor(public logger: ILogger, public initScope: SymbolScope, public checker: TypeChecker) {
+        constructor(public logger: ILogger,
+                    public initScope: SymbolScope,
+                    public checker: TypeChecker,
+                    public compilationSettings: CompilationSettings) {
             this.checker.typeFlow = this;
             this.scope = this.initScope;
             this.globalScope = this.initScope;
@@ -1218,7 +1221,7 @@ module TypeScript {
                     identifier.type = this.anyType;
                 }
                 else {
-                    if (optimizeModuleCodeGen && symbol && symbol.isType()) {
+                    if (this.compilationSettings.optimizeModuleCodeGen && symbol && symbol.isType()) {
                         var symType = symbol.getType();
                         // Once the type has been referenced outside of a type ref position, there's
                         // no going back                        
@@ -3122,6 +3125,7 @@ module TypeScript {
                 }
             }
         }
+
         public typeCheckIf(ifStmt: IfStatement): IfStatement {
             ifStmt.cond = this.typeCheck(ifStmt.cond);
             this.typeCheckCondExpr(ifStmt.cond);
@@ -3152,7 +3156,7 @@ module TypeScript {
             resultType.symbol = new TypeSymbol(this.checker.anon, objectLit.minChar,
                                              objectLit.limChar - objectLit.minChar,
                                              this.checker.locationInfo.fileName,
-                                             resultType);
+                                             resultType, this.compilationSettings.optimizeModuleCodeGen);
 
             resultType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             resultType.memberScope = new SymbolTableScope(resultType.members, null, null, null, null);

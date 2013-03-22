@@ -184,12 +184,4 @@ module TypeScript {
         Asynchronous = 1,
         Local = 1 << 1,
     }
-
-    // Compiler defaults to generating ES5-compliant code for
-    //  - getters and setters
-    export var codeGenTarget: LanguageVersion = LanguageVersion.EcmaScript3;
-
-    export var moduleGenTarget: ModuleGenTarget = ModuleGenTarget.Synchronous;
-
-    export var optimizeModuleCodeGen = true;
 }

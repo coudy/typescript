@@ -176,7 +176,7 @@ module TypeScript {
         return false;
     }
 
-    export function LexIsUnicodeDigit(code: number): bool {
+    export function LexIsUnicodeDigit(code: number, codeGenTarget: LanguageVersion): bool {
         if (codeGenTarget === LanguageVersion.EcmaScript3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdCont);
         } else {
@@ -184,7 +184,7 @@ module TypeScript {
         }
     }
 
-    export function LexIsUnicodeIdStart(code: number): bool {
+    export function LexIsUnicodeIdStart(code: number, codeGenTarget: LanguageVersion): bool {
         if (codeGenTarget === LanguageVersion.EcmaScript3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdStart);
         } else {
@@ -429,7 +429,7 @@ module TypeScript {
 
         private prevTok = staticTokens[TokenID.EndOfFile];
 
-        constructor() {
+        constructor(private codeGenTarget: LanguageVersion) {
             this.startCol = this.col;
             this.startLine = this.line;
 
@@ -952,7 +952,7 @@ module TypeScript {
         }
 
         private isValidUnicodeIdentifierChar(): bool {
-            var valid = LexIsUnicodeIdStart(this.ch) || LexIsUnicodeDigit(this.ch);
+            var valid = LexIsUnicodeIdStart(this.ch, this.codeGenTarget) || LexIsUnicodeDigit(this.ch, this.codeGenTarget);
             this.seenUnicodeChar = this.seenUnicodeChar || valid;
             return valid;
         }
@@ -1077,7 +1077,7 @@ module TypeScript {
 
                         // Verify is valid ID char 
                         if (lexIdStartTable[hexChar] || (!isFirstChar && LexIsDigit(hexChar)) ||
-                            (hexChar >= LexCodeASCIIChars && (LexIsUnicodeIdStart(hexChar) || (!isFirstChar && LexIsUnicodeDigit(hexChar))))) {
+                            (hexChar >= LexCodeASCIIChars && (LexIsUnicodeIdStart(hexChar, this.codeGenTarget) || (!isFirstChar && LexIsUnicodeDigit(hexChar, this.codeGenTarget))))) {
                         }
                         else {
                             this.reportScannerError("Invalid identifier character");
@@ -1111,7 +1111,7 @@ module TypeScript {
             this.ch = this.peekChar();
 
             start: while (this.pos < this.len) {
-                if (lexIdStartTable[this.ch] || this.ch === LexCodeBSL || (this.ch >= LexCodeASCIIChars && LexIsUnicodeIdStart(this.ch))) {
+                if (lexIdStartTable[this.ch] || this.ch === LexCodeBSL || (this.ch >= LexCodeASCIIChars && LexIsUnicodeIdStart(this.ch, this.codeGenTarget))) {
                     // identifier or keyword
                     return this.scanIdentifier();
                 }

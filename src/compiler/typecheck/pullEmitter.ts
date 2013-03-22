@@ -42,10 +42,14 @@ module TypeScript {
             this.pullTypeChecker.resolver.setUnitPath(fileName);
         }
 
-        constructor(emittingFileName: string, outfile: ITextWriter, emitOptions: EmitOptions, errorReporter: SimpleErrorReporter, private semanticInfoChain: SemanticInfoChain) {
+        constructor(emittingFileName: string,
+                    outfile: ITextWriter,
+                    emitOptions: EmitOptions,
+                    errorReporter: SimpleErrorReporter,
+                    private semanticInfoChain: SemanticInfoChain) {
             super(null, emittingFileName, outfile, emitOptions, errorReporter);
 
-            this.pullTypeChecker = new PullTypeChecker(semanticInfoChain);
+            this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
 
         public setUnit(locationInfo: LocationInfo) {
@@ -369,7 +373,7 @@ module TypeScript {
 
                 // If it's a dynamic module, we need to print the "require" invocation
                 if (pullSymbol && pullSymbolKind == PullElementKind.DynamicModule) {
-                    if (moduleGenTarget == ModuleGenTarget.Asynchronous) {
+                    if (this.emitOptions.compilationSettings.moduleGenTarget == ModuleGenTarget.Asynchronous) {
                         this.writeLineToOutput("__" + this.modAliasId + "__;");
                     }
                     else {
@@ -427,4 +431,3 @@ module TypeScript {
         }
     }
 }
-

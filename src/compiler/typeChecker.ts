@@ -110,7 +110,7 @@ module TypeScript {
 
         public wildElm: TypeSymbol = null;
 
-        constructor (public errorReporter: ErrorReporter) {
+        constructor (public errorReporter: ErrorReporter, private compilationSettings: CompilationSettings) {
             this.importedGlobals = new SymbolScopeBuilder(null, this.importedGlobalsTable, null, this.importedGlobalsTypeTable, null, null);
 
             this.dualGlobalValues = new DualStringHashTable(this.residentGlobalValues, new StringHashTable());
@@ -138,7 +138,7 @@ module TypeScript {
             // shared global state is resident
             this.setCollectionMode(TypeCheckCollectionMode.Resident);
 
-            this.wildElm = new TypeSymbol("_element", -1, 0, unknownLocationInfo.fileName, new Type());
+            this.wildElm = new TypeSymbol("_element", -1, 0, unknownLocationInfo.fileName, new Type(), this.compilationSettings.optimizeModuleCodeGen);
             this.importedGlobalsTypeTable.addPublicMember(this.wildElm.name, this.wildElm);
 
             this.mod = new ModuleType(dualGlobalScopedEnclosedTypes, dualGlobalScopedAmbientEnclosedTypes);
@@ -146,17 +146,16 @@ module TypeScript {
             this.mod.ambientMembers = dualGlobalScopedAmbientMembers;
             this.mod.containedScope = this.globalScope;
 
-            this.gloMod = new TypeSymbol(globalId, -1, 0, unknownLocationInfo.fileName, this.mod);
+            this.gloMod = new TypeSymbol(globalId, -1, 0, unknownLocationInfo.fileName, this.mod, this.compilationSettings.optimizeModuleCodeGen);
             this.mod.members.addPublicMember(this.gloMod.name, this.gloMod);
 
             this.defineGlobalValue("undefined", this.undefinedType);
         }
 
-
         public enterPrimitive(flags: number, name: string) {
             var primitive = new Type();
             primitive.primitiveTypeClass = flags;
-            var symbol = new TypeSymbol(name, -1, name.length, unknownLocationInfo.fileName, primitive);
+            var symbol = new TypeSymbol(name, -1, name.length, unknownLocationInfo.fileName, primitive, this.compilationSettings.optimizeModuleCodeGen);
             symbol.typeCheckStatus = TypeCheckStatus.Finished;
             primitive.symbol = symbol;
             this.importedGlobals.enter(null, null, symbol, this.errorReporter, true, true, true);
@@ -288,7 +287,8 @@ module TypeScript {
 
         public mustCaptureGlobalThis = false;
 
-        constructor (public persistentState: PersistentGlobalTypeState) {
+        constructor(public persistentState: PersistentGlobalTypeState,
+                    public compilationSettings: CompilationSettings) {
             this.voidType = this.persistentState.voidType;
             this.booleanType = this.persistentState.booleanType;
             this.numberType = this.persistentState.doubleType;
@@ -551,7 +551,7 @@ module TypeScript {
                     new TypeSymbol(funcName ? funcName : this.anon,
                                     funcDecl.minChar, funcDecl.limChar - funcDecl.minChar,
                                     this.locationInfo.fileName,
-                                    groupType);
+                                    groupType, this.compilationSettings.optimizeModuleCodeGen);
                 if (!useOverloadGroupSym) {
                     groupType.symbol.declAST = funcDecl;
                 }
@@ -923,7 +923,7 @@ module TypeScript {
                             }
                         }
 
-                        if (optimizeModuleCodeGen && symbol) {
+                        if (this.compilationSettings.optimizeModuleCodeGen && symbol) {
                             var symType = symbol.getType();
                             // Once the type has been referenced outside of a type ref position, there's
                             // no going back                        
@@ -1077,7 +1077,7 @@ module TypeScript {
                                                                    ast.minChar,
                                                                    ast.limChar - ast.minChar,
                                                                    this.locationInfo.fileName,
-                                                                   interfaceType);
+                                                                   interfaceType, this.compilationSettings.optimizeModuleCodeGen);
                                 interfaceType.symbol = interfaceSymbol;
                                 interfaceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
 

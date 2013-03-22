@@ -94,7 +94,7 @@ module TypeScript {
         }
 
         public emitAccessorDeclarationComments(funcDecl: FuncDecl) {
-            if (!this.emitOptions.emitComments) {
+            if (!this.emitOptions.compilationSettings.emitComments) {
                 return;
             }
 

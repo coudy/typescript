@@ -766,8 +766,8 @@ module Harness {
             compiler.settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
+            compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             compiler.parseEmitOption(stdout);
-            TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             compiler.addUnit(Harness.Compiler.libText, "lib.d.ts");
             return compiler;
         }
@@ -1192,14 +1192,13 @@ module Harness {
             var oldCompilerSettings = new TypeScript.CompilationSettings();
             clone(compiler.settings, oldCompilerSettings);
             var oldEmitSettings = new TypeScript.EmitOptions(compiler.settings);
-            clone(compiler.emitSettings, oldEmitSettings);
-
-            var oldModuleGenTarget = TypeScript.moduleGenTarget;
+            clone(compiler.emitOptions, oldEmitSettings);
 
             if (settingsCallback) {
                 settingsCallback(compiler.settings);
-                compiler.emitSettings = new TypeScript.EmitOptions(compiler.settings);
+                compiler.emitOptions = new TypeScript.EmitOptions(compiler.settings);
             }
+
             try {
                 compileString(code, fileName, callback, context, references);
             } finally {
@@ -1207,8 +1206,7 @@ module Harness {
                 // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
                 if (settingsCallback) {
                     compiler.settings = oldCompilerSettings;
-                    compiler.emitSettings = oldEmitSettings;
-                    TypeScript.moduleGenTarget = oldModuleGenTarget;
+                    compiler.emitOptions = oldEmitSettings;
                 }
             }
         }
@@ -1602,7 +1600,7 @@ module Harness {
         /** Parse file given its source text */
         public parseSourceText(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.Script {
             return TypeScript.SyntaxTreeToAstVisitor.visit(
-                TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText)), fileName);
+                TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText)), fileName, new TypeScript.CompilationSettings());
         }
 
         /** Parse a file on disk given its fileName */

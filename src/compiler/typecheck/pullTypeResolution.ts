@@ -83,7 +83,6 @@ module TypeScript {
 
     // The resolver associates types with a given AST
     export class PullTypeResolver {
-
         private cachedArrayInterfaceType: PullTypeSymbol = null;
         private cachedNumberInterfaceType: PullTypeSymbol = null;
         private cachedStringInterfaceType: PullTypeSymbol = null;
@@ -103,7 +102,9 @@ module TypeScript {
 
         private currentUnit: SemanticInfo = null;
 
-        constructor(public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
+        constructor(private compilationSettings: CompilationSettings,
+                    public semanticInfoChain: SemanticInfoChain,
+                    private unitPath: string) {
             this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);
             this.cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface);
             this.cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface);
@@ -457,7 +458,6 @@ module TypeScript {
             return this.getVisibleSymbolsFromDeclPath(declPath);
         }
 
-
         public getVisibleMembersFromExpresion(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
             var lhs: PullSymbol = this.resolveStatementOrExpression(expression, false, enclosingDecl, context);
             var lhsType = lhs.getType();
@@ -564,7 +564,6 @@ module TypeScript {
 
             return false;
         }
-
 
         // Declaration Resolution
 
@@ -841,7 +840,6 @@ module TypeScript {
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FuncDecl, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-
             var funcDeclSymbol = <PullFunctionTypeSymbol>this.semanticInfoChain.getSymbolForAST(funcDeclAST, this.unitPath);
 
             if (!funcDeclSymbol) {
@@ -858,7 +856,7 @@ module TypeScript {
 
                 var functionDecl = this.getDeclForAST(funcDeclAST);
 
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
                 binder.setUnit(this.unitPath);
                 if (functionDecl.getKind() == PullElementKind.ConstructorType) {
                     binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
@@ -976,7 +974,7 @@ module TypeScript {
 
                 var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
 
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
 
                 binder.setUnit(this.unitPath);
                 binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
@@ -2245,7 +2243,7 @@ module TypeScript {
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
 
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
                 binder.setUnit(this.unitPath);
                 binder.bindFunctionExpressionToPullSymbol(functionDecl);
 
@@ -2558,7 +2556,7 @@ module TypeScript {
 
                             var functionDecl = this.getDeclForAST(funcDeclAST);
 
-                            var binder = new PullSymbolBinder(this.semanticInfoChain);
+                            var binder = new PullSymbolBinder(this.compilationSettings, this.semanticInfoChain);
                             binder.setUnit(this.unitPath);
                             binder.pushParent(typeSymbol, objectLitDecl);
 

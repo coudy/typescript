@@ -36,10 +36,11 @@ module TypeScript {
 
         public context: PullTypeResolutionContext = new PullTypeResolutionContext();
 
-        constructor(public semanticInfoChain: SemanticInfoChain) { }
+        constructor(private compilationSettings: CompilationSettings,
+                    public semanticInfoChain: SemanticInfoChain) { }
 
         public setUnit(unitPath: string) {
-            this.resolver = new PullTypeResolver(this.semanticInfoChain, unitPath);
+            this.resolver = new PullTypeResolver(this.compilationSettings, this.semanticInfoChain, unitPath);
         }
 
         public getScriptDecl(fileName: string): PullDecl {

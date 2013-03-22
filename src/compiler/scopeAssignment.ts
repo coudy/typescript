@@ -172,7 +172,7 @@ module TypeScript {
         var ambientMembers = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
 
         withType = new Type();
-        var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.fileName, withType);
+        var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.fileName, withType, context.typeFlow.compilationSettings.optimizeModuleCodeGen);
         withType.members = members;
         withType.ambientMembers = ambientMembers;
         withType.symbol = withSymbol;

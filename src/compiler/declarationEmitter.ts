@@ -75,7 +75,7 @@ module TypeScript {
         }
 
         private getIndentString(declIndent? = false) {
-            if (this.emitOptions.minWhitespace) {
+            if (this.emitOptions.compilationSettings.minWhitespace) {
                 return "";
             }
             else {
@@ -271,7 +271,7 @@ module TypeScript {
         private emitDeclarationComments(ast: AST, endLine?: bool);
         private emitDeclarationComments(symbol: Symbol, endLine?: bool);
         private emitDeclarationComments(astOrSymbol, endLine = true) {
-            if (!this.emitOptions.emitComments) {
+            if (!this.emitOptions.compilationSettings.emitComments) {
                 return;
             }
 
@@ -714,7 +714,7 @@ module TypeScript {
                             // Create new file
                             var tsFileName = (<Script>this.getAstDeclarationContainer()).locationInfo.fileName;
                             var declareFileName = this.emitOptions.mapOutputFileName(tsFileName, TypeScriptCompiler.mapToDTSFileName);
-                            var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.emitComments && moduleDecl.containsUnicodeCharInComment);
+                            var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
                             try {
                                 // Creating files can cause exceptions, report them.   
                                 this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));

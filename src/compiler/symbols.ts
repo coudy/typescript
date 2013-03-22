@@ -368,10 +368,12 @@ module TypeScript {
         public expansions: Type[] = []; // For types that may be "split", keep track of the subsequent definitions
         public expansionsDeclAST: AST[] = [];
         public isDynamic = false;
+        public onlyReferencedAsTypeRef: bool;
 
-        constructor (locName: string, location: number, length: number, fileName: string, public type: Type) {
+        constructor(locName: string, location: number, length: number, fileName: string, public type: Type, optimizeModuleCodeGen: bool) {
             super(locName, location, length, fileName);
             this.prettyName = this.name;
+            this.onlyReferencedAsTypeRef = optimizeModuleCodeGen;
         }
 
         public addLocation(loc: number) {
@@ -386,7 +388,6 @@ module TypeScript {
         public isType(): bool { return true; }
         public getType() { return this.type; }
         public prettyName: string;
-        public onlyReferencedAsTypeRef = optimizeModuleCodeGen;
 
         public getTypeNameEx(scope: SymbolScope) {
             return this.type.getMemberTypeNameEx(this.name ? this.name + this.getOptionalNameString() : "", false, false, scope);
@@ -422,7 +423,7 @@ module TypeScript {
             else {
                 var replType = this.type.specializeType(pattern, replacement, checker, false);
                 if (replType != this.type) {
-                    var result = new TypeSymbol(this.name, -1, 0, unknownLocationInfo.fileName, replType);
+                    var result = new TypeSymbol(this.name, -1, 0, unknownLocationInfo.fileName, replType, checker.compilationSettings.optimizeModuleCodeGen);
                     return result;
                 }
                 else {
@@ -490,8 +491,8 @@ module TypeScript {
     }
 
     export class WithSymbol extends TypeSymbol {
-        constructor (location: number, fileName: string, withType: Type) {
-            super("with", location, 4, fileName, withType);
+        constructor(location: number, fileName: string, withType: Type, optimizeModuleCodeGen: bool) {
+            super("with", location, 4, fileName, withType, optimizeModuleCodeGen);
         }
         public isWith() { return true; }
     }

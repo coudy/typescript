@@ -88,8 +88,6 @@ module TypeScript {
         }
     }
 
-    export var defaultSettings = new CompilationSettings();
-
     export interface EmitterIOHost {
         // function that can even create a folder structure if needed
         createFile(path: string, useUTF8?: bool): ITextWriter;
@@ -125,7 +123,7 @@ module TypeScript {
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;
 
-        public emitSettings: EmitOptions;
+        public emitOptions: EmitOptions;
 
         public fileNameToScript = new TypeScript.StringHashTable();
         public fileNameToLocationInfo = new TypeScript.StringHashTable();
@@ -133,18 +131,16 @@ module TypeScript {
 
         constructor(public errorOutput: ITextWriter,
                     public logger: ILogger = new NullLogger(),
-                    public settings: CompilationSettings = defaultSettings,
+                    public settings: CompilationSettings = new CompilationSettings(),
                     public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
             this.errorReporter = new SimpleErrorReporter(this.errorOutput);
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
 
-            this.emitSettings = new EmitOptions(this.settings);
+            this.emitOptions = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
                 typescriptDiagnosticMessages = diagnosticMessages
             }
-
-            codeGenTarget = settings.codeGenTarget;
         }
 
         public timeFunction(funcDescription: string, func: () => any): any {
@@ -176,7 +172,7 @@ module TypeScript {
             return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
                 var oldScript = this.fileNameToScript.lookup(fileName);
                 var newScript = SyntaxTreeToAstVisitor.visit(
-                    Parser1.parse(new ScriptSnapshotText(sourceText)), fileName);
+                    Parser1.parse(new ScriptSnapshotText(sourceText)), fileName, this.emitOptions.compilationSettings);
 
                 return UpdateUnitResult.unknownEdits(oldScript, newScript);
             });
@@ -189,7 +185,7 @@ module TypeScript {
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
                 var syntaxTree = Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), LanguageVersion.EcmaScript5);
-                var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
+                var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
                 script.referencedFiles = referencedFiles;
 
                 this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
@@ -218,7 +214,7 @@ module TypeScript {
             var fileNames = this.fileNameToScript.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
-                if (script.emitRequired(this.emitSettings)) {
+                if (script.emitRequired(this.emitOptions)) {
                     var fileName = script.locationInfo.fileName;
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength === -1) {
@@ -252,42 +248,42 @@ module TypeScript {
                 }
             }
 
-            this.emitSettings.commonDirectoryPath = commonComponents.slice(0, commonComponentsLength).join("/") + "/";
-            if (this.emitSettings.outputOption.charAt(this.emitSettings.outputOption.length - 1) != "/") {
-                this.emitSettings.outputOption += "/";
+            this.emitOptions.commonDirectoryPath = commonComponents.slice(0, commonComponentsLength).join("/") + "/";
+            if (this.emitOptions.compilationSettings.outputOption.charAt(this.emitOptions.compilationSettings.outputOption.length - 1) != "/") {
+                this.emitOptions.compilationSettings.outputOption += "/";
             }
         }
 
         public parseEmitOption(ioHost: EmitterIOHost) {
-            this.emitSettings.ioHost = ioHost;
-            if (this.emitSettings.outputOption === "") {
-                this.emitSettings.outputMany = true;
-                this.emitSettings.commonDirectoryPath = "";
+            this.emitOptions.ioHost = ioHost;
+            if (this.emitOptions.compilationSettings.outputOption === "") {
+                this.emitOptions.outputMany = true;
+                this.emitOptions.commonDirectoryPath = "";
                 return;
             }
 
-            this.emitSettings.outputOption = switchToForwardSlashes(this.emitSettings.ioHost.resolvePath(this.emitSettings.outputOption));
+            this.emitOptions.compilationSettings.outputOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outputOption));
 
             // Determine if output options is directory or file
-            if (this.emitSettings.ioHost.directoryExists(this.emitSettings.outputOption)) {
+            if (this.emitOptions.ioHost.directoryExists(this.emitOptions.compilationSettings.outputOption)) {
                 // Existing directory
-                this.emitSettings.outputMany = true;
-            } else if (this.emitSettings.ioHost.fileExists(this.emitSettings.outputOption)) {
+                this.emitOptions.outputMany = true;
+            } else if (this.emitOptions.ioHost.fileExists(this.emitOptions.compilationSettings.outputOption)) {
                 // Existing file
-                this.emitSettings.outputMany = false;
+                this.emitOptions.outputMany = false;
             }
             else {
                 // New File/directory
-                this.emitSettings.outputMany = !isJSFile(this.emitSettings.outputOption);
+                this.emitOptions.outputMany = !isJSFile(this.emitOptions.compilationSettings.outputOption);
             }
 
             // Verify if options are correct
-            if (this.isDynamicModuleCompilation() && !this.emitSettings.outputMany) {
+            if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
                 this.errorReporter.emitterError("Cannot compile dynamic modules when emitting into single file");
             }
 
             // Parse the directory structure
-            if (this.emitSettings.outputMany) {
+            if (this.emitOptions.outputMany) {
                 this.updateCommonDirectoryPath();
             }
         }
@@ -304,7 +300,7 @@ module TypeScript {
         }
 
         private useUTF8ForFile(script: Script) {
-            if (this.emitSettings.outputMany) {
+            if (this.emitOptions.outputMany) {
                 return this.outputScriptToUTF8(script);
             } else {
                 return this.outputScriptsToUTF8(this.getScripts());
@@ -334,10 +330,10 @@ module TypeScript {
             }
 
             if (!declarationEmitter) {
-                var declareFileName = this.emitSettings.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
+                var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                 var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
 
-                declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitSettings, this.errorReporter);
+                declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitOptions, this.errorReporter);
                 declarationEmitter.setDeclarationFile(declareFile);
             }
 
@@ -370,9 +366,9 @@ module TypeScript {
             var fileNames = this.fileNameToScript.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]); 
-                if (this.emitSettings.outputMany || declarationEmitter === null) {
+                if (this.emitOptions.outputMany || declarationEmitter === null) {
                     // Create or reuse file
-                    declarationEmitter = this.emitDeclarationsUnit(script, !this.emitSettings.outputMany);
+                    declarationEmitter = this.emitDeclarationsUnit(script, !this.emitOptions.outputMany);
                 } else {
                     // Emit in existing emitter
                     this.emitDeclarationsUnit(script, true, declarationEmitter);
@@ -401,16 +397,16 @@ module TypeScript {
         }
 
         public emitUnit(script: Script, reuseEmitter?: bool, emitter?: PullEmitter, inputOutputMapper?: (inputName: string, outputName: string) => void) {
-            if (!script.emitRequired(this.emitSettings)) {
+            if (!script.emitRequired(this.emitOptions)) {
                 return null;
             }
 
             var fname = script.locationInfo.fileName;
             if (!emitter) {
-                var outFname = this.emitSettings.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
+                var outFname = this.emitOptions.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
                 var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
 
-                emitter = new PullEmitter(outFname, outFile, this.emitSettings, this.errorReporter, this.semanticInfoChain);
+                emitter = new PullEmitter(outFname, outFile, this.emitOptions, this.errorReporter, this.semanticInfoChain);
 
                 if (this.settings.mapSourceFiles) {
                     emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
@@ -443,8 +439,8 @@ module TypeScript {
             var startEmitTime = (new Date()).getTime();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
-                if (this.emitSettings.outputMany || emitter === null) {
-                    emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, inputOutputMapper);
+                if (this.emitOptions.outputMany || emitter === null) {
+                    emitter = this.emitUnit(script, !this.emitOptions.outputMany, null, inputOutputMapper);
                 } else {
                     this.emitUnit(script, true, emitter);
                 }
@@ -457,7 +453,7 @@ module TypeScript {
         }
 
         private outputScriptToUTF8(script: Script): bool {
-            return script.containsUnicodeChar || (this.emitSettings.emitComments && script.containsUnicodeCharInComment);
+            return script.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && script.containsUnicodeCharInComment);
         }
 
         private outputScriptsToUTF8(scripts: Script[]): bool {
@@ -473,7 +469,7 @@ module TypeScript {
         private createFile(fileName: string, useUTF8: bool): ITextWriter {
             try {
                 // Creating files can cause exceptions, report them.   
-                return this.emitSettings.ioHost.createFile(fileName, useUTF8);
+                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
             } catch (ex) {
                 this.errorReporter.emitterError(ex.message);
             }
@@ -523,7 +519,7 @@ module TypeScript {
 
                 if (!this.pullTypeChecker || refresh) {
                     this.semanticInfoChain = new SemanticInfoChain();
-                    this.pullTypeChecker = new PullTypeChecker(this.semanticInfoChain);
+                    this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
                 }
 
                 this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
@@ -555,7 +551,7 @@ module TypeScript {
                 // bind declaration symbols
                 var bindStartTime = new Date().getTime();
 
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
 
                 // start at '1', so as to skip binding for global primitives such as 'any'
                 for (i = 1; i < this.semanticInfoChain.units.length; i++) {
@@ -643,7 +639,7 @@ module TypeScript {
 
                 this.semanticInfoChain.update(newScript.locationInfo.fileName);
 
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
                 binder.setUnit(newScript.locationInfo.fileName);
 
                 var i = 0;
@@ -1180,7 +1176,7 @@ module TypeScript {
                 var oldScript = <Script>this.fileNameToScript.lookup(fileName);
 
                 var syntaxTree = Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), LanguageVersion.EcmaScript5);
-                var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
+                var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
 
                 this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
                 this.fileNameToScript.addOrUpdate(fileName, newScript);

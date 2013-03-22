@@ -1232,7 +1232,7 @@ module TypeScript {
                     }
                 }
 
-                if ( emitOptions.emitComments &&
+                if (emitOptions.compilationSettings.emitComments &&
                     ((this.bod.preComments && this.bod.preComments.length > 0) || (this.bod.postComments && this.bod.postComments.length > 0))) {
                     return this.setCachedEmitRequired(true);
                 }

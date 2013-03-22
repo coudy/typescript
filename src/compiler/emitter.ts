@@ -45,34 +45,24 @@ module TypeScript {
     }
 
     export class EmitOptions {
-        public minWhitespace: bool;
-        public propagateConstants: bool;
-        public emitComments: bool;
-        public emitFullSourceMapPath: bool;
-        public outputOption: string;
         public ioHost: EmitterIOHost = null;
         public outputMany: bool = true;
         public commonDirectoryPath = "";
 
-        constructor(settings: CompilationSettings) {
-            this.minWhitespace = settings.minWhitespace;
-            this.propagateConstants = settings.propagateConstants;
-            this.emitComments = settings.emitComments;
-            this.outputOption = settings.outputOption;
-            this.emitFullSourceMapPath = settings.emitFullSourceMapPath;
+        constructor(public compilationSettings: CompilationSettings) {
         }
 
         public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: bool) => string) {
             if (this.outputMany) {
                 var updatedFileName = fileName;
-                if (this.outputOption != "") {
+                if (this.compilationSettings.outputOption != "") {
                     // Replace the common directory path with the option specified
                     updatedFileName = fileName.replace(this.commonDirectoryPath, "");
-                    updatedFileName = this.outputOption + updatedFileName;
+                    updatedFileName = this.compilationSettings.outputOption + updatedFileName;
                 }
                 return extensionChanger(updatedFileName, false);
             } else {
-                return extensionChanger(this.outputOption, true);
+                return extensionChanger(this.compilationSettings.outputOption, true);
             }
         }
     }
@@ -145,14 +135,14 @@ module TypeScript {
         }
 
         public writeToOutputTrimmable(s: string) {
-            if (this.emitOptions.minWhitespace) {
+            if (this.emitOptions.compilationSettings.minWhitespace) {
                 s = s.replace(/[\s]*/g, '');
             }
             this.writeToOutput(s);
         }
 
         public writeLineToOutput(s: string) {
-            if (this.emitOptions.minWhitespace) {
+            if (this.emitOptions.compilationSettings.minWhitespace) {
                 this.writeToOutput(s);
                 var c = s.charCodeAt(s.length - 1);
                 if (!((c === LexCodeSpace) || (c === LexCodeSMC) || (c === LexCodeLBR))) {
@@ -191,7 +181,7 @@ module TypeScript {
         }
 
         private getIndentString() {
-            if (this.emitOptions.minWhitespace) {
+            if (this.emitOptions.compilationSettings.minWhitespace) {
                 return "";
             }
             else {
@@ -253,7 +243,7 @@ module TypeScript {
             if (ast.isParenthesized && !pre) {
                 this.writeToOutput(")");
             }
-            if (this.emitOptions.emitComments && comments && comments.length != 0) {
+            if (this.emitOptions.compilationSettings.emitComments && comments && comments.length != 0) {
                 for (var i = 0; i < comments.length; i++) {
                     this.emitCommentInPlace(comments[i]);
                 }
@@ -368,7 +358,7 @@ module TypeScript {
         }
 
         public tryEmitConstant(dotExpr: BinaryExpression) {
-            if (!this.emitOptions.propagateConstants) {
+            if (!this.emitOptions.compilationSettings.propagateConstants) {
                 return false;
             }
             var propertyName = <Identifier>dotExpr.operand2;
@@ -791,12 +781,12 @@ module TypeScript {
                         // regressing if the parser changes
                         if (switchToForwardSlashes(modFilePath) != switchToForwardSlashes(this.emittingFileName)) {
                             this.emittingFileName = modFilePath;
-                            var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.emitComments && moduleDecl.containsUnicodeCharInComment);
+                            var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
                             this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
                             if (prevSourceMapper != null) {
                                 this.allSourceMappers = [];
                                 var sourceMappingFile = this.createFile(this.emittingFileName + SourceMapper.MapFileExtension, false);
-                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, sourceMappingFile, this.errorReporter, this.emitOptions.emitFullSourceMapPath));
+                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, sourceMappingFile, this.errorReporter, this.emitOptions.compilationSettings.emitFullSourceMapPath));
                                 this.emitState.column = 0;
                                 this.emitState.line = 0;
                             }
@@ -808,7 +798,7 @@ module TypeScript {
                     this.setContainer(EmitContainer.DynamicModule); // discard the previous 'Module' container
 
                     this.recordSourceMappingStart(moduleDecl);
-                    if (moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
+                    if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
                         var dependencyList = "[\"require\", \"exports\"";
                         var importList = "require, exports";
 
@@ -849,7 +839,7 @@ module TypeScript {
                 }
 
                 // body - don't indent for Node
-                if (!isDynamicMod || moduleGenTarget === ModuleGenTarget.Asynchronous) {
+                if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.increaseIndent();
                 }
 
@@ -858,14 +848,14 @@ module TypeScript {
                 }
 
                 this.emitJavascriptList(moduleDecl.members, null, TokenID.Semicolon, true, false, false);
-                if (!isDynamicMod || moduleGenTarget === ModuleGenTarget.Asynchronous) {
+                if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
                 this.emitIndent();
 
                 // epilogue
                 if (isDynamicMod) {
-                    if (moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
+                    if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
                         this.writeLineToOutput("})");
                     }
                     else { // Node
@@ -1231,7 +1221,7 @@ module TypeScript {
                     (hasFlag((<ModuleDeclaration>sym.declAST).modFlags, ModuleFlags.IsDynamic))) {
                     var moduleDecl: ModuleDeclaration = <ModuleDeclaration>sym.declAST;
 
-                    if (moduleGenTarget === ModuleGenTarget.Asynchronous) {
+                    if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                         this.writeLineToOutput("__" + this.modAliasId + "__;");
                     }
                     else {
