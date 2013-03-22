@@ -399,6 +399,8 @@ module TypeScript.Parser {
         // Retrieves the diagnostics generated while the source was producing nodes or tokens. 
         // Should generally only be called after the document has been completely parsed.
         tokenDiagnostics(): SyntaxDiagnostic[];
+        
+        languageVersion(): LanguageVersion;
     }
 
     // Parser source used in batch scenarios.  Directly calls into an underlying text scanner and
@@ -431,6 +433,10 @@ module TypeScript.Parser {
                     languageVersion: LanguageVersion) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
             this.scanner = new Scanner1(text, languageVersion);
+        }
+
+        public languageVersion(): LanguageVersion {
+            return this.scanner.languageVersion();
         }
 
         private currentNode(): SyntaxNode {
@@ -694,6 +700,10 @@ module TypeScript.Parser {
             var finalLength = changeRange.newLength() + (changeRange.span().start() - start);
 
             return new TextChangeRange(finalSpan, finalLength);
+        }
+
+        public languageVersion(): LanguageVersion {
+            return this._normalParserSource.languageVersion();
         }
 
         public absolutePosition() {
@@ -1047,8 +1057,7 @@ module TypeScript.Parser {
         private source: IParserSource;
         private lineMap: LineMap;
 
-        // Parsing options.
-        private options: ParseOptions;
+        private parseOptions: ParseOptions;
 
         // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
         // parsing logic already handles storing/restoring this and should work properly even if we're
@@ -1075,10 +1084,10 @@ module TypeScript.Parser {
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
-        constructor(lineMap: LineMap, source: IParserSource, options?: ParseOptions) {
+        constructor(lineMap: LineMap, source: IParserSource, parseOptions: ParseOptions) {
             this.lineMap = lineMap;
             this.source = source;
-            this.options = options;
+            this.parseOptions = parseOptions;
         }
 
         private getRewindPoint(): IParserRewindPoint {
@@ -1339,7 +1348,7 @@ module TypeScript.Parser {
                 // fullstart of the current token.
                 var semicolonToken = Syntax.emptyToken(SyntaxKind.SemicolonToken);
 
-                if (!this.options.allowAutomaticSemicolonInsertion()) {
+                if (!this.parseOptions.allowAutomaticSemicolonInsertion()) {
                     // Report the missing semicolon at the end of the *previous* token.
 
                     this.addDiagnostic(
@@ -1578,7 +1587,7 @@ module TypeScript.Parser {
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 
-            return new SyntaxTree(sourceUnit, allDiagnostics, this.lineMap);
+            return new SyntaxTree(sourceUnit, allDiagnostics, this.lineMap, this.source.languageVersion(), this.parseOptions);
         }
 
         private setStrictMode(isInStrictMode: bool) {
@@ -5621,17 +5630,14 @@ module TypeScript.Parser {
 
     export function incrementalParse(oldSyntaxTree: SyntaxTree,
                                      textChangeRange: TextChangeRange,
-                                     newText: ISimpleText,
-                                     languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                                     options?: ParseOptions = null): SyntaxTree {
+                                     newText: ISimpleText): SyntaxTree {
         if (textChangeRange.isUnchanged()) {
             return oldSyntaxTree;
         }
         
         var source = new IncrementalParserSource(
-            oldSyntaxTree.sourceUnit(), textChangeRange, newText, languageVersion);
-        options = options || new ParseOptions();
+            oldSyntaxTree.sourceUnit(), textChangeRange, newText, oldSyntaxTree.languageVersion());
 
-        return new ParserImpl(newText.lineMap(), source, options).parseSyntaxTree();
+        return new ParserImpl(newText.lineMap(), source, oldSyntaxTree.parseOptions()).parseSyntaxTree();
     }
 }

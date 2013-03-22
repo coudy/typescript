@@ -5,7 +5,7 @@ module TypeScript {
         private slidingWindow: SlidingWindow;
 
         private text: ISimpleText;
-        private languageVersion: LanguageVersion;
+        private _languageVersion: LanguageVersion;
 
         private static isKeywordStartCharacter: bool[] = [];
         private static isIdentifierStartCharacter: bool[] = [];
@@ -52,7 +52,11 @@ module TypeScript {
 
             this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
             this.text = text;
-            this.languageVersion = languageVersion;
+            this._languageVersion = languageVersion;
+        }
+
+        public languageVersion(): LanguageVersion {
+            return this._languageVersion;
         }
 
         public fetchMoreItems(argument: any, sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
@@ -545,7 +549,7 @@ module TypeScript {
                 return true;
             }
 
-            return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
+            return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierStart(interpretedChar, this._languageVersion);
         }
 
         private isIdentifierPart(interpretedChar: number): bool {
@@ -553,7 +557,7 @@ module TypeScript {
                 return true;
             }
 
-            return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
+            return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this._languageVersion);
         }
 
         private tryFastScanIdentifierOrKeyword(firstCharacter: number): SyntaxKind {
