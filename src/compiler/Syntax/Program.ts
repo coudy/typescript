@@ -17,6 +17,7 @@ var specificFile =
     undefined;
 
 var generate = false;
+
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 
@@ -206,8 +207,10 @@ class Program {
                 Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                 Environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
 
-                var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
-                htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult, includeUnchangedRegions);
+                if (!generate) {
+                    var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
+                    htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult, includeUnchangedRegions);
+                }
             }
         }
     }

@@ -8,6 +8,10 @@ module TypeScript {
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
         }
 
+        public toJSON(key) {
+            return { allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion };
+        }
+
         public allowAutomaticSemicolonInsertion(): bool {
             return this._allowAutomaticSemicolonInsertion;
         }

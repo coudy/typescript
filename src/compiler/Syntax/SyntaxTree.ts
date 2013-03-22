@@ -26,12 +26,16 @@ module TypeScript {
         public toJSON(key) {
             var result: any = {};
 
+            result.isDeclaration = this._isDeclaration;
+            result.languageVersion = (<any>LanguageVersion)._map[this._languageVersion];
+            result.parseOptions = this._parseOptions;
+
             if (this._diagnostics.length > 0) {
-                result._diagnostics = this._diagnostics;
+                result.diagnostics = this._diagnostics;
             }
 
-            result._sourceUnit = this._sourceUnit;
-            result._lineMap = this._lineMap;
+            result.sourceUnit = this._sourceUnit;
+            result.lineMap = this._lineMap;
 
             return result;
         }

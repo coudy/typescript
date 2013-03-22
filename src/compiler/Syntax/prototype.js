@@ -2113,6 +2113,11 @@ var TypeScript;
             if (typeof allowAutomaticSemicolonInsertion === "undefined") { allowAutomaticSemicolonInsertion = true; }
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
         }
+        ParseOptions.prototype.toJSON = function (key) {
+            return {
+                allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion
+            };
+        };
         ParseOptions.prototype.allowAutomaticSemicolonInsertion = function () {
             return this._allowAutomaticSemicolonInsertion;
         };
@@ -17795,11 +17800,14 @@ var TypeScript;
         }
         SyntaxTree.prototype.toJSON = function (key) {
             var result = {};
+            result.isDeclaration = this._isDeclaration;
+            result.languageVersion = (TypeScript.LanguageVersion)._map[this._languageVersion];
+            result.parseOptions = this._parseOptions;
             if (this._diagnostics.length > 0) {
-                result._diagnostics = this._diagnostics;
+                result.diagnostics = this._diagnostics;
             }
-            result._sourceUnit = this._sourceUnit;
-            result._lineMap = this._lineMap;
+            result.sourceUnit = this._sourceUnit;
+            result.lineMap = this._lineMap;
             return result;
         };
         SyntaxTree.prototype.sourceUnit = function () {
@@ -57349,7 +57357,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = false;
+var generate = true;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {
@@ -57495,8 +57503,10 @@ var Program = (function () {
             if (expectedResult !== actualResult) {
                 Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                 Environment.writeFile(actualFile, actualResult, true);
-                var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
-                htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult, includeUnchangedRegions);
+                if (!generate) {
+                    var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
+                    htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult, includeUnchangedRegions);
+                }
             }
         }
     };
