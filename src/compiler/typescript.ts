@@ -141,10 +141,6 @@ module TypeScript {
             });
         }
 
-        public addUnit(prog: string, fileName: string, referencedFiles?: IFileReference[] = []): Script {
-            return this.addSourceUnit(ScriptSnapshot.fromString(prog), fileName, referencedFiles);
-        }
-
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
                 var syntaxTree = Parser1.parse(SimpleText.fromScriptSnapshot(sourceText), LanguageVersion.EcmaScript5);

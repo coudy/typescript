@@ -179,7 +179,7 @@ class BatchCompiler {
                 }
 
                 if (code.content != null) {
-                    compiler.addUnit(code.content, code.path, code.referencedFiles);
+                    compiler.addSourceUnit(TypeScript.ScriptSnapshot.fromString(code.content), code.path, code.referencedFiles);
 
                     // TODO: remove this code.  This is not how we should be reporting errors.
                     var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);

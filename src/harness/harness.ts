@@ -768,7 +768,7 @@ module Harness {
             compiler.settings.controlFlowUseDef = true;
             compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             compiler.parseEmitOption(stdout);
-            compiler.addUnit(Harness.Compiler.libText, "lib.d.ts");
+            compiler.addSourceUnit(TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText), "lib.d.ts");
             return compiler;
         }
 
@@ -1162,7 +1162,7 @@ module Harness {
                 // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
                 // of persistent typecheck state
                 //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
-                script = compiler.addUnit(code, uName, references);
+                script = compiler.addSourceUnit(TypeScript.ScriptSnapshot.fromString(code), uName, references);
                 needsFullTypeCheck = true;
             }
 
