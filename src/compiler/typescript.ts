@@ -126,8 +126,6 @@ module TypeScript {
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;
 
-        public persistentTypeState: PersistentGlobalTypeState;
-
         public emitSettings: EmitOptions;
 
         public fileNameToScript = new TypeScript.StringHashTable();
@@ -140,7 +138,6 @@ module TypeScript {
                     public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
             this.errorReporter = new ErrorReporter(this.errorOutput);
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
-            this.persistentTypeState = new PersistentGlobalTypeState(this.errorReporter);
             this.initTypeChecker(this.errorOutput);
 
             this.emitSettings = new EmitOptions(this.settings);
@@ -158,8 +155,7 @@ module TypeScript {
 
         public initTypeChecker(errorOutput: ITextWriter) {
             // The initial "refresh" initializes the persistent type state
-            this.persistentTypeState.refreshPersistentState();
-            this.typeChecker = new TypeChecker(this.persistentTypeState);
+            this.typeChecker = new TypeChecker(new PersistentGlobalTypeState(this.errorReporter));
             this.typeChecker.errorReporter = this.errorReporter;
 
             // REVIEW: These properties should be moved out of the typeCheck object
