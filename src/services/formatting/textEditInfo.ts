@@ -20,9 +20,6 @@ module TypeScript.Formatting {
     export class TextEditInfo {
 
         constructor(public position: number, public length: number, public replaceWith: string) {
-            if (!(length >= 0)) {
-                debugger;
-            }
         }
 
         public toString() {

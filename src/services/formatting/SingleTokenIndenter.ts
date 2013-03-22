@@ -30,7 +30,6 @@ module TypeScript.Formatting {
         }
 
         public static getIndentationAmount(position: number, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, options: FormattingOptions): number {
-            //debugger;
             var walker = new SingleTokenIndenter(position, sourceUnit, snapshot, true, options);
             sourceUnit.accept(walker);
             return walker.indentationAmount;
