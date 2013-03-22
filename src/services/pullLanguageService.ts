@@ -1095,7 +1095,7 @@ module Services {
 
             // Convert IScriptSnapshot to ITextSnapshot
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
+            var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
             var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
 
             var manager = new TypeScript.Formatting.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
@@ -1120,7 +1120,7 @@ module Services {
             var syntaxTree = this.getSyntaxTree(fileName);
 
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
+            var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
             var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
             var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
             
@@ -1164,7 +1164,7 @@ module Services {
 
         private createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
+            var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
             var syntaxTree = TypeScript.Parser1.parse(segmentedScriptSnapshot);
 
@@ -1182,7 +1182,7 @@ module Services {
             // Debug.assert(newLength >= 0);
 
             var newScriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var newSegmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(newScriptSnapshot);
+            var newSegmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(newScriptSnapshot);
 
             var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
                 previousSyntaxTree, editRange, newSegmentedScriptSnapshot);

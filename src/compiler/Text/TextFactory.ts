@@ -367,6 +367,12 @@ module TypeScript.TextFactory {
         }
     }
 
+    export function createText(value: string): IText {
+        return new StringText(value);
+    }
+}
+
+module TypeScript.SimpleText {
     /// <summary>
     /// An IText that represents a subrange of another IText.
     /// </summary>
@@ -478,15 +484,84 @@ module TypeScript.TextFactory {
         }
     }
 
-    export function createText(value: string): IText {
-        return new StringText(value);
+    // Class which wraps a host IScriptSnapshot and exposes an ISimpleText for newer compiler code. 
+    class ScriptSnapshotText implements ISimpleText {
+        private _length: number;
+        public segment: string;
+        public segmentStart: number;
+        private _lineMap: ILineMap = null;
+
+        constructor(public scriptSnapshot: IScriptSnapshot) {
+            this._length = this.scriptSnapshot.getLength();
+
+            // initialize values so the first call to fetchSegment will actually retrieve new data.
+            this.segment = "";
+            this.segmentStart = 0;
+            this.fetchSegment(0, 1024);
+        }
+
+        // Ensures we have a segment that contains the range [start, end).  The segment may start 
+        // before 'start' and may end after 'end'. 
+        private fetchSegment(start: number, end: number): void {
+            if (start >= this.segmentStart && end <= (this.segmentStart + this.segment.length)) {
+                // We're in bounds of the last fetched segment.  Nothing to do.
+                return;
+            }
+
+            // Always try to fetch at least 1k.  Unless it would go past the end of the array.
+            var lengthToFetch = this.max(1024, end - start);
+            var fetchEnd = this.min(start + lengthToFetch, this._length);
+
+            this.segment = this.scriptSnapshot.getText(start, fetchEnd);
+            this.segmentStart = start;
+        }
+
+        private max(a: number, b: number): number {
+            return a >= b ? a : b;
+        }
+
+        private min(a: number, b: number): number {
+            return a <= b ? a : b;
+        }
+
+        public charCodeAt(index: number): number {
+            this.fetchSegment(index, /*end:*/ index + 1);
+            return this.segment[index - this.segmentStart];
+        }
+
+        public length(): number {
+            return this._length;
+        }
+
+        public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
+            this.fetchSegment(sourceIndex, sourceIndex + count);
+            StringUtilities.copyTo(this.segment, sourceIndex - this.segmentStart, destination, destinationIndex, count);
+        }
+
+        public substr(start: number, length: number, intern: bool): string {
+            this.fetchSegment(start, start + length);
+            return this.segment.substr(start - this.segmentStart, length);
+        }
+
+        public subText(span: TextSpan): ISimpleText {
+            return new SimpleSubText(this, span);
+        }
+
+        public lineMap(): ILineMap {
+            if (this._lineMap === null) {
+                var lineStartPositions = this.scriptSnapshot.getLineStartPositions();
+                this._lineMap = new LineMap(lineStartPositions, this.length());
+            }
+
+            return this._lineMap;
+        }
     }
 
-    export function createSimpleText(value: string): ISimpleText {
+    export function fromString(value: string): ISimpleText {
         return new SimpleStringText(value);
     }
 
-    export function createSimpleSubText(text: ISimpleText, span: TextSpan): ISimpleText {
-        return new SimpleSubText(text, span);
+    export function fromScriptSnapshot(scriptSnapshot: IScriptSnapshot): ISimpleText {
+        return new ScriptSnapshotText(scriptSnapshot);
     }
 }

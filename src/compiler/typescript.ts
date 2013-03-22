@@ -134,7 +134,7 @@ module TypeScript {
             return this.timeFunction("updateSourceUnit(" + fileName + ")", () => {
                 var oldScript = this.fileNameToScript.lookup(fileName);
                 var newScript = SyntaxTreeToAstVisitor.visit(
-                    Parser1.parse(new ScriptSnapshotText(sourceText)), fileName, this.emitOptions.compilationSettings);
+                    Parser1.parse(SimpleText.fromScriptSnapshot(sourceText)), fileName, this.emitOptions.compilationSettings);
 
                 this.fileNameToScript.addOrUpdate(fileName, newScript);
                 this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
@@ -147,7 +147,7 @@ module TypeScript {
 
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var syntaxTree = Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), LanguageVersion.EcmaScript5);
+                var syntaxTree = Parser1.parse(SimpleText.fromScriptSnapshot(sourceText), LanguageVersion.EcmaScript5);
                 var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
                 script.referencedFiles = referencedFiles;
 
@@ -1137,7 +1137,7 @@ module TypeScript {
                 var oldScript = <Script>this.fileNameToScript.lookup(fileName);
                 var oldSyntaxTree = this.fileNameToSyntaxTree.lookup(fileName);
 
-                var text = new TypeScript.ScriptSnapshotText(scriptSnapshot);
+                var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
 
                 var syntaxTree = textChangeRange === null
                     ? TypeScript.Parser1.parse(text)

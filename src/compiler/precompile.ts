@@ -319,7 +319,7 @@ module TypeScript {
     }
 
     export function preProcessFile(sourceText: IScriptSnapshot, settings?: CompilationSettings = new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
-        var text = new ScriptSnapshotText(sourceText);
+        var text = SimpleText.fromScriptSnapshot(sourceText);
         var scanner = new Scanner1(text, LanguageVersion.EcmaScript5, scannerWindow);
 
         var firstToken = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);

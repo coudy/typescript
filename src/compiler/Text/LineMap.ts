@@ -95,7 +95,7 @@ module TypeScript {
         }
 
         public static createFromString(text: string): LineMap {
-            return LineMap.createFromText(TextFactory.createSimpleText(text));
+            return LineMap.createFromText(SimpleText.fromString(text));
         }
     }
 }

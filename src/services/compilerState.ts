@@ -265,7 +265,7 @@ module Services {
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             var syntaxTree = this.compiler.fileNameToSyntaxTree.lookup(fileName);
             if (syntaxTree === null) {
-                syntaxTree = TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(this.getScriptSnapshot(fileName)));
+                syntaxTree = TypeScript.Parser1.parse(TypeScript.SimpleText.fromScriptSnapshot(this.getScriptSnapshot(fileName)));
                 this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
             }
 
