@@ -130,17 +130,6 @@ module TypeScript {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
-        private updateSourceUnit(sourceText: IScriptSnapshot, fileName: string): bool {
-            return this.timeFunction("updateSourceUnit(" + fileName + ")", () => {
-                var oldScript = this.fileNameToScript.lookup(fileName);
-                var newScript = SyntaxTreeToAstVisitor.visit(
-                    Parser1.parse(SimpleText.fromScriptSnapshot(sourceText)), fileName, this.emitOptions.compilationSettings);
-
-                this.fileNameToScript.addOrUpdate(fileName, newScript);
-                this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
-            });
-        }
-
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
                 var syntaxTree = Parser1.parse(SimpleText.fromScriptSnapshot(sourceText), LanguageVersion.EcmaScript5);
@@ -152,6 +141,27 @@ module TypeScript {
                 this.fileNameToScript.addOrUpdate(fileName, script);
 
                 return script;
+            });
+        }
+
+        public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): void {
+            this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
+                var oldScript = <Script>this.fileNameToScript.lookup(fileName);
+                var oldSyntaxTree = this.fileNameToSyntaxTree.lookup(fileName);
+
+                var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
+
+                var syntaxTree = textChangeRange === null
+                    ? TypeScript.Parser1.parse(text)
+                    : TypeScript.Parser1.incrementalParse(oldSyntaxTree, textChangeRange, text);
+
+                var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
+
+                this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
+                this.fileNameToScript.addOrUpdate(fileName, newScript);
+                this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
+
+                this.pullUpdateScript(oldScript, newScript);
             });
         }
 
@@ -556,8 +566,8 @@ module TypeScript {
         }
 
         // returns 'true' if diffs were detected
-        private pullUpdateScript(oldScript: Script, newScript: Script): bool {
-            return this.timeFunction("pullUpdateScript: ", () => {
+        private pullUpdateScript(oldScript: Script, newScript: Script): void {
+            this.timeFunction("pullUpdateScript: ", () => {
 
                 var declDiffer = new PullDeclDiffer();
 
@@ -644,13 +654,11 @@ module TypeScript {
 
                     //this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors())
 
-                    return true;
+                    return;
                 }
 
                 this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
                 this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
-
-                return false;
             });
         }
 
@@ -1125,27 +1133,6 @@ module TypeScript {
 
                 var info = this.resolvePosition(pos, script, scriptName);
                 return info;
-            });
-        }
-
-        public pullUpdateUnit(fileName: string, scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): bool {
-            return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
-                var oldScript = <Script>this.fileNameToScript.lookup(fileName);
-                var oldSyntaxTree = this.fileNameToSyntaxTree.lookup(fileName);
-
-                var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
-
-                var syntaxTree = textChangeRange === null
-                    ? TypeScript.Parser1.parse(text)
-                    : TypeScript.Parser1.incrementalParse(oldSyntaxTree, textChangeRange, text);
-
-                var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
-
-                this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-                this.fileNameToScript.addOrUpdate(fileName, newScript);
-                this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
-
-                return this.pullUpdateScript(oldScript, newScript);
             });
         }
     }

@@ -784,8 +784,8 @@ module Harness {
             }
             else {
                 // requires unit to already exist in the compiler
-                compiler.pullUpdateUnit(fileName, TypeScript.ScriptSnapshot.fromString(""), null);
-                compiler.pullUpdateUnit(fileName, TypeScript.ScriptSnapshot.fromString(code), null);
+                compiler.updateSourceUnit(fileName, TypeScript.ScriptSnapshot.fromString(""), null);
+                compiler.updateSourceUnit(fileName, TypeScript.ScriptSnapshot.fromString(code), null);
             }
         }
 
@@ -1170,7 +1170,7 @@ module Harness {
         }
 
         export function updateUnit(code: string, unitName: string) {
-            compiler.pullUpdateUnit(unitName, TypeScript.ScriptSnapshot.fromString(code), null);
+            compiler.updateSourceUnit(unitName, TypeScript.ScriptSnapshot.fromString(code), null);
         }
 
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {

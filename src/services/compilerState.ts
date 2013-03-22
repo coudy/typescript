@@ -321,7 +321,7 @@ module Services {
             return this.compiler.pullGetVisibleSymbolsFromPath(path, script);
         }
 
-        private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): bool {
+        private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             var compilerScriptVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
 
             //
@@ -330,7 +330,7 @@ module Services {
             var version = this.hostCache.getVersion(fileName);
             if (compilerScriptVersion === version) {
                 //logger.log("Assumed unchanged unit: " + unitIndex + "-"+ fileName);
-                return false;
+                return;
             }
 
             var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, compilerScriptVersion);
@@ -338,8 +338,7 @@ module Services {
             // Keep track of the version of script we're adding to the compiler.
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
 
-            return compiler.pullUpdateUnit(
-                fileName, this.hostCache.getScriptSnapshot(fileName), textChangeRange);
+            compiler.updateSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName), textChangeRange);
         }
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {
