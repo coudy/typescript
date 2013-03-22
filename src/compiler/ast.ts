@@ -1153,7 +1153,7 @@ module TypeScript {
         public fileName: string;
 
         constructor(fileName: string,
-                    public lineMap: ILineMap) {
+                    public lineMap: LineMap) {
             this.fileName = fileName;
         }
     }

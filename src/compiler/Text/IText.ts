@@ -24,7 +24,7 @@ module TypeScript {
         subText(span: TextSpan): ISimpleText;
 
         charCodeAt(index: number): number;
-        lineMap(): ILineMap;
+        lineMap(): LineMap;
     }
 
     /// <summary>

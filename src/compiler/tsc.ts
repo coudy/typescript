@@ -155,7 +155,7 @@ class BatchCompiler {
         var compiler = new TypeScript.TypeScriptCompiler(
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
 
-        compiler.errorReporter.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) => {
+        compiler.errorReporter.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.LineMap) => {
             compiler.errorReporter.hasErrors = true;
             var lineCol = { line: -1, character: -1 };
             lineMap.fillLineAndCharacterFromPosition(minChar, lineCol);

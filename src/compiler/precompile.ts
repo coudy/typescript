@@ -230,7 +230,7 @@ module TypeScript {
     var scannerWindow = ArrayUtilities.createArray(2048, 0);
     var scannerDiagnostics = [];
 
-    function processImports(lineMap: ILineMap, scanner: Scanner1, token: ISyntaxToken, importedFiles: IFileReference[]): void {
+    function processImports(lineMap: LineMap, scanner: Scanner1, token: ISyntaxToken, importedFiles: IFileReference[]): void {
         var position = 0;
         var lineChar = { line: -1, character: -1 };
 
@@ -278,7 +278,7 @@ module TypeScript {
         }
     }
 
-    export function processTripleSlashDirectives(lineMap: ILineMap, firstToken: ISyntaxToken, settings: CompilationSettings, referencedFiles: IFileReference[]): ITripleSlashDirectiveProperties {
+    export function processTripleSlashDirectives(lineMap: LineMap, firstToken: ISyntaxToken, settings: CompilationSettings, referencedFiles: IFileReference[]): ITripleSlashDirectiveProperties {
         var leadingTrivia = firstToken.leadingTrivia();
 
         var position = 0;

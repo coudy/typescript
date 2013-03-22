@@ -4,11 +4,11 @@ module TypeScript {
     export class SyntaxTree {
         private _sourceUnit: SourceUnitSyntax;
         private _diagnostics: SyntaxDiagnostic[];
-        private _lineMap: ILineMap;
+        private _lineMap: LineMap;
 
         constructor(sourceUnit: SourceUnitSyntax,
             diagnostics: SyntaxDiagnostic[],
-            lineMap: ILineMap) {
+            lineMap: LineMap) {
             this._sourceUnit = sourceUnit;
             this._diagnostics = diagnostics;
             this._lineMap = lineMap;
@@ -35,7 +35,7 @@ module TypeScript {
             return this._diagnostics;
         }
 
-        public lineMap(): ILineMap {
+        public lineMap(): LineMap {
             return this._lineMap;
         }
 

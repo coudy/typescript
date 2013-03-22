@@ -317,7 +317,7 @@ module TypeScript {
         getComments(): CommentToken[];
         getCommentsForLine(line: number): CommentToken[];
         resetComments(): void;
-        lineMap: ILineMap;
+        lineMap: LineMap;
         setSourceText(newSrc: IScriptSnapshot, textMode: number): void;
         setErrorHandler(reportError: (message: string) => void ): void;
         seenUnicodeChar: bool;
@@ -338,7 +338,7 @@ module TypeScript {
         public startLine: number;
         public src: string;
         public len = 0;
-        public lineMap: ILineMap = null;
+        public lineMap: LineMap = null;
 
         public ch = LexEOF;
         public lexState = LexState.Start;
@@ -380,7 +380,7 @@ module TypeScript {
             this.len = 0;
             this.src = newSrc.getText(0, newSrc.getLength());
             this.len = this.src.length;
-            this.lineMap = LineMap.createFromScriptSnapshot(newSrc);
+            this.lineMap = LineMap.fromScriptSnapshot(newSrc);
             this.commentStack = [];
             this.leftCurlyCount = 0;
             this.rightCurlyCount = 0;

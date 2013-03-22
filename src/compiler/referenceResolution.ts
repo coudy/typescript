@@ -42,7 +42,7 @@ module TypeScript {
 
         public getLineStartPositions(): number[]{
             if (this.lineStarts === null) {
-                this.lineStarts = LineMap.createFromString(this.content).lineStarts();
+                this.lineStarts = LineMap.fromString(this.content).lineStarts();
             }
 
             return this.lineStarts;

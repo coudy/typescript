@@ -1430,7 +1430,7 @@ module Harness {
     export class ScriptInfo {
         public version: number = 1;
         public editRanges: { length: number; textChangeRange: TypeScript.TextChangeRange; }[] = [];
-        public lineMap: TypeScript.ILineMap = null;
+        public lineMap: TypeScript.LineMap = null;
 
         constructor(public fileName: string, public content: string) {
             this.setContent(content);
@@ -1438,7 +1438,7 @@ module Harness {
 
         private setContent(content: string): void {
             this.content = content;
-            this.lineMap = TypeScript.LineMap.createFromString(content);
+            this.lineMap = TypeScript.LineMap.fromString(content);
         }
 
         public updateContent(content: string): void {
@@ -1479,7 +1479,7 @@ module Harness {
     }
 
     class ScriptSnapshotShim implements Services.IScriptSnapshotShim {
-        private lineMap: TypeScript.ILineMap = null;
+        private lineMap: TypeScript.LineMap = null;
 
         constructor(private scriptInfo: ScriptInfo) {
         }
@@ -1494,7 +1494,7 @@ module Harness {
 
         public getLineStartPositions(): string {
             if (this.lineMap === null) {
-                this.lineMap = TypeScript.LineMap.createFromString(this.scriptInfo.content);
+                this.lineMap = TypeScript.LineMap.fromString(this.scriptInfo.content);
             }
 
             return JSON2.stringify(this.lineMap.lineStarts());

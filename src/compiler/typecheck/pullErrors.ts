@@ -79,7 +79,7 @@ module TypeScript {
             }
         }
 
-        public reportError(error: SemanticError, lineMap: ILineMap = null) {
+        public reportError(error: SemanticError, lineMap: LineMap = null) {
             if (lineMap === null) {
                 var locationInfo = this.locationInfoCache[error.fileName];
                 if (locationInfo && locationInfo.lineMap) {

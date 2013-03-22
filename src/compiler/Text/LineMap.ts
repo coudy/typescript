@@ -1,17 +1,7 @@
 ///<reference path='References.ts' />
 
 module TypeScript {
-    export interface ILineMap {
-        lineStarts(): number[];
-        lineCount(): number;
-        getLineNumberFromPosition(position: number): number;
-        getLineAndCharacterFromPosition(position: number): LineAndCharacter;
-        fillLineAndCharacterFromPosition(position: number, lineAndCharacter: ILineAndCharacter): void;
-        getLineStartPosition(lineNumber: number): number;
-        getPosition(line: number, character: number): number;
-    }
-
-    export class LineMap implements ILineMap {
+    export class LineMap {
         public static empty = new LineMap([0], 0);
 
         constructor(private _lineStarts: number[], private length: number) {
@@ -90,11 +80,11 @@ module TypeScript {
             return new LineMap(lineStarts, text.length());
         }
 
-        public static createFromScriptSnapshot(scriptSnapshot: IScriptSnapshot): LineMap {
+        public static fromScriptSnapshot(scriptSnapshot: IScriptSnapshot): LineMap {
             return new LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());
         }
 
-        public static createFromString(text: string): LineMap {
+        public static fromString(text: string): LineMap {
             return LineMap.createFromText(SimpleText.fromString(text));
         }
     }

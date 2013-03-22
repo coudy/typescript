@@ -489,7 +489,7 @@ module TypeScript.SimpleText {
         private _length: number;
         public segment: string;
         public segmentStart: number;
-        private _lineMap: ILineMap = null;
+        private _lineMap: LineMap = null;
 
         constructor(public scriptSnapshot: IScriptSnapshot) {
             this._length = this.scriptSnapshot.getLength();
@@ -547,7 +547,7 @@ module TypeScript.SimpleText {
             return new SimpleSubText(this, span);
         }
 
-        public lineMap(): ILineMap {
+        public lineMap(): LineMap {
             if (this._lineMap === null) {
                 var lineStartPositions = this.scriptSnapshot.getLineStartPositions();
                 this._lineMap = new LineMap(lineStartPositions, this.length());

@@ -17,7 +17,7 @@
 
 module TypeScript {
     export class SimpleErrorReporter {
-        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
         public hasErrors = false;
 
         constructor(public outfile: ITextWriter) {
@@ -32,7 +32,7 @@ module TypeScript {
     }
 
     export class ErrorReporter {
-        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
         public locationInfo: LocationInfo = unknownLocationInfo;
         public lineCol = { line: 0, character: 0 };
         public hasErrors = false;

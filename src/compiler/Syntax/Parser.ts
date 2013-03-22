@@ -1045,7 +1045,7 @@ module TypeScript.Parser1 {
     class ParserImpl {
         // Underlying source where we pull nodes and tokens from.
         private source: IParserSource;
-        private lineMap: ILineMap;
+        private lineMap: LineMap;
 
         // Parsing options.
         private options: ParseOptions;
@@ -1075,7 +1075,7 @@ module TypeScript.Parser1 {
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
-        constructor(lineMap: ILineMap, source: IParserSource, options?: ParseOptions) {
+        constructor(lineMap: LineMap, source: IParserSource, options?: ParseOptions) {
             this.lineMap = lineMap;
             this.source = source;
             this.options = options;

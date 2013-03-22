@@ -394,7 +394,7 @@ module TypeScript {
             this.emitParensAndCommentsInPlace(name, false);
         }
 
-        public getLineMap(): ILineMap {
+        public getLineMap(): LineMap {
             return this.locationInfo.lineMap;
         }
 

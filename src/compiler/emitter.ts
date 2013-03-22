@@ -1321,7 +1321,7 @@ module TypeScript {
             }
         }
 
-        public getLineMap(): ILineMap {
+        public getLineMap(): LineMap {
             return this.checker.locationInfo.lineMap;
         }
 

@@ -70,7 +70,7 @@ module TypeScript {
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
-                    private lineMap: ILineMap,
+                    private lineMap: LineMap,
                     private compilationSettings: CompilationSettings) {
             this.isParsingDeclareFile = isDSTRFile(fileName) || isDTSFile(fileName);
         }
