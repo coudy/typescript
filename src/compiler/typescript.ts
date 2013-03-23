@@ -298,7 +298,7 @@ module TypeScript {
         }
 
         // Caller is responsible for closing emitter.
-        private emitDeclarationsUnit1(script: Script, declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
+        private emitDeclarationsUnit(script: Script, declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
             if (this.canEmitDeclarations(script)) {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
@@ -312,43 +312,47 @@ module TypeScript {
             return declarationEmitter;
         }
 
+        // Will not throw exceptions.
         public emitDeclarations1(): IDiagnostic[] {
-            var diagnostics: IDiagnostic[] = [];
             if (this.canEmitDeclarations() &&
                 !this.errorReporter.hasErrors && !this.pullErrorReporter.hasErrors) {
 
                 var sharedEmitter: DeclarationEmitter = null;
-
                 var fileNames = this.fileNameToScript.getAllKeys();
 
-                // Keep on processing files as long as we don't get any errors.
+                for (var i = 0, n = fileNames.length; i < n; i++) {
+                    var fileName = fileNames[i];
 
-                for (var i = 0, n = fileNames.length; i < n && diagnostics.length === 0; i++) {
-                    var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
+                    try {
+                        var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
 
-                    if (this.emitOptions.outputMany) {
-                        var singleEmitter = this.emitDeclarationsUnit1(script);
-                        if (singleEmitter) {
-                            singleEmitter.close();
-                            diagnostics = singleEmitter.diagnostics();
+                        if (this.emitOptions.outputMany) {
+                            var singleEmitter = this.emitDeclarationsUnit(script);
+                            if (singleEmitter) {
+                                singleEmitter.close();
+                            }
+                        }
+                        else {
+                            // Create or reuse file
+                            sharedEmitter = this.emitDeclarationsUnit(script, sharedEmitter);
                         }
                     }
-                    else {
-                        // Create or reuse file
-                        sharedEmitter = this.emitDeclarationsUnit1(script, sharedEmitter);
-                        if (sharedEmitter) {
-                            diagnostics = sharedEmitter.diagnostics();
-                        }
+                    catch (ex1) {
+                        return [new Diagnostic(0, 0, fileName, ex1.message)];
                     }
                 }
 
                 if (sharedEmitter) {
-                    sharedEmitter.close();
-                    diagnostics = sharedEmitter.diagnostics();
+                    try {
+                        sharedEmitter.close();
+                    }
+                    catch (ex2) {
+                        return [new Diagnostic(0, 0, sharedEmitter.locationInfo.fileName, ex2.message)];
+                    }
                 }
             }
 
-            return diagnostics;
+            return [];
         }
 
         static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: bool) {
@@ -368,6 +372,7 @@ module TypeScript {
         }
 
         // Caller is responsible for closing the returned emitter.
+        // May throw exceptions.
         private emitUnit(script: Script,
                          inputOutputMapper?: (inputName: string, outputName: string) => void,
                          emitter?: PullEmitter): PullEmitter {
@@ -387,7 +392,7 @@ module TypeScript {
 
                     if (inputOutputMapper) {
                         // Remember the name of the outfile for this source file
-                        inputOutputMapper(script.locationInfo.fileName, javaScriptFileName);
+                        inputOutputMapper(typeScriptFileName, javaScriptFileName);
                     }
                 }
                 else if (this.settings.mapSourceFiles) {
@@ -403,13 +408,11 @@ module TypeScript {
             return emitter;
         }
 
+        // Will not throw exceptions.
         public emit(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
-            var diagnostics: IDiagnostic[] = [];
-
             var optionsDiagnostic = this.parseEmitOption(ioHost);
             if (optionsDiagnostic) {
-                diagnostics.push(optionsDiagnostic);
-                return diagnostics;
+                return [optionsDiagnostic];
             }
 
             var startEmitTime = (new Date()).getTime();
@@ -418,37 +421,44 @@ module TypeScript {
             var sharedEmitter: PullEmitter = null;
 
             // Iterate through the files, as long as we don't get an error.
-            for (var i = 0, n = fileNames.length; i < n && diagnostics.length === 0; i++) {
-                var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
 
-                if (this.emitOptions.outputMany) {
-                    // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
-                    var singleEmitter = this.emitUnit(script, inputOutputMapper);
+                var script = <Script>this.fileNameToScript.lookup(fileName);
 
-                    // Close the emitter after each emitted file.
-                    if (singleEmitter) {
-                        singleEmitter.Close();
-                        diagnostics = singleEmitter.diagnostics();
+                try {
+                    if (this.emitOptions.outputMany) {
+                        // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
+                        var singleEmitter = this.emitUnit(script, inputOutputMapper);
+
+                        // Close the emitter after each emitted file.
+                        if (singleEmitter) {
+                            singleEmitter.emitSourceMapsAndClose();
+                        }
+                    }
+                    else {
+                        // We're not outputting to multiple files.  Keep using the same emitter and don't
+                        // close until below.
+                        sharedEmitter = this.emitUnit(script, inputOutputMapper, sharedEmitter);
                     }
                 }
-                else {
-                    // We're not outputting to multiple files.  Keep using the same emitter and don't
-                    // close until below.
-                    sharedEmitter = this.emitUnit(script, inputOutputMapper, sharedEmitter);
-                    if (sharedEmitter) {
-                        diagnostics = sharedEmitter.diagnostics();
-                    }
+                catch (ex1) {
+                    return [new Diagnostic(0, 0, fileName, ex1.message)];
                 }
             }
 
             this.logger.log("Emit: " + ((new Date()).getTime() - startEmitTime));
 
             if (sharedEmitter) {
-                sharedEmitter.Close();
-                diagnostics = sharedEmitter.diagnostics();
+                try {
+                    sharedEmitter.emitSourceMapsAndClose();
+                }
+                catch (ex2) {
+                    return [new Diagnostic(0, 0, sharedEmitter.locationInfo.fileName, ex2.message)];
+                }
             }
 
-            return diagnostics;
+            return [];
         }
 
         private outputScriptToUTF8(script: Script): bool {
@@ -466,12 +476,8 @@ module TypeScript {
         }
 
         private createFile(fileName: string, useUTF8: bool): ITextWriter {
-            try {
-                // Creating files can cause exceptions, report them.   
-                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
-            } catch (ex) {
-                this.errorReporter.emitterError(ex.message);
-            }
+            // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
+            return this.emitOptions.ioHost.createFile(fileName, useUTF8);
         }
 
         //

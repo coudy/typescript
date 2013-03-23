@@ -68,8 +68,9 @@ module TypeScript {
             this.tsFileName = TypeScript.getRelativePathToFixedPath(fixedPath, tsFileName);
         }
         
-        // Generate source mapping
-        static EmitSourceMapping1(allSourceMappers: SourceMapper[]): IDiagnostic {
+        // Generate source mapping.
+        // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
+        static emitSourceMapping(allSourceMappers: SourceMapper[]): void {
             // At this point we know that there is at least one source mapper present.
             // If there are multiple source mappers, all will correspond to same map file but different sources
 
@@ -175,14 +176,8 @@ module TypeScript {
                 mappings: mappingsString
             }));
 
-            // Done, close the file
-            try {
-                // Closing files could result in exceptions, report them if they occur
-                sourceMapOut.Close();
-                return null;
-            } catch (ex) {
-                return new Diagnostic(0, 0, null, ex.message);
-            }
+            // Closing files could result in exceptions, report them if they occur
+            sourceMapOut.Close();
         }
     }
 }

@@ -115,7 +115,6 @@ module TypeScript {
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
         public varListCountStack: number[] = [0];
-        private _diagnostics: IDiagnostic[] = [];
 
         constructor(public checker: TypeChecker,
                     public emittingFileName: string,
@@ -872,7 +871,7 @@ module TypeScript {
 
                     // close the module outfile, and restore the old one
                     if (this.outfile != prevOutFile) {
-                        this.Close();
+                        this.emitSourceMapsAndClose();
                         if (prevSourceMapper != null) {
                             this.allSourceMappers = prevAllSourceMappers;
                             this.sourceMapper = prevSourceMapper;
@@ -1368,21 +1367,14 @@ module TypeScript {
             }
         }
 
-        public Close(): void {
+        // Note: may throw exception.
+        public emitSourceMapsAndClose(): void {
             // Output a source mapping.  As long as we haven't gotten any errors yet.
-            if (this._diagnostics.length === 0 && this.sourceMapper !== null) {
-                var diagnostic = SourceMapper.EmitSourceMapping1(this.allSourceMappers);
-                if (diagnostic !== null) {
-                    this._diagnostics.push(diagnostic);
-                }
+            if (this.sourceMapper !== null) {
+                SourceMapper.emitSourceMapping(this.allSourceMappers);
             }
 
-            try {
-                // Closing files could result in exceptions, report them if they occur
-                this.outfile.Close();
-            } catch (ex) {
-                this._diagnostics.push(new Diagnostic(0, 0, this.emittingFileName, ex.message));
-            }
+            this.outfile.Close();
         }
 
         public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
@@ -1835,12 +1827,9 @@ module TypeScript {
             }
         }
 
+        // Note: throws exception.  
         private createFile(fileName: string, useUTF8: bool): ITextWriter {
-            try {
-                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
-            } catch (ex) {
-                this.errorReporter.emitterError(ex.message);
-            }
+            return this.emitOptions.ioHost.createFile(fileName, useUTF8);
         }
     }
 }

@@ -37,6 +37,7 @@ module TypeScript {
     }
     
     export class DeclarationEmitter implements AstWalkerWithDetailCallback.AstWalkerDetailCallback {
+        public locationInfo: LocationInfo = null;
         public declFile: DeclFileWriter = null;
         private indenter = new Indenter();
         private declarationContainerStack: AST[] = [];
@@ -45,40 +46,23 @@ module TypeScript {
         private ignoreCallbackAst: AST = null;
         private singleDeclFile: DeclFileWriter = null;
         private varListCount: number = 0;
-        private _diagnostics: IDiagnostic[] = [];
 
         constructor(private emittingFileName: string,
                     isUTF8: bool,
                     public checker: TypeChecker,
                     public emitOptions: EmitOptions,
                     public errorReporter: SimpleErrorReporter) {
-            try {
-                // Creating files can cause exceptions, report them.   
-                var file = this.emitOptions.ioHost.createFile(emittingFileName, isUTF8);
-                this.declFile = new DeclFileWriter(file);
-            } catch (ex) {
-                this._diagnostics.push(new Diagnostic(0, 0, emittingFileName, ex.message));
-            }
-        }
-
-        public diagnostics(): IDiagnostic[]{
-            return this._diagnostics;
+            // Creating files can cause exceptions, report them.   
+            var file = this.emitOptions.ioHost.createFile(emittingFileName, isUTF8);
+            this.declFile = new DeclFileWriter(file);
         }
 
         public close() {
-            try {
-                // Closing files could result in exceptions, report them if they occur
-                this.declFile.Close();
-            } catch (ex) {
-                this._diagnostics.push(new Diagnostic(0, 0, this.emittingFileName, ex.message));
-            }
+            this.declFile.Close();
         }
 
         public emitDeclarations(script: TypeScript.Script): void {
-            // Don't do anything if we've already reported a diagnostic.
-            if (this._diagnostics.length > 0) {
-                return;
-            }
+            this.locationInfo = script.locationInfo;
 
             AstWalkerWithDetailCallback.walk(script, this);
         }
@@ -732,24 +716,18 @@ module TypeScript {
                             var tsFileName = (<Script>this.getAstDeclarationContainer()).locationInfo.fileName;
                             var declareFileName = this.emitOptions.mapOutputFileName(tsFileName, TypeScriptCompiler.mapToDTSFileName);
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
-                            try {
-                                // Creating files can cause exceptions, report them.   
-                                this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));
-                            } catch (ex) {
-                                this.errorReporter.emitterError(ex.message);
-                            }
+
+                            // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
+                            this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));
                         }
                         this.pushDeclarationContainer(moduleDecl);
                     } else {
                         if (!this.emitOptions.outputMany) {
                             CompilerDiagnostics.assert(this.singleDeclFile != this.declFile, "singleDeclFile cannot be null as we are going to revert back to it");
                             CompilerDiagnostics.assert(this.indenter.indentAmt === 0, "Indent has to be 0 when outputing new file");
-                            try {
-                                // Closing files could result in exceptions, report them if they occur
-                                this.declFile.Close();
-                            } catch (ex2) {
-                                this.errorReporter.emitterError(ex2.message);
-                            }
+
+                            // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
+                            this.declFile.Close();
                             this.declFile = this.singleDeclFile;
                         }
                         this.popDeclarationContainer(moduleDecl);
