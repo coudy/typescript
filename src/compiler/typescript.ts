@@ -176,7 +176,7 @@ module TypeScript {
             return false;
         }
 
-        private updateCommonDirectoryPath1(): IDiagnostic {
+        private updateCommonDirectoryPath(): IDiagnostic {
             var commonComponents: string[] = [];
             var commonComponentsLength = -1;
 
@@ -255,7 +255,7 @@ module TypeScript {
 
             // Parse the directory structure
             if (this.emitOptions.outputMany) {
-                return this.updateCommonDirectoryPath1();
+                return this.updateCommonDirectoryPath();
             }
 
             return null;
@@ -313,7 +313,7 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitDeclarations1(): IDiagnostic[] {
+        public emitDeclarations(): IDiagnostic[] {
             if (this.canEmitDeclarations() &&
                 !this.errorReporter.hasErrors && !this.pullErrorReporter.hasErrors) {
 

@@ -1257,7 +1257,7 @@ module Harness {
             var emitDiagnostics = emit(stdout);
             compiler.pullErrorReporter.reportDiagnostics(emitDiagnostics);
 
-            var emitDeclarationsDiagnostics = compiler.emitDeclarations1();
+            var emitDeclarationsDiagnostics = compiler.emitDeclarations();
             compiler.pullErrorReporter.reportDiagnostics(emitDeclarationsDiagnostics);
 
             if (context) {

@@ -218,7 +218,7 @@ class BatchCompiler {
             var emitDiagnostics = compiler.emit(emitterIOHost, mapInputToOutput);
             compiler.pullErrorReporter.reportDiagnostics(emitDiagnostics);
 
-            var emitDeclarationsDiagnostics = compiler.emitDeclarations1();
+            var emitDeclarationsDiagnostics = compiler.emitDeclarations();
             compiler.pullErrorReporter.reportDiagnostics(emitDeclarationsDiagnostics);
         } catch (err) {
             compiler.errorReporter.hasErrors = true;

@@ -132,7 +132,7 @@ class HarnessBatch {
             resolvePath: IO.resolvePath
         });
         compiler.emitOptions.ioHost.createFile = createDeclareFile;
-        var emitDeclarationsDiagnostics = compiler.emitDeclarations1();
+        var emitDeclarationsDiagnostics = compiler.emitDeclarations();
 
         if (this.errout) {
             this.errout.Close();
