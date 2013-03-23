@@ -146,6 +146,7 @@ module TypeScript.Formatting {
             static UnaryPredecrementExpressions = TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.OpenParenToken, SyntaxKind.ThisKeyword, SyntaxKind.NewKeyword]);
             static UnaryPostdecrementExpressions = TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.CloseParenToken, SyntaxKind.CloseBracketToken, SyntaxKind.NewKeyword]);
             static Comments = TokenRange.FromTokens([SyntaxKind.SingleLineCommentTrivia, SyntaxKind.MultiLineCommentTrivia]);
+            static TypeNames = TokenRange.FromTokens([SyntaxKind.IdentifierName, SyntaxKind.NumberKeyword, SyntaxKind.StringKeyword, SyntaxKind.BooleanKeyword, SyntaxKind.BoolKeyword, SyntaxKind.VoidKeyword, SyntaxKind.AnyKeyword]);
         }
     }
 }

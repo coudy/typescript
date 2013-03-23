@@ -133,6 +133,13 @@ module TypeScript.Formatting {
         public NoSpaceAfterEllipsis: Rule;
         public NoSpaceAfterOptionalParameters: Rule;
 
+        // generics
+        public NoSpaceBeforeOpenAngularBracket: Rule;
+        public NoSpaceBetweenCloseParenAndAngularBracket: Rule;
+        public NoSpaceAfterOpenAngularBracket: Rule;
+        public NoSpaceBeforeCloseAngularBracket: Rule;
+        public NoSpaceAfterCloseAngularBracket: Rule;
+
         // Remove spaces in empty interface literals. e.g.: x: {}
         public NoSpaceBetweenEmptyInterfaceBraceBrackets: Rule;
 
@@ -303,6 +310,13 @@ module TypeScript.Formatting {
             this.NoSpaceAfterEllipsis = new Rule(RuleDescriptor.create1(SyntaxKind.DotDotDotToken, SyntaxKind.IdentifierName), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext), RuleAction.Delete));
             this.NoSpaceAfterOptionalParameters = new Rule(RuleDescriptor.create3(SyntaxKind.QuestionToken, Shared.TokenRange.FromTokens([SyntaxKind.CloseParenToken, SyntaxKind.CommaToken])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), RuleAction.Delete));
 
+            // generics
+            this.NoSpaceBeforeOpenAngularBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.TypeNames, SyntaxKind.LessThanToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
+            this.NoSpaceBetweenCloseParenAndAngularBracket = new Rule(RuleDescriptor.create1(SyntaxKind.CloseParenToken, SyntaxKind.LessThanToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
+            this.NoSpaceAfterOpenAngularBracket = new Rule(RuleDescriptor.create3(SyntaxKind.LessThanToken, Shared.TokenRange.TypeNames), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
+            this.NoSpaceBeforeCloseAngularBracket = new Rule(RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.GreaterThanToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
+            this.NoSpaceAfterCloseAngularBracket = new Rule(RuleDescriptor.create3(SyntaxKind.GreaterThanToken, Shared.TokenRange.FromTokens([SyntaxKind.OpenParenToken, SyntaxKind.OpenBracketToken, SyntaxKind.GreaterThanToken, SyntaxKind.CommaToken])), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), RuleAction.Delete));
+ 
             // Remove spaces in empty interface literals. e.g.: x: {}
             this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Rule(RuleDescriptor.create1(SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken), RuleOperation.create2(new RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsInterfaceContext), RuleAction.Delete));
 
@@ -333,7 +347,12 @@ module TypeScript.Formatting {
                 this.SpaceAfterArrow,
                 this.NoSpaceAfterEllipsis,
                 this.NoSpaceAfterOptionalParameters,
-                this.NoSpaceBetweenEmptyInterfaceBraceBrackets
+                this.NoSpaceBetweenEmptyInterfaceBraceBrackets,
+                this.NoSpaceBeforeOpenAngularBracket,
+                this.NoSpaceBetweenCloseParenAndAngularBracket,
+                this.NoSpaceAfterOpenAngularBracket,
+                this.NoSpaceBeforeCloseAngularBracket,
+                this.NoSpaceAfterCloseAngularBracket
             ];
 
             // These rules are lower in priority than user-configurable rules.
@@ -731,6 +750,16 @@ module TypeScript.Formatting {
 
         static IsInterfaceContext(context: FormattingContext): bool {
             return context.contextNode.kind() === SyntaxKind.ObjectType;
+        }
+
+        static IsTypeArgumentOrParameter(tokenKind: SyntaxKind, parentKind: SyntaxKind): bool {
+            return ((tokenKind === SyntaxKind.LessThanToken || tokenKind === SyntaxKind.GreaterThanToken) &&
+                (parentKind === SyntaxKind.TypeParameterList || parentKind === SyntaxKind.TypeArgumentList));
+        }
+
+        static IsTypeArgumentOrParameterContext(context: FormattingContext): bool {
+            return Rules.IsTypeArgumentOrParameter(context.currentTokenSpan.kind(), context.currentTokenParent.kind()) ||
+             Rules.IsTypeArgumentOrParameter(context.nextTokenSpan.kind(), context.nextTokenParent.kind());
         }
     }
 }
