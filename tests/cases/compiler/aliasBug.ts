@@ -14,5 +14,5 @@ function use() {
   var p1: provide.Provide; // error here, but should be okay
   var p2: foo.Provide;
   var p3:booz.bar;
-  var p2= new provide.Provide();
+  var p22 = new provide.Provide();
 }

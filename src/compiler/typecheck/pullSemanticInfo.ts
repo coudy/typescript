@@ -37,6 +37,8 @@ module TypeScript {
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
+        private dynamicModuleImports: PullTypeAliasSymbol[] = [];
+
         constructor(compilationUnitPath: string, public locationInfo: LocationInfo = null) {
             this.compilationUnitPath = compilationUnitPath;
         }
@@ -109,7 +111,16 @@ module TypeScript {
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
         }
 
+        public addDynamicModuleImport(importSymbol: PullTypeAliasSymbol) {
+            this.dynamicModuleImports[this.dynamicModuleImports.length] = importSymbol;
+        }
+
+        public getDynamicModuleImports() {
+            return this.dynamicModuleImports;
+        }
+
         public getDiagnostics(semanticErrors: IDiagnostic[]) {
+
             for (var i = 0; i < this.topLevelDecls.length; i++) {
                 getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
             }

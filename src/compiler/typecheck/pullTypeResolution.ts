@@ -187,9 +187,9 @@ module TypeScript {
 
                     if (spanToFind.start() >= candidateSpan.start() && spanToFind.end() <= candidateSpan.end()) {
                         if (searchDecls[i].getKind() & searchKinds) { // only consider types, which have scopes
-                            //if (!(searchDecls[i].getKind() & PullElementKind.Script)) {
-                            decls[decls.length] = searchDecls[i];
-                            //}
+                            if (!(searchDecls[i].getKind() & PullElementKind.ObjectLiteral)) {
+                                decls[decls.length] = searchDecls[i];
+                            }
                             searchDecls = searchDecls[i].getChildDecls();
                             found = true;
                         }
@@ -210,7 +210,7 @@ module TypeScript {
 
                 var parent = decl.getParentDecl();
 
-                if (parent && decls[decls.length - 1] != parent) {
+                if (parent && decls[decls.length - 1] != parent && !(parent.getKind() & PullElementKind.ObjectLiteral)) {
                     decls[decls.length] = parent;
                 }
 
@@ -391,7 +391,7 @@ module TypeScript {
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
 
-                if (pathDeclKind & PullElementKind.Container) {
+                if (pathDeclKind & PullElementKind.SomeContainer) {
                     // Add locals
                     addSymbolsFromDecls(decl.getChildDecls())
 
@@ -565,6 +565,64 @@ module TypeScript {
             return false;
         }
 
+        public findTypeSymbolForDynamicModule(idText: string, currentFileName: string, search: (id: string) =>PullTypeSymbol): PullTypeSymbol {
+            var originalIdText = idText;
+            var symbol = search(idText);
+           
+            if (symbol === null) {
+                // perhaps it's a dynamic module?
+                if (!symbol) {
+                    idText = swapQuotes(originalIdText);
+                    symbol = search(idText);
+                }
+
+                // Check the literal path first
+                if (!symbol) {
+                    idText = stripQuotes(originalIdText) + ".ts";
+                    symbol = search(idText);
+                }
+
+                if (!symbol) {
+                    idText = stripQuotes(originalIdText) + ".d.ts";
+                    symbol = search(idText);
+                }
+
+                // If the literal path doesn't work, begin the search
+                if (!symbol && !isRelative(originalIdText)) {
+                    // check the full path first, as this is the most likely scenario
+                    idText = originalIdText;
+
+                    var strippedIdText = stripQuotes(idText);
+
+                    // REVIEW: Technically, we shouldn't have to normalize here - we should normalize in addUnit.
+                    // Still, normalizing here alows any language services to be free of assumptions
+                    var path = getRootFilePath(switchToForwardSlashes(currentFileName));
+
+                    while (symbol === null && path != "") {
+                        idText = normalizePath(path + strippedIdText + ".ts");
+                        symbol = search(idText);
+
+                        // check for .d.ts
+                        if (symbol === null) {
+                            idText = changePathToDTS(idText);
+                            symbol = search(idText);
+                        }
+
+                        if (symbol === null) {
+							if(path === '/') {
+								path = '';
+							} else {
+								path = normalizePath(path + "..");
+								path = path && path != '/' ? path + '/' : path;
+							}
+                        }
+                    }
+                }
+            }
+
+            return symbol;
+        }
+
         // Declaration Resolution
 
         public resolveDeclaration(declAST: AST, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): PullSymbol {
@@ -595,6 +653,10 @@ module TypeScript {
 
                 case NodeType.TypeParameter:
                     return this.resolveTypeParameterDeclaration(<TypeParameter>declAST, context);
+
+                case NodeType.ImportDeclaration:
+                    return this.resolveImportDeclaration(<ImportDeclaration>declAST, context);
+
                 default:
                     throw new Error("Invalid declaration type");
             }
@@ -837,6 +899,55 @@ module TypeScript {
             }
 
             return interfaceDeclSymbol;
+        }
+
+        public resolveImportDeclaration(importStatementAST: ImportDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
+            // internal or external? (Does it matter?)
+            var importDecl: PullDecl = this.getDeclForAST(importStatementAST);
+            var enclosingDecl = this.getEnclosingDecl(importDecl);
+            var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+            
+            var aliasName = importStatementAST.id.actualText;
+            var aliasedType: PullTypeSymbol = null;
+
+            // the alias name may be a string literal, in which case we'll need to convert it to a type
+            // reference
+            if (importStatementAST.alias.nodeType == NodeType.TypeRef) { // dotted name
+                aliasedType = this.resolveTypeReference(<TypeReference>importStatementAST.alias, enclosingDecl, context);
+            }
+            else if (importStatementAST.alias.nodeType == NodeType.Name) { // name or dynamic module name
+                var text = (<Identifier>importStatementAST.alias).actualText;
+
+                if (!isQuoted(text)) {
+                    aliasedType = this.resolveTypeReference(new TypeReference(importStatementAST.alias, 0), enclosingDecl, context);
+                }
+                else { // dynamic module name (string literal)
+                    var modPath = (<StringLiteral>importStatementAST.alias).text;
+                    var declPath = this.getPathToDecl(enclosingDecl);
+
+                    importStatementAST.isDynamicImport = true;
+
+                    aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.SomeType));
+
+                    if (aliasedType) {
+                        this.currentUnit.addDynamicModuleImport(importDeclSymbol);
+                    }
+                }
+            }
+
+            if (aliasedType) {
+
+                if (!aliasedType.isContainer()) {
+                    importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), "A module cannot be aliased to a non-module type"));
+                }
+
+                importDeclSymbol.setAliasedType(aliasedType);
+                importDeclSymbol.setResolved();
+
+                this.setSymbolForAST(importStatementAST.alias, aliasedType);
+            }
+            
+            return importDeclSymbol;
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FuncDecl, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -1191,7 +1302,7 @@ module TypeScript {
                 else {
 
                     // PULLREVIEW: If the type annotation is a container type, use the module instance type
-                    if (typeExprSymbol.getKind() == PullElementKind.Container) {
+                    if (typeExprSymbol.isContainer()) {
                         var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol()
 
                         if (!instanceSymbol) {
@@ -1381,11 +1492,30 @@ module TypeScript {
                 }
 
                 if (signature.isResolving()) {
-                    // PULLTODO: Error or warning?
+                    
+                    // try to set the return type, even though we may be lacking in some information
+                    if (funcDeclAST.returnTypeAnnotation) {
+                        var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
+                        var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
+                        if (!returnTypeSymbol) {
+                            context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
+                            signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                            hadError = true;
+                        } else {
+                            if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
+                                signature.setHasGenericParameter();
+                                if (funcSymbol) {
+                                    funcSymbol.getType().setHasGenericSignature();
+                                }
+                            }
+                            signature.setReturnType(returnTypeSymbol);
+                        }
+                    } 
+                    else {
+                        signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                    }
 
-                    signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
                     signature.setResolved();
-
                     return funcSymbol;
                 }
 
@@ -1407,11 +1537,11 @@ module TypeScript {
 
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
-                    var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
+                    returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
 
                     // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                     // on the function when resolving the return type
-                    var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
+                    returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
 
                     if (!returnTypeSymbol) {
                         context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
@@ -1420,7 +1550,6 @@ module TypeScript {
                         hadError = true;
                     }
                     else {
-
                         if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
                             signature.setHasGenericParameter();
 
@@ -1432,11 +1561,10 @@ module TypeScript {
                         signature.setReturnType(returnTypeSymbol);
                     }
                 }
-
-                    // if there's no return-type annotation
-                    //     - if it's not a definition signature, set the return type to 'any'
-                    //     - if it's a definition sigature, take the best common type of all return expressions
-                    //     - if it's a constructor, we set the return type link during binding
+                // if there's no return-type annotation
+                //     - if it's not a definition signature, set the return type to 'any'
+                //     - if it's a definition sigature, take the best common type of all return expressions
+                //     - if it's a constructor, we set the return type link during binding
                 else if (!funcDeclAST.isConstructor) {
                     if (funcDeclAST.isSignature()) {
                         signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
@@ -1911,6 +2039,10 @@ module TypeScript {
             var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
             var lhsType = lhs.getType();
 
+            if (lhs.isAlias()) {
+                (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
+            }
+
             if (lhsType == this.semanticInfoChain.anyTypeSymbol) {
                 return lhsType;
             }
@@ -1976,6 +2108,15 @@ module TypeScript {
 
                     if (constraint) {
                         nameSymbol = constraint.findMember(rhsName);
+                    }
+                }
+                else if (lhsType.isContainer()) {
+                    var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
+
+                    if (associatedInstance) {
+                        var instanceType = associatedInstance.getType();
+
+                        nameSymbol = instanceType.findMember(rhsName);
                     }
                 }
                 // could be a module instance
@@ -2462,7 +2603,7 @@ module TypeScript {
 
             span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
-            var objectLitDecl = new PullDecl("", PullElementKind.ObjectType, PullElementFlags.None, span, this.unitPath);
+            var objectLitDecl = new PullDecl("", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
 
             if (enclosingDecl) {
                 objectLitDecl.setParentDecl(enclosingDecl);
@@ -2869,7 +3010,14 @@ module TypeScript {
 
             if (callEx.target.nodeType == NodeType.Super) {
                 isSuperCall = true;
-                targetSymbol = (<PullClassTypeSymbol>targetSymbol).getConstructorMethod().getType();
+
+                if (targetSymbol.isClass()) { 
+                    targetSymbol = (<PullClassTypeSymbol>targetSymbol).getConstructorMethod().getType();
+                }
+                else {
+                    context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid super call on non-class type '"+ targetSymbol.toString() + "'", enclosingDecl);
+                    return this.semanticInfoChain.anyTypeSymbol;                    
+                }
             }
 
             var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
@@ -3263,6 +3411,7 @@ module TypeScript {
                         this.resolveBoundDecls(childDecls[i], context);
                     }
                     break;
+                case PullElementKind.DynamicModule:
                 case PullElementKind.Container:
                     var moduleDecl = <ModuleDeclaration>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
                     this.resolveModuleDeclaration(moduleDecl, context);

@@ -24,5 +24,5 @@ function use() {
     var p1;
     var p2;
     var p3;
-    var p2 = new provide.Provide();
+    var p22 = new provide.Provide();
 }

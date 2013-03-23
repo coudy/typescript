@@ -80,6 +80,9 @@ module TypeScript {
             this.declKind = declKind;
         }
 
+        public isAlias() { return false; }
+        public isContainer() { return false; }        
+
         public getName() { return this.name; }
 
         public getKind() { return this.declKind; }
@@ -849,7 +852,6 @@ module TypeScript {
         public isFunction() { return false; }
         public isTypeParameter() { return false; }
         public isTypeVariable() { return false; }
-        public isContainer() { return false; }
 
         public setHasGenericSignature() { this.hasGenericSignature = true; }
 
@@ -1747,8 +1749,8 @@ module TypeScript {
     export class PullContainerTypeSymbol extends PullTypeSymbol {
         public instanceSymbol: PullSymbol  = null;
 
-        constructor(name: string) {
-            super(name, PullElementKind.Container);
+        constructor(name: string, kind = PullElementKind.Container) {
+            super(name, kind);
         }
 
         public isContainer() { return true; }
@@ -1766,6 +1768,108 @@ module TypeScript {
             if (this.instanceSymbol) {
                 this.instanceSymbol.invalidate();
             }
+
+            super.invalidate();
+        }
+    }
+
+    export class PullTypeAliasSymbol extends PullTypeSymbol {
+
+        private typeAliasLink: PullSymbolLink = null;
+        private isUsedAsValue = false;
+
+        constructor(name: string) {
+            super(name, PullElementKind.TypeAlias);
+        }
+
+        public isAlias() { return true; }
+
+        public setAliasedType(type: PullTypeSymbol) {
+            if (this.typeAliasLink) {
+                this.removeOutgoingLink(this.typeAliasLink);
+            }
+
+            this.typeAliasLink = this.addOutgoingLink(type, SymbolLinkKind.Aliases);
+        }
+
+        public getType(): PullTypeSymbol {
+            if (this.typeAliasLink) {
+                return this.typeAliasLink.end;
+            }
+
+            return null;
+        }
+
+        public setType(type: PullTypeSymbol) {
+            this.setAliasedType(type);
+        }
+
+        public setIsUsedAsValue() {
+            this.isUsedAsValue = true;
+        }
+
+        public getIsUsedAsValue() {
+            return this.isUsedAsValue;
+        }
+
+        public getMembers(): PullSymbol[] {
+            if (this.typeAliasLink) {
+                return (<PullTypeSymbol>this.typeAliasLink.end).getMembers();
+            }
+
+            return [];
+        }
+
+        public getCallSignatures(): PullSignatureSymbol[] {
+            if (this.typeAliasLink) {
+                return (<PullTypeSymbol>this.typeAliasLink.end).getCallSignatures();
+            }
+
+            return [];
+        }
+
+        public getConstructSignatures(): PullSignatureSymbol[] {
+            if (this.typeAliasLink) {
+                return (<PullTypeSymbol>this.typeAliasLink.end).getConstructSignatures();
+            }
+
+            return [];
+        }
+
+        public getIndexSignatures(): PullSignatureSymbol[] {
+            if (this.typeAliasLink) {
+                return (<PullTypeSymbol>this.typeAliasLink.end).getIndexSignatures();
+            }
+
+            return [];
+        }        
+
+        public findMember(name: string): PullSymbol {
+            if (this.typeAliasLink) {
+                return (<PullTypeSymbol>this.typeAliasLink.end).findMember(name);
+            }
+
+            return null;
+        }
+
+        public findNestedType(name: string): PullTypeSymbol {
+            if (this.typeAliasLink) {
+                return (<PullTypeSymbol>this.typeAliasLink.end).findNestedType(name);
+            }
+
+            return null;
+        }
+
+        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[] {
+            if (this.typeAliasLink) {
+                return (<PullTypeSymbol>this.typeAliasLink.end).getAllMembers(searchDeclKind, includePrivate);
+            }
+
+            return [];
+        }
+
+        public invalidate() {
+            this.isUsedAsValue = false;
 
             super.invalidate();
         }

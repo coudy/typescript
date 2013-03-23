@@ -3,5 +3,5 @@ define(["require", "exports"], function(require, exports) {
     function log(n) {
         return n;
     }
-    void log(0.ts.foo).toString();
+    void log(foo).toString();
 })
