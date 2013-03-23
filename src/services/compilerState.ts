@@ -274,6 +274,10 @@ module Services {
             return this.compiler.fileNameToLocationInfo.lookup(fileName).lineMap;
         }
 
+        public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+            return this.compiler.getSyntacticDiagnostics(fileName);
+        }
+
         public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             return this.compiler.getSemanticDiagnostics(fileName);
         }

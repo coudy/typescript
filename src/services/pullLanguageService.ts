@@ -393,9 +393,7 @@ module Services {
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             this.compilerState.refresh();
-
-            var syntaxTree = this.compilerState.getSyntaxTree(fileName);
-            return syntaxTree.diagnostics();
+            return this.compilerState.getSyntacticDiagnostics(fileName);
         }
 
         public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {

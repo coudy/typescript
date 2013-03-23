@@ -465,6 +465,10 @@ module TypeScript {
             return true;
         }
 
+        public getSyntacticDiagnostics(fileName: string): IDiagnostic[]{
+            return this.fileNameToSyntaxTree.lookup(fileName).diagnostics();
+        }
+
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
             var errors: IDiagnostic[] = [];
 
