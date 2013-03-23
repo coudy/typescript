@@ -84,7 +84,7 @@ class HarnessBatch {
 
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
-    private compile(
+    private compile1(
         createEmitFile: (path: string, useUTF8?: bool) => ITextWriter,
         createDeclareFile: (path: string, useUTF8?: bool) => ITextWriter) {
         var compiler: TypeScript.TypeScriptCompiler;
