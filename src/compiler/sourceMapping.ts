@@ -45,6 +45,7 @@ module TypeScript {
 
         constructor(tsFileName: string,
                     jsFileName: string,
+                    public sourceMapFileName: string,
                     public jsFile: ITextWriter,
                     public sourceMapOut: ITextWriter,
                     public errorReporter: SimpleErrorReporter,
@@ -68,7 +69,7 @@ module TypeScript {
         }
         
         // Generate source mapping
-        static EmitSourceMapping(allSourceMappers: SourceMapper[]) {
+        static EmitSourceMapping1(allSourceMappers: SourceMapper[]): IDiagnostic {
             // At this point we know that there is at least one source mapper present.
             // If there are multiple source mappers, all will correspond to same map file but different sources
 
@@ -178,8 +179,9 @@ module TypeScript {
             try {
                 // Closing files could result in exceptions, report them if they occur
                 sourceMapOut.Close();
+                return null;
             } catch (ex) {
-                sourceMapper.errorReporter.emitterError(ex.message);
+                return new Diagnostic(0, 0, null, ex.message);
             }
         }
     }

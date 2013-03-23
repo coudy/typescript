@@ -374,24 +374,26 @@ module TypeScript {
                          emitter?: PullEmitter): PullEmitter {
 
             if (script.emitRequired(this.emitOptions)) {
-                var fname = script.locationInfo.fileName;
+                var typeScriptFileName = script.locationInfo.fileName;
                 if (!emitter) {
-                    var outFname = this.emitOptions.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
-                    var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
+                    var javaScriptFileName = this.emitOptions.mapOutputFileName(typeScriptFileName, TypeScriptCompiler.mapToJSFileName);
+                    var outFile = this.createFile(javaScriptFileName, this.useUTF8ForFile(script));
 
-                    emitter = new PullEmitter(outFname, outFile, this.emitOptions, this.errorReporter, this.semanticInfoChain);
+                    emitter = new PullEmitter(javaScriptFileName, outFile, this.emitOptions, this.errorReporter, this.semanticInfoChain);
 
                     if (this.settings.mapSourceFiles) {
-                        emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
+                        var sourceMapFileName = javaScriptFileName + SourceMapper.MapFileExtension;
+                        emitter.setSourceMappings(new SourceMapper(typeScriptFileName, javaScriptFileName, sourceMapFileName, outFile, this.createFile(javaScriptFileName + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
                     }
 
                     if (inputOutputMapper) {
                         // Remember the name of the outfile for this source file
-                        inputOutputMapper(script.locationInfo.fileName, outFname);
+                        inputOutputMapper(script.locationInfo.fileName, javaScriptFileName);
                     }
                 }
                 else if (this.settings.mapSourceFiles) {
-                    emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
+                    emitter.setSourceMappings(new SourceMapper(typeScriptFileName, emitter.emittingFileName, emitter.sourceMapper.sourceMapFileName, emitter.outfile,
+                        emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
                 }
 
                 // Set location info

@@ -789,8 +789,9 @@ module TypeScript {
                             this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
                             if (prevSourceMapper != null) {
                                 this.allSourceMappers = [];
-                                var sourceMappingFile = this.createFile(this.emittingFileName + SourceMapper.MapFileExtension, false);
-                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, sourceMappingFile, this.errorReporter, this.emitOptions.compilationSettings.emitFullSourceMapPath));
+                                var sourceMapFile = this.emittingFileName + SourceMapper.MapFileExtension;
+                                var sourceMappingFile = this.createFile(sourceMapFile, false);
+                                this.setSourceMappings(new SourceMapper(tsModFileName, this.emittingFileName, sourceMapFile, this.outfile, sourceMappingFile, this.errorReporter, this.emitOptions.compilationSettings.emitFullSourceMapPath));
                                 this.emitState.column = 0;
                                 this.emitState.line = 0;
                             }
@@ -1370,7 +1371,10 @@ module TypeScript {
         public Close(): void {
             // Output a source mapping.  As long as we haven't gotten any errors yet.
             if (this._diagnostics.length === 0 && this.sourceMapper !== null) {
-                SourceMapper.EmitSourceMapping(this.allSourceMappers);
+                var diagnostic = SourceMapper.EmitSourceMapping1(this.allSourceMappers);
+                if (diagnostic !== null) {
+                    this._diagnostics.push(diagnostic);
+                }
             }
 
             try {
