@@ -20,7 +20,7 @@ module TypeScript {
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
         public hasErrors = false;
 
-        constructor(public outfile: ITextWriter) {
+        constructor() {
         }
     }
 

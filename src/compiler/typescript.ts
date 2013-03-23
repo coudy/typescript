@@ -116,7 +116,7 @@ module TypeScript {
                     public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
                     public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
-            this.errorReporter = new SimpleErrorReporter(this.errorOutput);
+            this.errorReporter = new SimpleErrorReporter();
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
 
             this.emitOptions = new EmitOptions(this.settings);
