@@ -81,6 +81,8 @@ module TypeScript {
         }
 
         public reportDiagnostic(error: IDiagnostic, lineMap: LineMap = null) {
+            this.hasErrors = true;
+
             if (lineMap === null) {
                 var locationInfo = this.locationInfoCache[error.fileName()];
                 if (locationInfo && locationInfo.lineMap) {
@@ -100,10 +102,9 @@ module TypeScript {
             this.textWriter.WriteLine(error.message());
         }
 
-        public reportDiagnostics(errors: IDiagnostic[]) {
+        public reportDiagnostics(errors: IDiagnostic[], lineMap: LineMap = null) {
             for (var i = 0; i < errors.length; i++) {
-                this.reportDiagnostic(errors[i]);
-                this.hasErrors = true;
+                this.reportDiagnostic(errors[i], lineMap);
             }
         }
     }

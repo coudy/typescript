@@ -185,11 +185,7 @@ class BatchCompiler {
                     var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);
 
                     if (syntaxTree !== null) {
-                        var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
-                        for (var i = 0, n = diagnostics.length; i < n; i++) {
-                            var diagnostic = diagnostics[i];
-                            compiler.pullErrorReporter.reportDiagnostic(diagnostic, syntaxTree.lineMap());
-                        }
+                        compiler.pullErrorReporter.reportDiagnostics(syntaxTree.diagnostics(), syntaxTree.lineMap());
                     }
                 }
             }
@@ -217,7 +213,12 @@ class BatchCompiler {
             var mapInputToOutput = (inputFile: string, outputFile: string): void => {
                 this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
             };
-            compiler.emit(emitterIOHost, mapInputToOutput);
+
+            // TODO: if there are any emit diagnostics.  Don't proceed.
+            var emitDiagnostics = compiler.emit(emitterIOHost, mapInputToOutput);
+            compiler.pullErrorReporter.reportDiagnostics(emitDiagnostics);
+
+
             compiler.emitDeclarations();
         } catch (err) {
             compiler.errorReporter.hasErrors = true;

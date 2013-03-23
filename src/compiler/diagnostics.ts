@@ -167,7 +167,7 @@ module TypeScript {
     export function getDiagnosticMessage(diagnosticType: PullDiagnosticMessages, args: any[]): string {
         var diagnosticName: string = (<any>PullDiagnosticMessages)._map[diagnosticType];
 
-        var diagnostic = <Diagnostic> typescriptDiagnosticMessages[diagnosticName];
+        var diagnostic = <DiagnosticInfo> typescriptDiagnosticMessages[diagnosticName];
 
         if (!diagnostic) {
             throw new Error("Invalid diagnostic");

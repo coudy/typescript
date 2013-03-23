@@ -21,6 +21,31 @@ module TypeScript {
         private pullTypeChecker: PullTypeChecker = null;
         private declStack: PullDecl[] = [];
 
+        constructor(emittingFileName: string,
+            outfile: ITextWriter,
+            emitOptions: EmitOptions,
+            errorReporter: SimpleErrorReporter,
+            private semanticInfoChain: SemanticInfoChain) {
+            super(null, emittingFileName, outfile, emitOptions, errorReporter);
+
+            this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
+        }
+
+        public isPull() { return true; }
+
+        public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?: string): bool {
+
+            if (!importDeclAST.isDynamicImport) {
+                return true;
+            }
+
+            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.locationInfo.fileName);
+
+            var pullSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+
+            return pullSymbol.isUsedAsValue;
+        }
+
         private pushDecl(decl: PullDecl) {
             if (decl) {
                 this.declStack[this.declStack.length] = decl;
@@ -40,31 +65,6 @@ module TypeScript {
             }
 
             this.pullTypeChecker.resolver.setUnitPath(fileName);
-        }
-
-        constructor(emittingFileName: string,
-                    outfile: ITextWriter,
-                    emitOptions: EmitOptions,
-                    errorReporter: SimpleErrorReporter,
-                    private semanticInfoChain: SemanticInfoChain) {
-            super(null, emittingFileName, outfile, emitOptions, errorReporter);
-
-            this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
-        }
-
-        public isPull() { return true; }
-
-        public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?:string): bool {
-            
-            if (!importDeclAST.isDynamicImport) {
-                return true;
-            }
-
-            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.locationInfo.fileName);
-
-            var pullSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-
-            return pullSymbol.isUsedAsValue;
         }
 
         public setUnit(locationInfo: LocationInfo) {

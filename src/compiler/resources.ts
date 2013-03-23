@@ -22,7 +22,7 @@ module TypeScript {
         Error,
     }
 
-    export interface Diagnostic {
+    export interface DiagnosticInfo {
         category: DiagnosticCategory;
         message: string;
         code: number;
@@ -53,26 +53,26 @@ module TypeScript {
     }
 
     export interface TypeScriptDiagnosticMessages {
-        error_2: Diagnostic;
-        warning_2: Diagnostic;
+        error_2: DiagnosticInfo;
+        warning_2: DiagnosticInfo;
 
-        duplicateIdentifier_1: Diagnostic;
-        unresolvedSymbol_1: Diagnostic;
-        symbolDoesNotReferToAValue_1: Diagnostic;
-        invalidSuperReference: Diagnostic;
-        valueCannotBeModified: Diagnostic;
-        usedCallInsteadOfNew_1: Diagnostic;
-        valueIsNotCallable_1: Diagnostic;
-        valueIsNotNewable_1: Diagnostic;
-        invalidIndexLHS_2: Diagnostic;
-        incompatibleTypesForOperator_3: Diagnostic;
-        incompatibleTypesForOperatorWithReason_4: Diagnostic;
-        incompatibleTypes_2: Diagnostic;
-        incompatibleTypesWithReason_3: Diagnostic;
-        expectedClassOrInterface: Diagnostic;
-        unaryOperatorTypeError_2: Diagnostic;
-        duplicateGetter_1: Diagnostic;
-        duplicateSetter_1: Diagnostic;
-        accessorsMayNotBeGeneric: Diagnostic;
+        duplicateIdentifier_1: DiagnosticInfo;
+        unresolvedSymbol_1: DiagnosticInfo;
+        symbolDoesNotReferToAValue_1: DiagnosticInfo;
+        invalidSuperReference: DiagnosticInfo;
+        valueCannotBeModified: DiagnosticInfo;
+        usedCallInsteadOfNew_1: DiagnosticInfo;
+        valueIsNotCallable_1: DiagnosticInfo;
+        valueIsNotNewable_1: DiagnosticInfo;
+        invalidIndexLHS_2: DiagnosticInfo;
+        incompatibleTypesForOperator_3: DiagnosticInfo;
+        incompatibleTypesForOperatorWithReason_4: DiagnosticInfo;
+        incompatibleTypes_2: DiagnosticInfo;
+        incompatibleTypesWithReason_3: DiagnosticInfo;
+        expectedClassOrInterface: DiagnosticInfo;
+        unaryOperatorTypeError_2: DiagnosticInfo;
+        duplicateGetter_1: DiagnosticInfo;
+        duplicateSetter_1: DiagnosticInfo;
+        accessorsMayNotBeGeneric: DiagnosticInfo;
     }
 }

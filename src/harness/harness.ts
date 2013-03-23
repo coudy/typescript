@@ -1221,8 +1221,8 @@ module Harness {
             compileUnit(lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
-        export function emit(ioHost: TypeScript.EmitterIOHost) {
-            compiler.emit(ioHost);
+        export function emit(ioHost: TypeScript.EmitterIOHost): TypeScript.IDiagnostic[] {
+            return compiler.emit(ioHost);
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1245,11 +1245,13 @@ module Harness {
             var syntacticDiagnostics = compiler.getSyntacticDiagnostics(uName);
             compiler.pullErrorReporter.reportDiagnostics(syntacticDiagnostics);
 
-            var semanticErrors = compiler.getSemanticDiagnostics(uName);
-            compiler.pullErrorReporter.reportDiagnostics(semanticErrors);
+            var semanticDiagnostics = compiler.getSemanticDiagnostics(uName);
+            compiler.pullErrorReporter.reportDiagnostics(semanticDiagnostics);
 
             var errorLines = stderr.lines;
-            emit(stdout);
+            var emitterErrors = emit(stdout);
+            compiler.pullErrorReporter.reportDiagnostics(emitterErrors);
+
             compiler.emitDeclarations();
 
             if (context) {

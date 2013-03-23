@@ -365,61 +365,78 @@ module TypeScript {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
-        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: PullEmitter, inputOutputMapper?: (inputName: string, outputName: string) => void ) {
-            if (!script.emitRequired(this.emitOptions)) {
-                return null;
-            }
+        private emitUnit(script: Script,
+                          inputOutputMapper?: (inputName: string, outputName: string) => void,
+                          emitter?: PullEmitter): PullEmitter {
 
-            var fname = script.locationInfo.fileName;
-            if (!emitter) {
-                var outFname = this.emitOptions.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
-                var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
+            if (script.emitRequired(this.emitOptions)) {
+                var fname = script.locationInfo.fileName;
+                if (!emitter) {
+                    var outFname = this.emitOptions.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
+                    var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
 
-                emitter = new PullEmitter(outFname, outFile, this.emitOptions, this.errorReporter, this.semanticInfoChain);
+                    emitter = new PullEmitter(outFname, outFile, this.emitOptions, this.errorReporter, this.semanticInfoChain);
 
-                if (this.settings.mapSourceFiles) {
-                    emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
+                    if (this.settings.mapSourceFiles) {
+                        emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
+                    }
+                    if (inputOutputMapper) {
+                        // Remember the name of the outfile for this source file
+                        inputOutputMapper(script.locationInfo.fileName, outFname);
+                    }
+                } else if (this.settings.mapSourceFiles) {
+                    emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
                 }
-                if (inputOutputMapper) {
-                    // Remember the name of the outfile for this source file
-                    inputOutputMapper(script.locationInfo.fileName, outFname);
-                }
-            } else if (this.settings.mapSourceFiles) {
-                emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
+
+                // Set location info
+                emitter.setUnit(script.locationInfo);
+                emitter.emitJavascript(script, TokenID.Comma, false);
             }
 
-            // Set location info
-            emitter.setUnit(script.locationInfo);
-            emitter.emitJavascript(script, TokenID.Comma, false);
-
-            if (!reuseEmitter) {
-                emitter.Close();
-                return null;
-            } else {
-                return emitter;
-            }
+            return emitter;
         }
 
-        public emit(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ) {
+        public emit(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
             this.parseEmitOption(ioHost);
 
-            var emitter: PullEmitter = null;
-            var fileNames = this.fileNameToScript.getAllKeys();
+            var sharedEmitter: PullEmitter = null;
+            var diagnostics: IDiagnostic[] = [];
+
             var startEmitTime = (new Date()).getTime();
-            for (var i = 0, len = fileNames.length; i < len; i++) {
+
+            var fileNames = this.fileNameToScript.getAllKeys();
+
+            // Iterate through the files, as long as we don't get a
+            for (var i = 0, n = fileNames.length; i < n && diagnostics.length === 0; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
 
-                if (this.emitOptions.outputMany || emitter === null) {
-                    emitter = this.emitUnit(script, !this.emitOptions.outputMany, /*emitter:*/ null, inputOutputMapper);
-                } else {
-                    this.emitUnit(script, true, emitter);
+                if (this.emitOptions.outputMany) {
+                    // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
+                    var singleEmitter = this.emitUnit(script, inputOutputMapper);
+
+                    // Close the emitter after each emitted file.
+                    if (singleEmitter) {
+                        singleEmitter.Close();
+                        diagnostics = singleEmitter.diagnostics();
+                    }
+                }
+                else {
+                    // We're not outputting to multiple files.  Keep using the same emitter
+                    sharedEmitter = this.emitUnit(script, inputOutputMapper, sharedEmitter);
+                    if (sharedEmitter) {
+                        diagnostics = sharedEmitter.diagnostics();
+                    }
                 }
             }
+
             this.logger.log("Emit: " + ((new Date()).getTime() - startEmitTime));
 
-            if (emitter) {
-                emitter.Close();
+            if (sharedEmitter) {
+                sharedEmitter.Close();
+                diagnostics = sharedEmitter.diagnostics();
             }
+
+            return diagnostics;
         }
 
         private outputScriptToUTF8(script: Script): bool {

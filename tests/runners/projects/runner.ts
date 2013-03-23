@@ -125,7 +125,7 @@ class HarnessBatch {
 
         // TODO: call pullTypeCheck here?
         // compiler.typeCheck();
-        compiler.emit({
+        var emitDiagnostics = compiler.emit({
             createFile: createEmitFile,
             directoryExists: IO.directoryExists,
             fileExists: IO.fileExists,

@@ -115,6 +115,7 @@ module TypeScript {
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
         public varListCountStack: number[] = [0];
+        private _diagnostics: IDiagnostic[] = [];
 
         constructor(public checker: TypeChecker,
                     public emittingFileName: string,
@@ -1366,15 +1367,17 @@ module TypeScript {
             }
         }
 
-        public Close() {
-            if (this.sourceMapper != null) {
+        public Close(): void {
+            // Output a source mapping.  As long as we haven't gotten any errors yet.
+            if (this._diagnostics.length === 0 && this.sourceMapper !== null) {
                 SourceMapper.EmitSourceMapping(this.allSourceMappers);
             }
+
             try {
                 // Closing files could result in exceptions, report them if they occur
                 this.outfile.Close();
             } catch (ex) {
-                this.errorReporter.emitterError(ex.message);
+                this._diagnostics.push(new Diagnostic(0, 0, this.emittingFileName, ex.message));
             }
         }
 
