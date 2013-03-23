@@ -16,7 +16,6 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-
     export enum EmitContainer {
         Prog,
         Module,
@@ -1374,7 +1373,12 @@ module TypeScript {
                 SourceMapper.emitSourceMapping(this.allSourceMappers);
             }
 
-            this.outfile.Close();
+            try {
+                this.outfile.Close();
+            }
+            catch (e) {
+                Emitter.throwEmitterError(e);
+            }
         }
 
         public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
@@ -1827,9 +1831,28 @@ module TypeScript {
             }
         }
 
+        public static throwEmitterError(e: Error): void {
+            var error: any = new Error(e.message);
+            error.isEmitterError = true;
+            throw error;
+        }
+
+        public static handleEmitterError(fileName: string, e: Error): IDiagnostic[] {
+            if ((<any>e).isEmitterError === true) {
+                return [new Diagnostic(0, 0, fileName, e.message)];
+            }
+
+            throw e;
+        }
+
         // Note: throws exception.  
         private createFile(fileName: string, useUTF8: bool): ITextWriter {
-            return this.emitOptions.ioHost.createFile(fileName, useUTF8);
+            try {
+                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
+            }
+            catch (e) {
+                Emitter.throwEmitterError(e);
+            }
         }
     }
 }

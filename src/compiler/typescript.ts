@@ -338,7 +338,7 @@ module TypeScript {
                         }
                     }
                     catch (ex1) {
-                        return [new Diagnostic(0, 0, fileName, ex1.message)];
+                        return Emitter.handleEmitterError(fileName, ex1);
                     }
                 }
 
@@ -347,7 +347,7 @@ module TypeScript {
                         sharedEmitter.close();
                     }
                     catch (ex2) {
-                        return [new Diagnostic(0, 0, sharedEmitter.locationInfo.fileName, ex2.message)];
+                        return Emitter.handleEmitterError(sharedEmitter.locationInfo.fileName, ex2);
                     }
                 }
             }
@@ -443,7 +443,7 @@ module TypeScript {
                     }
                 }
                 catch (ex1) {
-                    return [new Diagnostic(0, 0, fileName, ex1.message)];
+                    return Emitter.handleEmitterError(fileName, ex1);
                 }
             }
 
@@ -454,7 +454,7 @@ module TypeScript {
                     sharedEmitter.emitSourceMapsAndClose();
                 }
                 catch (ex2) {
-                    return [new Diagnostic(0, 0, sharedEmitter.locationInfo.fileName, ex2.message)];
+                    return Emitter.handleEmitterError(sharedEmitter.locationInfo.fileName, ex2);
                 }
             }
 

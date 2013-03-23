@@ -33,6 +33,8 @@ module TypeScript {
 
         public isPull() { return true; }
 
+        public diagnostics(): IDiagnostic[] { return []; }
+
         public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?: string): bool {
 
             if (!importDeclAST.isDynamicImport) {

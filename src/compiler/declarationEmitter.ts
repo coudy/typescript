@@ -32,7 +32,12 @@ module TypeScript {
         }
 
         public Close() {
-            this.declFile.Close();
+            try {
+                this.declFile.Close();
+            }
+            catch (e) {
+                Emitter.throwEmitterError(e);
+            }
         }
     }
     
@@ -53,12 +58,26 @@ module TypeScript {
                     public emitOptions: EmitOptions,
                     public errorReporter: SimpleErrorReporter) {
             // Creating files can cause exceptions, report them.   
-            var file = this.emitOptions.ioHost.createFile(emittingFileName, isUTF8);
+            var file = this.createFile(emittingFileName, isUTF8);
             this.declFile = new DeclFileWriter(file);
         }
 
         public close() {
-            this.declFile.Close();
+            try {
+                this.declFile.Close();
+            }
+            catch (e) {
+                Emitter.throwEmitterError(e);
+            }
+        }
+
+        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+            try {
+                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
+            }
+            catch (e) {
+                Emitter.throwEmitterError(e);
+            }
         }
 
         public emitDeclarations(script: TypeScript.Script): void {
@@ -718,7 +737,7 @@ module TypeScript {
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.compilationSettings.emitComments && moduleDecl.containsUnicodeCharInComment);
 
                             // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
-                            this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));
+                            this.declFile = new DeclFileWriter(this.createFile(declareFileName, useUTF8InOutputfile));
                         }
                         this.pushDeclarationContainer(moduleDecl);
                     } else {
@@ -727,9 +746,16 @@ module TypeScript {
                             CompilerDiagnostics.assert(this.indenter.indentAmt === 0, "Indent has to be 0 when outputing new file");
 
                             // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
-                            this.declFile.Close();
+                            try {
+                                this.declFile.Close();
+                            }
+                            catch (e) {
+                                Emitter.throwEmitterError(e);
+                            }
+
                             this.declFile = this.singleDeclFile;
                         }
+
                         this.popDeclarationContainer(moduleDecl);
                     }
                 }
