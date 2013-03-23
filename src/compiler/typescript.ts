@@ -176,13 +176,14 @@ module TypeScript {
             return false;
         }
 
-        private updateCommonDirectoryPath() {
+        private updateCommonDirectoryPath1(): IDiagnostic {
             var commonComponents: string[] = [];
             var commonComponentsLength = -1;
 
             var fileNames = this.fileNameToScript.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
+
                 if (script.emitRequired(this.emitOptions)) {
                     var fileName = script.locationInfo.fileName;
                     var fileComponents = filePathComponents(fileName);
@@ -201,8 +202,7 @@ module TypeScript {
 
                                 if (j === 0) {
                                     // Its error to not have common path
-                                    this.errorReporter.emitterError("Cannot find the common subdirectory path for the input files");
-                                    return;
+                                    return new Diagnostic(0, 0, null, "Cannot find the common subdirectory path for the input files");
                                 }
 
                                 break;
@@ -221,6 +221,8 @@ module TypeScript {
             if (this.emitOptions.compilationSettings.outputOption.charAt(this.emitOptions.compilationSettings.outputOption.length - 1) != "/") {
                 this.emitOptions.compilationSettings.outputOption += "/";
             }
+
+            return null;
         }
 
         public parseEmitOption(ioHost: EmitterIOHost): IDiagnostic {
@@ -253,7 +255,7 @@ module TypeScript {
 
             // Parse the directory structure
             if (this.emitOptions.outputMany) {
-                this.updateCommonDirectoryPath();
+                return this.updateCommonDirectoryPath1();
             }
 
             return null;
