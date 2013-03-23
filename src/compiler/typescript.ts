@@ -132,7 +132,7 @@ module TypeScript {
 
         public addSourceUnit(fileName: string, sourceText: IScriptSnapshot, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var syntaxTree = Parser.parse(SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
+                var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
                 var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
                 script.referencedFiles = referencedFiles;
 
@@ -152,7 +152,7 @@ module TypeScript {
                 var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
 
                 var syntaxTree = textChangeRange === null
-                    ? TypeScript.Parser.parse(text, TypeScript.isDTSFile(fileName))
+                    ? TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName))
                     : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
                 var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
@@ -465,8 +465,8 @@ module TypeScript {
             return true;
         }
 
-        public pullGetErrorsForFile(fileName: string): SemanticError[] {
-            var errors: PullError[] = [];
+        public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
+            var errors: IDiagnostic[] = [];
 
             var unit = this.semanticInfoChain.getUnit(fileName);
 
@@ -476,14 +476,14 @@ module TypeScript {
                 if (script) {
                     this.pullTypeChecker.typeCheckScript(script, fileName, this);
 
-                    unit.getErrors(errors);
+                    unit.getDiagnostics(errors);
                 }
             }
 
             return errors;
         }
 
-        public pullTypeCheck(refresh = false, reportErrors = false) {
+        public pullTypeCheck(refresh = false, reportDiagnostics = false) {
             return this.timeFunction("pullTypeCheck()", () => {
 
                 if (!this.pullTypeChecker || refresh) {
@@ -543,7 +543,7 @@ module TypeScript {
                 for (i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
 
-                    if (reportErrors) {
+                    if (reportDiagnostics) {
                         this.logger.log("Type checking " + fileName);
                         this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
                     }
@@ -559,8 +559,8 @@ module TypeScript {
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
 
-                if (reportErrors) {
-                    this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
+                if (reportDiagnostics) {
+                    this.pullErrorReporter.reportDiagnostics(this.semanticInfoChain.postDiagnostics());
                 }
             });
         }
@@ -658,7 +658,7 @@ module TypeScript {
                 }
 
                 this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
-                this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
+                this.pullErrorReporter.reportDiagnostics(this.semanticInfoChain.postDiagnostics());
             });
         }
 

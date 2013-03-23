@@ -4,6 +4,7 @@ module TypeScript {
     export class Scanner1 implements ISlidingWindowSource {
         private slidingWindow: SlidingWindow;
 
+        private fileName: string;
         private text: ISimpleText;
         private _languageVersion: LanguageVersion;
 
@@ -45,12 +46,14 @@ module TypeScript {
             }
         }
 
-        constructor(text: ISimpleText,
+        constructor(fileName: string,
+                    text: ISimpleText,
                     languageVersion: LanguageVersion,
                     window: number[] = ArrayUtilities.createArray(2048, 0)) {
             Scanner1.initializeStaticData();
 
             this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
+            this.fileName = fileName;
             this.text = text;
             this._languageVersion = languageVersion;
         }
@@ -131,7 +134,7 @@ module TypeScript {
         // Scans a subsection of 'text' as trivia.
         public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
             // Debug.assert(length > 0);
-            var scanner = new Scanner1(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, Scanner1.triviaWindow);
+            var scanner = new Scanner1(/*fileName:*/ null, text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, Scanner1.triviaWindow);
             return scanner.scanTrivia(isTrailing);
         }
 
@@ -392,6 +395,7 @@ module TypeScript {
                 if (this.slidingWindow.isAtEndOfSource()) {
                     if (diagnostics !== null) {
                         diagnostics.push(new SyntaxDiagnostic(
+                            this.fileName,
                             this.slidingWindow.absoluteIndex(), 0, DiagnosticCode._StarSlash__expected, null));
                     }
 
@@ -975,7 +979,7 @@ module TypeScript {
 
             var text = String.fromCharCode(character);
             var messageText = this.getErrorMessageText(text);
-            diagnostics.push(new SyntaxDiagnostic(
+            diagnostics.push(new SyntaxDiagnostic(this.fileName,
                 position, 1, DiagnosticCode.Unexpected_character_0, [messageText]));
 
             return SyntaxKind.ErrorToken;
@@ -1141,7 +1145,7 @@ module TypeScript {
                     break;
                 }
                 else if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
-                    diagnostics.push(new SyntaxDiagnostic(
+                    diagnostics.push(new SyntaxDiagnostic(this.fileName,
                         this.slidingWindow.absoluteIndex(), 1, DiagnosticCode.Missing_closing_quote_character, null));
                     break;
                 }
@@ -1284,7 +1288,7 @@ module TypeScript {
         }
 
         private createIllegalEscapeDiagnostic(start: number, end: number): SyntaxDiagnostic {
-            return new SyntaxDiagnostic(start, end - start,
+            return new SyntaxDiagnostic(this.fileName, start, end - start,
                 DiagnosticCode.Unrecognized_escape_sequence, null);
         }
     }

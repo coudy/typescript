@@ -269,8 +269,8 @@ module Services {
             return this.compiler.fileNameToLocationInfo.lookup(fileName).lineMap;
         }
 
-        public pullGetErrorsForFile(fileName: string): TypeScript.SemanticError[] {
-            return this.compiler.pullGetErrorsForFile(fileName);
+        public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
+            return this.compiler.getSemanticDiagnostics(fileName);
         }
 
         public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {

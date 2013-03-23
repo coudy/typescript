@@ -109,9 +109,9 @@ module TypeScript {
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
         }
 
-        public getErrors(semanticErrors: SemanticError[]) {
+        public getDiagnostics(semanticErrors: IDiagnostic[]) {
             for (var i = 0; i < this.topLevelDecls.length; i++) {
-                getErrorsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
+                getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
             }
         }
     }
@@ -373,11 +373,12 @@ module TypeScript {
             symbol.invalidateCachedIDs(this.symbolCache);
         }
 
-        public postErrors(): SemanticError[] {
-            var errors: PullError[] = [];
+        public postDiagnostics(): IDiagnostic[] {
+            var errors: IDiagnostic[] = [];
 
+            // PULLTODO: Why are we indexing from 1?
             for (var i = 1; i < this.units.length; i++) {
-                this.units[i].getErrors(errors);
+                this.units[i].getDiagnostics(errors);
             }
 
             return errors;

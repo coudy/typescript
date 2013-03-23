@@ -172,7 +172,7 @@ module TypeScript {
                     // preprocess the file, to gather dependencies
                     var rootDir = ioHost.dirName(resolvedFile.path);
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
-                    var preProcessedFileInfo = preProcessFile(sourceUnit, this.environment.compilationSettings);
+                    var preProcessedFileInfo = preProcessFile(resolvedFile.path, sourceUnit, this.environment.compilationSettings);
                     var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
                     var i = 0;
                     var resolutionResult: bool;

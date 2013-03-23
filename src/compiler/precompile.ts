@@ -219,8 +219,8 @@ module TypeScript {
         }
     }
 
-    export function getReferencedFiles(sourceText: IScriptSnapshot): IFileReference[] {
-        var preProcessInfo = preProcessFile(sourceText, null, false);
+    export function getReferencedFiles(fileName: string, sourceText: IScriptSnapshot): IFileReference[] {
+        var preProcessInfo = preProcessFile(fileName, sourceText, null, false);
         return preProcessInfo.referencedFiles;
     }
 
@@ -315,9 +315,9 @@ module TypeScript {
         return { noDefaultLib: noDefaultLib};
     }
 
-    export function preProcessFile(sourceText: IScriptSnapshot, settings?: CompilationSettings = new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
+    export function preProcessFile(fileName: string, sourceText: IScriptSnapshot, settings?: CompilationSettings = new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
         var text = SimpleText.fromScriptSnapshot(sourceText);
-        var scanner = new Scanner1(text, LanguageVersion.EcmaScript5, scannerWindow);
+        var scanner = new Scanner1(fileName, text, LanguageVersion.EcmaScript5, scannerWindow);
 
         var firstToken = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);
 
