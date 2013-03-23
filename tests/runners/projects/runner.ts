@@ -82,63 +82,6 @@ class HarnessBatch {
         return this.commandLineHost.resolveCompilationEnvironment(this.compilationEnvironment, resolver, true);
     }
 
-    /// Do the actual compilation reading from input files and
-    /// writing to output file(s).
-    private compile1(
-        createEmitFile: (path: string, useUTF8?: bool) => ITextWriter,
-        createDeclareFile: (path: string, useUTF8?: bool) => ITextWriter) {
-        var compiler: TypeScript.TypeScriptCompiler;
-        var _self = this;
-        this.errout.reset();
-
-        compiler = new TypeScript.TypeScriptCompiler(this.errout, new TypeScript.NullLogger(), this.compilationSettings);
-
-        function consumeUnit(code: TypeScript.SourceUnit) {
-            try {
-            // if file resolving is disabled, the file's content will not yet be loaded
-                if (!(_self.compilationSettings.resolve)) {
-                    code.content = this.host.readFile(code.path);
-                }
-                if (code.content != null) {
-                    // Log any bugs associated with the test
-                    var bugs = code.content.match(/\bbug (\d+)/i);
-                    if (bugs) {
-                        bugs.forEach(bug => assert.bug(bug));
-                    }
-
-                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content));
-                }
-            }
-            catch (err) {
-            // This includes syntax errors thrown from error callback if not in recovery mode
-                if (_self.errout != null) {
-                    _self.errout.WriteLine(err.message)
-                } else {
-                    _self.host.stderr.WriteLine(err.message);
-                }
-            }
-        }
-
-        for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            consumeUnit(this.resolvedEnvironment.code[iCode]);
-        }
-
-        // TODO: call pullTypeCheck here?
-        // compiler.typeCheck();
-        var emitDiagnostics = compiler.emit({
-            createFile: createEmitFile,
-            directoryExists: IO.directoryExists,
-            fileExists: IO.fileExists,
-            resolvePath: IO.resolvePath
-        });
-        compiler.emitOptions.ioHost.createFile = createDeclareFile;
-        var emitDeclarationsDiagnostics = compiler.emitDeclarations();
-
-        if (this.errout) {
-            this.errout.Close();
-        }
-    }
-
     // Execute the provided inputs
     private run() {
         for (var i = 0; i < this.resolvedEnvironment.code.length; i++) {
