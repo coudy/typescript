@@ -17,11 +17,10 @@
 
 module TypeScript {
     export class PullDeclarationEmitter extends DeclarationEmitter {
-
         private locationInfo: LocationInfo = null;
 
-        constructor(emittingFileName: string, private semanticInfoChain: SemanticInfoChain, emitOptions: EmitOptions, errorReporter: SimpleErrorReporter) {
-            super(emittingFileName, null, emitOptions, errorReporter);
+        constructor(emittingFileName: string, isUTF8: bool, private semanticInfoChain: SemanticInfoChain, emitOptions: EmitOptions, errorReporter: SimpleErrorReporter) {
+            super(emittingFileName, isUTF8, null, emitOptions, errorReporter);
         }
 
         private emitTypeSignature(type: PullTypeSymbol) {

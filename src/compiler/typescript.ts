@@ -302,10 +302,8 @@ module TypeScript {
             if (this.canEmitDeclarations(script)) {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
-                    var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
-
-                    declarationEmitter = new PullDeclarationEmitter(declareFileName, this.semanticInfoChain, this.emitOptions, this.errorReporter);
-                    declarationEmitter.setDeclarationFile(declareFile);
+                    declarationEmitter = new PullDeclarationEmitter(
+                        declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions, this.errorReporter);
                 }
 
                 declarationEmitter.emitDeclarations(script);
@@ -324,13 +322,14 @@ module TypeScript {
                 var fileNames = this.fileNameToScript.getAllKeys();
 
                 // Keep on processing files as long as we don't get any errors.
+
                 for (var i = 0, n = fileNames.length; i < n && diagnostics.length === 0; i++) {
                     var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
 
                     if (this.emitOptions.outputMany) {
                         var singleEmitter = this.emitDeclarationsUnit1(script);
                         if (singleEmitter) {
-                            singleEmitter.Close();
+                            singleEmitter.close();
                             diagnostics = singleEmitter.diagnostics();
                         }
                     }
@@ -344,7 +343,7 @@ module TypeScript {
                 }
 
                 if (sharedEmitter) {
-                    sharedEmitter.Close();
+                    sharedEmitter.close();
                     diagnostics = sharedEmitter.diagnostics();
                 }
             }

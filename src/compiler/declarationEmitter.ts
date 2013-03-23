@@ -35,7 +35,7 @@ module TypeScript {
             this.declFile.Close();
         }
     }
-
+    
     export class DeclarationEmitter implements AstWalkerWithDetailCallback.AstWalkerDetailCallback {
         public declFile: DeclFileWriter = null;
         private indenter = new Indenter();
@@ -48,28 +48,24 @@ module TypeScript {
         private _diagnostics: IDiagnostic[] = [];
 
         constructor(private emittingFileName: string,
+                    isUTF8: bool,
                     public checker: TypeChecker,
                     public emitOptions: EmitOptions,
                     public errorReporter: SimpleErrorReporter) {
+            try {
+                // Creating files can cause exceptions, report them.   
+                var file = this.emitOptions.ioHost.createFile(emittingFileName, isUTF8);
+                this.declFile = new DeclFileWriter(file);
+            } catch (ex) {
+                this._diagnostics.push(new Diagnostic(0, 0, emittingFileName, ex.message));
+            }
         }
 
         public diagnostics(): IDiagnostic[]{
             return this._diagnostics;
         }
 
-        public getAstDeclarationContainer() {
-            return this.declarationContainerStack[this.declarationContainerStack.length - 1];
-        }
-
-        private emitDottedModuleName() {
-            return (this.isDottedModuleName.length === 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
-        }
-
-        public setDeclarationFile(file: ITextWriter) {
-            this.declFile = new DeclFileWriter(file);
-        }
-
-        public Close() {
+        public close() {
             try {
                 // Closing files could result in exceptions, report them if they occur
                 this.declFile.Close();
@@ -79,7 +75,20 @@ module TypeScript {
         }
 
         public emitDeclarations(script: TypeScript.Script): void {
+            // Don't do anything if we've already reported a diagnostic.
+            if (this._diagnostics.length > 0) {
+                return;
+            }
+
             AstWalkerWithDetailCallback.walk(script, this);
+        }
+
+        public getAstDeclarationContainer() {
+            return this.declarationContainerStack[this.declarationContainerStack.length - 1];
+        }
+
+        private emitDottedModuleName() {
+            return (this.isDottedModuleName.length === 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
         }
 
         private getIndentString(declIndent? = false) {
