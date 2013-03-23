@@ -602,21 +602,9 @@ module TypeScript {
                         idText = normalizePath(path + strippedIdText + ".ts");
                         symbol = search(idText);
 
-                        // check for .str
-                        if (symbol === null) {
-                            idText = changePathToSTR(idText);
-                            symbol = search(idText);
-                        }
-
                         // check for .d.ts
                         if (symbol === null) {
                             idText = changePathToDTS(idText);
-                            symbol = search(idText);
-                        }
-
-                        // check for .d.str
-                        if (symbol === null) {
-                            idText = changePathToDSTR(idText);
                             symbol = search(idText);
                         }
 
@@ -950,7 +938,7 @@ module TypeScript {
             if (aliasedType) {
 
                 if (!aliasedType.isContainer()) {
-                    importDecl.addError(new PullError(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), "A module cannot be aliased to a non-module type"));
+                    importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), "A module cannot be aliased to a non-module type"));
                 }
 
                 importDeclSymbol.setAliasedType(aliasedType);
