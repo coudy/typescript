@@ -20,8 +20,8 @@ module TypeScript {
 
         private locationInfo: LocationInfo = null;
 
-        constructor(private semanticInfoChain: SemanticInfoChain, emitOptions: EmitOptions, errorReporter: SimpleErrorReporter) {
-            super(null, emitOptions, errorReporter);
+        constructor(emittingFileName: string, private semanticInfoChain: SemanticInfoChain, emitOptions: EmitOptions, errorReporter: SimpleErrorReporter) {
+            super(emittingFileName, null, emitOptions, errorReporter);
         }
 
         private emitTypeSignature(type: PullTypeSymbol) {

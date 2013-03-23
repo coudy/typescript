@@ -47,7 +47,10 @@ module TypeScript {
         private varListCount: number = 0;
         private _diagnostics: IDiagnostic[] = [];
 
-        constructor (public checker: TypeChecker, public emitOptions: EmitOptions, public errorReporter: SimpleErrorReporter) {
+        constructor(private emittingFileName: string,
+                    public checker: TypeChecker,
+                    public emitOptions: EmitOptions,
+                    public errorReporter: SimpleErrorReporter) {
         }
 
         public diagnostics(): IDiagnostic[]{
@@ -71,7 +74,7 @@ module TypeScript {
                 // Closing files could result in exceptions, report them if they occur
                 this.declFile.Close();
             } catch (ex) {
-                this.errorReporter.emitterError(ex.message);
+                this._diagnostics.push(new Diagnostic(0, 0, this.emittingFileName, ex.message));
             }
         }
 

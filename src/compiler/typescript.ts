@@ -300,7 +300,7 @@ module TypeScript {
                     var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                     var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
 
-                    declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitOptions, this.errorReporter);
+                    declarationEmitter = new PullDeclarationEmitter(declareFileName, this.semanticInfoChain, this.emitOptions, this.errorReporter);
                     declarationEmitter.setDeclarationFile(declareFile);
                 }
 
