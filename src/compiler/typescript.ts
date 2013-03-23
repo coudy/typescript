@@ -408,8 +408,9 @@ module TypeScript {
             var startEmitTime = (new Date()).getTime();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
+
                 if (this.emitOptions.outputMany || emitter === null) {
-                    emitter = this.emitUnit(script, !this.emitOptions.outputMany, null, inputOutputMapper);
+                    emitter = this.emitUnit(script, !this.emitOptions.outputMany, /*emitter:*/ null, inputOutputMapper);
                 } else {
                     this.emitUnit(script, true, emitter);
                 }

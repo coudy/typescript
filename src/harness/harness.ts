@@ -1236,13 +1236,13 @@ module Harness {
 
             var isDeclareFile = Harness.Compiler.isDeclareFile(unitName);
             // for single file tests just add them as using the old '0.ts' naming scheme
-            var uName = context ? unitName : ((isDeclareFile) ? '0.d.ts' : '0.ts');
+            var uName = context ? unitName : isDeclareFile ? '0.d.ts' : '0.ts';
             scripts.push(addUnit(code, uName, isDeclareFile, references));
             compile(code, uName);
 
             compiler.pullErrorReporter.textWriter = stderr;
 
-            var syntacticDiagnostics = compiler.fileNameToSyntaxTree.lookup(uName).diagnostics();
+            var syntacticDiagnostics = compiler.getSyntacticDiagnostics(uName);
             compiler.pullErrorReporter.reportDiagnostics(syntacticDiagnostics);
 
             var semanticErrors = compiler.getSemanticDiagnostics(uName);
