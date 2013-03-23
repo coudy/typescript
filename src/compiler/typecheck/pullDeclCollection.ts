@@ -1009,20 +1009,51 @@ module TypeScript {
         return ast;
     }
 
+    function isContainer(decl: PullDecl): bool {
+        return decl.getKind() == PullElementKind.Container || decl.getKind() == PullElementKind.DynamicModule;
+    }
+
+    function getInitializationFlag(decl: PullDecl): PullElementFlags {
+        if (decl.getKind() & PullElementKind.Container) {
+            return PullElementFlags.InitializedModule;
+        }
+        else if (decl.getKind() & PullElementKind.DynamicModule) {
+            return PullElementFlags.InitializedDynamicModule;
+        }
+
+        return PullElementFlags.None;
+    }
+
+    function hasInitializationFlag(decl: PullDecl): bool {
+        if (decl.getKind() & PullElementKind.Container) {
+            return decl.getFlags() & PullElementFlags.InitializedModule;
+        }
+        else if (decl.getKind() & PullElementKind.DynamicModule) {
+            return decl.getFlags() & PullElementFlags.InitializedDynamicModule;
+        }
+
+        return false;
+    }
+
     export function postCollectDecls(ast: AST, parentAST: AST, walker: IAstWalker) {
         var context: DeclCollectionContext = walker.state;
         var parentDecl: PullDecl;
+        var initFlag = PullElementFlags.None;
 
         // Note that we never pop the Script - after the traversal, it should be the
         // one parent left in the context
+
 
         if (ast.nodeType == NodeType.ModuleDeclaration) {
             var thisModule = context.getParent();
             context.popParent();
             parentDecl = context.getParent();
-            if (thisModule.getFlags() & PullElementFlags.InitializedModule) {
-                if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
-                    parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+
+            if (hasInitializationFlag(thisModule)) {
+
+                if (parentDecl && isContainer(parentDecl)) {
+                    initFlag = getInitializationFlag(parentDecl);
+                    parentDecl.setFlags(parentDecl.getFlags() | initFlag);
                 }
 
                 // create the value decl
@@ -1043,8 +1074,9 @@ module TypeScript {
 
             parentDecl = context.getParent();
 
-            if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
-                parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+            if (parentDecl && isContainer(parentDecl)) {
+                initFlag = getInitializationFlag(parentDecl);
+                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
             }
         }
         else if (ast.nodeType == NodeType.InterfaceDeclaration) {
@@ -1055,15 +1087,17 @@ module TypeScript {
 
             parentDecl = context.getParent();
 
-            if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
-                parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+            if (parentDecl && isContainer(parentDecl)) {
+                initFlag = getInitializationFlag(parentDecl);
+                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
             }
         }
         else if (ast.nodeType == NodeType.VarDecl) { // PULLREVIEW: What if we just have a for loop in a module body?
             parentDecl = context.getParent();
 
-            if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
-                parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+            if (parentDecl && isContainer(parentDecl)) {
+                initFlag = getInitializationFlag(parentDecl);
+                parentDecl.setFlags(parentDecl.getFlags() | initFlag);
             }
         }
 

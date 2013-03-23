@@ -111,29 +111,27 @@ var N = (function () {
 })();
 var O = (function () {
     function O() {
-        this.=;
-        0;
+        this.p1 = 0;
     }
     return O;
 })();
 var P = (function () {
     function P() {
-        this.=;
-        0;
+        this.p1 = 0;
     }
     return P;
 })();
 var Q = (function () {
     function Q() {
-        this..;
-        p1 = 0;
+        public;
+        this.p1 = 0;
     }
     return Q;
 })();
 var R = (function () {
     function R() {
-        this..;
-        p1 = 0;
+        private;
+        this.p1 = 0;
     }
     return R;
 })();

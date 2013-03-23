@@ -187,9 +187,9 @@ module TypeScript {
 
                     if (spanToFind.start() >= candidateSpan.start() && spanToFind.end() <= candidateSpan.end()) {
                         if (searchDecls[i].getKind() & searchKinds) { // only consider types, which have scopes
-                            //if (!(searchDecls[i].getKind() & PullElementKind.Script)) {
-                            decls[decls.length] = searchDecls[i];
-                            //}
+                            if (!(searchDecls[i].getKind() & PullElementKind.ObjectLiteral)) {
+                                decls[decls.length] = searchDecls[i];
+                            }
                             searchDecls = searchDecls[i].getChildDecls();
                             found = true;
                         }
@@ -210,7 +210,7 @@ module TypeScript {
 
                 var parent = decl.getParentDecl();
 
-                if (parent && decls[decls.length - 1] != parent) {
+                if (parent && decls[decls.length - 1] != parent && !(parent.getKind() & PullElementKind.ObjectLiteral)) {
                     decls[decls.length] = parent;
                 }
 
@@ -391,7 +391,7 @@ module TypeScript {
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
 
-                if (pathDeclKind & PullElementKind.Container) {
+                if (pathDeclKind & PullElementKind.SomeContainer) {
                     // Add locals
                     addSymbolsFromDecls(decl.getChildDecls())
 
@@ -948,6 +948,11 @@ module TypeScript {
             }
 
             if (aliasedType) {
+
+                if (!aliasedType.isContainer()) {
+                    importDecl.addError(new PullError(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), "A module cannot be aliased to a non-module type"));
+                }
+
                 importDeclSymbol.setAliasedType(aliasedType);
                 importDeclSymbol.setResolved();
 
@@ -1309,7 +1314,7 @@ module TypeScript {
                 else {
 
                     // PULLREVIEW: If the type annotation is a container type, use the module instance type
-                    if (typeExprSymbol.getKind() == PullElementKind.Container) {
+                    if (typeExprSymbol.isContainer()) {
                         var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol()
 
                         if (!instanceSymbol) {
@@ -2610,7 +2615,7 @@ module TypeScript {
 
             span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
-            var objectLitDecl = new PullDecl("", PullElementKind.ObjectType, PullElementFlags.None, span, this.unitPath);
+            var objectLitDecl = new PullDecl("", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
 
             if (enclosingDecl) {
                 objectLitDecl.setParentDecl(enclosingDecl);
@@ -3017,7 +3022,14 @@ module TypeScript {
 
             if (callEx.target.nodeType == NodeType.Super) {
                 isSuperCall = true;
-                targetSymbol = (<PullClassTypeSymbol>targetSymbol).getConstructorMethod().getType();
+
+                if (targetSymbol.isClass()) { 
+                    targetSymbol = (<PullClassTypeSymbol>targetSymbol).getConstructorMethod().getType();
+                }
+                else {
+                    context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid super call on non-class type '"+ targetSymbol.toString() + "'", enclosingDecl);
+                    return this.semanticInfoChain.anyTypeSymbol;                    
+                }
             }
 
             var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
@@ -3411,6 +3423,7 @@ module TypeScript {
                         this.resolveBoundDecls(childDecls[i], context);
                     }
                     break;
+                case PullElementKind.DynamicModule:
                 case PullElementKind.Container:
                     var moduleDecl = <ModuleDeclaration>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
                     this.resolveModuleDeclaration(moduleDecl, context);

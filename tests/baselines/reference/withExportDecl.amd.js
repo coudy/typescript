@@ -21,7 +21,7 @@ define(["require", "exports"], function(require, exports) {
         'b'
     ];
     exports.exportedArrayVar;
-    0.ts.exportedArrayVar.push({
+    exportedArrayVar.push({
         x: 30,
         y: 'hello world'
     });

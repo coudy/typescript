@@ -8,6 +8,6 @@ define(["require", "exports", "importInsideModule_file1"], function(require, exp
         var foo = __foo__;
 
         var a = foo.x;
-    })(exports.myModule || (exports.myModule = {}));
-    var myModule = exports.myModule;
+    })(importInsideModule_file2.myModule || (importInsideModule_file2.myModule = {}));
+    var myModule = importInsideModule_file2.myModule;
 })

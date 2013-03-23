@@ -81,6 +81,7 @@ module TypeScript {
         }
 
         public isAlias() { return false; }
+        public isContainer() { return false; }        
 
         public getName() { return this.name; }
 
@@ -851,7 +852,6 @@ module TypeScript {
         public isFunction() { return false; }
         public isTypeParameter() { return false; }
         public isTypeVariable() { return false; }
-        public isContainer() { return false; }
 
         public setHasGenericSignature() { this.hasGenericSignature = true; }
 

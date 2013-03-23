@@ -200,7 +200,7 @@ module TypeScript {
                 createdNewSymbol = true;
             }
 
-            if (!moduleInstanceSymbol && (moduleContainerDecl.getFlags() & PullElementFlags.InitializedModule)) {
+            if (!moduleInstanceSymbol && (moduleContainerDecl.getFlags() & PullElementFlags.SomeInitializedModule)) {
                 moduleInstanceTypeSymbol = new PullTypeSymbol(modName, PullElementKind.ObjectType);
                 moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
 
@@ -303,7 +303,7 @@ module TypeScript {
             var importSymbol: PullTypeAliasSymbol = null;
             var declName = importDeclaration.getName();
             var parentHadSymbol = false;
-            var parent = this.getParent(true);
+            var parent = this.getParent();
 
             if (parent) {
                 importSymbol = <PullTypeAliasSymbol>parent.findMember(declName);
@@ -459,14 +459,20 @@ module TypeScript {
 
             var parent = this.getParent();
             var cleanedPreviousDecls = false;
+            var isExported = classDecl.getFlags() & PullElementFlags.Exported;
 
             var i = 0;
             var j = 0;
 
             if (parent) {
-                classSymbol = <PullClassTypeSymbol>parent.findNestedType(className);
+                if (isExported) {
+                    classSymbol = <PullClassTypeSymbol>parent.findMember(className);
+                }
+                else {
+                    classSymbol = <PullClassTypeSymbol>parent.findContainedMember(className);
+                }
             }
-            else if (!(classDecl.getFlags() & PullElementFlags.Exported)) {
+            else {
                 classSymbol = <PullClassTypeSymbol>this.findSymbolInContext(className, PullElementKind.SomeType, []);
             }
 
@@ -1055,7 +1061,7 @@ module TypeScript {
                         }
                     }
 
-                    if (classTypeSymbol) {
+                    if (classTypeSymbol && classTypeSymbol.isClass()) { // protect against duplicate declarations
                         variableSymbol = classTypeSymbol.getConstructorMethod();
                         variableDeclaration.setSymbol(variableSymbol);
 
@@ -1084,7 +1090,7 @@ module TypeScript {
                         variableSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     }
                 }
-                else if ((declFlags & PullElementFlags.InitializedModule)) {
+                else if (declFlags & PullElementFlags.SomeInitializedModule) {
                     var moduleContainerTypeSymbol: PullContainerTypeSymbol = null;
                     var moduleParent = this.getParent(false);
 
@@ -1092,7 +1098,7 @@ module TypeScript {
                         members = moduleParent.getMembers();
 
                         for (i = 0; i < members.length; i++) {
-                            if ((members[i].getName() == declName) && (members[i].getKind() == PullElementKind.Container)) {
+                            if ((members[i].getName() == declName) && (members[i].isContainer())) {
                                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>members[i];
                                 break;
                             }
@@ -1102,7 +1108,7 @@ module TypeScript {
                     if (!moduleContainerTypeSymbol) {
                         moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
 
-                        if (moduleContainerTypeSymbol && (moduleContainerTypeSymbol.getKind() != PullElementKind.Container)) {
+                        if (moduleContainerTypeSymbol && (!moduleContainerTypeSymbol.isContainer())) {
                             moduleContainerTypeSymbol = null;
                         }
                     }
@@ -1162,6 +1168,7 @@ module TypeScript {
 
             var isStatic = false;
             var isOptional = false;
+            var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) != 0;
 
             var linkKind = SymbolLinkKind.PublicMember;
 
@@ -1189,13 +1196,17 @@ module TypeScript {
 
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
 
-                // use the span, since we may not have an AST if this is a class constructor property for a class
-                // with an implicit constructor...
-                var span = propertyDeclaration.getSpan();
+                if (!propertySymbol.isType() || 
+                    !isImplicit ||
+                    (!(<PullTypeSymbol>propertySymbol).isClass() && isImplicit)) {
 
-                propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
+                    // use the span, since we may not have an AST if this is a class constructor property for a class
+                    // with an implicit constructor...
+                    var span = propertyDeclaration.getSpan();
 
+                    propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
+                }
+                
                 propertySymbol = null;
             }
 
@@ -1234,7 +1245,6 @@ module TypeScript {
             else {
                 // it's really an implicit class decl, so we need to set the type of the symbol to
                 // the constructor type
-                classTypeSymbol = null;
 
                 if (parent) {
                     var members = parent.getMembers();

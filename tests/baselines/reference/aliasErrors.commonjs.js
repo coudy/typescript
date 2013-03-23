@@ -23,8 +23,11 @@ var beez = foo.bar;
 var m = no;
 var m2 = no.mod;
 var n = ;
+5;
 var o = ;
+"s";
 var q = ;
+null;
 var r = undefined;
 var p = new provide.Provide();
 function use() {
@@ -32,5 +35,5 @@ function use() {
     var p1;
     var p2;
     var p3;
-    var p2 = new provide.Provide();
+    var p22 = new provide.Provide();
 }
