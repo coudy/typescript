@@ -223,12 +223,12 @@ module TypeScript {
             }
         }
 
-        public parseEmitOption(ioHost: EmitterIOHost) {
+        public parseEmitOption(ioHost: EmitterIOHost): IDiagnostic {
             this.emitOptions.ioHost = ioHost;
             if (this.emitOptions.compilationSettings.outputOption === "") {
                 this.emitOptions.outputMany = true;
                 this.emitOptions.commonDirectoryPath = "";
-                return;
+                return null;
             }
 
             this.emitOptions.compilationSettings.outputOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outputOption));
@@ -248,13 +248,15 @@ module TypeScript {
 
             // Verify if options are correct
             if (this.isDynamicModuleCompilation() && !this.emitOptions.outputMany) {
-                this.errorReporter.emitterError("Cannot compile dynamic modules when emitting into single file");
+                return new Diagnostic(0, 0, null, "Cannot compile dynamic modules when emitting into single file");
             }
 
             // Parse the directory structure
             if (this.emitOptions.outputMany) {
                 this.updateCommonDirectoryPath();
             }
+
+            return null;
         }
 
         public getScripts(): Script[] {
@@ -366,8 +368,8 @@ module TypeScript {
 
         // Caller is responsible for closing the returned emitter.
         private emitUnit(script: Script,
-                          inputOutputMapper?: (inputName: string, outputName: string) => void,
-                          emitter?: PullEmitter): PullEmitter {
+                         inputOutputMapper?: (inputName: string, outputName: string) => void,
+                         emitter?: PullEmitter): PullEmitter {
 
             if (script.emitRequired(this.emitOptions)) {
                 var fname = script.locationInfo.fileName;
@@ -380,11 +382,13 @@ module TypeScript {
                     if (this.settings.mapSourceFiles) {
                         emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
                     }
+
                     if (inputOutputMapper) {
                         // Remember the name of the outfile for this source file
                         inputOutputMapper(script.locationInfo.fileName, outFname);
                     }
-                } else if (this.settings.mapSourceFiles) {
+                }
+                else if (this.settings.mapSourceFiles) {
                     emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
                 }
 
@@ -397,16 +401,20 @@ module TypeScript {
         }
 
         public emit(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): IDiagnostic[] {
-            this.parseEmitOption(ioHost);
-
-            var sharedEmitter: PullEmitter = null;
             var diagnostics: IDiagnostic[] = [];
+
+            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            if (optionsDiagnostic) {
+                diagnostics.push(optionsDiagnostic);
+                return diagnostics;
+            }
 
             var startEmitTime = (new Date()).getTime();
 
             var fileNames = this.fileNameToScript.getAllKeys();
+            var sharedEmitter: PullEmitter = null;
 
-            // Iterate through the files, as long as we don't get a
+            // Iterate through the files, as long as we don't get an error.
             for (var i = 0, n = fileNames.length; i < n && diagnostics.length === 0; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
 
@@ -421,7 +429,8 @@ module TypeScript {
                     }
                 }
                 else {
-                    // We're not outputting to multiple files.  Keep using the same emitter
+                    // We're not outputting to multiple files.  Keep using the same emitter and don't
+                    // close until below.
                     sharedEmitter = this.emitUnit(script, inputOutputMapper, sharedEmitter);
                     if (sharedEmitter) {
                         diagnostics = sharedEmitter.diagnostics();

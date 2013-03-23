@@ -90,13 +90,15 @@ module TypeScript {
                 }
             }
 
-            if (lineMap) {
-                lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
+            if (error.fileName()) {
+                if (lineMap) {
+                    lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
 
-                this.textWriter.Write(error.fileName() + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
-            }
-            else {
-                this.textWriter.Write(error.fileName() + "(0,0): ");
+                    this.textWriter.Write(error.fileName() + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
+                }
+                else {
+                    this.textWriter.Write(error.fileName() + "(0,0): ");
+                }
             }
 
             this.textWriter.WriteLine(error.message());

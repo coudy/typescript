@@ -767,7 +767,11 @@ module Harness {
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
             compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-            compiler.parseEmitOption(stdout);
+            var diagnostic = compiler.parseEmitOption(stdout);
+            if (diagnostic) {
+                throw new Error(diagnostic.message());
+            }
+            
             compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText));
             return compiler;
         }
