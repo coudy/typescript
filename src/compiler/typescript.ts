@@ -293,60 +293,59 @@ module TypeScript {
             return true;
         }
 
-        private emitDeclarationsUnit(script: Script, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
-            if (!this.canEmitDeclarations(script)) {
-                return null;
+        // Caller is responsible for closing emitter.
+        private emitDeclarationsUnit1(script: Script, declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
+            if (this.canEmitDeclarations(script)) {
+                if (!declarationEmitter) {
+                    var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
+                    var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
+
+                    declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitOptions, this.errorReporter);
+                    declarationEmitter.setDeclarationFile(declareFile);
+                }
+
+                declarationEmitter.emitDeclarations(script);
             }
 
-            if (!declarationEmitter) {
-                var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
-                var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
-
-                declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitOptions, this.errorReporter);
-                declarationEmitter.setDeclarationFile(declareFile);
-            }
-
-            declarationEmitter.emitDeclarations(script);
-
-            if (!reuseEmitter) {
-                declarationEmitter.Close();
-                return null;
-            } else {
-                return declarationEmitter;
-            }
+            return declarationEmitter;
         }
 
-        public emitDeclarations() {
-            if (!this.canEmitDeclarations()) {
-                return;
-            }
+        public emitDeclarations1(): IDiagnostic[] {
+            var diagnostics: IDiagnostic[] = [];
+            if (this.canEmitDeclarations() &&
+                !this.errorReporter.hasErrors && !this.pullErrorReporter.hasErrors) {
 
-            if (this.errorReporter.hasErrors || this.pullErrorReporter.hasErrors) {
-                // There were errors reported, do not generate declaration file
-                return;
-            }
+                var sharedEmitter: DeclarationEmitter = null;
 
-            if (this.fileNameToScript.count() === 0) {
-                return;
-            }
+                var fileNames = this.fileNameToScript.getAllKeys();
 
-            var declarationEmitter: DeclarationEmitter = null;
+                // Keep on processing files as long as we don't get any errors.
+                for (var i = 0, n = fileNames.length; i < n && diagnostics.length === 0; i++) {
+                    var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
 
-            var fileNames = this.fileNameToScript.getAllKeys();
-            for (var i = 0, len = fileNames.length; i < len; i++) {
-                var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
-                if (this.emitOptions.outputMany || declarationEmitter === null) {
-                    // Create or reuse file
-                    declarationEmitter = this.emitDeclarationsUnit(script, !this.emitOptions.outputMany);
-                } else {
-                    // Emit in existing emitter
-                    this.emitDeclarationsUnit(script, true, declarationEmitter);
+                    if (this.emitOptions.outputMany) {
+                        var singleEmitter = this.emitDeclarationsUnit1(script);
+                        if (singleEmitter) {
+                            singleEmitter.Close();
+                            diagnostics = singleEmitter.diagnostics();
+                        }
+                    }
+                    else {
+                        // Create or reuse file
+                        sharedEmitter = this.emitDeclarationsUnit1(script, sharedEmitter);
+                        if (sharedEmitter) {
+                            diagnostics = sharedEmitter.diagnostics();
+                        }
+                    }
+                }
+
+                if (sharedEmitter) {
+                    sharedEmitter.Close();
+                    diagnostics = sharedEmitter.diagnostics();
                 }
             }
 
-            if (declarationEmitter) {
-                declarationEmitter.Close();
-            }
+            return diagnostics;
         }
 
         static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: bool) {
@@ -365,6 +364,7 @@ module TypeScript {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
+        // Caller is responsible for closing the returned emitter.
         private emitUnit(script: Script,
                           inputOutputMapper?: (inputName: string, outputName: string) => void,
                           emitter?: PullEmitter): PullEmitter {

@@ -1249,10 +1249,12 @@ module Harness {
             compiler.pullErrorReporter.reportDiagnostics(semanticDiagnostics);
 
             var errorLines = stderr.lines;
-            var emitterErrors = emit(stdout);
-            compiler.pullErrorReporter.reportDiagnostics(emitterErrors);
 
-            compiler.emitDeclarations();
+            var emitDiagnostics = emit(stdout);
+            compiler.pullErrorReporter.reportDiagnostics(emitDiagnostics);
+
+            var emitDeclarationsDiagnostics = compiler.emitDeclarations1();
+            compiler.pullErrorReporter.reportDiagnostics(emitDeclarationsDiagnostics);
 
             if (context) {
                 context.postCompile();

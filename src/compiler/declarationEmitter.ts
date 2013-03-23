@@ -45,6 +45,14 @@ module TypeScript {
         private ignoreCallbackAst: AST = null;
         private singleDeclFile: DeclFileWriter = null;
         private varListCount: number = 0;
+        private _diagnostics: IDiagnostic[] = [];
+
+        constructor (public checker: TypeChecker, public emitOptions: EmitOptions, public errorReporter: SimpleErrorReporter) {
+        }
+
+        public diagnostics(): IDiagnostic[]{
+            return this._diagnostics;
+        }
 
         public getAstDeclarationContainer() {
             return this.declarationContainerStack[this.declarationContainerStack.length - 1];
@@ -52,9 +60,6 @@ module TypeScript {
 
         private emitDottedModuleName() {
             return (this.isDottedModuleName.length === 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
-        }
-
-        constructor (public checker: TypeChecker, public emitOptions: EmitOptions, public errorReporter: SimpleErrorReporter) {
         }
 
         public setDeclarationFile(file: ITextWriter) {
