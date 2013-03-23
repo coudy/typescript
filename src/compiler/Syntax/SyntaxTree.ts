@@ -5,6 +5,7 @@ module TypeScript {
         private _sourceUnit: SourceUnitSyntax;
         private _isDeclaration: bool;
         private _diagnostics: SyntaxDiagnostic[];
+        private _fileName: string;
         private _lineMap: LineMap;
         private _languageVersion: LanguageVersion;
         private _parseOptions: ParseOptions;
@@ -12,12 +13,14 @@ module TypeScript {
         constructor(sourceUnit: SourceUnitSyntax,
                     isDeclaration: bool,
                     diagnostics: SyntaxDiagnostic[],
+                    fileName: string,
                     lineMap: LineMap,
                     languageVersion: LanguageVersion,
                     parseOtions: ParseOptions) {
             this._sourceUnit = sourceUnit;
             this._isDeclaration = isDeclaration;
             this._diagnostics = diagnostics;
+            this._fileName = fileName;
             this._lineMap = lineMap;
             this._languageVersion = languageVersion;
             this._parseOptions = parseOtions;
@@ -50,6 +53,10 @@ module TypeScript {
 
         public diagnostics(): SyntaxDiagnostic[] {
             return this._diagnostics;
+        }
+
+        public fileName(): string {
+            return this._fileName;
         }
 
         public lineMap(): LineMap {

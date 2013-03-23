@@ -429,10 +429,11 @@ module TypeScript.Parser {
         private rewindPointPool: IParserRewindPoint[] = [];
         private rewindPointPoolCount = 0;
 
-        constructor(text: ISimpleText,
+        constructor(fileName: string,
+                    text: ISimpleText,
                     languageVersion: LanguageVersion) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
-            this.scanner = new Scanner1(text, languageVersion);
+            this.scanner = new Scanner1(fileName, text, languageVersion);
         }
 
         public languageVersion(): LanguageVersion {
@@ -637,10 +638,10 @@ module TypeScript.Parser {
         // The cursor we use to navigate through and retrieve nodes and tokens from the old tree.
         private _oldSourceUnitCursor: SyntaxCursor;
 
-        constructor(oldSourceUnit: SourceUnitSyntax,
+        constructor(oldSyntaxTree: SyntaxTree,
                     textChangeRange: TextChangeRange,
-                    newText: ISimpleText,
-                    languageVersion: LanguageVersion) {
+                    newText: ISimpleText) {
+            var oldSourceUnit = oldSyntaxTree.sourceUnit();
             this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
 
             // In general supporting multiple individual edits is just not that important.  So we 
@@ -655,7 +656,7 @@ module TypeScript.Parser {
             // Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
 
             // Set up a scanner so that we can scan tokens out of the new text.
-            this._normalParserSource = new NormalParserSource(newText, languageVersion);
+            this._normalParserSource = new NormalParserSource(oldSyntaxTree.fileName(), newText, oldSyntaxTree.languageVersion());
         }
 
         private static extendToAffectedRange(changeRange:TextChangeRange,
@@ -1055,6 +1056,7 @@ module TypeScript.Parser {
     class ParserImpl {
         // Underlying source where we pull nodes and tokens from.
         private source: IParserSource;
+        private fileName: string;
         private lineMap: LineMap;
 
         private parseOptions: ParseOptions;
@@ -1084,7 +1086,8 @@ module TypeScript.Parser {
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
-        constructor(lineMap: LineMap, source: IParserSource, parseOptions: ParseOptions) {
+        constructor(fileName: string, lineMap: LineMap, source: IParserSource, parseOptions: ParseOptions) {
+            this.fileName = fileName;
             this.lineMap = lineMap;
             this.source = source;
             this.parseOptions = parseOptions;
@@ -1352,7 +1355,7 @@ module TypeScript.Parser {
                     // Report the missing semicolon at the end of the *previous* token.
 
                     this.addDiagnostic(
-                        new SyntaxDiagnostic(this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
+                        new SyntaxDiagnostic(this.fileName, this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
                 }
 
                 return semicolonToken;
@@ -1391,18 +1394,18 @@ module TypeScript.Parser {
 
             // They wanted something specific, just report that that token was missing.
             if (SyntaxFacts.isAnyKeyword(expectedKind) || SyntaxFacts.isAnyPunctuation(expectedKind)) {
-                return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
+                return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
             }
             else {
                 // They wanted an identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
-                    return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
+                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
+                    return new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
                 }
             }
 
@@ -1587,12 +1590,14 @@ module TypeScript.Parser {
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             if (allDiagnostics.length === 0) {
                 // If we have no scanner/parser errors, then also check for grammar errors as well.
-                // sourceUnit.accept(new GrammarErrorWalker(allDiagnostics));
+                if (isDeclaration) {
+                    // sourceUnit.accept(new DeclarationCheckerWalker(allDiagnostics));
+                }
             }
 
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 
-            return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.lineMap, this.source.languageVersion(), this.parseOptions);
+            return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.source.languageVersion(), this.parseOptions);
         }
 
         private setStrictMode(isInStrictMode: bool) {
@@ -2262,7 +2267,7 @@ module TypeScript.Parser {
         private handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword: ISyntaxToken): ISyntaxToken {
             Debug.assert(staticKeyword.tokenKind === SyntaxKind.StaticKeyword);
 
-            this.addDiagnostic(new SyntaxDiagnostic(
+            this.addDiagnostic(new SyntaxDiagnostic(this.fileName,
                 this.currentTokenStart(), this.currentToken().width(), DiagnosticCode._public_or_private_modifier_must_precede__static_, null));
 
             var publicOrPrivateKeyword = this.eatAnyToken();
@@ -2365,7 +2370,7 @@ module TypeScript.Parser {
                 // "function f() { return expr; }.
                 // 
                 // Detect if the user is typing this and attempt recovery.
-                var diagnostic = new SyntaxDiagnostic(
+                var diagnostic = new SyntaxDiagnostic(this.fileName,
                     this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_, []);
                 this.addDiagnostic(diagnostic);
 
@@ -5038,7 +5043,7 @@ module TypeScript.Parser {
                     items.length % 2 === 0 &&
                     items[items.length - 1] === this.previousToken()) {
 
-                    this.addDiagnostic(new SyntaxDiagnostic(
+                    this.addDiagnostic(new SyntaxDiagnostic(this.fileName,
                         this.previousTokenStart(), this.previousToken().width(), DiagnosticCode.Trailing_separator_not_allowed, null));
                 }
             }
@@ -5170,7 +5175,7 @@ module TypeScript.Parser {
         private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
             var token = this.currentToken();
 
-            var diagnostic = new SyntaxDiagnostic(
+            var diagnostic = new SyntaxDiagnostic(this.fileName,
                 this.currentTokenStart(), token.width(), DiagnosticCode.Unexpected_token__0_expected, [this.getExpectedListElementType(listType)]);
             this.addDiagnostic(diagnostic);
         }
@@ -5609,18 +5614,15 @@ module TypeScript.Parser {
         }
     }
 
-    //class GrammarErrorWalker extends PositionTrackingWalker {
-
-    //}
-
-    export function parse(text: ISimpleText,
+    export function parse(fileName: string,
+                          text: ISimpleText,
                           isDeclaration: bool,
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                           options?: ParseOptions = null): SyntaxTree {
-        var source = new NormalParserSource(text, languageVersion);
+        var source = new NormalParserSource(fileName, text, languageVersion);
         options = options || new ParseOptions();
 
-        return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
+        return new ParserImpl(fileName, text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
     }
 
     export function incrementalParse(oldSyntaxTree: SyntaxTree,
@@ -5630,9 +5632,8 @@ module TypeScript.Parser {
             return oldSyntaxTree;
         }
         
-        var source = new IncrementalParserSource(
-            oldSyntaxTree.sourceUnit(), textChangeRange, newText, oldSyntaxTree.languageVersion());
+        var source = new IncrementalParserSource(oldSyntaxTree, textChangeRange, newText);
 
-        return new ParserImpl(newText.lineMap(), source, oldSyntaxTree.parseOptions()).parseSyntaxTree(oldSyntaxTree.isDeclaration());
+        return new ParserImpl(oldSyntaxTree.fileName(), newText.lineMap(), source, oldSyntaxTree.parseOptions()).parseSyntaxTree(oldSyntaxTree.isDeclaration());
     }
 }

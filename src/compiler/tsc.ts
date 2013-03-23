@@ -132,7 +132,7 @@ class BatchCompiler {
         for (var i = 0; i < this.compilationEnvironment.code.length; i++) {
             if (!commandLineHost.isResolved(this.compilationEnvironment.code[i].path)) {
                 var path = this.compilationEnvironment.code[i].path;
-                if (!TypeScript.isSTRFile(path) && !TypeScript.isDSTRFile(path) && !TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
+                if (!TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
                     this.errorReporter.WriteLine("Unknown extension for file: \"" + path + "\". Only .ts and .d.ts extensions are allowed.");
                 }
                 else {
@@ -174,7 +174,7 @@ class BatchCompiler {
                     // preprocess the file contents and add in referenced files as well
                     if (this.compilationSettings.generateDeclarationFiles) {
                         TypeScript.CompilerDiagnostics.assert(code.referencedFiles === null, "With no resolve option, referenced files need to null");
-                        code.referencedFiles = TypeScript.getReferencedFiles(code);
+                        code.referencedFiles = TypeScript.getReferencedFiles(code.path, code);
                     }
                 }
 
@@ -188,9 +188,7 @@ class BatchCompiler {
                         var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
                         for (var i = 0, n = diagnostics.length; i < n; i++) {
                             var diagnostic = diagnostics[i];
-                            compiler.pullErrorReporter.reportError(
-                                new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
-                                syntaxTree.lineMap());
+                            compiler.pullErrorReporter.reportDiagnostic(diagnostic, syntaxTree.lineMap());
                         }
                     }
                 }

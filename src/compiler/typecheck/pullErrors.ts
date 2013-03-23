@@ -9,22 +9,23 @@ module TypeScript {
     // pull errors are declared at a specific offset from a given decl
     // adjustedOffset is set when the error is added to a decl
 
-    export interface SemanticError extends IDiagnostic {
-        fileName: string;
-        adjustOffset(pos: number): void;
-    }
-
-    export class PullError implements SemanticError {
+    export class PullDiagnostic implements IDiagnostic {
         private _originalStart: number;
+        private _fileName: string;
         private _start: number;
         private _length: number;
         private _message: string;
 
-        constructor(start: number, length: number, public fileName: string, message: string) {
+        constructor(start: number, length: number, fileName: string, message: string) {
             this._originalStart = start;
+            this._fileName = fileName;
             this._start = start;
             this._length = length;
             this._message = message;
+        }
+
+        public fileName(): string {
+            return this._fileName;
         }
 
         public start(): number {
@@ -44,8 +45,8 @@ module TypeScript {
         }
     }
 
-    export function getErrorsFromEnclosingDecl(enclosingDecl: PullDecl, errors: SemanticError[]) {
-        var declErrors = enclosingDecl.getErrors();
+    export function getDiagnosticsFromEnclosingDecl(enclosingDecl: PullDecl, errors: IDiagnostic[]) {
+        var declErrors = enclosingDecl.getDiagnostics();
         var i = 0;
 
         if (declErrors) {
@@ -57,7 +58,7 @@ module TypeScript {
         var childDecls = enclosingDecl.getChildDecls();
 
         for (i = 0; i < childDecls.length; i++) {
-            getErrorsFromEnclosingDecl(childDecls[i], errors);
+            getDiagnosticsFromEnclosingDecl(childDecls[i], errors);
         }
     }
 
@@ -79,9 +80,9 @@ module TypeScript {
             }
         }
 
-        public reportError(error: SemanticError, lineMap: LineMap = null) {
+        public reportDiagnostic(error: IDiagnostic, lineMap: LineMap = null) {
             if (lineMap === null) {
-                var locationInfo = this.locationInfoCache[error.fileName];
+                var locationInfo = this.locationInfoCache[error.fileName()];
                 if (locationInfo && locationInfo.lineMap) {
                     lineMap = locationInfo.lineMap;
                 }
@@ -90,18 +91,18 @@ module TypeScript {
             if (lineMap) {
                 lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
 
-                this.textWriter.Write(error.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
+                this.textWriter.Write(error.fileName() + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
             }
             else {
-                this.textWriter.Write(error.fileName + "(0,0): ");
+                this.textWriter.Write(error.fileName() + "(0,0): ");
             }
 
             this.textWriter.WriteLine(error.message());
         }
 
-        public reportErrors(errors: SemanticError[]) {
+        public reportDiagnostics(errors: IDiagnostic[]) {
             for (var i = 0; i < errors.length; i++) {
-                this.reportError(errors[i]);
+                this.reportDiagnostic(errors[i]);
                 this.hasErrors = true;
             }
         }

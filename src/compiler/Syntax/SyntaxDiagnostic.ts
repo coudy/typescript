@@ -2,16 +2,18 @@
 
 module TypeScript {
     export class SyntaxDiagnostic extends Diagnostic1 implements IDiagnostic {
+        private _fileName: string;
         private _start: number;
         private _length: number;
 
-        constructor(start: number, length: number, code: DiagnosticCode, args: any[]) {
+        constructor(fileName: string, start: number, length: number, code: DiagnosticCode, args: any[]) {
             super(code, args);
 
             if (length < 0) {
                 throw Errors.argumentOutOfRange("width");
             }
 
+            this._fileName = fileName;
             this._start = start;
             this._length = length;
         }
@@ -28,6 +30,10 @@ module TypeScript {
             }
 
             return result;
+        }
+
+        public fileName(): string {
+            return this._fileName;
         }
 
         public start(): number {

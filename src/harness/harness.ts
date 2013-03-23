@@ -1243,10 +1243,10 @@ module Harness {
             compiler.pullErrorReporter.textWriter = stderr;
 
             var syntacticDiagnostics = compiler.fileNameToSyntaxTree.lookup(uName).diagnostics();
-            compiler.pullErrorReporter.reportErrors(syntacticDiagnostics.map(d => new TypeScript.PullError(d.start(), d.length(), uName, d.message())));
+            compiler.pullErrorReporter.reportDiagnostics(syntacticDiagnostics);
 
-            var semanticErrors = compiler.pullGetErrorsForFile(uName);
-            compiler.pullErrorReporter.reportErrors(semanticErrors);
+            var semanticErrors = compiler.getSemanticDiagnostics(uName);
+            compiler.pullErrorReporter.reportDiagnostics(semanticErrors);
 
             var errorLines = stderr.lines;
             emit(stdout);
@@ -1604,7 +1604,7 @@ module Harness {
         /** Parse file given its source text */
         public parseSourceText(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.Script {
             return TypeScript.SyntaxTreeToAstVisitor.visit(
-                TypeScript.Parser.parse(TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName)),
+                TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName)),
                 fileName, new TypeScript.CompilationSettings());
         }
 

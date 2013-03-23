@@ -400,9 +400,7 @@ module Services {
 
         public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             this.compilerState.refresh();
-
-            // JOE: Here is where you should call and get the right set of semantic errors for this file.
-            return this.compilerState.pullGetErrorsForFile(fileName);
+            return this.compilerState.getSemanticDiagnostics(fileName);
         }
 
         public getEmitOutput(fileName: string): IOutputFile[] {
@@ -1159,9 +1157,9 @@ module Services {
 
         private createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
+            var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
-            var syntaxTree = TypeScript.Parser.parse(segmentedScriptSnapshot, TypeScript.isDTSFile(fileName));
+            var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName));
 
             return syntaxTree
         }

@@ -32,7 +32,7 @@ module TypeScript {
 
         private scriptName: string;
 
-        private errors: PullError[] = null;
+        private diagnostics: IDiagnostic[] = null;
 
         private parentDecl: PullDecl = null;
 
@@ -79,34 +79,34 @@ module TypeScript {
             this.parentDecl = parentDecl;
         }
 
-        public addError(error: PullError) {
-            if (!this.errors) {
-                this.errors = [];
+        public addDiagnostic(diagnostic: IDiagnostic) {
+            if (!this.diagnostics) {
+                this.diagnostics = [];
             }
 
             //error.adjustOffset(this.span.start());
 
-            this.errors[this.errors.length] = error;
+            this.diagnostics[this.diagnostics.length] = diagnostic;
         }
 
-        public getErrors(): PullError[] {
-            return this.errors;
+        public getDiagnostics(): IDiagnostic[] {
+            return this.diagnostics;
         }
 
-        public setErrors(errors: PullError[]) {
-            if (errors) {
-                this.errors = [];
+        public setErrors(diagnostics: PullDiagnostic[]) {
+            if (diagnostics) {
+                this.diagnostics = [];
 
                 // adjust the spans as we parent the errors to the new decl
-                for (var i = 0; i < errors.length; i++) {
-                    errors[i].adjustOffset(this.span.start());
-                    this.errors[this.errors.length] = errors[i];
+                for (var i = 0; i < diagnostics.length; i++) {
+                    diagnostics[i].adjustOffset(this.span.start());
+                    this.diagnostics[this.diagnostics.length] = diagnostics[i];
                 }
             }
         }
 
         public resetErrors() {
-            this.errors = [];
+            this.diagnostics = [];
         }
 
         // returns 'true' if the child decl was successfully added
