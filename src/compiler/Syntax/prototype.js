@@ -2279,10 +2279,11 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var Scanner1 = (function () {
-        function Scanner1(text, languageVersion, window) {
+        function Scanner1(fileName, text, languageVersion, window) {
             if (typeof window === "undefined") { window = TypeScript.ArrayUtilities.createArray(2048, 0); }
             Scanner1.initializeStaticData();
             this.slidingWindow = new TypeScript.SlidingWindow(this, window, 0, text.length());
+            this.fileName = fileName;
             this.text = text;
             this._languageVersion = languageVersion;
         }
@@ -2369,7 +2370,7 @@ var TypeScript;
         };
         Scanner1.triviaWindow = TypeScript.ArrayUtilities.createArray(2048, 0);
         Scanner1.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
-            var scanner = new Scanner1(text.subText(new TypeScript.TextSpan(start, length)), 1 /* EcmaScript5 */ , Scanner1.triviaWindow);
+            var scanner = new Scanner1(null, text.subText(new TypeScript.TextSpan(start, length)), 1 /* EcmaScript5 */ , Scanner1.triviaWindow);
             return scanner.scanTrivia(isTrailing);
         };
         Scanner1.prototype.scanTrivia = function (isTrailing) {
@@ -2563,7 +2564,7 @@ var TypeScript;
             while(true) {
                 if (this.slidingWindow.isAtEndOfSource()) {
                     if (diagnostics !== null) {
-                        diagnostics.push(new TypeScript.SyntaxDiagnostic(this.slidingWindow.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
+                        diagnostics.push(new TypeScript.SyntaxDiagnostic(this.fileName, this.slidingWindow.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
                     }
                     return width;
                 }
@@ -2975,7 +2976,7 @@ var TypeScript;
             this.slidingWindow.moveToNextItem();
             var text = String.fromCharCode(character);
             var messageText = this.getErrorMessageText(text);
-            diagnostics.push(new TypeScript.SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
+            diagnostics.push(new TypeScript.SyntaxDiagnostic(this.fileName, position, 1, 1 /* Unexpected_character_0 */ , [
                 messageText
             ]));
             return 9 /* ErrorToken */ ;
@@ -3021,7 +3022,7 @@ var TypeScript;
                     this.slidingWindow.moveToNextItem();
                     break;
                 } else if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
-                    diagnostics.push(new TypeScript.SyntaxDiagnostic(this.slidingWindow.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ , null));
+                    diagnostics.push(new TypeScript.SyntaxDiagnostic(this.fileName, this.slidingWindow.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ , null));
                     break;
                 } else {
                     this.slidingWindow.moveToNextItem();
@@ -3128,7 +3129,7 @@ var TypeScript;
             }
         };
         Scanner1.prototype.createIllegalEscapeDiagnostic = function (start, end) {
-            return new TypeScript.SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ , null);
+            return new TypeScript.SyntaxDiagnostic(this.fileName, start, end - start, 0 /* Unrecognized_escape_sequence */ , null);
         };
         return Scanner1;
     })();
@@ -4130,11 +4131,12 @@ var TypeScript;
 (function (TypeScript) {
     var SyntaxDiagnostic = (function (_super) {
         __extends(SyntaxDiagnostic, _super);
-        function SyntaxDiagnostic(start, length, code, args) {
+        function SyntaxDiagnostic(fileName, start, length, code, args) {
             _super.call(this, code, args);
             if (length < 0) {
                 throw TypeScript.Errors.argumentOutOfRange("width");
             }
+            this._fileName = fileName;
             this._start = start;
             this._length = length;
         }
@@ -4148,6 +4150,9 @@ var TypeScript;
                 result._arguments = arguments;
             }
             return result;
+        };
+        SyntaxDiagnostic.prototype.fileName = function () {
+            return this._fileName;
         };
         SyntaxDiagnostic.prototype.start = function () {
             return this._start;
@@ -14498,10 +14503,11 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var SyntaxTree = (function () {
-        function SyntaxTree(sourceUnit, isDeclaration, diagnostics, lineMap, languageVersion, parseOtions) {
+        function SyntaxTree(sourceUnit, isDeclaration, diagnostics, fileName, lineMap, languageVersion, parseOtions) {
             this._sourceUnit = sourceUnit;
             this._isDeclaration = isDeclaration;
             this._diagnostics = diagnostics;
+            this._fileName = fileName;
             this._lineMap = lineMap;
             this._languageVersion = languageVersion;
             this._parseOptions = parseOtions;
@@ -14526,6 +14532,9 @@ var TypeScript;
         };
         SyntaxTree.prototype.diagnostics = function () {
             return this._diagnostics;
+        };
+        SyntaxTree.prototype.fileName = function () {
+            return this._fileName;
         };
         SyntaxTree.prototype.lineMap = function () {
             return this._lineMap;
@@ -15947,14 +15956,14 @@ var TypeScript;
             return SyntaxCursor;
         })();        
         var NormalParserSource = (function () {
-            function NormalParserSource(text, languageVersion) {
+            function NormalParserSource(fileName, text, languageVersion) {
                 this._previousToken = null;
                 this._absolutePosition = 0;
                 this._tokenDiagnostics = [];
                 this.rewindPointPool = [];
                 this.rewindPointPoolCount = 0;
                 this.slidingWindow = new TypeScript.SlidingWindow(this, TypeScript.ArrayUtilities.createArray(32, null), null);
-                this.scanner = new TypeScript.Scanner1(text, languageVersion);
+                this.scanner = new TypeScript.Scanner1(fileName, text, languageVersion);
             }
             NormalParserSource.prototype.languageVersion = function () {
                 return this.scanner.languageVersion();
@@ -16048,11 +16057,12 @@ var TypeScript;
             return NormalParserSource;
         })();        
         var IncrementalParserSource = (function () {
-            function IncrementalParserSource(oldSourceUnit, textChangeRange, newText, languageVersion) {
+            function IncrementalParserSource(oldSyntaxTree, textChangeRange, newText) {
                 this._changeDelta = 0;
+                var oldSourceUnit = oldSyntaxTree.sourceUnit();
                 this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
                 this._changeRange = IncrementalParserSource.extendToAffectedRange(textChangeRange, oldSourceUnit);
-                this._normalParserSource = new NormalParserSource(newText, languageVersion);
+                this._normalParserSource = new NormalParserSource(oldSyntaxTree.fileName(), newText, oldSyntaxTree.languageVersion());
             }
             IncrementalParserSource.extendToAffectedRange = function extendToAffectedRange(changeRange, sourceUnit) {
                 var maxLookahead = 1;
@@ -16227,13 +16237,14 @@ var TypeScript;
             return IncrementalParserSource;
         })();        
         var ParserImpl = (function () {
-            function ParserImpl(lineMap, source, parseOptions) {
+            function ParserImpl(fileName, lineMap, source, parseOptions) {
                 this.listParsingState = 0;
                 this.isInStrictMode = false;
                 this.diagnostics = [];
                 this.factory = TypeScript.Syntax.normalModeFactory;
                 this.mergeTokensStorage = [];
                 this.arrayPool = [];
+                this.fileName = fileName;
                 this.lineMap = lineMap;
                 this.source = source;
                 this.parseOptions = parseOptions;
@@ -16391,7 +16402,7 @@ var TypeScript;
                 if (this.canEatAutomaticSemicolon(allowWithoutNewline)) {
                     var semicolonToken = TypeScript.Syntax.emptyToken(78 /* SemicolonToken */ );
                     if (!this.parseOptions.allowAutomaticSemicolonInsertion()) {
-                        this.addDiagnostic(new TypeScript.SyntaxDiagnostic(this.previousTokenEnd(), 0, 7 /* Automatic_semicolon_insertion_not_allowed */ , null));
+                        this.addDiagnostic(new TypeScript.SyntaxDiagnostic(this.fileName, this.previousTokenEnd(), 0, 7 /* Automatic_semicolon_insertion_not_allowed */ , null));
                     }
                     return semicolonToken;
                 }
@@ -16416,16 +16427,16 @@ var TypeScript;
             ParserImpl.prototype.getExpectedTokenDiagnostic = function (expectedKind, actual) {
                 var token = this.currentToken();
                 if (TypeScript.SyntaxFacts.isAnyKeyword(expectedKind) || TypeScript.SyntaxFacts.isAnyPunctuation(expectedKind)) {
-                    return new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), token.width(), 5 /* _0_expected */ , [
+                    return new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), 5 /* _0_expected */ , [
                         TypeScript.SyntaxFacts.getText(expectedKind)
                     ]);
                 } else {
                     if (actual !== null && TypeScript.SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
-                        return new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), token.width(), 6 /* Identifier_expected__0_is_a_keyword */ , [
+                        return new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), 6 /* Identifier_expected__0_is_a_keyword */ , [
                             TypeScript.SyntaxFacts.getText(actual.tokenKind)
                         ]);
                     } else {
-                        return new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), token.width(), 3 /* Identifier_expected */ , null);
+                        return new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), 3 /* Identifier_expected */ , null);
                     }
                 }
             };
@@ -16556,11 +16567,13 @@ var TypeScript;
                 var sourceUnit = this.parseSourceUnit();
                 var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
                 if (allDiagnostics.length === 0) {
+                    if (isDeclaration) {
+                    }
                 }
                 allDiagnostics.sort(function (a, b) {
                     return a.start() - b.start();
                 });
-                return new TypeScript.SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.lineMap, this.source.languageVersion(), this.parseOptions);
+                return new TypeScript.SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.source.languageVersion(), this.parseOptions);
             };
             ParserImpl.prototype.setStrictMode = function (isInStrictMode) {
                 this.isInStrictMode = isInStrictMode;
@@ -16971,7 +16984,7 @@ var TypeScript;
             };
             ParserImpl.prototype.handlePublicOrPrivateKeywordAfterStaticKeyword = function (staticKeyword) {
                 TypeScript.Debug.assert(staticKeyword.tokenKind === 58 /* StaticKeyword */ );
-                this.addDiagnostic(new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), this.currentToken().width(), 11 /* _public_or_private_modifier_must_precede__static_ */ , null));
+                this.addDiagnostic(new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), this.currentToken().width(), 11 /* _public_or_private_modifier_must_precede__static_ */ , null));
                 var publicOrPrivateKeyword = this.eatAnyToken();
                 TypeScript.Debug.assert(publicOrPrivateKeyword.tokenKind === 57 /* PublicKeyword */  || publicOrPrivateKeyword.tokenKind === 55 /* PrivateKeyword */ );
                 var skippedTokens = this.getArray();
@@ -17025,7 +17038,7 @@ var TypeScript;
                 var token0 = this.currentToken();
                 var hasEqualsGreaterThanToken = token0.tokenKind === 85 /* EqualsGreaterThanToken */ ;
                 if (hasEqualsGreaterThanToken) {
-                    var diagnostic = new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), token0.width(), 12 /* Unexpected_token_ */ , []);
+                    var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(), 12 /* Unexpected_token_ */ , []);
                     this.addDiagnostic(diagnostic);
                     var token = this.eatAnyToken();
                     return this.addSkippedTokenAfterNode(callSignature, token0);
@@ -18597,7 +18610,7 @@ var TypeScript;
                     this.reportUnexpectedTokenDiagnostic(currentListType);
                 } else {
                     if (listWasTerminated && !allowTrailingSeparator && items.length > 0 && items.length % 2 === 0 && items[items.length - 1] === this.previousToken()) {
-                        this.addDiagnostic(new TypeScript.SyntaxDiagnostic(this.previousTokenStart(), this.previousToken().width(), 9 /* Trailing_separator_not_allowed */ , null));
+                        this.addDiagnostic(new TypeScript.SyntaxDiagnostic(this.fileName, this.previousTokenStart(), this.previousToken().width(), 9 /* Trailing_separator_not_allowed */ , null));
                     }
                 }
                 var result = TypeScript.Syntax.separatedList(items);
@@ -18711,7 +18724,7 @@ var TypeScript;
             };
             ParserImpl.prototype.reportUnexpectedTokenDiagnostic = function (listType) {
                 var token = this.currentToken();
-                var diagnostic = new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), token.width(), 8 /* Unexpected_token__0_expected */ , [
+                var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token.width(), 8 /* Unexpected_token__0_expected */ , [
                     this.getExpectedListElementType(listType)
                 ]);
                 this.addDiagnostic(diagnostic);
@@ -19001,20 +19014,20 @@ var TypeScript;
             };
             return ParserImpl;
         })();        
-        function parse(text, isDeclaration, languageVersion, options) {
+        function parse(fileName, text, isDeclaration, languageVersion, options) {
             if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
             if (typeof options === "undefined") { options = null; }
-            var source = new NormalParserSource(text, languageVersion);
+            var source = new NormalParserSource(fileName, text, languageVersion);
             options = options || new TypeScript.ParseOptions();
-            return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
+            return new ParserImpl(fileName, text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
         }
         Parser.parse = parse;
         function incrementalParse(oldSyntaxTree, textChangeRange, newText) {
             if (textChangeRange.isUnchanged()) {
                 return oldSyntaxTree;
             }
-            var source = new IncrementalParserSource(oldSyntaxTree.sourceUnit(), textChangeRange, newText, oldSyntaxTree.languageVersion());
-            return new ParserImpl(newText.lineMap(), source, oldSyntaxTree.parseOptions()).parseSyntaxTree(oldSyntaxTree.isDeclaration());
+            var source = new IncrementalParserSource(oldSyntaxTree, textChangeRange, newText);
+            return new ParserImpl(oldSyntaxTree.fileName(), newText.lineMap(), source, oldSyntaxTree.parseOptions()).parseSyntaxTree(oldSyntaxTree.isDeclaration());
         }
         Parser.incrementalParse = incrementalParse;
     })(TypeScript.Parser || (TypeScript.Parser = {}));
@@ -24309,8 +24322,8 @@ var TypeScript;
             }).length;
         };
         IncrementalParserTests.compareTrees = function compareTrees(oldText, newText, textChangeRange, reusedElements) {
-            var oldTree = TypeScript.Parser.parse(oldText, false, 1 /* EcmaScript5 */ );
-            var newTree = TypeScript.Parser.parse(newText, false, 1 /* EcmaScript5 */ );
+            var oldTree = TypeScript.Parser.parse("", oldText, false, 1 /* EcmaScript5 */ );
+            var newTree = TypeScript.Parser.parse("", newText, false, 1 /* EcmaScript5 */ );
             var incrementalNewTree = TypeScript.Parser.incrementalParse(oldTree, textChangeRange, newText);
             TypeScript.Debug.assert(newTree.structuralEquals(incrementalNewTree));
             TypeScript.Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
@@ -40506,7 +40519,7 @@ var TypeScript;
                 if (resolvedFile && resolvedFile.content != null) {
                     var rootDir = ioHost.dirName(resolvedFile.path);
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
-                    var preProcessedFileInfo = TypeScript.preProcessFile(sourceUnit, this.environment.compilationSettings);
+                    var preProcessedFileInfo = TypeScript.preProcessFile(resolvedFile.path, sourceUnit, this.environment.compilationSettings);
                     var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
                     var i = 0;
                     var resolutionResult;
@@ -40723,8 +40736,8 @@ var TypeScript;
         }
     }
     TypeScript.getStyleSettings = getStyleSettings;
-    function getReferencedFiles(sourceText) {
-        var preProcessInfo = preProcessFile(sourceText, null, false);
+    function getReferencedFiles(fileName, sourceText) {
+        var preProcessInfo = preProcessFile(fileName, sourceText, null, false);
         return preProcessInfo.referencedFiles;
     }
     TypeScript.getReferencedFiles = getReferencedFiles;
@@ -40805,11 +40818,11 @@ var TypeScript;
         };
     }
     TypeScript.processTripleSlashDirectives = processTripleSlashDirectives;
-    function preProcessFile(sourceText, settings, readImportFiles) {
+    function preProcessFile(fileName, sourceText, settings, readImportFiles) {
         if (typeof settings === "undefined") { settings = new CompilationSettings(); }
         if (typeof readImportFiles === "undefined") { readImportFiles = true; }
         var text = TypeScript.SimpleText.fromScriptSnapshot(sourceText);
-        var scanner = new TypeScript.Scanner1(text, 1 /* EcmaScript5 */ , scannerWindow);
+        var scanner = new TypeScript.Scanner1(fileName, text, 1 /* EcmaScript5 */ , scannerWindow);
         var firstToken = scanner.scan(scannerDiagnostics, false);
         var importedFiles = [];
         if (readImportFiles) {
@@ -41691,7 +41704,7 @@ var TypeScript;
             this.childDeclTypeParameterCache = new TypeScript.BlockIntrinsics();
             this.declID = TypeScript.pullDeclID++;
             this.declFlags = 0 /* None */ ;
-            this.errors = null;
+            this.diagnostics = null;
             this.parentDecl = null;
             this.synthesizedValDecl = null;
             this.declName = declName;
@@ -41748,26 +41761,26 @@ var TypeScript;
         PullDecl.prototype.setParentDecl = function (parentDecl) {
             this.parentDecl = parentDecl;
         };
-        PullDecl.prototype.addError = function (error) {
-            if (!this.errors) {
-                this.errors = [];
+        PullDecl.prototype.addDiagnostic = function (diagnostic) {
+            if (!this.diagnostics) {
+                this.diagnostics = [];
             }
-            this.errors[this.errors.length] = error;
+            this.diagnostics[this.diagnostics.length] = diagnostic;
         };
-        PullDecl.prototype.getErrors = function () {
-            return this.errors;
+        PullDecl.prototype.getDiagnostics = function () {
+            return this.diagnostics;
         };
-        PullDecl.prototype.setErrors = function (errors) {
-            if (errors) {
-                this.errors = [];
-                for(var i = 0; i < errors.length; i++) {
-                    errors[i].adjustOffset(this.span.start());
-                    this.errors[this.errors.length] = errors[i];
+        PullDecl.prototype.setErrors = function (diagnostics) {
+            if (diagnostics) {
+                this.diagnostics = [];
+                for(var i = 0; i < diagnostics.length; i++) {
+                    diagnostics[i].adjustOffset(this.span.start());
+                    this.diagnostics[this.diagnostics.length] = diagnostics[i];
                 }
             }
         };
         PullDecl.prototype.resetErrors = function () {
-            this.errors = [];
+            this.diagnostics = [];
         };
         PullDecl.prototype.addChildDecl = function (childDecl, addIfDuplicate) {
             if (typeof addIfDuplicate === "undefined") { addIfDuplicate = true; }
@@ -44102,7 +44115,7 @@ var TypeScript;
             this.provisional = provisional;
             this.substitutions = substitutions;
             this.provisionallyTypedSymbols = [];
-            this.provisionalErrors = [];
+            this.provisionalDiagnostic = [];
         }
         PullContextualTypeContext.prototype.recordProvisionallyTypedSymbol = function (symbol) {
             this.provisionallyTypedSymbols[this.provisionallyTypedSymbols.length] = symbol;
@@ -44112,11 +44125,11 @@ var TypeScript;
                 this.provisionallyTypedSymbols[i].invalidate();
             }
         };
-        PullContextualTypeContext.prototype.postError = function (error) {
-            this.provisionalErrors[this.provisionalErrors.length] = error;
+        PullContextualTypeContext.prototype.postDiagnostic = function (error) {
+            this.provisionalDiagnostic[this.provisionalDiagnostic.length] = error;
         };
         PullContextualTypeContext.prototype.hadProvisionalErrors = function () {
-            return this.provisionalErrors.length > 0;
+            return this.provisionalDiagnostic.length > 0;
         };
         return PullContextualTypeContext;
     })();
@@ -44195,11 +44208,11 @@ var TypeScript;
             return type;
         };
         PullTypeResolutionContext.prototype.postError = function (offset, length, fileName, message, enclosingDecl) {
-            var error = new TypeScript.PullError(offset, length, fileName, message);
+            var error = new TypeScript.PullDiagnostic(offset, length, fileName, message);
             if (this.inProvisionalResolution()) {
-                (this.contextStack[this.contextStack.length - 1]).postError(error);
+                (this.contextStack[this.contextStack.length - 1]).postDiagnostic(error);
             } else if (enclosingDecl) {
-                enclosingDecl.addError(error);
+                enclosingDecl.addDiagnostic(error);
             }
         };
         return PullTypeResolutionContext;
@@ -48112,9 +48125,9 @@ var TypeScript;
             this.syntaxElementSymbolMap.link(TypeScript.Collections.identityHashCode(syntaxElement).toString(), symbol);
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
         };
-        SemanticInfo.prototype.getErrors = function (semanticErrors) {
+        SemanticInfo.prototype.getDiagnostics = function (semanticErrors) {
             for(var i = 0; i < this.topLevelDecls.length; i++) {
-                TypeScript.getErrorsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
+                TypeScript.getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
             }
         };
         return SemanticInfo;
@@ -48304,10 +48317,10 @@ var TypeScript;
             symbol.addCacheID(symID);
             symbol.invalidateCachedIDs(this.symbolCache);
         };
-        SemanticInfoChain.prototype.postErrors = function () {
+        SemanticInfoChain.prototype.postDiagnostics = function () {
             var errors = [];
             for(var i = 1; i < this.units.length; i++) {
-                this.units[i].getErrors(errors);
+                this.units[i].getDiagnostics(errors);
             }
             return errors;
         };
@@ -49138,7 +49151,7 @@ var TypeScript;
                 moduleContainerTypeSymbol = this.findSymbolInContext(modName, TypeScript.PullElementKind.SomeType, []);
             }
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != 8 /* Container */ ) {
-                moduleContainerDecl.addError(new TypeScript.PullError(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                moduleContainerDecl.addDiagnostic(new TypeScript.PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     modName
                 ])));
                 moduleContainerTypeSymbol = null;
@@ -49225,7 +49238,7 @@ var TypeScript;
                 enumSymbol = this.findSymbolInContext(enumName, TypeScript.PullElementKind.SomeType, []);
             }
             if (enumSymbol && (enumSymbol.getKind() != 128 /* Enum */  || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
-                enumDeclaration.addError(new TypeScript.PullError(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                enumDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     enumName
                 ])));
                 enumSymbol = null;
@@ -49285,7 +49298,7 @@ var TypeScript;
                 classSymbol = this.findSymbolInContext(className, TypeScript.PullElementKind.SomeType, []);
             }
             if (classSymbol && (classSymbol.getKind() != 16 /* Class */  || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
-                classDecl.addError(new TypeScript.PullError(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                classDecl.addDiagnostic(new TypeScript.PullDiagnostic(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     className
                 ])));
                 classSymbol = null;
@@ -49447,7 +49460,7 @@ var TypeScript;
                 interfaceSymbol = this.findSymbolInContext(interfaceName, TypeScript.PullElementKind.SomeType, []);
             }
             if (interfaceSymbol && (interfaceSymbol.getKind() != 32 /* Interface */ )) {
-                interfaceDecl.addError(new TypeScript.PullError(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                interfaceDecl.addDiagnostic(new TypeScript.PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     interfaceName
                 ])));
                 interfaceSymbol = null;
@@ -49620,7 +49633,7 @@ var TypeScript;
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
                 if ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0) {
                     span = variableDeclaration.getSpan();
-                    variableDeclaration.addError(new TypeScript.PullError(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                    variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                         declName
                     ])));
                     variableSymbol = null;
@@ -49628,7 +49641,7 @@ var TypeScript;
                 }
             } else if (variableSymbol && (variableSymbol.getKind() != 2048 /* Variable */ ) && ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0)) {
                 span = variableDeclaration.getSpan();
-                variableDeclaration.addError(new TypeScript.PullError(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     declName
                 ])));
                 variableSymbol = null;
@@ -49761,7 +49774,7 @@ var TypeScript;
             propertySymbol = parent.findMember(declName);
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
                 var span = propertyDeclaration.getSpan();
-                propertyDeclaration.addError(new TypeScript.PullError(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                propertyDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     declName
                 ])));
                 propertySymbol = null;
@@ -49853,7 +49866,7 @@ var TypeScript;
             }
             if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
                 if ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0) {
-                    importDeclaration.addError(new TypeScript.PullError(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                    importDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                         declName
                     ])));
                     importSymbol = null;
@@ -49906,7 +49919,7 @@ var TypeScript;
                         parameterSymbol.setIsOptional();
                     }
                     if (params[argDecl.id.actualText]) {
-                        decl.addError(new TypeScript.PullError(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                        decl.addDiagnostic(new TypeScript.PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                             argDecl.id.actualText
                         ])));
                     } else {
@@ -49957,7 +49970,7 @@ var TypeScript;
                 functionSymbol = this.findSymbolInContext(funcName, TypeScript.PullElementKind.SomeValue, []);
             }
             if (functionSymbol && functionSymbol.getKind() != 32768 /* Function */ ) {
-                functionDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     funcName
                 ])));
                 functionSymbol = null;
@@ -50144,7 +50157,7 @@ var TypeScript;
             var j = 0;
             methodSymbol = parent.isClass() && isStatic && (parent).getConstructorMethod() ? (parent).getConstructorMethod().getType().findMember(methodName) : parent.findMember(methodName);
             if (methodSymbol && methodSymbol.getKind() != 131072 /* Method */ ) {
-                methodDeclaration.addError(new TypeScript.PullError(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     methodName
                 ])));
                 methodSymbol = null;
@@ -50453,18 +50466,18 @@ var TypeScript;
                 }
             }
             if (this.compilationSettings.codeGenTarget < 1 /* EcmaScript5 */ ) {
-                getAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
+                getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
             }
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    getAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                    getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                         funcName
                     ])));
                     accessorSymbol = null;
                 } else {
                     getterSymbol = accessorSymbol.getGetter();
                     if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
-                        getAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(17 /* duplicateGetter_1 */ , [
+                        getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(17 /* duplicateGetter_1 */ , [
                             funcName
                         ])));
                         accessorSymbol = null;
@@ -50534,7 +50547,7 @@ var TypeScript;
             this.bindParameterSymbols(this.semanticInfo.getASTForDecl(getAccessorDeclaration), getterTypeSymbol, signature);
             var typeParameters = getAccessorDeclaration.getTypeParameters();
             if (typeParameters.length) {
-                getAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* accessorsMayNotBeGeneric */ , null)));
+                getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* accessorsMayNotBeGeneric */ , null)));
             }
             getterTypeSymbol.addSignature(signature);
             if (!isSignature) {
@@ -50582,18 +50595,18 @@ var TypeScript;
                 }
             }
             if (this.compilationSettings.codeGenTarget < 1 /* EcmaScript5 */ ) {
-                setAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
+                setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
             }
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    setAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                    setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                         funcName
                     ])));
                     accessorSymbol = null;
                 } else {
                     setterSymbol = accessorSymbol.getSetter();
                     if (setterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(setterSymbol))) {
-                        setAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(18 /* duplicateSetter_1 */ , [
+                        setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(18 /* duplicateSetter_1 */ , [
                             funcName
                         ])));
                         accessorSymbol = null;
@@ -50663,7 +50676,7 @@ var TypeScript;
             this.bindParameterSymbols(this.semanticInfo.getASTForDecl(setAccessorDeclaration), setterTypeSymbol, signature);
             var typeParameters = setAccessorDeclaration.getTypeParameters();
             if (typeParameters.length) {
-                setAccessorDeclaration.addError(new TypeScript.PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* accessorsMayNotBeGeneric */ , null)));
+                setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* accessorsMayNotBeGeneric */ , null)));
             }
             setterTypeSymbol.addSignature(signature);
             if (!isSignature) {
@@ -51514,31 +51527,34 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    var PullError = (function () {
-        function PullError(start, length, fileName, message) {
-            this.fileName = fileName;
+    var PullDiagnostic = (function () {
+        function PullDiagnostic(start, length, fileName, message) {
             this._originalStart = start;
+            this._fileName = fileName;
             this._start = start;
             this._length = length;
             this._message = message;
         }
-        PullError.prototype.start = function () {
+        PullDiagnostic.prototype.fileName = function () {
+            return this._fileName;
+        };
+        PullDiagnostic.prototype.start = function () {
             return this._start;
         };
-        PullError.prototype.length = function () {
+        PullDiagnostic.prototype.length = function () {
             return this._length;
         };
-        PullError.prototype.message = function () {
+        PullDiagnostic.prototype.message = function () {
             return this._message;
         };
-        PullError.prototype.adjustOffset = function (pos) {
+        PullDiagnostic.prototype.adjustOffset = function (pos) {
             this._start = this._originalStart + pos;
         };
-        return PullError;
+        return PullDiagnostic;
     })();
-    TypeScript.PullError = PullError;    
-    function getErrorsFromEnclosingDecl(enclosingDecl, errors) {
-        var declErrors = enclosingDecl.getErrors();
+    TypeScript.PullDiagnostic = PullDiagnostic;    
+    function getDiagnosticsFromEnclosingDecl(enclosingDecl, errors) {
+        var declErrors = enclosingDecl.getDiagnostics();
         var i = 0;
         if (declErrors) {
             for(i = 0; i < declErrors.length; i++) {
@@ -51547,10 +51563,10 @@ var TypeScript;
         }
         var childDecls = enclosingDecl.getChildDecls();
         for(i = 0; i < childDecls.length; i++) {
-            getErrorsFromEnclosingDecl(childDecls[i], errors);
+            getDiagnosticsFromEnclosingDecl(childDecls[i], errors);
         }
     }
-    TypeScript.getErrorsFromEnclosingDecl = getErrorsFromEnclosingDecl;
+    TypeScript.getDiagnosticsFromEnclosingDecl = getDiagnosticsFromEnclosingDecl;
     var PullErrorReporter = (function () {
         function PullErrorReporter(textWriter) {
             this.textWriter = textWriter;
@@ -51569,25 +51585,25 @@ var TypeScript;
                 this.locationInfoCache[fileName] = fileNameToLocationInfo.lookup(fileName);
             }
         };
-        PullErrorReporter.prototype.reportError = function (error, lineMap) {
+        PullErrorReporter.prototype.reportDiagnostic = function (error, lineMap) {
             if (typeof lineMap === "undefined") { lineMap = null; }
             if (lineMap === null) {
-                var locationInfo = this.locationInfoCache[error.fileName];
+                var locationInfo = this.locationInfoCache[error.fileName()];
                 if (locationInfo && locationInfo.lineMap) {
                     lineMap = locationInfo.lineMap;
                 }
             }
             if (lineMap) {
                 lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
-                this.textWriter.Write(error.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
+                this.textWriter.Write(error.fileName() + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
             } else {
-                this.textWriter.Write(error.fileName + "(0,0): ");
+                this.textWriter.Write(error.fileName() + "(0,0): ");
             }
             this.textWriter.WriteLine(error.message());
         };
-        PullErrorReporter.prototype.reportErrors = function (errors) {
+        PullErrorReporter.prototype.reportDiagnostics = function (errors) {
             for(var i = 0; i < errors.length; i++) {
-                this.reportError(errors[i]);
+                this.reportDiagnostic(errors[i]);
                 this.hasErrors = true;
             }
         };
@@ -51975,7 +51991,7 @@ var TypeScript;
             if (typeof referencedFiles === "undefined") { referencedFiles = []; }
             var _this = this;
             return this.timeFunction("addSourceUnit(" + fileName + ")", function () {
-                var syntaxTree = TypeScript.Parser.parse(TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
+                var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
                 var script = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, _this.emitOptions.compilationSettings);
                 script.referencedFiles = referencedFiles;
                 _this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
@@ -51990,7 +52006,7 @@ var TypeScript;
                 var oldScript = _this.fileNameToScript.lookup(fileName);
                 var oldSyntaxTree = _this.fileNameToSyntaxTree.lookup(fileName);
                 var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
-                var syntaxTree = textChangeRange === null ? TypeScript.Parser.parse(text, TypeScript.isDTSFile(fileName)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
+                var syntaxTree = textChangeRange === null ? TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
                 var newScript = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, _this.emitOptions.compilationSettings);
                 _this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
                 _this.fileNameToScript.addOrUpdate(fileName, newScript);
@@ -52223,21 +52239,21 @@ var TypeScript;
             this.pullTypeChecker.resolver.resolveBoundDecls(unit.getTopLevelDecls()[0], new TypeScript.PullTypeResolutionContext());
             return true;
         };
-        TypeScriptCompiler.prototype.pullGetErrorsForFile = function (fileName) {
+        TypeScriptCompiler.prototype.getSemanticDiagnostics = function (fileName) {
             var errors = [];
             var unit = this.semanticInfoChain.getUnit(fileName);
             if (unit) {
                 var script = this.fileNameToScript.lookup(fileName);
                 if (script) {
                     this.pullTypeChecker.typeCheckScript(script, fileName, this);
-                    unit.getErrors(errors);
+                    unit.getDiagnostics(errors);
                 }
             }
             return errors;
         };
-        TypeScriptCompiler.prototype.pullTypeCheck = function (refresh, reportErrors) {
+        TypeScriptCompiler.prototype.pullTypeCheck = function (refresh, reportDiagnostics) {
             if (typeof refresh === "undefined") { refresh = false; }
-            if (typeof reportErrors === "undefined") { reportErrors = false; }
+            if (typeof reportDiagnostics === "undefined") { reportDiagnostics = false; }
             var _this = this;
             return this.timeFunction("pullTypeCheck()", function () {
                 if (!_this.pullTypeChecker || refresh) {
@@ -52269,7 +52285,7 @@ var TypeScript;
                 fileNames = _this.fileNameToScript.getAllKeys();
                 for(i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
-                    if (reportErrors) {
+                    if (reportDiagnostics) {
                         _this.logger.log("Type checking " + fileName);
                         _this.pullTypeChecker.typeCheckScript(_this.fileNameToScript.lookup(fileName), fileName, _this);
                     } else {
@@ -52282,8 +52298,8 @@ var TypeScript;
                 _this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 _this.logger.log("    Time in findSymbol: " + TypeScript.time_in_findSymbol);
                 _this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
-                if (reportErrors) {
-                    _this.pullErrorReporter.reportErrors(_this.semanticInfoChain.postErrors());
+                if (reportDiagnostics) {
+                    _this.pullErrorReporter.reportDiagnostics(_this.semanticInfoChain.postDiagnostics());
                 }
             });
         };
@@ -52340,7 +52356,7 @@ var TypeScript;
                     return;
                 }
                 _this.pullErrorReporter.setUnits(_this.fileNameToLocationInfo);
-                _this.pullErrorReporter.reportErrors(_this.semanticInfoChain.postErrors());
+                _this.pullErrorReporter.reportDiagnostics(_this.semanticInfoChain.postDiagnostics());
             });
         };
         TypeScriptCompiler.prototype.getSymbolOfDeclaration = function (decl) {
@@ -57241,46 +57257,46 @@ var Program = (function () {
             TypeScript.IncrementalParserTests.runAllTests();
         }
         Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (fileName) {
+            return _this.runEmitter(fileName, 1 /* EcmaScript5 */ , verify, generate, false);
         });
         Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , verify, generate);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (fileName) {
+            return _this.runParser(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
-        this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , false, generate);
+        this.runTests("C:\\temp\\monoco-files", function (fileName) {
+            return _this.runParser(fileName, 1 /* EcmaScript5 */ , false, generate);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , true, generate);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (fileName) {
+            return _this.runParser(fileName, 1 /* EcmaScript5 */ , true, generate);
         });
         Environment.standardOut.WriteLine("Testing pretty printer.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (filePath) {
-            return _this.runPrettyPrinter(filePath, 1 /* EcmaScript5 */ , verify, generate);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (fileName) {
+            return _this.runPrettyPrinter(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, generate);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5", function (fileName) {
+            return _this.runFindToken(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing trivia.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, generate);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5", function (fileName) {
+            return _this.runTrivia(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, generate);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\scanner\\ecmascript5", function (fileName) {
+            return _this.runScanner(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runIncremental(filePath, 1 /* EcmaScript5 */ );
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (fileName) {
+            return _this.runIncremental(fileName, 1 /* EcmaScript5 */ );
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, true);
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter2\\ecmascript5", function (fileName) {
+            return _this.runEmitter(fileName, 1 /* EcmaScript5 */ , verify, generate, true);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {
@@ -57302,13 +57318,13 @@ var Program = (function () {
             reusedElements: reused
         };
     };
-    Program.prototype.testIncrementalSpeed = function (filePath) {
+    Program.prototype.testIncrementalSpeed = function (fileName) {
         if (specificFile !== undefined) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), 1 /* EcmaScript5 */ );
+        var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
         var totalIncrementalTime = 0;
         var count = 1000;
         var timer = new TypeScript.Timer();
@@ -57327,10 +57343,10 @@ var Program = (function () {
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
         Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
     };
-    Program.prototype.handleException = function (filePath, e) {
+    Program.prototype.handleException = function (fileName, e) {
         Environment.standardOut.WriteLine("");
-        if ((e.message).indexOf(filePath) < 0) {
-            Environment.standardOut.WriteLine("Exception: " + filePath + ": " + e.message);
+        if ((e.message).indexOf(fileName) < 0) {
+            Environment.standardOut.WriteLine("Exception: " + fileName + ": " + e.message);
         } else {
             Environment.standardOut.WriteLine(e.message);
         }
@@ -57341,28 +57357,28 @@ var Program = (function () {
             recursive: true
         });
         var indexNum = 0;
-        testFiles.forEach(function (filePath) {
-            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+        testFiles.forEach(function (fileName) {
+            if (specificFile !== undefined && fileName.indexOf(specificFile) < 0) {
                 return;
             }
             try  {
-                action(filePath);
+                action(fileName);
             } catch (e) {
-                _this.handleException(filePath, e);
+                _this.handleException(fileName, e);
             }
         });
     };
-    Program.prototype.checkResult = function (filePath, result, verify, generateBaseline, justText) {
+    Program.prototype.checkResult = function (fileName, result, verify, generateBaseline, justText) {
         var actualResult;
         var expectedFile;
         if (generateBaseline) {
             actualResult = justText ? result : JSON2.stringify(result, null, 4);
-            expectedFile = filePath + ".expected";
+            expectedFile = fileName + ".expected";
             Environment.writeFile(expectedFile, actualResult, true);
         } else if (verify) {
             actualResult = justText ? result : JSON2.stringify(result, null, 4);
-            expectedFile = filePath + ".expected";
-            var actualFile = filePath + ".actual";
+            expectedFile = fileName + ".expected";
+            var actualFile = fileName + ".actual";
             var expectedResult = null;
             if (!Environment.fileExists(expectedFile)) {
                 Environment.writeFile(expectedFile, "", false);
@@ -57383,84 +57399,84 @@ var Program = (function () {
             }
         }
     };
-    Program.prototype.runEmitter = function (filePath, languageVersion, verify, generateBaseline, justText) {
+    Program.prototype.runEmitter = function (fileName, languageVersion, verify, generateBaseline, justText) {
         if (true) {
         }
-        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
+        if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
-        if (filePath.indexOf("RealSource") >= 0) {
+        if (fileName.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         totalSize += contents.length;
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
+        var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), languageVersion);
         var emitted = TypeScript.Emitter1.emit(tree.sourceUnit());
         var result = justText ? emitted.fullText() : {
             fullText: emitted.fullText().split("\r\n"),
             sourceUnit: emitted
         };
-        this.checkResult(filePath, result, verify, generateBaseline, justText);
+        this.checkResult(fileName, result, verify, generateBaseline, justText);
     };
-    Program.prototype.runPrettyPrinter = function (filePath, languageVersion, verify, generateBaseline) {
-        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
+    Program.prototype.runPrettyPrinter = function (fileName, languageVersion, verify, generateBaseline) {
+        if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
-        if (filePath.indexOf("RealSource") >= 0) {
+        if (fileName.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         totalSize += contents.length;
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
+        var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), languageVersion);
         var result = TypeScript.PrettyPrinter.prettyPrint(tree.sourceUnit());
-        this.checkResult(filePath, result, verify, generateBaseline, true);
+        this.checkResult(fileName, result, verify, generateBaseline, true);
         totalTime += timer.time;
     };
-    Program.prototype.runParser = function (filePath, languageVersion, verify, generateBaseline) {
+    Program.prototype.runParser = function (fileName, languageVersion, verify, generateBaseline) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
-        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
+        if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
-        if (filePath.indexOf("RealSource") >= 0) {
+        if (fileName.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         totalSize += contents.length;
         var text = TypeScript.TextFactory.createText(contents);
         timer.start();
-        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
+        var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), languageVersion);
         timer.end();
         TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
         TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
         TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
-        this.checkResult(filePath, tree, verify, generateBaseline, false);
+        this.checkResult(fileName, tree, verify, generateBaseline, false);
         totalTime += timer.time;
     };
-    Program.prototype.runIncremental = function (filePath, languageVersion) {
-        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
+    Program.prototype.runIncremental = function (fileName, languageVersion) {
+        if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
-        if (filePath.indexOf("RealSource") >= 0) {
+        if (fileName.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
-        var tree1 = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
-        var tree2 = TypeScript.Parser.incrementalParse(new TypeScript.SyntaxTree(TypeScript.Syntax.emptySourceUnit(), TypeScript.isDTSFile(filePath), [], null, languageVersion, tree1.parseOptions()), new TypeScript.TextChangeRange(new TypeScript.TextSpan(0, 0), text.length()), text);
+        var tree1 = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), languageVersion);
+        var tree2 = TypeScript.Parser.incrementalParse(new TypeScript.SyntaxTree(TypeScript.Syntax.emptySourceUnit(), TypeScript.isDTSFile(fileName), [], fileName, null, languageVersion, tree1.parseOptions()), new TypeScript.TextChangeRange(new TypeScript.TextSpan(0, 0), text.length()), text);
         TypeScript.Debug.assert(tree1.structuralEquals(tree2));
     };
-    Program.prototype.runFindToken = function (filePath, languageVersion, verify, generateBaseline) {
-        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
+    Program.prototype.runFindToken = function (fileName, languageVersion, verify, generateBaseline) {
+        if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
-        if (filePath.indexOf("RealSource") >= 0) {
+        if (fileName.indexOf("RealSource") >= 0) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser.parse(text, TypeScript.isDTSFile(filePath), languageVersion);
+        var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), languageVersion);
         var sourceUnit = tree.sourceUnit();
         TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
         var tokens = {};
@@ -57497,15 +57513,15 @@ var Program = (function () {
             leftToRight: leftToRight,
             rightToLeft: rightToLeft
         };
-        this.checkResult(filePath, result, verify, generateBaseline, false);
+        this.checkResult(fileName, result, verify, generateBaseline, false);
     };
-    Program.prototype.runTrivia = function (filePath, languageVersion, verify, generateBaseline) {
-        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts")) {
+    Program.prototype.runTrivia = function (fileName, languageVersion, verify, generateBaseline) {
+        if (!TypeScript.StringUtilities.endsWith(fileName, ".ts")) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
-        var scanner = new TypeScript.Scanner1(text, languageVersion);
+        var scanner = new TypeScript.Scanner1(fileName, text, languageVersion);
         var tokens = [];
         var textArray = [];
         var diagnostics = [];
@@ -57516,15 +57532,15 @@ var Program = (function () {
                 break;
             }
         }
-        this.checkResult(filePath, tokens, verify, generateBaseline, false);
+        this.checkResult(fileName, tokens, verify, generateBaseline, false);
     };
-    Program.prototype.runScanner = function (filePath, languageVersion, verify, generateBaseline) {
-        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts")) {
+    Program.prototype.runScanner = function (fileName, languageVersion, verify, generateBaseline) {
+        if (!TypeScript.StringUtilities.endsWith(fileName, ".ts")) {
             return;
         }
-        var contents = Environment.readFile(filePath, true);
+        var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
-        var scanner = new TypeScript.Scanner1(text, languageVersion);
+        var scanner = new TypeScript.Scanner1(fileName, text, languageVersion);
         var tokens = [];
         var textArray = [];
         var diagnostics = [];
@@ -57547,7 +57563,7 @@ var Program = (function () {
             diagnostics: diagnostics,
             tokens: tokens
         };
-        this.checkResult(filePath, result, verify, generateBaseline, false);
+        this.checkResult(fileName, result, verify, generateBaseline, false);
     };
     Program.prototype.parseArguments = function () {
         if (true) {
@@ -57555,11 +57571,11 @@ var Program = (function () {
         }
         Environment.standardOut.WriteLine("Testing input files.");
         for(var index in Environment.arguments) {
-            var filePath = Environment.arguments[index];
-            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+            var fileName = Environment.arguments[index];
+            if (specificFile !== undefined && fileName.indexOf(specificFile) < 0) {
                 continue;
             }
-            this.runParser(filePath, 1 /* EcmaScript5 */ , false);
+            this.runParser(fileName, 1 /* EcmaScript5 */ , false);
         }
     };
     Program.prototype.run262 = function () {
@@ -57571,39 +57587,39 @@ var Program = (function () {
         var failCount = 0;
         var skippedTests = [];
         for(var index in testFiles) {
-            var filePath = testFiles[index];
-            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+            var fileName = testFiles[index];
+            if (specificFile !== undefined && fileName.indexOf(specificFile) < 0) {
                 continue;
             }
-            var contents = Environment.readFile(filePath, true);
+            var contents = Environment.readFile(fileName, true);
             var isNegative = contents.indexOf("@negative") >= 0;
             testCount++;
             try  {
                 var stringText = TypeScript.TextFactory.createText(contents);
-                var tree = TypeScript.Parser.parse(stringText, TypeScript.isDTSFile(filePath), 1 /* EcmaScript5 */ );
+                var tree = TypeScript.Parser.parse(fileName, stringText, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
                 if (isNegative) {
-                    var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
-                    var canParseSuccessfully = negative262ExpectedResults[fileName];
+                    var nameOnly = fileName.substr(fileName.lastIndexOf("\\") + 1);
+                    var canParseSuccessfully = negative262ExpectedResults[nameOnly];
                     if (canParseSuccessfully) {
                         if (tree.diagnostics() && tree.diagnostics().length > 0) {
-                            Environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
+                            Environment.standardOut.WriteLine("Negative test. Unexpected failure: " + fileName);
                             failCount++;
                         }
                     } else {
                         if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
-                            Environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
+                            Environment.standardOut.WriteLine("Negative test. Unexpected success: " + fileName);
                             failCount++;
                         }
                     }
                 } else {
                     if (tree.diagnostics() && tree.diagnostics().length > 0) {
-                        Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                        Environment.standardOut.WriteLine("Unexpected failure: " + fileName);
                         failCount++;
                     }
                 }
             } catch (e) {
                 failCount++;
-                this.handleException(filePath, e);
+                this.handleException(fileName, e);
             }
         }
         Environment.standardOut.WriteLine("");
@@ -57625,30 +57641,30 @@ var Program = (function () {
         var failCount = 0;
         var skippedTests = [];
         for(var index in testFiles) {
-            var filePath = testFiles[index];
-            if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
+            var fileName = testFiles[index];
+            if (specificFile !== undefined && fileName.indexOf(specificFile) < 0) {
                 continue;
             }
-            var canParseSuccessfully = expectedTop1000Failures[filePath.substr(path.length + 1)] === undefined;
-            var contents = Environment.readFile(filePath, true);
+            var canParseSuccessfully = expectedTop1000Failures[fileName.substr(path.length + 1)] === undefined;
+            var contents = Environment.readFile(fileName, true);
             testCount++;
             try  {
                 var stringText = TypeScript.TextFactory.createText(contents);
-                var tree = TypeScript.Parser.parse(stringText, false, 1 /* EcmaScript5 */ );
+                var tree = TypeScript.Parser.parse(fileName, stringText, false, 1 /* EcmaScript5 */ );
                 if (canParseSuccessfully) {
                     if (tree.diagnostics() && tree.diagnostics().length > 0) {
-                        Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                        Environment.standardOut.WriteLine("Unexpected failure: " + fileName);
                         failCount++;
                     }
                 } else {
                     if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
-                        Environment.standardOut.WriteLine("Unexpected success: " + filePath);
+                        Environment.standardOut.WriteLine("Unexpected success: " + fileName);
                         failCount++;
                     }
                 }
             } catch (e) {
                 failCount++;
-                this.handleException(filePath, e);
+                this.handleException(fileName, e);
             }
         }
         Environment.standardOut.WriteLine("");
