@@ -22,13 +22,6 @@ module TypeScript {
 
         constructor(public outfile: ITextWriter) {
         }
-
-        public emitterError(message: string) {
-            this.outfile.WriteLine(message);
-
-            // Emitter errors are not recoverable, stop immediately
-            throw Error("EmitError");
-        }
     }
 
     export class ErrorReporter {
