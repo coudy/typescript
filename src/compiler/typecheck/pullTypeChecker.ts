@@ -417,25 +417,74 @@ module TypeScript {
         }
 
         public typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
-            // "Getters must return a value"
-            // "Getter and setter types do not agree"
-            // "Setters may have one and only one argument"
+            var funcDeclAST = <FuncDecl>ast;            
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var functionSymbol = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context).getType();
+            var accessorSymbol = <PullAccessorSymbol>this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
 
-            var funcDeclAST = <FuncDecl>ast;
+            var isGetter = hasFlag(funcDeclAST.fncFlags, FncFlags.GetAccessor);
+            var isSetter = !isGetter;
+
+            var getter = accessorSymbol.getGetter();
+            var setter = accessorSymbol.getSetter();
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
             this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
-
+            var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
             typeCheckContext.popEnclosingDecl();
 
-            return functionSymbol.getType();            
+            var functionSignature = functionDecl.getSignatureSymbol();
+
+            // check for optionality
+            var parameters = functionSignature.getParameters();
+
+            if (parameters.length) {
+
+                if (isGetter) {
+                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters may not take arguments", typeCheckContext.getEnclosingDecl());''
+                }
+                else {
+                    
+                    if (parameters.length > 1) {
+                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may have one and only one argument", typeCheckContext.getEnclosingDecl());''
+                    }
+
+                    for (var i = 0; i < parameters.length; i++) {
+                        if (parameters[i].getIsOptional()) {
+                            this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not take optional parameters", typeCheckContext.getEnclosingDecl());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // PULLREVIEW: Should we also raise an error if the setter returns a value?
+            if (isGetter && !hasReturn) {
+                if (!(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.Throw)) {
+                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
+                }
+            }
+            else if (isSetter && hasReturn) {
+                this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not return a value", typeCheckContext.getEnclosingDecl());
+            }
+
+            if (getter && setter) {
+                var getterDecl = getter.getDeclarations()[0];
+                var setterDecl = setter.getDeclarations()[0];
+
+                var getterIsPrivate = getterDecl.getFlags() & PullElementFlags.Private;
+                var setterIsPrivate = setterDecl.getFlags() & PullElementFlags.Private;
+
+                if (getterIsPrivate != setterIsPrivate) {
+                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getter and setter accessors do not agree in visibility", typeCheckContext.getEnclosingDecl());
+                }
+            }
+
+            return accessorSymbol        
         }
 
         public typeCheckConstructor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
@@ -476,7 +525,7 @@ module TypeScript {
                     }
 
                 }
-            }
+            } 
 
             return functionSymbol ? functionSymbol.getType() : null;
         }

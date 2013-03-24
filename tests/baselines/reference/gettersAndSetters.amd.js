@@ -20,11 +20,11 @@ var C = (function () {
     });
     Object.defineProperty(C, "Bar", {
         get: function () {
-            return barBack;
+            return C.barBack;
         }
 ,
         set: function (bar) {
-            barBack = bar;
+            C.barBack = bar;
         }
 ,
         enumerable: true,

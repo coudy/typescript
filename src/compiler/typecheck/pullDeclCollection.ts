@@ -807,6 +807,13 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
+        if (hasFlag(getAccessorDeclAST.fncFlags, FncFlags.Private)) {
+            declFlags |= PullElementFlags.Private;
+        }
+        else {
+            declFlags |= PullElementFlags.Public;
+        }        
+
         var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
 
         var decl = new PullDecl(getAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
@@ -850,6 +857,13 @@ module TypeScript {
         if (hasFlag(setAccessorDeclAST.name.flags, ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
+
+        if (hasFlag(setAccessorDeclAST.fncFlags, FncFlags.Private)) {
+            declFlags |= PullElementFlags.Private;
+        }
+        else {
+            declFlags |= PullElementFlags.Public;
+        }         
 
         var span = TextSpan.fromBounds(setAccessorDeclAST.minChar, setAccessorDeclAST.limChar);
 

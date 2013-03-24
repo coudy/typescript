@@ -7,8 +7,8 @@ class C {
     public get Foo() { return this.fooBack;} // ok
     public set Foo(foo:string) {this.fooBack = foo;} // ok
 
-    static get Bar() {return barBack;} // ok
-    static set Bar(bar:string) {barBack = bar;} // ok
+    static get Bar() {return C.barBack;} // ok
+    static set Bar(bar:string) {C.barBack = bar;} // ok
 
     public get = function() {} // ok
     public set = function() {} // ok

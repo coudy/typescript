@@ -1344,6 +1344,10 @@ module TypeScript {
 
                     if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {
                         parameterSymbol.setIsVarArg();
+
+                        if (argDecl.init || hasFlag(argDecl.id.flags, ASTFlags.OptionalName)) {
+                            decl.addDiagnostic(new PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), "Varargs may not be optional or have default parameters"));
+                        }
                     }
 
                     if (decl.getFlags() & PullElementFlags.Optional) {
