@@ -156,7 +156,7 @@ class BatchCompiler {
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
 
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            var code = this.resolvedEnvironment[iCode];
+            var code = this.resolvedEnvironment.code[iCode];
 
             // if file resolving is disabled, the file's content will not yet be loaded
 
