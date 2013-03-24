@@ -762,8 +762,17 @@ module TypeScript {
             var i = 0;
 
             if (classDeclAST.extendsList) {
+                if (classDeclAST.extendsList.members.length > 1) {
+                    context.postError(classDeclAST.name.minChar, classDeclAST.name.getLength(), this.unitPath, "A class may only extend one other type", enclosingDecl);
+                }
+
                 for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
+
+                    if ((parentType.getKind & (PullElementKind.Interface | PullElementKind.Class)) != 0) {
+                        context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class or interface types", enclosingDecl);
+                    }
+
                     classDeclSymbol.addExtendedType(parentType);
                 }
             }
@@ -773,6 +782,10 @@ module TypeScript {
                 for (i = 0; i < classDeclAST.implementsList.members.length; i++) {
                     implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
                     classDeclSymbol.addImplementedType(implementedType);
+
+                    if ((implementedType.getKind & (PullElementKind.Interface | PullElementKind.Class)) != 0) {
+                        context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, "A class may only implement other class or interface types", enclosingDecl);
+                    }                    
                 }
             }
 
@@ -857,16 +870,17 @@ module TypeScript {
                 var parentType: PullTypeSymbol = null;
                 for (i = 0; i < interfaceDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
+
+                    if ((parentType.getKind & (PullElementKind.Interface | PullElementKind.Class)) != 0) {
+                        context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, "An interface may only extend other class or interface types", enclosingDecl);
+                    }
+                                       
                     interfaceDeclSymbol.addExtendedType(parentType);
                 }
             }
 
             if (interfaceDeclAST.implementsList) {
-                var implementedType: PullTypeSymbol = null;
-                for (i = 0; i < interfaceDeclAST.implementsList.members.length; i++) {
-                    implementedType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.implementsList.members[i], 0), interfaceDecl, context);
-                    interfaceDeclSymbol.addImplementedType(implementedType);
-                }
+                context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath, "An interface may not implement other types", enclosingDecl);            
             }
 
             interfaceDeclSymbol.setResolved();
@@ -1405,7 +1419,7 @@ module TypeScript {
             return typeParameterSymbol;
         }
 
-        public resolveFunctionBodyReturnTypes(funcDeclAST: FuncDecl, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveFunctionBodyReturnTypes(funcDeclAST: FuncDecl, signature: PullSignatureSymbol, useContextualType: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var returnStatements: ReturnStatement[] = [];
 
             var preFindReturnExpressionTypes = function (ast: AST, parent: AST, walker: IAstWalker) {
@@ -1436,7 +1450,20 @@ module TypeScript {
             getAstWalkerFactory().walk(funcDeclAST.bod, preFindReturnExpressionTypes);
 
             if (!returnStatements.length) {
-                signature.setReturnType(this.semanticInfoChain.voidTypeSymbol);
+                if (useContextualType) {
+                    var contextualType = this.widenType(context.getContextualType());
+
+                    signature.setReturnType(contextualType);
+
+                    var isVoidOrAny = contextualType == this.semanticInfoChain.anyTypeSymbol || contextualType == this.semanticInfoChain.voidTypeSymbol;
+               
+                    if (!isVoidOrAny) {
+                        context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Function declared a non-void return type, but has no return expression", enclosingDecl);
+                    }                    
+                }
+                else {
+                    signature.setReturnType(this.semanticInfoChain.voidTypeSymbol);
+                }
             }
 
             else {
@@ -1445,7 +1472,7 @@ module TypeScript {
 
                 for (i = 0; i < returnStatements.length; i++) {
                     if (returnStatements[i].returnExpression) {
-                        returnExpressionSymbols[returnExpressionSymbols.length] = this.resolveStatementOrExpression(returnStatements[i].returnExpression, false, enclosingDecl, context).getType();
+                        returnExpressionSymbols[returnExpressionSymbols.length] = this.resolveStatementOrExpression(returnStatements[i].returnExpression, useContextualType, enclosingDecl, context).getType();
                     }
                 }
 
@@ -1485,6 +1512,8 @@ module TypeScript {
 
             var hadError = false;
 
+            var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.fncFlags, FncFlags.ConstructMember);
+
             if (signature) {
 
                 if (signature.isResolved()) {
@@ -1509,6 +1538,10 @@ module TypeScript {
                                 }
                             }
                             signature.setReturnType(returnTypeSymbol);
+
+                            if (isConstructor && returnTypeSymbol == this.semanticInfoChain.voidTypeSymbol) {
+                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Constructors may not have a return type of 'void'", funcDecl);
+                            }                            
                         }
                     } 
                     else {
@@ -1559,6 +1592,10 @@ module TypeScript {
                         }
 
                         signature.setReturnType(returnTypeSymbol);
+
+                        if (isConstructor && returnTypeSymbol == this.semanticInfoChain.voidTypeSymbol) {
+                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Constructors may not have a return type of 'void'", funcDecl);
+                        }                           
                     }
                 }
                 // if there's no return-type annotation
@@ -1570,7 +1607,7 @@ module TypeScript {
                         signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
                     }
                     else {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, funcDecl, new PullTypeResolutionContext());
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, new PullTypeResolutionContext());
                     }
                 }
 
@@ -1663,7 +1700,7 @@ module TypeScript {
                         signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
                     }
                     else {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, funcDecl, new PullTypeResolutionContext());
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, new PullTypeResolutionContext());
                     }
                 }
 
@@ -2075,8 +2112,18 @@ module TypeScript {
                 }
             }
 
-            if (rhsName == "prototype" && lhsType.isClass()) {
-                return lhsType;
+            if (rhsName == "prototype") {
+
+                if (lhsType.isClass()) {
+                    return lhsType;
+                }
+                else {
+                    var classInstanceType = lhsType.getAssociatedContainerType();
+
+                    if (classInstanceType && classInstanceType.isClass()) {
+                        return classInstanceType;
+                    }
+                }
             }
 
             // now for the name...
@@ -2428,7 +2475,7 @@ module TypeScript {
                     if (returnType) {
                         context.pushContextualType(returnType, context.inProvisionalResolution(), null);
                         //signature.setReturnType(returnType);
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, functionDecl, context);
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, true, functionDecl, context);
                         context.popContextualType();
                     }
                     else {
@@ -2436,7 +2483,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, functionDecl, context);
+                    this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, functionDecl, context);
                 }
             }
 
@@ -3107,6 +3154,12 @@ module TypeScript {
             //}
 
             if (!signatures.length) {
+
+                // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
+                if (this.cachedFunctionInterfaceType && this.sourceIsSubtypeOfTarget(targetSymbol, this.cachedFunctionInterfaceType, context)) {
+                    return this.semanticInfoChain.anyTypeSymbol;
+                }
+
                 context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Attempting to call on a type with no call signatures", enclosingDecl);
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -3191,14 +3244,20 @@ module TypeScript {
                 targetTypeSymbol = (<PullClassTypeSymbol>targetTypeSymbol).getConstructorMethod().getType();
             }
 
-            if (targetTypeSymbol == this.semanticInfoChain.anyTypeSymbol) {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }
-
             var constructSignatures = targetTypeSymbol.getConstructSignatures();
 
             var typeArgs: PullTypeSymbol[] = null;
             var typeReplacementMap: any = null;
+            var usedCallSignaturesInstead = false;
+
+            if (targetTypeSymbol == this.semanticInfoChain.anyTypeSymbol) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }            
+
+            if (!constructSignatures.length) {
+                constructSignatures = targetTypeSymbol.getCallSignatures();
+                usedCallSignaturesInstead = true;
+            }            
 
             if (constructSignatures.length) {
 
@@ -3281,11 +3340,6 @@ module TypeScript {
                 //    return this.semanticInfoChain.anyTypeSymbol;
                 //}
 
-                if (!constructSignatures.length) {
-                    context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Attempting to 'new' a type with no construct signatures", enclosingDecl);
-                    return this.semanticInfoChain.anyTypeSymbol;
-                }
-
                 var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, context);
 
                 // if we haven't been able to choose an overload, default to the first one
@@ -3296,6 +3350,13 @@ module TypeScript {
                 }
 
                 returnType = signature.getReturnType();
+
+                if (usedCallSignaturesInstead) {
+                    if (returnType != this.semanticInfoChain.voidTypeSymbol) {
+                        context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Call signatures used in a 'new' expression must have a return type of 'void'", enclosingDecl);
+                        return this.semanticInfoChain.anyTypeSymbol;                        
+                    }
+                }
 
                 if (!returnType) {
                     returnType = signature.getReturnType();

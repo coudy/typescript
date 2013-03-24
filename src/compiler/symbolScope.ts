@@ -382,24 +382,20 @@ module TypeScript {
         public print(outfile: ITextWriter) {
             super.print(outfile);
             if (this.ambientValueMembers) {
-                this.ambientValueMembers.allMembers.map(function (key, sym, context) {
-                    outfile.WriteLine("  " + key);
-                }, null);
+                this.ambientValueMembers.allMembers.map((key, sym, context) =>
+                    outfile.WriteLine("  " + key), null);
             }
             if (this.valueMembers) {
-                this.valueMembers.allMembers.map(function (key, sym, context) {
-                    outfile.WriteLine("  " + key);
-                }, null);
+                this.valueMembers.allMembers.map((key, sym, context) =>
+                    outfile.WriteLine("  " + key), null);
             }
             if (this.ambientEnclosedTypes) {
-                this.ambientEnclosedTypes.allMembers.map(function (key, sym, context) {
-                    outfile.WriteLine("  " + key);
-                }, null);
+                this.ambientEnclosedTypes.allMembers.map((key, sym, context) =>
+                    outfile.WriteLine("  " + key), null);
             }
             if (this.enclosedTypes) {
-                this.enclosedTypes.allMembers.map(function (key, sym, context) {
-                    outfile.WriteLine("  " + key);
-                }, null);
+                this.enclosedTypes.allMembers.map((key, sym, context) =>
+                    outfile.WriteLine("  " + key), null);
             }
         }
 

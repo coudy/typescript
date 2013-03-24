@@ -653,12 +653,25 @@ module TypeScript {
             if (this.staticClassMembers.length) {
                 var member: PullSymbol;
                 var isPrivate = false;
+                var memberMap: any = {};
+                var memberDecl: PullDecl;
+                var memberAST: AST;
 
                 for (i = 0; i < this.staticClassMembers.length; i++) {
 
                     member = this.staticClassMembers[i];
-                    decls = member.getDeclarations();
-                    isPrivate = (decls[0].getFlags() & PullElementFlags.Private) != 0;
+
+                    if (memberMap[member.getName()]) {
+                        memberDecl = member.getDeclarations()[0];
+                        memberAST = this.semanticInfo.getASTForDecl(memberDecl);
+                        memberDecl.addDiagnostic(new PullDiagnostic(memberAST.minChar, memberAST.getLength(), this.semanticInfo.getPath(),
+                            getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [member.getName()])));
+                    }
+                    else {
+                        memberMap[member.getName()] = true;
+                    }
+
+                    isPrivate = member.hasFlag(PullElementFlags.Private);
 
                     constructorTypeSymbol.addMember(member, isPrivate ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember);
                 }
@@ -1192,7 +1205,18 @@ module TypeScript {
 
             var parent = this.getParent(true);
 
-            propertySymbol = parent.findMember(declName);
+            if (parent.isClass() && isStatic) {
+
+                for (i = 0; i < this.staticClassMembers.length; i++) {
+                    if (this.staticClassMembers[i].getName() == declName) {
+                        propertySymbol = this.staticClassMembers[i];
+                        break;
+                    }
+                }
+            }
+            else {
+                propertySymbol = parent.findMember(declName);
+            }
 
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
 
@@ -1419,7 +1443,9 @@ module TypeScript {
                 functionSymbol = this.findSymbolInContext(funcName, PullElementKind.SomeValue, []);
             }
 
-            if (functionSymbol && functionSymbol.getKind() != PullElementKind.Function) {
+            if (functionSymbol && 
+                (functionSymbol.getKind() != PullElementKind.Function ||
+                    !isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature))) {
                 functionDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
                     getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [funcName])));
                 functionSymbol = null;
@@ -1706,9 +1732,22 @@ module TypeScript {
             var i = 0;
             var j = 0;
 
-            methodSymbol = parent.isClass() && isStatic && (<PullClassTypeSymbol>parent).getConstructorMethod() ? (<PullClassTypeSymbol>parent).getConstructorMethod().getType().findMember(methodName) : parent.findMember(methodName);
+            if (parent.isClass() && isStatic) {
 
-            if (methodSymbol && methodSymbol.getKind() != PullElementKind.Method) {
+                for (i = 0; i < this.staticClassMembers.length; i++) {
+                    if (this.staticClassMembers[i].getName() == methodName) {
+                        methodSymbol = this.staticClassMembers[i];
+                        break;
+                    }
+                }
+            }
+            else {
+                methodSymbol = parent.findMember(methodName);
+            }
+
+            if (methodSymbol && 
+                (methodSymbol.getKind() != PullElementKind.Method ||
+                    (!isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
                 methodDeclaration.addDiagnostic(new PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [methodName])));
                 methodSymbol = null;
             }
@@ -1856,6 +1895,14 @@ module TypeScript {
             var constructorTypeSymbol: PullConstructorTypeSymbol = null;
 
             var linkKind = SymbolLinkKind.ConstructorMethod;
+
+            if (constructorSymbol && 
+                (constructorSymbol.getKind() != PullElementKind.ConstructorMethod ||
+                    !isSignature && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature))) {
+                constructorDeclaration.addDiagnostic(new PullDiagnostic(constructorAST.minChar, constructorAST.getLength(), this.semanticInfo.getPath(),
+                    "Duplicate constructor definition"));
+                constructorSymbol = null;
+            }            
 
             if (constructorSymbol) {
 
@@ -2140,6 +2187,7 @@ module TypeScript {
 
             var parent = this.getParent(true);
             var parentHadSymbol = false;
+            var hadOtherAccessor = false;
             var cleanedPreviousDecls = false;
 
             var accessorSymbol: PullAccessorSymbol = null;
@@ -2160,6 +2208,7 @@ module TypeScript {
 
                     if (candidate.getName() == funcName) {
                         accessorSymbol = <PullAccessorSymbol>candidate;
+                        hadOtherAccessor = accessorSymbol.isAccessor();
                         break;
                     }
                 }
@@ -2246,7 +2295,7 @@ module TypeScript {
             // PULLTODO: Verify parent is a class or object literal
             // PULLTODO: Verify static/non-static between getter and setter
 
-            if (!parentHadSymbol) {
+            if (!parentHadSymbol && !hadOtherAccessor) {
 
                 if (isStatic) {
                     this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;
@@ -2328,6 +2377,7 @@ module TypeScript {
 
             var parent = this.getParent(true);
             var parentHadSymbol = false;
+            var hadOtherAccessor = false;
             var cleanedPreviousDecls = false;
 
             var accessorSymbol: PullAccessorSymbol = null;
@@ -2348,6 +2398,7 @@ module TypeScript {
 
                     if (candidate.getName() == funcName) {
                         accessorSymbol = <PullAccessorSymbol>candidate;
+                        hadOtherAccessor = accessorSymbol.isAccessor();
                         break;
                     }
                 }
@@ -2435,7 +2486,7 @@ module TypeScript {
             // PULLTODO: Verify parent is a class or object literal
             // PULLTODO: Verify static/non-static between getter and setter
 
-            if (!parentHadSymbol) {
+            if (!parentHadSymbol && !hadOtherAccessor) {
 
                 if (isStatic) {
                     this.staticClassMembers[this.staticClassMembers.length] = accessorSymbol;

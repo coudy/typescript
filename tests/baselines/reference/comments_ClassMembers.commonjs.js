@@ -347,18 +347,14 @@ var i1_c: {
     s1: number;
     s2(b: number): number;
     s3: number;
-    s3: number;
     nc_s1: number;
     nc_s2(b: number): number;
-    nc_s3: number;
     nc_s3: number;
     a_s1: number;
     a_s2(b: number): number;
     a_s3: number;
-    a_s3: number;
     b_s1: number;
     b_s2(b: number): number;
-    b_s3: number;
     b_s3: number;
     new(): c1;
 };

@@ -7,16 +7,19 @@ module TypeScript {
 
     export class PullTypeCheckContext {
         public enclosingDeclStack: PullDecl[] = [];
+        public enclosingDeclReturnStack: bool[] = [];
         public semanticInfo: SemanticInfo = null;
 
         constructor(public compiler: TypeScriptCompiler, public script: Script, public scriptName: string) { }
 
         public pushEnclosingDecl(decl: PullDecl) {
             this.enclosingDeclStack[this.enclosingDeclStack.length] = decl;
+            this.enclosingDeclReturnStack[this.enclosingDeclReturnStack.length] = false;
         }
 
         public popEnclosingDecl() {
             this.enclosingDeclStack.length--;
+            this.enclosingDeclReturnStack.length--;
         }
 
         public getEnclosingDecl() {
@@ -26,6 +29,13 @@ module TypeScript {
 
             return null;
         }
+
+        public getEnclosingDeclHasReturn() {
+            return this.enclosingDeclReturnStack[this.enclosingDeclReturnStack.length - 1];
+        }
+        public setEnclosingDeclHasReturn() {
+            return this.enclosingDeclReturnStack[this.enclosingDeclReturnStack.length - 1] = true;
+        }        
     }
 
     export class PullTypeChecker {
@@ -333,7 +343,7 @@ module TypeScript {
             }
 
             return varTypeSymbol;
-        }
+        }         
 
         // functions 
         // validate:
@@ -348,16 +358,68 @@ module TypeScript {
         // PULLTODO: split up into separate functions for constructors, indexers, expressions, signatures, etc.
         public typeCheckFunction(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
 
-            // "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class"
-            // "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor"
-            // "Constructors for derived classes must contain a call to the class's 'super' constructor"
-            // "Index signatures may take one and only one parameter"
-            // "Index signatures may only take 'string' or 'number' as their parameter"
-            // "Function declared a non-void return type, but has no return expression"
+            var funcDeclAST = <FuncDecl>ast;
+
+            if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.fncFlags, FncFlags.ConstructMember)) {
+                return this.typeCheckConstructor(ast, typeCheckContext, inTypedAssignment);
+            }
+            else if (hasFlag(funcDeclAST.fncFlags, FncFlags.IndexerMember)) {
+                return this.typeCheckIndexer(ast, typeCheckContext, inTypedAssignment);
+            }
+            else if (funcDeclAST.isAccessor()) {
+                return this.typeCheckAccessor(ast, typeCheckContext, inTypedAssignment);
+            }
+
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var functionSymbol = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+
+            var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
+
+            typeCheckContext.pushEnclosingDecl(functionDecl);
+
+            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
+            var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
+            typeCheckContext.popEnclosingDecl();
+
+            var functionSignature = functionDecl.getSignatureSymbol();
+
+            // check for optionality
+            var parameters = functionSignature.getParameters();
+
+            if (parameters.length) {
+                var lastWasOptional = false;
+
+                for (var i = 0; i < parameters.length; i++) {
+
+                    if (parameters[i].getIsOptional()) {
+                        lastWasOptional = true;
+                    }
+                    else if (lastWasOptional) {
+                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
+                    }
+
+                }
+            } 
+
+            if (funcDeclAST.bod && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
+                var returnType = functionSignature.getReturnType();
+                var isVoidOrAny = returnType == this.semanticInfoChain.anyTypeSymbol || returnType == this.semanticInfoChain.voidTypeSymbol;
+                
+                if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.Throw)) {
+                    var funcName = functionDecl.getName();
+                    funcName = funcName ? "'" + funcName + "'" : "expression";
+                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Function "+ funcName +" declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
+                }
+            }            
+
+            return functionSymbol ? functionSymbol.getType() : null;
+        }
+
+        public typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             // "Getters must return a value"
             // "Getter and setter types do not agree"
             // "Setters may have one and only one argument"
-            // "Constructors may not have a return type of 'void'"
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -373,7 +435,98 @@ module TypeScript {
 
             typeCheckContext.popEnclosingDecl();
 
-            return functionSymbol.getType();
+            return functionSymbol.getType();            
+        }
+
+        public typeCheckConstructor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+
+            // PULLTODOERROR: "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class"
+            // PULLTODOERROR: "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor"
+            // PULLTODOERROR: "Constructors for derived classes must contain a call to the class's 'super' constructor"            
+
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var functionSymbol = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+
+            var funcDeclAST = <FuncDecl>ast;
+
+            var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
+
+            typeCheckContext.pushEnclosingDecl(functionDecl);
+
+            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
+
+            typeCheckContext.popEnclosingDecl();
+
+            var constructorSignature = functionDecl.getSignatureSymbol();
+
+            // check for optionality
+            var parameters = constructorSignature.getParameters();
+
+            if (parameters.length) {
+                var lastWasOptional = false;
+
+                for (var i = 0; i < parameters.length; i++) {
+
+                    if (parameters[i].getIsOptional()) {
+                        lastWasOptional = true;
+                    }
+                    else if (lastWasOptional) {
+                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
+                    }
+
+                }
+            }
+
+            return functionSymbol ? functionSymbol.getType() : null;
+        }
+
+        public typeCheckIndexer(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+        
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            // resolve the index signature, even though we won't be needing its type
+            this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+
+            var funcDeclAST = <FuncDecl>ast;
+
+            var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
+
+            typeCheckContext.pushEnclosingDecl(functionDecl);
+
+            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
+
+            typeCheckContext.popEnclosingDecl();
+
+            var indexSignature = functionDecl.getSignatureSymbol();
+            var parameters = indexSignature.getParameters();
+
+            if (parameters.length) {
+
+                if (parameters.length > 1) {
+                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
+                }
+
+                var parameterType: PullTypeSymbol = null;
+
+                for (var i = 0; i < parameters.length; i++) {
+
+                    if (parameters[i].getIsOptional() || parameters[i].getIsVarArg()) {
+                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
+                    }
+
+                    parameterType = parameters[i].getType();
+
+                    if (parameterType != this.semanticInfoChain.stringTypeSymbol && parameterType != this.semanticInfoChain.numberTypeSymbol) {
+                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
+                    }
+                }
+            }
+            else {
+                this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
+            }
+
+            return null;
         }
 
         // Classes
@@ -410,9 +563,17 @@ module TypeScript {
         //  - bases are interfaces or classes
         //  - declarations agree in generic parameters 
         public typeCheckInterface(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-
+            var interfaceAST = <InterfaceDeclaration>ast;
             // resolving the interface also resolves its members...
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var interfaceType = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            if (interfaceAST.members) {
+                for (var i = 0; i < interfaceAST.members.members.length; i++) {
+                    this.typeCheckAST(interfaceAST.members.members[i], typeCheckContext);
+                }
+            }
+
+            return interfaceType;
         }
 
         // Modules
@@ -848,7 +1009,7 @@ module TypeScript {
 
         public typeCheckReturnExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var returnAST = <ReturnStatement>ast;
-
+            typeCheckContext.setEnclosingDeclHasReturn();
             return this.typeCheckAST(returnAST.returnExpression, typeCheckContext);
         }
 

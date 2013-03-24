@@ -211,7 +211,7 @@ module TypeScript {
         public bind(scope: SymbolScope, table: IHashTable) {
             table.map(
                 (key, sym, binder) => {
-                    binder.bindSymbol(scope, sym);
+                    return binder.bindSymbol(scope, sym);
                 },
                 this);
         }

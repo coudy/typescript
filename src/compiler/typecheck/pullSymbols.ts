@@ -315,13 +315,22 @@ module TypeScript {
         public hasFlag(flag: PullElementFlags): bool {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
-                var declaration = declarations[i];
-                if ((declaration.getFlags() & flag) !== PullElementFlags.None) {
+                if ((declarations[i].getFlags() & flag) !== PullElementFlags.None) {
                     return true;
                 }
             }
             return false;
         }
+
+        public allDeclsHaveFlag(flag: PullElementFlags): bool {
+            var declarations = this.getDeclarations();
+            for (var i = 0, n = declarations.length; i < n; i++) {
+                if (!((declarations[i].getFlags() & flag) !== PullElementFlags.None)) {
+                    return false;
+                }
+            }
+            return true;
+        }        
 
         public pathToRoot() {
             var path: PullSymbol[] = [];
