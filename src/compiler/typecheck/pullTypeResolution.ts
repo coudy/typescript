@@ -769,7 +769,7 @@ module TypeScript {
                 for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
 
-                    if ((parentType.getKind & (PullElementKind.Interface | PullElementKind.Class)) != 0) {
+                    if ((parentType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
                         context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class or interface types", enclosingDecl);
                     }
 
@@ -783,7 +783,7 @@ module TypeScript {
                     implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
                     classDeclSymbol.addImplementedType(implementedType);
 
-                    if ((implementedType.getKind & (PullElementKind.Interface | PullElementKind.Class)) != 0) {
+                    if ((implementedType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
                         context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, "A class may only implement other class or interface types", enclosingDecl);
                     }                    
                 }
@@ -871,7 +871,7 @@ module TypeScript {
                 for (i = 0; i < interfaceDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
 
-                    if ((parentType.getKind & (PullElementKind.Interface | PullElementKind.Class)) != 0) {
+                    if ((parentType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
                         context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, "An interface may only extend other class or interface types", enclosingDecl);
                     }
                                        

@@ -42799,7 +42799,7 @@ var TypeScript;
                 }
                 for(i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeScript.TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
-                    if ((parentType.getKind & (32 /* Interface */  | 16 /* Class */ )) != 0) {
+                    if ((parentType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class or interface types", enclosingDecl);
                     }
                     classDeclSymbol.addExtendedType(parentType);
@@ -42810,7 +42810,7 @@ var TypeScript;
                 for(i = 0; i < classDeclAST.implementsList.members.length; i++) {
                     implementedType = this.resolveTypeReference(new TypeScript.TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
                     classDeclSymbol.addImplementedType(implementedType);
-                    if ((implementedType.getKind & (32 /* Interface */  | 16 /* Class */ )) != 0) {
+                    if ((implementedType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, "A class may only implement other class or interface types", enclosingDecl);
                     }
                 }
@@ -42875,7 +42875,7 @@ var TypeScript;
                 var parentType = null;
                 for(i = 0; i < interfaceDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeScript.TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
-                    if ((parentType.getKind & (32 /* Interface */  | 16 /* Class */ )) != 0) {
+                    if ((parentType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, "An interface may only extend other class or interface types", enclosingDecl);
                     }
                     interfaceDeclSymbol.addExtendedType(parentType);
