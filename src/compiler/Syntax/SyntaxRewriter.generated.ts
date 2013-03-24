@@ -356,7 +356,7 @@ module TypeScript {
 
         public visitMethodSignature(node: MethodSignatureSyntax): any {
             return node.update(
-                this.visitToken(node.identifier),
+                this.visitToken(node.propertyName),
                 node.questionToken === null ? null : this.visitToken(node.questionToken),
                 <CallSignatureSyntax>this.visitNode(node.callSignature));
         }

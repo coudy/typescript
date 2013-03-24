@@ -541,7 +541,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitMethodSignature(node: MethodSignatureSyntax): void {
-            this.appendToken(node.identifier);
+            this.appendToken(node.propertyName);
             this.appendToken(node.questionToken);
             node.callSignature.accept(this);
         }

@@ -1708,8 +1708,8 @@ module TypeScript {
 
             var preComments = this.convertNodeLeadingComments(node, start);
 
-            var name = this.identifierFromToken(node.identifier, !!node.questionToken);
-            this.movePast(node.identifier);
+            var name = this.identifierFromToken(node.propertyName, !!node.questionToken);
+            this.movePast(node.propertyName);
             this.movePast(node.questionToken);
 
             var typeParameters = node.callSignature.typeParameterList ? node.callSignature.typeParameterList.accept(this) : null;

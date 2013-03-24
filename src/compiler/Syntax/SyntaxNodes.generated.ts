@@ -3263,7 +3263,7 @@ module TypeScript {
 
     export class MethodSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
-    constructor(public identifier: ISyntaxToken,
+    constructor(public propertyName: ISyntaxToken,
                 public questionToken: ISyntaxToken,
                 public callSignature: CallSignatureSyntax,
                 parsedInStrictMode: bool) {
@@ -3285,7 +3285,7 @@ module TypeScript {
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this.identifier;
+            case 0: return this.propertyName;
             case 1: return this.questionToken;
             case 2: return this.callSignature;
             default: throw Errors.invalidOperation();
@@ -3296,23 +3296,23 @@ module TypeScript {
         return true;
     }
 
-    public update(identifier: ISyntaxToken,
+    public update(propertyName: ISyntaxToken,
                   questionToken: ISyntaxToken,
                   callSignature: CallSignatureSyntax): MethodSignatureSyntax {
-        if (this.identifier === identifier && this.questionToken === questionToken && this.callSignature === callSignature) {
+        if (this.propertyName === propertyName && this.questionToken === questionToken && this.callSignature === callSignature) {
             return this;
         }
 
-        return new MethodSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new MethodSignatureSyntax(propertyName, questionToken, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create(identifier: ISyntaxToken,
+    public static create(propertyName: ISyntaxToken,
                          callSignature: CallSignatureSyntax): MethodSignatureSyntax {
-        return new MethodSignatureSyntax(identifier, null, callSignature, /*parsedInStrictMode:*/ false);
+        return new MethodSignatureSyntax(propertyName, null, callSignature, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(identifier: ISyntaxToken): MethodSignatureSyntax {
-        return new MethodSignatureSyntax(identifier, null, CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): MethodSignatureSyntax {
+        return new MethodSignatureSyntax(propertyName, null, CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MethodSignatureSyntax {
@@ -3323,16 +3323,16 @@ module TypeScript {
         return <MethodSignatureSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withIdentifier(identifier: ISyntaxToken): MethodSignatureSyntax {
-        return this.update(identifier, this.questionToken, this.callSignature);
+    public withPropertyName(propertyName: ISyntaxToken): MethodSignatureSyntax {
+        return this.update(propertyName, this.questionToken, this.callSignature);
     }
 
     public withQuestionToken(questionToken: ISyntaxToken): MethodSignatureSyntax {
-        return this.update(this.identifier, questionToken, this.callSignature);
+        return this.update(this.propertyName, questionToken, this.callSignature);
     }
 
     public withCallSignature(callSignature: CallSignatureSyntax): MethodSignatureSyntax {
-        return this.update(this.identifier, this.questionToken, callSignature);
+        return this.update(this.propertyName, this.questionToken, callSignature);
     }
 
     public isTypeScriptSpecific(): bool {

@@ -2904,7 +2904,7 @@ var definitions = [
         ],
         children: [
             {
-                name: 'identifier',
+                name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
                     'IdentifierName'

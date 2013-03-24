@@ -308,7 +308,7 @@ module TypeScript {
         }
 
         public visitMethodSignature(node: MethodSignatureSyntax): void {
-            this.visitToken(node.identifier);
+            this.visitToken(node.propertyName);
             this.visitOptionalToken(node.questionToken);
             this.visitNode(node.callSignature);
         }
