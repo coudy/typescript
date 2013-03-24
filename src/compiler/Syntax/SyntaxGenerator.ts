@@ -487,7 +487,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['ITypeMemberSyntax'],
         children: [
-            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true, itTypeScriptSpecific: true },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' }
         ]

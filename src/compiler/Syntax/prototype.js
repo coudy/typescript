@@ -17169,7 +17169,7 @@ var TypeScript;
                 if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
                     return true;
                 }
-                return this.isCallSignature(0) || this.isConstructSignature() || this.isIndexSignature() || this.isMethodSignature() || this.isPropertySignature(inErrorRecovery);
+                return this.isCallSignature(0) || this.isConstructSignature() || this.isIndexSignature() || this.isMethodSignature(inErrorRecovery) || this.isPropertySignature(inErrorRecovery);
             };
             ParserImpl.prototype.parseTypeMember = function () {
                 if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
@@ -17181,7 +17181,7 @@ var TypeScript;
                     return this.parseConstructSignature();
                 } else if (this.isIndexSignature()) {
                     return this.parseIndexSignature();
-                } else if (this.isMethodSignature()) {
+                } else if (this.isMethodSignature(false)) {
                     return this.parseMethodSignature();
                 } else if (this.isPropertySignature(false)) {
                     return this.parsePropertySignature();
@@ -17209,10 +17209,10 @@ var TypeScript;
                 return this.factory.indexSignature(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation);
             };
             ParserImpl.prototype.parseMethodSignature = function () {
-                var identifier = this.eatIdentifierNameToken();
+                var propertyName = this.eatPropertyName();
                 var questionToken = this.tryEatToken(105 /* QuestionToken */ );
                 var callSignature = this.parseCallSignature(false);
-                return this.factory.methodSignature(identifier, questionToken, callSignature);
+                return this.factory.methodSignature(propertyName, questionToken, callSignature);
             };
             ParserImpl.prototype.parsePropertySignature = function () {
                 var propertyName = this.eatPropertyName();
@@ -17234,8 +17234,8 @@ var TypeScript;
             ParserImpl.prototype.isIndexSignature = function () {
                 return this.currentToken().tokenKind === 74 /* OpenBracketToken */ ;
             };
-            ParserImpl.prototype.isMethodSignature = function () {
-                if (TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())) {
+            ParserImpl.prototype.isMethodSignature = function (inErrorRecovery) {
+                if (this.isPropertyName(this.currentToken(), inErrorRecovery)) {
                     if (this.isCallSignature(1)) {
                         return true;
                     }

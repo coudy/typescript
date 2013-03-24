@@ -2521,7 +2521,7 @@ module TypeScript.Parser {
             return this.isCallSignature(/*tokenIndex:*/ 0) ||
                    this.isConstructSignature() ||
                    this.isIndexSignature() ||
-                   this.isMethodSignature() ||
+                   this.isMethodSignature(inErrorRecovery) ||
                    this.isPropertySignature(inErrorRecovery);
         }
 
@@ -2539,7 +2539,7 @@ module TypeScript.Parser {
             else if (this.isIndexSignature()) {
                 return this.parseIndexSignature();
             }
-            else if (this.isMethodSignature()) {
+            else if (this.isMethodSignature(/*inErrorRecovery:*/ false)) {
                 // Note: it is important that isFunctionSignature is called before isPropertySignature.
                 // isPropertySignature checks for a subset of isFunctionSignature.
                 return this.parseMethodSignature();
@@ -2583,11 +2583,13 @@ module TypeScript.Parser {
         }
 
         private parseMethodSignature(): MethodSignatureSyntax {
-            var identifier = this.eatIdentifierNameToken();
+            // Debug.assert(this.isMethodSignature());
+
+            var propertyName = this.eatPropertyName();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
-            return this.factory.methodSignature(identifier, questionToken, callSignature);
+            return this.factory.methodSignature(propertyName, questionToken, callSignature);
         }
 
         private parsePropertySignature(): PropertySignatureSyntax {
@@ -2618,8 +2620,8 @@ module TypeScript.Parser {
             return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
         }
 
-        private isMethodSignature(): bool {
-            if (SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())) {
+        private isMethodSignature(inErrorRecovery: bool): bool {
+            if (this.isPropertyName(this.currentToken(), inErrorRecovery)) {
                 // id(
                 if (this.isCallSignature(1)) {
                     return true;
