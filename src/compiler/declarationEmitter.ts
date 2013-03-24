@@ -55,8 +55,7 @@ module TypeScript {
         constructor(private emittingFileName: string,
                     isUTF8: bool,
                     public checker: TypeChecker,
-                    public emitOptions: EmitOptions,
-                    public errorReporter: SimpleErrorReporter) {
+                    public emitOptions: EmitOptions) {
             // Creating files can cause exceptions, report them.   
             var file = this.createFile(emittingFileName, isUTF8);
             this.declFile = new DeclFileWriter(file);

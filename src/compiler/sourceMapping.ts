@@ -48,7 +48,6 @@ module TypeScript {
                     public sourceMapFileName: string,
                     public jsFile: ITextWriter,
                     public sourceMapOut: ITextWriter,
-                    public errorReporter: SimpleErrorReporter,
                     emitFullPathOfSourceMap: bool) {
             this.currentMappings.push(this.sourceMappings);
 

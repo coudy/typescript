@@ -16,14 +16,6 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export class SimpleErrorReporter {
-        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
-        public hasErrors = false;
-
-        constructor() {
-        }
-    }
-
     export class ErrorReporter {
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
         public locationInfo: LocationInfo = unknownLocationInfo;

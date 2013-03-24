@@ -100,7 +100,6 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public errorReporter: SimpleErrorReporter = null;
         public pullErrorReporter: PullErrorReporter = null;
 
         public pullTypeChecker: PullTypeChecker = null;
@@ -116,7 +115,6 @@ module TypeScript {
                     public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
                     public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
-            this.errorReporter = new SimpleErrorReporter();
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
 
             this.emitOptions = new EmitOptions(this.settings);
@@ -303,7 +301,7 @@ module TypeScript {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                     declarationEmitter = new PullDeclarationEmitter(
-                        declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions, this.errorReporter);
+                        declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
                 }
 
                 declarationEmitter.emitDeclarations(script);
@@ -315,7 +313,7 @@ module TypeScript {
         // Will not throw exceptions.
         public emitDeclarations(): IDiagnostic[] {
             if (this.canEmitDeclarations() &&
-                !this.errorReporter.hasErrors && !this.pullErrorReporter.hasErrors) {
+                !this.pullErrorReporter.hasErrors) {
 
                 var sharedEmitter: DeclarationEmitter = null;
                 var fileNames = this.fileNameToScript.getAllKeys();
@@ -383,11 +381,12 @@ module TypeScript {
                     var javaScriptFileName = this.emitOptions.mapOutputFileName(typeScriptFileName, TypeScriptCompiler.mapToJSFileName);
                     var outFile = this.createFile(javaScriptFileName, this.useUTF8ForFile(script));
 
-                    emitter = new PullEmitter(javaScriptFileName, outFile, this.emitOptions, this.errorReporter, this.semanticInfoChain);
+                    emitter = new PullEmitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
 
                     if (this.settings.mapSourceFiles) {
                         var sourceMapFileName = javaScriptFileName + SourceMapper.MapFileExtension;
-                        emitter.setSourceMappings(new SourceMapper(typeScriptFileName, javaScriptFileName, sourceMapFileName, outFile, this.createFile(javaScriptFileName + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
+                        emitter.setSourceMappings(new SourceMapper(typeScriptFileName, javaScriptFileName, sourceMapFileName, outFile,
+                            this.createFile(sourceMapFileName, /*isUTF8:*/ false), this.settings.emitFullSourceMapPath));
                     }
 
                     if (inputOutputMapper) {
@@ -397,7 +396,7 @@ module TypeScript {
                 }
                 else if (this.settings.mapSourceFiles) {
                     emitter.setSourceMappings(new SourceMapper(typeScriptFileName, emitter.emittingFileName, emitter.sourceMapper.sourceMapFileName, emitter.outfile,
-                        emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
+                        emitter.sourceMapper.sourceMapOut, this.settings.emitFullSourceMapPath));
                 }
 
                 // Set location info
@@ -1174,6 +1173,24 @@ module TypeScript {
                 var info = this.resolvePosition(pos, script, scriptName);
                 return info;
             });
+        }
+
+        private reportDiagnostic(error: IDiagnostic, textWriter: ITextWriter) {
+            if (error.fileName()) {
+                var lineCol = { line: -1, character: -1 };
+                var lineMap = this.fileNameToLocationInfo.lookup(error.fileName()).lineMap;
+                lineMap.fillLineAndCharacterFromPosition(error.start(), lineCol);
+
+                textWriter.Write(error.fileName() + "(" + (lineCol.line + 1) + "," + lineCol.character + "): ");
+            }
+
+            textWriter.WriteLine(error.message());
+        }
+
+        public reportDiagnostics(errors: IDiagnostic[], textWriter: ITextWriter): void {
+            for (var i = 0; i < errors.length; i++) {
+                this.reportDiagnostic(errors[i], textWriter);
+            }
         }
     }
 }

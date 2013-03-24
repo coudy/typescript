@@ -118,8 +118,7 @@ module TypeScript {
         constructor(public checker: TypeChecker,
                     public emittingFileName: string,
                     public outfile: ITextWriter,
-                    public emitOptions: EmitOptions,
-                    public errorReporter: SimpleErrorReporter) {
+                    public emitOptions: EmitOptions) {
         }
 
         public isPull() { return false; }
@@ -789,7 +788,7 @@ module TypeScript {
                                 this.allSourceMappers = [];
                                 var sourceMapFile = this.emittingFileName + SourceMapper.MapFileExtension;
                                 var sourceMappingFile = this.createFile(sourceMapFile, false);
-                                this.setSourceMappings(new SourceMapper(tsModFileName, this.emittingFileName, sourceMapFile, this.outfile, sourceMappingFile, this.errorReporter, this.emitOptions.compilationSettings.emitFullSourceMapPath));
+                                this.setSourceMappings(new SourceMapper(tsModFileName, this.emittingFileName, sourceMapFile, this.outfile, sourceMappingFile, this.emitOptions.compilationSettings.emitFullSourceMapPath));
                                 this.emitState.column = 0;
                                 this.emitState.line = 0;
                             }

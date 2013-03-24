@@ -22,11 +22,10 @@ module TypeScript {
         private declStack: PullDecl[] = [];
 
         constructor(emittingFileName: string,
-            outfile: ITextWriter,
-            emitOptions: EmitOptions,
-            errorReporter: SimpleErrorReporter,
-            private semanticInfoChain: SemanticInfoChain) {
-            super(null, emittingFileName, outfile, emitOptions, errorReporter);
+                    outfile: ITextWriter,
+                    emitOptions: EmitOptions,
+                    private semanticInfoChain: SemanticInfoChain) {
+            super(null, emittingFileName, outfile, emitOptions);
 
             this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }

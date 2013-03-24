@@ -155,49 +155,31 @@ class BatchCompiler {
         var compiler = new TypeScript.TypeScriptCompiler(
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
 
-        compiler.errorReporter.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.LineMap) => {
-            compiler.errorReporter.hasErrors = true;
-            var lineCol = { line: -1, character: -1 };
-            lineMap.fillLineAndCharacterFromPosition(minChar, lineCol);
-
-            var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
-            this.errorReporter.WriteLine(msg);
-        };
-
-        var consumeUnit = (code: TypeScript.SourceUnit) => {
-            try {
-                // if file resolving is disabled, the file's content will not yet be loaded
-
-                if (!this.compilationSettings.resolve) {
-                    code.content = this.ioHost.readFile(code.path);
-                    // If declaration files are going to be emitted, 
-                    // preprocess the file contents and add in referenced files as well
-                    if (this.compilationSettings.generateDeclarationFiles) {
-                        TypeScript.CompilerDiagnostics.assert(code.referencedFiles === null, "With no resolve option, referenced files need to null");
-                        code.referencedFiles = TypeScript.getReferencedFiles(code.path, code);
-                    }
-                }
-
-                if (code.content != null) {
-                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), code.referencedFiles);
-
-                    // TODO: remove this code.  This is not how we should be reporting errors.
-                    var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);
-
-                    if (syntaxTree !== null) {
-                        compiler.pullErrorReporter.reportDiagnostics(syntaxTree.diagnostics(), syntaxTree.lineMap());
-                    }
-                }
-            }
-            catch (err) {
-                compiler.errorReporter.hasErrors = true;
-                // This includes syntax errors thrown from error callback if not in recovery mode
-                this.errorReporter.WriteLine(err.message);
-            }
-        }
-
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            consumeUnit(this.resolvedEnvironment.code[iCode]);
+            var code = this.resolvedEnvironment[iCode];
+
+            // if file resolving is disabled, the file's content will not yet be loaded
+
+            if (!this.compilationSettings.resolve) {
+                code.content = this.ioHost.readFile(code.path);
+                // If declaration files are going to be emitted, 
+                // preprocess the file contents and add in referenced files as well
+                if (this.compilationSettings.generateDeclarationFiles) {
+                    TypeScript.CompilerDiagnostics.assert(code.referencedFiles === null, "With no resolve option, referenced files need to null");
+                    code.referencedFiles = TypeScript.getReferencedFiles(code.path, code);
+                }
+            }
+
+            if (code.content != null) {
+                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), code.referencedFiles);
+
+                var syntacticDiagnostics = compiler.getSyntacticDiagnostics(code.path);
+                compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
+
+                if (syntacticDiagnostics.length > 0) {
+                    return true;
+                }
+            }
         }
 
         var emitterIOHost = {
@@ -207,28 +189,26 @@ class BatchCompiler {
             resolvePath: this.ioHost.resolvePath
         };
 
-        try {
-            compiler.pullTypeCheck(true, true);
+        compiler.pullTypeCheck(true, true);
 
-            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-            };
+        var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+            this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+        };
 
-            // TODO: if there are any emit diagnostics.  Don't proceed.
-            var emitDiagnostics = compiler.emit(emitterIOHost, mapInputToOutput);
-            compiler.pullErrorReporter.reportDiagnostics(emitDiagnostics);
-
-            var emitDeclarationsDiagnostics = compiler.emitDeclarations();
-            compiler.pullErrorReporter.reportDiagnostics(emitDeclarationsDiagnostics);
-        } catch (err) {
-            compiler.errorReporter.hasErrors = true;
-            // Catch emitter exceptions
-            if (err.message != "EmitError") {
-                throw err;
-            }
+        // TODO: if there are any emit diagnostics.  Don't proceed.
+        var emitDiagnostics = compiler.emit(emitterIOHost, mapInputToOutput);
+        compiler.reportDiagnostics(emitDiagnostics, this.errorReporter);
+        if (emitDiagnostics.length > 0) {
+            return true;
         }
 
-        return compiler.errorReporter.hasErrors;
+        var emitDeclarationsDiagnostics = compiler.emitDeclarations();
+        compiler.reportDiagnostics(emitDeclarationsDiagnostics, this.errorReporter);
+        if (emitDeclarationsDiagnostics.length > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     // Execute the provided inputs

@@ -1247,18 +1247,18 @@ module Harness {
             compiler.pullErrorReporter.textWriter = stderr;
 
             var syntacticDiagnostics = compiler.getSyntacticDiagnostics(uName);
-            compiler.pullErrorReporter.reportDiagnostics(syntacticDiagnostics);
+            compiler.reportDiagnostics(syntacticDiagnostics, stderr);
 
             var semanticDiagnostics = compiler.getSemanticDiagnostics(uName);
-            compiler.pullErrorReporter.reportDiagnostics(semanticDiagnostics);
+            compiler.reportDiagnostics(semanticDiagnostics, stderr);
 
             var errorLines = stderr.lines;
 
             var emitDiagnostics = emit(stdout);
-            compiler.pullErrorReporter.reportDiagnostics(emitDiagnostics);
+            compiler.reportDiagnostics(emitDiagnostics, stderr);
 
             var emitDeclarationsDiagnostics = compiler.emitDeclarations();
-            compiler.pullErrorReporter.reportDiagnostics(emitDeclarationsDiagnostics);
+            compiler.reportDiagnostics(emitDeclarationsDiagnostics, stderr);
 
             if (context) {
                 context.postCompile();

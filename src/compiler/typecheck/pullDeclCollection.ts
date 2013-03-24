@@ -1040,10 +1040,10 @@ module TypeScript {
 
     function hasInitializationFlag(decl: PullDecl): bool {
         if (decl.getKind() & PullElementKind.Container) {
-            return decl.getFlags() & PullElementFlags.InitializedModule;
+            return (decl.getFlags() & PullElementFlags.InitializedModule) !== 0;
         }
         else if (decl.getKind() & PullElementKind.DynamicModule) {
-            return decl.getFlags() & PullElementFlags.InitializedDynamicModule;
+            return (decl.getFlags() & PullElementFlags.InitializedDynamicModule) !== 0;
         }
 
         return false;
