@@ -554,7 +554,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitPropertySignature(node: PropertySignatureSyntax): void {
-            this.appendToken(node.identifier);
+            this.appendToken(node.propertyName);
             this.appendToken(node.questionToken);
             this.appendNode(node.typeAnnotation);
         }

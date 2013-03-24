@@ -539,6 +539,31 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
+    var Diagnostic = (function () {
+        function Diagnostic(start, length, fileName, message) {
+            this._fileName = fileName;
+            this._start = start;
+            this._length = length;
+            this._message = message;
+        }
+        Diagnostic.prototype.fileName = function () {
+            return this._fileName;
+        };
+        Diagnostic.prototype.start = function () {
+            return this._start;
+        };
+        Diagnostic.prototype.length = function () {
+            return this._length;
+        };
+        Diagnostic.prototype.message = function () {
+            return this._message;
+        };
+        return Diagnostic;
+    })();
+    TypeScript.Diagnostic = Diagnostic;    
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
     var IntegerUtilities = (function () {
         function IntegerUtilities() { }
         IntegerUtilities.integerDivide = function integerDivide(numerator, denominator) {
@@ -2932,10 +2957,12 @@ var definitions = [
         ],
         children: [
             {
-                name: 'identifier',
+                name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    'IdentifierName'
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
                 ]
             }, 
             {

@@ -2513,7 +2513,7 @@ module TypeScript.Parser {
             return this.factory.objectType(openBraceToken, typeMembers, closeBraceToken);
         }
 
-        private isTypeMember(): bool {
+        private isTypeMember(inErrorRecovery: bool): bool {
             if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
                 return true;
             }
@@ -2522,7 +2522,7 @@ module TypeScript.Parser {
                    this.isConstructSignature() ||
                    this.isIndexSignature() ||
                    this.isMethodSignature() ||
-                   this.isPropertySignature();
+                   this.isPropertySignature(inErrorRecovery);
         }
 
         private parseTypeMember(): ITypeMemberSyntax {
@@ -2544,7 +2544,7 @@ module TypeScript.Parser {
                 // isPropertySignature checks for a subset of isFunctionSignature.
                 return this.parseMethodSignature();
             }
-            else if (this.isPropertySignature()) {
+            else if (this.isPropertySignature(/*inErrorRecovery:*/ false)) {
                 return this.parsePropertySignature();
             }
             else {
@@ -2583,11 +2583,11 @@ module TypeScript.Parser {
         private parsePropertySignature(): PropertySignatureSyntax {
             // Debug.assert(this.isPropertySignature());
 
-            var identifier = this.eatIdentifierNameToken();
+            var propertyName = this.eatPropertyName();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
 
-            return this.factory.propertySignature(identifier, questionToken, typeAnnotation);
+            return this.factory.propertySignature(propertyName, questionToken, typeAnnotation);
         }
 
         private isCallSignature(tokenIndex: number): bool {
@@ -2625,10 +2625,10 @@ module TypeScript.Parser {
             return false;
         }
 
-        private isPropertySignature(): bool {
-            // Note: identifiers also start function signatures.  So it's important that we call this
+        private isPropertySignature(inErrorRecovery: bool): bool {
+            // Note: property names also start function signatures.  So it's important that we call this
             // after we calll isFunctionSignature.
-            return SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken());
+            return this.isPropertyName(this.currentToken(), inErrorRecovery);
         }
 
         private isExtendsClause(): bool {
@@ -5471,7 +5471,7 @@ module TypeScript.Parser {
                     return this.isVariableDeclarator();
 
                 case ListParsingState.ObjectType_TypeMembers:
-                    return this.isTypeMember();
+                    return this.isTypeMember(inErrorRecovery);
 
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.isExpression();

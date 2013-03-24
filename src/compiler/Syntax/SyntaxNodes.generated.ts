@@ -3430,7 +3430,7 @@ module TypeScript {
 
     export class PropertySignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
-    constructor(public identifier: ISyntaxToken,
+    constructor(public propertyName: ISyntaxToken,
                 public questionToken: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
                 parsedInStrictMode: bool) {
@@ -3452,7 +3452,7 @@ module TypeScript {
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this.identifier;
+            case 0: return this.propertyName;
             case 1: return this.questionToken;
             case 2: return this.typeAnnotation;
             default: throw Errors.invalidOperation();
@@ -3463,22 +3463,22 @@ module TypeScript {
         return true;
     }
 
-    public update(identifier: ISyntaxToken,
+    public update(propertyName: ISyntaxToken,
                   questionToken: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax {
-        if (this.identifier === identifier && this.questionToken === questionToken && this.typeAnnotation === typeAnnotation) {
+        if (this.propertyName === propertyName && this.questionToken === questionToken && this.typeAnnotation === typeAnnotation) {
             return this;
         }
 
-        return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new PropertySignatureSyntax(propertyName, questionToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create(identifier: ISyntaxToken): PropertySignatureSyntax {
-        return new PropertySignatureSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
+    public static create(propertyName: ISyntaxToken): PropertySignatureSyntax {
+        return new PropertySignatureSyntax(propertyName, null, null, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(identifier: ISyntaxToken): PropertySignatureSyntax {
-        return new PropertySignatureSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): PropertySignatureSyntax {
+        return new PropertySignatureSyntax(propertyName, null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertySignatureSyntax {
@@ -3489,16 +3489,16 @@ module TypeScript {
         return <PropertySignatureSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withIdentifier(identifier: ISyntaxToken): PropertySignatureSyntax {
-        return this.update(identifier, this.questionToken, this.typeAnnotation);
+    public withPropertyName(propertyName: ISyntaxToken): PropertySignatureSyntax {
+        return this.update(propertyName, this.questionToken, this.typeAnnotation);
     }
 
     public withQuestionToken(questionToken: ISyntaxToken): PropertySignatureSyntax {
-        return this.update(this.identifier, questionToken, this.typeAnnotation);
+        return this.update(this.propertyName, questionToken, this.typeAnnotation);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax {
-        return this.update(this.identifier, this.questionToken, typeAnnotation);
+        return this.update(this.propertyName, this.questionToken, typeAnnotation);
     }
 
     public isTypeScriptSpecific(): bool {

@@ -371,7 +371,7 @@ module TypeScript {
 
         public visitPropertySignature(node: PropertySignatureSyntax): any {
             return node.update(
-                this.visitToken(node.identifier),
+                this.visitToken(node.propertyName),
                 node.questionToken === null ? null : this.visitToken(node.questionToken),
                 node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
         }

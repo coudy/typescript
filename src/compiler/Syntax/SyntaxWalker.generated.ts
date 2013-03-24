@@ -321,7 +321,7 @@ module TypeScript {
         }
 
         public visitPropertySignature(node: PropertySignatureSyntax): void {
-            this.visitToken(node.identifier);
+            this.visitToken(node.propertyName);
             this.visitOptionalToken(node.questionToken);
             this.visitOptionalNode(node.typeAnnotation);
         }
