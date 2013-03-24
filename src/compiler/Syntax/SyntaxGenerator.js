@@ -2934,8 +2934,23 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'parameter',
-                type: 'ParameterSyntax'
+                name: 'identifier',
+                isToken: true,
+                tokenKinds: [
+                    'IdentifierName'
+                ]
+            }, 
+            {
+                name: 'colonToken',
+                isToken: true
+            }, 
+            {
+                name: 'stringOrNumberKeyword',
+                isToken: true,
+                tokenKinds: [
+                    'StringKeyword', 
+                    'NumberKeyword'
+                ]
             }, 
             {
                 name: 'closeBracketToken',

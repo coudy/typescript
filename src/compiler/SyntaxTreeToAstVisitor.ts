@@ -1737,7 +1737,17 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
 
             this.movePast(node.openBracketToken);
-            var parameter = node.parameter.accept(this);
+
+            var identifierStart = this.position;
+            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
+            this.movePast(node.identifier);
+            this.movePast(node.colonToken);
+            var parameterType = this.visitType(node.stringOrNumberKeyword);
+
+            var parameter = new ArgDecl(identifier);
+            parameter.typeExpr = parameterType;
+            this.setSpan(parameter, identifierStart, this.position);
+
             this.movePast(node.closeBracketToken);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
@@ -1751,7 +1761,7 @@ module TypeScript {
             this.setSpan(result, start, this.position);
 
             result.preComments = preComments;
-            result.variableArgList = !!node.parameter.dotDotDotToken;
+            result.variableArgList = false;
             result.returnTypeAnnotation = returnType;
 
             result.fncFlags |= FncFlags.IndexerMember;

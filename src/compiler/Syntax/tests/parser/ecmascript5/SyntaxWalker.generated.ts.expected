@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -464,37 +464,29 @@
                                             }
                                         ]
                                     },
-                                    "parameter": {
-                                        "kind": "Parameter",
-                                        "fullWidth": 13,
-                                        "identifier": {
-                                            "kind": "IdentifierName",
-                                            "width": 5,
-                                            "text": "index",
-                                            "valueText": "index"
-                                        },
-                                        "typeAnnotation": {
-                                            "kind": "TypeAnnotation",
-                                            "fullWidth": 8,
-                                            "colonToken": {
-                                                "kind": "ColonToken",
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": ":",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": " "
-                                                    }
-                                                ]
-                                            },
-                                            "type": {
-                                                "kind": "NumberKeyword",
-                                                "width": 6,
-                                                "text": "number"
+                                    "identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 5,
+                                        "text": "index",
+                                        "valueText": "index"
+                                    },
+                                    "colonToken": {
+                                        "kind": "ColonToken",
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": ":",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
                                             }
-                                        }
+                                        ]
+                                    },
+                                    "stringOrNumberKeyword": {
+                                        "kind": "NumberKeyword",
+                                        "width": 6,
+                                        "text": "number"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",

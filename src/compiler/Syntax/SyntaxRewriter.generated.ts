@@ -364,7 +364,9 @@ module TypeScript {
         public visitIndexSignature(node: IndexSignatureSyntax): any {
             return node.update(
                 this.visitToken(node.openBracketToken),
-                <ParameterSyntax>this.visitNode(node.parameter),
+                this.visitToken(node.identifier),
+                this.visitToken(node.colonToken),
+                this.visitToken(node.stringOrNumberKeyword),
                 this.visitToken(node.closeBracketToken),
                 node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
         }

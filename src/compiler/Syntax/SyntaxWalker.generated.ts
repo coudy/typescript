@@ -315,7 +315,9 @@ module TypeScript {
 
         public visitIndexSignature(node: IndexSignatureSyntax): void {
             this.visitToken(node.openBracketToken);
-            this.visitNode(node.parameter);
+            this.visitToken(node.identifier);
+            this.visitToken(node.colonToken);
+            this.visitToken(node.stringOrNumberKeyword);
             this.visitToken(node.closeBracketToken);
             this.visitOptionalNode(node.typeAnnotation);
         }
