@@ -533,17 +533,16 @@ module TypeScript {
                 this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
 
                 var declCollectionContext: DeclCollectionContext = null;
-                var i = 0;
+                var i: number;
 
                 var createDeclsStartTime = new Date().getTime();
 
                 var fileNames = this.fileNameToScript.getAllKeys();
-                for (; i < fileNames.length; i++) {
+                for (i = 0; i < fileNames.length; i++) {
                     var fileName = fileNames[i];
                     var semanticInfo = new SemanticInfo(fileName, this.fileNameToLocationInfo.lookup(fileName));
 
                     declCollectionContext = new DeclCollectionContext(semanticInfo);
-
                     declCollectionContext.scriptName = fileName;
 
                     // create decls
@@ -567,16 +566,9 @@ module TypeScript {
                 }
 
                 var bindEndTime = new Date().getTime();
-                //var typeCheckStartTime = new Date().getTime();
-
-                //// resolve symbols
-                ////for (i = 0; i < this.scripts.members.length; i++) {
-                ////    this.pullResolveFile(this.units[i].fileName);
-                ////}
-
-                //var typeCheckEndTime = new Date().getTime();
 
                 var findErrorsStartTime = new Date().getTime();
+
                 // type check
                 fileNames = this.fileNameToScript.getAllKeys();
                 for (i = 0; i < fileNames.length; i++) {

@@ -190,6 +190,7 @@ class BatchCompiler {
         };
 
         compiler.pullTypeCheck(true, true);
+        // Note: we continue even if there were type check warnings.
 
         var mapInputToOutput = (inputFile: string, outputFile: string): void => {
             this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);

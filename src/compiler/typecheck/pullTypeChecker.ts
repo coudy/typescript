@@ -484,7 +484,7 @@ module TypeScript {
                 }
             }
 
-            return accessorSymbol        
+            return accessorSymbol;
         }
 
         public typeCheckConstructor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
