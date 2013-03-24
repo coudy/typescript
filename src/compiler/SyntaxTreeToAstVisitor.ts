@@ -1748,7 +1748,7 @@ module TypeScript {
             this.setSpan(parameter, identifierStart, this.position);
 
             this.movePast(node.closeBracketToken);
-            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var returnType = node.typeAnnotation.accept(this);
 
             var name = new Identifier("__item");
             this.setSpan(name, start, start);   // 0 length name.
