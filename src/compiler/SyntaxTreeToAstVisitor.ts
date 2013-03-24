@@ -1741,8 +1741,7 @@ module TypeScript {
             var identifierStart = this.position;
             var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
-            this.movePast(node.colonToken);
-            var parameterType = this.visitType(node.stringOrNumberKeyword);
+            var parameterType = node.parameterTypeAnnotation.accept(this);
 
             var parameter = new ArgDecl(identifier);
             parameter.typeExpr = parameterType;

@@ -470,23 +470,27 @@
                                         "text": "index",
                                         "valueText": "index"
                                     },
-                                    "colonToken": {
-                                        "kind": "ColonToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ":",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
-                                    "stringOrNumberKeyword": {
-                                        "kind": "NumberKeyword",
-                                        "width": 6,
-                                        "text": "number"
+                                    "parameterTypeAnnotation": {
+                                        "kind": "TypeAnnotation",
+                                        "fullWidth": 8,
+                                        "colonToken": {
+                                            "kind": "ColonToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ":",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        "type": {
+                                            "kind": "NumberKeyword",
+                                            "width": 6,
+                                            "text": "number"
+                                        }
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",

@@ -4317,8 +4317,8 @@ var TypeScript;
             NormalModeFactory.prototype.methodSignature = function (propertyName, questionToken, callSignature) {
                 return new TypeScript.MethodSignatureSyntax(propertyName, questionToken, callSignature, false);
             };
-            NormalModeFactory.prototype.indexSignature = function (openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation) {
-                return new TypeScript.IndexSignatureSyntax(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation, false);
+            NormalModeFactory.prototype.indexSignature = function (openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation) {
+                return new TypeScript.IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, false);
             };
             NormalModeFactory.prototype.propertySignature = function (propertyName, questionToken, typeAnnotation) {
                 return new TypeScript.PropertySignatureSyntax(propertyName, questionToken, typeAnnotation, false);
@@ -4577,8 +4577,8 @@ var TypeScript;
             StrictModeFactory.prototype.methodSignature = function (propertyName, questionToken, callSignature) {
                 return new TypeScript.MethodSignatureSyntax(propertyName, questionToken, callSignature, true);
             };
-            StrictModeFactory.prototype.indexSignature = function (openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation) {
-                return new TypeScript.IndexSignatureSyntax(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation, true);
+            StrictModeFactory.prototype.indexSignature = function (openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation) {
+                return new TypeScript.IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, true);
             };
             StrictModeFactory.prototype.propertySignature = function (propertyName, questionToken, typeAnnotation) {
                 return new TypeScript.PropertySignatureSyntax(propertyName, questionToken, typeAnnotation, true);
@@ -9079,12 +9079,11 @@ var TypeScript;
     TypeScript.MethodSignatureSyntax = MethodSignatureSyntax;    
     var IndexSignatureSyntax = (function (_super) {
         __extends(IndexSignatureSyntax, _super);
-        function IndexSignatureSyntax(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation, parsedInStrictMode) {
+        function IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, parsedInStrictMode) {
             _super.call(this, parsedInStrictMode);
             this.openBracketToken = openBracketToken;
             this.identifier = identifier;
-            this.colonToken = colonToken;
-            this.stringOrNumberKeyword = stringOrNumberKeyword;
+            this.parameterTypeAnnotation = parameterTypeAnnotation;
             this.closeBracketToken = closeBracketToken;
             this.typeAnnotation = typeAnnotation;
         }
@@ -9095,7 +9094,7 @@ var TypeScript;
             return 142 /* IndexSignature */ ;
         };
         IndexSignatureSyntax.prototype.childCount = function () {
-            return 6;
+            return 5;
         };
         IndexSignatureSyntax.prototype.childAt = function (slot) {
             switch(slot) {
@@ -9104,12 +9103,10 @@ var TypeScript;
                 case 1:
                     return this.identifier;
                 case 2:
-                    return this.colonToken;
+                    return this.parameterTypeAnnotation;
                 case 3:
-                    return this.stringOrNumberKeyword;
-                case 4:
                     return this.closeBracketToken;
-                case 5:
+                case 4:
                     return this.typeAnnotation;
                 default:
                     throw TypeScript.Errors.invalidOperation();
@@ -9118,17 +9115,17 @@ var TypeScript;
         IndexSignatureSyntax.prototype.isTypeMember = function () {
             return true;
         };
-        IndexSignatureSyntax.prototype.update = function (openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation) {
-            if (this.openBracketToken === openBracketToken && this.identifier === identifier && this.colonToken === colonToken && this.stringOrNumberKeyword === stringOrNumberKeyword && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
+        IndexSignatureSyntax.prototype.update = function (openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation) {
+            if (this.openBracketToken === openBracketToken && this.identifier === identifier && this.parameterTypeAnnotation === parameterTypeAnnotation && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
                 return this;
             }
-            return new IndexSignatureSyntax(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation, this.parsedInStrictMode());
+            return new IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, this.parsedInStrictMode());
         };
-        IndexSignatureSyntax.create = function create(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken) {
-            return new IndexSignatureSyntax(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, null, false);
+        IndexSignatureSyntax.create = function create(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken) {
+            return new IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, null, false);
         };
-        IndexSignatureSyntax.create1 = function create1(identifier, stringOrNumberKeyword) {
-            return new IndexSignatureSyntax(TypeScript.Syntax.token(74 /* OpenBracketToken */ ), identifier, TypeScript.Syntax.token(106 /* ColonToken */ ), stringOrNumberKeyword, TypeScript.Syntax.token(75 /* CloseBracketToken */ ), null, false);
+        IndexSignatureSyntax.create1 = function create1(identifier, parameterTypeAnnotation) {
+            return new IndexSignatureSyntax(TypeScript.Syntax.token(74 /* OpenBracketToken */ ), identifier, parameterTypeAnnotation, TypeScript.Syntax.token(75 /* CloseBracketToken */ ), null, false);
         };
         IndexSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -9137,22 +9134,19 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
         IndexSignatureSyntax.prototype.withOpenBracketToken = function (openBracketToken) {
-            return this.update(openBracketToken, this.identifier, this.colonToken, this.stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
+            return this.update(openBracketToken, this.identifier, this.parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
         };
         IndexSignatureSyntax.prototype.withIdentifier = function (identifier) {
-            return this.update(this.openBracketToken, identifier, this.colonToken, this.stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
+            return this.update(this.openBracketToken, identifier, this.parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
         };
-        IndexSignatureSyntax.prototype.withColonToken = function (colonToken) {
-            return this.update(this.openBracketToken, this.identifier, colonToken, this.stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
-        };
-        IndexSignatureSyntax.prototype.withStringOrNumberKeyword = function (stringOrNumberKeyword) {
-            return this.update(this.openBracketToken, this.identifier, this.colonToken, stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
+        IndexSignatureSyntax.prototype.withParameterTypeAnnotation = function (parameterTypeAnnotation) {
+            return this.update(this.openBracketToken, this.identifier, parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
         };
         IndexSignatureSyntax.prototype.withCloseBracketToken = function (closeBracketToken) {
-            return this.update(this.openBracketToken, this.identifier, this.colonToken, this.stringOrNumberKeyword, closeBracketToken, this.typeAnnotation);
+            return this.update(this.openBracketToken, this.identifier, this.parameterTypeAnnotation, closeBracketToken, this.typeAnnotation);
         };
         IndexSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
-            return this.update(this.openBracketToken, this.identifier, this.colonToken, this.stringOrNumberKeyword, this.closeBracketToken, typeAnnotation);
+            return this.update(this.openBracketToken, this.identifier, this.parameterTypeAnnotation, this.closeBracketToken, typeAnnotation);
         };
         IndexSignatureSyntax.prototype.isTypeScriptSpecific = function () {
             return true;
@@ -12693,7 +12687,7 @@ var TypeScript;
             return node.update(this.visitToken(node.propertyName), node.questionToken === null ? null : this.visitToken(node.questionToken), this.visitNode(node.callSignature));
         };
         SyntaxRewriter.prototype.visitIndexSignature = function (node) {
-            return node.update(this.visitToken(node.openBracketToken), this.visitToken(node.identifier), this.visitToken(node.colonToken), this.visitToken(node.stringOrNumberKeyword), this.visitToken(node.closeBracketToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation));
+            return node.update(this.visitToken(node.openBracketToken), this.visitToken(node.identifier), this.visitNode(node.parameterTypeAnnotation), this.visitToken(node.closeBracketToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation));
         };
         SyntaxRewriter.prototype.visitPropertySignature = function (node) {
             return node.update(this.visitToken(node.propertyName), node.questionToken === null ? null : this.visitToken(node.questionToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation));
@@ -15432,8 +15426,7 @@ var TypeScript;
         SyntaxWalker.prototype.visitIndexSignature = function (node) {
             this.visitToken(node.openBracketToken);
             this.visitToken(node.identifier);
-            this.visitToken(node.colonToken);
-            this.visitToken(node.stringOrNumberKeyword);
+            this.visitNode(node.parameterTypeAnnotation);
             this.visitToken(node.closeBracketToken);
             this.visitOptionalNode(node.typeAnnotation);
         };
@@ -17197,16 +17190,10 @@ var TypeScript;
             ParserImpl.prototype.parseIndexSignature = function () {
                 var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
                 var identifier = this.eatIdentifierToken();
-                var colonToken = this.eatToken(106 /* ColonToken */ );
-                var stringOrNumberKeyword;
-                if (this.currentToken().tokenKind === 67 /* NumberKeyword */ ) {
-                    stringOrNumberKeyword = this.eatToken(67 /* NumberKeyword */ );
-                } else {
-                    stringOrNumberKeyword = this.eatToken(69 /* StringKeyword */ );
-                }
+                var parameterTypeAnnotation = this.parseTypeAnnotation(false);
                 var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
-                var typeAnnotation = this.parseOptionalTypeAnnotation(false);
-                return this.factory.indexSignature(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation);
+                var typeAnnotation = this.parseTypeAnnotation(false);
+                return this.factory.indexSignature(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation);
             };
             ParserImpl.prototype.parseMethodSignature = function () {
                 var propertyName = this.eatPropertyName();
@@ -22223,9 +22210,7 @@ var TypeScript;
             PrettyPrinterImpl.prototype.visitIndexSignature = function (node) {
                 this.appendToken(node.openBracketToken);
                 this.appendToken(node.identifier);
-                this.appendToken(node.colonToken);
-                this.ensureSpace();
-                this.appendToken(node.stringOrNumberKeyword);
+                node.parameterTypeAnnotation.accept(this);
                 this.appendToken(node.closeBracketToken);
                 this.appendNode(node.typeAnnotation);
             };
@@ -44891,7 +44876,7 @@ var TypeScript;
                 }
                 for(i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeScript.TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
-                    if ((parentType.getKind & (32 /* Interface */  | 16 /* Class */ )) != 0) {
+                    if ((parentType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class or interface types", enclosingDecl);
                     }
                     classDeclSymbol.addExtendedType(parentType);
@@ -44902,7 +44887,7 @@ var TypeScript;
                 for(i = 0; i < classDeclAST.implementsList.members.length; i++) {
                     implementedType = this.resolveTypeReference(new TypeScript.TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
                     classDeclSymbol.addImplementedType(implementedType);
-                    if ((implementedType.getKind & (32 /* Interface */  | 16 /* Class */ )) != 0) {
+                    if ((implementedType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, "A class may only implement other class or interface types", enclosingDecl);
                     }
                 }
@@ -44967,7 +44952,7 @@ var TypeScript;
                 var parentType = null;
                 for(i = 0; i < interfaceDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeScript.TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
-                    if ((parentType.getKind & (32 /* Interface */  | 16 /* Class */ )) != 0) {
+                    if ((parentType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, "An interface may only extend other class or interface types", enclosingDecl);
                     }
                     interfaceDeclSymbol.addExtendedType(parentType);
@@ -57169,8 +57154,7 @@ var TypeScript;
             var identifierStart = this.position;
             var identifier = this.identifierFromToken(node.identifier, false);
             this.movePast(node.identifier);
-            this.movePast(node.colonToken);
-            var parameterType = this.visitType(node.stringOrNumberKeyword);
+            var parameterType = node.parameterTypeAnnotation.accept(this);
             var parameter = new TypeScript.ArgDecl(identifier);
             parameter.typeExpr = parameterType;
             this.setSpan(parameter, identifierStart, this.position);

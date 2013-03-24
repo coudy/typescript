@@ -3345,8 +3345,7 @@ module TypeScript {
 
     constructor(public openBracketToken: ISyntaxToken,
                 public identifier: ISyntaxToken,
-                public colonToken: ISyntaxToken,
-                public stringOrNumberKeyword: ISyntaxToken,
+                public parameterTypeAnnotation: TypeAnnotationSyntax,
                 public closeBracketToken: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
                 parsedInStrictMode: bool) {
@@ -3363,17 +3362,16 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 6;
+        return 5;
     }
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBracketToken;
             case 1: return this.identifier;
-            case 2: return this.colonToken;
-            case 3: return this.stringOrNumberKeyword;
-            case 4: return this.closeBracketToken;
-            case 5: return this.typeAnnotation;
+            case 2: return this.parameterTypeAnnotation;
+            case 3: return this.closeBracketToken;
+            case 4: return this.typeAnnotation;
             default: throw Errors.invalidOperation();
         }
     }
@@ -3384,28 +3382,26 @@ module TypeScript {
 
     public update(openBracketToken: ISyntaxToken,
                   identifier: ISyntaxToken,
-                  colonToken: ISyntaxToken,
-                  stringOrNumberKeyword: ISyntaxToken,
+                  parameterTypeAnnotation: TypeAnnotationSyntax,
                   closeBracketToken: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
-        if (this.openBracketToken === openBracketToken && this.identifier === identifier && this.colonToken === colonToken && this.stringOrNumberKeyword === stringOrNumberKeyword && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
+        if (this.openBracketToken === openBracketToken && this.identifier === identifier && this.parameterTypeAnnotation === parameterTypeAnnotation && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
             return this;
         }
 
-        return new IndexSignatureSyntax(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(openBracketToken: ISyntaxToken,
                          identifier: ISyntaxToken,
-                         colonToken: ISyntaxToken,
-                         stringOrNumberKeyword: ISyntaxToken,
+                         parameterTypeAnnotation: TypeAnnotationSyntax,
                          closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
-        return new IndexSignatureSyntax(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, null, /*parsedInStrictMode:*/ false);
+        return new IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, null, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken,
-                          stringOrNumberKeyword: ISyntaxToken): IndexSignatureSyntax {
-        return new IndexSignatureSyntax(Syntax.token(SyntaxKind.OpenBracketToken), identifier, Syntax.token(SyntaxKind.ColonToken), stringOrNumberKeyword, Syntax.token(SyntaxKind.CloseBracketToken), null, /*parsedInStrictMode:*/ false);
+                          parameterTypeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
+        return new IndexSignatureSyntax(Syntax.token(SyntaxKind.OpenBracketToken), identifier, parameterTypeAnnotation, Syntax.token(SyntaxKind.CloseBracketToken), null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IndexSignatureSyntax {
@@ -3417,27 +3413,23 @@ module TypeScript {
     }
 
     public withOpenBracketToken(openBracketToken: ISyntaxToken): IndexSignatureSyntax {
-        return this.update(openBracketToken, this.identifier, this.colonToken, this.stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
+        return this.update(openBracketToken, this.identifier, this.parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
     }
 
     public withIdentifier(identifier: ISyntaxToken): IndexSignatureSyntax {
-        return this.update(this.openBracketToken, identifier, this.colonToken, this.stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
+        return this.update(this.openBracketToken, identifier, this.parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
     }
 
-    public withColonToken(colonToken: ISyntaxToken): IndexSignatureSyntax {
-        return this.update(this.openBracketToken, this.identifier, colonToken, this.stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
-    }
-
-    public withStringOrNumberKeyword(stringOrNumberKeyword: ISyntaxToken): IndexSignatureSyntax {
-        return this.update(this.openBracketToken, this.identifier, this.colonToken, stringOrNumberKeyword, this.closeBracketToken, this.typeAnnotation);
+    public withParameterTypeAnnotation(parameterTypeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
+        return this.update(this.openBracketToken, this.identifier, parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
     }
 
     public withCloseBracketToken(closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
-        return this.update(this.openBracketToken, this.identifier, this.colonToken, this.stringOrNumberKeyword, closeBracketToken, this.typeAnnotation);
+        return this.update(this.openBracketToken, this.identifier, this.parameterTypeAnnotation, closeBracketToken, this.typeAnnotation);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
-        return this.update(this.openBracketToken, this.identifier, this.colonToken, this.stringOrNumberKeyword, this.closeBracketToken, typeAnnotation);
+        return this.update(this.openBracketToken, this.identifier, this.parameterTypeAnnotation, this.closeBracketToken, typeAnnotation);
     }
 
     public isTypeScriptSpecific(): bool {

@@ -549,9 +549,7 @@ module TypeScript.PrettyPrinter {
         private visitIndexSignature(node: IndexSignatureSyntax): void {
             this.appendToken(node.openBracketToken);
             this.appendToken(node.identifier);
-            this.appendToken(node.colonToken);
-            this.ensureSpace();
-            this.appendToken(node.stringOrNumberKeyword);
+            node.parameterTypeAnnotation.accept(this);
             this.appendToken(node.closeBracketToken);
             this.appendNode(node.typeAnnotation);
         }

@@ -2566,20 +2566,11 @@ module TypeScript.Parser {
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var identifier = this.eatIdentifierToken();
-            var colonToken = this.eatToken(SyntaxKind.ColonToken);
-
-            var stringOrNumberKeyword: ISyntaxToken;
-            if (this.currentToken().tokenKind === SyntaxKind.NumberKeyword) {
-                stringOrNumberKeyword = this.eatToken(SyntaxKind.NumberKeyword);
-            }
-            else {
-                stringOrNumberKeyword = this.eatToken(SyntaxKind.StringKeyword);
-            }
-
+            var parameterTypeAnnotation = this.parseTypeAnnotation(/*allowStringLiteral:*/ false);
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
-            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
+            var typeAnnotation = this.parseTypeAnnotation(/*allowStringLiteral:*/ false);
 
-            return this.factory.indexSignature(openBracketToken, identifier, colonToken, stringOrNumberKeyword, closeBracketToken, typeAnnotation);
+            return this.factory.indexSignature(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation);
         }
 
         private parseMethodSignature(): MethodSignatureSyntax {

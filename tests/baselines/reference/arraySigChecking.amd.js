@@ -1,4 +1,3 @@
-;
 var myVar;
 var strArray = [
     myVar.voidFn()

@@ -499,10 +499,9 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'openBracketToken', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
-            <any>{ name: 'colonToken', isToken: true },
-            <any>{ name: 'stringOrNumberKeyword', isToken: true, tokenKinds: ['StringKeyword', 'NumberKeyword'] },
+            <any>{ name: 'parameterTypeAnnotation', type: 'TypeAnnotationSyntax' },
             <any>{ name: 'closeBracketToken', isToken: true },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' }
         ],
         isTypeScriptSpecific: true
     },

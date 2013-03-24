@@ -365,8 +365,7 @@ module TypeScript {
             return node.update(
                 this.visitToken(node.openBracketToken),
                 this.visitToken(node.identifier),
-                this.visitToken(node.colonToken),
-                this.visitToken(node.stringOrNumberKeyword),
+                <TypeAnnotationSyntax>this.visitNode(node.parameterTypeAnnotation),
                 this.visitToken(node.closeBracketToken),
                 node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
         }

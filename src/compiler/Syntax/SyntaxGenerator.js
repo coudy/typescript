@@ -2907,7 +2907,9 @@ var definitions = [
                 name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    'IdentifierName'
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
                 ]
             }, 
             {
@@ -2941,16 +2943,8 @@ var definitions = [
                 ]
             }, 
             {
-                name: 'colonToken',
-                isToken: true
-            }, 
-            {
-                name: 'stringOrNumberKeyword',
-                isToken: true,
-                tokenKinds: [
-                    'StringKeyword', 
-                    'NumberKeyword'
-                ]
+                name: 'parameterTypeAnnotation',
+                type: 'TypeAnnotationSyntax'
             }, 
             {
                 name: 'closeBracketToken',
