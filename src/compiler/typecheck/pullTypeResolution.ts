@@ -2508,7 +2508,19 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+            var enclosingDeclKind = enclosingDecl.getKind();
+
+            if (enclosingDeclKind == PullElementKind.Container) { // Dynamic modules are ok, though
+                enclosingDecl.addDiagnostic(new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), "'this' may not be referenced within module bodies"));
+                return this.semanticInfoChain.anyTypeSymbol;
+
+            }
+            else if (!(enclosingDeclKind & (PullElementKind.SomeFunction | PullElementKind.Script))) {
+                enclosingDecl.addDiagnostic(new PullDiagnostic(ast.minChar, ast.getLength(), this.currentUnit.getPath(), "Keyword 'this' cannot be referenced in initializers in a class body, or in super constructor calls"));
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            var declPath: PullDecl[] = this.getPathToDecl(enclosingDecl);
             var decl: PullDecl;
             var classSymbol: PullClassTypeSymbol;
 
@@ -2552,6 +2564,8 @@ module TypeScript {
                     }
                 }
 
+                var hadFatArrow = false;
+
                 for (i = declPath.length - 1; i >= 0; i--) {
                     decl = declPath[i];
                     declKind = decl.getKind();
@@ -2561,7 +2575,16 @@ module TypeScript {
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
-                    if (declKind == PullElementKind.FunctionExpression && !(declFlags & PullElementFlags.FatArrow)) {
+                    if (declKind == PullElementKind.FunctionExpression) {
+                        if (!(declFlags & PullElementFlags.FatArrow) && !hadFatArrow) {
+                            return this.semanticInfoChain.anyTypeSymbol;
+                        }
+                        else {
+                            hadFatArrow = true;
+                        }
+                    }
+
+                    if (declKind == PullElementKind.Function) {
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
