@@ -1588,10 +1588,10 @@ module TypeScript.Parser {
             var sourceUnit = this.parseSourceUnit();
 
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
-            if (allDiagnostics.length === 0) {
-                // If we have no scanner/parser errors, then also check for grammar errors as well.
-                sourceUnit.accept(new GrammarCheckerWalker(this.fileName, allDiagnostics, isDeclaration));
-            }
+            //if (allDiagnostics.length === 0) {
+            //    // If we have no scanner/parser errors, then also check for grammar errors as well.
+            //    sourceUnit.accept(new GrammarCheckerWalker(this.fileName, allDiagnostics, isDeclaration));
+            //}
 
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 

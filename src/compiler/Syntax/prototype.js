@@ -16813,9 +16813,6 @@ var TypeScript;
             ParserImpl.prototype.parseSyntaxTree = function (isDeclaration) {
                 var sourceUnit = this.parseSourceUnit();
                 var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
-                if (allDiagnostics.length === 0) {
-                    sourceUnit.accept(new GrammarCheckerWalker(this.fileName, allDiagnostics, isDeclaration));
-                }
                 allDiagnostics.sort(function (a, b) {
                     return a.start() - b.start();
                 });
