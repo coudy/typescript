@@ -2589,6 +2589,7 @@ module TypeScript {
                     this.bindVariableDeclarationToPullSymbol(decl);
                     break;
 
+                case PullElementKind.EnumMember:
                 case PullElementKind.Property:
                     this.bindPropertyDeclarationToPullSymbol(decl);
                     break;

@@ -88,14 +88,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Compatibility with non ES5 compliant engines
 if (!String.prototype.trim) {
-    String.prototype.trim = function() {
+    (<any>String.prototype.trim) = function() {
         return this.replace(/^\s+|\s+$/g, '');
     };
 }
 
 // Compatibility with non ES5 compliant engines
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function (searchElement, fromIndex?) {
+    (<any>Array.prototype.indexOf) = function (searchElement, fromIndex?) {
         "use strict";
         if (this == null) {
             throw new TypeError();
@@ -129,7 +129,7 @@ if (!Array.prototype.indexOf) {
 
 if (!Array.prototype.filter)
 {
-  Array.prototype.filter = function(fun, thisp?)
+  (<any>Array.prototype.filter) = function(fun, thisp?)
   {
     "use strict";
  
@@ -159,7 +159,7 @@ if (!Array.prototype.filter)
 // Production steps of ECMA-262, Edition 5, 15.4.4.19
 // Reference: http://es5.github.com/#x15.4.4.19
 if (!Array.prototype.map) {
-  Array.prototype.map = function(callback, thisArg?) {
+  (<any>Array.prototype.map) = function(callback, thisArg?) {
  
     var T = undefined, A, k;
  
@@ -231,7 +231,7 @@ if (!Array.prototype.map) {
 }
 
 if (!Array.prototype.reduce) {
-  Array.prototype.reduce = function reduce(accumulator){
+  (<any>Array.prototype.reduce) = function reduce(accumulator){
     if (this===null || this===undefined) throw new TypeError("Object is null or undefined");
     var i = 0, l = this.length >> 0, curr;
  
@@ -260,7 +260,7 @@ if (!Array.prototype.reduce) {
 // Reference: http://es5.github.com/#x15.4.4.18
 if (!Array.prototype.forEach) {
 
-    Array.prototype.forEach = function(callback, thisArg?) {
+    (<any>Array.prototype.forEach) = function(callback, thisArg?) {
 
       var T, k;
 
@@ -321,7 +321,7 @@ if (!Array.prototype.forEach) {
 // Compatibility with non ES5 compliant engines
 if (!Date.now) {
     (<any>Date).now = function() {
-        return +(new Date);
+        return (new Date()).getTime();
     };
 }
 
@@ -329,7 +329,7 @@ if (!Date.now) {
 // Production steps of ECMA-262, Edition 5.1, 15.4.4.17
 if (!Array.prototype.some)
 {
-  Array.prototype.some = function(fun /*, thisp */)
+  (<any>Array.prototype.some) = function(fun /*, thisp */)
   {
     "use strict";
  

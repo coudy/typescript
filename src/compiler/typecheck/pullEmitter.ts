@@ -343,7 +343,7 @@ module TypeScript {
                         else if (pullSymbolContainerKind == PullElementKind.Container || pullSymbolContainerKind == PullElementKind.Enum || 
                                     pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule)) {
                             // If property or, say, a constructor being invoked locally within the module of its definition
-                            if (pullSymbolKind == PullElementKind.Property) {
+                            if (pullSymbolKind == PullElementKind.Property || pullSymbolKind == PullElementKind.EnumMember) {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 

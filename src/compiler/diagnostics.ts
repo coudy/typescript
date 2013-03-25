@@ -107,9 +107,9 @@ module TypeScript {
     }
 
     export function timeFunction(logger: ILogger, funcDescription: string, func: () =>any): any {
-        var start = +new Date();
+        var start = (new Date()).getTime();
         var result = func();
-        var end = +new Date();
+        var end = (new Date()).getTime();
         logger.log(funcDescription + " completed in " + (end - start) + " msec");
         return result;
     }

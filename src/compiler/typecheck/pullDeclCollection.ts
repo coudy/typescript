@@ -288,7 +288,8 @@ module TypeScript {
     // interface properties
     export function createPropertySignature(propertyDecl: VarDecl, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
-        var declType = PullElementKind.Property;
+        var parent = context.getParent();
+        var declType = parent.getKind() == PullElementKind.Enum ? PullElementKind.EnumMember : PullElementKind.Property;
 
         if (hasFlag(propertyDecl.id.flags, ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
@@ -302,7 +303,7 @@ module TypeScript {
 
         var decl = new PullDecl(propertyDecl.id.text, declType, declFlags, span, context.scriptName);
 
-        var parent = context.getParent();
+        
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
 

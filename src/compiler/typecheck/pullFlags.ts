@@ -73,21 +73,23 @@ module TypeScript {
         FunctionType = 1 << 25,
         ConstructorType = 1 << 26,
 
+        EnumMember = 1 << 27,
+
         SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature,
 
         // Warning: SomeValue and SomeType (along with their constituents) must be disjoint
-        SomeValue = Variable | Parameter | Property | SomeFunction,
+        SomeValue = Variable | Parameter | Property | EnumMember | SomeFunction,
 
         SomeType = Script | Global | Primitive | Container | Class | Interface | DynamicModule |
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter,
-
-        SomeObjectType = Class | Interface | ObjectLiteral | ObjectType | FunctionType | ConstructorType,
 
         SomeContainer = Container | DynamicModule,
 
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
 
         SomeAccessor = GetAccessor | SetAccessor,
+
+        SomeLHS = Variable | Property | Parameter | SetAccessor,
     }
 
     export enum SymbolLinkKind {

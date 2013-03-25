@@ -667,11 +667,22 @@ module TypeScript {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var leftType = this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
+            var leftExpr = this.resolver.resolveAST(assignmentAST.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
+            var leftType = leftExpr.getType(); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
 
             this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
             var rightType = this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true);
             this.context.popContextualType();
+
+            var isValidLHS = assignmentAST.operand1.nodeType == NodeType.Index ||
+                            leftType == this.semanticInfoChain.anyTypeSymbol ||
+                            ((!leftExpr.isType() || leftType.isArray()) && 
+                                (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
+                            hasFlag(ast.flags, ASTFlags.EnumInitializer);
+
+            if (!isValidLHS) {
+                this.context.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, "Invalid left-hand side of assignment expression", enclosingDecl);
+            }
 
             var comparisonInfo = new TypeComparisonInfo();
 
@@ -679,12 +690,11 @@ module TypeScript {
 
             if (!isAssignable) {
                 var errorMessage = comparisonInfo.message;
-                var span = enclosingDecl.getSpan();
 
                 // ignore comparison info for now
                 var message = getDiagnosticMessage(PullDiagnosticMessages.Cannot_convert__0__to__1_, [rightType.toString(), leftType.toString()]);
 
-                this.context.postError(assignmentAST.operand1.minChar, span.length(), typeCheckContext.scriptName, message, enclosingDecl);
+                this.context.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
             }
 
             return leftType;
@@ -955,11 +965,15 @@ module TypeScript {
         //  -
         public typeCheckUnaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var unex = <UnaryExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var lhsType = this.typeCheckAST(unex.operand, typeCheckContext);
 
-            this.typeCheckAST(unex.operand, typeCheckContext);
+            var lhsIsFit = lhsType == this.semanticInfoChain.anyTypeSymbol || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
 
-            return type;
+            if (!lhsIsFit) {
+                this.context.postError(unex.operand.minChar, unex.operand.getLength(), typeCheckContext.scriptName, "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+            }           
+
+            return lhsType;
         }
 
         // Index expression 

@@ -880,7 +880,11 @@ module TypeScript {
                                                                       new Identifier("_map"),
                                                                       memberValue),
                                                  new StringLiteral('"' + memberName.actualText + '"'));
+                        map.flags |= ASTFlags.EnumInitializer;
                         members.append(map);
+                        this.setSpan(map, memberStart, this.position);
+                        this.setSpan(map.operand1, memberStart, this.position);
+                        this.setSpan(map.operand2, memberStart, this.position);
                     }
 
                     var member = new VarDecl(memberName, this.nestingLevel);

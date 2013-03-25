@@ -39,6 +39,7 @@ module TypeScript {
         //         Once we have a better way to associate information with nodes, this flag should not be used.
         SkipNextRParen = 1 << 11,
         TypeReference = 1 << 12,
+        EnumInitializer = 1 << 13,
     }
 
     export enum DeclFlags {
