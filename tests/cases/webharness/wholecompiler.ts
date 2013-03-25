@@ -39914,12 +39914,12 @@ module TypeScript.Parser {
             var sourceUnit = this.parseSourceUnit();
 
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
-            if (allDiagnostics.length === 0) {
+            //if (allDiagnostics.length === 0) {
                 // If we have no scanner/parser errors, then also check for grammar errors as well.
-                if (isDeclaration) {
-                    // sourceUnit.accept(new DeclarationCheckerWalker(allDiagnostics));
-                }
-            }
+                //if (isDeclaration) {
+                    sourceUnit.accept(new GrammarCheckerWalker(/*allDiagnostics*/));
+                //}
+            //}
 
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 
@@ -43941,6 +43941,9 @@ module TypeScript.Parser {
                     throw Errors.invalidOperation();
             }
         }
+    }
+
+    class GrammarCheckerWalker extends PositionTrackingWalker {
     }
 
     export function parse(fileName: string,
