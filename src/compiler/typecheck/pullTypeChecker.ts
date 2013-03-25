@@ -837,7 +837,7 @@ module TypeScript {
                 var errorMessage = comparisonInfo.message;
 
                 // ignore comparison info for now
-                var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [exprType.toString(), returnType.toString()]);
+                var message = getDiagnosticMessage(PullDiagnosticMessages.Cannot_convert__0__to__1_, [exprType.toString(), returnType.toString()]);
 
                 this.context.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }            
