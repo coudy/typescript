@@ -378,6 +378,260 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
+    (function (DiagnosticCategory) {
+        DiagnosticCategory._map = [];
+        DiagnosticCategory._map[0] = "Warning";
+        DiagnosticCategory.Warning = 0;
+        DiagnosticCategory._map[1] = "Error";
+        DiagnosticCategory.Error = 1;
+    })(TypeScript.DiagnosticCategory || (TypeScript.DiagnosticCategory = {}));
+    var DiagnosticCategory = TypeScript.DiagnosticCategory;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    (function (DiagnosticCode) {
+        DiagnosticCode._map = [];
+        DiagnosticCode._map[0] = "error_TS_0__1";
+        DiagnosticCode.error_TS_0__1 = 0;
+        DiagnosticCode._map[1] = "warning_TS_0__1";
+        DiagnosticCode.warning_TS_0__1 = 1;
+        DiagnosticCode._map[2] = "Unrecognized_escape_sequence";
+        DiagnosticCode.Unrecognized_escape_sequence = 2;
+        DiagnosticCode._map[3] = "Unexpected_character_0";
+        DiagnosticCode.Unexpected_character_0 = 3;
+        DiagnosticCode._map[4] = "Missing_closing_quote_character";
+        DiagnosticCode.Missing_closing_quote_character = 4;
+        DiagnosticCode._map[5] = "Identifier_expected";
+        DiagnosticCode.Identifier_expected = 5;
+        DiagnosticCode._map[6] = "_0_keyword_expected";
+        DiagnosticCode._0_keyword_expected = 6;
+        DiagnosticCode._map[7] = "_0_expected";
+        DiagnosticCode._0_expected = 7;
+        DiagnosticCode._map[8] = "Identifier_expected__0_is_a_keyword";
+        DiagnosticCode.Identifier_expected__0_is_a_keyword = 8;
+        DiagnosticCode._map[9] = "Automatic_semicolon_insertion_not_allowed";
+        DiagnosticCode.Automatic_semicolon_insertion_not_allowed = 9;
+        DiagnosticCode._map[10] = "Unexpected_token__0_expected";
+        DiagnosticCode.Unexpected_token__0_expected = 10;
+        DiagnosticCode._map[11] = "Trailing_separator_not_allowed";
+        DiagnosticCode.Trailing_separator_not_allowed = 11;
+        DiagnosticCode._map[12] = "_StarSlash__expected";
+        DiagnosticCode._StarSlash__expected = 12;
+        DiagnosticCode._map[13] = "_public_or_private_modifier_must_precede__static_";
+        DiagnosticCode._public_or_private_modifier_must_precede__static_ = 13;
+        DiagnosticCode._map[14] = "Unexpected_token_";
+        DiagnosticCode.Unexpected_token_ = 14;
+        DiagnosticCode._map[15] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 15;
+        DiagnosticCode._map[16] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 16;
+        DiagnosticCode._map[17] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 17;
+        DiagnosticCode._map[18] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 18;
+        DiagnosticCode._map[19] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 19;
+        DiagnosticCode._map[20] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 20;
+        DiagnosticCode._map[21] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 21;
+        DiagnosticCode._map[22] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 22;
+        DiagnosticCode._map[23] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 23;
+        DiagnosticCode._map[24] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 24;
+        DiagnosticCode._map[25] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 25;
+        DiagnosticCode._map[26] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 26;
+        DiagnosticCode._map[27] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 27;
+        DiagnosticCode._map[28] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 28;
+        DiagnosticCode._map[29] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 29;
+        DiagnosticCode._map[30] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 30;
+        DiagnosticCode._map[31] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 31;
+        DiagnosticCode._map[32] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 32;
+    })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
+    var DiagnosticCode = TypeScript.DiagnosticCode;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    TypeScript.diagnosticMessages = {
+        error_TS_0__1: {
+            category: 1 /* Error */ ,
+            message: "error TS{0}: {1}",
+            code: 0
+        },
+        warning_TS_0__1: {
+            category: 0 /* Warning */ ,
+            message: "warning TS{0}: {1}",
+            code: 1
+        },
+        Unrecognized_escape_sequence: {
+            category: 1 /* Error */ ,
+            message: "Unrecognized escape sequence.",
+            code: 100
+        },
+        Unexpected_character_0: {
+            category: 1 /* Error */ ,
+            message: "Unexpected character {0}.",
+            code: 101
+        },
+        Missing_closing_quote_character: {
+            category: 1 /* Error */ ,
+            message: "Missing close quote character.",
+            code: 102
+        },
+        Identifier_expected: {
+            category: 1 /* Error */ ,
+            message: "Identifier expected.",
+            code: 103
+        },
+        _0_keyword_expected: {
+            category: 1 /* Error */ ,
+            message: "'{0}' keyword expected.",
+            code: 104
+        },
+        _0_expected: {
+            category: 1 /* Error */ ,
+            message: "'{0}' expected.",
+            code: 105
+        },
+        Identifier_expected__0_is_a_keyword: {
+            category: 1 /* Error */ ,
+            message: "Identifier expected; '{0}' is a keyword.",
+            code: 106
+        },
+        Automatic_semicolon_insertion_not_allowed: {
+            category: 1 /* Error */ ,
+            message: "Automatic semicolon insertion not allowed.",
+            code: 107
+        },
+        Unexpected_token__0_expected: {
+            category: 1 /* Error */ ,
+            message: "Unexpected token; '{0}' expected.",
+            code: 108
+        },
+        Trailing_separator_not_allowed: {
+            category: 1 /* Error */ ,
+            message: "Trailing separator not allowed.",
+            code: 109
+        },
+        _StarSlash__expected: {
+            category: 1 /* Error */ ,
+            message: "'*/' expected.",
+            code: 110
+        },
+        _public_or_private_modifier_must_precede__static_: {
+            category: 1 /* Error */ ,
+            message: "'public' or 'private' modifier must precede 'static'.",
+            code: 111
+        },
+        Unexpected_token_: {
+            category: 1 /* Error */ ,
+            message: "Unexpected token.",
+            code: 112
+        },
+        Duplicate_identifier__0_: {
+            category: 1 /* Error */ ,
+            message: "Duplicate identifier '{0}'.",
+            code: 200
+        },
+        The_name__0__does_not_exist_in_the_current_scope: {
+            category: 1 /* Error */ ,
+            message: "The name '{0}' does not exist in the current scope.",
+            code: 201
+        },
+        The_name__0__does_not_refer_to_a_value: {
+            category: 1 /* Error */ ,
+            message: "The name '{0}' does not refer to a value.",
+            code: 202
+        },
+        Keyword__super__can_only_be_used_inside_a_class_instance_method: {
+            category: 1 /* Error */ ,
+            message: "Keyword 'super' can only be used inside a class instance method.",
+            code: 203
+        },
+        The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
+            category: 1 /* Error */ ,
+            message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
+            code: 204
+        },
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
+            code: 205
+        },
+        Value_of_type__0__is_not_callable: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not callable.",
+            code: 206
+        },
+        Value_of_type__0__is_not_newable: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not newable.",
+            code: 207
+        },
+        Value_of_type__0__is_not_indexable_by_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not indexable by type '{1}'.",
+            code: 208
+        },
+        Operator__0__cannot_be_applied_to_types__1__and__2_: {
+            category: 1 /* Error */ ,
+            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
+            code: 209
+        },
+        Operator__0__cannot_be_applied_to_types__1__and__2__3: {
+            category: 1 /* Error */ ,
+            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
+            code: 210
+        },
+        Cannot_convert__0__to__1_: {
+            category: 1 /* Error */ ,
+            message: "Cannot convert '{0}' to '{1}'.",
+            code: 211
+        },
+        Cannot_convert__0__to__1___2: {
+            category: 1 /* Error */ ,
+            message: "Cannot convert '{0}' to '{1}': {2}",
+            code: 212
+        },
+        Expected_var__class__interface__or_module: {
+            category: 1 /* Error */ ,
+            message: "Expected var, class, interface, or module.",
+            code: 213
+        },
+        Operator__0__cannot_be_applied_to_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Operator '{0}' cannot be applied to type '{1}'.",
+            code: 214
+        },
+        Getter__0__already_declared: {
+            category: 1 /* Error */ ,
+            message: "Getter '{0}' already declared.",
+            code: 215
+        },
+        Setter__0__already_declared: {
+            category: 1 /* Error */ ,
+            message: "Setter '{0}' already declared.",
+            code: 216
+        },
+        Accessor_may_not_take_type_parameters: {
+            category: 1 /* Error */ ,
+            message: "Accessors may not take type parameters.",
+            code: 217
+        }
+    };
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
     var Errors = (function () {
         function Errors() { }
         Errors.argument = function argument(argument, message) {
@@ -1932,7 +2186,7 @@ var TypeScript;
             return [];
         };
         Diagnostic1.prototype.message = function () {
-            return TypeScript.getDiagnosticMessage(this._diagnosticCode, this._arguments);
+            return getDiagnosticMessage(this._diagnosticCode, this._arguments);
         };
         Diagnostic1.equals = function equals(diagnostic1, diagnostic2) {
             return diagnostic1._diagnosticCode === diagnostic2._diagnosticCode && TypeScript.ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, function (v1, v2) {
@@ -1942,6 +2196,45 @@ var TypeScript;
         return Diagnostic1;
     })();
     TypeScript.Diagnostic1 = Diagnostic1;    
+    function getLargestIndex(diagnostic) {
+        var largest = -1;
+        var stringComponents = diagnostic.split("_");
+        for(var i = 0; i < stringComponents.length; i++) {
+            var val = parseInt(stringComponents[i]);
+            if (!isNaN(val) && val > largest) {
+                largest = val;
+            }
+        }
+        return largest;
+    }
+    function getDiagnosticMessage(diagnosticType, args) {
+        var diagnosticName = (TypeScript.DiagnosticCode)._map[diagnosticType];
+        var diagnostic = TypeScript.diagnosticMessages[diagnosticName];
+        if (!diagnostic) {
+            throw new Error("Invalid diagnostic");
+        } else {
+            var expectedCount = 1 + getLargestIndex(diagnosticName);
+            var actualCount = args ? args.length : 0;
+            if (expectedCount !== actualCount) {
+                throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
+            }
+        }
+        var diagnosticMessage = diagnostic.message.replace(/{(\d+)}/g, function (match, num) {
+            return typeof args[num] !== 'undefined' ? args[num] : match;
+        });
+        var message;
+        if (diagnosticType != 0 /* error_TS_0__1 */  && diagnosticType != 1 /* warning_TS_0__1 */ ) {
+            var errorOrWarning = diagnostic.category == 1 /* Error */  ? 0 /* error_TS_0__1 */  : 1 /* warning_TS_0__1 */ ;
+            message = getDiagnosticMessage(errorOrWarning, [
+                diagnostic.code, 
+                diagnosticMessage
+            ]);
+        } else {
+            message = diagnosticMessage;
+        }
+        return message;
+    }
+    TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
 var FormattingOptions = (function () {
     function FormattingOptions(useTabs, spacesPerTab, indentSpaces, newLineCharacter) {
@@ -25447,41 +25740,6 @@ var TypeScript;
         return result;
     }
     TypeScript.stringToLiteral = stringToLiteral;
-    function getDiagnosticMessage(diagnosticType, args) {
-        var diagnosticName = (TypeScript.DiagnosticCode)._map[diagnosticType];
-        var diagnostic = TypeScript.typescriptDiagnosticMessages[diagnosticName];
-        if (!diagnostic) {
-            throw new Error("Invalid diagnostic");
-        } else {
-            var stringComponents = diagnosticName.split("_");
-            var numberComponents = stringComponents.map(function (v) {
-                return parseInt(v);
-            }).filter(function (v) {
-                return !isNaN(v);
-            });
-            if (numberComponents.length) {
-                var max = Math.max.apply(null, numberComponents);
-                if ((max + 1) != args.length) {
-                    throw new Error("Expected " + (max + 1) + " arguments to diagnostic, got " + args.length + " instead");
-                }
-            }
-        }
-        var diagnosticMessage = diagnostic.message.replace(/{(\d+)}/g, function (match, num) {
-            return typeof args[num] !== 'undefined' ? args[num] : match;
-        });
-        var message;
-        if (diagnosticType != 0 /* error_TS_0__1 */  && diagnosticType != 1 /* warning_TS_0__1 */ ) {
-            var errorOrWarning = diagnostic.category == 1 /* Error */  ? 0 /* error_TS_0__1 */  : 1 /* warning_TS_0__1 */ ;
-            message = getDiagnosticMessage(errorOrWarning, [
-                diagnostic.code, 
-                diagnosticMessage
-            ]);
-        } else {
-            message = diagnosticMessage;
-        }
-        return message;
-    }
-    TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -52399,257 +52657,6 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (DiagnosticCategory) {
-        DiagnosticCategory._map = [];
-        DiagnosticCategory._map[0] = "Warning";
-        DiagnosticCategory.Warning = 0;
-        DiagnosticCategory._map[1] = "Error";
-        DiagnosticCategory.Error = 1;
-    })(TypeScript.DiagnosticCategory || (TypeScript.DiagnosticCategory = {}));
-    var DiagnosticCategory = TypeScript.DiagnosticCategory;
-    (function (DiagnosticCode) {
-        DiagnosticCode._map = [];
-        DiagnosticCode._map[0] = "error_TS_0__1";
-        DiagnosticCode.error_TS_0__1 = 0;
-        DiagnosticCode._map[1] = "warning_TS_0__1";
-        DiagnosticCode.warning_TS_0__1 = 1;
-        DiagnosticCode._map[2] = "Unrecognized_escape_sequence";
-        DiagnosticCode.Unrecognized_escape_sequence = 2;
-        DiagnosticCode._map[3] = "Unexpected_character_0";
-        DiagnosticCode.Unexpected_character_0 = 3;
-        DiagnosticCode._map[4] = "Missing_closing_quote_character";
-        DiagnosticCode.Missing_closing_quote_character = 4;
-        DiagnosticCode._map[5] = "Identifier_expected";
-        DiagnosticCode.Identifier_expected = 5;
-        DiagnosticCode._map[6] = "_0_keyword_expected";
-        DiagnosticCode._0_keyword_expected = 6;
-        DiagnosticCode._map[7] = "_0_expected";
-        DiagnosticCode._0_expected = 7;
-        DiagnosticCode._map[8] = "Identifier_expected__0_is_a_keyword";
-        DiagnosticCode.Identifier_expected__0_is_a_keyword = 8;
-        DiagnosticCode._map[9] = "Automatic_semicolon_insertion_not_allowed";
-        DiagnosticCode.Automatic_semicolon_insertion_not_allowed = 9;
-        DiagnosticCode._map[10] = "Unexpected_token__0_expected";
-        DiagnosticCode.Unexpected_token__0_expected = 10;
-        DiagnosticCode._map[11] = "Trailing_separator_not_allowed";
-        DiagnosticCode.Trailing_separator_not_allowed = 11;
-        DiagnosticCode._map[12] = "_StarSlash__expected";
-        DiagnosticCode._StarSlash__expected = 12;
-        DiagnosticCode._map[13] = "_public_or_private_modifier_must_precede__static_";
-        DiagnosticCode._public_or_private_modifier_must_precede__static_ = 13;
-        DiagnosticCode._map[14] = "Unexpected_token_";
-        DiagnosticCode.Unexpected_token_ = 14;
-        DiagnosticCode._map[15] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 15;
-        DiagnosticCode._map[16] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 16;
-        DiagnosticCode._map[17] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 17;
-        DiagnosticCode._map[18] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 18;
-        DiagnosticCode._map[19] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 19;
-        DiagnosticCode._map[20] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 20;
-        DiagnosticCode._map[21] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 21;
-        DiagnosticCode._map[22] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 22;
-        DiagnosticCode._map[23] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 23;
-        DiagnosticCode._map[24] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 24;
-        DiagnosticCode._map[25] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 25;
-        DiagnosticCode._map[26] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 26;
-        DiagnosticCode._map[27] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 27;
-        DiagnosticCode._map[28] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 28;
-        DiagnosticCode._map[29] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 29;
-        DiagnosticCode._map[30] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 30;
-        DiagnosticCode._map[31] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 31;
-        DiagnosticCode._map[32] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 32;
-    })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
-    var DiagnosticCode = TypeScript.DiagnosticCode;
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
-    TypeScript.typescriptDiagnosticMessages = {
-        error_TS_0__1: {
-            category: 1 /* Error */ ,
-            message: "error TS{0}: {1}",
-            code: 0
-        },
-        warning_TS_0__1: {
-            category: 0 /* Warning */ ,
-            message: "warning TS{0}: {1}",
-            code: 1
-        },
-        Unrecognized_escape_sequence: {
-            category: 1 /* Error */ ,
-            message: "Unrecognized escape sequence.",
-            code: 100
-        },
-        Unexpected_character_0: {
-            category: 1 /* Error */ ,
-            message: "Unexpected character {0}.",
-            code: 101
-        },
-        Missing_closing_quote_character: {
-            category: 1 /* Error */ ,
-            message: "Missing close quote character.",
-            code: 102
-        },
-        Identifier_expected: {
-            category: 1 /* Error */ ,
-            message: "Identifier expected.",
-            code: 103
-        },
-        _0_keyword_expected: {
-            category: 1 /* Error */ ,
-            message: "'{0}' keyword expected.",
-            code: 104
-        },
-        _0_expected: {
-            category: 1 /* Error */ ,
-            message: "'{0}' expected.",
-            code: 105
-        },
-        Identifier_expected__0_is_a_keyword: {
-            category: 1 /* Error */ ,
-            message: "Identifier expected; '{0}' is a keyword.",
-            code: 106
-        },
-        Automatic_semicolon_insertion_not_allowed: {
-            category: 1 /* Error */ ,
-            message: "Automatic semicolon insertion not allowed.",
-            code: 107
-        },
-        Unexpected_token__0_expected: {
-            category: 1 /* Error */ ,
-            message: "Unexpected token; '{0}' expected.",
-            code: 108
-        },
-        Trailing_separator_not_allowed: {
-            category: 1 /* Error */ ,
-            message: "Trailing separator not allowed.",
-            code: 109
-        },
-        _StarSlash__expected: {
-            category: 1 /* Error */ ,
-            message: "'*/' expected.",
-            code: 110
-        },
-        _public_or_private_modifier_must_precede__static_: {
-            category: 1 /* Error */ ,
-            message: "'public' or 'private' modifier must precede 'static'.",
-            code: 111
-        },
-        Unexpected_token_: {
-            category: 1 /* Error */ ,
-            message: "Unexpected token.",
-            code: 112
-        },
-        Duplicate_identifier__0_: {
-            category: 1 /* Error */ ,
-            message: "Duplicate identifier '{0}'.",
-            code: 200
-        },
-        The_name__0__does_not_exist_in_the_current_scope: {
-            category: 1 /* Error */ ,
-            message: "The name '{0}' does not exist in the current scope.",
-            code: 201
-        },
-        The_name__0__does_not_refer_to_a_value: {
-            category: 1 /* Error */ ,
-            message: "The name '{0}' does not refer to a value.",
-            code: 202
-        },
-        Keyword__super__can_only_be_used_inside_a_class_instance_method: {
-            category: 1 /* Error */ ,
-            message: "Keyword 'super' can only be used inside a class instance method.",
-            code: 203
-        },
-        The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
-            category: 1 /* Error */ ,
-            message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
-            code: 204
-        },
-        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
-            category: 1 /* Error */ ,
-            message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
-            code: 205
-        },
-        Value_of_type__0__is_not_callable: {
-            category: 1 /* Error */ ,
-            message: "Value of type '{0}' is not callable.",
-            code: 206
-        },
-        Value_of_type__0__is_not_newable: {
-            category: 1 /* Error */ ,
-            message: "Value of type '{0}' is not newable.",
-            code: 207
-        },
-        Value_of_type__0__is_not_indexable_by_type__1_: {
-            category: 1 /* Error */ ,
-            message: "Value of type '{0}' is not indexable by type '{1}'.",
-            code: 208
-        },
-        Operator__0__cannot_be_applied_to_types__1__and__2_: {
-            category: 1 /* Error */ ,
-            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
-            code: 209
-        },
-        Operator__0__cannot_be_applied_to_types__1__and__2__3: {
-            category: 1 /* Error */ ,
-            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
-            code: 210
-        },
-        Cannot_convert__0__to__1_: {
-            category: 1 /* Error */ ,
-            message: "Cannot convert '{0}' to '{1}'.",
-            code: 211
-        },
-        Cannot_convert__0__to__1___2: {
-            category: 1 /* Error */ ,
-            message: "Cannot convert '{0}' to '{1}': {2}",
-            code: 212
-        },
-        Expected_var__class__interface__or_module: {
-            category: 1 /* Error */ ,
-            message: "Expected var, class, interface, or module.",
-            code: 213
-        },
-        Operator__0__cannot_be_applied_to_type__1_: {
-            category: 1 /* Error */ ,
-            message: "Operator '{0}' cannot be applied to type '{1}'.",
-            code: 214
-        },
-        Getter__0__already_declared: {
-            category: 1 /* Error */ ,
-            message: "Getter '{0}' already declared.",
-            code: 215
-        },
-        Setter__0__already_declared: {
-            category: 1 /* Error */ ,
-            message: "Setter '{0}' already declared.",
-            code: 216
-        },
-        Accessor_may_not_take_type_parameters: {
-            category: 1 /* Error */ ,
-            message: "Accessors may not take type parameters.",
-            code: 217
-        }
-    };
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
     var TypeScriptCompiler = (function () {
         function TypeScriptCompiler(errorOutput, logger, settings, diagnosticMessages) {
             if (typeof logger === "undefined") { logger = new TypeScript.NullLogger(); }
@@ -52668,7 +52675,7 @@ var TypeScript;
             this.pullErrorReporter = new TypeScript.PullErrorReporter(this.errorOutput);
             this.emitOptions = new TypeScript.EmitOptions(this.settings);
             if (this.diagnosticMessages) {
-                TypeScript.typescriptDiagnosticMessages = diagnosticMessages;
+                TypeScript.diagnosticMessages = this.diagnosticMessages;
             }
         }
         TypeScriptCompiler.prototype.timeFunction = function (funcDescription, func) {

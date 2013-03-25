@@ -65,8 +65,6 @@ var compilerSources = [
 	"typecheck/pullHelpers.ts",	
 	"typecheck/pullDeclarationEmitter.ts",	
 	"SyntaxTreeToAstVisitor.ts",
-	"resources.ts",
-	"resourceStrings.ts",
 	"typescript.ts"
 ].map(function (f) {
 	return path.join(compilerDirectory, f);

@@ -63,8 +63,6 @@
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='typecheck\pullDeclarationEmitter.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
-///<reference path='resources.ts' />
-///<reference path='resourceStrings.ts' />
 ///<reference path='Core\Timer.ts' />
 
 module TypeScript {
@@ -114,13 +112,13 @@ module TypeScript {
         constructor(public errorOutput: ITextWriter,
                     public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
-                    public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
+                    public diagnosticMessages: IDiagnosticMessages = null) {
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
 
             this.emitOptions = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
-                typescriptDiagnosticMessages = diagnosticMessages
+                TypeScript.diagnosticMessages = this.diagnosticMessages
             }
         }
 

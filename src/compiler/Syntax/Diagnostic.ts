@@ -38,4 +38,59 @@ module TypeScript {
                    ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
         }
     }
+
+    function getLargestIndex(diagnostic: string): number {
+        var largest = -1;
+        var stringComponents = diagnostic.split("_");
+
+        for (var i = 0; i < stringComponents.length; i++) {
+            var val = parseInt(stringComponents[i]);
+            if (!isNaN(val) && val > largest) {
+                largest = val;
+            }
+        }
+
+        return largest;
+    }
+
+    export function getDiagnosticMessage(diagnosticType: DiagnosticCode, args: any[]): string {
+        var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticType];
+
+        var diagnostic = <DiagnosticInfo>diagnosticMessages[diagnosticName];
+
+        if (!diagnostic) {
+            throw new Error("Invalid diagnostic");
+        }
+        else {
+            // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
+            // (i.e.'1').  We then need one more arg than that to be correct.
+            var expectedCount = 1 + getLargestIndex(diagnosticName);
+            var actualCount = args ? args.length : 0;
+
+            if (expectedCount !== actualCount) {
+                throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
+            }
+        }
+
+        var diagnosticMessage = diagnostic.message.replace(/{(\d+)}/g, function (match, num) {
+            return typeof args[num] !== 'undefined'
+                ? args[num]
+                : match;
+        });
+
+        var message: string;
+
+        if (diagnosticType != DiagnosticCode.error_TS_0__1 && diagnosticType != DiagnosticCode.warning_TS_0__1) {
+            var errorOrWarning = diagnostic.category == DiagnosticCategory.Error ?
+                                    DiagnosticCode.error_TS_0__1 :
+                                    DiagnosticCode.warning_TS_0__1;
+
+            message = getDiagnosticMessage(errorOrWarning, [diagnostic.code, diagnosticMessage]);
+        }
+        else {
+            message = diagnosticMessage;
+        }
+
+        return message;
+    }
 }

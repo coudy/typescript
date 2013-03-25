@@ -17,7 +17,7 @@
 ///<reference path='io.ts'/>
 ///<reference path='optionsParser.ts'/>
 
-declare var localizedDiagnosticMessages: TypeScript.TypeScriptDiagnosticMessages;
+declare var localizedDiagnosticMessages: TypeScript.IDiagnosticMessages;
 
 class DiagnosticsLogger implements TypeScript.ILogger {
     constructor(public ioHost: IIO) {
