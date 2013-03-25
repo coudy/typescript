@@ -31,18 +31,17 @@ class DiagnosticsLogger implements TypeScript.ILogger {
 
 class BatchCompiler {
     public compiler: TypeScript.TypeScriptCompiler;
-    private stringTable = TypeScript.Collections.createStringTable();
-    private simpleText = TypeScript.TextFactory.createSimpleText(compilerString);
-    private sourceText = new TypeScript.StringScriptSnapshot(compilerString);
+    private simpleText = TypeScript.SimpleText.fromString(compilerString);
+    private libScriptSnapshot = TypeScript.ScriptSnapshot.fromString(libString);
+    private compilerScriptSnapshot = TypeScript.ScriptSnapshot.fromString(compilerString);
 
     public compile() {
         var settings = new TypeScript.CompilationSettings();
-        settings.usePull = true;
 
         this.compiler = new TypeScript.TypeScriptCompiler(new StringTextWriter(), new DiagnosticsLogger(), settings);
 
-        this.compiler.addUnit(libString, "lib.d.ts", []);
-        this.compiler.addUnit(compilerString, "compiler.ts", []);
+        this.compiler.addSourceUnit("lib.d.ts", this.libScriptSnapshot, []);
+        this.compiler.addSourceUnit("compiler.ts", this.compilerScriptSnapshot, []);
 
         this.compiler.pullTypeCheck();
     }
@@ -52,28 +51,16 @@ class BatchCompiler {
         this.compiler.pullTypeCheck(true, true);
     }
 
-    public oldParse(): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
-        var parser1 = new TypeScript.Parser();
-        parser1.errorRecovery = true;
-        return { script: parser1.parse(this.sourceText, "", 0), sourceText: this.sourceText };
-    }
-
     public newParse(): TypeScript.SyntaxTree {
-        return TypeScript.Parser1.parse(this.simpleText, TypeScript.LanguageVersion.EcmaScript5, this.stringTable);
+        return TypeScript.Parser.parse("compiler.ts", this.simpleText, false, TypeScript.LanguageVersion.EcmaScript5);
     }
 
     public newIncrementalParse(tree: TypeScript.SyntaxTree): TypeScript.SyntaxTree {
         var width = 100;
         var span = new TypeScript.TextSpan(TypeScript.IntegerUtilities.integerDivide(compilerString.length - width, 2), width);
         var range = new TypeScript.TextChangeRange(span, width);
-        return TypeScript.Parser1.incrementalParse(tree, range, this.simpleText, TypeScript.LanguageVersion.EcmaScript5, this.stringTable);
+        return TypeScript.Parser.incrementalParse(tree, range, this.simpleText);
     }
-
-    /*
-export interface IDiagnosticWriter {
-            Alert(output: string): void;
-        }
-    */
 }
 
 var batch = new BatchCompiler();
