@@ -44,7 +44,7 @@ module TypeScript {
 
             var pullSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
-            return pullSymbol.isUsedAsValue;
+            return pullSymbol.getIsUsedAsValue();
         }
 
         private pushDecl(decl: PullDecl) {

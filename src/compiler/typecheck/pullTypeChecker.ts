@@ -141,23 +141,31 @@ module TypeScript {
                     return this.typeCheckLogicalOperation(ast, typeCheckContext);
 
                 case NodeType.Add:
+                case NodeType.AsgAdd:                
+                    return this.typeCheckBinaryAdditionOperation(ast, typeCheckContext);
+
                 case NodeType.Sub:
                 case NodeType.Mul:
                 case NodeType.Div:
                 case NodeType.Mod:
                 case NodeType.Or:
                 case NodeType.And:
-                case NodeType.AsgAdd:
+                case NodeType.Lsh:
+                case NodeType.Rsh:
+                case NodeType.Rs2:
+                case NodeType.Xor:
+                case NodeType.AsgLsh:
+                case NodeType.AsgRsh:
+                case NodeType.AsgRs2:
                 case NodeType.AsgSub:
                 case NodeType.AsgMul:
                 case NodeType.AsgDiv:
                 case NodeType.AsgMod:
                 case NodeType.AsgOr:
-                case NodeType.AsgAnd:
+                case NodeType.AsgAnd:                
                     return this.typeCheckBinaryArithmeticOperation(ast, typeCheckContext);
 
                 case NodeType.Not:
-                case NodeType.LogNot:
                 case NodeType.Pos:
                 case NodeType.Neg:
                 case NodeType.IncPost:
@@ -166,16 +174,11 @@ module TypeScript {
                 case NodeType.DecPre:
                     return this.typeCheckUnaryArithmeticOperation(ast, typeCheckContext);
 
-                case NodeType.Lsh:
-                case NodeType.Rsh:
-                case NodeType.Rs2:
-                case NodeType.AsgLsh:
-                case NodeType.AsgRsh:
-                case NodeType.AsgRs2:
-                    return this.typeCheckBitwiseOperation(ast, typeCheckContext);
-
                 case NodeType.Index:
                     return this.typeCheckIndex(ast, typeCheckContext);
+
+                case NodeType.LogNot:
+                    return this.semanticInfoChain.boolTypeSymbol;
 
                 case NodeType.LogOr:
                 case NodeType.LogAnd:
@@ -198,6 +201,12 @@ module TypeScript {
 
                 case NodeType.Regex:
                     return this.typeCheckRegExpExpression(ast, typeCheckContext);
+
+                case NodeType.In:
+                    return this.typeCheckInExpression(ast, typeCheckContext);
+
+                case NodeType.InstOf:
+                    return this.typeCheckInstanceOfExpression(ast, typeCheckContext);                    
 
                 // statements
                 case NodeType.For:
@@ -484,7 +493,7 @@ module TypeScript {
                 }
             }
 
-            return accessorSymbol;
+            return null;
         }
 
         public typeCheckConstructor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
@@ -835,6 +844,57 @@ module TypeScript {
             return type;
         }
 
+        public typeCheckBinaryAdditionOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
+            var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            if (lhsType.getKind() == PullElementKind.Enum) {
+                lhsType = this.semanticInfoChain.numberTypeSymbol;
+            }
+            else if (lhsType == this.semanticInfoChain.nullTypeSymbol || lhsType == this.semanticInfoChain.nullTypeSymbol) {
+                if (rhsType != this.semanticInfoChain.nullTypeSymbol && rhsType != this.semanticInfoChain.nullTypeSymbol) {
+                    lhsType = rhsType;
+                }
+                else {
+                    lhsType = this.semanticInfoChain.anyTypeSymbol;
+                }
+            }
+
+            if (rhsType.getKind() == PullElementKind.Enum) {
+                rhsType = this.semanticInfoChain.numberTypeSymbol;
+            }
+            else if (rhsType == this.semanticInfoChain.nullTypeSymbol || rhsType == this.semanticInfoChain.nullTypeSymbol) {
+                if (lhsType != this.semanticInfoChain.nullTypeSymbol && lhsType != this.semanticInfoChain.nullTypeSymbol) {
+                    rhsType = lhsType;
+                }
+                else {
+                    rhsType = this.semanticInfoChain.anyTypeSymbol;
+                }
+            }         
+
+            var exprType: PullTypeSymbol = null;
+
+            if (lhsType == this.semanticInfoChain.stringTypeSymbol || rhsType == this.semanticInfoChain.stringTypeSymbol) {
+                exprType = this.semanticInfoChain.stringTypeSymbol;
+            }
+            else if (lhsType == this.semanticInfoChain.anyTypeSymbol || rhsType == this.semanticInfoChain.anyTypeSymbol) {
+                exprType = this.semanticInfoChain.anyTypeSymbol;
+            }
+            else if (rhsType == this.semanticInfoChain.numberTypeSymbol && lhsType == this.semanticInfoChain.numberTypeSymbol) {
+                exprType = this.semanticInfoChain.numberTypeSymbol;
+            }
+
+            if (!exprType) {
+                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "Invalid '+' expression - types do not agree", typeCheckContext.getEnclosingDecl());
+                exprType = this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            return exprType;
+        }        
+
         // Binary arithmetic expressions 
         // validate:
         //  - lhs and rhs are compatible
@@ -842,11 +902,53 @@ module TypeScript {
             var binex = <BinaryExpression>ast;
             var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
 
-            this.typeCheckAST(binex.operand1, typeCheckContext);
-            this.typeCheckAST(binex.operand2, typeCheckContext);
+            var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
+            var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
 
-            return type;
-        }
+            var lhsIsFit = lhsType == this.semanticInfoChain.anyTypeSymbol || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
+            var rhsIsFit = rhsType == this.semanticInfoChain.anyTypeSymbol || rhsType == this.semanticInfoChain.numberTypeSymbol || rhsType.getKind() == PullElementKind.Enum;
+
+            if (!rhsIsFit) {
+                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+            }
+
+            if (!lhsIsFit) {
+                this.context.postError(binex.operand2.minChar, binex.operand2.getLength(), typeCheckContext.scriptName, "The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+            }
+
+            // check for assignment compatibility
+            // PULLREVIEW: given the errors above, is this really necessary?
+            // switch (ast.nodeType) {
+            //     case NodeType.AsgLsh:
+            //     case NodeType.AsgRsh:
+            //     case NodeType.AsgRs2:
+            //     case NodeType.AsgSub:
+            //     case NodeType.AsgMul:
+            //     case NodeType.AsgDiv:
+            //     case NodeType.AsgMod:
+            //     case NodeType.AsgOr:
+            //     case NodeType.AsgAnd:
+            //         var comparisonInfo = new TypeComparisonInfo();
+
+            //         var isAssignable = this.resolver.sourceIsAssignableToTarget(rhsType, lhsType, this.context, comparisonInfo);
+
+            //         if (!isAssignable) {
+            //             var errorMessage = comparisonInfo.message;
+            //             var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            //             var span = enclosingDecl.getSpan();
+
+            //             // ignore comparison info for now
+            //             var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [rhsType.toString(), lhsType.toString()]);
+
+            //             this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+            //         }
+
+            //     default:
+            //         break;
+            // }
+
+            return this.semanticInfoChain.numberTypeSymbol;
+        }      
 
         // Unary arithmetic expressions 
         // validate:
@@ -856,19 +958,6 @@ module TypeScript {
             var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
 
             this.typeCheckAST(unex.operand, typeCheckContext);
-
-            return type;
-        }
-
-        // Bitwise operations 
-        // validate:
-        //  -
-        public typeCheckBitwiseOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var binex = <BinaryExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-
-            this.typeCheckAST(binex.operand1, typeCheckContext);
-            this.typeCheckAST(binex.operand2, typeCheckContext);
 
             return type;
         }
@@ -953,8 +1042,7 @@ module TypeScript {
 
             var forInStatement = <ForInStatement>ast;
 
-
-            this.typeCheckAST(forInStatement.obj, typeCheckContext);
+            var rhsType = this.resolver.widenType(this.typeCheckAST(forInStatement.obj, typeCheckContext));
             
             var varDecl = <VarDecl>forInStatement.lval;
 
@@ -964,13 +1052,59 @@ module TypeScript {
 
             var varSym = this.resolver.resolveAST(varDecl, false, typeCheckContext.getEnclosingDecl(), this.context);
 
-            varSym.unsetType();
+            var isStringOrAny = varSym.getType() == this.semanticInfoChain.stringTypeSymbol || varSym.getType() == this.semanticInfoChain.anyTypeSymbol;
+            var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || !rhsType.isPrimitive());
 
-            varSym.setType(this.semanticInfoChain.stringTypeSymbol);
-            varSym.setResolved();            
+            if (!isStringOrAny) {
+                this.context.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
+            }
+
+            if (!isValidRHS) {
+                this.context.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, "The right operand of a for/in expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+            }        
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
+
+        public typeCheckInExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var binex = <BinaryExpression>ast;
+
+            var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
+            var rhsType = this.resolver.widenType(this.typeCheckAST(binex.operand2, typeCheckContext));
+
+            var isStringOrAny = lhsType.getType() == this.semanticInfoChain.stringTypeSymbol || lhsType.getType() == this.semanticInfoChain.anyTypeSymbol;
+            var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || !rhsType.isPrimitive());
+
+            if (!isStringOrAny) {
+                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'in' expression may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
+            }
+
+            if (!isValidRHS) {
+                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+            }        
+
+            return this.semanticInfoChain.boolTypeSymbol;
+        }
+
+        public typeCheckInstanceOfExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var binex = <BinaryExpression>ast;
+
+            var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext)
+            var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            var isValidLHS = lhsType && (lhsType == this.semanticInfoChain.anyTypeSymbol || !lhsType.isPrimitive());
+            var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
+
+            if (!isValidLHS) {
+                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+            }
+
+            if (!isValidRHS) {
+                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'instanceOf' expression must be of type Any or a subtype of the 'Function' interface type", typeCheckContext.getEnclosingDecl());
+            }        
+
+            return this.semanticInfoChain.boolTypeSymbol;
+        }  
 
         public typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var whileStatementAST = <WhileStatement>ast;

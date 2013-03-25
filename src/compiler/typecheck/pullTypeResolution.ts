@@ -1937,7 +1937,6 @@ module TypeScript {
                     return this.resolveAssignmentStatement(expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 // boolean operations
-                case NodeType.Not:
                 case NodeType.LogNot:
                 case NodeType.Ne:
                 case NodeType.Eq:
@@ -1950,21 +1949,23 @@ module TypeScript {
                     return this.semanticInfoChain.boolTypeSymbol;
 
                 case NodeType.Add:
-                case NodeType.Sub:
-                case NodeType.Mul:
-                case NodeType.Div:
-                case NodeType.Mod:
-                case NodeType.Or:
-                case NodeType.And:
-                case NodeType.AsgAdd:
+                case NodeType.AsgAdd:                
+                    return this.resolveArithmeticExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+
                 case NodeType.AsgSub:
                 case NodeType.AsgMul:
                 case NodeType.AsgDiv:
                 case NodeType.AsgMod:
                 case NodeType.AsgOr:
                 case NodeType.AsgAnd:
-                    return this.resolveArithmeticExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
+                case NodeType.Not:
+                case NodeType.Sub:
+                case NodeType.Mul:
+                case NodeType.Div:
+                case NodeType.Mod:
+                case NodeType.Or:
+                case NodeType.And:
                 case NodeType.Pos:
                 case NodeType.Neg:
                 case NodeType.IncPost:
@@ -3865,6 +3866,14 @@ module TypeScript {
 
         public sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
+        }
+
+        public typeIsSubtypeOfFunction(source: PullTypeSymbol, context): bool {
+            if (this.cachedFunctionInterfaceType) {
+                return this.sourceIsSubtypeOfTarget(source, this.cachedFunctionInterfaceType, context);
+            }
+
+            return false;
         }
 
         public signatureGroupIsSubtypeOfTarget(sg1: PullSignatureSymbol[], sg2: PullSignatureSymbol[], context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
