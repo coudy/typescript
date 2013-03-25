@@ -559,3 +559,122 @@ function eaF() {
 ;
 
 ;
+////[0.d.ts]
+export var eV;
+export function eF(): void;
+export class eC {
+    constructor();
+    public pV;
+    private rV;
+    public pF(): void;
+    private rF();
+    public pgF(): void;
+    public pgF : void;
+    public psF(param: any): void;
+    public psF : any;
+    private rgF();
+    private rgF;
+    private rsF(param);
+    private rsF;
+    static tV;
+    static tF(): void;
+    static tsF(param: any): void;
+    static tsF : any;
+    static tgF(): void;
+    static tgF : void;
+}
+export interface eI {
+    ();
+    (): number;
+    (p);
+    (p1: string);
+    (p2?: string);
+    (...p3: any[]);
+    (p4: string, p5?: string);
+    (p6: string, ...p7: any[]);
+    new();
+    new(): number;
+    new(p: string);
+    new(p2?: string);
+    new(...p3: any[]);
+    new(p4: string, p5?: string);
+    new(p6: string, ...p7: any[]);
+    [p: any]: any;
+    [p1: string]: any;
+    [p2: string]: any;
+    p3: number;
+    p;
+    p1?;
+    p2?: string;
+    p3();
+    p4? ();
+    p5? (): void;
+    p6(pa1): void;
+    p7(pa1, pa2): void;
+    p7? (pa1, pa2): void;
+}
+export module eM {
+    var eV;
+    function eF(): void;
+    class eC {
+        constructor();
+        public pV;
+        private rV;
+        public pF(): void;
+        private rF();
+        public pgF(): void;
+        public pgF : void;
+        public psF(param: any): void;
+        public psF : any;
+        private rgF();
+        private rgF;
+        private rsF(param);
+        private rsF;
+        static tV;
+        static tF(): void;
+        static tsF(param: any): void;
+        static tsF : any;
+        static tgF(): void;
+        static tgF : void;
+    }
+    interface eI {
+        ();
+        (): number;
+        (p);
+        (p1: string);
+        (p2?: string);
+        (...p3: any[]);
+        (p4: string, p5?: string);
+        (p6: string, ...p7: any[]);
+        new();
+        new(): number;
+        new(p: string);
+        new(p2?: string);
+        new(...p3: any[]);
+        new(p4: string, p5?: string);
+        new(p6: string, ...p7: any[]);
+        [p: any]: any;
+        [p1: string]: any;
+        [p2: string]: any;
+        p3: number;
+        p;
+        p1?;
+        p2?: string;
+        p3();
+        p4? ();
+        p5? (): void;
+        p6(pa1): void;
+        p7(pa1, pa2): void;
+        p7? (pa1, pa2): void;
+    }
+    module eM {
+        var eV;
+        function eF(): void;
+        class eC {
+        }
+        interface eI {
+        }
+        module eM {
+        }
+    }
+}

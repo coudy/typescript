@@ -1243,7 +1243,7 @@ module Harness {
             scripts.push(addUnit(code, uName, isDeclareFile, references));
             compile(code, uName);
 
-            compiler.pullErrorReporter.textWriter = stderr;
+            // compiler.pullErrorReporter.textWriter = stderr;
 
             var syntacticDiagnostics = compiler.getSyntacticDiagnostics(uName);
             compiler.reportDiagnostics(syntacticDiagnostics, stderr);
