@@ -318,7 +318,7 @@ module TypeScript {
             this.visitToken(node.identifier);
             this.visitNode(node.parameterTypeAnnotation);
             this.visitToken(node.closeBracketToken);
-            this.visitOptionalNode(node.typeAnnotation);
+            this.visitNode(node.typeAnnotation);
         }
 
         public visitPropertySignature(node: PropertySignatureSyntax): void {
@@ -394,7 +394,7 @@ module TypeScript {
             this.visitOptionalToken(node.publicOrPrivateKeyword);
             this.visitOptionalToken(node.staticKeyword);
             this.visitToken(node.getKeyword);
-            this.visitToken(node.identifier);
+            this.visitToken(node.propertyName);
             this.visitNode(node.parameterList);
             this.visitOptionalNode(node.typeAnnotation);
             this.visitNode(node.block);
@@ -404,7 +404,7 @@ module TypeScript {
             this.visitOptionalToken(node.publicOrPrivateKeyword);
             this.visitOptionalToken(node.staticKeyword);
             this.visitToken(node.setKeyword);
-            this.visitToken(node.identifier);
+            this.visitToken(node.propertyName);
             this.visitNode(node.parameterList);
             this.visitNode(node.block);
         }

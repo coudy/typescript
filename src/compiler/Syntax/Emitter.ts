@@ -740,7 +740,7 @@ module TypeScript.Emitter1 {
         private convertMemberAccessorDeclaration(classDeclaration: ClassDeclarationSyntax,
                                                  memberAccessor: MemberAccessorDeclarationSyntax,
                                                  classElements: IClassElementSyntax[]): IStatementSyntax {
-            var name = <string>memberAccessor.identifier.value();
+            var name = <string>memberAccessor.propertyName.value();
             var i: number;
 
             // Find all the accessors with that name.
@@ -752,7 +752,7 @@ module TypeScript.Emitter1 {
                     element.kind() === SyntaxKind.SetMemberAccessorDeclaration) {
 
                     var otherAccessor = <MemberAccessorDeclarationSyntax>element;
-                    if (otherAccessor.identifier.value() === name &&
+                    if (otherAccessor.propertyName.value() === name &&
                         otherAccessor.block !== null) {
                         accessors.push(otherAccessor);
                         classElements.splice(i, 1);
@@ -764,7 +764,7 @@ module TypeScript.Emitter1 {
                 <any>MemberAccessExpressionSyntax.create1(
                     this.withNoTrivia(classDeclaration.identifier), Syntax.identifierName("prototype")),
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
-                Syntax.stringLiteralExpression('"' + memberAccessor.identifier.text() + '"'),
+                Syntax.stringLiteralExpression('"' + memberAccessor.propertyName.text() + '"'),
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space)
             ];
 

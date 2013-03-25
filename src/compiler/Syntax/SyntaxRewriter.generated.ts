@@ -367,7 +367,7 @@ module TypeScript {
                 this.visitToken(node.identifier),
                 <TypeAnnotationSyntax>this.visitNode(node.parameterTypeAnnotation),
                 this.visitToken(node.closeBracketToken),
-                node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
+                <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
         }
 
         public visitPropertySignature(node: PropertySignatureSyntax): any {
@@ -455,7 +455,7 @@ module TypeScript {
                 node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword),
                 node.staticKeyword === null ? null : this.visitToken(node.staticKeyword),
                 this.visitToken(node.getKeyword),
-                this.visitToken(node.identifier),
+                this.visitToken(node.propertyName),
                 <ParameterListSyntax>this.visitNode(node.parameterList),
                 node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation),
                 <BlockSyntax>this.visitNode(node.block));
@@ -466,7 +466,7 @@ module TypeScript {
                 node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword),
                 node.staticKeyword === null ? null : this.visitToken(node.staticKeyword),
                 this.visitToken(node.setKeyword),
-                this.visitToken(node.identifier),
+                this.visitToken(node.propertyName),
                 <ParameterListSyntax>this.visitNode(node.parameterList),
                 <BlockSyntax>this.visitNode(node.block));
         }

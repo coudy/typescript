@@ -634,7 +634,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
             <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'getKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
             <any>{ name: 'block', type: 'BlockSyntax' }
@@ -648,7 +648,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
             <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'setKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax' }
         ],

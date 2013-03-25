@@ -3392,16 +3392,10 @@ module TypeScript {
         return new IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create(openBracketToken: ISyntaxToken,
-                         identifier: ISyntaxToken,
-                         parameterTypeAnnotation: TypeAnnotationSyntax,
-                         closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
-        return new IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, null, /*parsedInStrictMode:*/ false);
-    }
-
     public static create1(identifier: ISyntaxToken,
-                          parameterTypeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
-        return new IndexSignatureSyntax(Syntax.token(SyntaxKind.OpenBracketToken), identifier, parameterTypeAnnotation, Syntax.token(SyntaxKind.CloseBracketToken), null, /*parsedInStrictMode:*/ false);
+                          parameterTypeAnnotation: TypeAnnotationSyntax,
+                          typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
+        return new IndexSignatureSyntax(Syntax.token(SyntaxKind.OpenBracketToken), identifier, parameterTypeAnnotation, Syntax.token(SyntaxKind.CloseBracketToken), typeAnnotation, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IndexSignatureSyntax {
@@ -4325,7 +4319,7 @@ module TypeScript {
     export class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
     constructor(public publicOrPrivateKeyword: ISyntaxToken,
                 public staticKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
+                public propertyName: ISyntaxToken,
                 public parameterList: ParameterListSyntax,
                 public block: BlockSyntax,
                 parsedInStrictMode: bool) {
@@ -4358,12 +4352,12 @@ module TypeScript {
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
                 public getKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
+                propertyName: ISyntaxToken,
                 parameterList: ParameterListSyntax,
                 public typeAnnotation: TypeAnnotationSyntax,
                 block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode); 
+        super(publicOrPrivateKeyword, staticKeyword, propertyName, parameterList, block, parsedInStrictMode); 
 
     }
 
@@ -4384,7 +4378,7 @@ module TypeScript {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
             case 2: return this.getKeyword;
-            case 3: return this.identifier;
+            case 3: return this.propertyName;
             case 4: return this.parameterList;
             case 5: return this.typeAnnotation;
             case 6: return this.block;
@@ -4395,26 +4389,26 @@ module TypeScript {
     public update(publicOrPrivateKeyword: ISyntaxToken,
                   staticKeyword: ISyntaxToken,
                   getKeyword: ISyntaxToken,
-                  identifier: ISyntaxToken,
+                  propertyName: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax,
                   block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.getKeyword === getKeyword && this.identifier === identifier && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation && this.block === block) {
+        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.getKeyword === getKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation && this.block === block) {
             return this;
         }
 
-        return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, propertyName, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(getKeyword: ISyntaxToken,
-                         identifier: ISyntaxToken,
+                         propertyName: ISyntaxToken,
                          parameterList: ParameterListSyntax,
                          block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-        return new GetMemberAccessorDeclarationSyntax(null, null, getKeyword, identifier, parameterList, null, block, /*parsedInStrictMode:*/ false);
+        return new GetMemberAccessorDeclarationSyntax(null, null, getKeyword, propertyName, parameterList, null, block, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(identifier: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return new GetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.GetKeyword), identifier, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        return new GetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.GetKeyword), propertyName, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GetMemberAccessorDeclarationSyntax {
@@ -4426,31 +4420,31 @@ module TypeScript {
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, this.block);
+        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withStaticKeyword(staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, this.block);
+        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withGetKeyword(getKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, getKeyword, this.identifier, this.parameterList, this.typeAnnotation, this.block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
-    public withIdentifier(identifier: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, identifier, this.parameterList, this.typeAnnotation, this.block);
+    public withPropertyName(propertyName: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): GetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, parameterList, this.typeAnnotation, this.block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.propertyName, parameterList, this.typeAnnotation, this.block);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): GetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, typeAnnotation, this.block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.propertyName, this.parameterList, typeAnnotation, this.block);
     }
 
     public withBlock(block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, block);
     }
 
     public isTypeScriptSpecific(): bool {
@@ -4463,11 +4457,11 @@ module TypeScript {
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
                 public setKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
+                propertyName: ISyntaxToken,
                 parameterList: ParameterListSyntax,
                 block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode); 
+        super(publicOrPrivateKeyword, staticKeyword, propertyName, parameterList, block, parsedInStrictMode); 
 
     }
 
@@ -4488,7 +4482,7 @@ module TypeScript {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
             case 2: return this.setKeyword;
-            case 3: return this.identifier;
+            case 3: return this.propertyName;
             case 4: return this.parameterList;
             case 5: return this.block;
             default: throw Errors.invalidOperation();
@@ -4498,25 +4492,25 @@ module TypeScript {
     public update(publicOrPrivateKeyword: ISyntaxToken,
                   staticKeyword: ISyntaxToken,
                   setKeyword: ISyntaxToken,
-                  identifier: ISyntaxToken,
+                  propertyName: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.setKeyword === setKeyword && this.identifier === identifier && this.parameterList === parameterList && this.block === block) {
+        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.setKeyword === setKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.block === block) {
             return this;
         }
 
-        return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(setKeyword: ISyntaxToken,
-                         identifier: ISyntaxToken,
+                         propertyName: ISyntaxToken,
                          parameterList: ParameterListSyntax,
                          block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-        return new SetMemberAccessorDeclarationSyntax(null, null, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ false);
+        return new SetMemberAccessorDeclarationSyntax(null, null, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(identifier: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return new SetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.SetKeyword), identifier, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        return new SetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.SetKeyword), propertyName, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SetMemberAccessorDeclarationSyntax {
@@ -4528,27 +4522,27 @@ module TypeScript {
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, this.parameterList, this.block);
+        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.propertyName, this.parameterList, this.block);
     }
 
     public withStaticKeyword(staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.setKeyword, this.identifier, this.parameterList, this.block);
+        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.setKeyword, this.propertyName, this.parameterList, this.block);
     }
 
     public withSetKeyword(setKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, setKeyword, this.identifier, this.parameterList, this.block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, setKeyword, this.propertyName, this.parameterList, this.block);
     }
 
-    public withIdentifier(identifier: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, identifier, this.parameterList, this.block);
+    public withPropertyName(propertyName: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, propertyName, this.parameterList, this.block);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): SetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, parameterList, this.block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.propertyName, parameterList, this.block);
     }
 
     public withBlock(block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, this.parameterList, block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.propertyName, this.parameterList, block);
     }
 
     public isTypeScriptSpecific(): bool {

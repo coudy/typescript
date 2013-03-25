@@ -2051,9 +2051,9 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
-            this.movePast(node.identifier);
+            this.moveTo2(node, node.propertyName);
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
+            this.movePast(node.propertyName);
             var parameters = node.parameterList.accept(this);
             var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
 

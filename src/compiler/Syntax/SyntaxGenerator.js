@@ -2952,8 +2952,7 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true
+                type: 'TypeAnnotationSyntax'
             }
         ],
         isTypeScriptSpecific: true
@@ -3258,10 +3257,12 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'identifier',
+                name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    'IdentifierName'
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
                 ]
             }, 
             {
@@ -3303,10 +3304,12 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'identifier',
+                name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    'IdentifierName'
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
                 ]
             }, 
             {

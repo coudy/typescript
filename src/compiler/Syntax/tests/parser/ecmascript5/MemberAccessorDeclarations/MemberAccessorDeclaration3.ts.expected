@@ -6,12 +6,12 @@
     },
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 47,
+        "fullWidth": 27,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 47,
+                "fullWidth": 27,
                 "classKeyword": {
                     "kind": "ClassKeyword",
                     "width": 5,
@@ -56,7 +56,7 @@
                 "classElements": [
                     {
                         "kind": "GetMemberAccessorDeclaration",
-                        "fullWidth": 17,
+                        "fullWidth": 15,
                         "getKeyword": {
                             "kind": "GetKeyword",
                             "width": 3,
@@ -78,10 +78,9 @@
                             ]
                         },
                         "propertyName": {
-                            "kind": "IdentifierName",
-                            "width": 3,
-                            "text": "foo",
-                            "valueText": "foo"
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "text": "0"
                         },
                         "parameterList": {
                             "kind": "ParameterList",
@@ -92,102 +91,6 @@
                                 "text": "("
                             },
                             "parameters": [],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ")",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
-                        },
-                        "block": {
-                            "kind": "Block",
-                            "fullWidth": 5,
-                            "openBraceToken": {
-                                "kind": "OpenBraceToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": "{",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            "statements": [],
-                            "closeBraceToken": {
-                                "kind": "CloseBraceToken",
-                                "width": 1,
-                                "fullWidth": 3,
-                                "text": "}",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLine": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "text": "\r\n"
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "kind": "SetMemberAccessorDeclaration",
-                        "fullWidth": 18,
-                        "setKeyword": {
-                            "kind": "SetKeyword",
-                            "width": 3,
-                            "fullWidth": 6,
-                            "text": "set",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "  "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
-                        "propertyName": {
-                            "kind": "IdentifierName",
-                            "width": 3,
-                            "text": "foo",
-                            "valueText": "foo"
-                        },
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 4,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 1,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "a",
-                                        "valueText": "a"
-                                    }
-                                }
-                            ],
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "width": 1,
@@ -253,9 +156,8 @@
         "lineStarts": [
             0,
             11,
-            28,
-            46
+            26
         ],
-        "length": 47
+        "length": 27
     }
 }

@@ -54,8 +54,8 @@ module TypeScript.Syntax {
         expressionStatement(expression: IExpressionSyntax, semicolonToken: ISyntaxToken): ExpressionStatementSyntax;
         constructorDeclaration(constructorKeyword: ISyntaxToken, parameterList: ParameterListSyntax, block: BlockSyntax, semicolonToken: ISyntaxToken): ConstructorDeclarationSyntax;
         memberFunctionDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, propertyName: ISyntaxToken, callSignature: CallSignatureSyntax, block: BlockSyntax, semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax;
-        getMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, getKeyword: ISyntaxToken, identifier: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, block: BlockSyntax): GetMemberAccessorDeclarationSyntax;
-        setMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, setKeyword: ISyntaxToken, identifier: ISyntaxToken, parameterList: ParameterListSyntax, block: BlockSyntax): SetMemberAccessorDeclarationSyntax;
+        getMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, getKeyword: ISyntaxToken, propertyName: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, block: BlockSyntax): GetMemberAccessorDeclarationSyntax;
+        setMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, setKeyword: ISyntaxToken, propertyName: ISyntaxToken, parameterList: ParameterListSyntax, block: BlockSyntax): SetMemberAccessorDeclarationSyntax;
         memberVariableDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, variableDeclarator: VariableDeclaratorSyntax, semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax;
         throwStatement(throwKeyword: ISyntaxToken, expression: IExpressionSyntax, semicolonToken: ISyntaxToken): ThrowStatementSyntax;
         returnStatement(returnKeyword: ISyntaxToken, expression: IExpressionSyntax, semicolonToken: ISyntaxToken): ReturnStatementSyntax;
@@ -246,11 +246,11 @@ module TypeScript.Syntax {
         memberFunctionDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, propertyName: ISyntaxToken, callSignature: CallSignatureSyntax, block: BlockSyntax, semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
             return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, /*parsedInStrictMode:*/ false);
         }
-        getMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, getKeyword: ISyntaxToken, identifier: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-            return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ false);
+        getMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, getKeyword: ISyntaxToken, propertyName: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
+            return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, propertyName, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ false);
         }
-        setMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, setKeyword: ISyntaxToken, identifier: ISyntaxToken, parameterList: ParameterListSyntax, block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-            return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ false);
+        setMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, setKeyword: ISyntaxToken, propertyName: ISyntaxToken, parameterList: ParameterListSyntax, block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
+            return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ false);
         }
         memberVariableDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, variableDeclarator: VariableDeclaratorSyntax, semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
             return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken, /*parsedInStrictMode:*/ false);
@@ -504,11 +504,11 @@ module TypeScript.Syntax {
         memberFunctionDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, propertyName: ISyntaxToken, callSignature: CallSignatureSyntax, block: BlockSyntax, semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
             return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, /*parsedInStrictMode:*/ true);
         }
-        getMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, getKeyword: ISyntaxToken, identifier: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-            return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ true);
+        getMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, getKeyword: ISyntaxToken, propertyName: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
+            return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, propertyName, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ true);
         }
-        setMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, setKeyword: ISyntaxToken, identifier: ISyntaxToken, parameterList: ParameterListSyntax, block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-            return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ true);
+        setMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, setKeyword: ISyntaxToken, propertyName: ISyntaxToken, parameterList: ParameterListSyntax, block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
+            return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ true);
         }
         memberVariableDeclaration(publicOrPrivateKeyword: ISyntaxToken, staticKeyword: ISyntaxToken, variableDeclarator: VariableDeclaratorSyntax, semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
             return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken, /*parsedInStrictMode:*/ true);
