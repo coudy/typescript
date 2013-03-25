@@ -2192,11 +2192,13 @@ module TypeScript.Parser {
             //      public;
             //      public=
             //      public:
+            //      public }
             if (ParserImpl.isModifier(token)) {
                 switch (this.peekToken(index + 1).tokenKind) {
                     case SyntaxKind.SemicolonToken:
                     case SyntaxKind.EqualsToken:
                     case SyntaxKind.ColonToken:
+                    case SyntaxKind.CloseBraceToken:
                        return true;
                     default:
                         return false;

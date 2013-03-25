@@ -17199,6 +17199,7 @@ var TypeScript;
                         case 78 /* SemicolonToken */ :
                         case 107 /* EqualsToken */ :
                         case 106 /* ColonToken */ :
+                        case 71 /* CloseBraceToken */ :
                             return true;
                         default:
                             return false;

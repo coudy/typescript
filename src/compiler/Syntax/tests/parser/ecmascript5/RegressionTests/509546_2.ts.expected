@@ -1,23 +1,12 @@
-﻿{
+{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
-    "diagnostics": [
-        {
-            "_position": 46,
-            "_width": 6,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "constructor, function, accessor or variable"
-            ]
-        }
-    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 57,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
@@ -46,7 +35,7 @@
             {
                 "kind": "ClassDeclaration",
                 "fullWidth": 42,
-                "hasSkippedText": true,
+                "hasZeroWidthToken": true,
                 "parsedInStrictMode": true,
                 "modifiers": [
                     {
@@ -101,11 +90,10 @@
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,
-                    "fullWidth": 17,
+                    "fullWidth": 4,
                     "text": "{",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
-                    "hasTrailingSkippedText": true,
                     "trailingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
@@ -114,22 +102,48 @@
                         {
                             "kind": "NewLineTrivia",
                             "text": "\r\n"
-                        },
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": "     "
-                        },
-                        {
-                            "kind": "SkippedTextTrivia",
-                            "text": "public"
-                        },
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
                         }
                     ]
                 },
-                "classElements": [],
+                "classElements": [
+                    {
+                        "kind": "MemberVariableDeclaration",
+                        "fullWidth": 13,
+                        "hasZeroWidthToken": true,
+                        "parsedInStrictMode": true,
+                        "variableDeclarator": {
+                            "kind": "VariableDeclarator",
+                            "fullWidth": 13,
+                            "parsedInStrictMode": true,
+                            "identifier": {
+                                "kind": "IdentifierName",
+                                "width": 6,
+                                "fullWidth": 13,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLine": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "     "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    }
+                                ]
+                            }
+                        },
+                        "semicolonToken": {
+                            "kind": "SemicolonToken",
+                            "width": 0,
+                            "text": ""
+                        }
+                    }
+                ],
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
                     "width": 1,

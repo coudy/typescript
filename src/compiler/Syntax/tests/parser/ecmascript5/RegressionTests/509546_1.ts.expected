@@ -1,36 +1,17 @@
-﻿{
+{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
-    "diagnostics": [
-        {
-            "_position": 29,
-            "_width": 6,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "constructor, function, accessor or variable"
-            ]
-        },
-        {
-            "_position": 37,
-            "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "module, class, interface, enum, import or statement"
-            ]
-        }
-    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 40,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 24,
+                "fullWidth": 40,
                 "hasZeroWidthToken": true,
                 "modifiers": [
                     {
@@ -92,52 +73,56 @@
                         }
                     ]
                 },
-                "classElements": [],
+                "classElements": [
+                    {
+                        "kind": "MemberVariableDeclaration",
+                        "fullWidth": 13,
+                        "hasZeroWidthToken": true,
+                        "variableDeclarator": {
+                            "kind": "VariableDeclarator",
+                            "fullWidth": 13,
+                            "identifier": {
+                                "kind": "IdentifierName",
+                                "width": 6,
+                                "fullWidth": 13,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLine": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "     "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    }
+                                ]
+                            }
+                        },
+                        "semicolonToken": {
+                            "kind": "SemicolonToken",
+                            "width": 0,
+                            "text": ""
+                        }
+                    }
+                ],
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
-                    "width": 0,
-                    "text": ""
-                }
-            },
-            {
-                "kind": "ExpressionStatement",
-                "fullWidth": 16,
-                "hasSkippedText": true,
-                "hasZeroWidthToken": true,
-                "expression": {
-                    "kind": "PublicKeyword",
-                    "width": 6,
-                    "fullWidth": 16,
-                    "text": "public",
-                    "hasLeadingTrivia": true,
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": "}",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
-                    "hasTrailingSkippedText": true,
-                    "leadingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": "     "
-                        }
-                    ],
                     "trailingTrivia": [
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        },
-                        {
-                            "kind": "SkippedTextTrivia",
-                            "text": "}"
-                        },
                         {
                             "kind": "NewLineTrivia",
                             "text": "\r\n"
                         }
                     ]
-                },
-                "semicolonToken": {
-                    "kind": "SemicolonToken",
-                    "width": 0,
-                    "text": ""
                 }
             }
         ],
