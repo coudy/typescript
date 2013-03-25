@@ -17193,8 +17193,7 @@ var TypeScript;
                 return this.factory.memberFunctionDeclaration(modifiers, propertyName, callSignature, block, semicolon);
             };
             ParserImpl.prototype.isDefinitelyMemberVariablePropertyName = function (index) {
-                var token = this.peekToken(index);
-                if (ParserImpl.isModifier(token)) {
+                if (TypeScript.SyntaxFacts.isAnyKeyword(this.peekToken(index).tokenKind)) {
                     switch(this.peekToken(index + 1).tokenKind) {
                         case 78 /* SemicolonToken */ :
                         case 107 /* EqualsToken */ :
@@ -57964,7 +57963,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = false;
+var generate = true;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {

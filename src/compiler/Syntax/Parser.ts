@@ -2185,16 +2185,14 @@ module TypeScript.Parser {
         }
         
         private isDefinitelyMemberVariablePropertyName(index: number): bool {
-            var token = this.peekToken(index);
-
-            // Modifiers are also property names.  Only accept a modifier as a property 
+            // keywords are also property names.  Only accept a keyword as a property 
             // name if is of the form:
             //      public;
             //      public=
             //      public:
             //      public }
             //      public <eof>
-            if (ParserImpl.isModifier(token)) {
+            if (SyntaxFacts.isAnyKeyword(this.peekToken(index).tokenKind)) {
                 switch (this.peekToken(index + 1).tokenKind) {
                     case SyntaxKind.SemicolonToken:
                     case SyntaxKind.EqualsToken:
@@ -2207,7 +2205,7 @@ module TypeScript.Parser {
                 }
             }
             else {
-                // If was a property name and not a modifier, then we're good to go.
+                // If was a property name and not a keyword, then we're good to go.
                 return true;
             }
         }
