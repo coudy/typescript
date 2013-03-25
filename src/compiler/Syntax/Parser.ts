@@ -1894,14 +1894,12 @@ module TypeScript.Parser {
                 openBraceToken, enumElements, closeBraceToken);
         }
 
-        private isEnumElement(): bool {
+        private isEnumElement(inErrorRecovery: bool): bool {
             if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.EnumElement) {
                 return true;
             }
 
-            var token0 = this.currentToken();
-            return SyntaxFacts.isIdentifierNameOrAnyKeyword(token0) ||
-                   token0.tokenKind === SyntaxKind.StringLiteral;
+            return this.isPropertyName(this.currentToken(), inErrorRecovery);
         }
 
         private parseEnumElement(): EnumElementSyntax {
@@ -1910,22 +1908,13 @@ module TypeScript.Parser {
                 return <EnumElementSyntax>this.eatNode();
             }
 
-            var identifier: ISyntaxToken = null;
-            var stringLiteral: ISyntaxToken = null;
-
-            if (SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())) {
-                identifier = this.eatIdentifierNameToken();
-            }
-            else {
-                stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
-            }
-
+            var propertyName = this.eatPropertyName();
             var equalsValueClause: EqualsValueClauseSyntax = null;
             if (this.isEqualsValueClause(/*inParameter*/ false)) {
                 equalsValueClause = this.parseEqualsValueClause(/*allowIn:*/ true);
             }
 
-            return this.factory.enumElement(identifier, stringLiteral, equalsValueClause);
+            return this.factory.enumElement(propertyName, equalsValueClause);
         }
 
         private isClassDeclaration(): bool {
@@ -5468,7 +5457,7 @@ module TypeScript.Parser {
                     return false;
 
                 case ListParsingState.EnumDeclaration_EnumElements:
-                    return this.isEnumElement();
+                    return this.isEnumElement(inErrorRecovery);
                 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:

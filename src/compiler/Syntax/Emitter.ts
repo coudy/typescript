@@ -968,7 +968,7 @@ module TypeScript.Emitter1 {
             // Add one to the previous value.
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier);
             var previousEnumElement = <EnumElementSyntax>enumDeclaration.enumElements.nonSeparatorAt(index - 1);
-            var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(previousEnumElement));
+            var variableIdentifier = this.withNoTrivia(previousEnumElement.propertyName);
 
             var receiver = variableIdentifier.kind() === SyntaxKind.StringLiteral
                 ? ElementAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier)
@@ -994,7 +994,7 @@ module TypeScript.Emitter1 {
                 var assignDefaultValues = { value: true };
                 for (var i = 0, n = node.enumElements.nonSeparatorCount(); i < n; i++) {
                     var enumElement = <EnumElementSyntax>node.enumElements.nonSeparatorAt(i)
-                    var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(enumElement));
+                    var variableIdentifier = this.withNoTrivia(enumElement.propertyName);
 
                     assignDefaultValues.value = assignDefaultValues.value && (enumElement.equalsValueClause === null);
 
@@ -1037,11 +1037,6 @@ module TypeScript.Emitter1 {
             return FunctionExpressionSyntax.create1()
                 .withCallSignature(CallSignatureSyntax.create(parameterList))
                 .withBlock(block);
-        }
-
-        private getEnumElementIdentifier(node: EnumElementSyntax): ISyntaxToken {
-            var enumElement = <EnumElementSyntax>node;
-            return enumElement.identifier || enumElement.stringLiteral;
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): IStatementSyntax[] {

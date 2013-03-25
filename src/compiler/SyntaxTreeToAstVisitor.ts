@@ -854,9 +854,8 @@ module TypeScript {
 
                     var memberValue: AST = null;
 
-                    memberName = this.identifierFromToken(enumElement.identifier || enumElement.stringLiteral, /*isOptional:*/ false);
-                    this.movePast(enumElement.identifier);
-                    this.movePast(enumElement.stringLiteral);
+                    memberName = this.identifierFromToken(enumElement.propertyName, /*isOptional:*/ false);
+                    this.movePast(enumElement.propertyName);
 
                     if (enumElement.equalsValueClause !== null) {
                         memberValue = enumElement.equalsValueClause.accept(this);

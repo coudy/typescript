@@ -596,8 +596,7 @@ module TypeScript {
 
         public visitEnumElement(node: EnumElementSyntax): any {
             return node.update(
-                node.identifier === null ? null : this.visitToken(node.identifier),
-                node.stringLiteral === null ? null : this.visitToken(node.stringLiteral),
+                this.visitToken(node.propertyName),
                 node.equalsValueClause === null ? null : <EqualsValueClauseSyntax>this.visitNode(node.equalsValueClause));
         }
 

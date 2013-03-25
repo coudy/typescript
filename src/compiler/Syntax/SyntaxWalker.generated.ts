@@ -519,8 +519,7 @@ module TypeScript {
         }
 
         public visitEnumElement(node: EnumElementSyntax): void {
-            this.visitOptionalToken(node.identifier);
-            this.visitOptionalToken(node.stringLiteral);
+            this.visitToken(node.propertyName);
             this.visitOptionalNode(node.equalsValueClause);
         }
 

@@ -5962,8 +5962,7 @@ module TypeScript {
 
     export class EnumElementSyntax extends SyntaxNode {
 
-    constructor(public identifier: ISyntaxToken,
-                public stringLiteral: ISyntaxToken,
+    constructor(public propertyName: ISyntaxToken,
                 public equalsValueClause: EqualsValueClauseSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
@@ -5979,34 +5978,32 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 3;
+        return 2;
     }
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this.identifier;
-            case 1: return this.stringLiteral;
-            case 2: return this.equalsValueClause;
+            case 0: return this.propertyName;
+            case 1: return this.equalsValueClause;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public update(identifier: ISyntaxToken,
-                  stringLiteral: ISyntaxToken,
+    public update(propertyName: ISyntaxToken,
                   equalsValueClause: EqualsValueClauseSyntax): EnumElementSyntax {
-        if (this.identifier === identifier && this.stringLiteral === stringLiteral && this.equalsValueClause === equalsValueClause) {
+        if (this.propertyName === propertyName && this.equalsValueClause === equalsValueClause) {
             return this;
         }
 
-        return new EnumElementSyntax(identifier, stringLiteral, equalsValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new EnumElementSyntax(propertyName, equalsValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create(): EnumElementSyntax {
-        return new EnumElementSyntax(null, null, null, /*parsedInStrictMode:*/ false);
+    public static create(propertyName: ISyntaxToken): EnumElementSyntax {
+        return new EnumElementSyntax(propertyName, null, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(): EnumElementSyntax {
-        return new EnumElementSyntax(null, null, null, /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): EnumElementSyntax {
+        return new EnumElementSyntax(propertyName, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): EnumElementSyntax {
@@ -6017,16 +6014,12 @@ module TypeScript {
         return <EnumElementSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withIdentifier(identifier: ISyntaxToken): EnumElementSyntax {
-        return this.update(identifier, this.stringLiteral, this.equalsValueClause);
-    }
-
-    public withStringLiteral(stringLiteral: ISyntaxToken): EnumElementSyntax {
-        return this.update(this.identifier, stringLiteral, this.equalsValueClause);
+    public withPropertyName(propertyName: ISyntaxToken): EnumElementSyntax {
+        return this.update(propertyName, this.equalsValueClause);
     }
 
     public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): EnumElementSyntax {
-        return this.update(this.identifier, this.stringLiteral, equalsValueClause);
+        return this.update(this.propertyName, equalsValueClause);
     }
 
     public isTypeScriptSpecific(): bool {

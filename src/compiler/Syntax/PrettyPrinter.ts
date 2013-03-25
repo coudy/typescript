@@ -860,9 +860,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitEnumElement(node: EnumElementSyntax): void {
-            this.appendToken(node.identifier);
-            this.ensureSpace();
-            this.appendToken(node.stringLiteral);
+            this.appendToken(node.propertyName);
             this.ensureSpace();
             this.appendNode(node.equalsValueClause);
         }

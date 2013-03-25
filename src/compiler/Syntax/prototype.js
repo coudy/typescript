@@ -4401,8 +4401,8 @@ var TypeScript;
             NormalModeFactory.prototype.enumDeclaration = function (exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken) {
                 return new TypeScript.EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, false);
             };
-            NormalModeFactory.prototype.enumElement = function (identifier, stringLiteral, equalsValueClause) {
-                return new TypeScript.EnumElementSyntax(identifier, stringLiteral, equalsValueClause, false);
+            NormalModeFactory.prototype.enumElement = function (propertyName, equalsValueClause) {
+                return new TypeScript.EnumElementSyntax(propertyName, equalsValueClause, false);
             };
             NormalModeFactory.prototype.castExpression = function (lessThanToken, type, greaterThanToken, expression) {
                 return new TypeScript.CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, false);
@@ -4661,8 +4661,8 @@ var TypeScript;
             StrictModeFactory.prototype.enumDeclaration = function (exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken) {
                 return new TypeScript.EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, true);
             };
-            StrictModeFactory.prototype.enumElement = function (identifier, stringLiteral, equalsValueClause) {
-                return new TypeScript.EnumElementSyntax(identifier, stringLiteral, equalsValueClause, true);
+            StrictModeFactory.prototype.enumElement = function (propertyName, equalsValueClause) {
+                return new TypeScript.EnumElementSyntax(propertyName, equalsValueClause, true);
             };
             StrictModeFactory.prototype.castExpression = function (lessThanToken, type, greaterThanToken, expression) {
                 return new TypeScript.CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, true);
@@ -11288,10 +11288,9 @@ var TypeScript;
     TypeScript.EnumDeclarationSyntax = EnumDeclarationSyntax;    
     var EnumElementSyntax = (function (_super) {
         __extends(EnumElementSyntax, _super);
-        function EnumElementSyntax(identifier, stringLiteral, equalsValueClause, parsedInStrictMode) {
+        function EnumElementSyntax(propertyName, equalsValueClause, parsedInStrictMode) {
             _super.call(this, parsedInStrictMode);
-            this.identifier = identifier;
-            this.stringLiteral = stringLiteral;
+            this.propertyName = propertyName;
             this.equalsValueClause = equalsValueClause;
         }
         EnumElementSyntax.prototype.accept = function (visitor) {
@@ -11301,31 +11300,29 @@ var TypeScript;
             return 239 /* EnumElement */ ;
         };
         EnumElementSyntax.prototype.childCount = function () {
-            return 3;
+            return 2;
         };
         EnumElementSyntax.prototype.childAt = function (slot) {
             switch(slot) {
                 case 0:
-                    return this.identifier;
+                    return this.propertyName;
                 case 1:
-                    return this.stringLiteral;
-                case 2:
                     return this.equalsValueClause;
                 default:
                     throw TypeScript.Errors.invalidOperation();
             }
         };
-        EnumElementSyntax.prototype.update = function (identifier, stringLiteral, equalsValueClause) {
-            if (this.identifier === identifier && this.stringLiteral === stringLiteral && this.equalsValueClause === equalsValueClause) {
+        EnumElementSyntax.prototype.update = function (propertyName, equalsValueClause) {
+            if (this.propertyName === propertyName && this.equalsValueClause === equalsValueClause) {
                 return this;
             }
-            return new EnumElementSyntax(identifier, stringLiteral, equalsValueClause, this.parsedInStrictMode());
+            return new EnumElementSyntax(propertyName, equalsValueClause, this.parsedInStrictMode());
         };
-        EnumElementSyntax.create = function create() {
-            return new EnumElementSyntax(null, null, null, false);
+        EnumElementSyntax.create = function create(propertyName) {
+            return new EnumElementSyntax(propertyName, null, false);
         };
-        EnumElementSyntax.create1 = function create1() {
-            return new EnumElementSyntax(null, null, null, false);
+        EnumElementSyntax.create1 = function create1(propertyName) {
+            return new EnumElementSyntax(propertyName, null, false);
         };
         EnumElementSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -11333,14 +11330,11 @@ var TypeScript;
         EnumElementSyntax.prototype.withTrailingTrivia = function (trivia) {
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
-        EnumElementSyntax.prototype.withIdentifier = function (identifier) {
-            return this.update(identifier, this.stringLiteral, this.equalsValueClause);
-        };
-        EnumElementSyntax.prototype.withStringLiteral = function (stringLiteral) {
-            return this.update(this.identifier, stringLiteral, this.equalsValueClause);
+        EnumElementSyntax.prototype.withPropertyName = function (propertyName) {
+            return this.update(propertyName, this.equalsValueClause);
         };
         EnumElementSyntax.prototype.withEqualsValueClause = function (equalsValueClause) {
-            return this.update(this.identifier, this.stringLiteral, equalsValueClause);
+            return this.update(this.propertyName, equalsValueClause);
         };
         EnumElementSyntax.prototype.isTypeScriptSpecific = function () {
             if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) {
@@ -12768,7 +12762,7 @@ var TypeScript;
             return node.update(node.exportKeyword === null ? null : this.visitToken(node.exportKeyword), this.visitToken(node.enumKeyword), this.visitToken(node.identifier), this.visitToken(node.openBraceToken), this.visitSeparatedList(node.enumElements), this.visitToken(node.closeBraceToken));
         };
         SyntaxRewriter.prototype.visitEnumElement = function (node) {
-            return node.update(node.identifier === null ? null : this.visitToken(node.identifier), node.stringLiteral === null ? null : this.visitToken(node.stringLiteral), node.equalsValueClause === null ? null : this.visitNode(node.equalsValueClause));
+            return node.update(this.visitToken(node.propertyName), node.equalsValueClause === null ? null : this.visitNode(node.equalsValueClause));
         };
         SyntaxRewriter.prototype.visitCastExpression = function (node) {
             return node.update(this.visitToken(node.lessThanToken), this.visitNodeOrToken(node.type), this.visitToken(node.greaterThanToken), this.visitNodeOrToken(node.expression));
@@ -15598,8 +15592,7 @@ var TypeScript;
             this.visitToken(node.closeBraceToken);
         };
         SyntaxWalker.prototype.visitEnumElement = function (node) {
-            this.visitOptionalToken(node.identifier);
-            this.visitOptionalToken(node.stringLiteral);
+            this.visitToken(node.propertyName);
             this.visitOptionalNode(node.equalsValueClause);
         };
         SyntaxWalker.prototype.visitCastExpression = function (node) {
@@ -16793,29 +16786,22 @@ var TypeScript;
                 var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
                 return this.factory.enumDeclaration(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken);
             };
-            ParserImpl.prototype.isEnumElement = function () {
+            ParserImpl.prototype.isEnumElement = function (inErrorRecovery) {
                 if (this.currentNode() !== null && this.currentNode().kind() === 239 /* EnumElement */ ) {
                     return true;
                 }
-                var token0 = this.currentToken();
-                return TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token0) || token0.tokenKind === 14 /* StringLiteral */ ;
+                return this.isPropertyName(this.currentToken(), inErrorRecovery);
             };
             ParserImpl.prototype.parseEnumElement = function () {
                 if (this.currentNode() !== null && this.currentNode().kind() === 239 /* EnumElement */ ) {
                     return this.eatNode();
                 }
-                var identifier = null;
-                var stringLiteral = null;
-                if (TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())) {
-                    identifier = this.eatIdentifierNameToken();
-                } else {
-                    stringLiteral = this.eatToken(14 /* StringLiteral */ );
-                }
+                var propertyName = this.eatPropertyName();
                 var equalsValueClause = null;
                 if (this.isEqualsValueClause(false)) {
                     equalsValueClause = this.parseEqualsValueClause(true);
                 }
-                return this.factory.enumElement(identifier, stringLiteral, equalsValueClause);
+                return this.factory.enumElement(propertyName, equalsValueClause);
             };
             ParserImpl.prototype.isClassDeclaration = function () {
                 var index = 0;
@@ -18936,7 +18922,7 @@ var TypeScript;
                     case 128 /* CatchBlock_Statements */ :
                         return false;
                     case 256 /* EnumDeclaration_EnumElements */ :
-                        return this.isEnumElement();
+                        return this.isEnumElement(inErrorRecovery);
                     case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                     case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                         return this.isVariableDeclarator();
@@ -21618,7 +21604,7 @@ var TypeScript;
                 }
                 var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier);
                 var previousEnumElement = enumDeclaration.enumElements.nonSeparatorAt(index - 1);
-                var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(previousEnumElement));
+                var variableIdentifier = this.withNoTrivia(previousEnumElement.propertyName);
                 var receiver = variableIdentifier.kind() === 14 /* StringLiteral */  ? TypeScript.ElementAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier) : TypeScript.MemberAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier);
                 return this.factory.binaryExpression(162 /* PlusExpression */ , receiver.withTrailingTrivia(TypeScript.Syntax.spaceTriviaList), TypeScript.Syntax.token(89 /* PlusToken */ ).withTrailingTrivia(this.space), TypeScript.Syntax.numericLiteralExpression("1"));
             };
@@ -21634,7 +21620,7 @@ var TypeScript;
                     };
                     for(var i = 0, n = node.enumElements.nonSeparatorCount(); i < n; i++) {
                         var enumElement = node.enumElements.nonSeparatorAt(i);
-                        var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(enumElement));
+                        var variableIdentifier = this.withNoTrivia(enumElement.propertyName);
                         assignDefaultValues.value = assignDefaultValues.value && (enumElement.equalsValueClause === null);
                         var left = variableIdentifier.kind() === 14 /* StringLiteral */  ? TypeScript.ElementAccessExpressionSyntax.create1(identifier, variableIdentifier) : TypeScript.MemberAccessExpressionSyntax.create1(identifier, variableIdentifier);
                         var innerAssign = TypeScript.Syntax.assignmentExpression(left.withTrailingTrivia(this.space), TypeScript.Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, enumElement, assignDefaultValues.value, i));
@@ -21647,10 +21633,6 @@ var TypeScript;
                 var block = this.factory.block(TypeScript.Syntax.token(70 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), TypeScript.Syntax.list(statements), TypeScript.Syntax.token(71 /* CloseBraceToken */ ).withLeadingTrivia(this.indentationTrivia(enumColumn)));
                 var parameterList = TypeScript.ParameterListSyntax.create1().withParameter(TypeScript.ParameterSyntax.create1(identifier)).withTrailingTrivia(this.space);
                 return TypeScript.FunctionExpressionSyntax.create1().withCallSignature(TypeScript.CallSignatureSyntax.create(parameterList)).withBlock(block);
-            };
-            EmitterImpl.prototype.getEnumElementIdentifier = function (node) {
-                var enumElement = node;
-                return enumElement.identifier || enumElement.stringLiteral;
             };
             EmitterImpl.prototype.visitEnumDeclaration = function (node) {
                 var identifier = this.withNoTrivia(node.identifier);
@@ -22471,9 +22453,7 @@ var TypeScript;
                 this.appendToken(node.closeBraceToken);
             };
             PrettyPrinterImpl.prototype.visitEnumElement = function (node) {
-                this.appendToken(node.identifier);
-                this.ensureSpace();
-                this.appendToken(node.stringLiteral);
+                this.appendToken(node.propertyName);
                 this.ensureSpace();
                 this.appendNode(node.equalsValueClause);
             };
@@ -56486,9 +56466,8 @@ var TypeScript;
                 } else {
                     var enumElement = node.enumElements.childAt(i);
                     var memberValue = null;
-                    memberName = this.identifierFromToken(enumElement.identifier || enumElement.stringLiteral, false);
-                    this.movePast(enumElement.identifier);
-                    this.movePast(enumElement.stringLiteral);
+                    memberName = this.identifierFromToken(enumElement.propertyName, false);
+                    this.movePast(enumElement.propertyName);
                     if (enumElement.equalsValueClause !== null) {
                         memberValue = enumElement.equalsValueClause.accept(this);
                         lastValue = memberValue;

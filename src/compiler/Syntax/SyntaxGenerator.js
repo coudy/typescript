@@ -3769,17 +3769,13 @@ var definitions = [
         baseType: 'SyntaxNode',
         children: [
             {
-                name: 'identifier',
+                name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    'IdentifierName'
-                ],
-                isOptional: true
-            }, 
-            {
-                name: 'stringLiteral',
-                isToken: true,
-                isOptional: true
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
+                ]
             }, 
             {
                 name: 'equalsValueClause',

@@ -840,8 +840,7 @@ var definitions:ITypeDefinition[] = [
         name: 'EnumElementSyntax',
         baseType: 'SyntaxNode',
         children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'], isOptional: true },
-            <any>{ name: 'stringLiteral', isToken: true, isOptional: true },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true }
         ]
     },
