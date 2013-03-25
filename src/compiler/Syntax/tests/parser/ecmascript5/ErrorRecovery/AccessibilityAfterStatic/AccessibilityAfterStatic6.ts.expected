@@ -6,19 +6,11 @@
     },
     "diagnostics": [
         {
-            "_position": 16,
-            "_width": 6,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "constructor, function, accessor or variable"
-            ]
-        },
-        {
-            "_position": 23,
-            "_width": 6,
+            "_position": 29,
+            "_width": 0,
             "_diagnosticCode": "_0_expected",
             "_arguments": [
-                ";"
+                "}"
             ]
         }
     ],
@@ -29,9 +21,8 @@
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 16,
+                "fullWidth": 29,
                 "hasZeroWidthToken": true,
-                "classElements": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
                     "width": 5,
@@ -74,46 +65,44 @@
                         }
                     ]
                 },
+                "classElements": [
+                    {
+                        "kind": "MemberVariableDeclaration",
+                        "fullWidth": 13,
+                        "hasZeroWidthToken": true,
+                        "modifiers": [
+                            {
+                                "kind": "StaticKeyword",
+                                "width": 6,
+                                "fullWidth": 7,
+                                "text": "static",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
+                        "variableDeclarator": {
+                            "kind": "VariableDeclarator",
+                            "fullWidth": 6,
+                            "identifier": {
+                                "kind": "IdentifierName",
+                                "width": 6,
+                                "text": "public"
+                            }
+                        },
+                        "semicolonToken": {
+                            "kind": "SemicolonToken",
+                            "width": 0,
+                            "text": ""
+                        }
+                    }
+                ],
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
-                    "width": 0,
-                    "text": ""
-                }
-            },
-            {
-                "kind": "ExpressionStatement",
-                "fullWidth": 7,
-                "hasZeroWidthToken": true,
-                "expression": {
-                    "kind": "StaticKeyword",
-                    "width": 6,
-                    "fullWidth": 7,
-                    "text": "static",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
-                "semicolonToken": {
-                    "kind": "SemicolonToken",
-                    "width": 0,
-                    "text": ""
-                }
-            },
-            {
-                "kind": "ExpressionStatement",
-                "fullWidth": 6,
-                "hasZeroWidthToken": true,
-                "expression": {
-                    "kind": "PublicKeyword",
-                    "width": 6,
-                    "text": "public"
-                },
-                "semicolonToken": {
-                    "kind": "SemicolonToken",
                     "width": 0,
                     "text": ""
                 }

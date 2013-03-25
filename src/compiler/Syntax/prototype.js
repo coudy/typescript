@@ -17200,6 +17200,7 @@ var TypeScript;
                         case 107 /* EqualsToken */ :
                         case 106 /* ColonToken */ :
                         case 71 /* CloseBraceToken */ :
+                        case 10 /* EndOfFileToken */ :
                             return true;
                         default:
                             return false;
@@ -57963,7 +57964,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {
