@@ -29,113 +29,115 @@ module TypeScript {
             code: 1
         },
 
-        // Semantic errors.
+        // Syntactic errors start at 100.
+
+        // Semantic errors start at 200.
         Duplicate_identifier__0_: {
             category: DiagnosticCategory.Error,
             message: "Duplicate identifier '{0}'.",
-            code: 100
+            code: 200
         },
 
         The_name__0__does_not_exist_in_the_current_scope: {
             category: DiagnosticCategory.Error,
             message: "The name '{0}' does not exist in the current scope.",
-            code: 101
+            code: 201
         },
 
         The_name__0__does_not_refer_to_a_value: {
             category: DiagnosticCategory.Error,
             message: "The name '{0}' does not refer to a value.",
-            code: 102
+            code: 202
         },
 
         Keyword__super__can_only_be_used_inside_a_class_instance_method: {
             category: DiagnosticCategory.Error,
             message: "Keyword 'super' can only be used inside a class instance method.",
-            code: 103
+            code: 203
         },
 
         The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
             category: DiagnosticCategory.Error,
             message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
-            code: 104
+            code: 204
         },
 
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
-            code: 105
+            code: 205
         },
 
         Value_of_type__0__is_not_callable: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not callable.",
-            code: 106
+            code: 206
         },
 
         Value_of_type__0__is_not_newable: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not newable.",
-            code: 107
+            code: 207
         },
 
         Value_of_type__0__is_not_indexable_by_type__1_: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not indexable by type '{1}'.",
-            code: 108
+            code: 208
         },
 
         Operator__0__cannot_be_applied_to_types__1__and__2_: {
             category: DiagnosticCategory.Error,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
-            code: 109
+            code: 209
         },
 
         Operator__0__cannot_be_applied_to_types__1__and__2__3: {
             category: DiagnosticCategory.Error,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
-            code: 110
+            code: 210
         },
 
         Cannot_convert__0__to__1_: {
             category: DiagnosticCategory.Error,
             message: "Cannot convert '{0}' to '{1}'.",
-            code: 111
+            code: 211
         },
 
         Cannot_convert__0__to__1___2: {
             category: DiagnosticCategory.Error,
             message: "Cannot convert '{0}' to '{1}': {2}",
-            code: 112
+            code: 212
         },
 
         Expected_var__class__interface__or_module: {
             category: DiagnosticCategory.Error,
             message: "Expected var, class, interface, or module.",
-            code: 113
+            code: 213
         },
 
         Operator__0__cannot_be_applied_to_type__1_: {
             category: DiagnosticCategory.Error,
             message: "Operator '{0}' cannot be applied to type '{1}'.",
-            code: 114
+            code: 214
         },
 
         Getter__0__already_declared: {
             category: DiagnosticCategory.Error,
             message: "Getter '{0}' already declared.",
-            code: 115
+            code: 215
         },
 
         Setter__0__already_declared: {
             category: DiagnosticCategory.Error,
             message: "Setter '{0}' already declared.",
-            code: 116
+            code: 216
         },
 
         Accessor_may_not_take_type_parameters: {
             category: DiagnosticCategory.Error,
             message: "Accessors may not take type parameters.",
-            code: 117
+            code: 217
         },
     };
 }
