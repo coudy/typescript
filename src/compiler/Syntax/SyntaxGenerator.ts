@@ -104,8 +104,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IModuleElementSyntax'],
         children: [
-            <any>{ name: 'exportKeyword', isToken: true, isOptional: true  },
-            <any>{ name: 'declareKeyword', isToken: true, isOptional: true  },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'classKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
@@ -122,7 +121,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IModuleElementSyntax'],
         children: [
-            <any>{ name: 'exportKeyword', isToken: true, isOptional: true  },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'interfaceKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
@@ -154,8 +153,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IModuleElementSyntax'],
         children: [
-            <any>{ name: 'exportKeyword', isToken: true, isOptional: true },
-            <any>{ name: 'declareKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'moduleKeyword', isToken: true },
             <any>{ name: 'moduleName', type: 'INameSyntax', isOptional: true },
             <any>{ name: 'stringLiteral', isToken: true, isOptional: true },
@@ -170,8 +168,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IStatementSyntax'],
         children: [
-            <any>{ name: 'exportKeyword', isToken: true, isOptional: true, isTypeScriptSpecific: true },
-            <any>{ name: 'declareKeyword', isToken: true, isOptional: true, isTypeScriptSpecific: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'functionKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
@@ -184,8 +181,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IStatementSyntax'],
         children: [
-            <any>{ name: 'exportKeyword', isToken: true, isOptional: true, isTypeScriptSpecific: true },
-            <any>{ name: 'declareKeyword', isToken: true, isOptional: true, isTypeScriptSpecific: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'variableDeclaration', type: 'VariableDeclarationSyntax' },
             <any>{ name: 'semicolonToken', isToken: true }
         ]
@@ -610,8 +606,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IMemberDeclarationSyntax'],
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
-            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax', isOptional: true },
@@ -631,8 +626,7 @@ var definitions:ITypeDefinition[] = [
         name: 'GetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
-            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'getKeyword', isToken: true },
             <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
@@ -645,8 +639,7 @@ var definitions:ITypeDefinition[] = [
         name: 'SetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
-            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'setKeyword', isToken: true },
             <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
@@ -659,8 +652,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IMemberDeclarationSyntax'],
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
-            <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'variableDeclarator', type: 'VariableDeclaratorSyntax' },
             <any>{ name: 'semicolonToken', isToken: true }
         ],
@@ -827,7 +819,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IModuleElementSyntax'],
         children: [
-            <any>{ name: 'exportKeyword', isToken: true, isOptional: true },
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'enumKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'openBraceToken', isToken: true },

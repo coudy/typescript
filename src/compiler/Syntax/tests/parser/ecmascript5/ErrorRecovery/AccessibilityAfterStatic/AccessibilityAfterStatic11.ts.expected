@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -58,19 +58,21 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 20,
-                        "staticKeyword": {
-                            "kind": "StaticKeyword",
-                            "width": 6,
-                            "fullWidth": 7,
-                            "text": "static",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "StaticKeyword",
+                                "width": 6,
+                                "fullWidth": 7,
+                                "text": "static",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 6,

@@ -87,7 +87,7 @@ module TypeScript {
             }
         }
 
-        private movePast(element: ISyntaxToken): void {
+        private movePast(element: ISyntaxElement): void {
             if (element !== null) {
                 this.assertElementAtPosition(element);
                 this.position += element.fullWidth();
@@ -275,6 +275,16 @@ module TypeScript {
 
         private convertNodeTrailingComments(node: SyntaxNode, nodeStart: number): Comment[] {
             return this.convertTokenTrailingComments(node.lastToken(), nodeStart + node.leadingTriviaWidth() + node.width());
+        }
+
+        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                if (list.childAt(i).kind() === kind) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private visitToken(token: ISyntaxToken): AST {
@@ -480,11 +490,11 @@ module TypeScript {
             result.preComments = preComments;
             result.postComments = postComments;
 
-            if (node.exportKeyword || this.isParsingAmbientModule) {
+            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 result.varFlags |= VarFlags.Exported;
             }
 
-            if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 result.varFlags |= VarFlags.Ambient;
             }
 
@@ -567,7 +577,7 @@ module TypeScript {
             //    result.varFlags |= VarFlags.Public;
             //}
 
-            if (node.exportKeyword || this.isParsingAmbientModule) {
+            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 result.varFlags |= VarFlags.Exported;
             }
 
@@ -660,13 +670,12 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.movePast(node.exportKeyword);
-            this.movePast(node.declareKeyword);
+            this.moveTo2(node, node.moduleKeyword);
             this.movePast(node.moduleKeyword);
             var names = this.getModuleNames(node);
             this.movePast(node.openBraceToken);
             var svIsParsingAmbientModule = this.isParsingAmbientModule;
-            if (node.declareKeyword|| this.isParsingDeclareFile) {
+            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingDeclareFile) {
                 this.isParsingAmbientModule = true;
             }
             var members = this.visitSyntaxList(node.moduleElements);
@@ -695,13 +704,13 @@ module TypeScript {
                 // mark the inner module declarations as exported
                 if (i) {
                     moduleDecl.modFlags |= ModuleFlags.Exported;
-                } else if (node.exportKeyword || this.isParsingAmbientModule) {
+                } else if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                     // outer module is exported if export key word or parsing ambient module
                     moduleDecl.modFlags |= ModuleFlags.Exported;
                 }
 
                 // mark ambient if declare keyword or parsing ambient module or parsing declare file
-                if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                     moduleDecl.modFlags |= ModuleFlags.Ambient;
                 }
 
@@ -800,11 +809,11 @@ module TypeScript {
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
 
-            if (node.exportKeyword || this.isParsingAmbientModule) {
+            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 funcDecl.fncFlags |= FncFlags.Exported;
             }
 
-            if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                 funcDecl.fncFlags |= FncFlags.Ambient;
             }
 
@@ -937,7 +946,7 @@ module TypeScript {
             modDecl.modFlags |= ModuleFlags.IsEnum;
             modDecl.recordNonInterface();
 
-            if (node.exportKeyword || this.isParsingAmbientModule) {
+            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 modDecl.modFlags |= ModuleFlags.Exported;
             }
 
@@ -996,16 +1005,11 @@ module TypeScript {
             var start = this.position;
 
             var preComments: Comment[] = null;
-
-            if (node.exportKeyword) {
-                preComments = this.convertTokenLeadingComments(node.exportKeyword, start);
-                this.movePast(node.exportKeyword);
+            if (node.modifiers.childCount() > 0) {
+                preComments = this.convertTokenLeadingComments(node.modifiers.firstToken(), start);
             }
 
-            if (node.declareKeyword) {
-                preComments = this.convertTokenLeadingComments(node.declareKeyword, this.position);
-                this.movePast(node.declareKeyword);
-            }
+            this.moveTo2(node, node.variableDeclaration);
 
             var varList = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
@@ -1023,11 +1027,11 @@ module TypeScript {
                     varDecl.preComments = this.mergeComments(preComments, varDecl.preComments);
                 }
 
-                if (node.exportKeyword || this.isParsingAmbientModule) {
+                if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                     varDecl.varFlags |= VarFlags.Exported;
                 }
 
-                if (node.declareKeyword || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                     varDecl.varFlags |= VarFlags.Ambient;
                 }
             }
@@ -2030,14 +2034,14 @@ module TypeScript {
                 result.fncFlags |= FncFlags.Signature;
             }
 
-            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
+            if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
                 result.fncFlags |= FncFlags.Private;
             }
             else {
                 result.fncFlags |= FncFlags.Public;
             }
 
-            if (node.staticKeyword) {
+            if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
                 result.fncFlags |= FncFlags.Static;
             }
 
@@ -2080,14 +2084,14 @@ module TypeScript {
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
 
-            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
+            if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
                 result.fncFlags |= FncFlags.Private;
             }
             else {
                 result.fncFlags |= FncFlags.Public;
             }
 
-            if (node.staticKeyword) {
+            if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
                 result.fncFlags |= FncFlags.Static;
             }
 
@@ -2141,11 +2145,11 @@ module TypeScript {
             varDecl.typeExpr = typeExpr;
             varDecl.init = init;
 
-            if (node.staticKeyword) {
+            if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
                 varDecl.varFlags |= VarFlags.Static;
             }
 
-            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
+            if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
                 varDecl.varFlags |= VarFlags.Private;
             }
             else {

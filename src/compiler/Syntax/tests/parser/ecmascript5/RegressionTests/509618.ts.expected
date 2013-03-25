@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -12,19 +12,21 @@
             {
                 "kind": "ModuleDeclaration",
                 "fullWidth": 54,
-                "declareKeyword": {
-                    "kind": "DeclareKeyword",
-                    "width": 7,
-                    "fullWidth": 8,
-                    "text": "declare",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "modifiers": [
+                    {
+                        "kind": "DeclareKeyword",
+                        "width": 7,
+                        "fullWidth": 8,
+                        "text": "declare",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    }
+                ],
                 "moduleKeyword": {
                     "kind": "ModuleKeyword",
                     "width": 6,

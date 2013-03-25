@@ -123,6 +123,13 @@ module TypeScript.PrettyPrinter {
             this.appendToken(token);
         }
 
+        private appendSpaceList(list: ISyntaxList): void {
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                this.appendToken(<ISyntaxToken>list.childAt(i));
+                this.ensureSpace();
+            }
+        }
+
         private appendSeparatorSpaceList(list: ISeparatedSyntaxList): void {
             for (var i = 0, n = list.childCount(); i < n; i++) {
                 if (i % 2 === 0) {
@@ -202,10 +209,8 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitClassDeclaration(node: ClassDeclarationSyntax): void {
-            this.appendToken(node.exportKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
-            this.appendToken(node.declareKeyword);
-            this.ensureSpace()
             this.appendToken(node.classKeyword);
             this.ensureSpace();
             this.appendToken(node.identifier);
@@ -238,7 +243,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
-            this.appendToken(node.exportKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             this.appendToken(node.interfaceKeyword);
             this.ensureSpace();
@@ -288,7 +293,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
-            this.appendToken(node.exportKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             this.appendToken(node.moduleKeyword);
             this.ensureSpace();
@@ -319,7 +324,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
-            this.appendToken(node.exportKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             this.appendToken(node.functionKeyword);
             this.ensureSpace();
@@ -329,9 +334,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitVariableStatement(node: VariableStatementSyntax): void {
-            this.appendToken(node.exportKeyword);
-            this.ensureSpace();
-            this.appendToken(node.declareKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             node.variableDeclaration.accept(this);
             this.appendToken(node.semicolonToken);
@@ -638,9 +641,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
-            this.appendToken(node.publicOrPrivateKeyword);
-            this.ensureSpace();
-            this.appendToken(node.staticKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             this.appendToken(node.propertyName);
             node.callSignature.accept(this);
@@ -648,9 +649,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
-            this.appendToken(node.publicOrPrivateKeyword);
-            this.ensureSpace();
-            this.appendToken(node.staticKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             this.appendToken(node.getKeyword);
             this.ensureSpace();
@@ -662,9 +661,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
-            this.appendToken(node.publicOrPrivateKeyword);
-            this.ensureSpace();
-            this.appendToken(node.staticKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             this.appendToken(node.setKeyword);
             this.ensureSpace();
@@ -675,9 +672,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
-            this.appendToken(node.publicOrPrivateKeyword);
-            this.ensureSpace();
-            this.appendToken(node.staticKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             node.variableDeclarator.accept(this);
             this.appendToken(node.semicolonToken);
@@ -843,7 +838,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): void {
-            this.appendToken(node.exportKeyword);
+            this.appendSpaceList(node.modifiers);
             this.ensureSpace();
             this.appendToken(node.enumKeyword);
             this.ensureSpace();

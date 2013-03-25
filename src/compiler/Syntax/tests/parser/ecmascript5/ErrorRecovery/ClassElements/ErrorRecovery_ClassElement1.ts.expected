@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -6,11 +6,19 @@
     },
     "diagnostics": [
         {
-            "_position": 128,
-            "_width": 5,
-            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_position": 134,
+            "_width": 1,
+            "_diagnosticCode": "_0_expected",
             "_arguments": [
-                "constructor, function, accessor or variable"
+                "="
+            ]
+        },
+        {
+            "_position": 136,
+            "_width": 1,
+            "_diagnosticCode": "_0_expected",
+            "_arguments": [
+                ";"
             ]
         }
     ],
@@ -21,7 +29,7 @@
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 11,
+                "fullWidth": 136,
                 "hasZeroWidthToken": true,
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -64,7 +72,85 @@
                         }
                     ]
                 },
-                "classElements": [],
+                "classElements": [
+                    {
+                        "kind": "MemberVariableDeclaration",
+                        "fullWidth": 125,
+                        "hasZeroWidthToken": true,
+                        "variableDeclarator": {
+                            "kind": "VariableDeclarator",
+                            "fullWidth": 125,
+                            "hasZeroWidthToken": true,
+                            "identifier": {
+                                "kind": "IdentifierName",
+                                "width": 5,
+                                "fullWidth": 123,
+                                "text": "class",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingComment": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "SingleLineCommentTrivia",
+                                        "text": "// Classes can't be nested.  So we should bail out of parsing here and recover"
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "SingleLineCommentTrivia",
+                                        "text": "// this as a source unit element."
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            "equalsValueClause": {
+                                "kind": "EqualsValueClause",
+                                "fullWidth": 2,
+                                "hasZeroWidthToken": true,
+                                "equalsToken": {
+                                    "kind": "EqualsToken",
+                                    "width": 0,
+                                    "text": ""
+                                },
+                                "value": {
+                                    "kind": "IdentifierName",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": "D",
+                                    "valueText": "D",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "semicolonToken": {
+                            "kind": "SemicolonToken",
+                            "width": 0,
+                            "text": ""
+                        }
+                    }
+                ],
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
                     "width": 0,
@@ -72,60 +158,8 @@
                 }
             },
             {
-                "kind": "ClassDeclaration",
-                "fullWidth": 129,
-                "classKeyword": {
-                    "kind": "ClassKeyword",
-                    "width": 5,
-                    "fullWidth": 123,
-                    "text": "class",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingComment": true,
-                    "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
-                    "leadingTrivia": [
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        },
-                        {
-                            "kind": "SingleLineCommentTrivia",
-                            "text": "// Classes can't be nested.  So we should bail out of parsing here and recover"
-                        },
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        },
-                        {
-                            "kind": "SingleLineCommentTrivia",
-                            "text": "// this as a source unit element."
-                        },
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
-                "identifier": {
-                    "kind": "IdentifierName",
-                    "width": 1,
-                    "fullWidth": 2,
-                    "text": "D",
-                    "valueText": "D",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "kind": "Block",
+                "fullWidth": 4,
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,
@@ -140,7 +174,7 @@
                         }
                     ]
                 },
-                "classElements": [],
+                "statements": [],
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
                     "width": 1,

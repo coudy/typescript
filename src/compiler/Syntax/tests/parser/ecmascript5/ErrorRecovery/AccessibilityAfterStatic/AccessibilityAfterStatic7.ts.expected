@@ -1,26 +1,17 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
-    "diagnostics": [
-        {
-            "_position": 23,
-            "_width": 6,
-            "_diagnosticCode": "_public_or_private_modifier_must_precede__static_"
-        }
-    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 44,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
                 "fullWidth": 44,
-                "hasSkippedText": true,
                 "classKeyword": {
                     "kind": "ClassKeyword",
                     "width": 5,
@@ -67,29 +58,34 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 25,
-                        "hasSkippedText": true,
-                        "staticKeyword": {
-                            "kind": "StaticKeyword",
-                            "width": 6,
-                            "fullWidth": 14,
-                            "text": "static",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingSkippedText": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                },
-                                {
-                                    "kind": "SkippedTextTrivia",
-                                    "text": "public"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "StaticKeyword",
+                                "width": 6,
+                                "fullWidth": 7,
+                                "text": "static",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 7,
+                                "text": "public",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 4,

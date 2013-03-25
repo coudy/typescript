@@ -1858,22 +1858,25 @@ module TypeScript.Parser {
         }
 
         private isEnumDeclaration(): bool {
-            var index = 0;
-            var token0 = this.peekToken(index);
+            var index = this.modifierCount();
 
-            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(index + 1).tokenKind === SyntaxKind.EnumKeyword) {
+            // If we have at least one modifier, and we see 'enum', then consider this an enum
+            // declaration.
+            if (index > 0 &&
+                this.peekToken(index).tokenKind === SyntaxKind.EnumKeyword) {
                 return true;
             }
 
-            return token0.tokenKind === SyntaxKind.EnumKeyword &&
-                   this.isIdentifier(this.peekToken(index + 1));
+            // 'enum' is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
+            // that we're actually looking at a enum construct and not some javascript expression.
+            return this.currentToken().tokenKind === SyntaxKind.EnumKeyword &&
+                   this.isIdentifier(this.peekToken(1));
         }
 
         private parseEnumDeclaration(): EnumDeclarationSyntax {
             // Debug.assert(this.isEnumDeclaration());
 
-            var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
+            var modifiers = this.parseModifiers();
             var enumKeyword = this.eatKeyword(SyntaxKind.EnumKeyword);
             var identifier = this.eatIdentifierToken();
 
@@ -1888,7 +1891,7 @@ module TypeScript.Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
-            return this.factory.enumDeclaration(exportKeyword, enumKeyword, identifier,
+            return this.factory.enumDeclaration(modifiers, enumKeyword, identifier,
                 openBraceToken, enumElements, closeBraceToken);
         }
 
@@ -1915,29 +1918,75 @@ module TypeScript.Parser {
             return this.factory.enumElement(propertyName, equalsValueClause);
         }
 
+        private static isModifier(token: ISyntaxToken): bool {
+            switch (token.tokenKind) {
+                case SyntaxKind.PublicKeyword:
+                case SyntaxKind.PrivateKeyword:
+                case SyntaxKind.StaticKeyword:
+                case SyntaxKind.ExportKeyword:
+                case SyntaxKind.DeclareKeyword:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        private modifierCount(): number {
+            var modifierCount = 0;
+            while (true) {
+                if (ParserImpl.isModifier(this.peekToken(modifierCount))) {
+                    modifierCount++;
+                    continue;
+                }
+
+                break;
+            }
+
+            return modifierCount
+        }
+
+        private parseModifiers(): ISyntaxList {
+            var tokens: ISyntaxToken[] = this.getArray();
+
+            while (true) {
+                if (ParserImpl.isModifier(this.currentToken())) {
+                    tokens.push(this.eatAnyToken());
+                    continue;
+                }
+
+                break;
+            }
+
+            var result = Syntax.list(tokens);
+
+            // If the tokens array is greater than one, then we can't return it.  It will have been 
+            // copied directly into the syntax list.
+            this.returnZeroOrOneLengthArray(tokens);
+
+            return result;
+        }
+
         private isClassDeclaration(): bool {
-            var index = 0;
-            var token0 = this.peekToken(index);
+            var index = this.modifierCount();
 
-            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(index + 1).tokenKind === SyntaxKind.ClassKeyword) {
+            // If we have at least one modifier, and we see 'class', then consider this a class
+            // declaration.
+            if (index > 0 &&
+                this.peekToken(index).tokenKind === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
-            if (token0.tokenKind === SyntaxKind.DeclareKeyword &&
-                this.peekToken(index + 1).tokenKind === SyntaxKind.ClassKeyword) {
-                return true;
-            }
-
-            return token0.tokenKind === SyntaxKind.ClassKeyword &&
-                   this.isIdentifier(this.peekToken(index + 1));
+            // 'class' is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
+            // that we're actually looking at a class construct and not some javascript expression.
+            return this.currentToken().tokenKind === SyntaxKind.ClassKeyword &&
+                   this.isIdentifier(this.peekToken(1));
         }
 
         private parseClassDeclaration(): ClassDeclarationSyntax {
             // Debug.assert(this.isClassDeclaration());
 
-            var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
-            var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
+            var modifiers = this.parseModifiers();
 
             var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
             var identifier = this.eatIdentifierToken();
@@ -1965,7 +2014,7 @@ module TypeScript.Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
             return this.factory.classDeclaration(
-                exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause,
+                modifiers, classKeyword, identifier, typeParameterList, extendsClause,
                 implementsClause, openBraceToken, classElements, closeBraceToken);
         }
 
@@ -1978,15 +2027,7 @@ module TypeScript.Parser {
         }
 
         private isMemberAccessorDeclaration(inErrorRecovery: bool): bool {
-            var index = 0;
-
-            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                index++;
-            }
-
-            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
-                index++;
-            }
+            var index = this.modifierCount();
 
             if (this.peekToken(index).tokenKind !== SyntaxKind.GetKeyword &&
                 this.peekToken(index).tokenKind !== SyntaxKind.SetKeyword) {
@@ -2000,26 +2041,20 @@ module TypeScript.Parser {
         private parseMemberAccessorDeclaration(): MemberAccessorDeclarationSyntax {
             // Debug.assert(this.isMemberAccessorDeclaration());
 
-            var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                publicOrPrivateKeyword = this.eatAnyToken();
-            }
-
-            var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
+            var modifiers = this.parseModifiers();
 
             if (this.currentToken().tokenKind === SyntaxKind.GetKeyword) {
-                return this.parseGetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
+                return this.parseGetMemberAccessorDeclaration(modifiers);
             }
             else if (this.currentToken().tokenKind === SyntaxKind.SetKeyword) {
-                return this.parseSetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
+                return this.parseSetMemberAccessorDeclaration(modifiers);
             }
             else {
                 throw Errors.invalidOperation();
             }
         }
 
-        private parseGetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
-                                                  staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        private parseGetMemberAccessorDeclaration(modifiers: ISyntaxList): GetMemberAccessorDeclarationSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.GetKeyword);
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
@@ -2029,11 +2064,10 @@ module TypeScript.Parser {
             var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
 
             return this.factory.getMemberAccessorDeclaration(
-                publicOrPrivateKeyword, staticKeyword, getKeyword, propertyName, parameterList, typeAnnotation, block);
+                modifiers, getKeyword, propertyName, parameterList, typeAnnotation, block);
         }
 
-        private parseSetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
-                                                  staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        private parseSetMemberAccessorDeclaration(modifiers: ISyntaxList): SetMemberAccessorDeclarationSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.SetKeyword);
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
@@ -2042,80 +2076,7 @@ module TypeScript.Parser {
             var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
 
             return this.factory.setMemberAccessorDeclaration(
-                publicOrPrivateKeyword, staticKeyword, setKeyword, propertyName, parameterList, block);
-        }
-
-        private isMemberVariableDeclaration(): bool {
-            var index = 0;
-            var token0 = this.peekToken(index);
-
-            if (ParserImpl.isPublicOrPrivateKeyword(token0)) {
-                index++;
-
-                // ERROR RECOVERY: 
-                // If we're following by an close curly or EOF, then consider this the start of a
-                // variable declaration.
-                if (this.peekToken(index).tokenKind === SyntaxKind.CloseBraceToken ||
-                    this.peekToken(index).tokenKind === SyntaxKind.EndOfFileToken) {
-                    return true;
-                }
-            }
-
-            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
-                index++;
-
-                // ERROR RECOVERY: 
-                // If we're following by an close curly or EOF, then consider this the start of a
-                // variable declaration.
-                //
-                // Also if we see 'static public' or 'static private', then treat this as the start
-                // of a variable declaration.
-                var token1 = this.peekToken(index);
-                if (token1.tokenKind === SyntaxKind.CloseBraceToken ||
-                    token1.tokenKind === SyntaxKind.EndOfFileToken ||
-                    ParserImpl.isPublicOrPrivateKeyword(token1)) {
-                    return true;
-                }
-            }
-
-            // We must at least have an identifier name at this point.
-            if (!SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(index))) {
-                return false;
-            }
-
-            // Now, according to the grammar, we've got a member variable.  However, in practice 
-            // this can be a bit too permissive (especially in error contexts).  Do some additional
-            // checking to make sure we don't try to parse what's next as a member when it clearly
-            // is not.
-
-            // For example, if we see a keyword, it is very likely that the user is not actually
-            // typing a member name there, but is actually typing some other construct.  For example:
-            //
-            //   class C { class D { }
-            //
-            // THe second 'class' is technically an identifier name, but we really don't want to 
-            // parse a member variable here.
-
-            // So, if we see a keyword, we do a more rigorous check that this is actually a variable
-            // declaration.  If not, we do not parse it as such.
-            if (this.isIdentifier(this.peekToken(index))) {
-                // It's a real identifier.  We can be confident this is a member.
-                return true;
-            }
-
-            // We have a keyword.  only allow this as a member if it's of the form:
-            //
-            //      keyword;
-            //      keyword = 
-            //      keyword:
-            switch (this.peekToken(index + 1).tokenKind) {
-                case SyntaxKind.SemicolonToken:
-                case SyntaxKind.EqualsToken:
-                case SyntaxKind.ColonToken:
-                    return true;
-            }
-
-            return false;
+                modifiers, setKeyword, propertyName, parameterList, block);
         }
 
         private isClassElement(inErrorRecovery: bool): bool {
@@ -2128,7 +2089,7 @@ module TypeScript.Parser {
             return this.isConstructorDeclaration() ||
                    this.isMemberFunctionDeclaration(inErrorRecovery) ||
                    this.isMemberAccessorDeclaration(inErrorRecovery) ||
-                   this.isMemberVariableDeclaration();
+                   this.isMemberVariableDeclaration(inErrorRecovery);
         }
 
         private parseConstructorDeclaration(): ConstructorDeclarationSyntax {
@@ -2153,82 +2114,54 @@ module TypeScript.Parser {
         private isMemberFunctionDeclaration(inErrorRecovery: bool): bool {
             var index = 0;
 
-            if (ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
-                index++;
-
-                // 'public'/'private' may be a modifier or may be the name of the member function.
-                // Check for the latter case.
-                if (this.isCallSignature(index)) {
+            // Note: typescript is highly ambiguous here.  We may have things like:
+            //      public()
+            //      public public()
+            //      public static()
+            //      public static public()
+            //
+            // etc.
+            //
+            // This means we can't just blindly consume and move past modifier tokens.  Instead, we 
+            // need to see if we're at the function's name, and only skip it if we're not.
+            while (true) {
+                var token = this.peekToken(index);
+                if (this.isPropertyName(token, inErrorRecovery) &&
+                    this.isCallSignature(index + 1)) {
                     return true;
                 }
-            }
 
-            var sawStatic = false;
-            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
-                index++;
-                sawStatic = true;
-
-                // 'static' may be a modifier or may be the name of the member function.
-                // Check for the latter case.
-                if (this.isCallSignature(index)) {
-                    return true;
+                // We weren't at the name of the function.  If we have a modifier token, then 
+                // consume it and try again.
+                if (ParserImpl.isModifier(token)) {
+                    index++;
+                    continue;
                 }
-            }
 
-            // Error Recovery:
-            // We may have 'static public foo()' or 'static private foo()'. check for that 
-            // common case so we can give a good error message.
-            if (sawStatic && ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
-                index++;
-
-                // We may also have "static public()" or "static private()". check for that.
-                if (this.isCallSignature(index)) {
-                    return true;
-                }
+                // Wasn't a member function.
+                return false;
             }
-
-            if (this.isPropertyName(this.peekToken(index), inErrorRecovery)) {
-                return this.isCallSignature(index + 1);
-            }
-        
-            return false;
         }
 
         private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
             // Debug.assert(this.isMemberFunctionDeclaration());
             
-            var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                // 'public'/'private' may be a modifier, or may be the name of the member function.
-                if (!this.isCallSignature(1)) {
-                    publicOrPrivateKeyword = this.eatAnyToken();
+            var modifierArray: ISyntaxToken[] = this.getArray();
+
+            while (true) {
+                var currentToken = this.currentToken();
+                if (this.isPropertyName(currentToken, /*inErrorRecovery:*/ false) &&
+                    this.isCallSignature(1)) {
+                    break;
                 }
+
+                Debug.assert(ParserImpl.isModifier(currentToken));
+                modifierArray.push(this.eatAnyToken());
             }
 
-            var staticKeyword: ISyntaxToken = null;
-            if (this.currentToken().tokenKind === SyntaxKind.StaticKeyword) {
-                // 'static' may be a modifier, or may be the name of the member function.
-                if (!this.isCallSignature(1)) {
-                    staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
-                }
-            }
-
-            // If we see 'static' followed by 'public' then this is actually syntactically invalid.
-            // However, it's a common enough type of error that we want to see it and give a useful
-            // error message to clarify the issue.
-            if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                // Ok.  We've seen 'static public' or 'static private'.
-
-                // This is actually legal in some circumstances.  For example, it's legal to type:
-                // 'static public() {}'.  So, if we're on a legal function signature, then parse
-                // it normally.  Otherwise, treat this as an error, attach the 'public/private' token
-                // as skipped text on the 'static' keyword, and continue on.
-
-                if (!this.isCallSignature(1)) {
-                    staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
-                }
-            }
-
+            var modifiers = Syntax.list(modifierArray);
+            this.returnZeroOrOneLengthArray(modifierArray);
+            
             var propertyName = this.eatPropertyName();
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
@@ -2248,65 +2181,88 @@ module TypeScript.Parser {
                 semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
             }
 
-            return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolon);
+            return this.factory.memberFunctionDeclaration(modifiers, propertyName, callSignature, block, semicolon);
+        }
+        
+        private isDefinitelyMemberVariablePropertyName(index: number): bool {
+            var token = this.peekToken(index);
+
+            // Modifiers are also property names.  Only accept a modifier as a property 
+            // name if is of the form:
+            //      public;
+            //      public=
+            //      public:
+            if (ParserImpl.isModifier(token)) {
+                switch (this.peekToken(index + 1).tokenKind) {
+                    case SyntaxKind.SemicolonToken:
+                    case SyntaxKind.EqualsToken:
+                    case SyntaxKind.ColonToken:
+                       return true;
+                    default:
+                        return false;
+                }
+            }
+            else {
+                // If was a property name and not a modifier, then we're good to go.
+                return true;
+            }
         }
 
-        private handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword: ISyntaxToken): ISyntaxToken {
-            Debug.assert(staticKeyword.tokenKind === SyntaxKind.StaticKeyword);
+        private isMemberVariableDeclaration(inErrorRecovery: bool): bool {
+            var index = 0;
 
-            this.addDiagnostic(new SyntaxDiagnostic(this.fileName,
-                this.currentTokenStart(), this.currentToken().width(), DiagnosticCode._public_or_private_modifier_must_precede__static_, null));
+            // Note: typescript is highly ambiguous here.  We may have things like:
+            //      public;
+            //      public public;
+            //      public static;
+            //      public static public;
+            //
+            // etc.
+            //
+            // This means we can't just blindly consume and move past modifier tokens.  Instead, we 
+            // need to see if we're at the function's name, and only skip it if we're not.
+            while (true) {
+                var token = this.peekToken(index);
+                if (this.isPropertyName(token, inErrorRecovery) &&
+                    this.isDefinitelyMemberVariablePropertyName(index)) {
+                        return true;
+                }
 
-            var publicOrPrivateKeyword = this.eatAnyToken();
-            Debug.assert(publicOrPrivateKeyword.tokenKind === SyntaxKind.PublicKeyword || publicOrPrivateKeyword.tokenKind === SyntaxKind.PrivateKeyword);
+                // We weren't at the name of the variable.  If we have a modifier token, then 
+                // consume it and try again.
+                if (ParserImpl.isModifier(this.peekToken(index))) {
+                    index++;
+                    continue;
+                }
 
-            var skippedTokens = this.getArray();
-            skippedTokens.push(publicOrPrivateKeyword);
-            staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
-
-            return staticKeyword;
+                // Wasn't a member variable.
+                return false;
+            }
         }
 
         private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
             // Debug.assert(this.isMemberVariableDeclaration());
 
-            var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                publicOrPrivateKeyword = this.eatAnyToken();
-            }
+            var modifierArray: ISyntaxToken[] = this.getArray();
 
-            var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
-
-            // If we see 'static' followed by 'public' then this is actually syntactically invalid.
-            // However, it's a common enough type of error that we want to see it and give a useful
-            // error message to clarify the issue.
-            if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                // Ok.  We've seen 'static public' or 'static private'.
-
-                // This is actually legal in some circumstances.  For example, it's legal to type:
-                // 'static public = 0'.  The following list is what is legal:
-                //
-                //      static public;
-                //      static public: SomeType ...
-                //      static public = ...
-                //
-                // If we see any of those, then w parse it as we would normally.  However, if we
-                // don't see that, then treat this as an error, attach the 'public/private' token
-                // as skipped text on the 'static' keyword, and continue on.
-
-                var token1 = this.peekToken(1);
-                if (token1.tokenKind !== SyntaxKind.SemicolonToken &&
-                    token1.tokenKind !== SyntaxKind.ColonToken &&
-                    token1.tokenKind !== SyntaxKind.EqualsToken) {
-
-                    staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
+            while (true) {
+                var currentToken = this.currentToken();
+                if (this.isPropertyName(currentToken, /*inErrorRecovery:*/ false) &&
+                    this.isDefinitelyMemberVariablePropertyName(0)) {
+                    break;
                 }
+
+                Debug.assert(ParserImpl.isModifier(currentToken));
+                modifierArray.push(this.eatAnyToken());
             }
 
-            var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ true);
+            var modifiers = Syntax.list(modifierArray);
+            this.returnZeroOrOneLengthArray(modifierArray);
+
+            var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true, /*allowPropertyName:*/ true);
             var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return this.factory.memberVariableDeclaration(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
+            return this.factory.memberVariableDeclaration(modifiers, variableDeclarator, semicolon);
         }
 
         private parseClassElement(inErrorRecovery: bool): IClassElementSyntax {
@@ -2325,27 +2281,12 @@ module TypeScript.Parser {
             else if (this.isMemberAccessorDeclaration(inErrorRecovery)) {
                 return this.parseMemberAccessorDeclaration();
             }
-            else if (this.isMemberVariableDeclaration()) {
+            else if (this.isMemberVariableDeclaration(inErrorRecovery)) {
                 return this.parseMemberVariableDeclaration();
             }
             else {
                 throw Errors.invalidOperation();
             }
-        }
-
-        private isFunctionDeclaration(): bool {
-            var token0KeywordKind = this.currentToken().tokenKind;
-            if (token0KeywordKind === SyntaxKind.FunctionKeyword) {
-                return true;
-            }
-
-            if (token0KeywordKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.FunctionKeyword) {
-                return true;
-            }
-
-            return token0KeywordKind === SyntaxKind.DeclareKeyword &&
-                   this.peekToken(1).tokenKind === SyntaxKind.FunctionKeyword;
         }
 
         private tryAddUnexpectedEqualsGreaterThanToken(callSignature: CallSignatureSyntax): CallSignatureSyntax {
@@ -2368,12 +2309,15 @@ module TypeScript.Parser {
             return callSignature;
         }
 
+        private isFunctionDeclaration(): bool {
+            var index = this.modifierCount();
+            return this.peekToken(index).tokenKind === SyntaxKind.FunctionKeyword;
+        }
+
         private parseFunctionDeclaration(): FunctionDeclarationSyntax {
             // Debug.assert(this.isFunctionDeclaration());
 
-            var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
-            var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
-
+            var modifiers = this.parseModifiers();
             var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
             var identifier = this.eatIdentifierToken();
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
@@ -2395,36 +2339,29 @@ module TypeScript.Parser {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
             }
 
-            return this.factory.functionDeclaration(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken);
+            return this.factory.functionDeclaration(modifiers, functionKeyword, identifier, callSignature, block, semicolonToken);
         }
 
         private isModuleDeclaration(): bool {
-            var index = 0;
-            var token0 = this.peekToken(index);
+            var index = this.modifierCount();
 
-            // export module
-            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(index + 1).tokenKind === SyntaxKind.ModuleKeyword) {
+            // If we have at least one modifier, and we see 'module', then consider this a module
+            // declaration.
+            if (index > 0 &&
+                this.peekToken(index).tokenKind === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
-            // declare module
-            if (token0.tokenKind === SyntaxKind.DeclareKeyword &&
-                this.peekToken(index + 1).tokenKind === SyntaxKind.ModuleKeyword) {
-                return true;
-            }
-
-            // Module is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
+            // 'module' is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
             // that we're actually looking at a module construct and not some javascript expression.
-            return token0.tokenKind === SyntaxKind.ModuleKeyword &&
-                   this.isIdentifier(this.peekToken(index + 1));
+            return this.currentToken().tokenKind === SyntaxKind.ModuleKeyword &&
+                   this.isIdentifier(this.peekToken(1));
         }
 
         private parseModuleDeclaration(): ModuleDeclarationSyntax {
             // Debug.assert(this.isModuleDeclaration());
 
-            var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
-            var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
+            var modifiers = this.parseModifiers();
             var moduleKeyword = this.eatKeyword(SyntaxKind.ModuleKeyword);
 
             var moduleName: INameSyntax = null;
@@ -2449,29 +2386,30 @@ module TypeScript.Parser {
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
             return this.factory.moduleDeclaration(
-                exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral,
+                modifiers, moduleKeyword, moduleName, stringLiteral,
                 openBraceToken, moduleElements, closeBraceToken);
         }
 
         private isInterfaceDeclaration(): bool {
-            var index = 0;
-            var token0 = this.peekToken(index);
+            var index = this.modifierCount();
 
-            // export interface
-            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(index + 1).tokenKind === SyntaxKind.InterfaceKeyword) {
+            // If we have at least one modifier, and we see 'interface', then consider this an interface
+            // declaration.
+            if (index > 0 &&
+                this.peekToken(index).tokenKind === SyntaxKind.InterfaceKeyword) {
                 return true
             }
 
-            // interface foo
-            return token0.tokenKind === SyntaxKind.InterfaceKeyword &&
-                   this.isIdentifier(this.peekToken(index + 1));
+            // 'interface' is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
+            // that we're actually looking at a interface construct and not some javascript expression.
+            return this.currentToken().tokenKind === SyntaxKind.InterfaceKeyword &&
+                   this.isIdentifier(this.peekToken(1));
         }
 
         private parseInterfaceDeclaration(): InterfaceDeclarationSyntax {
             // Debug.assert(this.isInterfaceDeclaration());
 
-            var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
+            var modifiers = this.parseModifiers();
             var interfaceKeyword = this.eatKeyword(SyntaxKind.InterfaceKeyword);
             var identifier = this.eatIdentifierToken();
             var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
@@ -2483,7 +2421,7 @@ module TypeScript.Parser {
 
             var objectType = this.parseObjectType();
             return this.factory.interfaceDeclaration(
-                exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, objectType);
+                modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, objectType);
         }
 
         private parseObjectType(): ObjectTypeSyntax {
@@ -3381,30 +3319,18 @@ module TypeScript.Parser {
         }
 
         private isVariableStatement(): bool {
-            var token0KeywordKind = this.currentToken().tokenKind;
-            if (token0KeywordKind === SyntaxKind.VarKeyword) {
-                return true;
-            }
-
-            if (token0KeywordKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.VarKeyword) {
-                return true;
-            }
-
-            return token0KeywordKind === SyntaxKind.DeclareKeyword &&
-                   this.peekToken(1).tokenKind === SyntaxKind.VarKeyword;
+            var index = this.modifierCount();
+            return this.peekToken(index).tokenKind === SyntaxKind.VarKeyword;
         }
 
         private parseVariableStatement(): VariableStatementSyntax {
             // Debug.assert(this.isVariableStatement());
 
-            var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
-            var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
-
+            var modifiers = this.parseModifiers();
             var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ true);
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return this.factory.variableStatement(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
+            return this.factory.variableStatement(modifiers, variableDeclaration, semicolonToken);
         }
 
         private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {
@@ -3432,7 +3358,7 @@ module TypeScript.Parser {
             return this.isIdentifier(this.currentToken());
         }
 
-        private parseVariableDeclarator(allowIn: bool, allowIdentifierName: bool): VariableDeclaratorSyntax {
+        private parseVariableDeclarator(allowIn: bool, allowPropertyName: bool): VariableDeclaratorSyntax {
             // TODO(cyrusn): What if the 'allowIn' context has changed between when we last parsed 
             // and now?  We could end up with an incorrect tree.  For example, say we had in the old 
             // tree "var i = a in b".  Then, in the new tree the declarator portion moved into:
@@ -3443,11 +3369,11 @@ module TypeScript.Parser {
                 return <VariableDeclaratorSyntax>this.eatNode();
             }
 
-            var identifier = allowIdentifierName ? this.eatIdentifierNameToken() : this.eatIdentifierToken();
+            var propertyName = allowPropertyName ? this.eatPropertyName() : this.eatIdentifierToken();
             var equalsValueClause: EqualsValueClauseSyntax = null;
             var typeAnnotation: TypeAnnotationSyntax = null;
 
-            if (identifier.width() > 0) {
+            if (propertyName.width() > 0) {
                 typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
 
                 if (this.isEqualsValueClause(/*inParameter*/ false)) {
@@ -3455,7 +3381,7 @@ module TypeScript.Parser {
                 }
             }
 
-            return this.factory.variableDeclarator(identifier, typeAnnotation, equalsValueClause);
+            return this.factory.variableDeclarator(propertyName, typeAnnotation, equalsValueClause);
         }
 
         private isColonValueClause(): bool {
@@ -4857,6 +4783,12 @@ module TypeScript.Parser {
             return [];
         }
 
+        private returnZeroOrOneLengthArray(array: any[]) {
+            if (array.length <= 1) {
+                this.returnArray(array);
+            }
+        }
+
         private returnArray(array: any[]) {
             array.length = 0;
             this.arrayPool.push(array);
@@ -4899,9 +4831,7 @@ module TypeScript.Parser {
 
             // Can't return if it has more then 1 element.  In that case, the list will have been
             // copied into the SyntaxList.
-            if (items.length <= 1) {
-                this.returnArray(items);
-            }
+            this.returnZeroOrOneLengthArray(items);
 
             return { skippedTokens: skippedTokens, list: result };
         }
@@ -5043,9 +4973,7 @@ module TypeScript.Parser {
 
             // Can't return if it has more then 1 element.  In that case, the list will have been
             // copied into the SyntaxList.
-            if (items.length <= 1) {
-                this.returnArray(items);
-            }
+            this.returnZeroOrOneLengthArray(items);
 
             return { skippedTokens: skippedTokens, list: result };
         }

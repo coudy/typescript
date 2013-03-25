@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -12,26 +12,28 @@
             {
                 "kind": "ModuleDeclaration",
                 "fullWidth": 790,
-                "exportKeyword": {
-                    "kind": "ExportKeyword",
-                    "width": 6,
-                    "fullWidth": 11,
-                    "text": "export",
-                    "hasLeadingTrivia": true,
-                    "hasTrailingTrivia": true,
-                    "leadingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": "    "
-                        }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "modifiers": [
+                    {
+                        "kind": "ExportKeyword",
+                        "width": 6,
+                        "fullWidth": 11,
+                        "text": "export",
+                        "hasLeadingTrivia": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": "    "
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    }
+                ],
                 "moduleKeyword": {
                     "kind": "ModuleKeyword",
                     "width": 6,
@@ -77,26 +79,28 @@
                     {
                         "kind": "VariableStatement",
                         "fullWidth": 35,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "variableDeclaration": {
                             "kind": "VariableDeclaration",
                             "fullWidth": 17,
@@ -174,26 +178,28 @@
                     {
                         "kind": "InterfaceDeclaration",
                         "fullWidth": 99,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "interfaceKeyword": {
                             "kind": "InterfaceKeyword",
                             "width": 9,
@@ -372,31 +378,33 @@
                     {
                         "kind": "VariableStatement",
                         "fullWidth": 66,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "variableDeclaration": {
                             "kind": "VariableDeclaration",
                             "fullWidth": 46,
@@ -497,31 +505,33 @@
                     {
                         "kind": "VariableStatement",
                         "fullWidth": 48,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "variableDeclaration": {
                             "kind": "VariableDeclaration",
                             "fullWidth": 28,
@@ -621,31 +631,33 @@
                     {
                         "kind": "FunctionDeclaration",
                         "fullWidth": 163,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "functionKeyword": {
                             "kind": "FunctionKeyword",
                             "width": 8,
@@ -932,31 +944,33 @@
                     {
                         "kind": "FunctionDeclaration",
                         "fullWidth": 130,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "functionKeyword": {
                             "kind": "FunctionKeyword",
                             "width": 8,
@@ -1228,31 +1242,33 @@
                     {
                         "kind": "FunctionDeclaration",
                         "fullWidth": 201,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "functionKeyword": {
                             "kind": "FunctionKeyword",
                             "width": 8,

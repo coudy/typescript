@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -6,27 +6,32 @@
     },
     "diagnostics": [
         {
-            "_position": 23,
+            "_position": 16,
             "_width": 6,
-            "_diagnosticCode": "_public_or_private_modifier_must_precede__static_"
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "constructor, function, accessor or variable"
+            ]
         },
         {
-            "_position": 29,
-            "_width": 0,
-            "_diagnosticCode": "Identifier_expected"
+            "_position": 23,
+            "_width": 6,
+            "_diagnosticCode": "_0_expected",
+            "_arguments": [
+                ";"
+            ]
         }
     ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 29,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 29,
-                "hasSkippedText": true,
+                "fullWidth": 16,
                 "hasZeroWidthToken": true,
+                "classElements": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
                     "width": 5,
@@ -69,49 +74,46 @@
                         }
                     ]
                 },
-                "classElements": [
-                    {
-                        "kind": "MemberVariableDeclaration",
-                        "fullWidth": 13,
-                        "hasSkippedText": true,
-                        "hasZeroWidthToken": true,
-                        "staticKeyword": {
-                            "kind": "StaticKeyword",
-                            "width": 6,
-                            "fullWidth": 13,
-                            "text": "static",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingSkippedText": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                },
-                                {
-                                    "kind": "SkippedTextTrivia",
-                                    "text": "public"
-                                }
-                            ]
-                        },
-                        "variableDeclarator": {
-                            "kind": "VariableDeclarator",
-                            "fullWidth": 0,
-                            "hasZeroWidthToken": true,
-                            "identifier": {
-                                "kind": "IdentifierName",
-                                "width": 0,
-                                "text": ""
-                            }
-                        },
-                        "semicolonToken": {
-                            "kind": "SemicolonToken",
-                            "width": 0,
-                            "text": ""
-                        }
-                    }
-                ],
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 7,
+                "hasZeroWidthToken": true,
+                "expression": {
+                    "kind": "StaticKeyword",
+                    "width": 6,
+                    "fullWidth": 7,
+                    "text": "static",
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 6,
+                "hasZeroWidthToken": true,
+                "expression": {
+                    "kind": "PublicKeyword",
+                    "width": 6,
+                    "text": "public"
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
                     "width": 0,
                     "text": ""
                 }

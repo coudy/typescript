@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -12,19 +12,21 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 280,
-                "exportKeyword": {
-                    "kind": "ExportKeyword",
-                    "width": 6,
-                    "fullWidth": 7,
-                    "text": "export",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "modifiers": [
+                    {
+                        "kind": "ExportKeyword",
+                        "width": 6,
+                        "fullWidth": 7,
+                        "text": "export",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    }
+                ],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
                     "width": 8,

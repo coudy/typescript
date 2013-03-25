@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -12,35 +12,37 @@
             {
                 "kind": "EnumDeclaration",
                 "fullWidth": 155,
-                "exportKeyword": {
-                    "kind": "ExportKeyword",
-                    "width": 6,
-                    "fullWidth": 15,
-                    "text": "export",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
-                    "leadingTrivia": [
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        },
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        },
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": "    "
-                        }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "modifiers": [
+                    {
+                        "kind": "ExportKeyword",
+                        "width": 6,
+                        "fullWidth": 15,
+                        "text": "export",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": "    "
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    }
+                ],
                 "enumKeyword": {
                     "kind": "EnumKeyword",
                     "width": 4,

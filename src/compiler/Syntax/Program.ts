@@ -13,10 +13,10 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "EnumDeclaration5.ts";
+    // "0_004152.ts";
     undefined;
 
-var generate = false;
+var generate = true;
 
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
@@ -169,6 +169,7 @@ class Program {
                 return;
             }
 
+            // Environment.standardOut.WriteLine(fileName);
             try {
                 action(fileName);
             }

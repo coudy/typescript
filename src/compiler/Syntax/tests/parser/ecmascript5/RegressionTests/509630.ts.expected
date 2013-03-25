@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -69,26 +69,28 @@
                         "kind": "MemberVariableDeclaration",
                         "fullWidth": 40,
                         "hasZeroWidthToken": true,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 11,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "    "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 11,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "    "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "variableDeclarator": {
                             "kind": "VariableDeclarator",
                             "fullWidth": 29,
@@ -185,6 +187,7 @@
             {
                 "kind": "ClassDeclaration",
                 "fullWidth": 29,
+                "classElements": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
                     "width": 5,
@@ -259,7 +262,6 @@
                         }
                     ]
                 },
-                "classElements": [],
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
                     "width": 1,

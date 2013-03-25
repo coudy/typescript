@@ -98,8 +98,7 @@ module TypeScript {
 
         public visitClassDeclaration(node: ClassDeclarationSyntax): any {
             return node.update(
-                node.exportKeyword === null ? null : this.visitToken(node.exportKeyword),
-                node.declareKeyword === null ? null : this.visitToken(node.declareKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.classKeyword),
                 this.visitToken(node.identifier),
                 node.typeParameterList === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList),
@@ -112,7 +111,7 @@ module TypeScript {
 
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
             return node.update(
-                node.exportKeyword === null ? null : this.visitToken(node.exportKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.interfaceKeyword),
                 this.visitToken(node.identifier),
                 node.typeParameterList === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList),
@@ -134,8 +133,7 @@ module TypeScript {
 
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
             return node.update(
-                node.exportKeyword === null ? null : this.visitToken(node.exportKeyword),
-                node.declareKeyword === null ? null : this.visitToken(node.declareKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.moduleKeyword),
                 node.moduleName === null ? null : <INameSyntax>this.visitNodeOrToken(node.moduleName),
                 node.stringLiteral === null ? null : this.visitToken(node.stringLiteral),
@@ -146,8 +144,7 @@ module TypeScript {
 
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
             return node.update(
-                node.exportKeyword === null ? null : this.visitToken(node.exportKeyword),
-                node.declareKeyword === null ? null : this.visitToken(node.declareKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.functionKeyword),
                 this.visitToken(node.identifier),
                 <CallSignatureSyntax>this.visitNode(node.callSignature),
@@ -157,8 +154,7 @@ module TypeScript {
 
         public visitVariableStatement(node: VariableStatementSyntax): any {
             return node.update(
-                node.exportKeyword === null ? null : this.visitToken(node.exportKeyword),
-                node.declareKeyword === null ? null : this.visitToken(node.declareKeyword),
+                this.visitList(node.modifiers),
                 <VariableDeclarationSyntax>this.visitNode(node.variableDeclaration),
                 this.visitToken(node.semicolonToken));
         }
@@ -442,8 +438,7 @@ module TypeScript {
 
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): any {
             return node.update(
-                node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword),
-                node.staticKeyword === null ? null : this.visitToken(node.staticKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.propertyName),
                 <CallSignatureSyntax>this.visitNode(node.callSignature),
                 node.block === null ? null : <BlockSyntax>this.visitNode(node.block),
@@ -452,8 +447,7 @@ module TypeScript {
 
         public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): any {
             return node.update(
-                node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword),
-                node.staticKeyword === null ? null : this.visitToken(node.staticKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.getKeyword),
                 this.visitToken(node.propertyName),
                 <ParameterListSyntax>this.visitNode(node.parameterList),
@@ -463,8 +457,7 @@ module TypeScript {
 
         public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): any {
             return node.update(
-                node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword),
-                node.staticKeyword === null ? null : this.visitToken(node.staticKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.setKeyword),
                 this.visitToken(node.propertyName),
                 <ParameterListSyntax>this.visitNode(node.parameterList),
@@ -473,8 +466,7 @@ module TypeScript {
 
         public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): any {
             return node.update(
-                node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword),
-                node.staticKeyword === null ? null : this.visitToken(node.staticKeyword),
+                this.visitList(node.modifiers),
                 <VariableDeclaratorSyntax>this.visitNode(node.variableDeclarator),
                 this.visitToken(node.semicolonToken));
         }
@@ -586,7 +578,7 @@ module TypeScript {
 
         public visitEnumDeclaration(node: EnumDeclarationSyntax): any {
             return node.update(
-                node.exportKeyword === null ? null : this.visitToken(node.exportKeyword),
+                this.visitList(node.modifiers),
                 this.visitToken(node.enumKeyword),
                 this.visitToken(node.identifier),
                 this.visitToken(node.openBraceToken),

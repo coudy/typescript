@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -12,40 +12,42 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 103,
-                "declareKeyword": {
-                    "kind": "DeclareKeyword",
-                    "width": 7,
-                    "fullWidth": 80,
-                    "text": "declare",
-                    "hasLeadingTrivia": true,
-                    "hasLeadingComment": true,
-                    "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
-                    "leadingTrivia": [
-                        {
-                            "kind": "SingleLineCommentTrivia",
-                            "text": "/// <style requireSemi=\"on\" />"
-                        },
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        },
-                        {
-                            "kind": "SingleLineCommentTrivia",
-                            "text": "/// <reference no-default-lib=\"true\"/>"
-                        },
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "modifiers": [
+                    {
+                        "kind": "DeclareKeyword",
+                        "width": 7,
+                        "fullWidth": 80,
+                        "text": "declare",
+                        "hasLeadingTrivia": true,
+                        "hasLeadingComment": true,
+                        "hasLeadingNewLine": true,
+                        "hasTrailingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "/// <style requireSemi=\"on\" />"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            },
+                            {
+                                "kind": "SingleLineCommentTrivia",
+                                "text": "/// <reference no-default-lib=\"true\"/>"
+                            },
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\r\n"
+                            }
+                        ],
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    }
+                ],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
                     "width": 8,
@@ -124,19 +126,21 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 31,
-                "declareKeyword": {
-                    "kind": "DeclareKeyword",
-                    "width": 7,
-                    "fullWidth": 8,
-                    "text": "declare",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "modifiers": [
+                    {
+                        "kind": "DeclareKeyword",
+                        "width": 7,
+                        "fullWidth": 8,
+                        "text": "declare",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    }
+                ],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
                     "width": 8,

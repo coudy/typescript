@@ -210,6 +210,267 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
+    (function (DiagnosticCategory) {
+        DiagnosticCategory._map = [];
+        DiagnosticCategory._map[0] = "Warning";
+        DiagnosticCategory.Warning = 0;
+        DiagnosticCategory._map[1] = "Error";
+        DiagnosticCategory.Error = 1;
+    })(TypeScript.DiagnosticCategory || (TypeScript.DiagnosticCategory = {}));
+    var DiagnosticCategory = TypeScript.DiagnosticCategory;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    (function (DiagnosticCode) {
+        DiagnosticCode._map = [];
+        DiagnosticCode._map[0] = "error_TS_0__1";
+        DiagnosticCode.error_TS_0__1 = 0;
+        DiagnosticCode._map[1] = "warning_TS_0__1";
+        DiagnosticCode.warning_TS_0__1 = 1;
+        DiagnosticCode._map[2] = "Unrecognized_escape_sequence";
+        DiagnosticCode.Unrecognized_escape_sequence = 2;
+        DiagnosticCode._map[3] = "Unexpected_character_0";
+        DiagnosticCode.Unexpected_character_0 = 3;
+        DiagnosticCode._map[4] = "Missing_closing_quote_character";
+        DiagnosticCode.Missing_closing_quote_character = 4;
+        DiagnosticCode._map[5] = "Identifier_expected";
+        DiagnosticCode.Identifier_expected = 5;
+        DiagnosticCode._map[6] = "_0_keyword_expected";
+        DiagnosticCode._0_keyword_expected = 6;
+        DiagnosticCode._map[7] = "_0_expected";
+        DiagnosticCode._0_expected = 7;
+        DiagnosticCode._map[8] = "Identifier_expected__0_is_a_keyword";
+        DiagnosticCode.Identifier_expected__0_is_a_keyword = 8;
+        DiagnosticCode._map[9] = "Automatic_semicolon_insertion_not_allowed";
+        DiagnosticCode.Automatic_semicolon_insertion_not_allowed = 9;
+        DiagnosticCode._map[10] = "Unexpected_token__0_expected";
+        DiagnosticCode.Unexpected_token__0_expected = 10;
+        DiagnosticCode._map[11] = "Trailing_separator_not_allowed";
+        DiagnosticCode.Trailing_separator_not_allowed = 11;
+        DiagnosticCode._map[12] = "_StarSlash__expected";
+        DiagnosticCode._StarSlash__expected = 12;
+        DiagnosticCode._map[13] = "_public_or_private_modifier_must_precede__static_";
+        DiagnosticCode._public_or_private_modifier_must_precede__static_ = 13;
+        DiagnosticCode._map[14] = "Unexpected_token_";
+        DiagnosticCode.Unexpected_token_ = 14;
+        DiagnosticCode._map[15] = "A_catch_clause_variable_cannot_have_a_type_annotation";
+        DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation = 15;
+        DiagnosticCode._map[16] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 16;
+        DiagnosticCode._map[17] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 17;
+        DiagnosticCode._map[18] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 18;
+        DiagnosticCode._map[19] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 19;
+        DiagnosticCode._map[20] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 20;
+        DiagnosticCode._map[21] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 21;
+        DiagnosticCode._map[22] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 22;
+        DiagnosticCode._map[23] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 23;
+        DiagnosticCode._map[24] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 24;
+        DiagnosticCode._map[25] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 25;
+        DiagnosticCode._map[26] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 26;
+        DiagnosticCode._map[27] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 27;
+        DiagnosticCode._map[28] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 28;
+        DiagnosticCode._map[29] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 29;
+        DiagnosticCode._map[30] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 30;
+        DiagnosticCode._map[31] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 31;
+        DiagnosticCode._map[32] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 32;
+        DiagnosticCode._map[33] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 33;
+    })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
+    var DiagnosticCode = TypeScript.DiagnosticCode;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    TypeScript.diagnosticMessages = {
+        error_TS_0__1: {
+            category: 1 /* Error */ ,
+            message: "error TS{0}: {1}",
+            code: 0
+        },
+        warning_TS_0__1: {
+            category: 0 /* Warning */ ,
+            message: "warning TS{0}: {1}",
+            code: 1
+        },
+        Unrecognized_escape_sequence: {
+            category: 1 /* Error */ ,
+            message: "Unrecognized escape sequence.",
+            code: 100
+        },
+        Unexpected_character_0: {
+            category: 1 /* Error */ ,
+            message: "Unexpected character {0}.",
+            code: 101
+        },
+        Missing_closing_quote_character: {
+            category: 1 /* Error */ ,
+            message: "Missing close quote character.",
+            code: 102
+        },
+        Identifier_expected: {
+            category: 1 /* Error */ ,
+            message: "Identifier expected.",
+            code: 103
+        },
+        _0_keyword_expected: {
+            category: 1 /* Error */ ,
+            message: "'{0}' keyword expected.",
+            code: 104
+        },
+        _0_expected: {
+            category: 1 /* Error */ ,
+            message: "'{0}' expected.",
+            code: 105
+        },
+        Identifier_expected__0_is_a_keyword: {
+            category: 1 /* Error */ ,
+            message: "Identifier expected; '{0}' is a keyword.",
+            code: 106
+        },
+        Automatic_semicolon_insertion_not_allowed: {
+            category: 1 /* Error */ ,
+            message: "Automatic semicolon insertion not allowed.",
+            code: 107
+        },
+        Unexpected_token__0_expected: {
+            category: 1 /* Error */ ,
+            message: "Unexpected token; '{0}' expected.",
+            code: 108
+        },
+        Trailing_separator_not_allowed: {
+            category: 1 /* Error */ ,
+            message: "Trailing separator not allowed.",
+            code: 109
+        },
+        _StarSlash__expected: {
+            category: 1 /* Error */ ,
+            message: "'*/' expected.",
+            code: 110
+        },
+        _public_or_private_modifier_must_precede__static_: {
+            category: 1 /* Error */ ,
+            message: "'public' or 'private' modifier must precede 'static'.",
+            code: 111
+        },
+        Unexpected_token_: {
+            category: 1 /* Error */ ,
+            message: "Unexpected token.",
+            code: 112
+        },
+        A_catch_clause_variable_cannot_have_a_type_annotation: {
+            category: 1 /* Error */ ,
+            message: "A catch clause variable cannot have a type annotation.",
+            code: 113
+        },
+        Duplicate_identifier__0_: {
+            category: 1 /* Error */ ,
+            message: "Duplicate identifier '{0}'.",
+            code: 200
+        },
+        The_name__0__does_not_exist_in_the_current_scope: {
+            category: 1 /* Error */ ,
+            message: "The name '{0}' does not exist in the current scope.",
+            code: 201
+        },
+        The_name__0__does_not_refer_to_a_value: {
+            category: 1 /* Error */ ,
+            message: "The name '{0}' does not refer to a value.",
+            code: 202
+        },
+        Keyword__super__can_only_be_used_inside_a_class_instance_method: {
+            category: 1 /* Error */ ,
+            message: "Keyword 'super' can only be used inside a class instance method.",
+            code: 203
+        },
+        The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
+            category: 1 /* Error */ ,
+            message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
+            code: 204
+        },
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
+            code: 205
+        },
+        Value_of_type__0__is_not_callable: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not callable.",
+            code: 206
+        },
+        Value_of_type__0__is_not_newable: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not newable.",
+            code: 207
+        },
+        Value_of_type__0__is_not_indexable_by_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Value of type '{0}' is not indexable by type '{1}'.",
+            code: 208
+        },
+        Operator__0__cannot_be_applied_to_types__1__and__2_: {
+            category: 1 /* Error */ ,
+            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
+            code: 209
+        },
+        Operator__0__cannot_be_applied_to_types__1__and__2__3: {
+            category: 1 /* Error */ ,
+            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
+            code: 210
+        },
+        Cannot_convert__0__to__1_: {
+            category: 1 /* Error */ ,
+            message: "Cannot convert '{0}' to '{1}'.",
+            code: 211
+        },
+        Cannot_convert__0__to__1___2: {
+            category: 1 /* Error */ ,
+            message: "Cannot convert '{0}' to '{1}': {2}",
+            code: 212
+        },
+        Expected_var__class__interface__or_module: {
+            category: 1 /* Error */ ,
+            message: "Expected var, class, interface, or module.",
+            code: 213
+        },
+        Operator__0__cannot_be_applied_to_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Operator '{0}' cannot be applied to type '{1}'.",
+            code: 214
+        },
+        Getter__0__already_declared: {
+            category: 1 /* Error */ ,
+            message: "Getter '{0}' already declared.",
+            code: 215
+        },
+        Setter__0__already_declared: {
+            category: 1 /* Error */ ,
+            message: "Setter '{0}' already declared.",
+            code: 216
+        },
+        Accessor_may_not_take_type_parameters: {
+            category: 1 /* Error */ ,
+            message: "Accessors may not take type parameters.",
+            code: 217
+        }
+    };
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
     var Errors = (function () {
         function Errors() { }
         Errors.argument = function argument(argument, message) {
@@ -1989,14 +2250,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'exportKeyword',
-                isToken: true,
-                isOptional: true
-            }, 
-            {
-                name: 'declareKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'classKeyword',
@@ -2048,9 +2304,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'exportKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'interfaceKeyword',
@@ -2122,14 +2378,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'exportKeyword',
-                isToken: true,
-                isOptional: true
-            }, 
-            {
-                name: 'declareKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'moduleKeyword',
@@ -2169,16 +2420,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'exportKeyword',
-                isToken: true,
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'declareKeyword',
-                isToken: true,
-                isOptional: true,
-                isTypeScriptSpecific: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'functionKeyword',
@@ -2215,16 +2459,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'exportKeyword',
-                isToken: true,
-                isOptional: true,
-                isTypeScriptSpecific: true
-            }, 
-            {
-                name: 'declareKeyword',
-                isToken: true,
-                isOptional: true,
-                isTypeScriptSpecific: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'variableDeclaration',
@@ -3185,18 +3422,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'publicOrPrivateKeyword',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'PublicKeyword', 
-                    'PrivateKeyword'
-                ]
-            }, 
-            {
-                name: 'staticKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'propertyName',
@@ -3239,18 +3467,9 @@ var definitions = [
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
             {
-                name: 'publicOrPrivateKeyword',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'PublicKeyword', 
-                    'PrivateKeyword'
-                ]
-            }, 
-            {
-                name: 'staticKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'getKeyword',
@@ -3286,18 +3505,9 @@ var definitions = [
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
             {
-                name: 'publicOrPrivateKeyword',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'PublicKeyword', 
-                    'PrivateKeyword'
-                ]
-            }, 
-            {
-                name: 'staticKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'setKeyword',
@@ -3331,18 +3541,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'publicOrPrivateKeyword',
-                isToken: true,
-                isOptional: true,
-                tokenKinds: [
-                    'PublicKeyword', 
-                    'PrivateKeyword'
-                ]
-            }, 
-            {
-                name: 'staticKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'variableDeclarator',
@@ -3733,9 +3934,9 @@ var definitions = [
         ],
         children: [
             {
-                name: 'exportKeyword',
-                isToken: true,
-                isOptional: true
+                name: 'modifiers',
+                isList: true,
+                elementType: 'ISyntaxToken'
             }, 
             {
                 name: 'enumKeyword',

@@ -87,8 +87,7 @@ module TypeScript {
         }
 
         public visitClassDeclaration(node: ClassDeclarationSyntax): void {
-            this.visitOptionalToken(node.exportKeyword);
-            this.visitOptionalToken(node.declareKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.classKeyword);
             this.visitToken(node.identifier);
             this.visitOptionalNode(node.typeParameterList);
@@ -100,7 +99,7 @@ module TypeScript {
         }
 
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
-            this.visitOptionalToken(node.exportKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.interfaceKeyword);
             this.visitToken(node.identifier);
             this.visitOptionalNode(node.typeParameterList);
@@ -119,8 +118,7 @@ module TypeScript {
         }
 
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
-            this.visitOptionalToken(node.exportKeyword);
-            this.visitOptionalToken(node.declareKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.moduleKeyword);
             this.visitOptionalNodeOrToken(node.moduleName);
             this.visitOptionalToken(node.stringLiteral);
@@ -130,8 +128,7 @@ module TypeScript {
         }
 
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
-            this.visitOptionalToken(node.exportKeyword);
-            this.visitOptionalToken(node.declareKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.functionKeyword);
             this.visitToken(node.identifier);
             this.visitNode(node.callSignature);
@@ -140,8 +137,7 @@ module TypeScript {
         }
 
         public visitVariableStatement(node: VariableStatementSyntax): void {
-            this.visitOptionalToken(node.exportKeyword);
-            this.visitOptionalToken(node.declareKeyword);
+            this.visitList(node.modifiers);
             this.visitNode(node.variableDeclaration);
             this.visitToken(node.semicolonToken);
         }
@@ -382,8 +378,7 @@ module TypeScript {
         }
 
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
-            this.visitOptionalToken(node.publicOrPrivateKeyword);
-            this.visitOptionalToken(node.staticKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.propertyName);
             this.visitNode(node.callSignature);
             this.visitOptionalNode(node.block);
@@ -391,8 +386,7 @@ module TypeScript {
         }
 
         public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
-            this.visitOptionalToken(node.publicOrPrivateKeyword);
-            this.visitOptionalToken(node.staticKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.getKeyword);
             this.visitToken(node.propertyName);
             this.visitNode(node.parameterList);
@@ -401,8 +395,7 @@ module TypeScript {
         }
 
         public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
-            this.visitOptionalToken(node.publicOrPrivateKeyword);
-            this.visitOptionalToken(node.staticKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.setKeyword);
             this.visitToken(node.propertyName);
             this.visitNode(node.parameterList);
@@ -410,8 +403,7 @@ module TypeScript {
         }
 
         public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
-            this.visitOptionalToken(node.publicOrPrivateKeyword);
-            this.visitOptionalToken(node.staticKeyword);
+            this.visitList(node.modifiers);
             this.visitNode(node.variableDeclarator);
             this.visitToken(node.semicolonToken);
         }
@@ -510,7 +502,7 @@ module TypeScript {
         }
 
         public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
-            this.visitOptionalToken(node.exportKeyword);
+            this.visitList(node.modifiers);
             this.visitToken(node.enumKeyword);
             this.visitToken(node.identifier);
             this.visitToken(node.openBraceToken);

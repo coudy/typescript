@@ -139,6 +139,16 @@ module TypeScript.Emitter1 {
             return <ISyntaxToken>name;
         }
 
+        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                if (list.childAt(i).kind() === kind) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private exportModuleElement(moduleIdentifier: ISyntaxToken,
                                     moduleElement: IModuleElementSyntax,
                                     elementIdentifier: ISyntaxToken): ExpressionStatementSyntax {
@@ -162,7 +172,7 @@ module TypeScript.Emitter1 {
             elements: IModuleElementSyntax[]): void {
             if (moduleElement.kind() === SyntaxKind.VariableStatement) {
                 var variableStatement = <VariableStatementSyntax>moduleElement;
-                if (variableStatement.exportKeyword !== null) {
+                if (this.containsToken(variableStatement.modifiers, SyntaxKind.ExportKeyword)) {
                     var declarators = variableStatement.variableDeclaration.variableDeclarators;
                     for (var i = 0, n = declarators.nonSeparatorCount(); i < n; i++) {
                         var declarator = <VariableDeclaratorSyntax>declarators.nonSeparatorAt(i);
@@ -172,20 +182,20 @@ module TypeScript.Emitter1 {
             }
             else if (moduleElement.kind() === SyntaxKind.FunctionDeclaration) {
                 var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
-                if (functionDeclaration.exportKeyword !== null) {
+                if (this.containsToken(functionDeclaration.modifiers, SyntaxKind.ExportKeyword)) {
                     elements.push(this.exportModuleElement(
                         parentModule, moduleElement, functionDeclaration.identifier));
                 }
             }
             else if (moduleElement.kind() === SyntaxKind.ClassDeclaration) {
                 var classDeclaration = <ClassDeclarationSyntax>moduleElement;
-                if (classDeclaration.exportKeyword !== null) {
+                if (this.containsToken(classDeclaration.modifiers, SyntaxKind.ExportKeyword)) {
                     elements.push(this.exportModuleElement(parentModule, moduleElement, classDeclaration.identifier));
                 }
             }
             else if (moduleElement.kind() === SyntaxKind.ModuleDeclaration) {
                 var childModule = <ModuleDeclarationSyntax>moduleElement;
-                if (childModule.exportKeyword !== null) {
+                if (this.containsToken(childModule.modifiers, SyntaxKind.ExportKeyword)) {
                     elements.push(this.exportModuleElement(
                         parentModule, moduleElement, this.leftmostName(childModule.moduleName)));
                 }
@@ -503,8 +513,7 @@ module TypeScript.Emitter1 {
                     Syntax.list(statements)));
             }
 
-            return rewritten.withExportKeyword(null)
-                            .withDeclareKeyword(null)
+            return rewritten.withModifiers(Syntax.emptyList)
                             .withLeadingTrivia(rewritten.leadingTrivia());
         }
 
@@ -518,7 +527,7 @@ module TypeScript.Emitter1 {
         private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
                                            static: bool,
                                            memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
-            var isStatic = memberDeclaration.staticKeyword !== null;
+            var isStatic = this.containsToken(memberDeclaration.modifiers, SyntaxKind.StaticKeyword);
             var declarator = memberDeclaration.variableDeclarator;
             if (static !== isStatic || declarator.equalsValueClause === null) {
                 return null;
@@ -679,7 +688,7 @@ module TypeScript.Emitter1 {
 
             var receiver: IExpressionSyntax = classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia());
 
-            receiver = functionDeclaration.staticKeyword !== null
+            receiver = this.containsToken(functionDeclaration.modifiers, SyntaxKind.StaticKeyword)
                 ? receiver
                 : MemberAccessExpressionSyntax.create1(receiver, Syntax.identifierName("prototype"));
 
@@ -1106,8 +1115,7 @@ module TypeScript.Emitter1 {
         private visitVariableStatement(node: VariableStatementSyntax): VariableStatementSyntax {
             var result: VariableStatementSyntax = super.visitVariableStatement(node);
 
-            return result.withExportKeyword(null)
-                         .withDeclareKeyword(null)
+            return result.withModifiers(Syntax.emptyList)
                          .withLeadingTrivia(result.leadingTrivia());
         }
 

@@ -1,4 +1,4 @@
-{
+﻿{
     "isDeclaration": false,
     "languageVersion": "EcmaScript5",
     "parseOptions": {
@@ -74,19 +74,21 @@
             {
                 "kind": "ModuleDeclaration",
                 "fullWidth": 208,
-                "declareKeyword": {
-                    "kind": "DeclareKeyword",
-                    "width": 7,
-                    "fullWidth": 8,
-                    "text": "declare",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
+                "modifiers": [
+                    {
+                        "kind": "DeclareKeyword",
+                        "width": 7,
+                        "fullWidth": 8,
+                        "text": "declare",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
+                    }
+                ],
                 "moduleKeyword": {
                     "kind": "ModuleKeyword",
                     "width": 6,
@@ -131,26 +133,28 @@
                     {
                         "kind": "ClassDeclaration",
                         "fullWidth": 111,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 11,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "    "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 11,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "    "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "classKeyword": {
                             "kind": "ClassKeyword",
                             "width": 5,
@@ -275,26 +279,28 @@
                             {
                                 "kind": "MemberFunctionDeclaration",
                                 "fullWidth": 39,
-                                "publicOrPrivateKeyword": {
-                                    "kind": "PublicKeyword",
-                                    "width": 6,
-                                    "fullWidth": 15,
-                                    "text": "public",
-                                    "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
+                                "modifiers": [
+                                    {
+                                        "kind": "PublicKeyword",
+                                        "width": 6,
+                                        "fullWidth": 15,
+                                        "text": "public",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            }
+                                        ],
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
+                                ],
                                 "propertyName": {
                                     "kind": "IdentifierName",
                                     "width": 11,
@@ -383,26 +389,28 @@
                     {
                         "kind": "InterfaceDeclaration",
                         "fullWidth": 71,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 11,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "    "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 11,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "    "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "interfaceKeyword": {
                             "kind": "InterfaceKeyword",
                             "width": 9,
@@ -727,26 +735,28 @@
                     {
                         "kind": "ClassDeclaration",
                         "fullWidth": 936,
-                        "exportKeyword": {
-                            "kind": "ExportKeyword",
-                            "width": 6,
-                            "fullWidth": 11,
-                            "text": "export",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "    "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 11,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "    "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "classKeyword": {
                             "kind": "ClassKeyword",
                             "width": 5,
@@ -792,26 +802,28 @@
                             {
                                 "kind": "MemberFunctionDeclaration",
                                 "fullWidth": 901,
-                                "staticKeyword": {
-                                    "kind": "StaticKeyword",
-                                    "width": 6,
-                                    "fullWidth": 15,
-                                    "text": "static",
-                                    "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
+                                "modifiers": [
+                                    {
+                                        "kind": "StaticKeyword",
+                                        "width": 6,
+                                        "fullWidth": 15,
+                                        "text": "static",
+                                        "hasLeadingTrivia": true,
+                                        "hasTrailingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            }
+                                        ],
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
+                                ],
                                 "propertyName": {
                                     "kind": "IdentifierName",
                                     "width": 4,
@@ -2758,76 +2770,78 @@
                                 "fullWidth": 1883,
                                 "hasZeroWidthToken": true,
                                 "hasRegularExpressionToken": true,
-                                "publicOrPrivateKeyword": {
-                                    "kind": "PublicKeyword",
-                                    "width": 6,
-                                    "fullWidth": 191,
-                                    "text": "public",
-                                    "hasLeadingTrivia": true,
-                                    "hasLeadingComment": true,
-                                    "hasLeadingNewLine": true,
-                                    "hasTrailingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// <summary>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// Test various of variables. Including nullable,key world as variable,special format"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// </summary>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// <returns></returns>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
+                                "modifiers": [
+                                    {
+                                        "kind": "PublicKeyword",
+                                        "width": 6,
+                                        "fullWidth": 191,
+                                        "text": "public",
+                                        "hasLeadingTrivia": true,
+                                        "hasLeadingComment": true,
+                                        "hasLeadingNewLine": true,
+                                        "hasTrailingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// <summary>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// Test various of variables. Including nullable,key world as variable,special format"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// </summary>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// <returns></returns>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            }
+                                        ],
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
+                                ],
                                 "propertyName": {
                                     "kind": "IdentifierName",
                                     "width": 9,
@@ -9287,80 +9301,82 @@
                             {
                                 "kind": "MemberFunctionDeclaration",
                                 "fullWidth": 575,
-                                "publicOrPrivateKeyword": {
-                                    "kind": "PublicKeyword",
-                                    "width": 6,
-                                    "fullWidth": 194,
-                                    "text": "public",
-                                    "hasLeadingTrivia": true,
-                                    "hasLeadingComment": true,
-                                    "hasLeadingNewLine": true,
-                                    "hasTrailingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// <summary>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// Test types in ts language. Including class,struct,interface,delegate,anonymous type"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// </summary>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "/// <returns></returns>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
+                                "modifiers": [
+                                    {
+                                        "kind": "PublicKeyword",
+                                        "width": 6,
+                                        "fullWidth": 194,
+                                        "text": "public",
+                                        "hasLeadingTrivia": true,
+                                        "hasLeadingComment": true,
+                                        "hasLeadingNewLine": true,
+                                        "hasTrailingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// <summary>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// Test types in ts language. Including class,struct,interface,delegate,anonymous type"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// </summary>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "/// <returns></returns>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            }
+                                        ],
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
+                                ],
                                 "propertyName": {
                                     "kind": "IdentifierName",
                                     "width": 5,
@@ -10469,84 +10485,86 @@
                                 "hasSkippedText": true,
                                 "hasZeroWidthToken": true,
                                 "hasRegularExpressionToken": true,
-                                "publicOrPrivateKeyword": {
-                                    "kind": "PublicKeyword",
-                                    "width": 6,
-                                    "fullWidth": 145,
-                                    "text": "public",
-                                    "hasLeadingTrivia": true,
-                                    "hasLeadingComment": true,
-                                    "hasLeadingNewLine": true,
-                                    "hasTrailingTrivia": true,
-                                    "leadingTrivia": [
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "///// <summary>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "///// Test different operators"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "///// </summary>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        },
-                                        {
-                                            "kind": "SingleLineCommentTrivia",
-                                            "text": "///// <returns></returns>"
-                                        },
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\r\n"
-                                        },
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": "        "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
+                                "modifiers": [
+                                    {
+                                        "kind": "PublicKeyword",
+                                        "width": 6,
+                                        "fullWidth": 145,
+                                        "text": "public",
+                                        "hasLeadingTrivia": true,
+                                        "hasLeadingComment": true,
+                                        "hasLeadingNewLine": true,
+                                        "hasTrailingTrivia": true,
+                                        "leadingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "///// <summary>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "///// Test different operators"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "///// </summary>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            },
+                                            {
+                                                "kind": "SingleLineCommentTrivia",
+                                                "text": "///// <returns></returns>"
+                                            },
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "text": "\r\n"
+                                            },
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": "        "
+                                            }
+                                        ],
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
+                                ],
                                 "propertyName": {
                                     "kind": "IdentifierName",
                                     "width": 8,
@@ -14327,31 +14345,33 @@
                         "kind": "MemberVariableDeclaration",
                         "fullWidth": 45,
                         "hasZeroWidthToken": true,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "variableDeclarator": {
                             "kind": "VariableDeclarator",
                             "fullWidth": 28,
@@ -14454,26 +14474,28 @@
                     {
                         "kind": "GetMemberAccessorDeclaration",
                         "fullWidth": 45,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "getKeyword": {
                             "kind": "GetKeyword",
                             "width": 3,
@@ -14588,26 +14610,28 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 61,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 6,
@@ -14729,26 +14753,28 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 201,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 3,
@@ -15337,26 +15363,28 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 74,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 7,
@@ -15504,26 +15532,28 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 80,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 7,
@@ -15828,31 +15858,33 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 78,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 7,
@@ -16095,31 +16127,33 @@
                     {
                         "kind": "MemberVariableDeclaration",
                         "fullWidth": 36,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PrivateKeyword",
-                            "width": 7,
-                            "fullWidth": 18,
-                            "text": "private",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PrivateKeyword",
+                                "width": 7,
+                                "fullWidth": 18,
+                                "text": "private",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "variableDeclarator": {
                             "kind": "VariableDeclarator",
                             "fullWidth": 15,
@@ -16359,35 +16393,37 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 51,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 24,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "       "
-                                },
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 24,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "       "
+                                    },
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 9,
@@ -16464,26 +16500,28 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 64,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 15,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 15,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 9,
@@ -16650,31 +16688,33 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 61,
-                        "publicOrPrivateKeyword": {
-                            "kind": "PublicKeyword",
-                            "width": 6,
-                            "fullWidth": 17,
-                            "text": "public",
-                            "hasLeadingTrivia": true,
-                            "hasLeadingNewLine": true,
-                            "hasTrailingTrivia": true,
-                            "leadingTrivia": [
-                                {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\r\n"
-                                },
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": "        "
-                                }
-                            ],
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
+                        "modifiers": [
+                            {
+                                "kind": "PublicKeyword",
+                                "width": 6,
+                                "fullWidth": 17,
+                                "text": "public",
+                                "hasLeadingTrivia": true,
+                                "hasLeadingNewLine": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\r\n"
+                                    },
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "        "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 12,
