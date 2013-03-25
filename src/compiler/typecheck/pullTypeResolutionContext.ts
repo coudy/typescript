@@ -248,6 +248,11 @@ module TypeScript {
         }
 
         public postError(offset: number, length: number, fileName: string, message: string, enclosingDecl: PullDecl) {
+
+            if (this.emitting) {
+                return;
+            }
+            
             var error = new PullDiagnostic(offset, length, fileName, message);
 
             if (this.inProvisionalResolution()) {

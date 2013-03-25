@@ -668,10 +668,10 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var leftExpr = this.resolver.resolveAST(assignmentAST.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
-            var leftType = leftExpr.getType(); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
+            var leftType = this.resolver.widenType(leftExpr.getType()); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
 
             this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
-            var rightType = this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true);
+            var rightType = this.resolver.widenType(this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true));
             this.context.popContextualType();
 
             var isValidLHS = assignmentAST.operand1.nodeType == NodeType.Index ||
