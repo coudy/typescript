@@ -163,6 +163,7 @@ define(["require", "exports"], function(require, exports) {
                         ;
             function eaF() {
             }
+            M.eaF = eaF;
             ;
             
             ;
@@ -264,6 +265,7 @@ define(["require", "exports"], function(require, exports) {
                         ;
             function eaF() {
             }
+            eM.eaF = eaF;
             ;
             
             ;
@@ -272,6 +274,7 @@ define(["require", "exports"], function(require, exports) {
         var eM = M.eM;
         function eaF() {
         }
+        M.eaF = eaF;
         ;
         
         ;
@@ -441,6 +444,7 @@ define(["require", "exports"], function(require, exports) {
                         ;
             function eaF() {
             }
+            M.eaF = eaF;
             ;
             
             ;
@@ -542,6 +546,7 @@ define(["require", "exports"], function(require, exports) {
                         ;
             function eaF() {
             }
+            eM.eaF = eaF;
             ;
             
             ;
@@ -550,6 +555,7 @@ define(["require", "exports"], function(require, exports) {
         var eM = eM.eM;
         function eaF() {
         }
+        eM.eaF = eaF;
         ;
         
         ;
@@ -557,6 +563,7 @@ define(["require", "exports"], function(require, exports) {
     var eM = 0.eM;
     function eaF() {
     }
+    exports.eaF = eaF;
     ;
     
     ;
@@ -670,6 +677,197 @@ export module eM {
         p7? (pa1, pa2): void;
     }
     module eM {
+        var eV;
+        function eF(): void;
+        class eC {
+        }
+        interface eI {
+        }
+        module eM {
+        }
+        var eaV;
+        function eaF(): void;
+        class eaC {
+        }
+        module eaM {
+        }
+    }
+    var eaV;
+    function eaF(): void;
+    class eaC {
+        constructor();
+        public pV;
+        private rV;
+        public pF(): void;
+        private rF();
+        public pgF(): void;
+        public pgF : void;
+        public psF(param: any): void;
+        public psF : any;
+        private rgF();
+        private rgF;
+        private rsF(param);
+        private rsF;
+        static tV;
+        static tF(): void;
+        static tsF(param: any): void;
+        static tsF : any;
+        static tgF(): void;
+        static tgF : void;
+    }
+    module eaM {
+        var V;
+        function F(): void;
+        class C {
+        }
+        interface I {
+        }
+        module M {
+        }
+        var eV;
+        function eF(): void;
+        class eC {
+        }
+        interface eI {
+        }
+        module eM {
+        }
+    }
+}
+export var eaV;
+export function eaF(): void;
+export class eaC {
+    constructor();
+    public pV;
+    private rV;
+    public pF(): void;
+    private rF();
+    public pgF(): void;
+    public pgF : void;
+    public psF(param: any): void;
+    public psF : any;
+    private rgF();
+    private rgF;
+    private rsF(param);
+    private rsF;
+    static tV;
+    static tF(): void;
+    static tsF(param: any): void;
+    static tsF : any;
+    static tgF(): void;
+    static tgF : void;
+}
+export module eaM {
+    var V;
+    function F(): void;
+    class C {
+        constructor();
+        public pV;
+        private rV;
+        public pF(): void;
+        static tV;
+        static tF(): void;
+    }
+    interface I {
+        ();
+        (): number;
+        (p: string);
+        (p2?: string);
+        (...p3: any[]);
+        (p4: string, p5?: string);
+        (p6: string, ...p7: any[]);
+        new();
+        new(): number;
+        new(p: string);
+        new(p2?: string);
+        new(...p3: any[]);
+        new(p4: string, p5?: string);
+        new(p6: string, ...p7: any[]);
+        [p: any]: any;
+        [p1: string]: any;
+        [p2: string]: any;
+        p3: number;
+        p;
+        p1?;
+        p2?: string;
+        p3();
+        p4? ();
+        p5? (): void;
+        p6(pa1): void;
+        p7(pa1, pa2): void;
+        p7? (pa1, pa2): void;
+    }
+    module M {
+        var V;
+        function F(): void;
+        class C {
+        }
+        interface I {
+        }
+        module M {
+        }
+        var eV;
+        function eF(): void;
+        class eC {
+        }
+        interface eI {
+        }
+        module eM {
+        }
+        var eaV;
+        function eaF(): void;
+        class eaC {
+        }
+        module eaM {
+        }
+    }
+    var eV;
+    function eF(): void;
+    class eC {
+        constructor();
+        public pV;
+        private rV;
+        public pF(): void;
+        static tV;
+        static tF(): void;
+    }
+    interface eI {
+        ();
+        (): number;
+        (p);
+        (p1: string);
+        (p2?: string);
+        (...p3: any[]);
+        (p4: string, p5?: string);
+        (p6: string, ...p7: any[]);
+        new();
+        new(): number;
+        new(p: string);
+        new(p2?: string);
+        new(...p3: any[]);
+        new(p4: string, p5?: string);
+        new(p6: string, ...p7: any[]);
+        [p: any]: any;
+        [p1: string]: any;
+        [p2: string]: any;
+        p3: number;
+        p;
+        p1?;
+        p2?: string;
+        p3();
+        p4? ();
+        p5? (): void;
+        p6(pa1): void;
+        p7(pa1, pa2): void;
+        p7? (pa1, pa2): void;
+    }
+    module eM {
+        var V;
+        function F(): void;
+        class C {
+        }
+        module M {
+        }
         var eV;
         function eF(): void;
         class eC {

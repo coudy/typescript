@@ -123,7 +123,9 @@ module m2 {
         constructor(b);
     }
     var mE;
+    var d1E, d2E;
     var b2E;
+    var v1E;
 }
 var a22, b22: number, c22: number;
 var nn;

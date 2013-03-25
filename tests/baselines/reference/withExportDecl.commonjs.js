@@ -42,11 +42,6 @@ var m1;
     }
     m1.foo = foo;
 })(m1 || (m1 = {}));
-declare;
-(function (m2) {
-    m2.a;
-})(0.m2 || (0.m2 = {}));
-var m2 = 0.m2;
 (function (m3) {
     function foo() {
         return m1.foo();
@@ -68,6 +63,7 @@ export var exportedWithComplicatedValue: {
     y: number;
     desc: string;
 };
+export var exportedDeclaredVar: number;
 export var exportedArrayVar: {
     x: number;
     y: string;
