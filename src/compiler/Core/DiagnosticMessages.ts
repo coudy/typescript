@@ -93,6 +93,12 @@ module TypeScript {
             code: 112
         },
 
+        A_catch_clause_variable_cannot_have_a_type_annotation: {
+                category: DiagnosticCategory.Error,
+                message: "A catch clause variable cannot have a type annotation.",
+                code: 113
+        },
+
         // Semantic errors start at 200.
         Duplicate_identifier__0_: {
             category: DiagnosticCategory.Error,
