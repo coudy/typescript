@@ -190,10 +190,11 @@ module TypeScript {
         else {
             // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
             // (i.e.'1').  We then need one more arg than that to be correct.
-            var largestIndex = getLargestIndex(diagnosticName);
+            var expectedCount = 1 + getLargestIndex(diagnosticName);
+            var actualCount = args ? args.length : 0;
 
-            if ((largestIndex + 1) != args.length) {
-                throw new Error("Expected " + (largestIndex + 1) + " arguments to diagnostic, got " + args.length + " instead");
+            if (expectedCount !== actualCount) {
+                throw new Error("Expected " + expectedCount + " arguments to diagnostic, got " + actualCount + " instead");
             }
         }
 
