@@ -33,6 +33,9 @@ class Program {
             // return;
         }
 
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
+
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
@@ -52,7 +55,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ true, /*generateBaselines:*/ generate));
+            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
@@ -61,9 +64,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5",
             fileName => this.runFindToken(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
-
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
 
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5",

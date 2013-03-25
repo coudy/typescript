@@ -57963,7 +57963,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {
@@ -57973,6 +57973,8 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         if (true) {
         }
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
@@ -57991,7 +57993,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (fileName) {
-            return _this.runParser(fileName, 1 /* EcmaScript5 */ , true, generate);
+            return _this.runParser(fileName, 1 /* EcmaScript5 */ , false, generate);
         });
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (fileName) {
@@ -58001,8 +58003,6 @@ var Program = (function () {
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5", function (fileName) {
             return _this.runFindToken(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5", function (fileName) {
             return _this.runTrivia(fileName, 1 /* EcmaScript5 */ , verify, generate);
