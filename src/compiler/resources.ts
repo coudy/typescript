@@ -28,11 +28,26 @@ module TypeScript {
         code: number;
     }
 
-    export enum PullDiagnosticMessages {
+    export enum DiagnosticCode {
         error_TS_0__1,
         warning_TS_0__1,
 
-        // Semantic Diagnostics.
+        // Syntactic diagnostics.
+        Unrecognized_escape_sequence,
+        Unexpected_character_0,
+        Missing_closing_quote_character,
+        Identifier_expected,
+        _0_keyword_expected,
+        _0_expected,
+        Identifier_expected__0_is_a_keyword,
+        Automatic_semicolon_insertion_not_allowed,
+        Unexpected_token__0_expected,
+        Trailing_separator_not_allowed,
+        _StarSlash__expected,
+        _public_or_private_modifier_must_precede__static_,
+        Unexpected_token_,
+
+        // Semantic diagnostics.
         Duplicate_identifier__0_,
         The_name__0__does_not_exist_in_the_current_scope,
         The_name__0__does_not_refer_to_a_value,
@@ -57,7 +72,22 @@ module TypeScript {
         error_TS_0__1: DiagnosticInfo;
         warning_TS_0__1: DiagnosticInfo;
 
-        // Semantic Diagnostics.
+        // Syntactic diagnostics.
+        Unrecognized_escape_sequence: DiagnosticInfo;
+        Unexpected_character_0: DiagnosticInfo;
+        Missing_closing_quote_character: DiagnosticInfo;
+        Identifier_expected: DiagnosticInfo;
+        _0_keyword_expected: DiagnosticInfo;
+        _0_expected: DiagnosticInfo;
+        Identifier_expected__0_is_a_keyword: DiagnosticInfo;
+        Automatic_semicolon_insertion_not_allowed: DiagnosticInfo;
+        Unexpected_token__0_expected: DiagnosticInfo;
+        Trailing_separator_not_allowed: DiagnosticInfo;
+        _StarSlash__expected: DiagnosticInfo;
+        _public_or_private_modifier_must_precede__static_: DiagnosticInfo;
+        Unexpected_token_: DiagnosticInfo;
+
+        // Semantic diagnostics.
         Duplicate_identifier__0_: DiagnosticInfo;
         The_name__0__does_not_exist_in_the_current_scope: DiagnosticInfo;
         The_name__0__does_not_refer_to_a_value: DiagnosticInfo;

@@ -30,7 +30,7 @@ module TypeScript {
         /// Get the text of the message in the given language.
         /// </summary>
         public message(): string {
-            return DiagnosticMessages1.getDiagnosticMessage(this._diagnosticCode, this._arguments);
+            return getDiagnosticMessage(this._diagnosticCode, this._arguments);
         }
 
         public static equals(diagnostic1: Diagnostic1, diagnostic2: Diagnostic1): bool {

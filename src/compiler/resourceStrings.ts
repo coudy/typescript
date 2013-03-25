@@ -30,6 +30,83 @@ module TypeScript {
         },
 
         // Syntactic errors start at 100.
+        Unrecognized_escape_sequence: {
+            category: DiagnosticCategory.Error,
+            message: "Unrecognized escape sequence.",
+            code: 100
+        },
+
+        Unexpected_character_0: {
+            category: DiagnosticCategory.Error,
+            message: "Unexpected character {0}.",
+            code: 101
+        },
+
+        Missing_closing_quote_character: {
+            category: DiagnosticCategory.Error,
+            message: "Missing close quote character.",
+            code: 102
+        },
+
+        Identifier_expected: {
+            category: DiagnosticCategory.Error,
+            message: "Identifier expected.",
+            code: 103
+        },
+
+        _0_keyword_expected: {
+            category: DiagnosticCategory.Error,
+            message: "'{0}' keyword expected.",
+            code: 104
+        },
+
+        _0_expected: {
+            category: DiagnosticCategory.Error,
+            message: "'{0}' expected.",
+            code: 105
+        },
+
+        Identifier_expected__0_is_a_keyword: {
+            category: DiagnosticCategory.Error,
+            message: "Identifier expected; '{0}' is a keyword.",
+            code: 106
+        },
+
+        Automatic_semicolon_insertion_not_allowed: {
+            category: DiagnosticCategory.Error,
+            message: "Automatic semicolon insertion not allowed.",
+            code: 107
+        },
+
+        Unexpected_token__0_expected: {
+            category: DiagnosticCategory.Error,
+            message: "Unexpected token; '{0}' expected.",
+            code: 108
+        },
+
+        Trailing_separator_not_allowed: {
+            category: DiagnosticCategory.Error,
+            message: "Trailing separator not allowed.",
+            code: 109
+        },
+
+        _StarSlash__expected: {
+            category: DiagnosticCategory.Error,
+            message: "'*/' expected.",
+            code: 110
+        },
+
+        _public_or_private_modifier_must_precede__static_: {
+            category: DiagnosticCategory.Error,
+            message: "'public' or 'private' modifier must precede 'static'.",
+            code: 111
+        },
+
+        Unexpected_token_: {
+            category: DiagnosticCategory.Error,
+            message: "Unexpected token.",
+            code: 112
+        },
 
         // Semantic errors start at 200.
         Duplicate_identifier__0_: {

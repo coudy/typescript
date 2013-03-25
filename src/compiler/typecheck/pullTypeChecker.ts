@@ -345,7 +345,7 @@ module TypeScript {
                     var errorMessage = comparisonInfo.message;
 
                     // ignore comparison info for now
-                    var message = getDiagnosticMessage(PullDiagnosticMessages.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
+                    var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
 
                     this.context.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                 }
@@ -692,7 +692,7 @@ module TypeScript {
                 var errorMessage = comparisonInfo.message;
 
                 // ignore comparison info for now
-                var message = getDiagnosticMessage(PullDiagnosticMessages.Cannot_convert__0__to__1_, [rightType.toString(), leftType.toString()]);
+                var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [rightType.toString(), leftType.toString()]);
 
                 this.context.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
             }
@@ -837,7 +837,7 @@ module TypeScript {
                 var errorMessage = comparisonInfo.message;
 
                 // ignore comparison info for now
-                var message = getDiagnosticMessage(PullDiagnosticMessages.Cannot_convert__0__to__1_, [exprType.toString(), returnType.toString()]);
+                var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [exprType.toString(), returnType.toString()]);
 
                 this.context.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }            

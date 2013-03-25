@@ -114,6 +114,7 @@ module TypeScript {
         return result;
     }
 
+    // TODO: Just use JSON.stringify here.
     export function stringToLiteral(value: string, length: number): string {
         var result = "";
 
@@ -164,8 +165,8 @@ module TypeScript {
         return result;
     }
 
-    export function getDiagnosticMessage(diagnosticType: PullDiagnosticMessages, args: any[]): string {
-        var diagnosticName: string = (<any>PullDiagnosticMessages)._map[diagnosticType];
+    export function getDiagnosticMessage(diagnosticType: DiagnosticCode, args: any[]): string {
+        var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticType];
 
         var diagnostic = <DiagnosticInfo> typescriptDiagnosticMessages[diagnosticName];
 
@@ -195,10 +196,10 @@ module TypeScript {
 
         var message: string;
 
-        if (diagnosticType != PullDiagnosticMessages.error_TS_0__1 && diagnosticType != PullDiagnosticMessages.warning_TS_0__1) {
+        if (diagnosticType != DiagnosticCode.error_TS_0__1 && diagnosticType != DiagnosticCode.warning_TS_0__1) {
             var errorOrWarning = diagnostic.category == DiagnosticCategory.Error ?
-                                    PullDiagnosticMessages.error_TS_0__1 :
-                                    PullDiagnosticMessages.warning_TS_0__1;
+                                    DiagnosticCode.error_TS_0__1 :
+                                    DiagnosticCode.warning_TS_0__1;
 
             message = getDiagnosticMessage(errorOrWarning, [diagnostic.code, diagnosticMessage]);
         }
