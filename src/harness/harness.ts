@@ -1139,13 +1139,12 @@ module Harness {
                 }
             }
 
-            compiler.pullErrorReporter.hasErrors = false;            
+            compiler.pullErrorReporter.hasErrors = false;
         }
 
         // Defines functions to invoke before compiling a piece of code and a post compile action intended to clean up the
         // effects of preCompile, preferably with something lighter weight than a full recreate()
         export interface CompilationContext {
-            fileName: string;
             preCompile: () => void;
             postCompile: () => void;
         }
@@ -1252,8 +1251,6 @@ module Harness {
             var semanticDiagnostics = compiler.getSemanticDiagnostics(uName);
             compiler.reportDiagnostics(semanticDiagnostics, stderr);
 
-            var errorLines = stderr.lines;
-
             var emitDiagnostics = emit(stdout);
             compiler.reportDiagnostics(emitDiagnostics, stderr);
 
@@ -1264,7 +1261,7 @@ module Harness {
                 context.postCompile();
             }
 
-            callback(new CompilerResult(stdout.toArray(), errorLines, scripts));
+            callback(new CompilerResult(stdout.toArray(), stderr.lines, scripts));
         }
 
         /** Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that
@@ -1290,7 +1287,6 @@ module Harness {
                     });
                 };
                 var context = {
-                    fileName: fileName,
                     preCompile: precompile,
                     postCompile: postcompile
                 };
@@ -1806,7 +1802,6 @@ module Harness {
                 runJSString(res.code, callback);
             });
         }
-
     }
 
     /** Support class for baseline files */
