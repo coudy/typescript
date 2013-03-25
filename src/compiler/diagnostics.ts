@@ -165,6 +165,20 @@ module TypeScript {
         return result;
     }
 
+    function getLargestIndex(diagnostic: string): number {
+        var largest = -1;
+        var stringComponents = diagnostic.split("_");
+
+        for (var i = 0; i < stringComponents.length; i++) {
+            var val = parseInt(stringComponents[i]);
+            if (!isNaN(val) && val > largest) {
+                largest = val;
+            }
+        }
+
+        return largest;
+    }
+
     export function getDiagnosticMessage(diagnosticType: DiagnosticCode, args: any[]): string {
         var diagnosticName: string = (<any>DiagnosticCode)._map[diagnosticType];
 
@@ -176,15 +190,10 @@ module TypeScript {
         else {
             // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
             // (i.e.'1').  We then need one more arg than that to be correct.
-            var stringComponents = diagnosticName.split("_");
-            var numberComponents = stringComponents.map(v => parseInt(v)).filter(v => !isNaN(v));
+            var largestIndex = getLargestIndex(diagnosticName);
 
-            if (numberComponents.length) {
-                var max = Math.max.apply(null, numberComponents);
-
-                if ((max + 1) != args.length) {
-                    throw new Error("Expected " + (max + 1) + " arguments to diagnostic, got " + args.length + " instead");
-                }
+            if ((largestIndex + 1) != args.length) {
+                throw new Error("Expected " + (largestIndex + 1) + " arguments to diagnostic, got " + args.length + " instead");
             }
         }
 

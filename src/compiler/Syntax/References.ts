@@ -4,7 +4,6 @@
 ///<reference path='CharacterInfo.ts' />
 ///<reference path='Constants.ts' />
 ///<reference path='Diagnostic.ts' />
-///<reference path='DiagnosticCode.ts' />
 ///<reference path='FormattingOptions.ts' />
 ///<reference path='Indentation.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
