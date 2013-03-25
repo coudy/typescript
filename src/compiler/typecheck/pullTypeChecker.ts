@@ -823,7 +823,24 @@ module TypeScript {
         //  - the type assertion and the expression it's applied to are assignment compatible
         public typeCheckTypeAssertion(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var returnType = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-            this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext);
+
+            this.context.pushContextualType(returnType, this.context.inProvisionalResolution(), null);
+            var exprType = this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext);
+            this.context.popContextualType();
+
+
+            var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, exprType, this.context, comparisonInfo) ||
+                                this.resolver.sourceIsAssignableToTarget(exprType, returnType, this.context, comparisonInfo);
+
+            if (!isAssignable) {
+                var comparisonInfo = new TypeComparisonInfo();
+                var errorMessage = comparisonInfo.message;
+
+                // ignore comparison info for now
+                var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [exprType.toString(), returnType.toString()]);
+
+                this.context.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+            }            
 
             return returnType;
         }
