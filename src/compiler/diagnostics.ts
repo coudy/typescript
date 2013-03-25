@@ -173,13 +173,16 @@ module TypeScript {
             throw new Error("Invalid diagnostic");
         }
         else {
-            var components = diagnosticName.split("_");
+            // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
+            // (i.e.'1').  We then need one more arg than that to be correct.
+            var stringComponents = diagnosticName.split("_");
+            var numberComponents = stringComponents.map(v => parseInt(v)).filter(v => !isNaN(v));
 
-            if (components.length) {
-                var argCount = parseInt(components[1]);
+            if (numberComponents.length) {
+                var max = Math.max.apply(null, numberComponents);
 
-                if (argCount != args.length) {
-                    throw new Error("Expected " + argCount + " arguments to diagnostic, got " + args.length + " instead");
+                if ((max + 1) != args.length) {
+                    throw new Error("Expected " + (max + 1) + " arguments to diagnostic, got " + args.length + " instead");
                 }
             }
         }
@@ -192,10 +195,10 @@ module TypeScript {
 
         var message: string;
 
-        if (diagnosticType != PullDiagnosticMessages.error_2 && diagnosticType != PullDiagnosticMessages.warning_2) {
+        if (diagnosticType != PullDiagnosticMessages.error_TS_0__1 && diagnosticType != PullDiagnosticMessages.warning_TS_0__1) {
             var errorOrWarning = diagnostic.category == DiagnosticCategory.Error ?
-                                    PullDiagnosticMessages.error_2 :
-                                    PullDiagnosticMessages.warning_2;
+                                    PullDiagnosticMessages.error_TS_0__1 :
+                                    PullDiagnosticMessages.warning_TS_0__1;
 
             message = getDiagnosticMessage(errorOrWarning, [diagnostic.code, diagnosticMessage]);
         }

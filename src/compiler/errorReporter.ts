@@ -131,11 +131,11 @@ module TypeScript {
             this.reportErrorFromSym(sym, msg);
         }
 
-        public invalidSuperReference(ast: AST) {
+        public Keyword__super__can_only_be_used_inside_a_class_instance_method(ast: AST) {
             this.simpleError(ast, "Keyword 'super' can only be used inside a class instance method");
         }
 
-        public valueCannotBeModified(ast: AST) {
+        public The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(ast: AST) {
             this.simpleError(ast, "The left-hand side of an assignment expression must be a variable, property or indexer");
         }
 
@@ -176,7 +176,7 @@ module TypeScript {
             }
         }
 
-        public expectedClassOrInterface(ast: AST): void {
+        public Expected_var__class__interface__or_module(ast: AST): void {
             this.simpleError(ast, "Expected var, class, interface, or module");
         }
 

@@ -336,7 +336,7 @@ module TypeScript {
                     var errorMessage = comparisonInfo.message;
 
                     // ignore comparison info for now
-                    var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
+                    var message = getDiagnosticMessage(PullDiagnosticMessages.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
 
                     this.context.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                 }
@@ -673,7 +673,7 @@ module TypeScript {
                 var span = enclosingDecl.getSpan();
 
                 // ignore comparison info for now
-                var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [rightType.toString(), leftType.toString()]);
+                var message = getDiagnosticMessage(PullDiagnosticMessages.Cannot_convert__0__to__1_, [rightType.toString(), leftType.toString()]);
 
                 this.context.postError(assignmentAST.operand1.minChar, span.length(), typeCheckContext.scriptName, message, enclosingDecl);
             }

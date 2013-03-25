@@ -17,123 +17,124 @@
 
 module TypeScript {
     export var typescriptDiagnosticMessages: TypeScriptDiagnosticMessages = {
-        error_2: {
+        error_TS_0__1: {
             category: DiagnosticCategory.Error,
             message: "error TS{0}: {1}",
             code: 0
         },
 
-        warning_2: {
+        warning_TS_0__1: {
             category: DiagnosticCategory.Warning,
             message: "warning TS{0}: {1}",
             code: 1
         },
 
-        duplicateIdentifier_1: {
+        // Semantic errors.
+        Duplicate_identifier__0_: {
             category: DiagnosticCategory.Error,
-            message: "Duplicate identifier '{0}'",
+            message: "Duplicate identifier '{0}'.",
             code: 100
         },
 
-        unresolvedSymbol_1: {
+        The_name__0__does_not_exist_in_the_current_scope: {
             category: DiagnosticCategory.Error,
-            message: "The name'{0}' does not exist in the current scope",
+            message: "The name '{0}' does not exist in the current scope.",
             code: 101
         },
 
-        symbolDoesNotReferToAValue_1: {
+        The_name__0__does_not_refer_to_a_value: {
             category: DiagnosticCategory.Error,
-            message: "The name '{0}' does not refer to a value",
+            message: "The name '{0}' does not refer to a value.",
             code: 102
         },
 
-        invalidSuperReference: {
+        Keyword__super__can_only_be_used_inside_a_class_instance_method: {
             category: DiagnosticCategory.Error,
-            message: "Keyword 'super' can only be used inside a class instance method",
+            message: "Keyword 'super' can only be used inside a class instance method.",
             code: 103
         },
 
-        valueCannotBeModified: {
+        The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
             category: DiagnosticCategory.Error,
-            message: "The left-hand side of an assignment expression must be a variable, property or indexer",
+            message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
             code: 104
         },
 
-        usedCallInsteadOfNew_1: {
+        Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
             category: DiagnosticCategory.Error,
-            message: "Value of type '{0}' is not callable.  Did you mean to include 'new'?",
+            message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
             code: 105
         },
 
-        valueIsNotCallable_1: {
+        Value_of_type__0__is_not_callable: {
             category: DiagnosticCategory.Error,
-            message: "Value of type '{0}' is not callable",
+            message: "Value of type '{0}' is not callable.",
             code: 106
         },
 
-        valueIsNotNewable_1: {
+        Value_of_type__0__is_not_newable: {
             category: DiagnosticCategory.Error,
-            message: "Value of type '{0}' is not newable",
+            message: "Value of type '{0}' is not newable.",
             code: 107
         },
 
-        invalidIndexLHS_2: {
+        Value_of_type__0__is_not_indexable_by_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Value of type '{0}' is not indexable by type '{1}'",
+            message: "Value of type '{0}' is not indexable by type '{1}'.",
             code: 108
         },
 
-        incompatibleTypesForOperator_3: {
+        Operator__0__cannot_be_applied_to_types__1__and__2_: {
             category: DiagnosticCategory.Error,
-            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'",
+            message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
             code: 109
         },
 
-        incompatibleTypesForOperatorWithReason_4: {
+        Operator__0__cannot_be_applied_to_types__1__and__2__3: {
             category: DiagnosticCategory.Error,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
             code: 110
         },
 
-        incompatibleTypes_2: {
+        Cannot_convert__0__to__1_: {
             category: DiagnosticCategory.Error,
-            message: "Cannot convert '{0}' to '{1}'",
+            message: "Cannot convert '{0}' to '{1}'.",
             code: 111
         },
 
-        incompatibleTypesWithReason_3: {
+        Cannot_convert__0__to__1___2: {
             category: DiagnosticCategory.Error,
             message: "Cannot convert '{0}' to '{1}': {2}",
             code: 112
         },
 
-        expectedClassOrInterface: {
+        Expected_var__class__interface__or_module: {
             category: DiagnosticCategory.Error,
-            message: "Expected var, class, interface, or module",
+            message: "Expected var, class, interface, or module.",
             code: 113
         },
 
-        unaryOperatorTypeError_2: {
+        Operator__0__cannot_be_applied_to_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Operator '{0}' cannot be applied to type '{1}'",
+            message: "Operator '{0}' cannot be applied to type '{1}'.",
             code: 114
         },
 
-        duplicateGetter_1: {
+        Getter__0__already_declared: {
             category: DiagnosticCategory.Error,
-            message: "Getter '{0}' already declared",
+            message: "Getter '{0}' already declared.",
             code: 115
         },
 
-        duplicateSetter_1: {
+        Setter__0__already_declared: {
             category: DiagnosticCategory.Error,
-            message: "Setter '{0}' already declared",
+            message: "Setter '{0}' already declared.",
             code: 116
         },
 
-        accessorsMayNotBeGeneric: {
+        Accessor_may_not_take_type_parameters: {
             category: DiagnosticCategory.Error,
-            message: "Accessors may not take type parameters",
+            message: "Accessors may not take type parameters.",
             code: 117
         },
     };

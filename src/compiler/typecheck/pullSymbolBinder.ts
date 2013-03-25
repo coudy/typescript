@@ -187,7 +187,7 @@ module TypeScript {
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {
                 // duplicate symbol error
                 moduleContainerDecl.addDiagnostic(new PullDiagnostic(
-                    moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [modName])));
+                    moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [modName])));
 
                 moduleContainerTypeSymbol = null;
             }
@@ -321,7 +321,7 @@ module TypeScript {
             }
 
             if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
-                importDeclaration.addDiagnostic(new PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
+                importDeclaration.addDiagnostic(new PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [declName])));
                 importSymbol = null;
             }
 
@@ -385,7 +385,7 @@ module TypeScript {
 
             if (enumSymbol && (enumSymbol.getKind() != PullElementKind.Enum || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
                 enumDeclaration.addDiagnostic(new PullDiagnostic(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [enumName])));
+                    getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [enumName])));
                 enumSymbol = null;
             }
 
@@ -478,7 +478,7 @@ module TypeScript {
 
             if (classSymbol && (classSymbol.getKind() != PullElementKind.Class || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
                 classDecl.addDiagnostic(new PullDiagnostic(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [className])));
+                    getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [className])));
                 classSymbol = null;
             }
             else if (classSymbol) {
@@ -665,7 +665,7 @@ module TypeScript {
                         memberDecl = member.getDeclarations()[0];
                         memberAST = this.semanticInfo.getASTForDecl(memberDecl);
                         memberDecl.addDiagnostic(new PullDiagnostic(memberAST.minChar, memberAST.getLength(), this.semanticInfo.getPath(),
-                            getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [member.getName()])));
+                            getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [member.getName()])));
                     }
                     else {
                         memberMap[member.getName()] = true;
@@ -736,7 +736,7 @@ module TypeScript {
 
             if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface)) {
                 interfaceDecl.addDiagnostic(new PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [interfaceName])));
+                    getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [interfaceName])));
                 interfaceSymbol = null;
             }
 
@@ -1005,7 +1005,7 @@ module TypeScript {
                     span = variableDeclaration.getSpan();
 
                     variableDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
-                        getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
+                        getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [declName])));
                     variableSymbol = null;
                     parentHadSymbol = false;
                 }
@@ -1014,7 +1014,7 @@ module TypeScript {
                 span = variableDeclaration.getSpan();
 
                 variableDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
+                    getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [declName])));
                 variableSymbol = null;
                 parentHadSymbol = false;
             }
@@ -1228,7 +1228,7 @@ module TypeScript {
                     // with an implicit constructor...
                     var span = propertyDeclaration.getSpan();
 
-                    propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [declName])));
+                    propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [declName])));
                 }
                 
                 propertySymbol = null;
@@ -1356,7 +1356,7 @@ module TypeScript {
 
                     if (params[argDecl.id.actualText]) {
                         decl.addDiagnostic(new PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(),
-                            getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [argDecl.id.actualText])));
+                            getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [argDecl.id.actualText])));
                     }
                     else {
                         params[argDecl.id.actualText] = true;
@@ -1451,7 +1451,7 @@ module TypeScript {
                 (functionSymbol.getKind() != PullElementKind.Function ||
                     !isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature))) {
                 functionDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [funcName])));
+                    getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [funcName])));
                 functionSymbol = null;
             }
 
@@ -1752,7 +1752,7 @@ module TypeScript {
             if (methodSymbol && 
                 (methodSymbol.getKind() != PullElementKind.Method ||
                     (!isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
-                methodDeclaration.addDiagnostic(new PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [methodName])));
+                methodDeclaration.addDiagnostic(new PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [methodName])));
                 methodSymbol = null;
             }
 
@@ -2226,7 +2226,7 @@ module TypeScript {
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
                     getAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                        getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [funcName])));
+                        getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [funcName])));
                     accessorSymbol = null;
                 }
                 else {
@@ -2234,7 +2234,7 @@ module TypeScript {
 
                     if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
                         getAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                            getDiagnosticMessage(PullDiagnosticMessages.duplicateGetter_1, [funcName])));
+                            getDiagnosticMessage(PullDiagnosticMessages.Getter__0__already_declared, [funcName])));
                         accessorSymbol = null;
                         getterSymbol = null;
                     }
@@ -2339,7 +2339,7 @@ module TypeScript {
 
             if (typeParameters.length) {
                 getAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.accessorsMayNotBeGeneric, null)));
+                    getDiagnosticMessage(PullDiagnosticMessages.Accessor_may_not_take_type_parameters, null)));
             }
 
             // add the implicit call member for this function type
@@ -2416,7 +2416,7 @@ module TypeScript {
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
                     setAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                        getDiagnosticMessage(PullDiagnosticMessages.duplicateIdentifier_1, [funcName])));
+                        getDiagnosticMessage(PullDiagnosticMessages.Duplicate_identifier__0_, [funcName])));
                     accessorSymbol = null;
                 }
                 else {
@@ -2424,7 +2424,7 @@ module TypeScript {
 
                     if (setterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(setterSymbol))) {
                         setAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                            getDiagnosticMessage(PullDiagnosticMessages.duplicateSetter_1, [funcName])));
+                            getDiagnosticMessage(PullDiagnosticMessages.Setter__0__already_declared, [funcName])));
                         accessorSymbol = null;
                         setterSymbol = null;
                     }
@@ -2531,7 +2531,7 @@ module TypeScript {
 
             if (typeParameters.length) {
                 setAccessorDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
-                    getDiagnosticMessage(PullDiagnosticMessages.accessorsMayNotBeGeneric, null)));
+                    getDiagnosticMessage(PullDiagnosticMessages.Accessor_may_not_take_type_parameters, null)));
             }
 
             // add the implicit call member for this function type

@@ -1067,7 +1067,7 @@ module TypeScript {
                 }
 
                 ast.type = this.anyType;
-                this.checker.errorReporter.invalidSuperReference(ast);
+                this.checker.errorReporter.Keyword__super__can_only_be_used_inside_a_class_instance_method(ast);
             }
             return ast;
         }
@@ -1300,7 +1300,7 @@ module TypeScript {
             var unex = <UnaryExpression>ast;
             var lval = unex.operand;
             if (!this.astIsWriteable(unex)) {
-                this.checker.errorReporter.valueCannotBeModified(unex);
+                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(unex);
                 unex.type = this.doubleType;
             }
             else {
@@ -1321,7 +1321,7 @@ module TypeScript {
             var rightType = binex.operand2.type;
 
             if (assignment && (!this.astIsWriteable(binex))) {
-                this.checker.errorReporter.valueCannotBeModified(binex);
+                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
             }
 
             if (this.checker.styleSettings.bitwise) {
@@ -1366,7 +1366,7 @@ module TypeScript {
             var rightType = binex.operand2.type;
 
             if (assignment && (!this.astIsWriteable(binex.operand1))) {
-                this.checker.errorReporter.valueCannotBeModified(binex);
+                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
             }
 
             if (this.checker.styleSettings.bitwise &&
@@ -1491,7 +1491,7 @@ module TypeScript {
                 }
             }
             if (!leftScope) {
-                this.checker.errorReporter.expectedClassOrInterface(binex);
+                this.checker.errorReporter.Expected_var__class__interface__or_module(binex);
                 binex.type = this.anyType;
             }
             else {
@@ -1570,7 +1570,7 @@ module TypeScript {
             var rightType = binex.operand2.type;
 
             if (!(this.astIsWriteable(binex.operand1))) {
-                this.checker.errorReporter.valueCannotBeModified(binex);
+                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
             }
             if (binex.operand1.nodeType === NodeType.Call) {
                 var callEx = <CallExpression>binex.operand1;
@@ -1673,7 +1673,7 @@ module TypeScript {
             binex.operand1 = this.cast(this.typeCheck(binex.operand1), this.doubleType);
             binex.operand2 = this.cast(this.typeCheck(binex.operand2), this.doubleType);
             if (assignment && (!(this.astIsWriteable(binex.operand1)))) {
-                this.checker.errorReporter.valueCannotBeModified(binex);
+                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
             }
             binex.type = this.doubleType;
             return binex;
