@@ -95,13 +95,18 @@ module TypeScript {
     }
 
     class GrammarCheckerWalker extends PositionTrackingWalker {
+        private inAmbientDeclaration: bool;
+
         constructor(private fileName: string,
                     private diagnostics: IDiagnostic[],
                     private isDeclaration: bool) {
             super();
+
+            // Everything in an declaration file is in an ambient declaration
+            this.inAmbientDeclaration = isDeclaration;
         }
 
-        private childFullStart(parent: ISyntaxNode, child: ISyntaxElement): number {
+        private childFullStart(parent: ISyntaxElement, child: ISyntaxElement): number {
             return this.position() + Syntax.childOffset(parent, child);
         }
 
@@ -109,14 +114,19 @@ module TypeScript {
             return this.childFullStart(parent, child) + child.leadingTriviaWidth();
         }
 
-        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+        private getToken(list: ISyntaxList, kind: SyntaxKind): ISyntaxToken {
             for (var i = 0, n = list.childCount(); i < n; i++) {
-                if (list.childAt(i).kind() === kind) {
-                    return true;
+                var token = <ISyntaxToken>list.childAt(i);
+                if (token.tokenKind === kind) {
+                    return token;
                 }
             }
 
-            return false;
+            return null;
+        }
+
+        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+            return this.getToken(list, kind) !== null;
         }
 
         private pushDiagnostic(start: number, length: number, diagnosticCode: DiagnosticCode, args: any[] = null): void {
@@ -231,7 +241,7 @@ module TypeScript {
             super.visitIndexSignature(node);
         }
 
-        private checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): void {
+        private checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): bool {
             var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
             var heritageClauseFullStart = heritageClausesFullStart;
 
@@ -246,19 +256,19 @@ module TypeScript {
                     if (seenExtendsClause) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
                             DiagnosticCode._extends__clause_already_seen);
-                        return;
+                        return true;
                     }
 
                     if (seenImplementsClause) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
                             DiagnosticCode._extends__clause_must_precede__implements__clause);
-                        return;
+                        return true;
                     }
 
                     if (heritageClause.typeNames.nonSeparatorCount() > 1) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
                             DiagnosticCode.Class_can_only_extend_single_type);
-                        return;
+                        return true;
                     }
 
                     seenExtendsClause = true;
@@ -268,7 +278,7 @@ module TypeScript {
                     if (seenImplementsClause) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
                             DiagnosticCode._implements__clause_already_seen);
-                        return;
+                        return true;
                     }
 
                     seenImplementsClause = true;
@@ -276,12 +286,39 @@ module TypeScript {
 
                 heritageClauseFullStart += heritageClause.fullWidth();
             }
+
+            return false;
+        }
+
+        private checkForDisallowedDeclareModifier(modifiers: ISyntaxList): bool {
+            if (this.inAmbientDeclaration) {
+                var declareToken = this.getToken(modifiers, SyntaxKind.DeclareKeyword);
+
+                if (declareToken) {
+                    this.pushDiagnostic1(this.childFullStart(modifiers, declareToken), declareToken,
+                        DiagnosticCode._declare__modifier_not_allowed_for_code_already_in_an_ambient_context);
+                    return true;
+                }
+            }
+            
+            return false;
         }
 
         private visitClassDeclaration(node: ClassDeclarationSyntax): void {
-            this.checkClassDeclarationHeritageClauses(node);
+            if (this.checkForDisallowedDeclareModifier(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
 
+            if (this.checkClassDeclarationHeritageClauses(node)) {
+                this.skip(node);
+                return;
+            }
+
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitClassDeclaration(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
         private checkInterfaceDeclarationHeritageClauses(node: InterfaceDeclarationSyntax): void {
@@ -388,7 +425,7 @@ module TypeScript {
             super.visitSetMemberAccessorDeclaration(node);
         }
 
-        private checkEnumDeclarationElements(node: EnumDeclarationSyntax): void {
+        private checkEnumDeclarationElements(node: EnumDeclarationSyntax): bool {
             var enumElementsFullStart = this.childFullStart(node, node.enumElements);
             var enumElementFullStart = enumElementsFullStart;
             var seenExplicitMember = false;
@@ -403,18 +440,31 @@ module TypeScript {
                     else if (seenExplicitMember) {
                         this.pushDiagnostic1(enumElementFullStart, enumElement,
                             DiagnosticCode.Enum_element_must_have_initializer);
-                        return;
+                        return true;
                     }
                 }
 
                 enumElementFullStart += nodeOrToken.fullWidth();
             }
+
+            return false;
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): void {
-            this.checkEnumDeclarationElements(node);
+            if (this.checkForDisallowedDeclareModifier(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
             
+            if (this.checkEnumDeclarationElements(node)) {
+                this.skip(node);
+                return;
+            }
+
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitEnumDeclaration(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
         private visitInvocationExpression(node: InvocationExpressionSyntax): void {
@@ -428,24 +478,33 @@ module TypeScript {
         }
 
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
-            if (this.isDeclaration) {
+            if (this.checkForDisallowedDeclareModifier(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
+
+            if (this.inAmbientDeclaration) {
             }
             else {
                 if (node.stringLiteral && !this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                     var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
                     this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral,
-                        DiagnosticCode.Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier);
+                        DiagnosticCode.Non_ambient_modules_cannot_use_quoted_names);
+                    this.skip(node);
                     return;
                 }
             }
 
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitModuleDeclaration(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
         private visitBlock(node: BlockSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Implementations_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Implementations_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -454,9 +513,9 @@ module TypeScript {
         }
 
         private visitBreakStatement(node: BreakStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -465,9 +524,9 @@ module TypeScript {
         }
 
         private visitContinueStatement(node: ContinueStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -476,9 +535,9 @@ module TypeScript {
         }
 
         private visitDebuggerStatement(node: DebuggerStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -487,9 +546,9 @@ module TypeScript {
         }
 
         private visitDoStatement(node: DoStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -498,9 +557,9 @@ module TypeScript {
         }
 
         private visitEmptyStatement(node: EmptyStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -509,9 +568,9 @@ module TypeScript {
         }
 
         private visitExpressionStatement(node: ExpressionStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -520,9 +579,9 @@ module TypeScript {
         }
 
         private visitForInStatement(node: ForInStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -531,9 +590,9 @@ module TypeScript {
         }
 
         private visitForStatement(node: ForStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -542,9 +601,9 @@ module TypeScript {
         }
 
         private visitIfStatement(node: IfStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -553,9 +612,9 @@ module TypeScript {
         }
 
         private visitLabeledStatement(node: LabeledStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -564,9 +623,9 @@ module TypeScript {
         }
 
         private visitReturnStatement(node: ReturnStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -575,9 +634,9 @@ module TypeScript {
         }
 
         private visitSwitchStatement(node: SwitchStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -586,9 +645,9 @@ module TypeScript {
         }
 
         private visitThrowStatement(node: ThrowStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -597,9 +656,9 @@ module TypeScript {
         }
 
         private visitTryStatement(node: TryStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -608,9 +667,9 @@ module TypeScript {
         }
 
         private visitWhileStatement(node: WhileStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
@@ -619,14 +678,38 @@ module TypeScript {
         }
 
         private visitWithStatement(node: WithStatementSyntax): void {
-            if (this.isDeclaration) {
+            if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
                 this.skip(node);
                 return;
             }
 
             super.visitWithStatement(node);
+        }
+
+        private visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
+            if (this.checkForDisallowedDeclareModifier(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
+
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            super.visitFunctionDeclaration(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private visitVariableStatement(node: VariableStatementSyntax): void {
+            if (this.checkForDisallowedDeclareModifier(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
+
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            super.visitVariableStatement(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
     }
 }

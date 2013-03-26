@@ -225,22 +225,28 @@ module TypeScript {
             code: 1034
         },
 
-        Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier: {
+        Non_ambient_modules_cannot_use_quoted_names: {
             category: DiagnosticCategory.Error,
-            message: "Modules in implementation files with quoted names must have the 'declare' modifier.",
+            message: "Non ambient modules cannot use quoted names.",
             code: 1035
         },
 
-        Statements_are_not_allowed_in_declaration_files: {
+        Statements_are_not_allowed_in_ambient_declarations: {
             category: DiagnosticCategory.Error,
-            message: "Statements are not allowed in declaration files.",
+            message: "Statements are not allowed in ambient declarations.",
             code: 1036
         },
 
-        Implementations_are_not_allowed_in_declaration_files: {
+        Implementations_are_not_allowed_in_ambient_declarations: {
             category: DiagnosticCategory.Error,
-            message: "Implementations are not allowed in declaration files.",
+            message: "Implementations are not allowed in ambient declarations.",
             code: 1037
+        },
+
+        _declare__modifier_not_allowed_for_code_already_in_an_ambient_context: {
+            category: DiagnosticCategory.Error,
+            message: "'declare' modifier not allowed for code already in an ambient context.",
+            code: 1038
         },
 
 
