@@ -16,7 +16,7 @@ var specificFile =
     // "ClassDeclaration4.ts";
     undefined;
 
-var generate = true;
+var generate = false;
 
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
@@ -24,6 +24,10 @@ htmlReport.reset();
 class Program {
     runAllTests(verify: bool): void {
         Environment.standardOut.WriteLine("");
+
+        if (generate) {
+            Environment.standardOut.WriteLine("!!!!!!!!!! WARNING - GENERATING !!!!!!!!!");
+        }
 
         // Environment.standardOut.WriteLine("Testing against fuzz.");
         // this.runTests("C:\\temp\\fuzz",
@@ -55,7 +59,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false, /*generateBaselines:*/ generate));
+            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ true, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",

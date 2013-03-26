@@ -18,169 +18,169 @@ module TypeScript {
         Unrecognized_escape_sequence: {
             category: DiagnosticCategory.Error,
             message: "Unrecognized escape sequence.",
-            code: 100
+            code: 1000
         },
 
         Unexpected_character_0: {
             category: DiagnosticCategory.Error,
             message: "Unexpected character {0}.",
-            code: 101
+            code: 1001
         },
 
         Missing_closing_quote_character: {
             category: DiagnosticCategory.Error,
             message: "Missing close quote character.",
-            code: 102
+            code: 1002
         },
 
         Identifier_expected: {
             category: DiagnosticCategory.Error,
             message: "Identifier expected.",
-            code: 103
+            code: 1003
         },
 
         _0_keyword_expected: {
             category: DiagnosticCategory.Error,
             message: "'{0}' keyword expected.",
-            code: 104
+            code: 1004
         },
 
         _0_expected: {
             category: DiagnosticCategory.Error,
             message: "'{0}' expected.",
-            code: 105
+            code: 1005
         },
 
         Identifier_expected__0_is_a_keyword: {
             category: DiagnosticCategory.Error,
             message: "Identifier expected; '{0}' is a keyword.",
-            code: 106
+            code: 1006
         },
 
         Automatic_semicolon_insertion_not_allowed: {
             category: DiagnosticCategory.Error,
             message: "Automatic semicolon insertion not allowed.",
-            code: 107
+            code: 1007
         },
 
         Unexpected_token__0_expected: {
             category: DiagnosticCategory.Error,
             message: "Unexpected token; '{0}' expected.",
-            code: 108
+            code: 1008
         },
 
         Trailing_separator_not_allowed: {
             category: DiagnosticCategory.Error,
             message: "Trailing separator not allowed.",
-            code: 109
+            code: 1009
         },
 
         _StarSlash__expected: {
             category: DiagnosticCategory.Error,
             message: "'*/' expected.",
-            code: 110
+            code: 1010
         },
 
         _public_or_private_modifier_must_precede__static_: {
             category: DiagnosticCategory.Error,
             message: "'public' or 'private' modifier must precede 'static'.",
-            code: 111
+            code: 1011
         },
 
         Unexpected_token_: {
             category: DiagnosticCategory.Error,
             message: "Unexpected token.",
-            code: 112
+            code: 1012
         },
 
         A_catch_clause_variable_cannot_have_a_type_annotation: {
             category: DiagnosticCategory.Error,
             message: "A catch clause variable cannot have a type annotation.",
-            code: 113
+            code: 1013
         },
 
         Rest_parameter_must_be_last_in_list: {
             category: DiagnosticCategory.Error,
             message: "Rest parameter must be last in list.",
-            code: 114
+            code: 1014
         },
 
         Parameter_cannot_have_question_mark_and_initializer: {
             category: DiagnosticCategory.Error,
             message: "Parameter cannot have question mark and initializer.",
-            code: 115
+            code: 1015
         },
 
         Required_parameter_cannot_follow_optional_parameter: {
             category: DiagnosticCategory.Error,
             message: "required parameter cannot follow optional parameter.",
-            code: 116
+            code: 1016
         },
 
         Index_signatures_cannot_have_rest_parameters: {
             category: DiagnosticCategory.Error,
             message: "Index signatures cannot have rest parameters.",
-            code: 117
+            code: 1017
         },
 
         Index_signature_parameter_cannot_have_accessibility_modifiers: {
             category: DiagnosticCategory.Error,
             message: "Index signature parameter cannot have accessibility modifiers.",
-            code: 118
+            code: 1018
         },
 
         Index_signature_parameter_cannot_have_a_question_mark: {
             category: DiagnosticCategory.Error,
             message: "Index signature parameter cannot have a question mark.",
-            code: 119
+            code: 1019
         },
 
         Index_signature_parameter_cannot_have_an_initializer: {
             category: DiagnosticCategory.Error,
             message: "Index signature parameter cannot have an initializer.",
-            code: 120
+            code: 1020
         },
 
         Index_signature_must_have_a_type_annotation: {
             category: DiagnosticCategory.Error,
             message: "Index signature must have a type annotation.",
-            code: 121
+            code: 1021
         },
 
         Index_signature_parameter_must_have_a_type_annotation: {
             category: DiagnosticCategory.Error,
             message: "Index signature parameter must have a type annotation.",
-            code: 122
+            code: 1022
         },
 
         Index_signature_parameter_type_must_be__string__or__number_: {
             category: DiagnosticCategory.Error,
             message: "Index signature parameter type must be 'string' or 'number'.",
-            code: 123
+            code: 1023
         },
 
         _extends__clause_already_seen: {
             category: DiagnosticCategory.Error,
             message: "'extends' clause already seen.",
-            code: 124
+            code: 1024
         },
 
         _extends__clause_must_precede__implements__clause: {
             category: DiagnosticCategory.Error,
             message: "'extends' clause must precede 'implements' clause.",
-            code: 125
+            code: 1025
         },
 
         Class_can_only_extend_single_type: {
             category: DiagnosticCategory.Error,
             message: "Class can only extend single type.",
-            code: 126
+            code: 1026
         },
 
         _implements__clause_already_seen: {
             category: DiagnosticCategory.Error,
             message: "'implements' clause already seen.",
-            code: 127
+            code: 1027
         },
 
 
@@ -192,109 +192,109 @@ module TypeScript {
         Duplicate_identifier__0_: {
             category: DiagnosticCategory.Error,
             message: "Duplicate identifier '{0}'.",
-            code: 200
+            code: 2000
         },
 
         The_name__0__does_not_exist_in_the_current_scope: {
             category: DiagnosticCategory.Error,
             message: "The name '{0}' does not exist in the current scope.",
-            code: 201
+            code: 2001
         },
 
         The_name__0__does_not_refer_to_a_value: {
             category: DiagnosticCategory.Error,
             message: "The name '{0}' does not refer to a value.",
-            code: 202
+            code: 2002
         },
 
         Keyword__super__can_only_be_used_inside_a_class_instance_method: {
             category: DiagnosticCategory.Error,
             message: "Keyword 'super' can only be used inside a class instance method.",
-            code: 203
+            code: 2003
         },
 
         The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
             category: DiagnosticCategory.Error,
             message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
-            code: 204
+            code: 2004
         },
 
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
-            code: 205
+            code: 2005
         },
 
         Value_of_type__0__is_not_callable: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not callable.",
-            code: 206
+            code: 2006
         },
 
         Value_of_type__0__is_not_newable: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not newable.",
-            code: 207
+            code: 2007
         },
 
         Value_of_type__0__is_not_indexable_by_type__1_: {
             category: DiagnosticCategory.Error,
             message: "Value of type '{0}' is not indexable by type '{1}'.",
-            code: 208
+            code: 2008
         },
 
         Operator__0__cannot_be_applied_to_types__1__and__2_: {
             category: DiagnosticCategory.Error,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
-            code: 209
+            code: 2009
         },
 
         Operator__0__cannot_be_applied_to_types__1__and__2__3: {
             category: DiagnosticCategory.Error,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
-            code: 210
+            code: 2010
         },
 
         Cannot_convert__0__to__1_: {
             category: DiagnosticCategory.Error,
             message: "Cannot convert '{0}' to '{1}'.",
-            code: 211
+            code: 2011
         },
 
         Cannot_convert__0__to__1___2: {
             category: DiagnosticCategory.Error,
             message: "Cannot convert '{0}' to '{1}': {2}",
-            code: 212
+            code: 2012
         },
 
         Expected_var__class__interface__or_module: {
             category: DiagnosticCategory.Error,
             message: "Expected var, class, interface, or module.",
-            code: 213
+            code: 2013
         },
 
         Operator__0__cannot_be_applied_to_type__1_: {
             category: DiagnosticCategory.Error,
             message: "Operator '{0}' cannot be applied to type '{1}'.",
-            code: 214
+            code: 2014
         },
 
         Getter__0__already_declared: {
             category: DiagnosticCategory.Error,
             message: "Getter '{0}' already declared.",
-            code: 215
+            code: 2015
         },
 
         Setter__0__already_declared: {
             category: DiagnosticCategory.Error,
             message: "Setter '{0}' already declared.",
-            code: 216
+            code: 2016
         },
 
         Accessor_may_not_take_type_parameters: {
             category: DiagnosticCategory.Error,
             message: "Accessors may not take type parameters.",
-            code: 217
+            code: 2017
         },
     };
 }
