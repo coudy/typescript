@@ -42,9 +42,10 @@ module TypeScript {
         Enum_element_must_have_initializer: DiagnosticInfo;
         _super__invocation_cannot_have_type_arguments: DiagnosticInfo;
         Non_ambient_modules_cannot_use_quoted_names: DiagnosticInfo;
-        Statements_are_not_allowed_in_ambient_declarations: DiagnosticInfo;
-        Implementations_are_not_allowed_in_ambient_declarations: DiagnosticInfo;
+        Statements_are_not_allowed_in_ambient_contexts: DiagnosticInfo;
+        Implementations_are_not_allowed_in_ambient_contexts: DiagnosticInfo;
         _declare__modifier_not_allowed_for_code_already_in_an_ambient_context: DiagnosticInfo;
+        Initializers_are_not_allowed_in_ambient_contexts: DiagnosticInfo;
 
 
 

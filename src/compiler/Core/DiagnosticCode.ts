@@ -42,9 +42,10 @@ module TypeScript {
         Enum_element_must_have_initializer,
         _super__invocation_cannot_have_type_arguments,
         Non_ambient_modules_cannot_use_quoted_names,
-        Statements_are_not_allowed_in_ambient_declarations,
-        Implementations_are_not_allowed_in_ambient_declarations,
+        Statements_are_not_allowed_in_ambient_contexts,
+        Implementations_are_not_allowed_in_ambient_contexts,
         _declare__modifier_not_allowed_for_code_already_in_an_ambient_context,
+        Initializers_are_not_allowed_in_ambient_contexts,
 
 
 

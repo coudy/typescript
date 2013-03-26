@@ -231,15 +231,15 @@ module TypeScript {
             code: 1035
         },
 
-        Statements_are_not_allowed_in_ambient_declarations: {
+        Statements_are_not_allowed_in_ambient_contexts: {
             category: DiagnosticCategory.Error,
-            message: "Statements are not allowed in ambient declarations.",
+            message: "Statements are not allowed in ambient contexts.",
             code: 1036
         },
 
-        Implementations_are_not_allowed_in_ambient_declarations: {
+        Implementations_are_not_allowed_in_ambient_contexts: {
             category: DiagnosticCategory.Error,
-            message: "Implementations are not allowed in ambient declarations.",
+            message: "Implementations are not allowed in ambient contexts.",
             code: 1037
         },
 
@@ -247,6 +247,12 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "'declare' modifier not allowed for code already in an ambient context.",
             code: 1038
+        },
+
+        Initializers_are_not_allowed_in_ambient_contexts: {
+            category: DiagnosticCategory.Error,
+            message: "Initializers are not allowed in ambient contexts.",
+            code: 1039
         },
 
 

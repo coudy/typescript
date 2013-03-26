@@ -197,7 +197,7 @@ module TypeScript {
             super.visitParameterList(node);
         }
 
-        private visitIndexSignature(node: IndexSignatureSyntax): void {
+        private checkIndexSignatureParameter(node: IndexSignatureSyntax): bool {
             var parameterFullStart = this.childFullStart(node, node.parameter);
             var parameter = node.parameter;
 
@@ -205,37 +205,55 @@ module TypeScript {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
                     DiagnosticCode.Index_signatures_cannot_have_rest_parameters);
+                return true;
             }
             else if (parameter.publicOrPrivateKeyword) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss);
+                return true;
             }
             else if (parameter.questionToken) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark);
+                return true;
             }
             else if (parameter.equalsValueClause) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer);
+                return true;
             }
             else if (!parameter.typeAnnotation) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation);
+                return true;
             }
             else if (parameter.typeAnnotation.type.kind() !== SyntaxKind.StringKeyword &&
                      parameter.typeAnnotation.type.kind() !== SyntaxKind.NumberKeyword) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_);
+                return true;
             }
-            else if (!node.typeAnnotation) {
+
+            return false;
+        }
+
+        private visitIndexSignature(node: IndexSignatureSyntax): void {
+            if (this.checkIndexSignatureParameter(node)) {
+                this.skip(node);
+                return;
+            }
+
+            if (!node.typeAnnotation) {
                 this.pushDiagnostic1(
                     this.position(), node,
                     DiagnosticCode.Index_signature_must_have_a_type_annotation);
+                this.skip(node);
+                return;
             }
 
             super.visitIndexSignature(node);
@@ -504,7 +522,7 @@ module TypeScript {
         private visitBlock(node: BlockSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Implementations_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Implementations_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -515,7 +533,7 @@ module TypeScript {
         private visitBreakStatement(node: BreakStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -526,7 +544,7 @@ module TypeScript {
         private visitContinueStatement(node: ContinueStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -537,7 +555,7 @@ module TypeScript {
         private visitDebuggerStatement(node: DebuggerStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -548,7 +566,7 @@ module TypeScript {
         private visitDoStatement(node: DoStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -559,7 +577,7 @@ module TypeScript {
         private visitEmptyStatement(node: EmptyStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -570,7 +588,7 @@ module TypeScript {
         private visitExpressionStatement(node: ExpressionStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -581,7 +599,7 @@ module TypeScript {
         private visitForInStatement(node: ForInStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -592,7 +610,7 @@ module TypeScript {
         private visitForStatement(node: ForStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -603,7 +621,7 @@ module TypeScript {
         private visitIfStatement(node: IfStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -614,7 +632,7 @@ module TypeScript {
         private visitLabeledStatement(node: LabeledStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -625,7 +643,7 @@ module TypeScript {
         private visitReturnStatement(node: ReturnStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -636,7 +654,7 @@ module TypeScript {
         private visitSwitchStatement(node: SwitchStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -647,7 +665,7 @@ module TypeScript {
         private visitThrowStatement(node: ThrowStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -658,7 +676,7 @@ module TypeScript {
         private visitTryStatement(node: TryStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -669,7 +687,7 @@ module TypeScript {
         private visitWhileStatement(node: WhileStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -680,7 +698,7 @@ module TypeScript {
         private visitWithStatement(node: WithStatementSyntax): void {
             if (this.inAmbientDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_declarations);
+                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 this.skip(node);
                 return;
             }
@@ -710,6 +728,49 @@ module TypeScript {
             this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitVariableStatement(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private visitObjectType(node: ObjectTypeSyntax): void {
+            // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = true;
+            super.visitObjectType(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private visitArrayType(node: ArrayTypeSyntax): void {
+            // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = true;
+            super.visitArrayType(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private visitFunctionType(node: FunctionTypeSyntax): void {
+            // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = true;
+            super.visitFunctionType(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private visitConstructorType(node: ConstructorTypeSyntax): void {
+            // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = true;
+            super.visitConstructorType(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
+        private visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
+            if (this.inAmbientDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts);
+                this.skip(node);
+                return;
+            }
+
+            super.visitEqualsValueClause(node);
         }
     }
 }
