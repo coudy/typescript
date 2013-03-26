@@ -231,6 +231,17 @@ module TypeScript {
             code: 1035
         },
 
+        Statements_are_not_allowed_in_declaration_files: {
+            category: DiagnosticCategory.Error,
+            message: "Statements are not allowed in declaration files.",
+            code: 1036
+        },
+
+        Implementations_are_not_allowed_in_declaration_files: {
+            category: DiagnosticCategory.Error,
+            message: "Implementations are not allowed in declaration files.",
+            code: 1037
+        },
 
 
 

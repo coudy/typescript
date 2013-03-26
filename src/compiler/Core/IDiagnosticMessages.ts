@@ -42,6 +42,8 @@ module TypeScript {
         Enum_element_must_have_initializer: DiagnosticInfo;
         _super__invocation_cannot_have_type_arguments: DiagnosticInfo;
         Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier: DiagnosticInfo;
+        Statements_are_not_allowed_in_declaration_files: DiagnosticInfo;
+        Implementations_are_not_allowed_in_declaration_files: DiagnosticInfo;
 
 
 

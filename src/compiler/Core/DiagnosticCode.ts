@@ -42,6 +42,8 @@ module TypeScript {
         Enum_element_must_have_initializer,
         _super__invocation_cannot_have_type_arguments,
         Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier,
+        Statements_are_not_allowed_in_declaration_files,
+        Implementations_are_not_allowed_in_declaration_files,
 
 
 

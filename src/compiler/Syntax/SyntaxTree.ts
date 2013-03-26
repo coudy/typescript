@@ -231,7 +231,7 @@ module TypeScript {
             super.visitIndexSignature(node);
         }
 
-        checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): void {
+        private checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): void {
             var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
             var heritageClauseFullStart = heritageClausesFullStart;
 
@@ -278,13 +278,13 @@ module TypeScript {
             }
         }
 
-        visitClassDeclaration(node: ClassDeclarationSyntax): void {
+        private visitClassDeclaration(node: ClassDeclarationSyntax): void {
             this.checkClassDeclarationHeritageClauses(node);
 
             super.visitClassDeclaration(node);
         }
 
-        checkInterfaceDeclarationHeritageClauses(node: InterfaceDeclarationSyntax): void {
+        private checkInterfaceDeclarationHeritageClauses(node: InterfaceDeclarationSyntax): void {
             var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
             var heritageClauseFullStart = heritageClausesFullStart;
 
@@ -314,13 +314,13 @@ module TypeScript {
             }
         }
 
-        visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
+        private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
             this.checkInterfaceDeclarationHeritageClauses(node);
 
             super.visitInterfaceDeclaration(node);
         }
 
-        checkClassElementModifiers(list: ISyntaxList): void {
+        private checkClassElementModifiers(list: ISyntaxList): void {
             var modifierFullStart = this.position();
 
             var seenAccessibilityModifier = false;
@@ -364,31 +364,31 @@ module TypeScript {
             }
         }
 
-        visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
+        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
             this.checkClassElementModifiers(node.modifiers);
 
             super.visitMemberVariableDeclaration(node);
         }
 
-        visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
+        private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
             this.checkClassElementModifiers(node.modifiers);
 
             super.visitMemberFunctionDeclaration(node);
         }
 
-        visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
+        private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
             this.checkClassElementModifiers(node.modifiers);
 
             super.visitGetMemberAccessorDeclaration(node);
         }
 
-        visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
+        private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
             this.checkClassElementModifiers(node.modifiers);
 
             super.visitSetMemberAccessorDeclaration(node);
         }
 
-        checkEnumDeclarationElements(node: EnumDeclarationSyntax): void {
+        private checkEnumDeclarationElements(node: EnumDeclarationSyntax): void {
             var enumElementsFullStart = this.childFullStart(node, node.enumElements);
             var enumElementFullStart = enumElementsFullStart;
             var seenExplicitMember = false;
@@ -411,13 +411,13 @@ module TypeScript {
             }
         }
 
-        visitEnumDeclaration(node: EnumDeclarationSyntax): void {
+        private visitEnumDeclaration(node: EnumDeclarationSyntax): void {
             this.checkEnumDeclarationElements(node);
             
             super.visitEnumDeclaration(node);
         }
 
-        visitInvocationExpression(node: InvocationExpressionSyntax): void {
+        private visitInvocationExpression(node: InvocationExpressionSyntax): void {
             if (node.expression.kind() === SyntaxKind.SuperKeyword &&
                 node.argumentList.typeArgumentList !== null) {
                 this.pushDiagnostic1(this.position(), node,
@@ -427,7 +427,7 @@ module TypeScript {
             super.visitInvocationExpression(node);
         }
 
-        visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
+        private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.isDeclaration) {
             }
             else {
@@ -440,6 +440,193 @@ module TypeScript {
             }
 
             super.visitModuleDeclaration(node);
+        }
+
+        private visitBlock(node: BlockSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Implementations_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitBlock(node);
+        }
+
+        private visitBreakStatement(node: BreakStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node,
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitBreakStatement(node);
+        }
+
+        private visitContinueStatement(node: ContinueStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node,
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitContinueStatement(node);
+        }
+
+        private visitDebuggerStatement(node: DebuggerStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node,
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitDebuggerStatement(node);
+        }
+
+        private visitDoStatement(node: DoStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitDoStatement(node);
+        }
+
+        private visitEmptyStatement(node: EmptyStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node,
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitEmptyStatement(node);
+        }
+
+        private visitExpressionStatement(node: ExpressionStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node,
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitExpressionStatement(node);
+        }
+
+        private visitForInStatement(node: ForInStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitForInStatement(node);
+        }
+
+        private visitForStatement(node: ForStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitForStatement(node);
+        }
+
+        private visitIfStatement(node: IfStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitIfStatement(node);
+        }
+
+        private visitLabeledStatement(node: LabeledStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitLabeledStatement(node);
+        }
+
+        private visitReturnStatement(node: ReturnStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitReturnStatement(node);
+        }
+
+        private visitSwitchStatement(node: SwitchStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitSwitchStatement(node);
+        }
+
+        private visitThrowStatement(node: ThrowStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitThrowStatement(node);
+        }
+
+        private visitTryStatement(node: TryStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitTryStatement(node);
+        }
+
+        private visitWhileStatement(node: WhileStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitWhileStatement(node);
+        }
+
+        private visitWithStatement(node: WithStatementSyntax): void {
+            if (this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
+                    DiagnosticCode.Statements_are_not_allowed_in_declaration_files);
+                this.skip(node);
+                return;
+            }
+
+            super.visitWithStatement(node);
         }
     }
 }

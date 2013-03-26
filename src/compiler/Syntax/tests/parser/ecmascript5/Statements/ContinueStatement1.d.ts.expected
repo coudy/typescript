@@ -1,0 +1,46 @@
+{
+    "isDeclaration": true,
+    "languageVersion": "EcmaScript5",
+    "parseOptions": {
+        "allowAutomaticSemicolonInsertion": true
+    },
+    "diagnostics": [
+        {
+            "_position": 0,
+            "_width": 9,
+            "_diagnosticCode": "Statements_are_not_allowed_in_declaration_files"
+        }
+    ],
+    "sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 9,
+        "hasZeroWidthToken": true,
+        "moduleElements": [
+            {
+                "kind": "ContinueStatement",
+                "fullWidth": 9,
+                "continueKeyword": {
+                    "kind": "ContinueKeyword",
+                    "width": 8,
+                    "text": "continue"
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "text": ";"
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    },
+    "lineMap": {
+        "lineStarts": [
+            0
+        ],
+        "length": 9
+    }
+}
