@@ -40,6 +40,7 @@ module TypeScript {
         _0__modifier_cannot_appear_on_a_class_element,
         Interface_declaration_cannot_have__implements__clause,
         Enum_element_must_have_initializer,
+        _super__invocation_cannot_have_type_arguments,
 
 
 

@@ -406,5 +406,15 @@ module TypeScript {
             
             super.visitEnumDeclaration(node);
         }
+
+        visitInvocationExpression(node: InvocationExpressionSyntax): void {
+            if (node.expression.kind() === SyntaxKind.SuperKeyword &&
+                node.argumentList.typeArgumentList !== null) {
+                this.pushDiagnostic1(this.position(), node,
+                    DiagnosticCode._super__invocation_cannot_have_type_arguments);
+            }
+
+            super.visitInvocationExpression(node);
+        }
     }
 }

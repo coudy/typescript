@@ -219,6 +219,12 @@ module TypeScript {
             code: 1033
         },
 
+        _super__invocation_cannot_have_type_arguments: {
+            category: DiagnosticCategory.Error,
+            message: "'super' invocation cannot have type arguments.",
+            code: 1034
+        },
+
 
 
 
