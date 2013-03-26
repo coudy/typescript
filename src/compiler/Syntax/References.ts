@@ -40,7 +40,6 @@
 ///<reference path='SyntaxToken.generated.ts' />
 ///<reference path='SyntaxToken.ts' />
 ///<reference path='SyntaxTokenReplacer.ts' />
-///<reference path='SyntaxTree.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 ///<reference path='SyntaxTriviaList.ts' />
 ///<reference path='SyntaxUtilities.ts' />
@@ -61,6 +60,9 @@
 
 // Parser depends on PositionTrackingWalker
 ///<reference path='Parser.ts' />
+
+// SyntaxTree depends on PositionTrackingWalker
+///<reference path='SyntaxTree.ts' />
 
 ///<reference path='TextSpanWalker.ts' />
 ///<reference path='Unicode.ts' />

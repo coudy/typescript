@@ -14757,58 +14757,6 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    var SyntaxTree = (function () {
-        function SyntaxTree(sourceUnit, isDeclaration, diagnostics, fileName, lineMap, languageVersion, parseOtions) {
-            this._sourceUnit = sourceUnit;
-            this._isDeclaration = isDeclaration;
-            this._diagnostics = diagnostics;
-            this._fileName = fileName;
-            this._lineMap = lineMap;
-            this._languageVersion = languageVersion;
-            this._parseOptions = parseOtions;
-        }
-        SyntaxTree.prototype.toJSON = function (key) {
-            var result = {};
-            result.isDeclaration = this._isDeclaration;
-            result.languageVersion = (TypeScript.LanguageVersion)._map[this._languageVersion];
-            result.parseOptions = this._parseOptions;
-            if (this._diagnostics.length > 0) {
-                result.diagnostics = this._diagnostics;
-            }
-            result.sourceUnit = this._sourceUnit;
-            result.lineMap = this._lineMap;
-            return result;
-        };
-        SyntaxTree.prototype.sourceUnit = function () {
-            return this._sourceUnit;
-        };
-        SyntaxTree.prototype.isDeclaration = function () {
-            return this._isDeclaration;
-        };
-        SyntaxTree.prototype.diagnostics = function () {
-            return this._diagnostics;
-        };
-        SyntaxTree.prototype.fileName = function () {
-            return this._fileName;
-        };
-        SyntaxTree.prototype.lineMap = function () {
-            return this._lineMap;
-        };
-        SyntaxTree.prototype.languageVersion = function () {
-            return this._languageVersion;
-        };
-        SyntaxTree.prototype.parseOptions = function () {
-            return this._parseOptions;
-        };
-        SyntaxTree.prototype.structuralEquals = function (tree) {
-            return TypeScript.ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), TypeScript.SyntaxDiagnostic.equals) && this.sourceUnit().structuralEquals(tree.sourceUnit());
-        };
-        return SyntaxTree;
-    })();
-    TypeScript.SyntaxTree = SyntaxTree;    
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
     (function (Syntax) {
         var SyntaxTrivia = (function () {
             function SyntaxTrivia(kind, text) {
@@ -19223,22 +19171,6 @@ var TypeScript;
             };
             return ParserImpl;
         })();        
-        var GrammarCheckerWalker = (function (_super) {
-            __extends(GrammarCheckerWalker, _super);
-            function GrammarCheckerWalker(fileName, diagnostics, isDeclaration) {
-                _super.call(this);
-                this.fileName = fileName;
-                this.diagnostics = diagnostics;
-                this.isDeclaration = isDeclaration;
-            }
-            GrammarCheckerWalker.prototype.visitCatchClause = function (node) {
-                if (node.typeAnnotation) {
-                    var offSet = TypeScript.Syntax.childOffset(node, node.typeAnnotation);
-                    this.diagnostics.push(new TypeScript.SyntaxDiagnostic(this.fileName, this.position() + offSet + node.typeAnnotation.leadingTriviaWidth(), node.typeAnnotation.width(), 15 /* A_catch_clause_variable_cannot_have_a_type_annotation */ , null));
-                }
-            };
-            return GrammarCheckerWalker;
-        })(TypeScript.PositionTrackingWalker);        
         function parse(fileName, text, isDeclaration, languageVersion, options) {
             if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
             if (typeof options === "undefined") { options = null; }
@@ -19257,6 +19189,86 @@ var TypeScript;
         Parser.incrementalParse = incrementalParse;
     })(TypeScript.Parser || (TypeScript.Parser = {}));
     var Parser = TypeScript.Parser;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var SyntaxTree = (function () {
+        function SyntaxTree(sourceUnit, isDeclaration, diagnostics, fileName, lineMap, languageVersion, parseOtions) {
+            this._allDiagnostics = null;
+            this._sourceUnit = sourceUnit;
+            this._isDeclaration = isDeclaration;
+            this._parserDiagnostics = diagnostics;
+            this._fileName = fileName;
+            this._lineMap = lineMap;
+            this._languageVersion = languageVersion;
+            this._parseOptions = parseOtions;
+        }
+        SyntaxTree.prototype.toJSON = function (key) {
+            var result = {};
+            result.isDeclaration = this._isDeclaration;
+            result.languageVersion = (TypeScript.LanguageVersion)._map[this._languageVersion];
+            result.parseOptions = this._parseOptions;
+            if (this.diagnostics().length > 0) {
+                result.diagnostics = this.diagnostics();
+            }
+            result.sourceUnit = this._sourceUnit;
+            result.lineMap = this._lineMap;
+            return result;
+        };
+        SyntaxTree.prototype.sourceUnit = function () {
+            return this._sourceUnit;
+        };
+        SyntaxTree.prototype.isDeclaration = function () {
+            return this._isDeclaration;
+        };
+        SyntaxTree.prototype.computeDiagnostics = function () {
+            if (this._parserDiagnostics.length > 0) {
+                return this._parserDiagnostics;
+            }
+            var diagnostics = [];
+            this.sourceUnit().accept(new GrammarCheckerWalker(this.fileName(), diagnostics, this.isDeclaration()));
+            return diagnostics;
+        };
+        SyntaxTree.prototype.diagnostics = function () {
+            if (this._allDiagnostics === null) {
+                this._allDiagnostics = this.computeDiagnostics();
+            }
+            return this._allDiagnostics;
+        };
+        SyntaxTree.prototype.fileName = function () {
+            return this._fileName;
+        };
+        SyntaxTree.prototype.lineMap = function () {
+            return this._lineMap;
+        };
+        SyntaxTree.prototype.languageVersion = function () {
+            return this._languageVersion;
+        };
+        SyntaxTree.prototype.parseOptions = function () {
+            return this._parseOptions;
+        };
+        SyntaxTree.prototype.structuralEquals = function (tree) {
+            return TypeScript.ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), TypeScript.SyntaxDiagnostic.equals) && this.sourceUnit().structuralEquals(tree.sourceUnit());
+        };
+        return SyntaxTree;
+    })();
+    TypeScript.SyntaxTree = SyntaxTree;    
+    var GrammarCheckerWalker = (function (_super) {
+        __extends(GrammarCheckerWalker, _super);
+        function GrammarCheckerWalker(fileName, diagnostics, isDeclaration) {
+            _super.call(this);
+            this.fileName = fileName;
+            this.diagnostics = diagnostics;
+            this.isDeclaration = isDeclaration;
+        }
+        GrammarCheckerWalker.prototype.visitCatchClause = function (node) {
+            if (node.typeAnnotation) {
+                var offSet = TypeScript.Syntax.childOffset(node, node.typeAnnotation);
+                this.diagnostics.push(new TypeScript.SyntaxDiagnostic(this.fileName, this.position() + offSet + node.typeAnnotation.leadingTriviaWidth(), node.typeAnnotation.width(), 15 /* A_catch_clause_variable_cannot_have_a_type_annotation */ , null));
+            }
+        };
+        return GrammarCheckerWalker;
+    })(TypeScript.PositionTrackingWalker);    
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {

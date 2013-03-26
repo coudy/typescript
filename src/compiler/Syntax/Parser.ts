@@ -1588,11 +1588,6 @@ module TypeScript.Parser {
             var sourceUnit = this.parseSourceUnit();
 
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
-            //if (allDiagnostics.length === 0) {
-            //    // If we have no scanner/parser errors, then also check for grammar errors as well.
-            //    sourceUnit.accept(new GrammarCheckerWalker(this.fileName, allDiagnostics, isDeclaration));
-            //}
-
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 
             return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.source.languageVersion(), this.parseOptions);
@@ -5531,23 +5526,6 @@ module TypeScript.Parser {
 
                 default:
                     throw Errors.invalidOperation();
-            }
-        }
-    }
-
-    class GrammarCheckerWalker extends PositionTrackingWalker {
-        constructor(private fileName: string,
-                    private diagnostics: IDiagnostic[],
-                    private isDeclaration: bool) {
-            super();
-        }
-
-        private visitCatchClause(node: CatchClauseSyntax): void {
-            if (node.typeAnnotation) {
-                var offSet = Syntax.childOffset(node, node.typeAnnotation);
-                this.diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                    this.position() + offSet + node.typeAnnotation.leadingTriviaWidth(),
-                    node.typeAnnotation.width(), DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation, null));
             }
         }
     }
