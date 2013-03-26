@@ -18070,42 +18070,62 @@ var TypeScript;
         DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation = 24;
         DiagnosticCode._map[25] = "Index_signature_parameter_type_must_be__string__or__number_";
         DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_ = 25;
-        DiagnosticCode._map[26] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 26;
-        DiagnosticCode._map[27] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 27;
-        DiagnosticCode._map[28] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 28;
-        DiagnosticCode._map[29] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 29;
-        DiagnosticCode._map[30] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 30;
-        DiagnosticCode._map[31] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 31;
-        DiagnosticCode._map[32] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 32;
-        DiagnosticCode._map[33] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 33;
-        DiagnosticCode._map[34] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 34;
-        DiagnosticCode._map[35] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 35;
-        DiagnosticCode._map[36] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 36;
-        DiagnosticCode._map[37] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 37;
-        DiagnosticCode._map[38] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 38;
-        DiagnosticCode._map[39] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 39;
-        DiagnosticCode._map[40] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 40;
-        DiagnosticCode._map[41] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 41;
-        DiagnosticCode._map[42] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 42;
-        DiagnosticCode._map[43] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 43;
+        DiagnosticCode._map[26] = "_extends__clause_already_seen";
+        DiagnosticCode._extends__clause_already_seen = 26;
+        DiagnosticCode._map[27] = "_extends__clause_must_precede__implements__clause";
+        DiagnosticCode._extends__clause_must_precede__implements__clause = 27;
+        DiagnosticCode._map[28] = "Class_can_only_extend_single_type";
+        DiagnosticCode.Class_can_only_extend_single_type = 28;
+        DiagnosticCode._map[29] = "_implements__clause_already_seen";
+        DiagnosticCode._implements__clause_already_seen = 29;
+        DiagnosticCode._map[30] = "Accessibility_modifier_already_seen";
+        DiagnosticCode.Accessibility_modifier_already_seen = 30;
+        DiagnosticCode._map[31] = "Accessibility_modifier_must_precede__static__modifier";
+        DiagnosticCode.Accessibility_modifier_must_precede__static__modifier = 31;
+        DiagnosticCode._map[32] = "_static__modifier_already_seen";
+        DiagnosticCode._static__modifier_already_seen = 32;
+        DiagnosticCode._map[33] = "_0__modifier_cannot_appear_on_a_class_element";
+        DiagnosticCode._0__modifier_cannot_appear_on_a_class_element = 33;
+        DiagnosticCode._map[34] = "Interface_declaration_cannot_have__implements__clause";
+        DiagnosticCode.Interface_declaration_cannot_have__implements__clause = 34;
+        DiagnosticCode._map[35] = "Enum_element_must_have_initializer";
+        DiagnosticCode.Enum_element_must_have_initializer = 35;
+        DiagnosticCode._map[36] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 36;
+        DiagnosticCode._map[37] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 37;
+        DiagnosticCode._map[38] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 38;
+        DiagnosticCode._map[39] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 39;
+        DiagnosticCode._map[40] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 40;
+        DiagnosticCode._map[41] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 41;
+        DiagnosticCode._map[42] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 42;
+        DiagnosticCode._map[43] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 43;
+        DiagnosticCode._map[44] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 44;
+        DiagnosticCode._map[45] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 45;
+        DiagnosticCode._map[46] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 46;
+        DiagnosticCode._map[47] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 47;
+        DiagnosticCode._map[48] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 48;
+        DiagnosticCode._map[49] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 49;
+        DiagnosticCode._map[50] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 50;
+        DiagnosticCode._map[51] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 51;
+        DiagnosticCode._map[52] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 52;
+        DiagnosticCode._map[53] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 53;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -18125,212 +18145,262 @@ var TypeScript;
         Unrecognized_escape_sequence: {
             category: 1 /* Error */ ,
             message: "Unrecognized escape sequence.",
-            code: 100
+            code: 1000
         },
         Unexpected_character_0: {
             category: 1 /* Error */ ,
             message: "Unexpected character {0}.",
-            code: 101
+            code: 1001
         },
         Missing_closing_quote_character: {
             category: 1 /* Error */ ,
             message: "Missing close quote character.",
-            code: 102
+            code: 1002
         },
         Identifier_expected: {
             category: 1 /* Error */ ,
             message: "Identifier expected.",
-            code: 103
+            code: 1003
         },
         _0_keyword_expected: {
             category: 1 /* Error */ ,
             message: "'{0}' keyword expected.",
-            code: 104
+            code: 1004
         },
         _0_expected: {
             category: 1 /* Error */ ,
             message: "'{0}' expected.",
-            code: 105
+            code: 1005
         },
         Identifier_expected__0_is_a_keyword: {
             category: 1 /* Error */ ,
             message: "Identifier expected; '{0}' is a keyword.",
-            code: 106
+            code: 1006
         },
         Automatic_semicolon_insertion_not_allowed: {
             category: 1 /* Error */ ,
             message: "Automatic semicolon insertion not allowed.",
-            code: 107
+            code: 1007
         },
         Unexpected_token__0_expected: {
             category: 1 /* Error */ ,
             message: "Unexpected token; '{0}' expected.",
-            code: 108
+            code: 1008
         },
         Trailing_separator_not_allowed: {
             category: 1 /* Error */ ,
             message: "Trailing separator not allowed.",
-            code: 109
+            code: 1009
         },
         _StarSlash__expected: {
             category: 1 /* Error */ ,
             message: "'*/' expected.",
-            code: 110
+            code: 1010
         },
         _public_or_private_modifier_must_precede__static_: {
             category: 1 /* Error */ ,
             message: "'public' or 'private' modifier must precede 'static'.",
-            code: 111
+            code: 1011
         },
         Unexpected_token_: {
             category: 1 /* Error */ ,
             message: "Unexpected token.",
-            code: 112
+            code: 1012
         },
         A_catch_clause_variable_cannot_have_a_type_annotation: {
             category: 1 /* Error */ ,
             message: "A catch clause variable cannot have a type annotation.",
-            code: 113
+            code: 1013
         },
         Rest_parameter_must_be_last_in_list: {
             category: 1 /* Error */ ,
             message: "Rest parameter must be last in list.",
-            code: 114
+            code: 1014
         },
         Parameter_cannot_have_question_mark_and_initializer: {
             category: 1 /* Error */ ,
             message: "Parameter cannot have question mark and initializer.",
-            code: 115
+            code: 1015
         },
         Required_parameter_cannot_follow_optional_parameter: {
             category: 1 /* Error */ ,
             message: "required parameter cannot follow optional parameter.",
-            code: 116
+            code: 1016
         },
         Index_signatures_cannot_have_rest_parameters: {
             category: 1 /* Error */ ,
             message: "Index signatures cannot have rest parameters.",
-            code: 117
+            code: 1017
         },
         Index_signature_parameter_cannot_have_accessibility_modifiers: {
             category: 1 /* Error */ ,
             message: "Index signature parameter cannot have accessibility modifiers.",
-            code: 118
+            code: 1018
         },
         Index_signature_parameter_cannot_have_a_question_mark: {
             category: 1 /* Error */ ,
             message: "Index signature parameter cannot have a question mark.",
-            code: 119
+            code: 1019
         },
         Index_signature_parameter_cannot_have_an_initializer: {
             category: 1 /* Error */ ,
             message: "Index signature parameter cannot have an initializer.",
-            code: 120
+            code: 1020
         },
         Index_signature_must_have_a_type_annotation: {
             category: 1 /* Error */ ,
             message: "Index signature must have a type annotation.",
-            code: 121
+            code: 1021
         },
         Index_signature_parameter_must_have_a_type_annotation: {
             category: 1 /* Error */ ,
             message: "Index signature parameter must have a type annotation.",
-            code: 122
+            code: 1022
         },
         Index_signature_parameter_type_must_be__string__or__number_: {
             category: 1 /* Error */ ,
             message: "Index signature parameter type must be 'string' or 'number'.",
-            code: 123
+            code: 1023
+        },
+        _extends__clause_already_seen: {
+            category: 1 /* Error */ ,
+            message: "'extends' clause already seen.",
+            code: 1024
+        },
+        _extends__clause_must_precede__implements__clause: {
+            category: 1 /* Error */ ,
+            message: "'extends' clause must precede 'implements' clause.",
+            code: 1025
+        },
+        Class_can_only_extend_single_type: {
+            category: 1 /* Error */ ,
+            message: "Class can only extend single type.",
+            code: 1026
+        },
+        _implements__clause_already_seen: {
+            category: 1 /* Error */ ,
+            message: "'implements' clause already seen.",
+            code: 1027
+        },
+        Accessibility_modifier_already_seen: {
+            category: 1 /* Error */ ,
+            message: "Accessibility modifier already seen.",
+            code: 1028
+        },
+        Accessibility_modifier_must_precede__static__modifier: {
+            category: 1 /* Error */ ,
+            message: "Accessibility modifier must precede 'static' modifier.",
+            code: 1029
+        },
+        _static__modifier_already_seen: {
+            category: 1 /* Error */ ,
+            message: "'static' modifier already seen.",
+            code: 1030
+        },
+        _0__modifier_cannot_appear_on_a_class_element: {
+            category: 1 /* Error */ ,
+            message: "'{0}' modifier cannot appear on a class element.",
+            code: 1031
+        },
+        Interface_declaration_cannot_have__implements__clause: {
+            category: 1 /* Error */ ,
+            message: "Interface declaration cannot have 'implements' clause.",
+            code: 1032
+        },
+        Enum_element_must_have_initializer: {
+            category: 1 /* Error */ ,
+            message: "Enum element must have initializer.",
+            code: 1033
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
             message: "Duplicate identifier '{0}'.",
-            code: 200
+            code: 2000
         },
         The_name__0__does_not_exist_in_the_current_scope: {
             category: 1 /* Error */ ,
             message: "The name '{0}' does not exist in the current scope.",
-            code: 201
+            code: 2001
         },
         The_name__0__does_not_refer_to_a_value: {
             category: 1 /* Error */ ,
             message: "The name '{0}' does not refer to a value.",
-            code: 202
+            code: 2002
         },
         Keyword__super__can_only_be_used_inside_a_class_instance_method: {
             category: 1 /* Error */ ,
             message: "Keyword 'super' can only be used inside a class instance method.",
-            code: 203
+            code: 2003
         },
         The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
             category: 1 /* Error */ ,
             message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
-            code: 204
+            code: 2004
         },
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
-            code: 205
+            code: 2005
         },
         Value_of_type__0__is_not_callable: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not callable.",
-            code: 206
+            code: 2006
         },
         Value_of_type__0__is_not_newable: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not newable.",
-            code: 207
+            code: 2007
         },
         Value_of_type__0__is_not_indexable_by_type__1_: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not indexable by type '{1}'.",
-            code: 208
+            code: 2008
         },
         Operator__0__cannot_be_applied_to_types__1__and__2_: {
             category: 1 /* Error */ ,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
-            code: 209
+            code: 2009
         },
         Operator__0__cannot_be_applied_to_types__1__and__2__3: {
             category: 1 /* Error */ ,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
-            code: 210
+            code: 2010
         },
         Cannot_convert__0__to__1_: {
             category: 1 /* Error */ ,
             message: "Cannot convert '{0}' to '{1}'.",
-            code: 211
+            code: 2011
         },
         Cannot_convert__0__to__1___2: {
             category: 1 /* Error */ ,
             message: "Cannot convert '{0}' to '{1}': {2}",
-            code: 212
+            code: 2012
         },
         Expected_var__class__interface__or_module: {
             category: 1 /* Error */ ,
             message: "Expected var, class, interface, or module.",
-            code: 213
+            code: 2013
         },
         Operator__0__cannot_be_applied_to_type__1_: {
             category: 1 /* Error */ ,
             message: "Operator '{0}' cannot be applied to type '{1}'.",
-            code: 214
+            code: 2014
         },
         Getter__0__already_declared: {
             category: 1 /* Error */ ,
             message: "Getter '{0}' already declared.",
-            code: 215
+            code: 2015
         },
         Setter__0__already_declared: {
             category: 1 /* Error */ ,
             message: "Setter '{0}' already declared.",
-            code: 216
+            code: 2016
         },
         Accessor_may_not_take_type_parameters: {
             category: 1 /* Error */ ,
             message: "Accessors may not take type parameters.",
-            code: 217
+            code: 2017
         }
     };
 })(TypeScript || (TypeScript = {}));
@@ -22748,7 +22818,7 @@ var TypeScript;
                 var parent = positionedNodeOrToken.containingNode();
                 if (parent !== null) {
                     switch(parent.kind()) {
-                        case 243 /* ModuleNameModuleReference */ :
+                        case 242 /* ModuleNameModuleReference */ :
                             return true;
                         case 121 /* QualifiedName */ :
                             return true;
@@ -22771,9 +22841,8 @@ var TypeScript;
                         return (parent).type === nodeOrToken;
                     case 218 /* CastExpression */ :
                         return (parent).type === nodeOrToken;
-                    case 240 /* TypeAnnotation */ :
-                    case 229 /* ExtendsClause */ :
-                    case 228 /* ImplementsClause */ :
+                    case 239 /* TypeAnnotation */ :
+                    case 228 /* HeritageClause */ :
                     case 226 /* TypeArgumentList */ :
                         return true;
                 }
@@ -22997,17 +23066,14 @@ var TypeScript;
             NormalModeFactory.prototype.exportAssignment = function (exportKeyword, equalsToken, identifier, semicolonToken) {
                 return new TypeScript.ExportAssignmentSyntax(exportKeyword, equalsToken, identifier, semicolonToken, false);
             };
-            NormalModeFactory.prototype.classDeclaration = function (modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
-                return new TypeScript.ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, false);
+            NormalModeFactory.prototype.classDeclaration = function (modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken) {
+                return new TypeScript.ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken, false);
             };
-            NormalModeFactory.prototype.interfaceDeclaration = function (modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body) {
-                return new TypeScript.InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body, false);
+            NormalModeFactory.prototype.interfaceDeclaration = function (modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body) {
+                return new TypeScript.InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body, false);
             };
-            NormalModeFactory.prototype.extendsClause = function (extendsKeyword, typeNames) {
-                return new TypeScript.ExtendsClauseSyntax(extendsKeyword, typeNames, false);
-            };
-            NormalModeFactory.prototype.implementsClause = function (implementsKeyword, typeNames) {
-                return new TypeScript.ImplementsClauseSyntax(implementsKeyword, typeNames, false);
+            NormalModeFactory.prototype.heritageClause = function (extendsOrImplementsKeyword, typeNames) {
+                return new TypeScript.HeritageClauseSyntax(extendsOrImplementsKeyword, typeNames, false);
             };
             NormalModeFactory.prototype.moduleDeclaration = function (modifiers, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken) {
                 return new TypeScript.ModuleDeclarationSyntax(modifiers, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, false);
@@ -23257,17 +23323,14 @@ var TypeScript;
             StrictModeFactory.prototype.exportAssignment = function (exportKeyword, equalsToken, identifier, semicolonToken) {
                 return new TypeScript.ExportAssignmentSyntax(exportKeyword, equalsToken, identifier, semicolonToken, true);
             };
-            StrictModeFactory.prototype.classDeclaration = function (modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
-                return new TypeScript.ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, true);
+            StrictModeFactory.prototype.classDeclaration = function (modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken) {
+                return new TypeScript.ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken, true);
             };
-            StrictModeFactory.prototype.interfaceDeclaration = function (modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body) {
-                return new TypeScript.InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body, true);
+            StrictModeFactory.prototype.interfaceDeclaration = function (modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body) {
+                return new TypeScript.InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body, true);
             };
-            StrictModeFactory.prototype.extendsClause = function (extendsKeyword, typeNames) {
-                return new TypeScript.ExtendsClauseSyntax(extendsKeyword, typeNames, true);
-            };
-            StrictModeFactory.prototype.implementsClause = function (implementsKeyword, typeNames) {
-                return new TypeScript.ImplementsClauseSyntax(implementsKeyword, typeNames, true);
+            StrictModeFactory.prototype.heritageClause = function (extendsOrImplementsKeyword, typeNames) {
+                return new TypeScript.HeritageClauseSyntax(extendsOrImplementsKeyword, typeNames, true);
             };
             StrictModeFactory.prototype.moduleDeclaration = function (modifiers, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken) {
                 return new TypeScript.ModuleDeclarationSyntax(modifiers, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, true);
@@ -23965,42 +24028,40 @@ var TypeScript;
         SyntaxKind.TypeArgumentList = 226;
         SyntaxKind._map[227] = "TypeParameterList";
         SyntaxKind.TypeParameterList = 227;
-        SyntaxKind._map[228] = "ImplementsClause";
-        SyntaxKind.ImplementsClause = 228;
-        SyntaxKind._map[229] = "ExtendsClause";
-        SyntaxKind.ExtendsClause = 229;
-        SyntaxKind._map[230] = "EqualsValueClause";
-        SyntaxKind.EqualsValueClause = 230;
-        SyntaxKind._map[231] = "CaseSwitchClause";
-        SyntaxKind.CaseSwitchClause = 231;
-        SyntaxKind._map[232] = "DefaultSwitchClause";
-        SyntaxKind.DefaultSwitchClause = 232;
-        SyntaxKind._map[233] = "ElseClause";
-        SyntaxKind.ElseClause = 233;
-        SyntaxKind._map[234] = "CatchClause";
-        SyntaxKind.CatchClause = 234;
-        SyntaxKind._map[235] = "FinallyClause";
-        SyntaxKind.FinallyClause = 235;
-        SyntaxKind._map[236] = "TypeParameter";
-        SyntaxKind.TypeParameter = 236;
-        SyntaxKind._map[237] = "Constraint";
-        SyntaxKind.Constraint = 237;
-        SyntaxKind._map[238] = "Parameter";
-        SyntaxKind.Parameter = 238;
-        SyntaxKind._map[239] = "EnumElement";
-        SyntaxKind.EnumElement = 239;
-        SyntaxKind._map[240] = "TypeAnnotation";
-        SyntaxKind.TypeAnnotation = 240;
-        SyntaxKind._map[241] = "SimplePropertyAssignment";
-        SyntaxKind.SimplePropertyAssignment = 241;
-        SyntaxKind._map[242] = "ExternalModuleReference";
-        SyntaxKind.ExternalModuleReference = 242;
-        SyntaxKind._map[243] = "ModuleNameModuleReference";
-        SyntaxKind.ModuleNameModuleReference = 243;
-        SyntaxKind._map[244] = "GetAccessorPropertyAssignment";
-        SyntaxKind.GetAccessorPropertyAssignment = 244;
-        SyntaxKind._map[245] = "SetAccessorPropertyAssignment";
-        SyntaxKind.SetAccessorPropertyAssignment = 245;
+        SyntaxKind._map[228] = "HeritageClause";
+        SyntaxKind.HeritageClause = 228;
+        SyntaxKind._map[229] = "EqualsValueClause";
+        SyntaxKind.EqualsValueClause = 229;
+        SyntaxKind._map[230] = "CaseSwitchClause";
+        SyntaxKind.CaseSwitchClause = 230;
+        SyntaxKind._map[231] = "DefaultSwitchClause";
+        SyntaxKind.DefaultSwitchClause = 231;
+        SyntaxKind._map[232] = "ElseClause";
+        SyntaxKind.ElseClause = 232;
+        SyntaxKind._map[233] = "CatchClause";
+        SyntaxKind.CatchClause = 233;
+        SyntaxKind._map[234] = "FinallyClause";
+        SyntaxKind.FinallyClause = 234;
+        SyntaxKind._map[235] = "TypeParameter";
+        SyntaxKind.TypeParameter = 235;
+        SyntaxKind._map[236] = "Constraint";
+        SyntaxKind.Constraint = 236;
+        SyntaxKind._map[237] = "Parameter";
+        SyntaxKind.Parameter = 237;
+        SyntaxKind._map[238] = "EnumElement";
+        SyntaxKind.EnumElement = 238;
+        SyntaxKind._map[239] = "TypeAnnotation";
+        SyntaxKind.TypeAnnotation = 239;
+        SyntaxKind._map[240] = "SimplePropertyAssignment";
+        SyntaxKind.SimplePropertyAssignment = 240;
+        SyntaxKind._map[241] = "ExternalModuleReference";
+        SyntaxKind.ExternalModuleReference = 241;
+        SyntaxKind._map[242] = "ModuleNameModuleReference";
+        SyntaxKind.ModuleNameModuleReference = 242;
+        SyntaxKind._map[243] = "GetAccessorPropertyAssignment";
+        SyntaxKind.GetAccessorPropertyAssignment = 243;
+        SyntaxKind._map[244] = "SetAccessorPropertyAssignment";
+        SyntaxKind.SetAccessorPropertyAssignment = 244;
         SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
         SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
         SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -24821,9 +24882,6 @@ var TypeScript;
                 if (value) {
                     for(var name in this) {
                         if (value === this[name]) {
-                            if (name === 'modifiers' && value.childCount() === 0) {
-                                continue;
-                            }
                             result[name] = value;
                             break;
                         }
@@ -25107,7 +25165,7 @@ var TypeScript;
             return visitor.visitExternalModuleReference(this);
         };
         ExternalModuleReferenceSyntax.prototype.kind = function () {
-            return 242 /* ExternalModuleReference */ ;
+            return 241 /* ExternalModuleReference */ ;
         };
         ExternalModuleReferenceSyntax.prototype.childCount = function () {
             return 4;
@@ -25169,7 +25227,7 @@ var TypeScript;
             return visitor.visitModuleNameModuleReference(this);
         };
         ModuleNameModuleReferenceSyntax.prototype.kind = function () {
-            return 243 /* ModuleNameModuleReference */ ;
+            return 242 /* ModuleNameModuleReference */ ;
         };
         ModuleNameModuleReferenceSyntax.prototype.childCount = function () {
             return 1;
@@ -25347,14 +25405,13 @@ var TypeScript;
     TypeScript.ExportAssignmentSyntax = ExportAssignmentSyntax;    
     var ClassDeclarationSyntax = (function (_super) {
         __extends(ClassDeclarationSyntax, _super);
-        function ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, parsedInStrictMode) {
+        function ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken, parsedInStrictMode) {
             _super.call(this, parsedInStrictMode);
             this.modifiers = modifiers;
             this.classKeyword = classKeyword;
             this.identifier = identifier;
             this.typeParameterList = typeParameterList;
-            this.extendsClause = extendsClause;
-            this.implementsClause = implementsClause;
+            this.heritageClauses = heritageClauses;
             this.openBraceToken = openBraceToken;
             this.classElements = classElements;
             this.closeBraceToken = closeBraceToken;
@@ -25366,7 +25423,7 @@ var TypeScript;
             return 130 /* ClassDeclaration */ ;
         };
         ClassDeclarationSyntax.prototype.childCount = function () {
-            return 9;
+            return 8;
         };
         ClassDeclarationSyntax.prototype.childAt = function (slot) {
             switch(slot) {
@@ -25379,14 +25436,12 @@ var TypeScript;
                 case 3:
                     return this.typeParameterList;
                 case 4:
-                    return this.extendsClause;
+                    return this.heritageClauses;
                 case 5:
-                    return this.implementsClause;
-                case 6:
                     return this.openBraceToken;
-                case 7:
+                case 6:
                     return this.classElements;
-                case 8:
+                case 7:
                     return this.closeBraceToken;
                 default:
                     throw TypeScript.Errors.invalidOperation();
@@ -25395,17 +25450,17 @@ var TypeScript;
         ClassDeclarationSyntax.prototype.isModuleElement = function () {
             return true;
         };
-        ClassDeclarationSyntax.prototype.update = function (modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
-            if (this.modifiers === modifiers && this.classKeyword === classKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.extendsClause === extendsClause && this.implementsClause === implementsClause && this.openBraceToken === openBraceToken && this.classElements === classElements && this.closeBraceToken === closeBraceToken) {
+        ClassDeclarationSyntax.prototype.update = function (modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken) {
+            if (this.modifiers === modifiers && this.classKeyword === classKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.heritageClauses === heritageClauses && this.openBraceToken === openBraceToken && this.classElements === classElements && this.closeBraceToken === closeBraceToken) {
                 return this;
             }
-            return new ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, this.parsedInStrictMode());
+            return new ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken, this.parsedInStrictMode());
         };
         ClassDeclarationSyntax.create = function create(classKeyword, identifier, openBraceToken, closeBraceToken) {
-            return new ClassDeclarationSyntax(TypeScript.Syntax.emptyList, classKeyword, identifier, null, null, null, openBraceToken, TypeScript.Syntax.emptyList, closeBraceToken, false);
+            return new ClassDeclarationSyntax(TypeScript.Syntax.emptyList, classKeyword, identifier, null, TypeScript.Syntax.emptyList, openBraceToken, TypeScript.Syntax.emptyList, closeBraceToken, false);
         };
         ClassDeclarationSyntax.create1 = function create1(identifier) {
-            return new ClassDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(44 /* ClassKeyword */ ), identifier, null, null, null, TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptyList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
+            return new ClassDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(44 /* ClassKeyword */ ), identifier, null, TypeScript.Syntax.emptyList, TypeScript.Syntax.token(70 /* OpenBraceToken */ ), TypeScript.Syntax.emptyList, TypeScript.Syntax.token(71 /* CloseBraceToken */ ), false);
         };
         ClassDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -25414,7 +25469,7 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
         ClassDeclarationSyntax.prototype.withModifiers = function (modifiers) {
-            return this.update(modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+            return this.update(modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
         };
         ClassDeclarationSyntax.prototype.withModifier = function (modifier) {
             return this.withModifiers(TypeScript.Syntax.list([
@@ -25422,25 +25477,27 @@ var TypeScript;
             ]));
         };
         ClassDeclarationSyntax.prototype.withClassKeyword = function (classKeyword) {
-            return this.update(this.modifiers, classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+            return this.update(this.modifiers, classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
         };
         ClassDeclarationSyntax.prototype.withIdentifier = function (identifier) {
-            return this.update(this.modifiers, this.classKeyword, identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+            return this.update(this.modifiers, this.classKeyword, identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
         };
         ClassDeclarationSyntax.prototype.withTypeParameterList = function (typeParameterList) {
-            return this.update(this.modifiers, this.classKeyword, this.identifier, typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+            return this.update(this.modifiers, this.classKeyword, this.identifier, typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
         };
-        ClassDeclarationSyntax.prototype.withExtendsClause = function (extendsClause) {
-            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+        ClassDeclarationSyntax.prototype.withHeritageClauses = function (heritageClauses) {
+            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
         };
-        ClassDeclarationSyntax.prototype.withImplementsClause = function (implementsClause) {
-            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+        ClassDeclarationSyntax.prototype.withHeritageClause = function (heritageClause) {
+            return this.withHeritageClauses(TypeScript.Syntax.list([
+                heritageClause
+            ]));
         };
         ClassDeclarationSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
-            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, openBraceToken, this.classElements, this.closeBraceToken);
+            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, openBraceToken, this.classElements, this.closeBraceToken);
         };
         ClassDeclarationSyntax.prototype.withClassElements = function (classElements) {
-            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, classElements, this.closeBraceToken);
+            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, classElements, this.closeBraceToken);
         };
         ClassDeclarationSyntax.prototype.withClassElement = function (classElement) {
             return this.withClassElements(TypeScript.Syntax.list([
@@ -25448,7 +25505,7 @@ var TypeScript;
             ]));
         };
         ClassDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
-            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, closeBraceToken);
+            return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, closeBraceToken);
         };
         ClassDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
             return true;
@@ -25458,13 +25515,13 @@ var TypeScript;
     TypeScript.ClassDeclarationSyntax = ClassDeclarationSyntax;    
     var InterfaceDeclarationSyntax = (function (_super) {
         __extends(InterfaceDeclarationSyntax, _super);
-        function InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body, parsedInStrictMode) {
+        function InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body, parsedInStrictMode) {
             _super.call(this, parsedInStrictMode);
             this.modifiers = modifiers;
             this.interfaceKeyword = interfaceKeyword;
             this.identifier = identifier;
             this.typeParameterList = typeParameterList;
-            this.extendsClause = extendsClause;
+            this.heritageClauses = heritageClauses;
             this.body = body;
         }
         InterfaceDeclarationSyntax.prototype.accept = function (visitor) {
@@ -25487,7 +25544,7 @@ var TypeScript;
                 case 3:
                     return this.typeParameterList;
                 case 4:
-                    return this.extendsClause;
+                    return this.heritageClauses;
                 case 5:
                     return this.body;
                 default:
@@ -25497,17 +25554,17 @@ var TypeScript;
         InterfaceDeclarationSyntax.prototype.isModuleElement = function () {
             return true;
         };
-        InterfaceDeclarationSyntax.prototype.update = function (modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body) {
-            if (this.modifiers === modifiers && this.interfaceKeyword === interfaceKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.extendsClause === extendsClause && this.body === body) {
+        InterfaceDeclarationSyntax.prototype.update = function (modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body) {
+            if (this.modifiers === modifiers && this.interfaceKeyword === interfaceKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.heritageClauses === heritageClauses && this.body === body) {
                 return this;
             }
-            return new InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body, this.parsedInStrictMode());
+            return new InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body, this.parsedInStrictMode());
         };
         InterfaceDeclarationSyntax.create = function create(interfaceKeyword, identifier, body) {
-            return new InterfaceDeclarationSyntax(TypeScript.Syntax.emptyList, interfaceKeyword, identifier, null, null, body, false);
+            return new InterfaceDeclarationSyntax(TypeScript.Syntax.emptyList, interfaceKeyword, identifier, null, TypeScript.Syntax.emptyList, body, false);
         };
         InterfaceDeclarationSyntax.create1 = function create1(identifier) {
-            return new InterfaceDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(52 /* InterfaceKeyword */ ), identifier, null, null, ObjectTypeSyntax.create1(), false);
+            return new InterfaceDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(52 /* InterfaceKeyword */ ), identifier, null, TypeScript.Syntax.emptyList, ObjectTypeSyntax.create1(), false);
         };
         InterfaceDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -25516,7 +25573,7 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
         InterfaceDeclarationSyntax.prototype.withModifiers = function (modifiers) {
-            return this.update(modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.body);
+            return this.update(modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.body);
         };
         InterfaceDeclarationSyntax.prototype.withModifier = function (modifier) {
             return this.withModifiers(TypeScript.Syntax.list([
@@ -25524,19 +25581,24 @@ var TypeScript;
             ]));
         };
         InterfaceDeclarationSyntax.prototype.withInterfaceKeyword = function (interfaceKeyword) {
-            return this.update(this.modifiers, interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.body);
+            return this.update(this.modifiers, interfaceKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.body);
         };
         InterfaceDeclarationSyntax.prototype.withIdentifier = function (identifier) {
-            return this.update(this.modifiers, this.interfaceKeyword, identifier, this.typeParameterList, this.extendsClause, this.body);
+            return this.update(this.modifiers, this.interfaceKeyword, identifier, this.typeParameterList, this.heritageClauses, this.body);
         };
         InterfaceDeclarationSyntax.prototype.withTypeParameterList = function (typeParameterList) {
-            return this.update(this.modifiers, this.interfaceKeyword, this.identifier, typeParameterList, this.extendsClause, this.body);
+            return this.update(this.modifiers, this.interfaceKeyword, this.identifier, typeParameterList, this.heritageClauses, this.body);
         };
-        InterfaceDeclarationSyntax.prototype.withExtendsClause = function (extendsClause) {
-            return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, extendsClause, this.body);
+        InterfaceDeclarationSyntax.prototype.withHeritageClauses = function (heritageClauses) {
+            return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, heritageClauses, this.body);
+        };
+        InterfaceDeclarationSyntax.prototype.withHeritageClause = function (heritageClause) {
+            return this.withHeritageClauses(TypeScript.Syntax.list([
+                heritageClause
+            ]));
         };
         InterfaceDeclarationSyntax.prototype.withBody = function (body) {
-            return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, body);
+            return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.heritageClauses, body);
         };
         InterfaceDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
             return true;
@@ -25544,122 +25606,61 @@ var TypeScript;
         return InterfaceDeclarationSyntax;
     })(TypeScript.SyntaxNode);
     TypeScript.InterfaceDeclarationSyntax = InterfaceDeclarationSyntax;    
-    var ExtendsClauseSyntax = (function (_super) {
-        __extends(ExtendsClauseSyntax, _super);
-        function ExtendsClauseSyntax(extendsKeyword, typeNames, parsedInStrictMode) {
+    var HeritageClauseSyntax = (function (_super) {
+        __extends(HeritageClauseSyntax, _super);
+        function HeritageClauseSyntax(extendsOrImplementsKeyword, typeNames, parsedInStrictMode) {
             _super.call(this, parsedInStrictMode);
-            this.extendsKeyword = extendsKeyword;
+            this.extendsOrImplementsKeyword = extendsOrImplementsKeyword;
             this.typeNames = typeNames;
         }
-        ExtendsClauseSyntax.prototype.accept = function (visitor) {
-            return visitor.visitExtendsClause(this);
+        HeritageClauseSyntax.prototype.accept = function (visitor) {
+            return visitor.visitHeritageClause(this);
         };
-        ExtendsClauseSyntax.prototype.kind = function () {
-            return 229 /* ExtendsClause */ ;
+        HeritageClauseSyntax.prototype.kind = function () {
+            return 228 /* HeritageClause */ ;
         };
-        ExtendsClauseSyntax.prototype.childCount = function () {
+        HeritageClauseSyntax.prototype.childCount = function () {
             return 2;
         };
-        ExtendsClauseSyntax.prototype.childAt = function (slot) {
+        HeritageClauseSyntax.prototype.childAt = function (slot) {
             switch(slot) {
                 case 0:
-                    return this.extendsKeyword;
+                    return this.extendsOrImplementsKeyword;
                 case 1:
                     return this.typeNames;
                 default:
                     throw TypeScript.Errors.invalidOperation();
             }
         };
-        ExtendsClauseSyntax.prototype.update = function (extendsKeyword, typeNames) {
-            if (this.extendsKeyword === extendsKeyword && this.typeNames === typeNames) {
+        HeritageClauseSyntax.prototype.update = function (extendsOrImplementsKeyword, typeNames) {
+            if (this.extendsOrImplementsKeyword === extendsOrImplementsKeyword && this.typeNames === typeNames) {
                 return this;
             }
-            return new ExtendsClauseSyntax(extendsKeyword, typeNames, this.parsedInStrictMode());
+            return new HeritageClauseSyntax(extendsOrImplementsKeyword, typeNames, this.parsedInStrictMode());
         };
-        ExtendsClauseSyntax.create1 = function create1(typeNames) {
-            return new ExtendsClauseSyntax(TypeScript.Syntax.token(48 /* ExtendsKeyword */ ), typeNames, false);
-        };
-        ExtendsClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
+        HeritageClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
         };
-        ExtendsClauseSyntax.prototype.withTrailingTrivia = function (trivia) {
+        HeritageClauseSyntax.prototype.withTrailingTrivia = function (trivia) {
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
-        ExtendsClauseSyntax.prototype.withExtendsKeyword = function (extendsKeyword) {
-            return this.update(extendsKeyword, this.typeNames);
+        HeritageClauseSyntax.prototype.withExtendsOrImplementsKeyword = function (extendsOrImplementsKeyword) {
+            return this.update(extendsOrImplementsKeyword, this.typeNames);
         };
-        ExtendsClauseSyntax.prototype.withTypeNames = function (typeNames) {
-            return this.update(this.extendsKeyword, typeNames);
+        HeritageClauseSyntax.prototype.withTypeNames = function (typeNames) {
+            return this.update(this.extendsOrImplementsKeyword, typeNames);
         };
-        ExtendsClauseSyntax.prototype.withTypeName = function (typeName) {
+        HeritageClauseSyntax.prototype.withTypeName = function (typeName) {
             return this.withTypeNames(TypeScript.Syntax.separatedList([
                 typeName
             ]));
         };
-        ExtendsClauseSyntax.prototype.isTypeScriptSpecific = function () {
+        HeritageClauseSyntax.prototype.isTypeScriptSpecific = function () {
             return true;
         };
-        return ExtendsClauseSyntax;
+        return HeritageClauseSyntax;
     })(TypeScript.SyntaxNode);
-    TypeScript.ExtendsClauseSyntax = ExtendsClauseSyntax;    
-    var ImplementsClauseSyntax = (function (_super) {
-        __extends(ImplementsClauseSyntax, _super);
-        function ImplementsClauseSyntax(implementsKeyword, typeNames, parsedInStrictMode) {
-            _super.call(this, parsedInStrictMode);
-            this.implementsKeyword = implementsKeyword;
-            this.typeNames = typeNames;
-        }
-        ImplementsClauseSyntax.prototype.accept = function (visitor) {
-            return visitor.visitImplementsClause(this);
-        };
-        ImplementsClauseSyntax.prototype.kind = function () {
-            return 228 /* ImplementsClause */ ;
-        };
-        ImplementsClauseSyntax.prototype.childCount = function () {
-            return 2;
-        };
-        ImplementsClauseSyntax.prototype.childAt = function (slot) {
-            switch(slot) {
-                case 0:
-                    return this.implementsKeyword;
-                case 1:
-                    return this.typeNames;
-                default:
-                    throw TypeScript.Errors.invalidOperation();
-            }
-        };
-        ImplementsClauseSyntax.prototype.update = function (implementsKeyword, typeNames) {
-            if (this.implementsKeyword === implementsKeyword && this.typeNames === typeNames) {
-                return this;
-            }
-            return new ImplementsClauseSyntax(implementsKeyword, typeNames, this.parsedInStrictMode());
-        };
-        ImplementsClauseSyntax.create1 = function create1(typeNames) {
-            return new ImplementsClauseSyntax(TypeScript.Syntax.token(51 /* ImplementsKeyword */ ), typeNames, false);
-        };
-        ImplementsClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
-            return _super.prototype.withLeadingTrivia.call(this, trivia);
-        };
-        ImplementsClauseSyntax.prototype.withTrailingTrivia = function (trivia) {
-            return _super.prototype.withTrailingTrivia.call(this, trivia);
-        };
-        ImplementsClauseSyntax.prototype.withImplementsKeyword = function (implementsKeyword) {
-            return this.update(implementsKeyword, this.typeNames);
-        };
-        ImplementsClauseSyntax.prototype.withTypeNames = function (typeNames) {
-            return this.update(this.implementsKeyword, typeNames);
-        };
-        ImplementsClauseSyntax.prototype.withTypeName = function (typeName) {
-            return this.withTypeNames(TypeScript.Syntax.separatedList([
-                typeName
-            ]));
-        };
-        ImplementsClauseSyntax.prototype.isTypeScriptSpecific = function () {
-            return true;
-        };
-        return ImplementsClauseSyntax;
-    })(TypeScript.SyntaxNode);
-    TypeScript.ImplementsClauseSyntax = ImplementsClauseSyntax;    
+    TypeScript.HeritageClauseSyntax = HeritageClauseSyntax;    
     var ModuleDeclarationSyntax = (function (_super) {
         __extends(ModuleDeclarationSyntax, _super);
         function ModuleDeclarationSyntax(modifiers, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, parsedInStrictMode) {
@@ -26078,7 +26079,7 @@ var TypeScript;
             return visitor.visitEqualsValueClause(this);
         };
         EqualsValueClauseSyntax.prototype.kind = function () {
-            return 230 /* EqualsValueClause */ ;
+            return 229 /* EqualsValueClause */ ;
         };
         EqualsValueClauseSyntax.prototype.childCount = function () {
             return 2;
@@ -27019,7 +27020,7 @@ var TypeScript;
             return visitor.visitTypeAnnotation(this);
         };
         TypeAnnotationSyntax.prototype.kind = function () {
-            return 240 /* TypeAnnotation */ ;
+            return 239 /* TypeAnnotation */ ;
         };
         TypeAnnotationSyntax.prototype.childCount = function () {
             return 2;
@@ -27152,7 +27153,7 @@ var TypeScript;
             return visitor.visitParameter(this);
         };
         ParameterSyntax.prototype.kind = function () {
-            return 238 /* Parameter */ ;
+            return 237 /* Parameter */ ;
         };
         ParameterSyntax.prototype.childCount = function () {
             return 6;
@@ -28218,7 +28219,7 @@ var TypeScript;
             return visitor.visitTypeParameter(this);
         };
         TypeParameterSyntax.prototype.kind = function () {
-            return 236 /* TypeParameter */ ;
+            return 235 /* TypeParameter */ ;
         };
         TypeParameterSyntax.prototype.childCount = function () {
             return 2;
@@ -28274,7 +28275,7 @@ var TypeScript;
             return visitor.visitConstraint(this);
         };
         ConstraintSyntax.prototype.kind = function () {
-            return 237 /* Constraint */ ;
+            return 236 /* Constraint */ ;
         };
         ConstraintSyntax.prototype.childCount = function () {
             return 2;
@@ -28327,7 +28328,7 @@ var TypeScript;
             return visitor.visitElseClause(this);
         };
         ElseClauseSyntax.prototype.kind = function () {
-            return 233 /* ElseClause */ ;
+            return 232 /* ElseClause */ ;
         };
         ElseClauseSyntax.prototype.childCount = function () {
             return 2;
@@ -29290,7 +29291,7 @@ var TypeScript;
             return visitor.visitCaseSwitchClause(this);
         };
         CaseSwitchClauseSyntax.prototype.kind = function () {
-            return 231 /* CaseSwitchClause */ ;
+            return 230 /* CaseSwitchClause */ ;
         };
         CaseSwitchClauseSyntax.prototype.childCount = function () {
             return 4;
@@ -29366,7 +29367,7 @@ var TypeScript;
             return visitor.visitDefaultSwitchClause(this);
         };
         DefaultSwitchClauseSyntax.prototype.kind = function () {
-            return 232 /* DefaultSwitchClause */ ;
+            return 231 /* DefaultSwitchClause */ ;
         };
         DefaultSwitchClauseSyntax.prototype.childCount = function () {
             return 3;
@@ -30079,7 +30080,7 @@ var TypeScript;
             return visitor.visitEnumElement(this);
         };
         EnumElementSyntax.prototype.kind = function () {
-            return 239 /* EnumElement */ ;
+            return 238 /* EnumElement */ ;
         };
         EnumElementSyntax.prototype.childCount = function () {
             return 2;
@@ -30303,7 +30304,7 @@ var TypeScript;
             return visitor.visitSimplePropertyAssignment(this);
         };
         SimplePropertyAssignmentSyntax.prototype.kind = function () {
-            return 241 /* SimplePropertyAssignment */ ;
+            return 240 /* SimplePropertyAssignment */ ;
         };
         SimplePropertyAssignmentSyntax.prototype.childCount = function () {
             return 3;
@@ -30384,7 +30385,7 @@ var TypeScript;
             return visitor.visitGetAccessorPropertyAssignment(this);
         };
         GetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-            return 244 /* GetAccessorPropertyAssignment */ ;
+            return 243 /* GetAccessorPropertyAssignment */ ;
         };
         GetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
             return 6;
@@ -30466,7 +30467,7 @@ var TypeScript;
             return visitor.visitSetAccessorPropertyAssignment(this);
         };
         SetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-            return 245 /* SetAccessorPropertyAssignment */ ;
+            return 244 /* SetAccessorPropertyAssignment */ ;
         };
         SetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
             return 6;
@@ -30765,7 +30766,7 @@ var TypeScript;
             return visitor.visitCatchClause(this);
         };
         CatchClauseSyntax.prototype.kind = function () {
-            return 234 /* CatchClause */ ;
+            return 233 /* CatchClause */ ;
         };
         CatchClauseSyntax.prototype.childCount = function () {
             return 6;
@@ -30847,7 +30848,7 @@ var TypeScript;
             return visitor.visitFinallyClause(this);
         };
         FinallyClauseSyntax.prototype.kind = function () {
-            return 235 /* FinallyClause */ ;
+            return 234 /* FinallyClause */ ;
         };
         FinallyClauseSyntax.prototype.childCount = function () {
             return 2;
@@ -31355,16 +31356,13 @@ var TypeScript;
             return node.update(this.visitToken(node.exportKeyword), this.visitToken(node.equalsToken), this.visitToken(node.identifier), this.visitToken(node.semicolonToken));
         };
         SyntaxRewriter.prototype.visitClassDeclaration = function (node) {
-            return node.update(this.visitList(node.modifiers), this.visitToken(node.classKeyword), this.visitToken(node.identifier), node.typeParameterList === null ? null : this.visitNode(node.typeParameterList), node.extendsClause === null ? null : this.visitNode(node.extendsClause), node.implementsClause === null ? null : this.visitNode(node.implementsClause), this.visitToken(node.openBraceToken), this.visitList(node.classElements), this.visitToken(node.closeBraceToken));
+            return node.update(this.visitList(node.modifiers), this.visitToken(node.classKeyword), this.visitToken(node.identifier), node.typeParameterList === null ? null : this.visitNode(node.typeParameterList), this.visitList(node.heritageClauses), this.visitToken(node.openBraceToken), this.visitList(node.classElements), this.visitToken(node.closeBraceToken));
         };
         SyntaxRewriter.prototype.visitInterfaceDeclaration = function (node) {
-            return node.update(this.visitList(node.modifiers), this.visitToken(node.interfaceKeyword), this.visitToken(node.identifier), node.typeParameterList === null ? null : this.visitNode(node.typeParameterList), node.extendsClause === null ? null : this.visitNode(node.extendsClause), this.visitNode(node.body));
+            return node.update(this.visitList(node.modifiers), this.visitToken(node.interfaceKeyword), this.visitToken(node.identifier), node.typeParameterList === null ? null : this.visitNode(node.typeParameterList), this.visitList(node.heritageClauses), this.visitNode(node.body));
         };
-        SyntaxRewriter.prototype.visitExtendsClause = function (node) {
-            return node.update(this.visitToken(node.extendsKeyword), this.visitSeparatedList(node.typeNames));
-        };
-        SyntaxRewriter.prototype.visitImplementsClause = function (node) {
-            return node.update(this.visitToken(node.implementsKeyword), this.visitSeparatedList(node.typeNames));
+        SyntaxRewriter.prototype.visitHeritageClause = function (node) {
+            return node.update(this.visitToken(node.extendsOrImplementsKeyword), this.visitSeparatedList(node.typeNames));
         };
         SyntaxRewriter.prototype.visitModuleDeclaration = function (node) {
             return node.update(this.visitList(node.modifiers), this.visitToken(node.moduleKeyword), node.moduleName === null ? null : this.visitNodeOrToken(node.moduleName), node.stringLiteral === null ? null : this.visitToken(node.stringLiteral), this.visitToken(node.openBraceToken), this.visitList(node.moduleElements), this.visitToken(node.closeBraceToken));
@@ -33643,10 +33641,7 @@ var TypeScript;
         SyntaxVisitor.prototype.visitInterfaceDeclaration = function (node) {
             return this.defaultVisit(node);
         };
-        SyntaxVisitor.prototype.visitExtendsClause = function (node) {
-            return this.defaultVisit(node);
-        };
-        SyntaxVisitor.prototype.visitImplementsClause = function (node) {
+        SyntaxVisitor.prototype.visitHeritageClause = function (node) {
             return this.defaultVisit(node);
         };
         SyntaxVisitor.prototype.visitModuleDeclaration = function (node) {
@@ -33957,8 +33952,7 @@ var TypeScript;
             this.visitToken(node.classKeyword);
             this.visitToken(node.identifier);
             this.visitOptionalNode(node.typeParameterList);
-            this.visitOptionalNode(node.extendsClause);
-            this.visitOptionalNode(node.implementsClause);
+            this.visitList(node.heritageClauses);
             this.visitToken(node.openBraceToken);
             this.visitList(node.classElements);
             this.visitToken(node.closeBraceToken);
@@ -33968,15 +33962,11 @@ var TypeScript;
             this.visitToken(node.interfaceKeyword);
             this.visitToken(node.identifier);
             this.visitOptionalNode(node.typeParameterList);
-            this.visitOptionalNode(node.extendsClause);
+            this.visitList(node.heritageClauses);
             this.visitNode(node.body);
         };
-        SyntaxWalker.prototype.visitExtendsClause = function (node) {
-            this.visitToken(node.extendsKeyword);
-            this.visitSeparatedList(node.typeNames);
-        };
-        SyntaxWalker.prototype.visitImplementsClause = function (node) {
-            this.visitToken(node.implementsKeyword);
+        SyntaxWalker.prototype.visitHeritageClause = function (node) {
+            this.visitToken(node.extendsOrImplementsKeyword);
             this.visitSeparatedList(node.typeNames);
         };
         SyntaxWalker.prototype.visitModuleDeclaration = function (node) {
@@ -34594,15 +34584,16 @@ var TypeScript;
             ListParsingState.CatchBlock_Statements = 1 << 7;
             ListParsingState.EnumDeclaration_EnumElements = 1 << 8;
             ListParsingState.ObjectType_TypeMembers = 1 << 9;
-            ListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 10;
-            ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn = 1 << 11;
-            ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 12;
-            ListParsingState.ArgumentList_AssignmentExpressions = 1 << 13;
-            ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 14;
-            ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 15;
-            ListParsingState.ParameterList_Parameters = 1 << 16;
-            ListParsingState.TypeArgumentList_Types = 1 << 17;
-            ListParsingState.TypeParameterList_TypeParameters = 1 << 18;
+            ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses = 1 << 10;
+            ListParsingState.HeritageClause_TypeNameList = 1 << 11;
+            ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn = 1 << 12;
+            ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 13;
+            ListParsingState.ArgumentList_AssignmentExpressions = 1 << 14;
+            ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 15;
+            ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 16;
+            ListParsingState.ParameterList_Parameters = 1 << 17;
+            ListParsingState.TypeArgumentList_Types = 1 << 18;
+            ListParsingState.TypeParameterList_TypeParameters = 1 << 19;
             ListParsingState.FirstListParsingState = ListParsingState.SourceUnit_ModuleElements;
             ListParsingState.LastListParsingState = ListParsingState.TypeArgumentList_Types;
         })(ListParsingState || (ListParsingState = {}));
@@ -35425,7 +35416,7 @@ var TypeScript;
                 var typeArguments;
                 if (!inExpression) {
                     lessThanToken = this.eatToken(80 /* LessThanToken */ );
-                    result = this.parseSeparatedSyntaxList(131072 /* TypeArgumentList_Types */ );
+                    result = this.parseSeparatedSyntaxList(262144 /* TypeArgumentList_Types */ );
                     typeArguments = result.list;
                     lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
                     greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
@@ -35434,7 +35425,7 @@ var TypeScript;
                 var rewindPoint = this.getRewindPoint();
                 try  {
                     lessThanToken = this.eatToken(80 /* LessThanToken */ );
-                    result = this.parseSeparatedSyntaxList(131072 /* TypeArgumentList_Types */ );
+                    result = this.parseSeparatedSyntaxList(262144 /* TypeArgumentList_Types */ );
                     typeArguments = result.list;
                     lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
                     greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
@@ -35506,13 +35497,13 @@ var TypeScript;
                 return this.factory.enumDeclaration(modifiers, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken);
             };
             ParserImpl.prototype.isEnumElement = function (inErrorRecovery) {
-                if (this.currentNode() !== null && this.currentNode().kind() === 239 /* EnumElement */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 238 /* EnumElement */ ) {
                     return true;
                 }
                 return this.isPropertyName(this.currentToken(), inErrorRecovery);
             };
             ParserImpl.prototype.parseEnumElement = function () {
-                if (this.currentNode() !== null && this.currentNode().kind() === 239 /* EnumElement */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 238 /* EnumElement */ ) {
                     return this.eatNode();
                 }
                 var propertyName = this.eatPropertyName();
@@ -35565,19 +35556,21 @@ var TypeScript;
                 }
                 return this.currentToken().tokenKind === 44 /* ClassKeyword */  && this.isIdentifier(this.peekToken(1));
             };
+            ParserImpl.prototype.parseHeritageClauses = function () {
+                var heritageClauses = TypeScript.Syntax.emptyList;
+                if (this.isHeritageClause()) {
+                    var result = this.parseSyntaxList(1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ );
+                    heritageClauses = result.list;
+                    TypeScript.Debug.assert(result.skippedTokens.length === 0);
+                }
+                return heritageClauses;
+            };
             ParserImpl.prototype.parseClassDeclaration = function () {
                 var modifiers = this.parseModifiers();
                 var classKeyword = this.eatKeyword(44 /* ClassKeyword */ );
                 var identifier = this.eatIdentifierToken();
                 var typeParameterList = this.parseOptionalTypeParameterList(false);
-                var extendsClause = null;
-                if (this.isExtendsClause()) {
-                    extendsClause = this.parseExtendsClause();
-                }
-                var implementsClause = null;
-                if (this.isImplementsClause()) {
-                    implementsClause = this.parseImplementsClause();
-                }
+                var heritageClauses = this.parseHeritageClauses();
                 var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
                 var classElements = TypeScript.Syntax.emptyList;
                 if (openBraceToken.width() > 0) {
@@ -35586,7 +35579,7 @@ var TypeScript;
                     openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
                 }
                 var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
-                return this.factory.classDeclaration(modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
+                return this.factory.classDeclaration(modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken);
             };
             ParserImpl.prototype.isConstructorDeclaration = function () {
                 return this.currentToken().tokenKind === 63 /* ConstructorKeyword */ ;
@@ -35818,12 +35811,9 @@ var TypeScript;
                 var interfaceKeyword = this.eatKeyword(52 /* InterfaceKeyword */ );
                 var identifier = this.eatIdentifierToken();
                 var typeParameterList = this.parseOptionalTypeParameterList(false);
-                var extendsClause = null;
-                if (this.isExtendsClause()) {
-                    extendsClause = this.parseExtendsClause();
-                }
+                var heritageClauses = this.parseHeritageClauses();
                 var objectType = this.parseObjectType();
-                return this.factory.interfaceDeclaration(modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, objectType);
+                return this.factory.interfaceDeclaration(modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, objectType);
             };
             ParserImpl.prototype.parseObjectType = function () {
                 var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
@@ -35912,25 +35902,29 @@ var TypeScript;
             ParserImpl.prototype.isPropertySignature = function (inErrorRecovery) {
                 return this.isPropertyName(this.currentToken(), inErrorRecovery);
             };
-            ParserImpl.prototype.isExtendsClause = function () {
-                return this.currentToken().tokenKind === 48 /* ExtendsKeyword */ ;
+            ParserImpl.prototype.isHeritageClause = function () {
+                var token0 = this.currentToken();
+                return token0.tokenKind === 48 /* ExtendsKeyword */  || token0.tokenKind === 51 /* ImplementsKeyword */ ;
             };
-            ParserImpl.prototype.parseExtendsClause = function () {
-                var extendsKeyword = this.eatKeyword(48 /* ExtendsKeyword */ );
-                var result = this.parseSeparatedSyntaxList(1024 /* ExtendsOrImplementsClause_TypeNameList */ );
+            ParserImpl.prototype.isNotHeritageClauseTypeName = function () {
+                if (this.currentToken().tokenKind === 51 /* ImplementsKeyword */  || this.currentToken().tokenKind === 48 /* ExtendsKeyword */ ) {
+                    return this.isIdentifier(this.peekToken(1));
+                }
+                return false;
+            };
+            ParserImpl.prototype.isHeritageClauseTypeName = function () {
+                if (this.isName()) {
+                    return !this.isNotHeritageClauseTypeName();
+                }
+                return false;
+            };
+            ParserImpl.prototype.parseHeritageClause = function () {
+                var extendsOrImplementsKeyword = this.eatAnyToken();
+                TypeScript.Debug.assert(extendsOrImplementsKeyword.tokenKind === 48 /* ExtendsKeyword */  || extendsOrImplementsKeyword.tokenKind === 51 /* ImplementsKeyword */ );
+                var result = this.parseSeparatedSyntaxList(2048 /* HeritageClause_TypeNameList */ );
                 var typeNames = result.list;
-                extendsKeyword = this.addSkippedTokensAfterToken(extendsKeyword, result.skippedTokens);
-                return this.factory.extendsClause(extendsKeyword, typeNames);
-            };
-            ParserImpl.prototype.isImplementsClause = function () {
-                return this.currentToken().tokenKind === 51 /* ImplementsKeyword */ ;
-            };
-            ParserImpl.prototype.parseImplementsClause = function () {
-                var implementsKeyword = this.eatKeyword(51 /* ImplementsKeyword */ );
-                var result = this.parseSeparatedSyntaxList(1024 /* ExtendsOrImplementsClause_TypeNameList */ );
-                var typeNames = result.list;
-                implementsKeyword = this.addSkippedTokensAfterToken(implementsKeyword, result.skippedTokens);
-                return this.factory.implementsClause(implementsKeyword, typeNames);
+                extendsOrImplementsKeyword = this.addSkippedTokensAfterToken(extendsOrImplementsKeyword, result.skippedTokens);
+                return this.factory.heritageClause(extendsOrImplementsKeyword, typeNames);
             };
             ParserImpl.prototype.isStatement = function (inErrorRecovery) {
                 if (this.currentNode() !== null && this.currentNode().isStatement()) {
@@ -36378,7 +36372,7 @@ var TypeScript;
             };
             ParserImpl.prototype.parseVariableDeclaration = function (allowIn) {
                 var varKeyword = this.eatKeyword(40 /* VarKeyword */ );
-                var listParsingState = allowIn ? 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */  : 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ ;
+                var listParsingState = allowIn ? 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */  : 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ ;
                 var result = this.parseSeparatedSyntaxList(listParsingState);
                 var variableDeclarators = result.list;
                 varKeyword = this.addSkippedTokensAfterToken(varKeyword, result.skippedTokens);
@@ -36624,7 +36618,7 @@ var TypeScript;
                 var openParenToken = this.eatToken(72 /* OpenParenToken */ );
                 var arguments = TypeScript.Syntax.emptySeparatedList;
                 if (openParenToken.fullWidth() > 0) {
-                    var result = this.parseSeparatedSyntaxList(8192 /* ArgumentList_AssignmentExpressions */ );
+                    var result = this.parseSeparatedSyntaxList(16384 /* ArgumentList_AssignmentExpressions */ );
                     arguments = result.list;
                     openParenToken = this.addSkippedTokensAfterToken(openParenToken, result.skippedTokens);
                 }
@@ -36901,7 +36895,7 @@ var TypeScript;
             };
             ParserImpl.prototype.parseObjectLiteralExpression = function () {
                 var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
-                var result = this.parseSeparatedSyntaxList(16384 /* ObjectLiteralExpression_PropertyAssignments */ );
+                var result = this.parseSeparatedSyntaxList(32768 /* ObjectLiteralExpression_PropertyAssignments */ );
                 var propertyAssignments = result.list;
                 openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
                 var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
@@ -36975,7 +36969,7 @@ var TypeScript;
             };
             ParserImpl.prototype.parseArrayLiteralExpression = function () {
                 var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
-                var result = this.parseSeparatedSyntaxList(32768 /* ArrayLiteralExpression_AssignmentExpressions */ );
+                var result = this.parseSeparatedSyntaxList(65536 /* ArrayLiteralExpression_AssignmentExpressions */ );
                 var expressions = result.list;
                 openBracketToken = this.addSkippedTokensAfterToken(openBracketToken, result.skippedTokens);
                 var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
@@ -37015,7 +37009,7 @@ var TypeScript;
                 var rewindPoint = this.getRewindPoint();
                 try  {
                     var lessThanToken = this.eatToken(80 /* LessThanToken */ );
-                    var result = this.parseSeparatedSyntaxList(262144 /* TypeParameterList_TypeParameters */ );
+                    var result = this.parseSeparatedSyntaxList(524288 /* TypeParameterList_TypeParameters */ );
                     var typeParameterList = result.list;
                     lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
                     var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
@@ -37048,7 +37042,7 @@ var TypeScript;
                 var openParenToken = this.eatToken(72 /* OpenParenToken */ );
                 var parameters = TypeScript.Syntax.emptySeparatedList;
                 if (openParenToken.width() > 0) {
-                    var result = this.parseSeparatedSyntaxList(65536 /* ParameterList_Parameters */ );
+                    var result = this.parseSeparatedSyntaxList(131072 /* ParameterList_Parameters */ );
                     parameters = result.list;
                     openParenToken = this.addSkippedTokensAfterToken(openParenToken, result.skippedTokens);
                 }
@@ -37146,7 +37140,7 @@ var TypeScript;
                 return false;
             };
             ParserImpl.prototype.isParameter = function () {
-                if (this.currentNode() !== null && this.currentNode().kind() === 238 /* Parameter */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 237 /* Parameter */ ) {
                     return true;
                 }
                 var token = this.currentToken();
@@ -37159,7 +37153,7 @@ var TypeScript;
                 return this.isIdentifier(token);
             };
             ParserImpl.prototype.parseParameter = function () {
-                if (this.currentNode() !== null && this.currentNode().kind() === 238 /* Parameter */ ) {
+                if (this.currentNode() !== null && this.currentNode().kind() === 237 /* Parameter */ ) {
                     return this.eatNode();
                 }
                 var dotDotDotToken = this.tryEatToken(77 /* DotDotDotToken */ );
@@ -37193,7 +37187,7 @@ var TypeScript;
             };
             ParserImpl.prototype.abortParsingListOrMoveToNextToken = function (currentListType, itemCount, items, skippedTokens) {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
-                for(var state = 131072 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
+                for(var state = 262144 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
                     if ((this.listParsingState & state) !== 0) {
                         if (this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, true)) {
                             return true;
@@ -37330,16 +37324,17 @@ var TypeScript;
                 switch(currentListType) {
                     case 256 /* EnumDeclaration_EnumElements */ :
                     case 512 /* ObjectType_TypeMembers */ :
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
                         return true;
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                    case 65536 /* ParameterList_Parameters */ :
-                    case 131072 /* TypeArgumentList_Types */ :
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 131072 /* ParameterList_Parameters */ :
+                    case 262144 /* TypeArgumentList_Types */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return false;
                     case 1 /* SourceUnit_ModuleElements */ :
                     case 2 /* ClassDeclaration_ClassElements */ :
@@ -37353,20 +37348,21 @@ var TypeScript;
             };
             ParserImpl.prototype.requiresAtLeastOneItem = function (currentListType) {
                 switch(currentListType) {
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
-                    case 131072 /* TypeArgumentList_Types */ :
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
+                    case 262144 /* TypeArgumentList_Types */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return true;
                     case 512 /* ObjectType_TypeMembers */ :
                     case 256 /* EnumDeclaration_EnumElements */ :
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
-                    case 65536 /* ParameterList_Parameters */ :
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 131072 /* ParameterList_Parameters */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
                         return false;
                     case 1 /* SourceUnit_ModuleElements */ :
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
                     case 2 /* ClassDeclaration_ClassElements */ :
                     case 4 /* ModuleDeclaration_ModuleElements */ :
                     case 8 /* SwitchStatement_SwitchClauses */ :
@@ -37380,18 +37376,19 @@ var TypeScript;
                 switch(currentListType) {
                     case 512 /* ObjectType_TypeMembers */ :
                         return true;
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
                     case 256 /* EnumDeclaration_EnumElements */ :
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
-                    case 65536 /* ParameterList_Parameters */ :
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                    case 131072 /* TypeArgumentList_Types */ :
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 131072 /* ParameterList_Parameters */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 262144 /* TypeArgumentList_Types */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return false;
                     case 1 /* SourceUnit_ModuleElements */ :
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
                     case 2 /* ClassDeclaration_ClassElements */ :
                     case 4 /* ModuleDeclaration_ModuleElements */ :
                     case 8 /* SwitchStatement_SwitchClauses */ :
@@ -37403,20 +37400,21 @@ var TypeScript;
             };
             ParserImpl.prototype.separatorKind = function (currentListType) {
                 switch(currentListType) {
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
                     case 256 /* EnumDeclaration_EnumElements */ :
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
-                    case 65536 /* ParameterList_Parameters */ :
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                    case 131072 /* TypeArgumentList_Types */ :
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 131072 /* ParameterList_Parameters */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 262144 /* TypeArgumentList_Types */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return 79 /* CommaToken */ ;
                     case 512 /* ObjectType_TypeMembers */ :
                         return 78 /* SemicolonToken */ ;
                     case 1 /* SourceUnit_ModuleElements */ :
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
                     case 2 /* ClassDeclaration_ClassElements */ :
                     case 4 /* ModuleDeclaration_ModuleElements */ :
                     case 8 /* SwitchStatement_SwitchClauses */ :
@@ -37443,6 +37441,8 @@ var TypeScript;
                 switch(currentListType) {
                     case 1 /* SourceUnit_ModuleElements */ :
                         return this.isExpectedSourceUnit_ModuleElementsTerminator();
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
+                        return this.isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator();
                     case 2 /* ClassDeclaration_ClassElements */ :
                         return this.isExpectedClassDeclaration_ClassElementsTerminator();
                     case 4 /* ModuleDeclaration_ModuleElements */ :
@@ -37461,23 +37461,23 @@ var TypeScript;
                         return this.isExpectedEnumDeclaration_EnumElementsTerminator();
                     case 512 /* ObjectType_TypeMembers */ :
                         return this.isExpectedObjectType_TypeMembersTerminator();
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
                         return this.isExpectedArgumentList_AssignmentExpressionsTerminator();
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
-                        return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
+                        return this.isExpectedHeritageClause_TypeNameListTerminator();
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                         return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount);
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                         return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
                         return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
-                    case 65536 /* ParameterList_Parameters */ :
+                    case 131072 /* ParameterList_Parameters */ :
                         return this.isExpectedParameterList_ParametersTerminator();
-                    case 131072 /* TypeArgumentList_Types */ :
+                    case 262144 /* TypeArgumentList_Types */ :
                         return this.isExpectedTypeArgumentList_TypesTerminator();
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return this.isExpectedTypeParameterList_TypeParametersTerminator();
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
                         return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
                     default:
                         throw TypeScript.Errors.invalidOperation();
@@ -37552,11 +37552,19 @@ var TypeScript;
                 }
                 return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(false);
             };
-            ParserImpl.prototype.isExpectedExtendsOrImplementsClause_TypeNameListTerminator = function () {
-                if (this.currentToken().tokenKind === 48 /* ExtendsKeyword */  || this.currentToken().tokenKind === 51 /* ImplementsKeyword */ ) {
+            ParserImpl.prototype.isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator = function () {
+                var token0 = this.currentToken();
+                if (token0.tokenKind === 70 /* OpenBraceToken */  || token0.tokenKind === 71 /* CloseBraceToken */ ) {
                     return true;
                 }
-                if (this.currentToken().tokenKind === 70 /* OpenBraceToken */  || this.currentToken().tokenKind === 71 /* CloseBraceToken */ ) {
+                return false;
+            };
+            ParserImpl.prototype.isExpectedHeritageClause_TypeNameListTerminator = function () {
+                var token0 = this.currentToken();
+                if (token0.tokenKind === 48 /* ExtendsKeyword */  || token0.tokenKind === 51 /* ImplementsKeyword */ ) {
+                    return true;
+                }
+                if (this.isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator()) {
                     return true;
                 }
                 return false;
@@ -37583,22 +37591,12 @@ var TypeScript;
             ParserImpl.prototype.isExpectedCatchBlock_StatementsTerminator = function () {
                 return this.currentToken().tokenKind === 25 /* FinallyKeyword */ ;
             };
-            ParserImpl.prototype.isExtendsOrImplementsClause = function () {
-                if (this.currentToken().tokenKind === 51 /* ImplementsKeyword */  || this.currentToken().tokenKind === 48 /* ExtendsKeyword */ ) {
-                    return this.isIdentifier(this.peekToken(1));
-                }
-                return false;
-            };
-            ParserImpl.prototype.isExtendsOrImplementsClauseTypeName = function () {
-                if (this.isName()) {
-                    return !this.isExtendsOrImplementsClause();
-                }
-                return false;
-            };
             ParserImpl.prototype.isExpectedListItem = function (currentListType, inErrorRecovery) {
                 switch(currentListType) {
                     case 1 /* SourceUnit_ModuleElements */ :
                         return this.isModuleElement(inErrorRecovery);
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
+                        return this.isHeritageClause();
                     case 2 /* ClassDeclaration_ClassElements */ :
                         return this.isClassElement(inErrorRecovery);
                     case 4 /* ModuleDeclaration_ModuleElements */ :
@@ -37614,24 +37612,24 @@ var TypeScript;
                         return false;
                     case 256 /* EnumDeclaration_EnumElements */ :
                         return this.isEnumElement(inErrorRecovery);
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                         return this.isVariableDeclarator();
                     case 512 /* ObjectType_TypeMembers */ :
                         return this.isTypeMember(inErrorRecovery);
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
                         return this.isExpression();
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
-                        return this.isExtendsOrImplementsClauseTypeName();
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
+                        return this.isHeritageClauseTypeName();
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
                         return this.isPropertyAssignment(inErrorRecovery);
-                    case 65536 /* ParameterList_Parameters */ :
+                    case 131072 /* ParameterList_Parameters */ :
                         return this.isParameter();
-                    case 131072 /* TypeArgumentList_Types */ :
+                    case 262144 /* TypeArgumentList_Types */ :
                         return this.isType();
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return this.isTypeParameter();
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
                         return this.isAssignmentOrOmittedExpression();
                     default:
                         throw TypeScript.Errors.invalidOperation();
@@ -37641,6 +37639,8 @@ var TypeScript;
                 switch(currentListType) {
                     case 1 /* SourceUnit_ModuleElements */ :
                         return this.parseModuleElement();
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
+                        return this.parseHeritageClause();
                     case 2 /* ClassDeclaration_ClassElements */ :
                         return this.parseClassElement(false);
                     case 4 /* ModuleDeclaration_ModuleElements */ :
@@ -37655,23 +37655,23 @@ var TypeScript;
                         return this.parseEnumElement();
                     case 512 /* ObjectType_TypeMembers */ :
                         return this.parseTypeMember();
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
                         return this.parseAssignmentExpression(true);
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
                         return this.parseNameOrGenericType();
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                         return this.parseVariableDeclarator(true, false);
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                         return this.parseVariableDeclarator(false, false);
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
                         return this.parsePropertyAssignment();
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
                         return this.parseAssignmentOrOmittedExpression();
-                    case 65536 /* ParameterList_Parameters */ :
+                    case 131072 /* ParameterList_Parameters */ :
                         return this.parseParameter();
-                    case 131072 /* TypeArgumentList_Types */ :
+                    case 262144 /* TypeArgumentList_Types */ :
                         return this.parseType();
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return this.parseTypeParameter();
                     default:
                         throw TypeScript.Errors.invalidOperation();
@@ -37681,6 +37681,8 @@ var TypeScript;
                 switch(currentListType) {
                     case 1 /* SourceUnit_ModuleElements */ :
                         return TypeScript.Strings.module__class__interface__enum__import_or_statement;
+                    case 1024 /* ClassOrInterfaceDeclaration_HeritageClauses */ :
+                        return '{';
                     case 2 /* ClassDeclaration_ClassElements */ :
                         return TypeScript.Strings.constructor__function__accessor_or_variable;
                     case 4 /* ModuleDeclaration_ModuleElements */ :
@@ -37691,26 +37693,26 @@ var TypeScript;
                         return TypeScript.Strings.statement;
                     case 32 /* Block_Statements */ :
                         return TypeScript.Strings.statement;
-                    case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                    case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                    case 4096 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                    case 8192 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                         return TypeScript.Strings.identifier;
                     case 256 /* EnumDeclaration_EnumElements */ :
                         return TypeScript.Strings.identifier;
                     case 512 /* ObjectType_TypeMembers */ :
                         return TypeScript.Strings.call__construct__index__property_or_function_signature;
-                    case 8192 /* ArgumentList_AssignmentExpressions */ :
+                    case 16384 /* ArgumentList_AssignmentExpressions */ :
                         return TypeScript.Strings.expression;
-                    case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
+                    case 2048 /* HeritageClause_TypeNameList */ :
                         return TypeScript.Strings.type_name;
-                    case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                    case 32768 /* ObjectLiteralExpression_PropertyAssignments */ :
                         return TypeScript.Strings.property_or_accessor;
-                    case 65536 /* ParameterList_Parameters */ :
+                    case 131072 /* ParameterList_Parameters */ :
                         return TypeScript.Strings.parameter;
-                    case 131072 /* TypeArgumentList_Types */ :
+                    case 262144 /* TypeArgumentList_Types */ :
                         return TypeScript.Strings.type;
-                    case 262144 /* TypeParameterList_TypeParameters */ :
+                    case 524288 /* TypeParameterList_TypeParameters */ :
                         return TypeScript.Strings.type_parameter;
-                    case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                    case 65536 /* ArrayLiteralExpression_AssignmentExpressions */ :
                         return TypeScript.Strings.expression;
                     default:
                         throw TypeScript.Errors.invalidOperation();
@@ -37818,6 +37820,10 @@ var TypeScript;
             if (typeof args === "undefined") { args = null; }
             this.diagnostics.push(new TypeScript.SyntaxDiagnostic(this.fileName, start, length, diagnosticCode, args));
         };
+        GrammarCheckerWalker.prototype.pushDiagnostic1 = function (elementFullStart, element, diagnosticCode, args) {
+            if (typeof args === "undefined") { args = null; }
+            this.diagnostics.push(new TypeScript.SyntaxDiagnostic(this.fileName, elementFullStart + element.leadingTriviaWidth(), element.width(), diagnosticCode, args));
+        };
         GrammarCheckerWalker.prototype.visitCatchClause = function (node) {
             if (node.typeAnnotation) {
                 this.pushDiagnostic(this.childStart(node, node.typeAnnotation), node.typeAnnotation.width(), 15 /* A_catch_clause_variable_cannot_have_a_type_annotation */ );
@@ -37836,18 +37842,18 @@ var TypeScript;
                     var parameter = node.parameters.childAt(i);
                     if (parameter.dotDotDotToken) {
                         if (parameterIndex != (parameterCount - 1)) {
-                            this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 16 /* Rest_parameter_must_be_last_in_list */ , null);
+                            this.pushDiagnostic1(parameterFullStart, parameter, 16 /* Rest_parameter_must_be_last_in_list */ );
                             break;
                         }
                     } else if (parameter.questionToken || parameter.equalsValueClause) {
                         seenOptionalParameter = true;
                         if (parameter.questionToken && parameter.equalsValueClause) {
-                            this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 17 /* Parameter_cannot_have_question_mark_and_initializer */ , null);
+                            this.pushDiagnostic1(parameterFullStart, parameter, 17 /* Parameter_cannot_have_question_mark_and_initializer */ );
                             break;
                         }
                     } else {
                         if (seenOptionalParameter) {
-                            this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 18 /* Required_parameter_cannot_follow_optional_parameter */ , null);
+                            this.pushDiagnostic1(parameterFullStart, parameter, 18 /* Required_parameter_cannot_follow_optional_parameter */ );
                             break;
                         }
                     }
@@ -37860,21 +37866,152 @@ var TypeScript;
             var parameterFullStart = this.childFullStart(node, node.parameter);
             var parameter = node.parameter;
             if (parameter.dotDotDotToken) {
-                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 19 /* Index_signatures_cannot_have_rest_parameters */ , null);
+                this.pushDiagnostic1(parameterFullStart, parameter, 19 /* Index_signatures_cannot_have_rest_parameters */ );
             } else if (parameter.publicOrPrivateKeyword) {
-                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 20 /* Index_signature_parameter_cannot_have_accessibility_modifierss */ , null);
+                this.pushDiagnostic1(parameterFullStart, parameter, 20 /* Index_signature_parameter_cannot_have_accessibility_modifierss */ );
             } else if (parameter.questionToken) {
-                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 21 /* Index_signature_parameter_cannot_have_a_question_mark */ , null);
+                this.pushDiagnostic1(parameterFullStart, parameter, 21 /* Index_signature_parameter_cannot_have_a_question_mark */ );
             } else if (parameter.equalsValueClause) {
-                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 22 /* Index_signature_parameter_cannot_have_an_initializer */ , null);
+                this.pushDiagnostic1(parameterFullStart, parameter, 22 /* Index_signature_parameter_cannot_have_an_initializer */ );
             } else if (!parameter.typeAnnotation) {
-                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 24 /* Index_signature_parameter_must_have_a_type_annotation */ , null);
+                this.pushDiagnostic1(parameterFullStart, parameter, 24 /* Index_signature_parameter_must_have_a_type_annotation */ );
             } else if (parameter.typeAnnotation.type.kind() !== 69 /* StringKeyword */  && parameter.typeAnnotation.type.kind() !== 67 /* NumberKeyword */ ) {
-                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 25 /* Index_signature_parameter_type_must_be__string__or__number_ */ , null);
+                this.pushDiagnostic1(parameterFullStart, parameter, 25 /* Index_signature_parameter_type_must_be__string__or__number_ */ );
             } else if (!node.typeAnnotation) {
-                this.pushDiagnostic(this.position() + node.leadingTriviaWidth(), node.width(), 23 /* Index_signature_must_have_a_type_annotation */ , null);
+                this.pushDiagnostic1(this.position(), node, 23 /* Index_signature_must_have_a_type_annotation */ );
             }
             _super.prototype.visitIndexSignature.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.checkClassDeclarationHeritageClauses = function (node) {
+            var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
+            var heritageClauseFullStart = heritageClausesFullStart;
+            var seenExtendsClause = false;
+            var seenImplementsClause = false;
+            for(var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                TypeScript.Debug.assert(i <= 2);
+                var heritageClause = node.heritageClauses.childAt(i);
+                if (heritageClause.extendsOrImplementsKeyword.tokenKind === 48 /* ExtendsKeyword */ ) {
+                    if (seenExtendsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause, 26 /* _extends__clause_already_seen */ );
+                        return;
+                    }
+                    if (seenImplementsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause, 27 /* _extends__clause_must_precede__implements__clause */ );
+                        return;
+                    }
+                    if (heritageClause.typeNames.nonSeparatorCount() > 1) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause, 28 /* Class_can_only_extend_single_type */ );
+                        return;
+                    }
+                    seenExtendsClause = true;
+                } else {
+                    TypeScript.Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === 51 /* ImplementsKeyword */ );
+                    if (seenImplementsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause, 29 /* _implements__clause_already_seen */ );
+                        return;
+                    }
+                    seenImplementsClause = true;
+                }
+                heritageClauseFullStart += heritageClause.fullWidth();
+            }
+        };
+        GrammarCheckerWalker.prototype.visitClassDeclaration = function (node) {
+            this.checkClassDeclarationHeritageClauses(node);
+            _super.prototype.visitClassDeclaration.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.checkInterfaceDeclarationHeritageClauses = function (node) {
+            var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
+            var heritageClauseFullStart = heritageClausesFullStart;
+            var seenExtendsClause = false;
+            for(var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                TypeScript.Debug.assert(i <= 1);
+                var heritageClause = node.heritageClauses.childAt(i);
+                if (heritageClause.extendsOrImplementsKeyword.tokenKind === 48 /* ExtendsKeyword */ ) {
+                    if (seenExtendsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause, 26 /* _extends__clause_already_seen */ );
+                        return;
+                    }
+                    seenExtendsClause = true;
+                } else {
+                    TypeScript.Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === 51 /* ImplementsKeyword */ );
+                    this.pushDiagnostic1(heritageClauseFullStart, heritageClause, 34 /* Interface_declaration_cannot_have__implements__clause */ );
+                    return;
+                }
+                heritageClauseFullStart += heritageClause.fullWidth();
+            }
+        };
+        GrammarCheckerWalker.prototype.visitInterfaceDeclaration = function (node) {
+            this.checkInterfaceDeclarationHeritageClauses(node);
+            _super.prototype.visitInterfaceDeclaration.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.checkClassElementModifiers = function (list) {
+            var modifierFullStart = this.position();
+            var seenAccessibilityModifier = false;
+            var seenStaticModifier = false;
+            for(var i = 0, n = list.childCount(); i < n; i++) {
+                var modifier = list.childAt(i);
+                if (modifier.tokenKind === 57 /* PublicKeyword */  || modifier.tokenKind === 55 /* PrivateKeyword */ ) {
+                    if (seenAccessibilityModifier) {
+                        this.pushDiagnostic1(modifierFullStart, modifier, 30 /* Accessibility_modifier_already_seen */ );
+                        return;
+                    }
+                    if (seenStaticModifier) {
+                        this.pushDiagnostic1(modifierFullStart, modifier, 31 /* Accessibility_modifier_must_precede__static__modifier */ );
+                        return;
+                    }
+                    seenAccessibilityModifier = true;
+                } else if (modifier.tokenKind === 58 /* StaticKeyword */ ) {
+                    if (seenStaticModifier) {
+                        this.pushDiagnostic1(modifierFullStart, modifier, 32 /* _static__modifier_already_seen */ );
+                        return;
+                    }
+                    seenStaticModifier = true;
+                } else {
+                    this.pushDiagnostic1(modifierFullStart, modifier, 33 /* _0__modifier_cannot_appear_on_a_class_element */ , [
+                        modifier.text()
+                    ]);
+                    return;
+                }
+                modifierFullStart += modifier.fullWidth();
+            }
+        };
+        GrammarCheckerWalker.prototype.visitMemberVariableDeclaration = function (node) {
+            this.checkClassElementModifiers(node.modifiers);
+            _super.prototype.visitMemberVariableDeclaration.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitMemberFunctionDeclaration = function (node) {
+            this.checkClassElementModifiers(node.modifiers);
+            _super.prototype.visitMemberFunctionDeclaration.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitGetMemberAccessorDeclaration = function (node) {
+            this.checkClassElementModifiers(node.modifiers);
+            _super.prototype.visitGetMemberAccessorDeclaration.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitSetMemberAccessorDeclaration = function (node) {
+            this.checkClassElementModifiers(node.modifiers);
+            _super.prototype.visitSetMemberAccessorDeclaration.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.checkEnumDeclarationElements = function (node) {
+            var enumElementsFullStart = this.childFullStart(node, node.enumElements);
+            var enumElementFullStart = enumElementsFullStart;
+            var seenExplicitMember = false;
+            for(var i = 0, n = node.enumElements.childCount(); i < n; i++) {
+                var nodeOrToken = node.enumElements.childAt(i);
+                if (i % 2 === 0) {
+                    var enumElement = nodeOrToken;
+                    if (enumElement.equalsValueClause) {
+                        seenExplicitMember = true;
+                    } else if (seenExplicitMember) {
+                        this.pushDiagnostic1(enumElementFullStart, enumElement, 35 /* Enum_element_must_have_initializer */ );
+                        return;
+                    }
+                }
+                enumElementFullStart += nodeOrToken.fullWidth();
+            }
+        };
+        GrammarCheckerWalker.prototype.visitEnumDeclaration = function (node) {
+            this.checkEnumDeclarationElements(node);
+            _super.prototype.visitEnumDeclaration.call(this, node);
         };
         return GrammarCheckerWalker;
     })(TypeScript.PositionTrackingWalker);    
@@ -42343,12 +42480,12 @@ var TypeScript;
         if (signature.currentlyBeingSpecialized()) {
             return signature;
         }
-        signature.setIsBeingSpecialized();
         var newSignature = signature.getSpecialization(typeArguments);
         var i = 0;
         if (newSignature) {
             return newSignature;
         }
+        signature.setIsBeingSpecialized();
         newSignature = new PullSignatureSymbol(signature.getKind());
         newSignature.addDeclaration(signature.getDeclarations()[0]);
         if (signature.hasVariableParamList()) {
@@ -43213,9 +43350,6 @@ var TypeScript;
             }
             var i = 0;
             if (classDeclAST.extendsList) {
-                if (classDeclAST.extendsList.members.length > 1) {
-                    context.postError(classDeclAST.name.minChar, classDeclAST.name.getLength(), this.unitPath, "A class may only extend one other type", enclosingDecl);
-                }
                 for(i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeScript.TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
                     if ((parentType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
@@ -46366,7 +46500,7 @@ var TypeScript;
                 var isAssignable = this.resolver.sourceIsAssignableToTarget(initTypeSymbol, varTypeSymbol, this.context, comparisonInfo);
                 if (!isAssignable) {
                     var errorMessage = comparisonInfo.message;
-                    var message = TypeScript.getDiagnosticMessage(37 /* Cannot_convert__0__to__1_ */ , [
+                    var message = TypeScript.getDiagnosticMessage(47 /* Cannot_convert__0__to__1_ */ , [
                         initTypeSymbol.toString(), 
                         varTypeSymbol.toString()
                     ]);
@@ -46566,7 +46700,7 @@ var TypeScript;
             var isAssignable = this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo);
             if (!isAssignable) {
                 var errorMessage = comparisonInfo.message;
-                var message = TypeScript.getDiagnosticMessage(37 /* Cannot_convert__0__to__1_ */ , [
+                var message = TypeScript.getDiagnosticMessage(47 /* Cannot_convert__0__to__1_ */ , [
                     rightType.toString(), 
                     leftType.toString()
                 ]);
@@ -46651,7 +46785,7 @@ var TypeScript;
             if (!isAssignable) {
                 var comparisonInfo = new TypeScript.TypeComparisonInfo();
                 var errorMessage = comparisonInfo.message;
-                var message = TypeScript.getDiagnosticMessage(37 /* Cannot_convert__0__to__1_ */ , [
+                var message = TypeScript.getDiagnosticMessage(47 /* Cannot_convert__0__to__1_ */ , [
                     exprType.toString(), 
                     returnType.toString()
                 ]);
@@ -48105,7 +48239,7 @@ var TypeScript;
                 moduleContainerTypeSymbol = this.findSymbolInContext(modName, TypeScript.PullElementKind.SomeType, []);
             }
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {
-                moduleContainerDecl.addDiagnostic(new TypeScript.PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                moduleContainerDecl.addDiagnostic(new TypeScript.PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     modName
                 ])));
                 moduleContainerTypeSymbol = null;
@@ -48201,7 +48335,7 @@ var TypeScript;
                 parentHadSymbol = true;
             }
             if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
-                importDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                importDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     declName
                 ])));
                 importSymbol = null;
@@ -48245,7 +48379,7 @@ var TypeScript;
                 enumSymbol = this.findSymbolInContext(enumName, TypeScript.PullElementKind.SomeType, []);
             }
             if (enumSymbol && (enumSymbol.getKind() != 128 /* Enum */  || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
-                enumDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                enumDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     enumName
                 ])));
                 enumSymbol = null;
@@ -48310,7 +48444,7 @@ var TypeScript;
                 classSymbol = this.findSymbolInContext(className, TypeScript.PullElementKind.SomeType, []);
             }
             if (classSymbol && (classSymbol.getKind() != 16 /* Class */  || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
-                classDecl.addDiagnostic(new TypeScript.PullDiagnostic(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                classDecl.addDiagnostic(new TypeScript.PullDiagnostic(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     className
                 ])));
                 classSymbol = null;
@@ -48436,7 +48570,7 @@ var TypeScript;
                     if (memberMap[member.getName()]) {
                         memberDecl = member.getDeclarations()[0];
                         memberAST = this.semanticInfo.getASTForDecl(memberDecl);
-                        memberDecl.addDiagnostic(new TypeScript.PullDiagnostic(memberAST.minChar, memberAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                        memberDecl.addDiagnostic(new TypeScript.PullDiagnostic(memberAST.minChar, memberAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                             member.getName()
                         ])));
                     } else {
@@ -48483,7 +48617,7 @@ var TypeScript;
                 interfaceSymbol = this.findSymbolInContext(interfaceName, TypeScript.PullElementKind.SomeType, []);
             }
             if (interfaceSymbol && (interfaceSymbol.getKind() != 32 /* Interface */ )) {
-                interfaceDecl.addDiagnostic(new TypeScript.PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                interfaceDecl.addDiagnostic(new TypeScript.PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     interfaceName
                 ])));
                 interfaceSymbol = null;
@@ -48656,7 +48790,7 @@ var TypeScript;
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
                 if ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0) {
                     span = variableDeclaration.getSpan();
-                    variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                    variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                         declName
                     ])));
                     variableSymbol = null;
@@ -48664,7 +48798,7 @@ var TypeScript;
                 }
             } else if (variableSymbol && (variableSymbol.getKind() != 2048 /* Variable */ ) && ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0)) {
                 span = variableDeclaration.getSpan();
-                variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     declName
                 ])));
                 variableSymbol = null;
@@ -48808,7 +48942,7 @@ var TypeScript;
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
                 if (!propertySymbol.isType() || !isImplicit || (!(propertySymbol).isClass() && isImplicit)) {
                     var span = propertyDeclaration.getSpan();
-                    propertyDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                    propertyDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                         declName
                     ])));
                 }
@@ -48900,7 +49034,7 @@ var TypeScript;
                         parameterSymbol.setIsOptional();
                     }
                     if (params[argDecl.id.actualText]) {
-                        decl.addDiagnostic(new TypeScript.PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                        decl.addDiagnostic(new TypeScript.PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                             argDecl.id.actualText
                         ])));
                     } else {
@@ -48951,7 +49085,7 @@ var TypeScript;
                 functionSymbol = this.findSymbolInContext(funcName, TypeScript.PullElementKind.SomeValue, []);
             }
             if (functionSymbol && this.symbolIsRedeclaration(functionSymbol) && (functionSymbol.getKind() != 32768 /* Function */  || !isSignature && !functionSymbol.allDeclsHaveFlag(4096 /* Signature */ ))) {
-                functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     funcName
                 ])));
                 functionSymbol = null;
@@ -49149,7 +49283,7 @@ var TypeScript;
                 methodSymbol = parent.findMember(methodName);
             }
             if (methodSymbol && this.symbolIsRedeclaration(methodSymbol) && (methodSymbol.getKind() != 131072 /* Method */  || (!isSignature && !methodSymbol.allDeclsHaveFlag(4096 /* Signature */ )))) {
-                methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                     methodName
                 ])));
                 methodSymbol = null;
@@ -49470,14 +49604,14 @@ var TypeScript;
             }
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                    getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                         funcName
                     ])));
                     accessorSymbol = null;
                 } else {
                     getterSymbol = accessorSymbol.getGetter();
                     if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
-                        getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(41 /* Getter__0__already_declared */ , [
+                        getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(51 /* Getter__0__already_declared */ , [
                             funcName
                         ])));
                         accessorSymbol = null;
@@ -49547,7 +49681,7 @@ var TypeScript;
             this.bindParameterSymbols(this.semanticInfo.getASTForDecl(getAccessorDeclaration), getterTypeSymbol, signature);
             var typeParameters = getAccessorDeclaration.getTypeParameters();
             if (typeParameters.length) {
-                getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(43 /* Accessor_may_not_take_type_parameters */ , null)));
+                getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(53 /* Accessor_may_not_take_type_parameters */ , null)));
             }
             getterTypeSymbol.addSignature(signature);
             if (!isSignature) {
@@ -49601,14 +49735,14 @@ var TypeScript;
             }
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
+                    setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Duplicate_identifier__0_ */ , [
                         funcName
                     ])));
                     accessorSymbol = null;
                 } else {
                     setterSymbol = accessorSymbol.getSetter();
                     if (setterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(setterSymbol))) {
-                        setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(42 /* Setter__0__already_declared */ , [
+                        setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(52 /* Setter__0__already_declared */ , [
                             funcName
                         ])));
                         accessorSymbol = null;
@@ -49678,7 +49812,7 @@ var TypeScript;
             this.bindParameterSymbols(this.semanticInfo.getASTForDecl(setAccessorDeclaration), setterTypeSymbol, signature);
             var typeParameters = setAccessorDeclaration.getTypeParameters();
             if (typeParameters.length) {
-                setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(43 /* Accessor_may_not_take_type_parameters */ , null)));
+                setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(53 /* Accessor_may_not_take_type_parameters */ , null)));
             }
             setterTypeSymbol.addSignature(signature);
             if (!isSignature) {
@@ -51091,7 +51225,7 @@ var TypeScript;
                 }
                 if (moduleElement.kind() === 132 /* ImportDeclaration */ ) {
                     var importDecl = moduleElement;
-                    if (importDecl.moduleReference.kind() === 242 /* ExternalModuleReference */ ) {
+                    if (importDecl.moduleReference.kind() === 241 /* ExternalModuleReference */ ) {
                         return true;
                     }
                 }
@@ -51179,12 +51313,23 @@ var TypeScript;
             var name = this.identifierFromToken(node.identifier, false);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var extendsList = node.extendsClause ? node.extendsClause.accept(this) : new TypeScript.ASTList();
-            var implementsList = node.implementsClause ? node.implementsClause.accept(this) : new TypeScript.ASTList();
+            var extendsList = new TypeScript.ASTList();
+            var implementsList = new TypeScript.ASTList();
+            var i = 0;
+            var n = 0;
+            for(i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                var heritageClause = node.heritageClauses.childAt(i);
+                if (heritageClause.extendsOrImplementsKeyword.tokenKind === 48 /* ExtendsKeyword */ ) {
+                    extendsList = heritageClause.accept(this);
+                } else {
+                    TypeScript.Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === 51 /* ImplementsKeyword */ );
+                    implementsList = heritageClause.accept(this);
+                }
+            }
             this.movePast(node.openBraceToken);
             var members = this.visitSyntaxList(node.classElements);
             this.movePast(node.closeBraceToken);
-            this.requiresExtendsBlock = this.requiresExtendsBlock || !!node.extendsClause;
+            this.requiresExtendsBlock = this.requiresExtendsBlock || extendsList.members.length > 0;
             var result = new TypeScript.ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
             this.setSpan(result, start, this.position);
             result.preComments = preComments;
@@ -51196,8 +51341,6 @@ var TypeScript;
                 result.varFlags |= 8 /* Ambient */ ;
             }
             result.varFlags |= 2048 /* Class */ ;
-            var i = 0;
-            var n = 0;
             for(i = 0; i < members.members.length; i++) {
                 var member = members.members[i];
                 if (member.nodeType === 73 /* FuncDecl */ ) {
@@ -51232,11 +51375,21 @@ var TypeScript;
             var name = this.identifierFromToken(node.identifier, false);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var extendsList = node.extendsClause ? node.extendsClause.accept(this) : null;
+            var i = 0;
+            var n = 0;
+            var extendsList = null;
+            for(i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                var heritageClause = node.heritageClauses.childAt(i);
+                if (i === 0) {
+                    extendsList = heritageClause.accept(this);
+                } else {
+                    this.movePast(heritageClause);
+                }
+            }
             this.movePast(node.body.openBraceToken);
             var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
             if (members.members) {
-                for(var i = 0; i < members.members.length; i++) {
+                for(i = 0; i < members.members.length; i++) {
                     if (members.members[i].nodeType === 73 /* FuncDecl */ ) {
                         (members.members[i]).fncFlags |= 1024 /* Method */ ;
                         (members.members[i]).fncFlags |= 512 /* Signature */ ;
@@ -51253,27 +51406,10 @@ var TypeScript;
             }
             return result;
         };
-        SyntaxTreeToAstVisitor.prototype.visitExtendsClause = function (node) {
+        SyntaxTreeToAstVisitor.prototype.visitHeritageClause = function (node) {
             this.assertElementAtPosition(node);
             var result = new TypeScript.ASTList();
-            this.movePast(node.extendsKeyword);
-            for(var i = 0, n = node.typeNames.childCount(); i < n; i++) {
-                if (i % 2 === 1) {
-                    this.movePast(node.typeNames.childAt(i));
-                } else {
-                    var type = this.visitType(node.typeNames.childAt(i));
-                    if (type.nodeType === 28 /* TypeRef */ ) {
-                        type = (type).term;
-                    }
-                    result.append(type);
-                }
-            }
-            return result;
-        };
-        SyntaxTreeToAstVisitor.prototype.visitImplementsClause = function (node) {
-            this.assertElementAtPosition(node);
-            var result = new TypeScript.ASTList();
-            this.movePast(node.implementsKeyword);
+            this.movePast(node.extendsOrImplementsKeyword);
             for(var i = 0, n = node.typeNames.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
                     this.movePast(node.typeNames.childAt(i));
@@ -51524,7 +51660,7 @@ var TypeScript;
             this.setSpan(importDecl, start, this.position);
             importDecl.preComments = preComments;
             importDecl.postComments = postComments;
-            importDecl.isDynamicImport = node.moduleReference.kind() === 242 /* ExternalModuleReference */ ;
+            importDecl.isDynamicImport = node.moduleReference.kind() === 241 /* ExternalModuleReference */ ;
             return importDecl;
         };
         SyntaxTreeToAstVisitor.prototype.visitExportAssignment = function (node) {
@@ -52428,7 +52564,7 @@ var TypeScript;
             for(var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
                 var switchClause = node.switchClauses.childAt(i);
                 var translated = switchClause.accept(this);
-                if (switchClause.kind() === 232 /* DefaultSwitchClause */ ) {
+                if (switchClause.kind() === 231 /* DefaultSwitchClause */ ) {
                     result.defaultCase = translated;
                 }
                 result.caseList.append(translated);
@@ -56611,8 +56747,8 @@ var Services;
                 case 132 /* ImportDeclaration */ :
                 case 144 /* Block */ :
                 case 149 /* SwitchStatement */ :
-                case 231 /* CaseSwitchClause */ :
-                case 232 /* DefaultSwitchClause */ :
+                case 230 /* CaseSwitchClause */ :
+                case 231 /* DefaultSwitchClause */ :
                     return true;
                 case 122 /* ObjectType */ :
                     return true;
@@ -56622,11 +56758,11 @@ var Services;
                 case 134 /* MemberFunctionDeclaration */ :
                 case 137 /* GetMemberAccessorDeclaration */ :
                 case 138 /* SetMemberAccessorDeclaration */ :
-                case 244 /* GetAccessorPropertyAssignment */ :
-                case 245 /* SetAccessorPropertyAssignment */ :
+                case 243 /* GetAccessorPropertyAssignment */ :
+                case 244 /* SetAccessorPropertyAssignment */ :
                 case 220 /* FunctionExpression */ :
-                case 234 /* CatchClause */ :
-                case 235 /* FinallyClause */ :
+                case 233 /* CatchClause */ :
+                case 234 /* FinallyClause */ :
                 case 128 /* FunctionDeclaration */ :
                 case 136 /* ConstructorDeclaration */ :
                 case 152 /* ForStatement */ :
@@ -56635,7 +56771,7 @@ var Services;
                 case 159 /* DoStatement */ :
                 case 161 /* WithStatement */ :
                 case 145 /* IfStatement */ :
-                case 233 /* ElseClause */ :
+                case 232 /* ElseClause */ :
                     return element.kind() !== 144 /* Block */ ;
                 case 157 /* TryStatement */ :
                     return false;
@@ -57483,7 +57619,7 @@ var TypeScript;
                         return true;
                     case 132 /* ImportDeclaration */ :
                     case 223 /* VariableDeclarator */ :
-                    case 230 /* EqualsValueClause */ :
+                    case 229 /* EqualsValueClause */ :
                         return context.currentTokenSpan.kind() === 107 /* EqualsToken */  || context.nextTokenSpan.kind() === 107 /* EqualsToken */ ;
                 }
                 return false;
@@ -57548,9 +57684,9 @@ var TypeScript;
                     case 157 /* TryStatement */ :
                     case 159 /* DoStatement */ :
                     case 161 /* WithStatement */ :
-                    case 233 /* ElseClause */ :
-                    case 234 /* CatchClause */ :
-                    case 235 /* FinallyClause */ :
+                    case 232 /* ElseClause */ :
+                    case 233 /* CatchClause */ :
+                    case 234 /* FinallyClause */ :
                         return true;
                     default:
                         return false;
@@ -57596,9 +57732,9 @@ var TypeScript;
             };
             Rules.IsGetSetMemberContext = function IsGetSetMemberContext(context) {
                 switch(context.contextNode.kind()) {
-                    case 244 /* GetAccessorPropertyAssignment */ :
+                    case 243 /* GetAccessorPropertyAssignment */ :
                     case 137 /* GetMemberAccessorDeclaration */ :
-                    case 245 /* SetAccessorPropertyAssignment */ :
+                    case 244 /* SetAccessorPropertyAssignment */ :
                     case 138 /* SetMemberAccessorDeclaration */ :
                         return true;
                 }
@@ -58250,8 +58386,8 @@ var TypeScript;
                     case 156 /* WhileStatement */ :
                     case 159 /* DoStatement */ :
                     case 161 /* WithStatement */ :
-                    case 231 /* CaseSwitchClause */ :
-                    case 232 /* DefaultSwitchClause */ :
+                    case 230 /* CaseSwitchClause */ :
+                    case 231 /* DefaultSwitchClause */ :
                     case 148 /* ReturnStatement */ :
                     case 155 /* ThrowStatement */ :
                     case 222 /* VariableDeclaration */ :
@@ -58259,7 +58395,7 @@ var TypeScript;
                         indentationLevelDelta = 1;
                         break;
                     case 145 /* IfStatement */ :
-                        if (parent.kind() === 233 /* ElseClause */  && !(parent).elseKeyword.hasTrailingNewLine() && !(node).ifKeyword.hasLeadingNewLine()) {
+                        if (parent.kind() === 232 /* ElseClause */  && !(parent).elseKeyword.hasTrailingNewLine() && !(node).ifKeyword.hasLeadingNewLine()) {
                             indentationLevel = parentIndentationLevel;
                             indentationLevelDelta = parentIndentationLevelDelta;
                         } else {
@@ -58267,7 +58403,7 @@ var TypeScript;
                             indentationLevelDelta = 1;
                         }
                         break;
-                    case 233 /* ElseClause */ :
+                    case 232 /* ElseClause */ :
                         indentationLevel = parentIndentationLevel;
                         indentationLevelDelta = parentIndentationLevelDelta;
                         break;
@@ -58279,7 +58415,7 @@ var TypeScript;
                             case 159 /* DoStatement */ :
                             case 161 /* WithStatement */ :
                             case 145 /* IfStatement */ :
-                            case 233 /* ElseClause */ :
+                            case 232 /* ElseClause */ :
                                 indentationLevel = parentIndentationLevel;
                                 indentationLevelDelta = parentIndentationLevelDelta;
                                 break;
