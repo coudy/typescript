@@ -18056,42 +18056,56 @@ var TypeScript;
         DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer = 17;
         DiagnosticCode._map[18] = "Required_parameter_cannot_follow_optional_parameter";
         DiagnosticCode.Required_parameter_cannot_follow_optional_parameter = 18;
-        DiagnosticCode._map[19] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 19;
-        DiagnosticCode._map[20] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 20;
-        DiagnosticCode._map[21] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 21;
-        DiagnosticCode._map[22] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 22;
-        DiagnosticCode._map[23] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 23;
-        DiagnosticCode._map[24] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 24;
-        DiagnosticCode._map[25] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 25;
-        DiagnosticCode._map[26] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 26;
-        DiagnosticCode._map[27] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 27;
-        DiagnosticCode._map[28] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 28;
-        DiagnosticCode._map[29] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 29;
-        DiagnosticCode._map[30] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 30;
-        DiagnosticCode._map[31] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 31;
-        DiagnosticCode._map[32] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 32;
-        DiagnosticCode._map[33] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 33;
-        DiagnosticCode._map[34] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 34;
-        DiagnosticCode._map[35] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 35;
-        DiagnosticCode._map[36] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 36;
+        DiagnosticCode._map[19] = "Index_signatures_cannot_have_rest_parameters";
+        DiagnosticCode.Index_signatures_cannot_have_rest_parameters = 19;
+        DiagnosticCode._map[20] = "Index_signature_parameter_cannot_have_accessibility_modifierss";
+        DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss = 20;
+        DiagnosticCode._map[21] = "Index_signature_parameter_cannot_have_a_question_mark";
+        DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark = 21;
+        DiagnosticCode._map[22] = "Index_signature_parameter_cannot_have_an_initializer";
+        DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer = 22;
+        DiagnosticCode._map[23] = "Index_signature_must_have_a_type_annotation";
+        DiagnosticCode.Index_signature_must_have_a_type_annotation = 23;
+        DiagnosticCode._map[24] = "Index_signature_parameter_must_have_a_type_annotation";
+        DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation = 24;
+        DiagnosticCode._map[25] = "Index_signature_parameter_type_must_be__string__or__number_";
+        DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_ = 25;
+        DiagnosticCode._map[26] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 26;
+        DiagnosticCode._map[27] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 27;
+        DiagnosticCode._map[28] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 28;
+        DiagnosticCode._map[29] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 29;
+        DiagnosticCode._map[30] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 30;
+        DiagnosticCode._map[31] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 31;
+        DiagnosticCode._map[32] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 32;
+        DiagnosticCode._map[33] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 33;
+        DiagnosticCode._map[34] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 34;
+        DiagnosticCode._map[35] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 35;
+        DiagnosticCode._map[36] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 36;
+        DiagnosticCode._map[37] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 37;
+        DiagnosticCode._map[38] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 38;
+        DiagnosticCode._map[39] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 39;
+        DiagnosticCode._map[40] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 40;
+        DiagnosticCode._map[41] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 41;
+        DiagnosticCode._map[42] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 42;
+        DiagnosticCode._map[43] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 43;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -18191,7 +18205,42 @@ var TypeScript;
         Required_parameter_cannot_follow_optional_parameter: {
             category: 1 /* Error */ ,
             message: "required parameter cannot follow optional parameter.",
-            code: 115
+            code: 116
+        },
+        Index_signatures_cannot_have_rest_parameters: {
+            category: 1 /* Error */ ,
+            message: "Index signatures cannot have rest parameters.",
+            code: 117
+        },
+        Index_signature_parameter_cannot_have_accessibility_modifiers: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter cannot have accessibility modifiers.",
+            code: 118
+        },
+        Index_signature_parameter_cannot_have_a_question_mark: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter cannot have a question mark.",
+            code: 119
+        },
+        Index_signature_parameter_cannot_have_an_initializer: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter cannot have an initializer.",
+            code: 120
+        },
+        Index_signature_must_have_a_type_annotation: {
+            category: 1 /* Error */ ,
+            message: "Index signature must have a type annotation.",
+            code: 121
+        },
+        Index_signature_parameter_must_have_a_type_annotation: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter must have a type annotation.",
+            code: 122
+        },
+        Index_signature_parameter_type_must_be__string__or__number_: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter type must be 'string' or 'number'.",
+            code: 123
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
@@ -23053,8 +23102,8 @@ var TypeScript;
             NormalModeFactory.prototype.methodSignature = function (propertyName, questionToken, callSignature) {
                 return new TypeScript.MethodSignatureSyntax(propertyName, questionToken, callSignature, false);
             };
-            NormalModeFactory.prototype.indexSignature = function (openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation) {
-                return new TypeScript.IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, false);
+            NormalModeFactory.prototype.indexSignature = function (openBracketToken, parameter, closeBracketToken, typeAnnotation) {
+                return new TypeScript.IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, false);
             };
             NormalModeFactory.prototype.propertySignature = function (propertyName, questionToken, typeAnnotation) {
                 return new TypeScript.PropertySignatureSyntax(propertyName, questionToken, typeAnnotation, false);
@@ -23313,8 +23362,8 @@ var TypeScript;
             StrictModeFactory.prototype.methodSignature = function (propertyName, questionToken, callSignature) {
                 return new TypeScript.MethodSignatureSyntax(propertyName, questionToken, callSignature, true);
             };
-            StrictModeFactory.prototype.indexSignature = function (openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation) {
-                return new TypeScript.IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, true);
+            StrictModeFactory.prototype.indexSignature = function (openBracketToken, parameter, closeBracketToken, typeAnnotation) {
+                return new TypeScript.IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, true);
             };
             StrictModeFactory.prototype.propertySignature = function (propertyName, questionToken, typeAnnotation) {
                 return new TypeScript.PropertySignatureSyntax(propertyName, questionToken, typeAnnotation, true);
@@ -27813,11 +27862,10 @@ var TypeScript;
     TypeScript.MethodSignatureSyntax = MethodSignatureSyntax;    
     var IndexSignatureSyntax = (function (_super) {
         __extends(IndexSignatureSyntax, _super);
-        function IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, parsedInStrictMode) {
+        function IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, parsedInStrictMode) {
             _super.call(this, parsedInStrictMode);
             this.openBracketToken = openBracketToken;
-            this.identifier = identifier;
-            this.parameterTypeAnnotation = parameterTypeAnnotation;
+            this.parameter = parameter;
             this.closeBracketToken = closeBracketToken;
             this.typeAnnotation = typeAnnotation;
         }
@@ -27828,19 +27876,17 @@ var TypeScript;
             return 142 /* IndexSignature */ ;
         };
         IndexSignatureSyntax.prototype.childCount = function () {
-            return 5;
+            return 4;
         };
         IndexSignatureSyntax.prototype.childAt = function (slot) {
             switch(slot) {
                 case 0:
                     return this.openBracketToken;
                 case 1:
-                    return this.identifier;
+                    return this.parameter;
                 case 2:
-                    return this.parameterTypeAnnotation;
-                case 3:
                     return this.closeBracketToken;
-                case 4:
+                case 3:
                     return this.typeAnnotation;
                 default:
                     throw TypeScript.Errors.invalidOperation();
@@ -27849,14 +27895,17 @@ var TypeScript;
         IndexSignatureSyntax.prototype.isTypeMember = function () {
             return true;
         };
-        IndexSignatureSyntax.prototype.update = function (openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation) {
-            if (this.openBracketToken === openBracketToken && this.identifier === identifier && this.parameterTypeAnnotation === parameterTypeAnnotation && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
+        IndexSignatureSyntax.prototype.update = function (openBracketToken, parameter, closeBracketToken, typeAnnotation) {
+            if (this.openBracketToken === openBracketToken && this.parameter === parameter && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
                 return this;
             }
-            return new IndexSignatureSyntax(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation, this.parsedInStrictMode());
+            return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, this.parsedInStrictMode());
         };
-        IndexSignatureSyntax.create1 = function create1(identifier, parameterTypeAnnotation, typeAnnotation) {
-            return new IndexSignatureSyntax(TypeScript.Syntax.token(74 /* OpenBracketToken */ ), identifier, parameterTypeAnnotation, TypeScript.Syntax.token(75 /* CloseBracketToken */ ), typeAnnotation, false);
+        IndexSignatureSyntax.create = function create(openBracketToken, parameter, closeBracketToken) {
+            return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, null, false);
+        };
+        IndexSignatureSyntax.create1 = function create1(parameter) {
+            return new IndexSignatureSyntax(TypeScript.Syntax.token(74 /* OpenBracketToken */ ), parameter, TypeScript.Syntax.token(75 /* CloseBracketToken */ ), null, false);
         };
         IndexSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -27865,19 +27914,16 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
         IndexSignatureSyntax.prototype.withOpenBracketToken = function (openBracketToken) {
-            return this.update(openBracketToken, this.identifier, this.parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
+            return this.update(openBracketToken, this.parameter, this.closeBracketToken, this.typeAnnotation);
         };
-        IndexSignatureSyntax.prototype.withIdentifier = function (identifier) {
-            return this.update(this.openBracketToken, identifier, this.parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
-        };
-        IndexSignatureSyntax.prototype.withParameterTypeAnnotation = function (parameterTypeAnnotation) {
-            return this.update(this.openBracketToken, this.identifier, parameterTypeAnnotation, this.closeBracketToken, this.typeAnnotation);
+        IndexSignatureSyntax.prototype.withParameter = function (parameter) {
+            return this.update(this.openBracketToken, parameter, this.closeBracketToken, this.typeAnnotation);
         };
         IndexSignatureSyntax.prototype.withCloseBracketToken = function (closeBracketToken) {
-            return this.update(this.openBracketToken, this.identifier, this.parameterTypeAnnotation, closeBracketToken, this.typeAnnotation);
+            return this.update(this.openBracketToken, this.parameter, closeBracketToken, this.typeAnnotation);
         };
         IndexSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
-            return this.update(this.openBracketToken, this.identifier, this.parameterTypeAnnotation, this.closeBracketToken, typeAnnotation);
+            return this.update(this.openBracketToken, this.parameter, this.closeBracketToken, typeAnnotation);
         };
         IndexSignatureSyntax.prototype.isTypeScriptSpecific = function () {
             return true;
@@ -31414,7 +31460,7 @@ var TypeScript;
             return node.update(this.visitToken(node.propertyName), node.questionToken === null ? null : this.visitToken(node.questionToken), this.visitNode(node.callSignature));
         };
         SyntaxRewriter.prototype.visitIndexSignature = function (node) {
-            return node.update(this.visitToken(node.openBracketToken), this.visitToken(node.identifier), this.visitNode(node.parameterTypeAnnotation), this.visitToken(node.closeBracketToken), this.visitNode(node.typeAnnotation));
+            return node.update(this.visitToken(node.openBracketToken), this.visitNode(node.parameter), this.visitToken(node.closeBracketToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation));
         };
         SyntaxRewriter.prototype.visitPropertySignature = function (node) {
             return node.update(this.visitToken(node.propertyName), node.questionToken === null ? null : this.visitToken(node.questionToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation));
@@ -34096,10 +34142,9 @@ var TypeScript;
         };
         SyntaxWalker.prototype.visitIndexSignature = function (node) {
             this.visitToken(node.openBracketToken);
-            this.visitToken(node.identifier);
-            this.visitNode(node.parameterTypeAnnotation);
+            this.visitNode(node.parameter);
             this.visitToken(node.closeBracketToken);
-            this.visitNode(node.typeAnnotation);
+            this.visitOptionalNode(node.typeAnnotation);
         };
         SyntaxWalker.prototype.visitPropertySignature = function (node) {
             this.visitToken(node.propertyName);
@@ -35822,11 +35867,10 @@ var TypeScript;
             };
             ParserImpl.prototype.parseIndexSignature = function () {
                 var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
-                var identifier = this.eatIdentifierToken();
-                var parameterTypeAnnotation = this.parseTypeAnnotation(false);
+                var parameter = this.parseParameter();
                 var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
-                var typeAnnotation = this.parseTypeAnnotation(false);
-                return this.factory.indexSignature(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation);
+                var typeAnnotation = this.parseOptionalTypeAnnotation(false);
+                return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
             };
             ParserImpl.prototype.parseMethodSignature = function () {
                 var propertyName = this.eatPropertyName();
@@ -37811,6 +37855,26 @@ var TypeScript;
                 parameterFullStart += nodeOrToken.fullWidth();
             }
             _super.prototype.visitParameterList.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitIndexSignature = function (node) {
+            var parameterFullStart = this.childFullStart(node, node.parameter);
+            var parameter = node.parameter;
+            if (parameter.dotDotDotToken) {
+                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 19 /* Index_signatures_cannot_have_rest_parameters */ , null);
+            } else if (parameter.publicOrPrivateKeyword) {
+                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 20 /* Index_signature_parameter_cannot_have_accessibility_modifierss */ , null);
+            } else if (parameter.questionToken) {
+                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 21 /* Index_signature_parameter_cannot_have_a_question_mark */ , null);
+            } else if (parameter.equalsValueClause) {
+                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 22 /* Index_signature_parameter_cannot_have_an_initializer */ , null);
+            } else if (!parameter.typeAnnotation) {
+                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 24 /* Index_signature_parameter_must_have_a_type_annotation */ , null);
+            } else if (parameter.typeAnnotation.type.kind() !== 69 /* StringKeyword */  && parameter.typeAnnotation.type.kind() !== 67 /* NumberKeyword */ ) {
+                this.pushDiagnostic(parameterFullStart + parameter.leadingTriviaWidth(), parameter.width(), 25 /* Index_signature_parameter_type_must_be__string__or__number_ */ , null);
+            } else if (!node.typeAnnotation) {
+                this.pushDiagnostic(this.position() + node.leadingTriviaWidth(), node.width(), 23 /* Index_signature_must_have_a_type_annotation */ , null);
+            }
+            _super.prototype.visitIndexSignature.call(this, node);
         };
         return GrammarCheckerWalker;
     })(TypeScript.PositionTrackingWalker);    
@@ -46302,7 +46366,7 @@ var TypeScript;
                 var isAssignable = this.resolver.sourceIsAssignableToTarget(initTypeSymbol, varTypeSymbol, this.context, comparisonInfo);
                 if (!isAssignable) {
                     var errorMessage = comparisonInfo.message;
-                    var message = TypeScript.getDiagnosticMessage(30 /* Cannot_convert__0__to__1_ */ , [
+                    var message = TypeScript.getDiagnosticMessage(37 /* Cannot_convert__0__to__1_ */ , [
                         initTypeSymbol.toString(), 
                         varTypeSymbol.toString()
                     ]);
@@ -46502,7 +46566,7 @@ var TypeScript;
             var isAssignable = this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo);
             if (!isAssignable) {
                 var errorMessage = comparisonInfo.message;
-                var message = TypeScript.getDiagnosticMessage(30 /* Cannot_convert__0__to__1_ */ , [
+                var message = TypeScript.getDiagnosticMessage(37 /* Cannot_convert__0__to__1_ */ , [
                     rightType.toString(), 
                     leftType.toString()
                 ]);
@@ -46587,7 +46651,7 @@ var TypeScript;
             if (!isAssignable) {
                 var comparisonInfo = new TypeScript.TypeComparisonInfo();
                 var errorMessage = comparisonInfo.message;
-                var message = TypeScript.getDiagnosticMessage(30 /* Cannot_convert__0__to__1_ */ , [
+                var message = TypeScript.getDiagnosticMessage(37 /* Cannot_convert__0__to__1_ */ , [
                     exprType.toString(), 
                     returnType.toString()
                 ]);
@@ -48041,7 +48105,7 @@ var TypeScript;
                 moduleContainerTypeSymbol = this.findSymbolInContext(modName, TypeScript.PullElementKind.SomeType, []);
             }
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {
-                moduleContainerDecl.addDiagnostic(new TypeScript.PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                moduleContainerDecl.addDiagnostic(new TypeScript.PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     modName
                 ])));
                 moduleContainerTypeSymbol = null;
@@ -48137,7 +48201,7 @@ var TypeScript;
                 parentHadSymbol = true;
             }
             if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
-                importDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                importDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     declName
                 ])));
                 importSymbol = null;
@@ -48181,7 +48245,7 @@ var TypeScript;
                 enumSymbol = this.findSymbolInContext(enumName, TypeScript.PullElementKind.SomeType, []);
             }
             if (enumSymbol && (enumSymbol.getKind() != 128 /* Enum */  || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
-                enumDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                enumDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     enumName
                 ])));
                 enumSymbol = null;
@@ -48246,7 +48310,7 @@ var TypeScript;
                 classSymbol = this.findSymbolInContext(className, TypeScript.PullElementKind.SomeType, []);
             }
             if (classSymbol && (classSymbol.getKind() != 16 /* Class */  || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
-                classDecl.addDiagnostic(new TypeScript.PullDiagnostic(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                classDecl.addDiagnostic(new TypeScript.PullDiagnostic(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     className
                 ])));
                 classSymbol = null;
@@ -48372,7 +48436,7 @@ var TypeScript;
                     if (memberMap[member.getName()]) {
                         memberDecl = member.getDeclarations()[0];
                         memberAST = this.semanticInfo.getASTForDecl(memberDecl);
-                        memberDecl.addDiagnostic(new TypeScript.PullDiagnostic(memberAST.minChar, memberAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                        memberDecl.addDiagnostic(new TypeScript.PullDiagnostic(memberAST.minChar, memberAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                             member.getName()
                         ])));
                     } else {
@@ -48419,7 +48483,7 @@ var TypeScript;
                 interfaceSymbol = this.findSymbolInContext(interfaceName, TypeScript.PullElementKind.SomeType, []);
             }
             if (interfaceSymbol && (interfaceSymbol.getKind() != 32 /* Interface */ )) {
-                interfaceDecl.addDiagnostic(new TypeScript.PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                interfaceDecl.addDiagnostic(new TypeScript.PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     interfaceName
                 ])));
                 interfaceSymbol = null;
@@ -48592,7 +48656,7 @@ var TypeScript;
             if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
                 if ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0) {
                     span = variableDeclaration.getSpan();
-                    variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                    variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                         declName
                     ])));
                     variableSymbol = null;
@@ -48600,7 +48664,7 @@ var TypeScript;
                 }
             } else if (variableSymbol && (variableSymbol.getKind() != 2048 /* Variable */ ) && ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0)) {
                 span = variableDeclaration.getSpan();
-                variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                variableDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     declName
                 ])));
                 variableSymbol = null;
@@ -48744,7 +48808,7 @@ var TypeScript;
             if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
                 if (!propertySymbol.isType() || !isImplicit || (!(propertySymbol).isClass() && isImplicit)) {
                     var span = propertyDeclaration.getSpan();
-                    propertyDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                    propertyDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                         declName
                     ])));
                 }
@@ -48836,7 +48900,7 @@ var TypeScript;
                         parameterSymbol.setIsOptional();
                     }
                     if (params[argDecl.id.actualText]) {
-                        decl.addDiagnostic(new TypeScript.PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                        decl.addDiagnostic(new TypeScript.PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                             argDecl.id.actualText
                         ])));
                     } else {
@@ -48887,7 +48951,7 @@ var TypeScript;
                 functionSymbol = this.findSymbolInContext(funcName, TypeScript.PullElementKind.SomeValue, []);
             }
             if (functionSymbol && this.symbolIsRedeclaration(functionSymbol) && (functionSymbol.getKind() != 32768 /* Function */  || !isSignature && !functionSymbol.allDeclsHaveFlag(4096 /* Signature */ ))) {
-                functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     funcName
                 ])));
                 functionSymbol = null;
@@ -49085,7 +49149,7 @@ var TypeScript;
                 methodSymbol = parent.findMember(methodName);
             }
             if (methodSymbol && this.symbolIsRedeclaration(methodSymbol) && (methodSymbol.getKind() != 131072 /* Method */  || (!isSignature && !methodSymbol.allDeclsHaveFlag(4096 /* Signature */ )))) {
-                methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     methodName
                 ])));
                 methodSymbol = null;
@@ -49406,14 +49470,14 @@ var TypeScript;
             }
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                    getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                         funcName
                     ])));
                     accessorSymbol = null;
                 } else {
                     getterSymbol = accessorSymbol.getGetter();
                     if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
-                        getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(34 /* Getter__0__already_declared */ , [
+                        getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(41 /* Getter__0__already_declared */ , [
                             funcName
                         ])));
                         accessorSymbol = null;
@@ -49483,7 +49547,7 @@ var TypeScript;
             this.bindParameterSymbols(this.semanticInfo.getASTForDecl(getAccessorDeclaration), getterTypeSymbol, signature);
             var typeParameters = getAccessorDeclaration.getTypeParameters();
             if (typeParameters.length) {
-                getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Accessor_may_not_take_type_parameters */ , null)));
+                getAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(43 /* Accessor_may_not_take_type_parameters */ , null)));
             }
             getterTypeSymbol.addSignature(signature);
             if (!isSignature) {
@@ -49537,14 +49601,14 @@ var TypeScript;
             }
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(19 /* Duplicate_identifier__0_ */ , [
+                    setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                         funcName
                     ])));
                     accessorSymbol = null;
                 } else {
                     setterSymbol = accessorSymbol.getSetter();
                     if (setterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(setterSymbol))) {
-                        setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(35 /* Setter__0__already_declared */ , [
+                        setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(42 /* Setter__0__already_declared */ , [
                             funcName
                         ])));
                         accessorSymbol = null;
@@ -49614,7 +49678,7 @@ var TypeScript;
             this.bindParameterSymbols(this.semanticInfo.getASTForDecl(setAccessorDeclaration), setterTypeSymbol, signature);
             var typeParameters = setAccessorDeclaration.getTypeParameters();
             if (typeParameters.length) {
-                setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(36 /* Accessor_may_not_take_type_parameters */ , null)));
+                setAccessorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(43 /* Accessor_may_not_take_type_parameters */ , null)));
             }
             setterTypeSymbol.addSignature(signature);
             if (!isSignature) {
@@ -52047,15 +52111,9 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             this.movePast(node.openBracketToken);
-            var identifierStart = this.position;
-            var identifier = this.identifierFromToken(node.identifier, false);
-            this.movePast(node.identifier);
-            var parameterType = node.parameterTypeAnnotation.accept(this);
-            var parameter = new TypeScript.ArgDecl(identifier);
-            parameter.typeExpr = parameterType;
-            this.setSpan(parameter, identifierStart, this.position);
+            var parameter = node.parameter.accept(this);
             this.movePast(node.closeBracketToken);
-            var returnType = node.typeAnnotation.accept(this);
+            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var name = new TypeScript.Identifier("__item");
             this.setSpan(name, start, start);
             var parameters = new TypeScript.ASTList();
