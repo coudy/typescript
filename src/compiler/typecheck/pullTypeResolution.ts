@@ -762,10 +762,6 @@ module TypeScript {
             var i = 0;
 
             if (classDeclAST.extendsList) {
-                if (classDeclAST.extendsList.members.length > 1) {
-                    context.postError(classDeclAST.name.minChar, classDeclAST.name.getLength(), this.unitPath, "A class may only extend one other type", enclosingDecl);
-                }
-
                 for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
 
