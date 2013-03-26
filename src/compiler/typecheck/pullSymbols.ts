@@ -2684,14 +2684,14 @@ module TypeScript {
             return signature;
         }        
 
-        signature.setIsBeingSpecialized();
-
         var newSignature = signature.getSpecialization(typeArguments);
         var i = 0;
 
         if (newSignature) {
             return newSignature;
         }
+
+        signature.setIsBeingSpecialized();
 
         newSignature = new PullSignatureSymbol(signature.getKind());
         newSignature.addDeclaration(signature.getDeclarations()[0]);
