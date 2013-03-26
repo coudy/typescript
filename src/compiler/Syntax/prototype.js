@@ -6411,14 +6411,8 @@ var TypeScript;
                 kind: (TypeScript.SyntaxKind)._map[this.kind()],
                 fullWidth: this.fullWidth()
             };
-            if (this.hasSkippedText()) {
-                result.hasSkippedText = true;
-            }
-            if (this.hasZeroWidthToken()) {
-                result.hasZeroWidthToken = true;
-            }
-            if (this.hasRegularExpressionToken()) {
-                result.hasRegularExpressionToken = true;
+            if (this.hasSkippedText() || this.hasZeroWidthToken() || this.hasRegularExpressionToken()) {
+                result.isIncrementallyReusable = false;
             }
             if (this.parsedInStrictMode()) {
                 result.parsedInStrictMode = true;

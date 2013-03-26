@@ -7,7 +7,7 @@
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 505,
-        "hasZeroWidthToken": true,
+        "isIncrementallyReusable": false,
         "moduleElements": [
             {
                 "kind": "IfStatement",
@@ -337,7 +337,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 139,
-                "hasZeroWidthToken": true,
+                "isIncrementallyReusable": false,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -376,11 +376,11 @@
                 "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 30,
-                    "hasZeroWidthToken": true,
+                    "isIncrementallyReusable": false,
                     "left": {
                         "kind": "BitwiseNotExpression",
                         "fullWidth": 24,
-                        "hasZeroWidthToken": true,
+                        "isIncrementallyReusable": false,
                         "operatorToken": {
                             "kind": "TildeToken",
                             "width": 1,
@@ -389,7 +389,7 @@
                         "operand": {
                             "kind": "ParenthesizedExpression",
                             "fullWidth": 23,
-                            "hasZeroWidthToken": true,
+                            "isIncrementallyReusable": false,
                             "openParenToken": {
                                 "kind": "OpenParenToken",
                                 "width": 1,
@@ -398,7 +398,7 @@
                             "expression": {
                                 "kind": "FunctionExpression",
                                 "fullWidth": 20,
-                                "hasZeroWidthToken": true,
+                                "isIncrementallyReusable": false,
                                 "functionKeyword": {
                                     "kind": "FunctionKeyword",
                                     "width": 8,
@@ -426,7 +426,7 @@
                                 "block": {
                                     "kind": "Block",
                                     "fullWidth": 10,
-                                    "hasZeroWidthToken": true,
+                                    "isIncrementallyReusable": false,
                                     "openBraceToken": {
                                         "kind": "OpenBraceToken",
                                         "width": 1,
@@ -436,7 +436,7 @@
                                         {
                                             "kind": "ReturnStatement",
                                             "fullWidth": 8,
-                                            "hasZeroWidthToken": true,
+                                            "isIncrementallyReusable": false,
                                             "returnKeyword": {
                                                 "kind": "ReturnKeyword",
                                                 "width": 6,
@@ -528,7 +528,7 @@
                 "statement": {
                     "kind": "Block",
                     "fullWidth": 90,
-                    "hasZeroWidthToken": true,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -547,11 +547,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 86,
-                            "hasZeroWidthToken": true,
+                            "isIncrementallyReusable": false,
                             "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 84,
-                                "hasZeroWidthToken": true,
+                                "isIncrementallyReusable": false,
                                 "expression": {
                                     "kind": "IdentifierName",
                                     "width": 6,
@@ -569,7 +569,7 @@
                                 "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 76,
-                                    "hasZeroWidthToken": true,
+                                    "isIncrementallyReusable": false,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
@@ -579,7 +579,7 @@
                                         {
                                             "kind": "AddExpression",
                                             "fullWidth": 74,
-                                            "hasZeroWidthToken": true,
+                                            "isIncrementallyReusable": false,
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 46,
@@ -609,7 +609,7 @@
                                             "right": {
                                                 "kind": "ParenthesizedExpression",
                                                 "fullWidth": 25,
-                                                "hasZeroWidthToken": true,
+                                                "isIncrementallyReusable": false,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -618,7 +618,7 @@
                                                 "expression": {
                                                     "kind": "BitwiseNotExpression",
                                                     "fullWidth": 23,
-                                                    "hasZeroWidthToken": true,
+                                                    "isIncrementallyReusable": false,
                                                     "operatorToken": {
                                                         "kind": "TildeToken",
                                                         "width": 1,
@@ -627,7 +627,7 @@
                                                     "operand": {
                                                         "kind": "ParenthesizedExpression",
                                                         "fullWidth": 22,
-                                                        "hasZeroWidthToken": true,
+                                                        "isIncrementallyReusable": false,
                                                         "openParenToken": {
                                                             "kind": "OpenParenToken",
                                                             "width": 1,
@@ -636,7 +636,7 @@
                                                         "expression": {
                                                             "kind": "FunctionExpression",
                                                             "fullWidth": 20,
-                                                            "hasZeroWidthToken": true,
+                                                            "isIncrementallyReusable": false,
                                                             "functionKeyword": {
                                                                 "kind": "FunctionKeyword",
                                                                 "width": 8,
@@ -664,7 +664,7 @@
                                                             "block": {
                                                                 "kind": "Block",
                                                                 "fullWidth": 10,
-                                                                "hasZeroWidthToken": true,
+                                                                "isIncrementallyReusable": false,
                                                                 "openBraceToken": {
                                                                     "kind": "OpenBraceToken",
                                                                     "width": 1,
@@ -674,7 +674,7 @@
                                                                     {
                                                                         "kind": "ReturnStatement",
                                                                         "fullWidth": 8,
-                                                                        "hasZeroWidthToken": true,
+                                                                        "isIncrementallyReusable": false,
                                                                         "returnKeyword": {
                                                                             "kind": "ReturnKeyword",
                                                                             "width": 6,
