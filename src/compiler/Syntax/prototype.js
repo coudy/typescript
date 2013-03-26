@@ -6330,9 +6330,6 @@ var TypeScript;
                 if (value) {
                     for(var name in this) {
                         if (value === this[name]) {
-                            if ((name === 'modifiers' || name === 'heritageClauses') && value.childCount() === 0) {
-                                continue;
-                            }
                             result[name] = value;
                             break;
                         }
@@ -50830,7 +50827,7 @@ var TypeScript;
             } else if (!(functionDeclaration.getFlags() & 1 /* Exported */ )) {
                 functionSymbol = this.findSymbolInContext(funcName, TypeScript.PullElementKind.SomeValue, []);
             }
-            if (functionSymbol && (functionSymbol.getKind() != 32768 /* Function */  || !isSignature && !functionSymbol.allDeclsHaveFlag(4096 /* Signature */ ))) {
+            if (functionSymbol && this.symbolIsRedeclaration(functionSymbol) && (functionSymbol.getKind() != 32768 /* Function */  || !isSignature && !functionSymbol.allDeclsHaveFlag(4096 /* Signature */ ))) {
                 functionDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     funcName
                 ])));
@@ -50853,6 +50850,8 @@ var TypeScript;
             }
             if (!functionSymbol) {
                 functionSymbol = new TypeScript.PullSymbol(funcName, 32768 /* Function */ );
+            }
+            if (!functionTypeSymbol) {
                 functionTypeSymbol = new TypeScript.PullFunctionTypeSymbol();
                 functionSymbol.setType(functionTypeSymbol);
             }
@@ -51026,7 +51025,7 @@ var TypeScript;
             } else {
                 methodSymbol = parent.findMember(methodName);
             }
-            if (methodSymbol && (methodSymbol.getKind() != 131072 /* Method */  || (!isSignature && !methodSymbol.allDeclsHaveFlag(4096 /* Signature */ )))) {
+            if (methodSymbol && this.symbolIsRedeclaration(methodSymbol) && (methodSymbol.getKind() != 131072 /* Method */  || (!isSignature && !methodSymbol.allDeclsHaveFlag(4096 /* Signature */ )))) {
                 methodDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(26 /* Duplicate_identifier__0_ */ , [
                     methodName
                 ])));
@@ -51049,6 +51048,8 @@ var TypeScript;
             }
             if (!methodSymbol) {
                 methodSymbol = new TypeScript.PullSymbol(methodName, 131072 /* Method */ );
+            }
+            if (!methodTypeSymbol) {
                 methodTypeSymbol = new TypeScript.PullFunctionTypeSymbol();
                 methodSymbol.setType(methodTypeSymbol);
             }

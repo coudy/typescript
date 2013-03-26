@@ -287,7 +287,7 @@ class Program {
     runParser(fileName: string,
         languageVersion: TypeScript.LanguageVersion,
         verify: bool,
-              generateBaseline?: bool = false): void {
+              generateBaseline: bool = false): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }

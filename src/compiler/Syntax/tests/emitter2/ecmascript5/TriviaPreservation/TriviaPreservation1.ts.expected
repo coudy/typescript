@@ -149,19 +149,23 @@ var X = (function() {
 })();
 
 // class
-var X2 = (function() {
+var X2 = (function(_super) {
+    __extends(X2, _super);
     function X2() {
+        _super.apply(this, arguments);
         // x
         this.x = 1;
         // y
         this.y = "";
     }
     return X2;
-})();
+})(I);
 
 // class
-var X3 = (function() {
+var X3 = (function(_super) {
+    __extends(X3, _super);
     function X3() {
+        _super.apply(this, arguments);
         // x
         this.x = {};
         /* y */
@@ -176,7 +180,7 @@ var X3 = (function() {
     // hm: BUG static comments are lost and put in the wrong place
     X3.a = 1;
     return X3;
-})();
+})(I3);
 
 // class
 var X4 = (function() {
@@ -354,19 +358,23 @@ var M1;
     var x = 1;
     
     // class
-    var X2 = (function() {
+    var X2 = (function(_super) {
+        __extends(X2, _super);
         function X2() {
+            _super.apply(this, arguments);
             // x
             this.x = 1;
             // y
             this.y = "";
         }
         return X2;
-    })();
+    })(I);
 
     // class
-    var X3 = (function() {
+    var X3 = (function(_super) {
+        __extends(X3, _super);
         function X3() {
+            _super.apply(this, arguments);
             // x
             this.x = { /* hello */ };
             /* y */
@@ -381,7 +389,7 @@ var M1;
         // hm: BUG static comments are lost and put in the wrong place
         X3.a = 1;
         return X3;
-    })();
+    })(I3);
 
     // declare
     var x; // x

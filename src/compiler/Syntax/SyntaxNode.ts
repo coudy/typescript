@@ -112,10 +112,6 @@ module TypeScript {
                 if (value) {
                     for (var name in this) {
                         if (value === this[name]) {
-                            if ((name === 'modifiers' || name === 'heritageClauses') && value.childCount() === 0) {
-                                continue;
-                            }
-
                             result[name] = value;
                             break;
                         }
