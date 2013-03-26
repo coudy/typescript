@@ -734,7 +734,7 @@ module TypeScript {
                 interfaceSymbol = <PullClassTypeSymbol>this.findSymbolInContext(interfaceName, PullElementKind.SomeType, []);
             }
 
-            if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface) && this.symbolIsRedeclaration(interfaceSymbol)) {
+            if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface)) {
                 interfaceDecl.addDiagnostic(new PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(),
                     getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [interfaceName])));
                 interfaceSymbol = null;
@@ -1481,8 +1481,10 @@ module TypeScript {
             if (!functionSymbol) {
                 // PULLTODO: Make sure that we properly flag signature decl types when collecting decls
                 functionSymbol = new PullSymbol(funcName, PullElementKind.Function);
-                functionTypeSymbol = new PullFunctionTypeSymbol();
+            }
 
+            if (!functionTypeSymbol) {
+                functionTypeSymbol = new PullFunctionTypeSymbol();
                 functionSymbol.setType(functionTypeSymbol);
             }
 
@@ -1783,8 +1785,10 @@ module TypeScript {
             if (!methodSymbol) {
                 // PULLTODO: Make sure that we properly flag signature decl types when collecting decls
                 methodSymbol = new PullSymbol(methodName, PullElementKind.Method);
-                methodTypeSymbol = new PullFunctionTypeSymbol();
+            }
 
+            if (!methodTypeSymbol) {
+                methodTypeSymbol = new PullFunctionTypeSymbol();
                 methodSymbol.setType(methodTypeSymbol);
             }
 
