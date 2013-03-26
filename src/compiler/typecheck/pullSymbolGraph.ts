@@ -196,6 +196,19 @@ module TypeScript {
                 this.semanticInfoChain.removeSymbolFromCache(symbolToRemove);
             }
 
+            if (symbolToRemove.isAccessor()) {
+                var getterSymbol = (<PullAccessorSymbol>symbolToRemove).getGetter();
+                var setterSymbol = (<PullAccessorSymbol>symbolToRemove).getSetter();
+
+                if (getterSymbol) {
+                    this.removeSymbol(getterSymbol);
+                }
+
+                if (setterSymbol) {
+                    this.removeSymbol(setterSymbol);
+                }
+            }
+
             symbolToRemove.removeAllLinks();
         }
 
