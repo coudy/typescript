@@ -377,5 +377,34 @@ module TypeScript {
 
             super.visitSetMemberAccessorDeclaration(node);
         }
+
+        checkEnumDeclarationElements(node: EnumDeclarationSyntax): void {
+            var enumElementsFullStart = this.childFullStart(node, node.enumElements);
+            var enumElementFullStart = enumElementsFullStart;
+            var seenExplicitMember = false;
+            for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
+                var nodeOrToken = node.enumElements.childAt(i);
+                if (i % 2 === 0) {
+                    var enumElement = <EnumElementSyntax>nodeOrToken;
+
+                    if (enumElement.equalsValueClause) {
+                        seenExplicitMember = true;
+                    }
+                    else if (seenExplicitMember) {
+                        this.pushDiagnostic1(enumElementFullStart, enumElement,
+                            DiagnosticCode.Enum_element_must_have_initializer);
+                        return;
+                    }
+                }
+
+                enumElementFullStart += nodeOrToken.fullWidth();
+            }
+        }
+
+        visitEnumDeclaration(node: EnumDeclarationSyntax): void {
+            this.checkEnumDeclarationElements(node);
+            
+            super.visitEnumDeclaration(node);
+        }
     }
 }

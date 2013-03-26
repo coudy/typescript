@@ -213,6 +213,12 @@ module TypeScript {
             code: 1032
         },
 
+        Enum_element_must_have_initializer: {
+            category: DiagnosticCategory.Error,
+            message: "Enum element must have initializer.",
+            code: 1033
+        },
+
 
 
 

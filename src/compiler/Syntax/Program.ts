@@ -13,7 +13,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "MemberFunctionDeclaration1";
+    // "Enum1.ts";
     undefined;
 
 var generate = false;
