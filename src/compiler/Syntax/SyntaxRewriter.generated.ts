@@ -360,10 +360,9 @@ module TypeScript {
         public visitIndexSignature(node: IndexSignatureSyntax): any {
             return node.update(
                 this.visitToken(node.openBracketToken),
-                this.visitToken(node.identifier),
-                <TypeAnnotationSyntax>this.visitNode(node.parameterTypeAnnotation),
+                <ParameterSyntax>this.visitNode(node.parameter),
                 this.visitToken(node.closeBracketToken),
-                <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
+                node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
         }
 
         public visitPropertySignature(node: PropertySignatureSyntax): any {

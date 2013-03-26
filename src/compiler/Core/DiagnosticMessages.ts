@@ -94,9 +94,9 @@ module TypeScript {
         },
 
         A_catch_clause_variable_cannot_have_a_type_annotation: {
-                category: DiagnosticCategory.Error,
-                message: "A catch clause variable cannot have a type annotation.",
-                code: 113
+            category: DiagnosticCategory.Error,
+            message: "A catch clause variable cannot have a type annotation.",
+            code: 113
         },
 
         Rest_parameter_must_be_last_in_list: {
@@ -114,8 +114,52 @@ module TypeScript {
         Required_parameter_cannot_follow_optional_parameter: {
             category: DiagnosticCategory.Error,
             message: "required parameter cannot follow optional parameter.",
-            code: 115
+            code: 116
         },
+
+        Index_signatures_cannot_have_rest_parameters: {
+            category: DiagnosticCategory.Error,
+            message: "Index signatures cannot have rest parameters.",
+            code: 117
+        },
+
+        Index_signature_parameter_cannot_have_accessibility_modifiers: {
+            category: DiagnosticCategory.Error,
+            message: "Index signature parameter cannot have accessibility modifiers.",
+            code: 118
+        },
+
+        Index_signature_parameter_cannot_have_a_question_mark: {
+            category: DiagnosticCategory.Error,
+            message: "Index signature parameter cannot have a question mark.",
+            code: 119
+        },
+
+        Index_signature_parameter_cannot_have_an_initializer: {
+            category: DiagnosticCategory.Error,
+            message: "Index signature parameter cannot have an initializer.",
+            code: 120
+        },
+
+        Index_signature_must_have_a_type_annotation: {
+            category: DiagnosticCategory.Error,
+            message: "Index signature must have a type annotation.",
+            code: 121
+        },
+
+        Index_signature_parameter_must_have_a_type_annotation: {
+            category: DiagnosticCategory.Error,
+            message: "Index signature parameter must have a type annotation.",
+            code: 122
+        },
+
+        Index_signature_parameter_type_must_be__string__or__number_: {
+            category: DiagnosticCategory.Error,
+            message: "Index signature parameter type must be 'string' or 'number'.",
+            code: 123
+        },
+
+
 
         // Semantic errors start at 200.
         Duplicate_identifier__0_: {

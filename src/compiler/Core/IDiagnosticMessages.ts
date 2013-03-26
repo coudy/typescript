@@ -23,6 +23,15 @@ module TypeScript {
         Rest_parameter_must_be_last_in_list: DiagnosticInfo;
         Parameter_cannot_have_question_mark_and_initializer: DiagnosticInfo;
         Required_parameter_cannot_follow_optional_parameter: DiagnosticInfo;
+        Index_signatures_cannot_have_rest_parameters: DiagnosticInfo;
+        Index_signature_parameter_cannot_have_accessibility_modifiers: DiagnosticInfo;
+        Index_signature_parameter_cannot_have_a_question_mark: DiagnosticInfo;
+        Index_signature_parameter_cannot_have_an_initializer: DiagnosticInfo;
+        Index_signature_must_have_a_type_annotation: DiagnosticInfo;
+        Index_signature_parameter_must_have_a_type_annotation: DiagnosticInfo;
+        Index_signature_parameter_type_must_be__string__or__number_: DiagnosticInfo;
+
+
 
         // Semantic diagnostics.
         Duplicate_identifier__0_: DiagnosticInfo;

@@ -472,32 +472,36 @@
                                             }
                                         ]
                                     },
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 5,
-                                        "text": "index",
-                                        "valueText": "index"
-                                    },
-                                    "parameterTypeAnnotation": {
-                                        "kind": "TypeAnnotation",
-                                        "fullWidth": 8,
-                                        "colonToken": {
-                                            "kind": "ColonToken",
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": ":",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
+                                    "parameter": {
+                                        "kind": "Parameter",
+                                        "fullWidth": 13,
+                                        "identifier": {
+                                            "kind": "IdentifierName",
+                                            "width": 5,
+                                            "text": "index",
+                                            "valueText": "index"
                                         },
-                                        "type": {
-                                            "kind": "NumberKeyword",
-                                            "width": 6,
-                                            "text": "number"
+                                        "typeAnnotation": {
+                                            "kind": "TypeAnnotation",
+                                            "fullWidth": 8,
+                                            "colonToken": {
+                                                "kind": "ColonToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ":",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
+                                            },
+                                            "type": {
+                                                "kind": "NumberKeyword",
+                                                "width": 6,
+                                                "text": "number"
+                                            }
                                         }
                                     },
                                     "closeBracketToken": {

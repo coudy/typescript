@@ -2487,12 +2487,11 @@ module TypeScript.Parser {
             // Debug.assert(this.isIndexSignature());
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
-            var identifier = this.eatIdentifierToken();
-            var parameterTypeAnnotation = this.parseTypeAnnotation(/*allowStringLiteral:*/ false);
+            var parameter = this.parseParameter();
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
-            var typeAnnotation = this.parseTypeAnnotation(/*allowStringLiteral:*/ false);
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
 
-            return this.factory.indexSignature(openBracketToken, identifier, parameterTypeAnnotation, closeBracketToken, typeAnnotation);
+            return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
         }
 
         private parseMethodSignature(): MethodSignatureSyntax {

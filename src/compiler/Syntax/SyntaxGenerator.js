@@ -255,42 +255,48 @@ var TypeScript;
         DiagnosticCode.Unexpected_token_ = 14;
         DiagnosticCode._map[15] = "A_catch_clause_variable_cannot_have_a_type_annotation";
         DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation = 15;
-        DiagnosticCode._map[16] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 16;
-        DiagnosticCode._map[17] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 17;
-        DiagnosticCode._map[18] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 18;
-        DiagnosticCode._map[19] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 19;
-        DiagnosticCode._map[20] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 20;
-        DiagnosticCode._map[21] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 21;
-        DiagnosticCode._map[22] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 22;
-        DiagnosticCode._map[23] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 23;
-        DiagnosticCode._map[24] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 24;
-        DiagnosticCode._map[25] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 25;
-        DiagnosticCode._map[26] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 26;
-        DiagnosticCode._map[27] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 27;
-        DiagnosticCode._map[28] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 28;
-        DiagnosticCode._map[29] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 29;
-        DiagnosticCode._map[30] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 30;
-        DiagnosticCode._map[31] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 31;
-        DiagnosticCode._map[32] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 32;
-        DiagnosticCode._map[33] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 33;
+        DiagnosticCode._map[16] = "Rest_parameter_must_be_last_in_list";
+        DiagnosticCode.Rest_parameter_must_be_last_in_list = 16;
+        DiagnosticCode._map[17] = "Parameter_cannot_have_question_mark_and_initializer";
+        DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer = 17;
+        DiagnosticCode._map[18] = "Required_parameter_cannot_follow_optional_parameter";
+        DiagnosticCode.Required_parameter_cannot_follow_optional_parameter = 18;
+        DiagnosticCode._map[19] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 19;
+        DiagnosticCode._map[20] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 20;
+        DiagnosticCode._map[21] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 21;
+        DiagnosticCode._map[22] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 22;
+        DiagnosticCode._map[23] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 23;
+        DiagnosticCode._map[24] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 24;
+        DiagnosticCode._map[25] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 25;
+        DiagnosticCode._map[26] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 26;
+        DiagnosticCode._map[27] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 27;
+        DiagnosticCode._map[28] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 28;
+        DiagnosticCode._map[29] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 29;
+        DiagnosticCode._map[30] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 30;
+        DiagnosticCode._map[31] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 31;
+        DiagnosticCode._map[32] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 32;
+        DiagnosticCode._map[33] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 33;
+        DiagnosticCode._map[34] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 34;
+        DiagnosticCode._map[35] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 35;
+        DiagnosticCode._map[36] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 36;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -376,6 +382,21 @@ var TypeScript;
             category: 1 /* Error */ ,
             message: "A catch clause variable cannot have a type annotation.",
             code: 113
+        },
+        Rest_parameter_must_be_last_in_list: {
+            category: 1 /* Error */ ,
+            message: "Rest parameter must be last in list.",
+            code: 114
+        },
+        Parameter_cannot_have_question_mark_and_initializer: {
+            category: 1 /* Error */ ,
+            message: "Parameter cannot have question mark and initializer.",
+            code: 115
+        },
+        Required_parameter_cannot_follow_optional_parameter: {
+            category: 1 /* Error */ ,
+            message: "required parameter cannot follow optional parameter.",
+            code: 115
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
@@ -3173,15 +3194,8 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'identifier',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
-            }, 
-            {
-                name: 'parameterTypeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                name: 'parameter',
+                type: 'ParameterSyntax'
             }, 
             {
                 name: 'closeBracketToken',
@@ -3189,7 +3203,8 @@ var definitions = [
             }, 
             {
                 name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax'
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
             }
         ],
         isTypeScriptSpecific: true

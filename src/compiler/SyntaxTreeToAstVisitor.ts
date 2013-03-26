@@ -1745,17 +1745,10 @@ module TypeScript {
 
             this.movePast(node.openBracketToken);
 
-            var identifierStart = this.position;
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
-            this.movePast(node.identifier);
-            var parameterType = node.parameterTypeAnnotation.accept(this);
-
-            var parameter = new ArgDecl(identifier);
-            parameter.typeExpr = parameterType;
-            this.setSpan(parameter, identifierStart, this.position);
+            var parameter = node.parameter.accept(this);
 
             this.movePast(node.closeBracketToken);
-            var returnType = node.typeAnnotation.accept(this);
+            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var name = new Identifier("__item");
             this.setSpan(name, start, start);   // 0 length name.

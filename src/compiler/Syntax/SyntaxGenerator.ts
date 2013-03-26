@@ -494,10 +494,9 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['ITypeMemberSyntax'],
         children: [
             <any>{ name: 'openBracketToken', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
-            <any>{ name: 'parameterTypeAnnotation', type: 'TypeAnnotationSyntax' },
+            <any>{ name: 'parameter', type: 'ParameterSyntax' },
             <any>{ name: 'closeBracketToken', isToken: true },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax' }
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
         ],
         isTypeScriptSpecific: true
     },

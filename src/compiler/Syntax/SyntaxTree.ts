@@ -174,5 +174,56 @@ module TypeScript {
             
             super.visitParameterList(node);
         }
+
+        private visitIndexSignature(node: IndexSignatureSyntax): void {
+            var parameterFullStart = this.childFullStart(node, node.parameter);
+            var parameter = node.parameter;
+
+            if (parameter.dotDotDotToken) {
+                this.pushDiagnostic(
+                    parameterFullStart + parameter.leadingTriviaWidth(),
+                    parameter.width(),
+                    DiagnosticCode.Index_signatures_cannot_have_rest_parameters, null);
+            }
+            else if (parameter.publicOrPrivateKeyword) {
+                this.pushDiagnostic(
+                    parameterFullStart + parameter.leadingTriviaWidth(),
+                    parameter.width(),
+                    DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss, null);
+            }
+            else if (parameter.questionToken) {
+                this.pushDiagnostic(
+                    parameterFullStart + parameter.leadingTriviaWidth(),
+                    parameter.width(),
+                    DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark, null);
+            }
+            else if (parameter.equalsValueClause) {
+                this.pushDiagnostic(
+                    parameterFullStart + parameter.leadingTriviaWidth(),
+                    parameter.width(),
+                    DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer, null);
+            }
+            else if (!parameter.typeAnnotation) {
+                this.pushDiagnostic(
+                    parameterFullStart + parameter.leadingTriviaWidth(),
+                    parameter.width(),
+                    DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation, null);
+            }
+            else if (parameter.typeAnnotation.type.kind() !== SyntaxKind.StringKeyword &&
+                     parameter.typeAnnotation.type.kind() !== SyntaxKind.NumberKeyword) {
+                this.pushDiagnostic(
+                    parameterFullStart + parameter.leadingTriviaWidth(),
+                    parameter.width(),
+                    DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_, null);
+            }
+            else if (!node.typeAnnotation) {
+                this.pushDiagnostic(
+                    this.position() + node.leadingTriviaWidth(),
+                    node.width(),
+                    DiagnosticCode.Index_signature_must_have_a_type_annotation, null);
+            }
+
+            super.visitIndexSignature(node);
+        }
     }
 }
