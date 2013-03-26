@@ -261,42 +261,56 @@ var TypeScript;
         DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer = 17;
         DiagnosticCode._map[18] = "Required_parameter_cannot_follow_optional_parameter";
         DiagnosticCode.Required_parameter_cannot_follow_optional_parameter = 18;
-        DiagnosticCode._map[19] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 19;
-        DiagnosticCode._map[20] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 20;
-        DiagnosticCode._map[21] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 21;
-        DiagnosticCode._map[22] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 22;
-        DiagnosticCode._map[23] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 23;
-        DiagnosticCode._map[24] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 24;
-        DiagnosticCode._map[25] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 25;
-        DiagnosticCode._map[26] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 26;
-        DiagnosticCode._map[27] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 27;
-        DiagnosticCode._map[28] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 28;
-        DiagnosticCode._map[29] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 29;
-        DiagnosticCode._map[30] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 30;
-        DiagnosticCode._map[31] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 31;
-        DiagnosticCode._map[32] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 32;
-        DiagnosticCode._map[33] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 33;
-        DiagnosticCode._map[34] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 34;
-        DiagnosticCode._map[35] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 35;
-        DiagnosticCode._map[36] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 36;
+        DiagnosticCode._map[19] = "Index_signatures_cannot_have_rest_parameters";
+        DiagnosticCode.Index_signatures_cannot_have_rest_parameters = 19;
+        DiagnosticCode._map[20] = "Index_signature_parameter_cannot_have_accessibility_modifierss";
+        DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss = 20;
+        DiagnosticCode._map[21] = "Index_signature_parameter_cannot_have_a_question_mark";
+        DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark = 21;
+        DiagnosticCode._map[22] = "Index_signature_parameter_cannot_have_an_initializer";
+        DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer = 22;
+        DiagnosticCode._map[23] = "Index_signature_must_have_a_type_annotation";
+        DiagnosticCode.Index_signature_must_have_a_type_annotation = 23;
+        DiagnosticCode._map[24] = "Index_signature_parameter_must_have_a_type_annotation";
+        DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation = 24;
+        DiagnosticCode._map[25] = "Index_signature_parameter_type_must_be__string__or__number_";
+        DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_ = 25;
+        DiagnosticCode._map[26] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 26;
+        DiagnosticCode._map[27] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 27;
+        DiagnosticCode._map[28] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 28;
+        DiagnosticCode._map[29] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 29;
+        DiagnosticCode._map[30] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 30;
+        DiagnosticCode._map[31] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 31;
+        DiagnosticCode._map[32] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 32;
+        DiagnosticCode._map[33] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 33;
+        DiagnosticCode._map[34] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 34;
+        DiagnosticCode._map[35] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 35;
+        DiagnosticCode._map[36] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 36;
+        DiagnosticCode._map[37] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 37;
+        DiagnosticCode._map[38] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 38;
+        DiagnosticCode._map[39] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 39;
+        DiagnosticCode._map[40] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 40;
+        DiagnosticCode._map[41] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 41;
+        DiagnosticCode._map[42] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 42;
+        DiagnosticCode._map[43] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 43;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -396,7 +410,42 @@ var TypeScript;
         Required_parameter_cannot_follow_optional_parameter: {
             category: 1 /* Error */ ,
             message: "required parameter cannot follow optional parameter.",
-            code: 115
+            code: 116
+        },
+        Index_signatures_cannot_have_rest_parameters: {
+            category: 1 /* Error */ ,
+            message: "Index signatures cannot have rest parameters.",
+            code: 117
+        },
+        Index_signature_parameter_cannot_have_accessibility_modifiers: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter cannot have accessibility modifiers.",
+            code: 118
+        },
+        Index_signature_parameter_cannot_have_a_question_mark: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter cannot have a question mark.",
+            code: 119
+        },
+        Index_signature_parameter_cannot_have_an_initializer: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter cannot have an initializer.",
+            code: 120
+        },
+        Index_signature_must_have_a_type_annotation: {
+            category: 1 /* Error */ ,
+            message: "Index signature must have a type annotation.",
+            code: 121
+        },
+        Index_signature_parameter_must_have_a_type_annotation: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter must have a type annotation.",
+            code: 122
+        },
+        Index_signature_parameter_type_must_be__string__or__number_: {
+            category: 1 /* Error */ ,
+            message: "Index signature parameter type must be 'string' or 'number'.",
+            code: 123
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
@@ -2292,14 +2341,9 @@ var definitions = [
                 isOptional: true
             }, 
             {
-                name: 'extendsClause',
-                type: 'ExtendsClauseSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'implementsClause',
-                type: 'ImplementsClauseSyntax',
-                isOptional: true
+                name: 'heritageClauses',
+                isList: true,
+                elementType: 'HeritageClauseSyntax'
             }, 
             {
                 name: 'openBraceToken',
@@ -2346,9 +2390,9 @@ var definitions = [
                 isOptional: true
             }, 
             {
-                name: 'extendsClause',
-                type: 'ExtendsClauseSyntax',
-                isOptional: true
+                name: 'heritageClauses',
+                isList: true,
+                elementType: 'HeritageClauseSyntax'
             }, 
             {
                 name: 'body',
@@ -2358,29 +2402,16 @@ var definitions = [
         isTypeScriptSpecific: true
     }, 
     {
-        name: 'ExtendsClauseSyntax',
+        name: 'HeritageClauseSyntax',
         baseType: 'SyntaxNode',
         children: [
             {
-                name: 'extendsKeyword',
-                isToken: true
-            }, 
-            {
-                name: 'typeNames',
-                isSeparatedList: true,
-                requiresAtLeastOneItem: true,
-                elementType: 'INameSyntax'
-            }
-        ],
-        isTypeScriptSpecific: true
-    }, 
-    {
-        name: 'ImplementsClauseSyntax',
-        baseType: 'SyntaxNode',
-        children: [
-            {
-                name: 'implementsKeyword',
-                isToken: true
+                name: 'extendsOrImplementsKeyword',
+                isToken: true,
+                tokenKinds: [
+                    'ExtendsKeyword', 
+                    'ImplementsKeyword'
+                ]
             }, 
             {
                 name: 'typeNames',

@@ -10,8 +10,7 @@ module TypeScript {
         visitExportAssignment(node: ExportAssignmentSyntax): any;
         visitClassDeclaration(node: ClassDeclarationSyntax): any;
         visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any;
-        visitExtendsClause(node: ExtendsClauseSyntax): any;
-        visitImplementsClause(node: ImplementsClauseSyntax): any;
+        visitHeritageClause(node: HeritageClauseSyntax): any;
         visitModuleDeclaration(node: ModuleDeclarationSyntax): any;
         visitFunctionDeclaration(node: FunctionDeclarationSyntax): any;
         visitVariableStatement(node: VariableStatementSyntax): any;
@@ -127,11 +126,7 @@ module TypeScript {
             return this.defaultVisit(node);
         }
 
-        private visitExtendsClause(node: ExtendsClauseSyntax): any {
-            return this.defaultVisit(node);
-        }
-
-        private visitImplementsClause(node: ImplementsClauseSyntax): any {
+        private visitHeritageClause(node: HeritageClauseSyntax): any {
             return this.defaultVisit(node);
         }
 

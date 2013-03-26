@@ -39,78 +39,151 @@
                         }
                     ]
                 },
-                "extendsClause": {
-                    "kind": "ExtendsClause",
-                    "fullWidth": 25,
-                    "extendsKeyword": {
-                        "kind": "ExtendsKeyword",
-                        "width": 7,
-                        "fullWidth": 8,
-                        "text": "extends",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                "heritageClauses": [
+                    {
+                        "kind": "HeritageClause",
+                        "fullWidth": 25,
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ExtendsKeyword",
+                            "width": 7,
+                            "fullWidth": 8,
+                            "text": "extends",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "typeNames": [
                             {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "typeNames": [
-                        {
-                            "kind": "GenericType",
-                            "fullWidth": 17,
-                            "name": {
-                                "kind": "IdentifierName",
-                                "width": 1,
-                                "text": "A",
-                                "valueText": "A"
-                            },
-                            "typeArgumentList": {
-                                "kind": "TypeArgumentList",
-                                "fullWidth": 16,
-                                "lessThanToken": {
-                                    "kind": "LessThanToken",
+                                "kind": "GenericType",
+                                "fullWidth": 17,
+                                "name": {
+                                    "kind": "IdentifierName",
                                     "width": 1,
-                                    "text": "<"
+                                    "text": "A",
+                                    "valueText": "A"
                                 },
-                                "typeArguments": [
-                                    {
-                                        "kind": "GenericType",
-                                        "fullWidth": 4,
-                                        "name": {
-                                            "kind": "IdentifierName",
-                                            "width": 1,
-                                            "text": "X",
-                                            "valueText": "X"
-                                        },
-                                        "typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 3,
-                                            "lessThanToken": {
-                                                "kind": "LessThanToken",
+                                "typeArgumentList": {
+                                    "kind": "TypeArgumentList",
+                                    "fullWidth": 16,
+                                    "lessThanToken": {
+                                        "kind": "LessThanToken",
+                                        "width": 1,
+                                        "text": "<"
+                                    },
+                                    "typeArguments": [
+                                        {
+                                            "kind": "GenericType",
+                                            "fullWidth": 4,
+                                            "name": {
+                                                "kind": "IdentifierName",
                                                 "width": 1,
-                                                "text": "<"
+                                                "text": "X",
+                                                "valueText": "X"
                                             },
-                                            "typeArguments": [
-                                                {
-                                                    "kind": "IdentifierName",
+                                            "typeArgumentList": {
+                                                "kind": "TypeArgumentList",
+                                                "fullWidth": 3,
+                                                "lessThanToken": {
+                                                    "kind": "LessThanToken",
                                                     "width": 1,
-                                                    "text": "T",
-                                                    "valueText": "T"
+                                                    "text": "<"
+                                                },
+                                                "typeArguments": [
+                                                    {
+                                                        "kind": "IdentifierName",
+                                                        "width": 1,
+                                                        "text": "T",
+                                                        "valueText": "T"
+                                                    }
+                                                ],
+                                                "greaterThanToken": {
+                                                    "kind": "GreaterThanToken",
+                                                    "width": 1,
+                                                    "text": ">"
                                                 }
-                                            ],
-                                            "greaterThanToken": {
-                                                "kind": "GreaterThanToken",
+                                            }
+                                        },
+                                        {
+                                            "kind": "CommaToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ",",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "kind": "GenericType",
+                                            "fullWidth": 7,
+                                            "name": {
+                                                "kind": "IdentifierName",
                                                 "width": 1,
-                                                "text": ">"
+                                                "text": "Y",
+                                                "valueText": "Y"
+                                            },
+                                            "typeArgumentList": {
+                                                "kind": "TypeArgumentList",
+                                                "fullWidth": 6,
+                                                "lessThanToken": {
+                                                    "kind": "LessThanToken",
+                                                    "width": 1,
+                                                    "text": "<"
+                                                },
+                                                "typeArguments": [
+                                                    {
+                                                        "kind": "GenericType",
+                                                        "fullWidth": 4,
+                                                        "name": {
+                                                            "kind": "IdentifierName",
+                                                            "width": 1,
+                                                            "text": "Z",
+                                                            "valueText": "Z"
+                                                        },
+                                                        "typeArgumentList": {
+                                                            "kind": "TypeArgumentList",
+                                                            "fullWidth": 3,
+                                                            "lessThanToken": {
+                                                                "kind": "LessThanToken",
+                                                                "width": 1,
+                                                                "text": "<"
+                                                            },
+                                                            "typeArguments": [
+                                                                {
+                                                                    "kind": "IdentifierName",
+                                                                    "width": 1,
+                                                                    "text": "T",
+                                                                    "valueText": "T"
+                                                                }
+                                                            ],
+                                                            "greaterThanToken": {
+                                                                "kind": "GreaterThanToken",
+                                                                "width": 1,
+                                                                "text": ">"
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "greaterThanToken": {
+                                                    "kind": "GreaterThanToken",
+                                                    "width": 1,
+                                                    "text": ">"
+                                                }
                                             }
                                         }
-                                    },
-                                    {
-                                        "kind": "CommaToken",
+                                    ],
+                                    "greaterThanToken": {
+                                        "kind": "GreaterThanToken",
                                         "width": 1,
                                         "fullWidth": 2,
-                                        "text": ",",
+                                        "text": ">",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -118,155 +191,155 @@
                                                 "text": " "
                                             }
                                         ]
-                                    },
-                                    {
-                                        "kind": "GenericType",
-                                        "fullWidth": 7,
-                                        "name": {
-                                            "kind": "IdentifierName",
-                                            "width": 1,
-                                            "text": "Y",
-                                            "valueText": "Y"
-                                        },
-                                        "typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 6,
-                                            "lessThanToken": {
-                                                "kind": "LessThanToken",
-                                                "width": 1,
-                                                "text": "<"
-                                            },
-                                            "typeArguments": [
-                                                {
-                                                    "kind": "GenericType",
-                                                    "fullWidth": 4,
-                                                    "name": {
-                                                        "kind": "IdentifierName",
-                                                        "width": 1,
-                                                        "text": "Z",
-                                                        "valueText": "Z"
-                                                    },
-                                                    "typeArgumentList": {
-                                                        "kind": "TypeArgumentList",
-                                                        "fullWidth": 3,
-                                                        "lessThanToken": {
-                                                            "kind": "LessThanToken",
-                                                            "width": 1,
-                                                            "text": "<"
-                                                        },
-                                                        "typeArguments": [
-                                                            {
-                                                                "kind": "IdentifierName",
-                                                                "width": 1,
-                                                                "text": "T",
-                                                                "valueText": "T"
-                                                            }
-                                                        ],
-                                                        "greaterThanToken": {
-                                                            "kind": "GreaterThanToken",
-                                                            "width": 1,
-                                                            "text": ">"
-                                                        }
-                                                    }
-                                                }
-                                            ],
-                                            "greaterThanToken": {
-                                                "kind": "GreaterThanToken",
-                                                "width": 1,
-                                                "text": ">"
-                                            }
-                                        }
                                     }
-                                ],
-                                "greaterThanToken": {
-                                    "kind": "GreaterThanToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ">",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
                                 }
-                            }
-                        }
-                    ]
-                },
-                "implementsClause": {
-                    "kind": "ImplementsClause",
-                    "fullWidth": 28,
-                    "implementsKeyword": {
-                        "kind": "ImplementsKeyword",
-                        "width": 10,
-                        "fullWidth": 11,
-                        "text": "implements",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
                             }
                         ]
                     },
-                    "typeNames": [
-                        {
-                            "kind": "GenericType",
-                            "fullWidth": 17,
-                            "name": {
-                                "kind": "IdentifierName",
-                                "width": 1,
-                                "text": "B",
-                                "valueText": "B"
-                            },
-                            "typeArgumentList": {
-                                "kind": "TypeArgumentList",
-                                "fullWidth": 16,
-                                "lessThanToken": {
-                                    "kind": "LessThanToken",
+                    {
+                        "kind": "HeritageClause",
+                        "fullWidth": 28,
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ImplementsKeyword",
+                            "width": 10,
+                            "fullWidth": 11,
+                            "text": "implements",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "typeNames": [
+                            {
+                                "kind": "GenericType",
+                                "fullWidth": 17,
+                                "name": {
+                                    "kind": "IdentifierName",
                                     "width": 1,
-                                    "text": "<"
+                                    "text": "B",
+                                    "valueText": "B"
                                 },
-                                "typeArguments": [
-                                    {
-                                        "kind": "GenericType",
-                                        "fullWidth": 4,
-                                        "name": {
-                                            "kind": "IdentifierName",
-                                            "width": 1,
-                                            "text": "X",
-                                            "valueText": "X"
-                                        },
-                                        "typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 3,
-                                            "lessThanToken": {
-                                                "kind": "LessThanToken",
+                                "typeArgumentList": {
+                                    "kind": "TypeArgumentList",
+                                    "fullWidth": 16,
+                                    "lessThanToken": {
+                                        "kind": "LessThanToken",
+                                        "width": 1,
+                                        "text": "<"
+                                    },
+                                    "typeArguments": [
+                                        {
+                                            "kind": "GenericType",
+                                            "fullWidth": 4,
+                                            "name": {
+                                                "kind": "IdentifierName",
                                                 "width": 1,
-                                                "text": "<"
+                                                "text": "X",
+                                                "valueText": "X"
                                             },
-                                            "typeArguments": [
-                                                {
-                                                    "kind": "IdentifierName",
+                                            "typeArgumentList": {
+                                                "kind": "TypeArgumentList",
+                                                "fullWidth": 3,
+                                                "lessThanToken": {
+                                                    "kind": "LessThanToken",
                                                     "width": 1,
-                                                    "text": "T",
-                                                    "valueText": "T"
+                                                    "text": "<"
+                                                },
+                                                "typeArguments": [
+                                                    {
+                                                        "kind": "IdentifierName",
+                                                        "width": 1,
+                                                        "text": "T",
+                                                        "valueText": "T"
+                                                    }
+                                                ],
+                                                "greaterThanToken": {
+                                                    "kind": "GreaterThanToken",
+                                                    "width": 1,
+                                                    "text": ">"
                                                 }
-                                            ],
-                                            "greaterThanToken": {
-                                                "kind": "GreaterThanToken",
+                                            }
+                                        },
+                                        {
+                                            "kind": "CommaToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ",",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "kind": "GenericType",
+                                            "fullWidth": 7,
+                                            "name": {
+                                                "kind": "IdentifierName",
                                                 "width": 1,
-                                                "text": ">"
+                                                "text": "Y",
+                                                "valueText": "Y"
+                                            },
+                                            "typeArgumentList": {
+                                                "kind": "TypeArgumentList",
+                                                "fullWidth": 6,
+                                                "lessThanToken": {
+                                                    "kind": "LessThanToken",
+                                                    "width": 1,
+                                                    "text": "<"
+                                                },
+                                                "typeArguments": [
+                                                    {
+                                                        "kind": "GenericType",
+                                                        "fullWidth": 4,
+                                                        "name": {
+                                                            "kind": "IdentifierName",
+                                                            "width": 1,
+                                                            "text": "Z",
+                                                            "valueText": "Z"
+                                                        },
+                                                        "typeArgumentList": {
+                                                            "kind": "TypeArgumentList",
+                                                            "fullWidth": 3,
+                                                            "lessThanToken": {
+                                                                "kind": "LessThanToken",
+                                                                "width": 1,
+                                                                "text": "<"
+                                                            },
+                                                            "typeArguments": [
+                                                                {
+                                                                    "kind": "IdentifierName",
+                                                                    "width": 1,
+                                                                    "text": "T",
+                                                                    "valueText": "T"
+                                                                }
+                                                            ],
+                                                            "greaterThanToken": {
+                                                                "kind": "GreaterThanToken",
+                                                                "width": 1,
+                                                                "text": ">"
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "greaterThanToken": {
+                                                    "kind": "GreaterThanToken",
+                                                    "width": 1,
+                                                    "text": ">"
+                                                }
                                             }
                                         }
-                                    },
-                                    {
-                                        "kind": "CommaToken",
+                                    ],
+                                    "greaterThanToken": {
+                                        "kind": "GreaterThanToken",
                                         "width": 1,
                                         "fullWidth": 2,
-                                        "text": ",",
+                                        "text": ">",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -274,83 +347,12 @@
                                                 "text": " "
                                             }
                                         ]
-                                    },
-                                    {
-                                        "kind": "GenericType",
-                                        "fullWidth": 7,
-                                        "name": {
-                                            "kind": "IdentifierName",
-                                            "width": 1,
-                                            "text": "Y",
-                                            "valueText": "Y"
-                                        },
-                                        "typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 6,
-                                            "lessThanToken": {
-                                                "kind": "LessThanToken",
-                                                "width": 1,
-                                                "text": "<"
-                                            },
-                                            "typeArguments": [
-                                                {
-                                                    "kind": "GenericType",
-                                                    "fullWidth": 4,
-                                                    "name": {
-                                                        "kind": "IdentifierName",
-                                                        "width": 1,
-                                                        "text": "Z",
-                                                        "valueText": "Z"
-                                                    },
-                                                    "typeArgumentList": {
-                                                        "kind": "TypeArgumentList",
-                                                        "fullWidth": 3,
-                                                        "lessThanToken": {
-                                                            "kind": "LessThanToken",
-                                                            "width": 1,
-                                                            "text": "<"
-                                                        },
-                                                        "typeArguments": [
-                                                            {
-                                                                "kind": "IdentifierName",
-                                                                "width": 1,
-                                                                "text": "T",
-                                                                "valueText": "T"
-                                                            }
-                                                        ],
-                                                        "greaterThanToken": {
-                                                            "kind": "GreaterThanToken",
-                                                            "width": 1,
-                                                            "text": ">"
-                                                        }
-                                                    }
-                                                }
-                                            ],
-                                            "greaterThanToken": {
-                                                "kind": "GreaterThanToken",
-                                                "width": 1,
-                                                "text": ">"
-                                            }
-                                        }
                                     }
-                                ],
-                                "greaterThanToken": {
-                                    "kind": "GreaterThanToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ">",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
                                 }
                             }
-                        }
-                    ]
-                },
+                        ]
+                    }
+                ],
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,

@@ -13,7 +13,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "0_004152.ts";
+    // "Class1.ts";
     undefined;
 
 var generate = false;

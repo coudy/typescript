@@ -476,13 +476,32 @@ module TypeScript {
             this.movePast(node.identifier);
 
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var extendsList = node.extendsClause ? node.extendsClause.accept(this) : new ASTList();
-            var implementsList = node.implementsClause ? node.implementsClause.accept(this) : new ASTList();
+            var extendsList = new ASTList();
+            var implementsList = new ASTList();
+
+            var i = 0;
+            var n = 0;
+
+            for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
+                if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
+                    extendsList = heritageClause.accept(this);
+                }
+                else {
+                    Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
+                    implementsList = heritageClause.accept(this);
+                }
+
+                if (i >= 2) {
+                    this.movePast(heritageClause);
+                }
+            }
+
             this.movePast(node.openBraceToken);
             var members = this.visitSyntaxList(node.classElements);
             this.movePast(node.closeBraceToken);
 
-            this.requiresExtendsBlock = this.requiresExtendsBlock || !!node.extendsClause;
+            this.requiresExtendsBlock = this.requiresExtendsBlock || node.heritageClauses.childCount() > 0;
 
             var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
             this.setSpan(result, start, this.position);
@@ -499,9 +518,6 @@ module TypeScript {
             }
 
             result.varFlags |= VarFlags.Class;
-
-            var i = 0;
-            var n = 0;
 
             for (i = 0; i < members.members.length; i++) {
                 var member = members.members[i];
@@ -548,13 +564,27 @@ module TypeScript {
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var extendsList = node.extendsClause ? node.extendsClause.accept(this) : null;
+
+            var i = 0;
+            var n = 0;
+            var extendsList = new ASTList();
+
+            for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
+                if (i === 0) {
+                    extendsList = heritageClause.accept(this);
+                }
+                else {
+                    this.movePast(heritageClause);
+                }
+            }
+
             this.movePast(node.body.openBraceToken);
             var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
 
             // Fix up interface method flags
             if (members.members) {
-                for (var i = 0; i < members.members.length; i++) {
+                for (i = 0; i < members.members.length; i++) {
                     if (members.members[i].nodeType === NodeType.FuncDecl) {
                         (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Method;
                         (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Signature;
@@ -584,35 +614,12 @@ module TypeScript {
             return result;
         }
 
-        private visitExtendsClause(node: ExtendsClauseSyntax): ASTList {
+        private visitHeritageClause(node: HeritageClauseSyntax): ASTList {
             this.assertElementAtPosition(node);
 
             var result = new ASTList();
 
-            this.movePast(node.extendsKeyword);
-            for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
-                if (i % 2 === 1) {
-                    this.movePast(<ISyntaxToken>node.typeNames.childAt(i));
-                }
-                else {
-                    var type = this.visitType(node.typeNames.childAt(i));
-                    if (type.nodeType === NodeType.TypeRef) {
-                        type = (<TypeReference>type).term;
-                    }
-
-                    result.append(type);
-                }
-            }
-
-            return result;
-        }
-
-        private visitImplementsClause(node: ImplementsClauseSyntax): ASTList {
-            this.assertElementAtPosition(node);
-
-            var result = new ASTList();
-
-            this.movePast(node.implementsKeyword);
+            this.movePast(node.extendsOrImplementsKeyword);
             for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
                     this.movePast(<ISyntaxToken>node.typeNames.childAt(i));

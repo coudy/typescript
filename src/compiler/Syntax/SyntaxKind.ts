@@ -274,8 +274,7 @@ module TypeScript {
         TypeParameterList,
 
         // Clauses
-        ImplementsClause,
-        ExtendsClause,
+        HeritageClause,
         EqualsValueClause,
         CaseSwitchClause,
         DefaultSwitchClause,

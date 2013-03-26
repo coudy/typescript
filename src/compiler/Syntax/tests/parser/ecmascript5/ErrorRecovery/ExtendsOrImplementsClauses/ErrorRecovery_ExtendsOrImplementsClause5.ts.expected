@@ -52,72 +52,15 @@
                         }
                     ]
                 },
-                "extendsClause": {
-                    "kind": "ExtendsClause",
-                    "fullWidth": 11,
-                    "extendsKeyword": {
-                        "kind": "ExtendsKeyword",
-                        "width": 7,
-                        "fullWidth": 8,
-                        "text": "extends",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "typeNames": [
-                        {
-                            "kind": "IdentifierName",
-                            "width": 1,
-                            "text": "A",
-                            "valueText": "A"
-                        },
-                        {
-                            "kind": "CommaToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": ",",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "implementsClause": {
-                    "kind": "ImplementsClause",
-                    "fullWidth": 14,
-                    "implementsKeyword": {
-                        "kind": "ImplementsKeyword",
-                        "width": 10,
+                "heritageClauses": [
+                    {
+                        "kind": "HeritageClause",
                         "fullWidth": 11,
-                        "text": "implements",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "typeNames": [
-                        {
-                            "kind": "IdentifierName",
-                            "width": 1,
-                            "text": "B",
-                            "valueText": "B"
-                        },
-                        {
-                            "kind": "CommaToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": ",",
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ExtendsKeyword",
+                            "width": 7,
+                            "fullWidth": 8,
+                            "text": "extends",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -125,9 +68,68 @@
                                     "text": " "
                                 }
                             ]
-                        }
-                    ]
-                },
+                        },
+                        "typeNames": [
+                            {
+                                "kind": "IdentifierName",
+                                "width": 1,
+                                "text": "A",
+                                "valueText": "A"
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "kind": "HeritageClause",
+                        "fullWidth": 14,
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ImplementsKeyword",
+                            "width": 10,
+                            "fullWidth": 11,
+                            "text": "implements",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "typeNames": [
+                            {
+                                "kind": "IdentifierName",
+                                "width": 1,
+                                "text": "B",
+                                "valueText": "B"
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,

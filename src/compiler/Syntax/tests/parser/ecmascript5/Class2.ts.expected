@@ -70,29 +70,15 @@
                         }
                     ]
                 },
-                "implementsClause": {
-                    "kind": "ImplementsClause",
-                    "fullWidth": 19,
-                    "implementsKeyword": {
-                        "kind": "ImplementsKeyword",
-                        "width": 10,
-                        "fullWidth": 11,
-                        "text": "implements",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "typeNames": [
-                        {
-                            "kind": "IdentifierName",
-                            "width": 7,
-                            "fullWidth": 8,
-                            "text": "ILogger",
-                            "valueText": "ILogger",
+                "heritageClauses": [
+                    {
+                        "kind": "HeritageClause",
+                        "fullWidth": 19,
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ImplementsKeyword",
+                            "width": 10,
+                            "fullWidth": 11,
+                            "text": "implements",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -100,9 +86,25 @@
                                     "text": " "
                                 }
                             ]
-                        }
-                    ]
-                },
+                        },
+                        "typeNames": [
+                            {
+                                "kind": "IdentifierName",
+                                "width": 7,
+                                "fullWidth": 8,
+                                "text": "ILogger",
+                                "valueText": "ILogger",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,

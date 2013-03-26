@@ -400,8 +400,7 @@ module TypeScript {
                 public classKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
                 public typeParameterList: TypeParameterListSyntax,
-                public extendsClause: ExtendsClauseSyntax,
-                public implementsClause: ImplementsClauseSyntax,
+                public heritageClauses: ISyntaxList,
                 public openBraceToken: ISyntaxToken,
                 public classElements: ISyntaxList,
                 public closeBraceToken: ISyntaxToken,
@@ -419,7 +418,7 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 9;
+        return 8;
     }
 
     public childAt(slot: number): ISyntaxElement {
@@ -428,11 +427,10 @@ module TypeScript {
             case 1: return this.classKeyword;
             case 2: return this.identifier;
             case 3: return this.typeParameterList;
-            case 4: return this.extendsClause;
-            case 5: return this.implementsClause;
-            case 6: return this.openBraceToken;
-            case 7: return this.classElements;
-            case 8: return this.closeBraceToken;
+            case 4: return this.heritageClauses;
+            case 5: return this.openBraceToken;
+            case 6: return this.classElements;
+            case 7: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -445,27 +443,26 @@ module TypeScript {
                   classKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   typeParameterList: TypeParameterListSyntax,
-                  extendsClause: ExtendsClauseSyntax,
-                  implementsClause: ImplementsClauseSyntax,
+                  heritageClauses: ISyntaxList,
                   openBraceToken: ISyntaxToken,
                   classElements: ISyntaxList,
                   closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        if (this.modifiers === modifiers && this.classKeyword === classKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.extendsClause === extendsClause && this.implementsClause === implementsClause && this.openBraceToken === openBraceToken && this.classElements === classElements && this.closeBraceToken === closeBraceToken) {
+        if (this.modifiers === modifiers && this.classKeyword === classKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.heritageClauses === heritageClauses && this.openBraceToken === openBraceToken && this.classElements === classElements && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
-        return new ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new ClassDeclarationSyntax(modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(classKeyword: ISyntaxToken,
                          identifier: ISyntaxToken,
                          openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return new ClassDeclarationSyntax(Syntax.emptyList, classKeyword, identifier, null, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new ClassDeclarationSyntax(Syntax.emptyList, classKeyword, identifier, null, Syntax.emptyList, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken): ClassDeclarationSyntax {
-        return new ClassDeclarationSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.ClassKeyword), identifier, null, null, null, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
+        return new ClassDeclarationSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.ClassKeyword), identifier, null, Syntax.emptyList, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassDeclarationSyntax {
@@ -477,7 +474,7 @@ module TypeScript {
     }
 
     public withModifiers(modifiers: ISyntaxList): ClassDeclarationSyntax {
-        return this.update(modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+        return this.update(modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withModifier(modifier: ISyntaxToken): ClassDeclarationSyntax {
@@ -485,31 +482,31 @@ module TypeScript {
     }
 
     public withClassKeyword(classKeyword: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this.modifiers, classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+        return this.update(this.modifiers, classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this.modifiers, this.classKeyword, identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+        return this.update(this.modifiers, this.classKeyword, identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withTypeParameterList(typeParameterList: TypeParameterListSyntax): ClassDeclarationSyntax {
-        return this.update(this.modifiers, this.classKeyword, this.identifier, typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+        return this.update(this.modifiers, this.classKeyword, this.identifier, typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
-    public withExtendsClause(extendsClause: ExtendsClauseSyntax): ClassDeclarationSyntax {
-        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+    public withHeritageClauses(heritageClauses: ISyntaxList): ClassDeclarationSyntax {
+        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, heritageClauses, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
-    public withImplementsClause(implementsClause: ImplementsClauseSyntax): ClassDeclarationSyntax {
-        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
+    public withHeritageClause(heritageClause: HeritageClauseSyntax): ClassDeclarationSyntax {
+        return this.withHeritageClauses(Syntax.list([heritageClause]));
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, openBraceToken, this.classElements, this.closeBraceToken);
+        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withClassElements(classElements: ISyntaxList): ClassDeclarationSyntax {
-        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, classElements, this.closeBraceToken);
+        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, classElements, this.closeBraceToken);
     }
 
     public withClassElement(classElement: IClassElementSyntax): ClassDeclarationSyntax {
@@ -517,7 +514,7 @@ module TypeScript {
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, closeBraceToken);
+        return this.update(this.modifiers, this.classKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.openBraceToken, this.classElements, closeBraceToken);
     }
 
     public isTypeScriptSpecific(): bool {
@@ -531,7 +528,7 @@ module TypeScript {
                 public interfaceKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
                 public typeParameterList: TypeParameterListSyntax,
-                public extendsClause: ExtendsClauseSyntax,
+                public heritageClauses: ISyntaxList,
                 public body: ObjectTypeSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
@@ -556,7 +553,7 @@ module TypeScript {
             case 1: return this.interfaceKeyword;
             case 2: return this.identifier;
             case 3: return this.typeParameterList;
-            case 4: return this.extendsClause;
+            case 4: return this.heritageClauses;
             case 5: return this.body;
             default: throw Errors.invalidOperation();
         }
@@ -570,23 +567,23 @@ module TypeScript {
                   interfaceKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   typeParameterList: TypeParameterListSyntax,
-                  extendsClause: ExtendsClauseSyntax,
+                  heritageClauses: ISyntaxList,
                   body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        if (this.modifiers === modifiers && this.interfaceKeyword === interfaceKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.extendsClause === extendsClause && this.body === body) {
+        if (this.modifiers === modifiers && this.interfaceKeyword === interfaceKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.heritageClauses === heritageClauses && this.body === body) {
             return this;
         }
 
-        return new InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new InterfaceDeclarationSyntax(modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(interfaceKeyword: ISyntaxToken,
                          identifier: ISyntaxToken,
                          body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        return new InterfaceDeclarationSyntax(Syntax.emptyList, interfaceKeyword, identifier, null, null, body, /*parsedInStrictMode:*/ false);
+        return new InterfaceDeclarationSyntax(Syntax.emptyList, interfaceKeyword, identifier, null, Syntax.emptyList, body, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
-        return new InterfaceDeclarationSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.InterfaceKeyword), identifier, null, null, ObjectTypeSyntax.create1(), /*parsedInStrictMode:*/ false);
+        return new InterfaceDeclarationSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.InterfaceKeyword), identifier, null, Syntax.emptyList, ObjectTypeSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): InterfaceDeclarationSyntax {
@@ -598,7 +595,7 @@ module TypeScript {
     }
 
     public withModifiers(modifiers: ISyntaxList): InterfaceDeclarationSyntax {
-        return this.update(modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.body);
+        return this.update(modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.body);
     }
 
     public withModifier(modifier: ISyntaxToken): InterfaceDeclarationSyntax {
@@ -606,23 +603,27 @@ module TypeScript {
     }
 
     public withInterfaceKeyword(interfaceKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(this.modifiers, interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.body);
+        return this.update(this.modifiers, interfaceKeyword, this.identifier, this.typeParameterList, this.heritageClauses, this.body);
     }
 
     public withIdentifier(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(this.modifiers, this.interfaceKeyword, identifier, this.typeParameterList, this.extendsClause, this.body);
+        return this.update(this.modifiers, this.interfaceKeyword, identifier, this.typeParameterList, this.heritageClauses, this.body);
     }
 
     public withTypeParameterList(typeParameterList: TypeParameterListSyntax): InterfaceDeclarationSyntax {
-        return this.update(this.modifiers, this.interfaceKeyword, this.identifier, typeParameterList, this.extendsClause, this.body);
+        return this.update(this.modifiers, this.interfaceKeyword, this.identifier, typeParameterList, this.heritageClauses, this.body);
     }
 
-    public withExtendsClause(extendsClause: ExtendsClauseSyntax): InterfaceDeclarationSyntax {
-        return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, extendsClause, this.body);
+    public withHeritageClauses(heritageClauses: ISyntaxList): InterfaceDeclarationSyntax {
+        return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, heritageClauses, this.body);
+    }
+
+    public withHeritageClause(heritageClause: HeritageClauseSyntax): InterfaceDeclarationSyntax {
+        return this.withHeritageClauses(Syntax.list([heritageClause]));
     }
 
     public withBody(body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, body);
+        return this.update(this.modifiers, this.interfaceKeyword, this.identifier, this.typeParameterList, this.heritageClauses, body);
     }
 
     public isTypeScriptSpecific(): bool {
@@ -630,9 +631,9 @@ module TypeScript {
     }
     }
 
-    export class ExtendsClauseSyntax extends SyntaxNode {
+    export class HeritageClauseSyntax extends SyntaxNode {
 
-    constructor(public extendsKeyword: ISyntaxToken,
+    constructor(public extendsOrImplementsKeyword: ISyntaxToken,
                 public typeNames: ISeparatedSyntaxList,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
@@ -640,11 +641,11 @@ module TypeScript {
     }
 
     public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitExtendsClause(this);
+        return visitor.visitHeritageClause(this);
     }
 
     public kind(): SyntaxKind {
-        return SyntaxKind.ExtendsClause;
+        return SyntaxKind.HeritageClause;
     }
 
     public childCount(): number {
@@ -653,109 +654,38 @@ module TypeScript {
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this.extendsKeyword;
+            case 0: return this.extendsOrImplementsKeyword;
             case 1: return this.typeNames;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public update(extendsKeyword: ISyntaxToken,
-                  typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
-        if (this.extendsKeyword === extendsKeyword && this.typeNames === typeNames) {
+    public update(extendsOrImplementsKeyword: ISyntaxToken,
+                  typeNames: ISeparatedSyntaxList): HeritageClauseSyntax {
+        if (this.extendsOrImplementsKeyword === extendsOrImplementsKeyword && this.typeNames === typeNames) {
             return this;
         }
 
-        return new ExtendsClauseSyntax(extendsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new HeritageClauseSyntax(extendsOrImplementsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create1(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
-        return new ExtendsClauseSyntax(Syntax.token(SyntaxKind.ExtendsKeyword), typeNames, /*parsedInStrictMode:*/ false);
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): HeritageClauseSyntax {
+        return <HeritageClauseSyntax>super.withLeadingTrivia(trivia);
     }
 
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): ExtendsClauseSyntax {
-        return <ExtendsClauseSyntax>super.withLeadingTrivia(trivia);
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): HeritageClauseSyntax {
+        return <HeritageClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): ExtendsClauseSyntax {
-        return <ExtendsClauseSyntax>super.withTrailingTrivia(trivia);
+    public withExtendsOrImplementsKeyword(extendsOrImplementsKeyword: ISyntaxToken): HeritageClauseSyntax {
+        return this.update(extendsOrImplementsKeyword, this.typeNames);
     }
 
-    public withExtendsKeyword(extendsKeyword: ISyntaxToken): ExtendsClauseSyntax {
-        return this.update(extendsKeyword, this.typeNames);
+    public withTypeNames(typeNames: ISeparatedSyntaxList): HeritageClauseSyntax {
+        return this.update(this.extendsOrImplementsKeyword, typeNames);
     }
 
-    public withTypeNames(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
-        return this.update(this.extendsKeyword, typeNames);
-    }
-
-    public withTypeName(typeName: INameSyntax): ExtendsClauseSyntax {
-        return this.withTypeNames(Syntax.separatedList([typeName]));
-    }
-
-    public isTypeScriptSpecific(): bool {
-        return true;
-    }
-    }
-
-    export class ImplementsClauseSyntax extends SyntaxNode {
-
-    constructor(public implementsKeyword: ISyntaxToken,
-                public typeNames: ISeparatedSyntaxList,
-                parsedInStrictMode: bool) {
-        super(parsedInStrictMode); 
-
-    }
-
-    public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitImplementsClause(this);
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.ImplementsClause;
-    }
-
-    public childCount(): number {
-        return 2;
-    }
-
-    public childAt(slot: number): ISyntaxElement {
-        switch (slot) {
-            case 0: return this.implementsKeyword;
-            case 1: return this.typeNames;
-            default: throw Errors.invalidOperation();
-        }
-    }
-
-    public update(implementsKeyword: ISyntaxToken,
-                  typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
-        if (this.implementsKeyword === implementsKeyword && this.typeNames === typeNames) {
-            return this;
-        }
-
-        return new ImplementsClauseSyntax(implementsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
-    }
-
-    public static create1(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
-        return new ImplementsClauseSyntax(Syntax.token(SyntaxKind.ImplementsKeyword), typeNames, /*parsedInStrictMode:*/ false);
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): ImplementsClauseSyntax {
-        return <ImplementsClauseSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): ImplementsClauseSyntax {
-        return <ImplementsClauseSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public withImplementsKeyword(implementsKeyword: ISyntaxToken): ImplementsClauseSyntax {
-        return this.update(implementsKeyword, this.typeNames);
-    }
-
-    public withTypeNames(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
-        return this.update(this.implementsKeyword, typeNames);
-    }
-
-    public withTypeName(typeName: INameSyntax): ImplementsClauseSyntax {
+    public withTypeName(typeName: INameSyntax): HeritageClauseSyntax {
         return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 

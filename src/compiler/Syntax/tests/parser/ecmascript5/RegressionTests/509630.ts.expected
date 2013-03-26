@@ -215,29 +215,15 @@
                         }
                     ]
                 },
-                "extendsClause": {
-                    "kind": "ExtendsClause",
-                    "fullWidth": 13,
-                    "extendsKeyword": {
-                        "kind": "ExtendsKeyword",
-                        "width": 7,
-                        "fullWidth": 8,
-                        "text": "extends",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "typeNames": [
-                        {
-                            "kind": "IdentifierName",
-                            "width": 4,
-                            "fullWidth": 5,
-                            "text": "Type",
-                            "valueText": "Type",
+                "heritageClauses": [
+                    {
+                        "kind": "HeritageClause",
+                        "fullWidth": 13,
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ExtendsKeyword",
+                            "width": 7,
+                            "fullWidth": 8,
+                            "text": "extends",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -245,9 +231,25 @@
                                     "text": " "
                                 }
                             ]
-                        }
-                    ]
-                },
+                        },
+                        "typeNames": [
+                            {
+                                "kind": "IdentifierName",
+                                "width": 4,
+                                "fullWidth": 5,
+                                "text": "Type",
+                                "valueText": "Type",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,

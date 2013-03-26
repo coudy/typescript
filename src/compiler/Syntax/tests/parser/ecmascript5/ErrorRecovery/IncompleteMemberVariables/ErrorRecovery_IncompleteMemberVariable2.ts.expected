@@ -304,29 +304,15 @@
                                 }
                             ]
                         },
-                        "implementsClause": {
-                            "kind": "ImplementsClause",
-                            "fullWidth": 18,
-                            "implementsKeyword": {
-                                "kind": "ImplementsKeyword",
-                                "width": 10,
-                                "fullWidth": 11,
-                                "text": "implements",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            "typeNames": [
-                                {
-                                    "kind": "IdentifierName",
-                                    "width": 6,
-                                    "fullWidth": 7,
-                                    "text": "IPoint",
-                                    "valueText": "IPoint",
+                        "heritageClauses": [
+                            {
+                                "kind": "HeritageClause",
+                                "fullWidth": 18,
+                                "extendsOrImplementsKeyword": {
+                                    "kind": "ImplementsKeyword",
+                                    "width": 10,
+                                    "fullWidth": 11,
+                                    "text": "implements",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -334,9 +320,25 @@
                                             "text": " "
                                         }
                                     ]
-                                }
-                            ]
-                        },
+                                },
+                                "typeNames": [
+                                    {
+                                        "kind": "IdentifierName",
+                                        "width": 6,
+                                        "fullWidth": 7,
+                                        "text": "IPoint",
+                                        "valueText": "IPoint",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
                         "openBraceToken": {
                             "kind": "OpenBraceToken",
                             "width": 1,

@@ -50,29 +50,15 @@
                         }
                     ]
                 },
-                "extendsClause": {
-                    "kind": "ExtendsClause",
-                    "fullWidth": 10,
-                    "extendsKeyword": {
-                        "kind": "ExtendsKeyword",
-                        "width": 7,
-                        "fullWidth": 8,
-                        "text": "extends",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "typeNames": [
-                        {
-                            "kind": "IdentifierName",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "A",
-                            "valueText": "A",
+                "heritageClauses": [
+                    {
+                        "kind": "HeritageClause",
+                        "fullWidth": 10,
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ExtendsKeyword",
+                            "width": 7,
+                            "fullWidth": 8,
+                            "text": "extends",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -80,27 +66,43 @@
                                     "text": " "
                                 }
                             ]
-                        }
-                    ]
-                },
-                "implementsClause": {
-                    "kind": "ImplementsClause",
-                    "fullWidth": 11,
-                    "implementsKeyword": {
-                        "kind": "ImplementsKeyword",
-                        "width": 10,
-                        "fullWidth": 11,
-                        "text": "implements",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        },
+                        "typeNames": [
                             {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
+                                "kind": "IdentifierName",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": "A",
+                                "valueText": "A",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             }
                         ]
                     },
-                    "typeNames": []
-                },
+                    {
+                        "kind": "HeritageClause",
+                        "fullWidth": 11,
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ImplementsKeyword",
+                            "width": 10,
+                            "fullWidth": 11,
+                            "text": "implements",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "typeNames": []
+                    }
+                ],
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,

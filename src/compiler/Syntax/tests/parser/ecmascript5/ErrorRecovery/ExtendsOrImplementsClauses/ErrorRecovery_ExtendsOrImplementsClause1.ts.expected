@@ -50,24 +50,26 @@
                         }
                     ]
                 },
-                "extendsClause": {
-                    "kind": "ExtendsClause",
-                    "fullWidth": 8,
-                    "extendsKeyword": {
-                        "kind": "ExtendsKeyword",
-                        "width": 7,
+                "heritageClauses": [
+                    {
+                        "kind": "HeritageClause",
                         "fullWidth": 8,
-                        "text": "extends",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "typeNames": []
-                },
+                        "extendsOrImplementsKeyword": {
+                            "kind": "ExtendsKeyword",
+                            "width": 7,
+                            "fullWidth": 8,
+                            "text": "extends",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "typeNames": []
+                    }
+                ],
                 "openBraceToken": {
                     "kind": "OpenBraceToken",
                     "width": 1,

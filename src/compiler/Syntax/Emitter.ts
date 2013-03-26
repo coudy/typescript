@@ -572,7 +572,7 @@ module TypeScript.Emitter1 {
             var statementIndentationColumn = classIndentationColumn + this.options.indentSpaces;
 
             var statements: IStatementSyntax[] = [];
-            if (classDeclaration.extendsClause !== null) {
+            if (classDeclaration.heritageClauses.childCount() > 0) {
                 statements.push(ExpressionStatementSyntax.create1(
                         this.factory.invocationExpression(
                             MemberAccessExpressionSyntax.create1(
@@ -847,7 +847,7 @@ module TypeScript.Emitter1 {
             var statements: IStatementSyntax[] = [];
             var statementIndentation = this.indentationTrivia( this.options.indentSpaces + this.columnForStartOfToken(node.firstToken()));
 
-            if (node.extendsClause !== null) {
+            if (node.heritageClauses.childCount() > 0) {
                 // __extends(C, _super);
                 statements.push(ExpressionStatementSyntax.create1(
                     this.factory.invocationExpression(
@@ -884,7 +884,7 @@ module TypeScript.Emitter1 {
                 Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(this.indentationTriviaForStartOfNode(node)));
 
             var callParameters = [];
-            if (node.extendsClause !== null) {
+            if (node.heritageClauses.childCount() > 0) {
                 callParameters.push(ParameterSyntax.create(Syntax.identifier("_super")));
             }
 
@@ -893,10 +893,13 @@ module TypeScript.Emitter1 {
                     Syntax.separatedList(callParameters))).withTrailingTrivia(this.space);
 
             var invocationParameters = [];
-            if (node.extendsClause !== null && node.extendsClause.typeNames.nonSeparatorCount() > 0) {
-                invocationParameters.push(node.extendsClause.typeNames.nonSeparatorAt(0)
-                    .withLeadingTrivia(Syntax.emptyTriviaList)
-                    .withTrailingTrivia(Syntax.emptyTriviaList));
+            if (node.heritageClauses.childCount() > 0) {
+                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(0);
+                if (heritageClause.typeNames.nonSeparatorCount() > 0) {
+                    invocationParameters.push(heritageClause.typeNames.nonSeparatorAt(0)
+                        .withLeadingTrivia(Syntax.emptyTriviaList)
+                        .withTrailingTrivia(Syntax.emptyTriviaList));
+                }
             }
 
             // (function(_super) { ... })(BaseType)

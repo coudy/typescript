@@ -108,8 +108,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'classKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
-            <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax', isOptional: true },
-            <any>{ name: 'implementsClause', type: 'ImplementsClauseSyntax', isOptional: true },
+            <any>{ name: 'heritageClauses', isList: true, elementType: 'HeritageClauseSyntax' },
             <any>{ name: 'openBraceToken', isToken: true },
             <any>{ name: 'classElements', isList: true, elementType: 'IClassElementSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
@@ -125,25 +124,16 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'interfaceKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
-            <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax', isOptional: true },
+            <any>{ name: 'heritageClauses', isList: true, elementType: 'HeritageClauseSyntax' },
             <any>{ name: 'body', type: 'ObjectTypeSyntax' }
         ],
         isTypeScriptSpecific: true
     },
-    <any>{
-        name: 'ExtendsClauseSyntax',
+    <any> {
+        name: 'HeritageClauseSyntax',
         baseType: 'SyntaxNode',
         children: [
-            <any>{ name: 'extendsKeyword', isToken: true },
-            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'INameSyntax' }
-        ],
-        isTypeScriptSpecific: true
-    },
-    <any>{
-        name: 'ImplementsClauseSyntax',
-        baseType: 'SyntaxNode',
-        children: [
-            <any>{ name: 'implementsKeyword', isToken: true },
+            <any>{ name: 'extendsOrImplementsKeyword', isToken: true, tokenKinds: ['ExtendsKeyword', 'ImplementsKeyword'] },
             <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'INameSyntax' }
         ],
         isTypeScriptSpecific: true

@@ -102,8 +102,7 @@ module TypeScript {
                 this.visitToken(node.classKeyword),
                 this.visitToken(node.identifier),
                 node.typeParameterList === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList),
-                node.extendsClause === null ? null : <ExtendsClauseSyntax>this.visitNode(node.extendsClause),
-                node.implementsClause === null ? null : <ImplementsClauseSyntax>this.visitNode(node.implementsClause),
+                this.visitList(node.heritageClauses),
                 this.visitToken(node.openBraceToken),
                 this.visitList(node.classElements),
                 this.visitToken(node.closeBraceToken));
@@ -115,19 +114,13 @@ module TypeScript {
                 this.visitToken(node.interfaceKeyword),
                 this.visitToken(node.identifier),
                 node.typeParameterList === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList),
-                node.extendsClause === null ? null : <ExtendsClauseSyntax>this.visitNode(node.extendsClause),
+                this.visitList(node.heritageClauses),
                 <ObjectTypeSyntax>this.visitNode(node.body));
         }
 
-        public visitExtendsClause(node: ExtendsClauseSyntax): any {
+        public visitHeritageClause(node: HeritageClauseSyntax): any {
             return node.update(
-                this.visitToken(node.extendsKeyword),
-                this.visitSeparatedList(node.typeNames));
-        }
-
-        public visitImplementsClause(node: ImplementsClauseSyntax): any {
-            return node.update(
-                this.visitToken(node.implementsKeyword),
+                this.visitToken(node.extendsOrImplementsKeyword),
                 this.visitSeparatedList(node.typeNames));
         }
 

@@ -91,8 +91,7 @@ module TypeScript {
             this.visitToken(node.classKeyword);
             this.visitToken(node.identifier);
             this.visitOptionalNode(node.typeParameterList);
-            this.visitOptionalNode(node.extendsClause);
-            this.visitOptionalNode(node.implementsClause);
+            this.visitList(node.heritageClauses);
             this.visitToken(node.openBraceToken);
             this.visitList(node.classElements);
             this.visitToken(node.closeBraceToken);
@@ -103,17 +102,12 @@ module TypeScript {
             this.visitToken(node.interfaceKeyword);
             this.visitToken(node.identifier);
             this.visitOptionalNode(node.typeParameterList);
-            this.visitOptionalNode(node.extendsClause);
+            this.visitList(node.heritageClauses);
             this.visitNode(node.body);
         }
 
-        public visitExtendsClause(node: ExtendsClauseSyntax): void {
-            this.visitToken(node.extendsKeyword);
-            this.visitSeparatedList(node.typeNames);
-        }
-
-        public visitImplementsClause(node: ImplementsClauseSyntax): void {
-            this.visitToken(node.implementsKeyword);
+        public visitHeritageClause(node: HeritageClauseSyntax): void {
+            this.visitToken(node.extendsOrImplementsKeyword);
             this.visitSeparatedList(node.typeNames);
         }
 

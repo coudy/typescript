@@ -216,9 +216,7 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.identifier);
             this.appendNode(node.typeParameterList);
             this.ensureSpace();
-            this.appendNode(node.extendsClause);
-            this.ensureSpace();
-            this.appendNode(node.implementsClause);
+            this.appendSpaceList(node.heritageClauses);
             this.ensureSpace();
             this.appendToken(node.openBraceToken);
             this.ensureNewLine();
@@ -250,7 +248,8 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.identifier);
             this.appendNode(node.typeParameterList);
             this.ensureSpace();
-
+            this.appendSpaceList(node.heritageClauses);
+            this.ensureSpace();
             this.appendObjectType(node.body, /*appendNewLines:*/ true);
         }
 
@@ -280,14 +279,8 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.closeBraceToken);
         }
 
-        private visitExtendsClause(node: ExtendsClauseSyntax): void {
-            this.appendToken(node.extendsKeyword);
-            this.ensureSpace();
-            this.appendSeparatorSpaceList(node.typeNames);
-        }
-
-        private visitImplementsClause(node: ImplementsClauseSyntax): void {
-            this.appendToken(node.implementsKeyword);
+        private visitHeritageClause(node: HeritageClauseSyntax): void {
+            this.appendToken(node.extendsOrImplementsKeyword);
             this.ensureSpace();
             this.appendSeparatorSpaceList(node.typeNames);
         }

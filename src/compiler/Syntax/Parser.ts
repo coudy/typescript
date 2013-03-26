@@ -137,15 +137,16 @@ module TypeScript.Parser {
         CatchBlock_Statements = 1 << 7,
         EnumDeclaration_EnumElements = 1 << 8,
         ObjectType_TypeMembers = 1 << 9,
-        ExtendsOrImplementsClause_TypeNameList = 1 << 10,
-        VariableDeclaration_VariableDeclarators_AllowIn = 1 << 11,
-        VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 12,
-        ArgumentList_AssignmentExpressions = 1 << 13,
-        ObjectLiteralExpression_PropertyAssignments = 1 << 14,
-        ArrayLiteralExpression_AssignmentExpressions = 1 << 15,
-        ParameterList_Parameters = 1 << 16,
-        TypeArgumentList_Types = 1 << 17,
-        TypeParameterList_TypeParameters = 1 << 18,
+        ClassOrInterfaceDeclaration_HeritageClauses = 1 << 10,
+        HeritageClause_TypeNameList = 1 << 11,
+        VariableDeclaration_VariableDeclarators_AllowIn = 1 << 12,
+        VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 13,
+        ArgumentList_AssignmentExpressions = 1 << 14,
+        ObjectLiteralExpression_PropertyAssignments = 1 << 15,
+        ArrayLiteralExpression_AssignmentExpressions = 1 << 16,
+        ParameterList_Parameters = 1 << 17,
+        TypeArgumentList_Types = 1 << 18,
+        TypeParameterList_TypeParameters = 1 << 19,
 
         FirstListParsingState = SourceUnit_ModuleElements,
         LastListParsingState = TypeArgumentList_Types,
@@ -1978,6 +1979,18 @@ module TypeScript.Parser {
                    this.isIdentifier(this.peekToken(1));
         }
 
+        private parseHeritageClauses(): ISyntaxList {
+            var heritageClauses: ISyntaxList = Syntax.emptyList;
+            
+            if (this.isHeritageClause()) {
+                var result = this.parseSyntaxList(ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses);
+                heritageClauses = result.list;
+                Debug.assert(result.skippedTokens.length === 0);
+            }
+
+            return heritageClauses;
+        }
+
         private parseClassDeclaration(): ClassDeclarationSyntax {
             // Debug.assert(this.isClassDeclaration());
 
@@ -1986,17 +1999,7 @@ module TypeScript.Parser {
             var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
             var identifier = this.eatIdentifierToken();
             var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
-
-            var extendsClause: ExtendsClauseSyntax = null;
-            if (this.isExtendsClause()) {
-                extendsClause = this.parseExtendsClause();
-            }
-
-            var implementsClause: ImplementsClauseSyntax = null;
-            if (this.isImplementsClause()) {
-                implementsClause = this.parseImplementsClause();
-            }
-
+            var heritageClauses = this.parseHeritageClauses();
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
             var classElements: ISyntaxList = Syntax.emptyList;
 
@@ -2009,8 +2012,7 @@ module TypeScript.Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
             return this.factory.classDeclaration(
-                modifiers, classKeyword, identifier, typeParameterList, extendsClause,
-                implementsClause, openBraceToken, classElements, closeBraceToken);
+                modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken);
         }
 
         private isConstructorDeclaration(): bool {
@@ -2410,15 +2412,11 @@ module TypeScript.Parser {
             var interfaceKeyword = this.eatKeyword(SyntaxKind.InterfaceKeyword);
             var identifier = this.eatIdentifierToken();
             var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
-
-            var extendsClause: ExtendsClauseSyntax = null;
-            if (this.isExtendsClause()) {
-                extendsClause = this.parseExtendsClause();
-            }
+            var heritageClauses = this.parseHeritageClauses();
 
             var objectType = this.parseObjectType();
             return this.factory.interfaceDeclaration(
-                modifiers, interfaceKeyword, identifier, typeParameterList, extendsClause, objectType);
+                modifiers, interfaceKeyword, identifier, typeParameterList, heritageClauses, objectType);
         }
 
         private parseObjectType(): ObjectTypeSyntax {
@@ -2555,38 +2553,42 @@ module TypeScript.Parser {
             return this.isPropertyName(this.currentToken(), inErrorRecovery);
         }
 
-        private isExtendsClause(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword;
+        private isHeritageClause(): bool {
+            var token0 = this.currentToken();
+            return token0.tokenKind === SyntaxKind.ExtendsKeyword || token0.tokenKind === SyntaxKind.ImplementsKeyword;
         }
 
-        private parseExtendsClause(): ExtendsClauseSyntax {
-            // Debug.assert(this.isExtendsClause());
+        private isNotHeritageClauseTypeName(): bool {
+            if (this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword) {
 
-            var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
-            // Debug.assert(extendsKeyword.fullWidth() > 0);
+                return this.isIdentifier(this.peekToken(1));
+            }
 
-            var result = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
+            return false;
+        }
+
+        private isHeritageClauseTypeName(): bool {
+            if (this.isName()) {
+                // We want to make sure that the "extends" in "extends foo" or the "implements" in
+                // "implements foo" is not considered a type name.
+                return !this.isNotHeritageClauseTypeName();
+            }
+            
+            return false;
+        }
+
+        private parseHeritageClause(): HeritageClauseSyntax {
+            // Debug.assert(this.isHeritageClause());
+
+            var extendsOrImplementsKeyword = this.eatAnyToken();
+            Debug.assert(extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword || extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
+
+            var result = this.parseSeparatedSyntaxList(ListParsingState.HeritageClause_TypeNameList);
             var typeNames = result.list;
-            extendsKeyword = this.addSkippedTokensAfterToken(extendsKeyword, result.skippedTokens);
+            extendsOrImplementsKeyword = this.addSkippedTokensAfterToken(extendsOrImplementsKeyword, result.skippedTokens);
 
-            return this.factory.extendsClause(extendsKeyword, typeNames);
-        }
-
-        private isImplementsClause(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword;
-        }
-
-        private parseImplementsClause(): ImplementsClauseSyntax {
-            // Debug.assert(this.isImplementsClause());
-
-            var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
-            // Debug.assert(implementsKeyword.fullWidth() > 0);
-
-            var result = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
-            var typeNames = result.list;
-            implementsKeyword = this.addSkippedTokensAfterToken(implementsKeyword, result.skippedTokens);
-
-            return this.factory.implementsClause(implementsKeyword, typeNames);
+            return this.factory.heritageClause(extendsOrImplementsKeyword, typeNames);
         }
 
         private isStatement(inErrorRecovery: bool): bool {
@@ -4982,7 +4984,8 @@ module TypeScript.Parser {
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return true;
 
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
+                case ListParsingState.HeritageClause_TypeNameList:
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
@@ -5007,7 +5010,7 @@ module TypeScript.Parser {
             switch (currentListType) {
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.HeritageClause_TypeNameList:
                 case ListParsingState.TypeArgumentList_Types:
                 case ListParsingState.TypeParameterList_TypeParameters:
                     return true;
@@ -5021,6 +5024,7 @@ module TypeScript.Parser {
                     return false;
 
                 case ListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
                 case ListParsingState.ClassDeclaration_ClassElements:
                 case ListParsingState.ModuleDeclaration_ModuleElements:
                 case ListParsingState.SwitchStatement_SwitchClauses:
@@ -5036,7 +5040,7 @@ module TypeScript.Parser {
                 case ListParsingState.ObjectType_TypeMembers:
                     return true;
 
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.HeritageClause_TypeNameList:
                 case ListParsingState.EnumDeclaration_EnumElements:
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
@@ -5049,6 +5053,7 @@ module TypeScript.Parser {
                     return false;
 
                 case ListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
                 case ListParsingState.ClassDeclaration_ClassElements:
                 case ListParsingState.ModuleDeclaration_ModuleElements:
                 case ListParsingState.SwitchStatement_SwitchClauses:
@@ -5061,7 +5066,7 @@ module TypeScript.Parser {
 
         private separatorKind(currentListType: ListParsingState): SyntaxKind {
             switch (currentListType) {
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.HeritageClause_TypeNameList:
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                 case ListParsingState.EnumDeclaration_EnumElements:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
@@ -5077,6 +5082,7 @@ module TypeScript.Parser {
                     return SyntaxKind.SemicolonToken;
 
                 case ListParsingState.SourceUnit_ModuleElements:
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
                 case ListParsingState.ClassDeclaration_ClassElements:
                 case ListParsingState.ModuleDeclaration_ModuleElements:
                 case ListParsingState.SwitchStatement_SwitchClauses:
@@ -5110,6 +5116,9 @@ module TypeScript.Parser {
                 case ListParsingState.SourceUnit_ModuleElements:
                     return this.isExpectedSourceUnit_ModuleElementsTerminator();
 
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
+                    return this.isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator();
+
                 case ListParsingState.ClassDeclaration_ClassElements:
                     return this.isExpectedClassDeclaration_ClassElementsTerminator();
 
@@ -5140,8 +5149,8 @@ module TypeScript.Parser {
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.isExpectedArgumentList_AssignmentExpressionsTerminator();
 
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                    return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
+                case ListParsingState.HeritageClause_TypeNameList:
+                    return this.isExpectedHeritageClause_TypeNameListTerminator();
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                     return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount);
@@ -5284,14 +5293,24 @@ module TypeScript.Parser {
             return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
         }
 
-        private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): bool {
-            if (this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword) {
+        private isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator(): bool {
+            var token0 = this.currentToken();
+            if (token0.tokenKind === SyntaxKind.OpenBraceToken ||
+                token0.tokenKind === SyntaxKind.CloseBraceToken) {
                 return true;
             }
 
-            if (this.currentToken().tokenKind === SyntaxKind.OpenBraceToken ||
-                this.currentToken().tokenKind === SyntaxKind.CloseBraceToken) {
+            return false;
+        }
+
+        private isExpectedHeritageClause_TypeNameListTerminator(): bool {
+            var token0 = this.currentToken();
+            if (token0.tokenKind === SyntaxKind.ExtendsKeyword ||
+                token0.tokenKind === SyntaxKind.ImplementsKeyword) {
+                return true;
+            }
+
+            if (this.isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator()) {
                 return true;
             }
 
@@ -5330,30 +5349,13 @@ module TypeScript.Parser {
             return this.currentToken().tokenKind === SyntaxKind.FinallyKeyword;
         }
 
-        private isExtendsOrImplementsClause(): bool {
-            if (this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword) {
-
-                return this.isIdentifier(this.peekToken(1));
-            }
-
-            return false;
-        }
-
-        private isExtendsOrImplementsClauseTypeName(): bool {
-            if (this.isName()) {
-                // We want to make sure that the "extends" in "extends foo" or the "implements" in
-                // "implements foo" is not considered a type name.
-                return !this.isExtendsOrImplementsClause();
-            }
-            
-            return false;
-        }
-
         private isExpectedListItem(currentListType: ListParsingState, inErrorRecovery: bool): any {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
                     return this.isModuleElement(inErrorRecovery);
+
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
+                    return this.isHeritageClause();
 
                 case ListParsingState.ClassDeclaration_ClassElements:
                     return this.isClassElement(inErrorRecovery);
@@ -5391,8 +5393,8 @@ module TypeScript.Parser {
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.isExpression();
 
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                    return this.isExtendsOrImplementsClauseTypeName();
+                case ListParsingState.HeritageClause_TypeNameList:
+                    return this.isHeritageClauseTypeName();
 
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                     return this.isPropertyAssignment(inErrorRecovery);
@@ -5419,6 +5421,9 @@ module TypeScript.Parser {
                 case ListParsingState.SourceUnit_ModuleElements:
                     return this.parseModuleElement();
 
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
+                    return this.parseHeritageClause();
+
                 case ListParsingState.ClassDeclaration_ClassElements:
                     return this.parseClassElement(/*inErrorRecovery:*/ false);
 
@@ -5443,7 +5448,7 @@ module TypeScript.Parser {
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.parseAssignmentExpression(/*allowIn:*/ true);
 
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.HeritageClause_TypeNameList:
                     return this.parseNameOrGenericType();
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
@@ -5505,7 +5510,7 @@ module TypeScript.Parser {
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                     return Strings.expression;
 
-                case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.HeritageClause_TypeNameList:
                     return Strings.type_name;
 
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
