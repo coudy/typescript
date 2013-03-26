@@ -159,6 +159,33 @@ module TypeScript {
             code: 123
         },
 
+        _extends__clause_already_seen: {
+            category: DiagnosticCategory.Error,
+            message: "'extends' clause already seen.",
+            code: 124
+        },
+
+        _extends__clause_must_precede__implements__clause: {
+            category: DiagnosticCategory.Error,
+            message: "'extends' clause must precede 'implements' clause.",
+            code: 125
+        },
+
+        Class_can_only_extend_single_type: {
+            category: DiagnosticCategory.Error,
+            message: "Class can only extend single type.",
+            code: 126
+        },
+
+        _implements__clause_already_seen: {
+            category: DiagnosticCategory.Error,
+            message: "'implements' clause already seen.",
+            code: 127
+        },
+
+
+
+
 
 
         // Semantic errors start at 200.

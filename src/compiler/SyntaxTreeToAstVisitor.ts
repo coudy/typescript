@@ -491,10 +491,6 @@ module TypeScript {
                     Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
                     implementsList = heritageClause.accept(this);
                 }
-
-                if (i >= 2) {
-                    this.movePast(heritageClause);
-                }
             }
 
             this.movePast(node.openBraceToken);

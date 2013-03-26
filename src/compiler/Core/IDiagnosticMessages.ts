@@ -30,6 +30,10 @@ module TypeScript {
         Index_signature_must_have_a_type_annotation: DiagnosticInfo;
         Index_signature_parameter_must_have_a_type_annotation: DiagnosticInfo;
         Index_signature_parameter_type_must_be__string__or__number_: DiagnosticInfo;
+        _extends__clause_already_seen: DiagnosticInfo;
+        _extends__clause_must_precede__implements__clause: DiagnosticInfo;
+        Class_can_only_extend_single_type: DiagnosticInfo;
+        _implements__clause_already_seen: DiagnosticInfo;
 
 
 

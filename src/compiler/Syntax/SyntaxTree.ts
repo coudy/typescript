@@ -114,6 +114,11 @@ module TypeScript {
                 this.fileName, start, length, diagnosticCode, args));
         }
 
+        private pushDiagnostic1(elementFullStart: number, element: ISyntaxElement, diagnosticCode: DiagnosticCode, args: any[] = null): void {
+            this.diagnostics.push(new SyntaxDiagnostic(
+                this.fileName, elementFullStart + element.leadingTriviaWidth(), element.width(), diagnosticCode, args));
+        }
+
         private visitCatchClause(node: CatchClauseSyntax): void {
             if (node.typeAnnotation) {
                 this.pushDiagnostic(
@@ -140,9 +145,8 @@ module TypeScript {
 
                     if (parameter.dotDotDotToken) {
                         if (parameterIndex != (parameterCount - 1)) {
-                            this.pushDiagnostic(
-                                parameterFullStart + parameter.leadingTriviaWidth(),
-                                parameter.width(),
+                            this.pushDiagnostic1(
+                                parameterFullStart, parameter,
                                 DiagnosticCode.Rest_parameter_must_be_last_in_list, null);
                             break;
                         }
@@ -151,18 +155,16 @@ module TypeScript {
                         seenOptionalParameter = true;
 
                         if (parameter.questionToken && parameter.equalsValueClause) {
-                            this.pushDiagnostic(
-                                parameterFullStart + parameter.leadingTriviaWidth(),
-                                parameter.width(),
+                            this.pushDiagnostic1(
+                                parameterFullStart, parameter,
                                 DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer, null);
                             break;
                         }
                     }
                     else {
                         if (seenOptionalParameter) {
-                            this.pushDiagnostic(
-                                parameterFullStart + parameter.leadingTriviaWidth(),
-                                parameter.width(),
+                            this.pushDiagnostic1(
+                                parameterFullStart, parameter,
                                 DiagnosticCode.Required_parameter_cannot_follow_optional_parameter, null);
                             break;
                         }
@@ -180,50 +182,96 @@ module TypeScript {
             var parameter = node.parameter;
 
             if (parameter.dotDotDotToken) {
-                this.pushDiagnostic(
-                    parameterFullStart + parameter.leadingTriviaWidth(),
-                    parameter.width(),
+                this.pushDiagnostic1(
+                    parameterFullStart, parameter,
                     DiagnosticCode.Index_signatures_cannot_have_rest_parameters, null);
             }
             else if (parameter.publicOrPrivateKeyword) {
-                this.pushDiagnostic(
-                    parameterFullStart + parameter.leadingTriviaWidth(),
-                    parameter.width(),
+                this.pushDiagnostic1(
+                    parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss, null);
             }
             else if (parameter.questionToken) {
-                this.pushDiagnostic(
-                    parameterFullStart + parameter.leadingTriviaWidth(),
-                    parameter.width(),
+                this.pushDiagnostic1(
+                    parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark, null);
             }
             else if (parameter.equalsValueClause) {
-                this.pushDiagnostic(
-                    parameterFullStart + parameter.leadingTriviaWidth(),
-                    parameter.width(),
+                this.pushDiagnostic1(
+                    parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer, null);
             }
             else if (!parameter.typeAnnotation) {
-                this.pushDiagnostic(
-                    parameterFullStart + parameter.leadingTriviaWidth(),
-                    parameter.width(),
+                this.pushDiagnostic1(
+                    parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation, null);
             }
             else if (parameter.typeAnnotation.type.kind() !== SyntaxKind.StringKeyword &&
                      parameter.typeAnnotation.type.kind() !== SyntaxKind.NumberKeyword) {
-                this.pushDiagnostic(
-                    parameterFullStart + parameter.leadingTriviaWidth(),
-                    parameter.width(),
+                this.pushDiagnostic1(
+                    parameterFullStart, parameter,
                     DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_, null);
             }
             else if (!node.typeAnnotation) {
-                this.pushDiagnostic(
-                    this.position() + node.leadingTriviaWidth(),
-                    node.width(),
+                this.pushDiagnostic1(
+                    this.position(), node,
                     DiagnosticCode.Index_signature_must_have_a_type_annotation, null);
             }
 
             super.visitIndexSignature(node);
+        }
+
+        checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): void {
+            var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
+            var heritageClauseFullStart = heritageClausesFullStart;
+
+            var seenExtendsClause = false;
+            var seenImplementsClause = false;
+
+            for (var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                Debug.assert(i <= 2);
+                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
+
+                if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
+                    if (seenExtendsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
+                            DiagnosticCode._extends__clause_already_seen, null);
+                        return;
+                    }
+
+                    if (seenImplementsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
+                            DiagnosticCode._extends__clause_must_precede__implements__clause, null);
+                        return;
+                    }
+
+                    if (heritageClause.typeNames.nonSeparatorCount() > 1) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
+                            DiagnosticCode.Class_can_only_extend_single_type, null);
+                        return;
+                    }
+
+                    seenExtendsClause = true;
+                }
+                else {
+                    Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
+                    if (seenImplementsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
+                            DiagnosticCode._implements__clause_already_seen, null);
+                        return;
+                    }
+
+                    seenImplementsClause = true;
+                }
+
+                heritageClauseFullStart += heritageClause.fullWidth();
+            }
+        }
+
+        visitClassDeclaration(node: ClassDeclarationSyntax): void {
+            this.checkClassDeclarationHeritageClauses(node);
+
+            super.visitClassDeclaration(node);
         }
     }
 }

@@ -13,10 +13,10 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "Class1.ts";
+    // "ClassDeclaration4.ts";
     undefined;
 
-var generate = false;
+var generate = true;
 
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
