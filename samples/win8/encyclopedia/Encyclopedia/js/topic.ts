@@ -1,8 +1,6 @@
 ///<reference path='win.ts'/>
 ///<reference path='data.ts'/>
 
-declare var URL;
-
 var topiccache: any = {}  
 
 function createTopicFromUrl(url, group) {
@@ -158,8 +156,8 @@ function findImage(bodyHtml) {
         return keep;
     })
     imgs.forEach(function (img, i) {
-        img.attributes["width"].value *= (1 - (i / imgs.length)/2);
-        img.attributes["height"].value *= (1 - (i / imgs.length)/2);
+        <any>img.attributes["width"].value *= (1 - (i / imgs.length)/2);
+        <any>img.attributes["height"].value *= (1 - (i / imgs.length)/2);
     })
     imgs.sort(function (img1, img2) {
         var awidth = +img1.attributes["width"].value;

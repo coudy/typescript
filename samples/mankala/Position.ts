@@ -55,7 +55,7 @@ module Mankala {
             if (sum == 0) {
                 var mySpaces = homeSpaces[1 - this.turn];
                 var mySum = 0;
-                for (var j = 0, len = mySpaces.length; j < len; j++) {
+                for (var j = 0, length = mySpaces.length; j < length; j++) {
                     mySum += this.seedCounts[mySpaces[j]];
                 }
 

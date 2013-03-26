@@ -1,4 +1,4 @@
-///<reference path="d3types.ts" />
+///<reference path="d3.d.ts" />
 "use strict";
 
 interface IDataSeries {
@@ -56,10 +56,10 @@ module Chart {
             var stackData = stackLayout(data);
 
             // Maximum measurement in the dataset
-            var maxY = d3.max(stackData, function(d) => d3.max(d.data, function(d) => d.y0 + d.y));
+            var maxY = d3.max(stackData, (d) => d3.max(d.data, (d) => d.y0 + d.y));
 
             // Earliest day in the dataset
-            var minX = d3.min(data, function(d) => d3.min(d.data, function(d) => d.x));
+            var minX = d3.min(data, (d) => d3.min(d.data, (d) => d.x));
 
             // All days in the dataset (from earliest day until now)
             var days = d3.time.days(minX, new Date());
@@ -108,14 +108,14 @@ module Chart {
                         .attr('height', 25);
                         
             legendItem.append('text')
-                .text(function(d) => d.desc)
+                .text((d) => d.desc)
                 .attr('x', 30)
                 .attr('dy', '1em');
             
                     
             // Bars
             var rects = barGroups.selectAll('rect')
-                            .data(function(d) => d.data)
+                            .data((d) => d.data)
                         .enter()
                             .append('rect')
                             .attr('x', (d, i) => x(d.x))
@@ -141,7 +141,6 @@ module Chart {
                     .attr('transform', 'translate(' + this.legendWidth + ',' + this.chartHeight + ')')
                     .call(axis);
 
-            var svg;
         }
     }
     
@@ -240,9 +239,9 @@ var start = d3.time.day.offset(new Date(), -30);
 var end = new Date()
 var days = d3.time.days(start, end);
 
-var buildData: IRun[] = days.map(day => ( { date: day, pass: Math.random() > 0.1 } ));
-var compilerTestData: IRun[] = days.map(day => ( { date: day, pass: Math.random() > 0.1 } ));
-var servicesTestData: IRun[] = days.map(day => ( { date: day, pass: Math.random() > 0.1 } ));
+var buildData: IRun[] = days.map(day => ({ date: day, pass: Math.random() > 0.1 }));
+var compilerTestData: IRun[] = days.map(day => ({ date: day, pass: Math.random() > 0.1 }));
+var servicesTestData: IRun[] = days.map(day => ({ date: day, pass: Math.random() > 0.1 }));
 
 function decreasingRandom(start: number, deviation: number, factor: number) {
     var factorRandom = d3.random.normal(factor, 0.05);
@@ -259,11 +258,11 @@ var parseRandom = decreasingRandom(400, 20, 0.97);
 var typecheckRandom = decreasingRandom(500, 20, 0.97);
 var emitRandom = decreasingRandom(100, 10, 0.97);
 
-var parseData: IPerfRun[] = days.map(day => ( {x: day, y: parseRandom()}));
-var typecheckData: IPerfRun[] = days.map(day => ( {x: day, y: typecheckRandom()}));
-var emitData: IPerfRun[] = days.map(day => ( {x: day, y: emitRandom()}));
+var parseData: IPerfRun[] = days.map(day => ({ x: day, y: parseRandom() }));
+var typecheckData: IPerfRun[] = days.map(day => ({ x: day, y: typecheckRandom() }));
+var emitData: IPerfRun[] = days.map(day => ({ x: day, y: emitRandom() }));
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var chart = new Chart.DailyBuild(d3.select('#passchart'));
 
     chart.render([
@@ -271,13 +270,13 @@ document.addEventListener('DOMContentLoaded', function() {
         { desc: "Compiler Tests", data: compilerTestData },
         { desc: "Services Tests", data: servicesTestData },
     ]);
-    
+
     var normalizedData = [
         { desc: 'Emit', data: emitData },
         { desc: 'Typecheck', data: typecheckData },
         { desc: 'Parse', data: parseData }
     ]
-            
+
     var perfchart = new Chart.Bar(d3.select('#performanceChart'));
     perfchart.render(normalizedData);
 });

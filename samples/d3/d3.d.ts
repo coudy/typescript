@@ -7,15 +7,16 @@ interface ID3Base extends ID3Selectors {
     // Array Helpers
     ascending: (a: number, b: number) => number;
     descending: (a: number, b: number) => number;
-    min: (arr: any[], map?: (v: any) => any ) => any;
-    max: (arr: any[], map?: (v: any) => any ) => any;
-    extent: (arr: any[], map?: (v: any) => any ) => any[];
+    min<T, U>(arr: T[], map: (v: T) => U ): U;
+    min<T>(arr: T[]): T;
+    max<T, U>(arr: T[], map: (v: T) => U ): U;
+    max<T>(arr: T[]): T;
+    extent<T, U>(arr: T[], map: (v: T) => U): U[];
+    extent<T>(arr: T[]): T[];
     quantile: (arr: number[], p: number) => number;
-    bisectLeft: (arr: any[], x: any, low?: number, high?: number) => number;
-    bisect: (arr: any[], x: any, low?: number, high?: number) => number;
-    bisectRight: (arr: any[], x: any, low?: number, high?: number) => number;
-    first: (arr: any[], comparator: (a: any, b: any) => any ) => any;
-    last: (arr: any[], comparator: (a: any, b:any) => any ) => any;
+    bisectLeft<T>(arr: T[], x: T, low?: number, high?: number): number;
+    bisect<T>(arr: T[], x: T, low?: number, high?: number): number;
+    bisectRight<T>(arr: T[], x: T, low?: number, high?: number): number;
     
     // Loading resources
     xhr: {

@@ -101,7 +101,7 @@ class Todo extends Backbone.Model {
             content: "empty todo...",
             done: false
         }
-    };
+    }
 
         // Ensure that each todo created has `content`.
     initialize() {
