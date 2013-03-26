@@ -20,6 +20,9 @@ module TypeScript {
         _public_or_private_modifier_must_precede__static_,
         Unexpected_token_,
         A_catch_clause_variable_cannot_have_a_type_annotation,
+        Rest_parameter_must_be_last_in_list,
+        Parameter_cannot_have_question_mark_and_initializer,
+        Required_parameter_cannot_follow_optional_parameter,
 
         // Semantic diagnostics.
         Duplicate_identifier__0_,

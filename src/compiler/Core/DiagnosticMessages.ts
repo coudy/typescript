@@ -99,6 +99,24 @@ module TypeScript {
                 code: 113
         },
 
+        Rest_parameter_must_be_last_in_list: {
+            category: DiagnosticCategory.Error,
+            message: "Rest parameter must be last in list.",
+            code: 114
+        },
+
+        Parameter_cannot_have_question_mark_and_initializer: {
+            category: DiagnosticCategory.Error,
+            message: "Parameter cannot have question mark and initializer.",
+            code: 115
+        },
+
+        Required_parameter_cannot_follow_optional_parameter: {
+            category: DiagnosticCategory.Error,
+            message: "required parameter cannot follow optional parameter.",
+            code: 115
+        },
+
         // Semantic errors start at 200.
         Duplicate_identifier__0_: {
             category: DiagnosticCategory.Error,

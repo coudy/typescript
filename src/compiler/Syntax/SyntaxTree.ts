@@ -101,13 +101,76 @@ module TypeScript {
             super();
         }
 
+        private childFullStart(parent: ISyntaxNode, child: ISyntaxElement): number {
+            return this.position() + Syntax.childOffset(parent, child);
+        }
+
+        private childStart(parent: ISyntaxNode, child: ISyntaxElement): number {
+            return this.childFullStart(parent, child) + child.leadingTriviaWidth();
+        }
+
+        private pushDiagnostic(start: number, length: number, diagnosticCode: DiagnosticCode, args: any[] = null): void {
+            this.diagnostics.push(new SyntaxDiagnostic(
+                this.fileName, start, length, diagnosticCode, args));
+        }
+
         private visitCatchClause(node: CatchClauseSyntax): void {
             if (node.typeAnnotation) {
-                var offSet = Syntax.childOffset(node, node.typeAnnotation);
-                this.diagnostics.push(new SyntaxDiagnostic(this.fileName,
-                    this.position() + offSet + node.typeAnnotation.leadingTriviaWidth(),
-                    node.typeAnnotation.width(), DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation, null));
+                this.pushDiagnostic(
+                    this.childStart(node, node.typeAnnotation),
+                    node.typeAnnotation.width(),
+                    DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation);
             }
+        }
+
+        private visitParameterList(node: ParameterListSyntax): void {
+            var parametersPosition = this.childFullStart(node, node.parameters);
+            var parameterFullStart = parametersPosition;
+
+            var seenOptionalParameter = false;
+            var parameterCount = node.parameters.nonSeparatorCount();
+
+            for (var i = 0, n = node.parameters.childCount(); i < n; i++) {
+                var nodeOrToken = node.parameters.childAt(i);
+                if (i % 2 === 0) {
+                    var parameterIndex = i / 2;
+                    var parameter = <ParameterSyntax>node.parameters.childAt(i);
+
+                    if (parameter.dotDotDotToken) {
+                        if (parameterIndex != (parameterCount - 1)) {
+                            this.pushDiagnostic(
+                                parameterFullStart + parameter.leadingTriviaWidth(),
+                                parameter.width(),
+                                DiagnosticCode.Rest_parameter_must_be_last_in_list, null);
+                            break;
+                        }
+                    }
+                    else if (parameter.questionToken || parameter.equalsValueClause) {
+                        seenOptionalParameter = true;
+
+                        if (parameter.questionToken && parameter.equalsValueClause) {
+                            this.pushDiagnostic(
+                                parameterFullStart + parameter.leadingTriviaWidth(),
+                                parameter.width(),
+                                DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer, null);
+                            break;
+                        }
+                    }
+                    else {
+                        if (seenOptionalParameter) {
+                            this.pushDiagnostic(
+                                parameterFullStart + parameter.leadingTriviaWidth(),
+                                parameter.width(),
+                                DiagnosticCode.Required_parameter_cannot_follow_optional_parameter, null);
+                            break;
+                        }
+                    }
+                }
+
+                parameterFullStart += nodeOrToken.fullWidth();
+            }
+            
+            super.visitParameterList(node);
         }
     }
 }

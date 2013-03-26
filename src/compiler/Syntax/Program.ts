@@ -33,6 +33,10 @@ class Program {
             // return;
         }
 
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
+            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
 
@@ -44,10 +48,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
             fileName => this.runEmitter(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
-
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
-            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
@@ -181,7 +181,9 @@ class Program {
 
     private checkResult(fileName: string, result: any, verify: bool, generateBaseline: bool, justText: bool): void {
         var actualResult: string;
-        var expectedFile: string;
+
+        var expectedFile = fileName + ".expected";
+        var actualFile = fileName + ".actual";
 
         if (generateBaseline) {
             actualResult = justText ? result : JSON2.stringify(result, null, 4);
@@ -189,12 +191,13 @@ class Program {
 
             // Environment.standardOut.WriteLine("Generating baseline for: " + fileName);
             Environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
+
+            if (Environment.fileExists(actualFile)) {
+                Environment.deleteFile(actualFile);
+            }
         }
         else if (verify) {
             actualResult = justText ? result : JSON2.stringify(result, null, 4);
-            expectedFile = fileName + ".expected";
-
-            var actualFile = fileName + ".actual";
 
             var expectedResult = null;
             if (!Environment.fileExists(expectedFile)) {

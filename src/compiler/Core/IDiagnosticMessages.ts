@@ -19,6 +19,10 @@ module TypeScript {
         _StarSlash__expected: DiagnosticInfo;
         _public_or_private_modifier_must_precede__static_: DiagnosticInfo;
         Unexpected_token_: DiagnosticInfo;
+        A_catch_clause_variable_cannot_have_a_type_annotation: DiagnosticInfo;
+        Rest_parameter_must_be_last_in_list: DiagnosticInfo;
+        Parameter_cannot_have_question_mark_and_initializer: DiagnosticInfo;
+        Required_parameter_cannot_follow_optional_parameter: DiagnosticInfo;
 
         // Semantic diagnostics.
         Duplicate_identifier__0_: DiagnosticInfo;
