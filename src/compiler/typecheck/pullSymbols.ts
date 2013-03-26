@@ -157,17 +157,30 @@ module TypeScript {
         public removeOutgoingLink(link: PullSymbolLink) {
             if (link) {
                 this.outgoingLinks.remove(p => p === link);
-                link.end.incomingLinks.remove(p => p === link);
+
+                if (link.end.incomingLinks) {
+                    link.end.incomingLinks.remove(p => p === link);
+                }
             }
         }
 
         public updateOutgoingLinks(map: (item: PullSymbolLink, context: any) => void , context: any) {
-            this.outgoingLinks.update(map, context);
+            if (this.outgoingLinks) {
+                this.outgoingLinks.update(map, context);
+            }
         }
 
         public updateIncomingLinks(map: (item: PullSymbolLink, context: any) => void , context: any) {
-            this.incomingLinks.update(map, context);
+            if (this.incomingLinks) {
+                this.incomingLinks.update(map, context);
+            }
         }
+
+        // remove all outgoing, as well as incoming, links
+        public removeAllLinks() {
+            this.updateOutgoingLinks((item) => this.removeOutgoingLink(item), null);
+            this.updateIncomingLinks((item) => item.start.removeOutgoingLink(item), null);
+        }        
 
         public setContainer(containerSymbol: PullTypeSymbol) {
             //containerSymbol.addOutgoingLink(this, relationshipKind);

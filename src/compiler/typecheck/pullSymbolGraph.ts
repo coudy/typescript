@@ -195,6 +195,8 @@ module TypeScript {
                 container.removeMember(symbolToRemove);
                 this.semanticInfoChain.removeSymbolFromCache(symbolToRemove);
             }
+
+            symbolToRemove.removeAllLinks();
         }
 
         public addSymbol(symbolToAdd: PullSymbol) {
