@@ -1,4 +1,0 @@
-implements;
-IFoo;
- {
-}
