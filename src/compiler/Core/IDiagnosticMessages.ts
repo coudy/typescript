@@ -34,6 +34,10 @@ module TypeScript {
         _extends__clause_must_precede__implements__clause: DiagnosticInfo;
         Class_can_only_extend_single_type: DiagnosticInfo;
         _implements__clause_already_seen: DiagnosticInfo;
+        Accessibility_modifier_already_seen: DiagnosticInfo;
+        Accessibility_modifier_must_precede__static__modifier: DiagnosticInfo;
+        _static__modifier_already_seen: DiagnosticInfo;
+        _0__modifier_cannot_appear_on_a_class_element: DiagnosticInfo;
 
 
 

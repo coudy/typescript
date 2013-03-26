@@ -6,19 +6,22 @@
     },
     "diagnostics": [
         {
-            "_position": 23,
+            "_position": 13,
             "_width": 6,
-            "_diagnosticCode": "Accessibility_modifier_must_precede__static__modifier"
+            "_diagnosticCode": "_0__modifier_cannot_appear_on_a_class_element",
+            "_arguments": [
+                "export"
+            ]
         }
     ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 48,
+        "fullWidth": 27,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 48,
+                "fullWidth": 27,
                 "modifiers": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -35,16 +38,15 @@
                 },
                 "identifier": {
                     "kind": "IdentifierName",
-                    "width": 5,
-                    "fullWidth": 7,
-                    "text": "Outer",
-                    "valueText": "Outer",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": "C",
+                    "valueText": "C",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLine": true,
                     "trailingTrivia": [
                         {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
                         }
                     ]
                 },
@@ -65,27 +67,21 @@
                 "classElements": [
                     {
                         "kind": "MemberVariableDeclaration",
-                        "fullWidth": 29,
+                        "fullWidth": 15,
                         "modifiers": [
                             {
-                                "kind": "StaticKeyword",
+                                "kind": "ExportKeyword",
                                 "width": 6,
-                                "fullWidth": 7,
-                                "text": "static",
+                                "fullWidth": 9,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
                                 "hasTrailingTrivia": true,
-                                "trailingTrivia": [
+                                "leadingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "text": " "
+                                        "text": "  "
                                     }
-                                ]
-                            },
-                            {
-                                "kind": "PublicKeyword",
-                                "width": 6,
-                                "fullWidth": 7,
-                                "text": "public",
-                                "hasTrailingTrivia": true,
+                                ],
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
@@ -96,34 +92,12 @@
                         ],
                         "variableDeclarator": {
                             "kind": "VariableDeclarator",
-                            "fullWidth": 12,
+                            "fullWidth": 3,
                             "identifier": {
                                 "kind": "IdentifierName",
-                                "width": 4,
-                                "text": "intI",
-                                "valueText": "intI"
-                            },
-                            "typeAnnotation": {
-                                "kind": "TypeAnnotation",
-                                "fullWidth": 8,
-                                "colonToken": {
-                                    "kind": "ColonToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ":",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                "type": {
-                                    "kind": "NumberKeyword",
-                                    "width": 6,
-                                    "text": "number"
-                                }
+                                "width": 3,
+                                "text": "Foo",
+                                "valueText": "Foo"
                             }
                         },
                         "semicolonToken": {
@@ -145,16 +119,7 @@
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
                     "width": 1,
-                    "fullWidth": 3,
-                    "text": "}",
-                    "hasTrailingTrivia": true,
-                    "hasTrailingNewLine": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        }
-                    ]
+                    "text": "}"
                 }
             }
         ],
@@ -167,11 +132,9 @@
     "lineMap": {
         "lineStarts": [
             0,
-            13,
-            16,
-            45,
-            48
+            11,
+            26
         ],
-        "length": 48
+        "length": 27
     }
 }

@@ -183,6 +183,30 @@ module TypeScript {
             code: 1027
         },
 
+        Accessibility_modifier_already_seen: {
+            category: DiagnosticCategory.Error,
+            message: "Accessibility modifier already seen.",
+            code: 1028
+        },
+
+        Accessibility_modifier_must_precede__static__modifier: {
+            category: DiagnosticCategory.Error,
+            message: "Accessibility modifier must precede 'static' modifier.",
+            code: 1029
+        },
+
+        _static__modifier_already_seen: {
+            category: DiagnosticCategory.Error,
+            message: "'static' modifier already seen.",
+            code: 1030
+        },
+
+        _0__modifier_cannot_appear_on_a_class_element: {
+            category: DiagnosticCategory.Error,
+            message: "'{0}' modifier cannot appear on a class element.",
+            code: 1031
+        },
+
 
 
 

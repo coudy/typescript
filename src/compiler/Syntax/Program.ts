@@ -27,6 +27,7 @@ class Program {
 
         if (generate) {
             Environment.standardOut.WriteLine("!!!!!!!!!! WARNING - GENERATING !!!!!!!!!");
+            Environment.standardOut.WriteLine("");
         }
 
         // Environment.standardOut.WriteLine("Testing against fuzz.");

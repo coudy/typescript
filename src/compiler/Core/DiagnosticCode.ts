@@ -34,6 +34,10 @@ module TypeScript {
         _extends__clause_must_precede__implements__clause,
         Class_can_only_extend_single_type,
         _implements__clause_already_seen,
+        Accessibility_modifier_already_seen,
+        Accessibility_modifier_must_precede__static__modifier,
+        _static__modifier_already_seen,
+        _0__modifier_cannot_appear_on_a_class_element,
 
 
 

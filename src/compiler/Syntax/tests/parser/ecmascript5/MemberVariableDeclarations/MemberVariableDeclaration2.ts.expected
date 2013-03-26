@@ -6,19 +6,19 @@
     },
     "diagnostics": [
         {
-            "_position": 23,
+            "_position": 20,
             "_width": 6,
-            "_diagnosticCode": "Accessibility_modifier_must_precede__static__modifier"
+            "_diagnosticCode": "_static__modifier_already_seen"
         }
     ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 48,
+        "fullWidth": 34,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 48,
+                "fullWidth": 34,
                 "modifiers": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -35,16 +35,15 @@
                 },
                 "identifier": {
                     "kind": "IdentifierName",
-                    "width": 5,
-                    "fullWidth": 7,
-                    "text": "Outer",
-                    "valueText": "Outer",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": "C",
+                    "valueText": "C",
                     "hasTrailingTrivia": true,
-                    "hasTrailingNewLine": true,
                     "trailingTrivia": [
                         {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
                         }
                     ]
                 },
@@ -65,8 +64,28 @@
                 "classElements": [
                     {
                         "kind": "MemberVariableDeclaration",
-                        "fullWidth": 29,
+                        "fullWidth": 22,
                         "modifiers": [
+                            {
+                                "kind": "StaticKeyword",
+                                "width": 6,
+                                "fullWidth": 9,
+                                "text": "static",
+                                "hasLeadingTrivia": true,
+                                "hasTrailingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "  "
+                                    }
+                                ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
                             {
                                 "kind": "StaticKeyword",
                                 "width": 6,
@@ -79,51 +98,16 @@
                                         "text": " "
                                     }
                                 ]
-                            },
-                            {
-                                "kind": "PublicKeyword",
-                                "width": 6,
-                                "fullWidth": 7,
-                                "text": "public",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
                             }
                         ],
                         "variableDeclarator": {
                             "kind": "VariableDeclarator",
-                            "fullWidth": 12,
+                            "fullWidth": 3,
                             "identifier": {
                                 "kind": "IdentifierName",
-                                "width": 4,
-                                "text": "intI",
-                                "valueText": "intI"
-                            },
-                            "typeAnnotation": {
-                                "kind": "TypeAnnotation",
-                                "fullWidth": 8,
-                                "colonToken": {
-                                    "kind": "ColonToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ":",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                "type": {
-                                    "kind": "NumberKeyword",
-                                    "width": 6,
-                                    "text": "number"
-                                }
+                                "width": 3,
+                                "text": "Foo",
+                                "valueText": "Foo"
                             }
                         },
                         "semicolonToken": {
@@ -145,16 +129,7 @@
                 "closeBraceToken": {
                     "kind": "CloseBraceToken",
                     "width": 1,
-                    "fullWidth": 3,
-                    "text": "}",
-                    "hasTrailingTrivia": true,
-                    "hasTrailingNewLine": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        }
-                    ]
+                    "text": "}"
                 }
             }
         ],
@@ -167,11 +142,9 @@
     "lineMap": {
         "lineStarts": [
             0,
-            13,
-            16,
-            45,
-            48
+            11,
+            33
         ],
-        "length": 48
+        "length": 34
     }
 }

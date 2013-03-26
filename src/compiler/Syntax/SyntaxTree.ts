@@ -147,7 +147,7 @@ module TypeScript {
                         if (parameterIndex != (parameterCount - 1)) {
                             this.pushDiagnostic1(
                                 parameterFullStart, parameter,
-                                DiagnosticCode.Rest_parameter_must_be_last_in_list, null);
+                                DiagnosticCode.Rest_parameter_must_be_last_in_list);
                             break;
                         }
                     }
@@ -157,7 +157,7 @@ module TypeScript {
                         if (parameter.questionToken && parameter.equalsValueClause) {
                             this.pushDiagnostic1(
                                 parameterFullStart, parameter,
-                                DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer, null);
+                                DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer);
                             break;
                         }
                     }
@@ -165,7 +165,7 @@ module TypeScript {
                         if (seenOptionalParameter) {
                             this.pushDiagnostic1(
                                 parameterFullStart, parameter,
-                                DiagnosticCode.Required_parameter_cannot_follow_optional_parameter, null);
+                                DiagnosticCode.Required_parameter_cannot_follow_optional_parameter);
                             break;
                         }
                     }
@@ -184,38 +184,38 @@ module TypeScript {
             if (parameter.dotDotDotToken) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
-                    DiagnosticCode.Index_signatures_cannot_have_rest_parameters, null);
+                    DiagnosticCode.Index_signatures_cannot_have_rest_parameters);
             }
             else if (parameter.publicOrPrivateKeyword) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
-                    DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss, null);
+                    DiagnosticCode.Index_signature_parameter_cannot_have_accessibility_modifierss);
             }
             else if (parameter.questionToken) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
-                    DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark, null);
+                    DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark);
             }
             else if (parameter.equalsValueClause) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
-                    DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer, null);
+                    DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer);
             }
             else if (!parameter.typeAnnotation) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
-                    DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation, null);
+                    DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation);
             }
             else if (parameter.typeAnnotation.type.kind() !== SyntaxKind.StringKeyword &&
                      parameter.typeAnnotation.type.kind() !== SyntaxKind.NumberKeyword) {
                 this.pushDiagnostic1(
                     parameterFullStart, parameter,
-                    DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_, null);
+                    DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_);
             }
             else if (!node.typeAnnotation) {
                 this.pushDiagnostic1(
                     this.position(), node,
-                    DiagnosticCode.Index_signature_must_have_a_type_annotation, null);
+                    DiagnosticCode.Index_signature_must_have_a_type_annotation);
             }
 
             super.visitIndexSignature(node);
@@ -235,19 +235,19 @@ module TypeScript {
                 if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
                     if (seenExtendsClause) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
-                            DiagnosticCode._extends__clause_already_seen, null);
+                            DiagnosticCode._extends__clause_already_seen);
                         return;
                     }
 
                     if (seenImplementsClause) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
-                            DiagnosticCode._extends__clause_must_precede__implements__clause, null);
+                            DiagnosticCode._extends__clause_must_precede__implements__clause);
                         return;
                     }
 
                     if (heritageClause.typeNames.nonSeparatorCount() > 1) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
-                            DiagnosticCode.Class_can_only_extend_single_type, null);
+                            DiagnosticCode.Class_can_only_extend_single_type);
                         return;
                     }
 
@@ -257,7 +257,7 @@ module TypeScript {
                     Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
                     if (seenImplementsClause) {
                         this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
-                            DiagnosticCode._implements__clause_already_seen, null);
+                            DiagnosticCode._implements__clause_already_seen);
                         return;
                     }
 
@@ -272,6 +272,74 @@ module TypeScript {
             this.checkClassDeclarationHeritageClauses(node);
 
             super.visitClassDeclaration(node);
+        }
+
+        checkClassElementModifiers(list: ISyntaxList): void {
+            var modifierFullStart = this.position();
+
+            var seenAccessibilityModifier = false;
+            var seenStaticModifier = false;
+
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                var modifier = <ISyntaxToken>list.childAt(i);
+                if (modifier.tokenKind === SyntaxKind.PublicKeyword ||
+                    modifier.tokenKind === SyntaxKind.PrivateKeyword) {
+
+                    if (seenAccessibilityModifier) {
+                        this.pushDiagnostic1(modifierFullStart, modifier,
+                            DiagnosticCode.Accessibility_modifier_already_seen);
+                        return;
+                    }
+
+                    if (seenStaticModifier) {
+                        this.pushDiagnostic1(modifierFullStart, modifier,
+                            DiagnosticCode.Accessibility_modifier_must_precede__static__modifier);
+                        return;
+                    }
+
+                    seenAccessibilityModifier = true;
+                }
+                else if (modifier.tokenKind === SyntaxKind.StaticKeyword) {
+                    if (seenStaticModifier) {
+                        this.pushDiagnostic1(modifierFullStart, modifier,
+                            DiagnosticCode._static__modifier_already_seen);
+                        return;
+                    }
+
+                    seenStaticModifier = true;
+                }
+                else {
+                    this.pushDiagnostic1(modifierFullStart, modifier,
+                        DiagnosticCode._0__modifier_cannot_appear_on_a_class_element, [modifier.text()]);
+                    return;
+                }
+
+                modifierFullStart += modifier.fullWidth();
+            }
+        }
+
+        visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
+            this.checkClassElementModifiers(node.modifiers);
+
+            super.visitMemberVariableDeclaration(node);
+        }
+
+        visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
+            this.checkClassElementModifiers(node.modifiers);
+
+            super.visitMemberFunctionDeclaration(node);
+        }
+
+        visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
+            this.checkClassElementModifiers(node.modifiers);
+
+            super.visitGetMemberAccessorDeclaration(node);
+        }
+
+        visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
+            this.checkClassElementModifiers(node.modifiers);
+
+            super.visitSetMemberAccessorDeclaration(node);
         }
     }
 }
