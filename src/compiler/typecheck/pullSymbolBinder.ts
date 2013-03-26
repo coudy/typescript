@@ -734,7 +734,7 @@ module TypeScript {
                 interfaceSymbol = <PullClassTypeSymbol>this.findSymbolInContext(interfaceName, PullElementKind.SomeType, []);
             }
 
-            if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface)) {
+            if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface) && this.symbolIsRedeclaration(interfaceSymbol)) {
                 interfaceDecl.addDiagnostic(new PullDiagnostic(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(),
                     getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [interfaceName])));
                 interfaceSymbol = null;
@@ -1448,6 +1448,7 @@ module TypeScript {
             }
 
             if (functionSymbol && 
+                this.symbolIsRedeclaration(functionSymbol) &&
                 (functionSymbol.getKind() != PullElementKind.Function ||
                     !isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature))) {
                 functionDeclaration.addDiagnostic(new PullDiagnostic(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(),
@@ -1749,7 +1750,8 @@ module TypeScript {
                 methodSymbol = parent.findMember(methodName);
             }
 
-            if (methodSymbol && 
+            if (methodSymbol &&
+                this.symbolIsRedeclaration(methodSymbol) &&
                 (methodSymbol.getKind() != PullElementKind.Method ||
                     (!isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
                 methodDeclaration.addDiagnostic(new PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [methodName])));
