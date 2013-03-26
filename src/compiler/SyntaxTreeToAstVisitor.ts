@@ -501,7 +501,7 @@ module TypeScript {
             var members = this.visitSyntaxList(node.classElements);
             this.movePast(node.closeBraceToken);
 
-            this.requiresExtendsBlock = this.requiresExtendsBlock || node.heritageClauses.childCount() > 0;
+            this.requiresExtendsBlock = this.requiresExtendsBlock || extendsList.members.length > 0;
 
             var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
             this.setSpan(result, start, this.position);
@@ -567,7 +567,7 @@ module TypeScript {
 
             var i = 0;
             var n = 0;
-            var extendsList = new ASTList();
+            var extendsList: ASTList = null;
 
             for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
                 var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);

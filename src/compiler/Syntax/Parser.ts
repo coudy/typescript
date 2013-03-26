@@ -5482,6 +5482,9 @@ module TypeScript.Parser {
                 case ListParsingState.SourceUnit_ModuleElements:
                     return Strings.module__class__interface__enum__import_or_statement;
 
+                case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
+                    return '{';
+
                 case ListParsingState.ClassDeclaration_ClassElements:
                     return Strings.constructor__function__accessor_or_variable;
 
