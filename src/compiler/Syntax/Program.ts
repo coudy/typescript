@@ -213,7 +213,7 @@ class Program {
             }
 
             if (expectedResult !== actualResult) {
-                Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                Environment.standardOut.WriteLine(" ! Fail: " + actualFile);
                 Environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
 
                 if (!generate) {

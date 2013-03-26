@@ -52199,6 +52199,16 @@ var TypeScript;
                 container.removeMember(symbolToRemove);
                 this.semanticInfoChain.removeSymbolFromCache(symbolToRemove);
             }
+            if (symbolToRemove.isAccessor()) {
+                var getterSymbol = (symbolToRemove).getGetter();
+                var setterSymbol = (symbolToRemove).getSetter();
+                if (getterSymbol) {
+                    this.removeSymbol(getterSymbol);
+                }
+                if (setterSymbol) {
+                    this.removeSymbol(setterSymbol);
+                }
+            }
             symbolToRemove.removeAllLinks();
         };
         PullSymbolGraphUpdater.prototype.addSymbol = function (symbolToAdd) {
@@ -58410,7 +58420,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {
@@ -58560,7 +58570,7 @@ var Program = (function () {
                 expectedResult = Environment.readFile(expectedFile, true);
             }
             if (expectedResult !== actualResult) {
-                Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
+                Environment.standardOut.WriteLine(" ! Fail: " + actualFile);
                 Environment.writeFile(actualFile, actualResult, true);
                 if (!generate) {
                     var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
