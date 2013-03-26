@@ -139,7 +139,7 @@ module FourSlash {
             this.fixCaretPosition();
         }
 
-        public moveCaretRight(count? = 1) {
+        public moveCaretRight(count = 1) {
             this.currentCaretPosition += count;
             this.currentCaretPosition = Math.min(this.currentCaretPosition, this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getLength());
         }
@@ -509,7 +509,7 @@ module FourSlash {
             IO.printLine(JSON2.stringify(completions));
         }
 
-        public deleteChar(count? = 1) {
+        public deleteChar(count = 1) {
             var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             var ch = "";
@@ -532,7 +532,7 @@ module FourSlash {
             this.fixCaretPosition();
         }
 
-        public deleteCharBehindMarker(count ?= 1) {
+        public deleteCharBehindMarker(count = 1) {
             var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             var ch = "";
@@ -653,7 +653,7 @@ module FourSlash {
             return this.testData.ranges.slice(0);
         }
 
-        public verifyCaretAtMarker(markerName? = '') {
+        public verifyCaretAtMarker(markerName = '') {
             var pos = this.getMarkerByName(markerName);
             if (pos.fileName !== this.activeFile.fileName) {
                 throw new Error('verifyCaretAtMarker failed - expected to be in file "' + pos.fileName + '", but was in file "' + this.activeFile.fileName + '"');

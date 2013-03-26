@@ -39,7 +39,7 @@ module Diff {
     ///  the old and new states of the string diff'd.
     /// </summary>
     export class Segment {
-        constructor(public content? = '', public type? = SegmentType.Unchanged) { }
+        constructor(public content = '', public type = SegmentType.Unchanged) { }
     }
 
     /// <summary>

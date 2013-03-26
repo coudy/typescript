@@ -1897,7 +1897,7 @@ module Harness {
             descriptionForDescribe: string,
             relativeFilename: string,
             generateContent: () => string,
-            runImmediately? = false,
+            runImmediately = false,
             opts?: BaselineOptions) {
 
             var actual = <string>undefined;

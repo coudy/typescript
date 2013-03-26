@@ -100,7 +100,7 @@ module TypeScript {
         return isFileOfExtension(fname, ".d.ts");
     }
 
-    export function getPrettyName(modPath: string, quote?=true, treatAsFileName?=false) { 
+    export function getPrettyName(modPath: string, quote=true, treatAsFileName=false) { 
         var modName = treatAsFileName ? switchToForwardSlashes(modPath) : trimModName(stripQuotes(modPath));
         var components = this.getPathComponents(modName);
         return components.length ? (quote ? quoteStr(components[components.length - 1]) : components[components.length - 1]) : modPath;

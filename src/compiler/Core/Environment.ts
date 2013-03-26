@@ -37,7 +37,7 @@ var Environment = (function () {
                 return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
 
-            readFile: function (path, useUTF8?: bool = false) {
+            readFile: function (path, useUTF8: bool = false) {
                 try {
                     var streamObj = getStreamObject();
                     streamObj.Open();
@@ -67,7 +67,7 @@ var Environment = (function () {
                 }
             },
 
-            writeFile: function (path, contents, useUTF8?: bool = false) {
+            writeFile: function (path, contents, useUTF8: bool = false) {
                 var file = this.createFile(path, useUTF8);
                 file.Write(contents);
                 file.Close();
@@ -118,7 +118,7 @@ var Environment = (function () {
                 return filesInFolder(folder, path);
             },
 
-            createFile: function (path, useUTF8?: bool = false) {
+            createFile: function (path, useUTF8: bool = false) {
                 try {
                     var streamObj = getStreamObject();
                     streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';

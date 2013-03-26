@@ -93,7 +93,7 @@ module TypeScript {
             return (this.isDottedModuleName.length === 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
         }
 
-        private getIndentString(declIndent? = false) {
+        private getIndentString(declIndent = false) {
             if (this.emitOptions.compilationSettings.minWhitespace) {
                 return "";
             }
@@ -106,7 +106,7 @@ module TypeScript {
             this.declFile.Write(this.getIndentString());
         }
 
-        private canEmitSignature(declFlags: DeclFlags, canEmitGlobalAmbientDecl?: bool = true, useDeclarationContainerTop?: bool = true) {
+        private canEmitSignature(declFlags: DeclFlags, canEmitGlobalAmbientDecl: bool = true, useDeclarationContainerTop: bool = true) {
             var container: AST;
             if (useDeclarationContainerTop) {
                 container = this.getAstDeclarationContainer();
@@ -190,7 +190,7 @@ module TypeScript {
             this.declarationContainerStack.pop();
         }
 
-        public emitTypeNamesMember(memberName: MemberName, emitIndent? : bool = false) {
+        public emitTypeNamesMember(memberName: MemberName, emitIndent: bool = false) {
             if (memberName.prefix === "{ ") {
                 if (emitIndent) {
                     this.emitIndent();

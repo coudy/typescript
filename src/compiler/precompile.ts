@@ -315,7 +315,7 @@ module TypeScript {
         return { noDefaultLib: noDefaultLib};
     }
 
-    export function preProcessFile(fileName: string, sourceText: IScriptSnapshot, settings?: CompilationSettings = new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
+    export function preProcessFile(fileName: string, sourceText: IScriptSnapshot, settings: CompilationSettings = new CompilationSettings(), readImportFiles = true): IPreProcessedFileInfo {
         var text = SimpleText.fromScriptSnapshot(sourceText);
         var scanner = new Scanner1(fileName, text, LanguageVersion.EcmaScript5, scannerWindow);
 

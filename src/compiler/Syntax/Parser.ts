@@ -5534,7 +5534,7 @@ module TypeScript.Parser {
                           text: ISimpleText,
                           isDeclaration: bool,
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                          options?: ParseOptions = null): SyntaxTree {
+                          options: ParseOptions = null): SyntaxTree {
         var source = new NormalParserSource(fileName, text, languageVersion);
         options = options || new ParseOptions();
 

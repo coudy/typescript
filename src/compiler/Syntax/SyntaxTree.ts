@@ -121,6 +121,8 @@ module TypeScript {
                     node.typeAnnotation.width(),
                     DiagnosticCode.A_catch_clause_variable_cannot_have_a_type_annotation);
             }
+
+            super.visitCatchClause(node);
         }
 
         private visitParameterList(node: ParameterListSyntax): void {

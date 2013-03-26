@@ -900,7 +900,7 @@ module TypeScript {
             return typeFlow.typeCheckImportDecl(this);
         }
 
-        public getAliasName(aliasAST?: AST = this.alias) : string {
+        public getAliasName(aliasAST: AST = this.alias) : string {
             if (aliasAST.nodeType === NodeType.Name) {
                 return (<Identifier>aliasAST).actualText;
             } else {

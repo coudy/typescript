@@ -4,7 +4,7 @@ module TypeScript {
     export class ParseOptions {
         private _allowAutomaticSemicolonInsertion: bool;
 
-        constructor(allowAutomaticSemicolonInsertion?: bool = true) {
+        constructor(allowAutomaticSemicolonInsertion: bool = true) {
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
         }
 

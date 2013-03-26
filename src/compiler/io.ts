@@ -305,7 +305,7 @@ var IO = (function() {
             getExecutingFilePath: function () {
                 return WScript.ScriptFullName;
             },
-            quit: function (exitCode? : number = 0) {
+            quit: function (exitCode: number = 0) {
                 try {
                     WScript.Quit(exitCode);
                 } catch (e) {

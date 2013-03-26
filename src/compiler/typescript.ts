@@ -126,7 +126,7 @@ module TypeScript {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
-        public addSourceUnit(fileName: string, sourceText: IScriptSnapshot, referencedFiles?: IFileReference[] = []): Script {
+        public addSourceUnit(fileName: string, sourceText: IScriptSnapshot, referencedFiles: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
                 var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
                 var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);

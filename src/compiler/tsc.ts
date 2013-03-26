@@ -155,6 +155,7 @@ class BatchCompiler {
         var compiler = new TypeScript.TypeScriptCompiler(
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
 
+        var anySyntacticErrors = false;
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
             var code = this.resolvedEnvironment.code[iCode];
 
@@ -177,9 +178,13 @@ class BatchCompiler {
                 compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
 
                 if (syntacticDiagnostics.length > 0) {
-                    return true;
+                    anySyntacticErrors = true;
                 }
             }
+        }
+
+        if (anySyntacticErrors) {
+            return true;
         }
 
         var emitterIOHost = {
@@ -191,7 +196,7 @@ class BatchCompiler {
 
         compiler.pullTypeCheck(true, true);
         // Note: we continue even if there were type check warnings.
-
+        
         var mapInputToOutput = (inputFile: string, outputFile: string): void => {
             this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
         };

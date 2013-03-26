@@ -116,7 +116,7 @@ module TypeScript.TextFactory {
         /// Provides a string representation of the StringText located within given span.
         /// </summary>
         /// <exception cref="T:ArgumentOutOfRangeException">When given span is outside of the text range.</exception>
-        public toString(span?: TextSpan = null): string {
+        public toString(span: TextSpan = null): string {
             throw Errors.abstract();
         }
 
@@ -348,7 +348,7 @@ module TypeScript.TextFactory {
         /// Provides a string representation of the StringText located within given span.
         /// </summary>
         /// <exception cref="T:ArgumentOutOfRangeException">When given span is outside of the text range.</exception>
-        public toString(span?: TextSpan = null): string {
+        public toString(span: TextSpan = null): string {
             if (span === null) {
                 span = new TextSpan(0, this.length());
             }

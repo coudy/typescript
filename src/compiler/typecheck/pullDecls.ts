@@ -111,7 +111,7 @@ module TypeScript {
 
         // returns 'true' if the child decl was successfully added
         // ('false' is returned if addIfDuplicate is false and there is a collision)
-        public addChildDecl(childDecl: PullDecl, addIfDuplicate? = true) {
+        public addChildDecl(childDecl: PullDecl, addIfDuplicate = true) {
             // check if decl exists
             // merge if necessary
             var declName = childDecl.getName();

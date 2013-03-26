@@ -74,7 +74,7 @@ module TypeScript {
             return this.toStringHelperEx(shortform, brackets, scope).toString();
         }
 
-        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix?: string = ""): MemberNameArray {
+        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix: string = ""): MemberNameArray {
             var builder = new MemberNameArray();
             if (brackets) {
                 builder.prefix =  prefix + "[";
