@@ -13,7 +13,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "ClassDeclaration4.ts";
+    // "MemberFunctionDeclaration1";
     undefined;
 
 var generate = false;
