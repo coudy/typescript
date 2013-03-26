@@ -70,9 +70,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -161,9 +160,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -252,9 +250,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -346,9 +343,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -412,9 +408,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -490,9 +485,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -568,9 +562,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -649,9 +642,8 @@ module TypeScript.Syntax {
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): bool { return false; }
-        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 

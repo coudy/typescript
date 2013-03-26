@@ -41,9 +41,7 @@ module TypeScript.Syntax {
         width: () => 0,
 
         isTypeScriptSpecific: () => false,
-        hasSkippedText: () => false,
-        hasZeroWidthToken: () => false,
-        hasRegularExpressionToken: () => false,
+        isIncrementallyReusable: () => true,
 
         findTokenInternal: (parent: PositionedElement, position: number, fullStart: number): PositionedToken => {
             // This should never have been called on this list.  It has a 0 width, so the client 
@@ -150,16 +148,8 @@ module TypeScript.Syntax {
             return this.item.isTypeScriptSpecific();
         }
 
-        public hasSkippedText(): bool {
-            return this.item.hasSkippedText();
-        }
-
-        public hasZeroWidthToken(): bool {
-            return this.item.hasZeroWidthToken();
-        }
-
-        public hasRegularExpressionToken(): bool {
-            return this.item.hasRegularExpressionToken();
+        public isIncrementallyReusable(): bool {
+            return this.item.isIncrementallyReusable();
         }
 
         public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
@@ -288,16 +278,8 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public hasSkippedText(): bool {
-            return (this.data() & SyntaxConstants.NodeSkippedTextMask) !== 0;
-        }
-
-        public hasZeroWidthToken(): bool {
-            return (this.data() & SyntaxConstants.NodeZeroWidthTokenMask) !== 0;
-        }
-
-        public hasRegularExpressionToken(): bool {
-            return (this.data() & SyntaxConstants.NodeRegularExpressionTokenMask) !== 0;
+        public isIncrementallyReusable(): bool {
+            return (this.data() & SyntaxConstants.NodeIncrementallyReusableMask) !== 0;
         }
 
         public fullWidth(): number {
@@ -327,9 +309,7 @@ module TypeScript.Syntax {
 
         private computeData(): number {
             var fullWidth = 0;
-            var hasSkippedText = false;
-            var hasZeroWidthToken = false;
-            var hasRegularExpressionToken = false;
+            var isIncrementallyReusable = true;
 
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
@@ -337,28 +317,11 @@ module TypeScript.Syntax {
                 var childWidth = element.fullWidth();
                 fullWidth += childWidth;
 
-                if (i % 2 === 0) {
-                    var nodeOrToken = element;
-
-                    hasSkippedText = hasSkippedText || nodeOrToken.hasSkippedText();
-                    hasZeroWidthToken = hasZeroWidthToken || nodeOrToken.hasZeroWidthToken();
-                    hasRegularExpressionToken = hasRegularExpressionToken || nodeOrToken.hasRegularExpressionToken();
-                }
-                else {
-                    var token = <ISyntaxToken>element;
-
-                    hasSkippedText = hasSkippedText || token.hasSkippedText();
-                    hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-                    // A regex token never shows up as a separator token in a list.  If the language
-                    // ever changes, add hte appropriate check here.
-                }
+                isIncrementallyReusable = isIncrementallyReusable && element.isIncrementallyReusable();
             }
 
             return (fullWidth << SyntaxConstants.NodeFullWidthShift)
-                 | (hasSkippedText ? SyntaxConstants.NodeSkippedTextMask : 0)
-                 | (hasZeroWidthToken ? SyntaxConstants.NodeZeroWidthTokenMask : 0)
-                 | (hasRegularExpressionToken ? SyntaxConstants.NodeRegularExpressionTokenMask : 0);
+                 | (isIncrementallyReusable ? SyntaxConstants.NodeIncrementallyReusableMask : 0);
         }
 
         private data(): number {

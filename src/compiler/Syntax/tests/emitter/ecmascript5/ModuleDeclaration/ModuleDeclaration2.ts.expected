@@ -17,10 +17,12 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 8,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 5,
+                    "isIncrementallyReusable": false,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
@@ -38,6 +40,7 @@
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 1,
+                            "isIncrementallyReusable": false,
                             "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
@@ -65,12 +68,15 @@
             {
                 "kind": "ExpressionStatement",
                 "fullWidth": 98,
+                "isIncrementallyReusable": false,
                 "expression": {
                     "kind": "InvocationExpression",
                     "fullWidth": 95,
+                    "isIncrementallyReusable": false,
                     "expression": {
                         "kind": "ParenthesizedExpression",
                         "fullWidth": 84,
+                        "isIncrementallyReusable": false,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -79,6 +85,7 @@
                         "expression": {
                             "kind": "FunctionExpression",
                             "fullWidth": 82,
+                            "isIncrementallyReusable": false,
                             "functionKeyword": {
                                 "kind": "FunctionKeyword",
                                 "width": 8,
@@ -87,9 +94,11 @@
                             "callSignature": {
                                 "kind": "CallSignature",
                                 "fullWidth": 4,
+                                "isIncrementallyReusable": false,
                                 "parameterList": {
                                     "kind": "ParameterList",
                                     "fullWidth": 4,
+                                    "isIncrementallyReusable": false,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
@@ -99,6 +108,7 @@
                                         {
                                             "kind": "Parameter",
                                             "fullWidth": 1,
+                                            "isIncrementallyReusable": false,
                                             "identifier": {
                                                 "kind": "IdentifierName",
                                                 "width": 1,
@@ -125,6 +135,7 @@
                             "block": {
                                 "kind": "Block",
                                 "fullWidth": 70,
+                                "isIncrementallyReusable": false,
                                 "openBraceToken": {
                                     "kind": "OpenBraceToken",
                                     "width": 1,
@@ -143,10 +154,12 @@
                                     {
                                         "kind": "VariableStatement",
                                         "fullWidth": 12,
+                                        "isIncrementallyReusable": false,
                                         "modifiers": [],
                                         "variableDeclaration": {
                                             "kind": "VariableDeclaration",
                                             "fullWidth": 9,
+                                            "isIncrementallyReusable": false,
                                             "varKeyword": {
                                                 "kind": "VarKeyword",
                                                 "width": 3,
@@ -171,6 +184,7 @@
                                                 {
                                                     "kind": "VariableDeclarator",
                                                     "fullWidth": 1,
+                                                    "isIncrementallyReusable": false,
                                                     "identifier": {
                                                         "kind": "IdentifierName",
                                                         "width": 1,
@@ -198,12 +212,15 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 40,
+                                        "isIncrementallyReusable": false,
                                         "expression": {
                                             "kind": "InvocationExpression",
                                             "fullWidth": 37,
+                                            "isIncrementallyReusable": false,
                                             "expression": {
                                                 "kind": "ParenthesizedExpression",
                                                 "fullWidth": 26,
+                                                "isIncrementallyReusable": false,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -220,6 +237,7 @@
                                                 "expression": {
                                                     "kind": "FunctionExpression",
                                                     "fullWidth": 20,
+                                                    "isIncrementallyReusable": false,
                                                     "functionKeyword": {
                                                         "kind": "FunctionKeyword",
                                                         "width": 8,
@@ -228,9 +246,11 @@
                                                     "callSignature": {
                                                         "kind": "CallSignature",
                                                         "fullWidth": 4,
+                                                        "isIncrementallyReusable": false,
                                                         "parameterList": {
                                                             "kind": "ParameterList",
                                                             "fullWidth": 4,
+                                                            "isIncrementallyReusable": false,
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
@@ -240,6 +260,7 @@
                                                                 {
                                                                     "kind": "Parameter",
                                                                     "fullWidth": 1,
+                                                                    "isIncrementallyReusable": false,
                                                                     "identifier": {
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
@@ -266,6 +287,7 @@
                                                     "block": {
                                                         "kind": "Block",
                                                         "fullWidth": 8,
+                                                        "isIncrementallyReusable": false,
                                                         "openBraceToken": {
                                                             "kind": "OpenBraceToken",
                                                             "width": 1,
@@ -305,6 +327,7 @@
                                             "argumentList": {
                                                 "kind": "ArgumentList",
                                                 "fullWidth": 11,
+                                                "isIncrementallyReusable": false,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -314,6 +337,7 @@
                                                     {
                                                         "kind": "LogicalOrExpression",
                                                         "fullWidth": 9,
+                                                        "isIncrementallyReusable": false,
                                                         "left": {
                                                             "kind": "IdentifierName",
                                                             "width": 1,
@@ -328,6 +352,7 @@
                                                         "right": {
                                                             "kind": "ParenthesizedExpression",
                                                             "fullWidth": 6,
+                                                            "isIncrementallyReusable": false,
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
@@ -336,6 +361,7 @@
                                                             "expression": {
                                                                 "kind": "AssignmentExpression",
                                                                 "fullWidth": 4,
+                                                                "isIncrementallyReusable": false,
                                                                 "left": {
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
@@ -350,6 +376,7 @@
                                                                 "right": {
                                                                     "kind": "ObjectLiteralExpression",
                                                                     "fullWidth": 2,
+                                                                    "isIncrementallyReusable": false,
                                                                     "openBraceToken": {
                                                                         "kind": "OpenBraceToken",
                                                                         "width": 1,
@@ -396,12 +423,15 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 14,
+                                        "isIncrementallyReusable": false,
                                         "expression": {
                                             "kind": "AssignmentExpression",
                                             "fullWidth": 11,
+                                            "isIncrementallyReusable": false,
                                             "left": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 8,
+                                                "isIncrementallyReusable": false,
                                                 "expression": {
                                                     "kind": "IdentifierName",
                                                     "width": 1,
@@ -488,6 +518,7 @@
                     "argumentList": {
                         "kind": "ArgumentList",
                         "fullWidth": 11,
+                        "isIncrementallyReusable": false,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -497,6 +528,7 @@
                             {
                                 "kind": "LogicalOrExpression",
                                 "fullWidth": 9,
+                                "isIncrementallyReusable": false,
                                 "left": {
                                     "kind": "IdentifierName",
                                     "width": 1,
@@ -511,6 +543,7 @@
                                 "right": {
                                     "kind": "ParenthesizedExpression",
                                     "fullWidth": 6,
+                                    "isIncrementallyReusable": false,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
@@ -519,6 +552,7 @@
                                     "expression": {
                                         "kind": "AssignmentExpression",
                                         "fullWidth": 4,
+                                        "isIncrementallyReusable": false,
                                         "left": {
                                             "kind": "IdentifierName",
                                             "width": 1,
@@ -533,6 +567,7 @@
                                         "right": {
                                             "kind": "ObjectLiteralExpression",
                                             "fullWidth": 2,
+                                            "isIncrementallyReusable": false,
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,

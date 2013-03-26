@@ -7,6 +7,7 @@
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 1070,
+        "isIncrementallyReusable": false,
         "moduleElements": [
             {
                 "kind": "VariableStatement",
@@ -445,6 +446,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 152,
+                "isIncrementallyReusable": false,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -483,9 +485,11 @@
                 "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 29,
+                    "isIncrementallyReusable": false,
                     "left": {
                         "kind": "MemberAccessExpression",
                         "fullWidth": 18,
+                        "isIncrementallyReusable": false,
                         "expression": {
                             "kind": "IdentifierName",
                             "width": 5,

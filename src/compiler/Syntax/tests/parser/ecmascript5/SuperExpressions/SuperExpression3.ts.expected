@@ -12,6 +12,7 @@
             {
                 "kind": "ClassDeclaration",
                 "fullWidth": 49,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -58,6 +59,7 @@
                     {
                         "kind": "MemberFunctionDeclaration",
                         "fullWidth": 37,
+                        "isIncrementallyReusable": false,
                         "modifiers": [],
                         "propertyName": {
                             "kind": "IdentifierName",
@@ -103,6 +105,7 @@
                         "block": {
                             "kind": "Block",
                             "fullWidth": 31,
+                            "isIncrementallyReusable": false,
                             "openBraceToken": {
                                 "kind": "OpenBraceToken",
                                 "width": 1,
@@ -121,12 +124,15 @@
                                 {
                                     "kind": "ExpressionStatement",
                                     "fullWidth": 23,
+                                    "isIncrementallyReusable": false,
                                     "expression": {
                                         "kind": "InvocationExpression",
                                         "fullWidth": 20,
+                                        "isIncrementallyReusable": false,
                                         "expression": {
                                             "kind": "MemberAccessExpression",
                                             "fullWidth": 14,
+                                            "isIncrementallyReusable": false,
                                             "expression": {
                                                 "kind": "ThisKeyword",
                                                 "width": 4,

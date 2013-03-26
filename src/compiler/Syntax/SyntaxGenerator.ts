@@ -1973,70 +1973,6 @@ function couldBeRegularExpressionToken(child: IMemberDefinition): bool {
            TypeScript.ArrayUtilities.contains(kinds, "RegularExpressionLiteral");
 }
 
-function generateComputeDataMethod(definition: ITypeDefinition): string {
-    if (definition.isAbstract) {
-        return "";
-    }
-
-    var result = "\r\n    private computeData(): number {\r\n";
-    result += "        var fullWidth = 0;\r\n";
-    result += "        var childWidth = 0;\r\n";
-    result += "        var hasSkippedText = false;\r\n";
-
-    // If we have no children (like an OmmittedExpressionSyntax), we automatically have a zero 
-    // width token.
-    result += "        var hasZeroWidthToken = " + (definition.children.length === 0) + ";\r\n";
-
-    result += "        var hasRegularExpressionToken = false;\r\n";
-
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
-
-        if (child.type === "SyntaxKind") {
-            continue;
-        }
-
-        var indent = "";
-        if (child.isOptional) {
-            result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
-            indent = "    ";
-        }
-        else {
-            result += "\r\n";
-        }
-
-        result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
-        result += indent + "        fullWidth += childWidth;\r\n";
-
-        result += indent + "        hasSkippedText = hasSkippedText || " + getPropertyAccess(child) + ".hasSkippedText();\r\n";
-
-        if (child.isToken) {
-            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
-
-            if (couldBeRegularExpressionToken(child)) {
-                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".tokenKind);\r\n";
-            }
-        }
-        else {
-            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";
-            result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || " + getPropertyAccess(child) + ".hasRegularExpressionToken();\r\n";
-        }
-
-        if (child.isOptional) {
-            result += "        }\r\n";
-        }
-    }
-
-    result += "\r\n        return (fullWidth << Constants.NodeFullWidthShift)";
-    result += "\r\n             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)";
-    result += "\r\n             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)";
-    result += "\r\n             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);\r\n";
-
-    result += "    }\r\n";
-
-    return result;
-}
-
 function generateStructuralEqualsMethod(definition: ITypeDefinition): string {
     if (definition.isAbstract) {
         return "";
@@ -2106,7 +2042,6 @@ function generateNode(definition: ITypeDefinition): string {
     // result += generateLastTokenMethod(definition);
     // result += generateInsertChildrenIntoMethod(definition);
     // result += generateCollectTextElementsMethod(definition);
-    // result += generateComputeDataMethod(definition);
     // result += generateFindTokenInternalMethod(definition);
     // result += generateStructuralEqualsMethod(definition);
 
@@ -2483,9 +2418,8 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 "        public firstToken(): ISyntaxToken { return this; }\r\n" +
 "        public lastToken(): ISyntaxToken { return this; }\r\n" +
 "        public isTypeScriptSpecific(): bool { return false; }\r\n" +
-"        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }\r\n" +
+"        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
-"        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" +
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 

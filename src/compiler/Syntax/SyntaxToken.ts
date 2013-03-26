@@ -141,8 +141,9 @@ module TypeScript.Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+
+        // Empty tokens are never incrementally reusable.
+        private isIncrementallyReusable() { return false; }
 
         public fullWidth() { return 0; }
         public width() { return 0; }
@@ -210,8 +211,10 @@ module TypeScript.Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+
+        // Realized tokens are created from the parser.  They are *never* incrementally reusable.
+        private isIncrementallyReusable() { return false; }
+
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 
         public childCount(): number {

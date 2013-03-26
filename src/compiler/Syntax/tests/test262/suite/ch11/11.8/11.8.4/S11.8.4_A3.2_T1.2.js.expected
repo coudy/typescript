@@ -1660,6 +1660,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 133,
+                "isIncrementallyReusable": false,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -1698,9 +1699,11 @@
                 "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 47,
+                    "isIncrementallyReusable": false,
                     "left": {
                         "kind": "ParenthesizedExpression",
                         "fullWidth": 11,
+                        "isIncrementallyReusable": false,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -1709,6 +1712,7 @@
                         "expression": {
                             "kind": "GreaterThanOrEqualExpression",
                             "fullWidth": 8,
+                            "isIncrementallyReusable": false,
                             "left": {
                                 "kind": "ObjectLiteralExpression",
                                 "fullWidth": 3,
@@ -1791,6 +1795,7 @@
                     "right": {
                         "kind": "ParenthesizedExpression",
                         "fullWidth": 32,
+                        "isIncrementallyReusable": false,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -1799,6 +1804,7 @@
                         "expression": {
                             "kind": "GreaterThanOrEqualExpression",
                             "fullWidth": 30,
+                            "isIncrementallyReusable": false,
                             "left": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 14,

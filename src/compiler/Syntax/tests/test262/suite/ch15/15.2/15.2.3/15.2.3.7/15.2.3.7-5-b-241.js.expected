@@ -12,6 +12,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 1012,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -123,6 +124,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 390,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -574,9 +576,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 65,
+                            "isIncrementallyReusable": false,
                             "expression": {
                                 "kind": "AssignmentExpression",
                                 "fullWidth": 62,
+                                "isIncrementallyReusable": false,
                                 "left": {
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 23,
@@ -635,6 +639,7 @@
                                 "right": {
                                     "kind": "ObjectLiteralExpression",
                                     "fullWidth": 37,
+                                    "isIncrementallyReusable": false,
                                     "openBraceToken": {
                                         "kind": "OpenBraceToken",
                                         "width": 1,
@@ -653,6 +658,7 @@
                                         {
                                             "kind": "SimplePropertyAssignment",
                                             "fullWidth": 25,
+                                            "isIncrementallyReusable": false,
                                             "propertyName": {
                                                 "kind": "IdentifierName",
                                                 "width": 3,

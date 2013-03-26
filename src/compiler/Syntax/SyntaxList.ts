@@ -69,16 +69,8 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public hasSkippedText(): bool {
-            return false;
-        }
-
-        public hasZeroWidthToken(): bool {
-            return false;
-        }
-
-        public hasRegularExpressionToken(): bool {
-            return false;
+        public isIncrementallyReusable(): bool {
+            return true;
         }
 
         public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
@@ -171,16 +163,8 @@ module TypeScript.Syntax {
             return this.item.isTypeScriptSpecific();
         }
 
-        public hasSkippedText(): bool {
-            return this.item.hasSkippedText();
-        }
-
-        public hasZeroWidthToken(): bool {
-            return this.item.hasZeroWidthToken();
-        }
-
-        public hasRegularExpressionToken(): bool {
-            return this.item.hasRegularExpressionToken();
+        public isIncrementallyReusable(): bool {
+            return this.item.isIncrementallyReusable();
         }
 
         public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
@@ -274,16 +258,8 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public hasSkippedText(): bool {
-            return (this.data() & SyntaxConstants.NodeSkippedTextMask) !== 0;
-        }
-
-        public hasZeroWidthToken(): bool {
-            return (this.data() & SyntaxConstants.NodeZeroWidthTokenMask) !== 0;
-        }
-
-        public hasRegularExpressionToken(): bool {
-            return (this.data() & SyntaxConstants.NodeRegularExpressionTokenMask) !== 0;
+        public isIncrementallyReusable(): bool {
+            return (this.data() & SyntaxConstants.NodeIncrementallyReusableMask) !== 0;
         }
 
         public fullWidth(): number {
@@ -313,22 +289,18 @@ module TypeScript.Syntax {
 
         private computeData(): number {
             var fullWidth = 0;
-            var hasSkippedText = false;
+            var isIncrementallyReusable = true;
             var hasZeroWidthToken = false;
             var hasRegularExpressionToken = false;
 
             for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
                 var node = this.nodeOrTokens[i];
                 fullWidth += node.fullWidth();
-                hasSkippedText = hasSkippedText || node.hasSkippedText();
-                hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
-                hasRegularExpressionToken = hasRegularExpressionToken || node.hasRegularExpressionToken();
+                isIncrementallyReusable = isIncrementallyReusable && node.isIncrementallyReusable();
             }
 
             return (fullWidth << SyntaxConstants.NodeFullWidthShift)
-                 | (hasSkippedText ? SyntaxConstants.NodeSkippedTextMask : 0)
-                 | (hasZeroWidthToken ? SyntaxConstants.NodeZeroWidthTokenMask : 0)
-                 | (hasRegularExpressionToken ? SyntaxConstants.NodeRegularExpressionTokenMask : 0);
+                 | (isIncrementallyReusable ? SyntaxConstants.NodeIncrementallyReusableMask : 0);
         }
 
         private data(): number {

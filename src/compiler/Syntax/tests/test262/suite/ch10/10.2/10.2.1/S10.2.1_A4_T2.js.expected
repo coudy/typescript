@@ -7,6 +7,7 @@
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 864,
+        "isIncrementallyReusable": false,
         "moduleElements": [
             {
                 "kind": "FunctionDeclaration",
@@ -384,6 +385,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 99,
+                "isIncrementallyReusable": false,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -397,6 +399,7 @@
                 "condition": {
                     "kind": "LogicalNotExpression",
                     "fullWidth": 52,
+                    "isIncrementallyReusable": false,
                     "operatorToken": {
                         "kind": "ExclamationToken",
                         "width": 1,
@@ -405,6 +408,7 @@
                     "operand": {
                         "kind": "ParenthesizedExpression",
                         "fullWidth": 51,
+                        "isIncrementallyReusable": false,
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
@@ -413,12 +417,15 @@
                         "expression": {
                             "kind": "EqualsExpression",
                             "fullWidth": 49,
+                            "isIncrementallyReusable": false,
                             "left": {
                                 "kind": "MemberAccessExpression",
                                 "fullWidth": 27,
+                                "isIncrementallyReusable": false,
                                 "expression": {
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 16,
+                                    "isIncrementallyReusable": false,
                                     "expression": {
                                         "kind": "InvocationExpression",
                                         "fullWidth": 4,

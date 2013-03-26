@@ -13,7 +13,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "Enum1.ts";
+    // "ClassDeclaration1";
     undefined;
 
 var generate = false;

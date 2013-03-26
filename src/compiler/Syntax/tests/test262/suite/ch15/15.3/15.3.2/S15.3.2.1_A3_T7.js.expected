@@ -581,6 +581,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 204,
+                "isIncrementallyReusable": false,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -619,9 +620,11 @@
                 "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 26,
+                    "isIncrementallyReusable": false,
                     "left": {
                         "kind": "MemberAccessExpression",
                         "fullWidth": 14,
+                        "isIncrementallyReusable": false,
                         "expression": {
                             "kind": "IdentifierName",
                             "width": 1,

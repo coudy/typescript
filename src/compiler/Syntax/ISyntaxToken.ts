@@ -7,8 +7,9 @@ module TypeScript {
 
         // Text for this token, not including leading or trailing trivia.
         text(): string;
-
         value(): any;
+
+        isIncrementallyReusable(): bool;
 
         hasLeadingTrivia(): bool;
         hasLeadingComment(): bool;

@@ -811,6 +811,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 345,
+                "isIncrementallyReusable": false,
                 "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
@@ -873,9 +874,11 @@
                 "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 28,
+                    "isIncrementallyReusable": false,
                     "left": {
                         "kind": "MemberAccessExpression",
                         "fullWidth": 18,
+                        "isIncrementallyReusable": false,
                         "expression": {
                             "kind": "IdentifierName",
                             "width": 5,
@@ -937,6 +940,7 @@
                 "statement": {
                     "kind": "Block",
                     "fullWidth": 137,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -955,9 +959,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 133,
+                            "isIncrementallyReusable": false,
                             "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 130,
+                                "isIncrementallyReusable": false,
                                 "expression": {
                                     "kind": "IdentifierName",
                                     "width": 6,
@@ -975,6 +981,7 @@
                                 "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 122,
+                                    "isIncrementallyReusable": false,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
@@ -984,6 +991,7 @@
                                         {
                                             "kind": "AddExpression",
                                             "fullWidth": 120,
+                                            "isIncrementallyReusable": false,
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 101,
@@ -997,6 +1005,7 @@
                                             "right": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 18,
+                                                "isIncrementallyReusable": false,
                                                 "expression": {
                                                     "kind": "IdentifierName",
                                                     "width": 5,

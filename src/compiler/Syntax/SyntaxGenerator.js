@@ -275,42 +275,70 @@ var TypeScript;
         DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation = 24;
         DiagnosticCode._map[25] = "Index_signature_parameter_type_must_be__string__or__number_";
         DiagnosticCode.Index_signature_parameter_type_must_be__string__or__number_ = 25;
-        DiagnosticCode._map[26] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 26;
-        DiagnosticCode._map[27] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 27;
-        DiagnosticCode._map[28] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 28;
-        DiagnosticCode._map[29] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 29;
-        DiagnosticCode._map[30] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 30;
-        DiagnosticCode._map[31] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 31;
-        DiagnosticCode._map[32] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 32;
-        DiagnosticCode._map[33] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 33;
-        DiagnosticCode._map[34] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 34;
-        DiagnosticCode._map[35] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 35;
-        DiagnosticCode._map[36] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 36;
-        DiagnosticCode._map[37] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 37;
-        DiagnosticCode._map[38] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 38;
-        DiagnosticCode._map[39] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 39;
-        DiagnosticCode._map[40] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 40;
-        DiagnosticCode._map[41] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 41;
-        DiagnosticCode._map[42] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 42;
-        DiagnosticCode._map[43] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 43;
+        DiagnosticCode._map[26] = "_extends__clause_already_seen";
+        DiagnosticCode._extends__clause_already_seen = 26;
+        DiagnosticCode._map[27] = "_extends__clause_must_precede__implements__clause";
+        DiagnosticCode._extends__clause_must_precede__implements__clause = 27;
+        DiagnosticCode._map[28] = "Class_can_only_extend_single_type";
+        DiagnosticCode.Class_can_only_extend_single_type = 28;
+        DiagnosticCode._map[29] = "_implements__clause_already_seen";
+        DiagnosticCode._implements__clause_already_seen = 29;
+        DiagnosticCode._map[30] = "Accessibility_modifier_already_seen";
+        DiagnosticCode.Accessibility_modifier_already_seen = 30;
+        DiagnosticCode._map[31] = "Accessibility_modifier_must_precede__static__modifier";
+        DiagnosticCode.Accessibility_modifier_must_precede__static__modifier = 31;
+        DiagnosticCode._map[32] = "_static__modifier_already_seen";
+        DiagnosticCode._static__modifier_already_seen = 32;
+        DiagnosticCode._map[33] = "_0__modifier_cannot_appear_on_a_class_element";
+        DiagnosticCode._0__modifier_cannot_appear_on_a_class_element = 33;
+        DiagnosticCode._map[34] = "Interface_declaration_cannot_have__implements__clause";
+        DiagnosticCode.Interface_declaration_cannot_have__implements__clause = 34;
+        DiagnosticCode._map[35] = "Enum_element_must_have_initializer";
+        DiagnosticCode.Enum_element_must_have_initializer = 35;
+        DiagnosticCode._map[36] = "_super__invocation_cannot_have_type_arguments";
+        DiagnosticCode._super__invocation_cannot_have_type_arguments = 36;
+        DiagnosticCode._map[37] = "Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier";
+        DiagnosticCode.Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier = 37;
+        DiagnosticCode._map[38] = "Statements_are_not_allowed_in_declaration_files";
+        DiagnosticCode.Statements_are_not_allowed_in_declaration_files = 38;
+        DiagnosticCode._map[39] = "Implementations_are_not_allowed_in_declaration_files";
+        DiagnosticCode.Implementations_are_not_allowed_in_declaration_files = 39;
+        DiagnosticCode._map[40] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 40;
+        DiagnosticCode._map[41] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 41;
+        DiagnosticCode._map[42] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 42;
+        DiagnosticCode._map[43] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 43;
+        DiagnosticCode._map[44] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 44;
+        DiagnosticCode._map[45] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 45;
+        DiagnosticCode._map[46] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 46;
+        DiagnosticCode._map[47] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 47;
+        DiagnosticCode._map[48] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 48;
+        DiagnosticCode._map[49] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 49;
+        DiagnosticCode._map[50] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 50;
+        DiagnosticCode._map[51] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 51;
+        DiagnosticCode._map[52] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 52;
+        DiagnosticCode._map[53] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 53;
+        DiagnosticCode._map[54] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 54;
+        DiagnosticCode._map[55] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 55;
+        DiagnosticCode._map[56] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 56;
+        DiagnosticCode._map[57] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 57;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -330,212 +358,282 @@ var TypeScript;
         Unrecognized_escape_sequence: {
             category: 1 /* Error */ ,
             message: "Unrecognized escape sequence.",
-            code: 100
+            code: 1000
         },
         Unexpected_character_0: {
             category: 1 /* Error */ ,
             message: "Unexpected character {0}.",
-            code: 101
+            code: 1001
         },
         Missing_closing_quote_character: {
             category: 1 /* Error */ ,
             message: "Missing close quote character.",
-            code: 102
+            code: 1002
         },
         Identifier_expected: {
             category: 1 /* Error */ ,
             message: "Identifier expected.",
-            code: 103
+            code: 1003
         },
         _0_keyword_expected: {
             category: 1 /* Error */ ,
             message: "'{0}' keyword expected.",
-            code: 104
+            code: 1004
         },
         _0_expected: {
             category: 1 /* Error */ ,
             message: "'{0}' expected.",
-            code: 105
+            code: 1005
         },
         Identifier_expected__0_is_a_keyword: {
             category: 1 /* Error */ ,
             message: "Identifier expected; '{0}' is a keyword.",
-            code: 106
+            code: 1006
         },
         Automatic_semicolon_insertion_not_allowed: {
             category: 1 /* Error */ ,
             message: "Automatic semicolon insertion not allowed.",
-            code: 107
+            code: 1007
         },
         Unexpected_token__0_expected: {
             category: 1 /* Error */ ,
             message: "Unexpected token; '{0}' expected.",
-            code: 108
+            code: 1008
         },
         Trailing_separator_not_allowed: {
             category: 1 /* Error */ ,
             message: "Trailing separator not allowed.",
-            code: 109
+            code: 1009
         },
         _StarSlash__expected: {
             category: 1 /* Error */ ,
             message: "'*/' expected.",
-            code: 110
+            code: 1010
         },
         _public_or_private_modifier_must_precede__static_: {
             category: 1 /* Error */ ,
             message: "'public' or 'private' modifier must precede 'static'.",
-            code: 111
+            code: 1011
         },
         Unexpected_token_: {
             category: 1 /* Error */ ,
             message: "Unexpected token.",
-            code: 112
+            code: 1012
         },
         A_catch_clause_variable_cannot_have_a_type_annotation: {
             category: 1 /* Error */ ,
             message: "A catch clause variable cannot have a type annotation.",
-            code: 113
+            code: 1013
         },
         Rest_parameter_must_be_last_in_list: {
             category: 1 /* Error */ ,
             message: "Rest parameter must be last in list.",
-            code: 114
+            code: 1014
         },
         Parameter_cannot_have_question_mark_and_initializer: {
             category: 1 /* Error */ ,
             message: "Parameter cannot have question mark and initializer.",
-            code: 115
+            code: 1015
         },
         Required_parameter_cannot_follow_optional_parameter: {
             category: 1 /* Error */ ,
             message: "required parameter cannot follow optional parameter.",
-            code: 116
+            code: 1016
         },
         Index_signatures_cannot_have_rest_parameters: {
             category: 1 /* Error */ ,
             message: "Index signatures cannot have rest parameters.",
-            code: 117
+            code: 1017
         },
         Index_signature_parameter_cannot_have_accessibility_modifiers: {
             category: 1 /* Error */ ,
             message: "Index signature parameter cannot have accessibility modifiers.",
-            code: 118
+            code: 1018
         },
         Index_signature_parameter_cannot_have_a_question_mark: {
             category: 1 /* Error */ ,
             message: "Index signature parameter cannot have a question mark.",
-            code: 119
+            code: 1019
         },
         Index_signature_parameter_cannot_have_an_initializer: {
             category: 1 /* Error */ ,
             message: "Index signature parameter cannot have an initializer.",
-            code: 120
+            code: 1020
         },
         Index_signature_must_have_a_type_annotation: {
             category: 1 /* Error */ ,
             message: "Index signature must have a type annotation.",
-            code: 121
+            code: 1021
         },
         Index_signature_parameter_must_have_a_type_annotation: {
             category: 1 /* Error */ ,
             message: "Index signature parameter must have a type annotation.",
-            code: 122
+            code: 1022
         },
         Index_signature_parameter_type_must_be__string__or__number_: {
             category: 1 /* Error */ ,
             message: "Index signature parameter type must be 'string' or 'number'.",
-            code: 123
+            code: 1023
+        },
+        _extends__clause_already_seen: {
+            category: 1 /* Error */ ,
+            message: "'extends' clause already seen.",
+            code: 1024
+        },
+        _extends__clause_must_precede__implements__clause: {
+            category: 1 /* Error */ ,
+            message: "'extends' clause must precede 'implements' clause.",
+            code: 1025
+        },
+        Class_can_only_extend_single_type: {
+            category: 1 /* Error */ ,
+            message: "Class can only extend single type.",
+            code: 1026
+        },
+        _implements__clause_already_seen: {
+            category: 1 /* Error */ ,
+            message: "'implements' clause already seen.",
+            code: 1027
+        },
+        Accessibility_modifier_already_seen: {
+            category: 1 /* Error */ ,
+            message: "Accessibility modifier already seen.",
+            code: 1028
+        },
+        Accessibility_modifier_must_precede__static__modifier: {
+            category: 1 /* Error */ ,
+            message: "Accessibility modifier must precede 'static' modifier.",
+            code: 1029
+        },
+        _static__modifier_already_seen: {
+            category: 1 /* Error */ ,
+            message: "'static' modifier already seen.",
+            code: 1030
+        },
+        _0__modifier_cannot_appear_on_a_class_element: {
+            category: 1 /* Error */ ,
+            message: "'{0}' modifier cannot appear on a class element.",
+            code: 1031
+        },
+        Interface_declaration_cannot_have__implements__clause: {
+            category: 1 /* Error */ ,
+            message: "Interface declaration cannot have 'implements' clause.",
+            code: 1032
+        },
+        Enum_element_must_have_initializer: {
+            category: 1 /* Error */ ,
+            message: "Enum element must have initializer.",
+            code: 1033
+        },
+        _super__invocation_cannot_have_type_arguments: {
+            category: 1 /* Error */ ,
+            message: "'super' invocation cannot have type arguments.",
+            code: 1034
+        },
+        Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier: {
+            category: 1 /* Error */ ,
+            message: "Modules in implementation files with quoted names must have the 'declare' modifier.",
+            code: 1035
+        },
+        Statements_are_not_allowed_in_declaration_files: {
+            category: 1 /* Error */ ,
+            message: "Statements are not allowed in declaration files.",
+            code: 1036
+        },
+        Implementations_are_not_allowed_in_declaration_files: {
+            category: 1 /* Error */ ,
+            message: "Implementations are not allowed in declaration files.",
+            code: 1037
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
             message: "Duplicate identifier '{0}'.",
-            code: 200
+            code: 2000
         },
         The_name__0__does_not_exist_in_the_current_scope: {
             category: 1 /* Error */ ,
             message: "The name '{0}' does not exist in the current scope.",
-            code: 201
+            code: 2001
         },
         The_name__0__does_not_refer_to_a_value: {
             category: 1 /* Error */ ,
             message: "The name '{0}' does not refer to a value.",
-            code: 202
+            code: 2002
         },
         Keyword__super__can_only_be_used_inside_a_class_instance_method: {
             category: 1 /* Error */ ,
             message: "Keyword 'super' can only be used inside a class instance method.",
-            code: 203
+            code: 2003
         },
         The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer: {
             category: 1 /* Error */ ,
             message: "The left-hand side of an assignment expression must be a variable, property or indexer.",
-            code: 204
+            code: 2004
         },
         Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not callable. Did you mean to include 'new'?",
-            code: 205
+            code: 2005
         },
         Value_of_type__0__is_not_callable: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not callable.",
-            code: 206
+            code: 2006
         },
         Value_of_type__0__is_not_newable: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not newable.",
-            code: 207
+            code: 2007
         },
         Value_of_type__0__is_not_indexable_by_type__1_: {
             category: 1 /* Error */ ,
             message: "Value of type '{0}' is not indexable by type '{1}'.",
-            code: 208
+            code: 2008
         },
         Operator__0__cannot_be_applied_to_types__1__and__2_: {
             category: 1 /* Error */ ,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}'.",
-            code: 209
+            code: 2009
         },
         Operator__0__cannot_be_applied_to_types__1__and__2__3: {
             category: 1 /* Error */ ,
             message: "Operator '{0}' cannot be applied to types '{1}' and '{2}': {3}",
-            code: 210
+            code: 2010
         },
         Cannot_convert__0__to__1_: {
             category: 1 /* Error */ ,
             message: "Cannot convert '{0}' to '{1}'.",
-            code: 211
+            code: 2011
         },
         Cannot_convert__0__to__1___2: {
             category: 1 /* Error */ ,
             message: "Cannot convert '{0}' to '{1}': {2}",
-            code: 212
+            code: 2012
         },
         Expected_var__class__interface__or_module: {
             category: 1 /* Error */ ,
             message: "Expected var, class, interface, or module.",
-            code: 213
+            code: 2013
         },
         Operator__0__cannot_be_applied_to_type__1_: {
             category: 1 /* Error */ ,
             message: "Operator '{0}' cannot be applied to type '{1}'.",
-            code: 214
+            code: 2014
         },
         Getter__0__already_declared: {
             category: 1 /* Error */ ,
             message: "Getter '{0}' already declared.",
-            code: 215
+            code: 2015
         },
         Setter__0__already_declared: {
             category: 1 /* Error */ ,
             message: "Setter '{0}' already declared.",
-            code: 216
+            code: 2016
         },
         Accessor_may_not_take_type_parameters: {
             category: 1 /* Error */ ,
             message: "Accessors may not take type parameters.",
-            code: 217
+            code: 2017
         }
     };
 })(TypeScript || (TypeScript = {}));
@@ -1776,42 +1874,40 @@ var TypeScript;
         SyntaxKind.TypeArgumentList = 226;
         SyntaxKind._map[227] = "TypeParameterList";
         SyntaxKind.TypeParameterList = 227;
-        SyntaxKind._map[228] = "ImplementsClause";
-        SyntaxKind.ImplementsClause = 228;
-        SyntaxKind._map[229] = "ExtendsClause";
-        SyntaxKind.ExtendsClause = 229;
-        SyntaxKind._map[230] = "EqualsValueClause";
-        SyntaxKind.EqualsValueClause = 230;
-        SyntaxKind._map[231] = "CaseSwitchClause";
-        SyntaxKind.CaseSwitchClause = 231;
-        SyntaxKind._map[232] = "DefaultSwitchClause";
-        SyntaxKind.DefaultSwitchClause = 232;
-        SyntaxKind._map[233] = "ElseClause";
-        SyntaxKind.ElseClause = 233;
-        SyntaxKind._map[234] = "CatchClause";
-        SyntaxKind.CatchClause = 234;
-        SyntaxKind._map[235] = "FinallyClause";
-        SyntaxKind.FinallyClause = 235;
-        SyntaxKind._map[236] = "TypeParameter";
-        SyntaxKind.TypeParameter = 236;
-        SyntaxKind._map[237] = "Constraint";
-        SyntaxKind.Constraint = 237;
-        SyntaxKind._map[238] = "Parameter";
-        SyntaxKind.Parameter = 238;
-        SyntaxKind._map[239] = "EnumElement";
-        SyntaxKind.EnumElement = 239;
-        SyntaxKind._map[240] = "TypeAnnotation";
-        SyntaxKind.TypeAnnotation = 240;
-        SyntaxKind._map[241] = "SimplePropertyAssignment";
-        SyntaxKind.SimplePropertyAssignment = 241;
-        SyntaxKind._map[242] = "ExternalModuleReference";
-        SyntaxKind.ExternalModuleReference = 242;
-        SyntaxKind._map[243] = "ModuleNameModuleReference";
-        SyntaxKind.ModuleNameModuleReference = 243;
-        SyntaxKind._map[244] = "GetAccessorPropertyAssignment";
-        SyntaxKind.GetAccessorPropertyAssignment = 244;
-        SyntaxKind._map[245] = "SetAccessorPropertyAssignment";
-        SyntaxKind.SetAccessorPropertyAssignment = 245;
+        SyntaxKind._map[228] = "HeritageClause";
+        SyntaxKind.HeritageClause = 228;
+        SyntaxKind._map[229] = "EqualsValueClause";
+        SyntaxKind.EqualsValueClause = 229;
+        SyntaxKind._map[230] = "CaseSwitchClause";
+        SyntaxKind.CaseSwitchClause = 230;
+        SyntaxKind._map[231] = "DefaultSwitchClause";
+        SyntaxKind.DefaultSwitchClause = 231;
+        SyntaxKind._map[232] = "ElseClause";
+        SyntaxKind.ElseClause = 232;
+        SyntaxKind._map[233] = "CatchClause";
+        SyntaxKind.CatchClause = 233;
+        SyntaxKind._map[234] = "FinallyClause";
+        SyntaxKind.FinallyClause = 234;
+        SyntaxKind._map[235] = "TypeParameter";
+        SyntaxKind.TypeParameter = 235;
+        SyntaxKind._map[236] = "Constraint";
+        SyntaxKind.Constraint = 236;
+        SyntaxKind._map[237] = "Parameter";
+        SyntaxKind.Parameter = 237;
+        SyntaxKind._map[238] = "EnumElement";
+        SyntaxKind.EnumElement = 238;
+        SyntaxKind._map[239] = "TypeAnnotation";
+        SyntaxKind.TypeAnnotation = 239;
+        SyntaxKind._map[240] = "SimplePropertyAssignment";
+        SyntaxKind.SimplePropertyAssignment = 240;
+        SyntaxKind._map[241] = "ExternalModuleReference";
+        SyntaxKind.ExternalModuleReference = 241;
+        SyntaxKind._map[242] = "ModuleNameModuleReference";
+        SyntaxKind.ModuleNameModuleReference = 242;
+        SyntaxKind._map[243] = "GetAccessorPropertyAssignment";
+        SyntaxKind.GetAccessorPropertyAssignment = 243;
+        SyntaxKind._map[244] = "SetAccessorPropertyAssignment";
+        SyntaxKind.SetAccessorPropertyAssignment = 244;
         SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
         SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
         SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -5133,51 +5229,6 @@ function couldBeRegularExpressionToken(child) {
     var kinds = tokenKinds(child);
     return TypeScript.ArrayUtilities.contains(kinds, "SlashToken") || TypeScript.ArrayUtilities.contains(kinds, "SlashEqualsToken") || TypeScript.ArrayUtilities.contains(kinds, "RegularExpressionLiteral");
 }
-function generateComputeDataMethod(definition) {
-    if (definition.isAbstract) {
-        return "";
-    }
-    var result = "\r\n    private computeData(): number {\r\n";
-    result += "        var fullWidth = 0;\r\n";
-    result += "        var childWidth = 0;\r\n";
-    result += "        var hasSkippedText = false;\r\n";
-    result += "        var hasZeroWidthToken = " + (definition.children.length === 0) + ";\r\n";
-    result += "        var hasRegularExpressionToken = false;\r\n";
-    for(var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
-        if (child.type === "SyntaxKind") {
-            continue;
-        }
-        var indent = "";
-        if (child.isOptional) {
-            result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
-            indent = "    ";
-        } else {
-            result += "\r\n";
-        }
-        result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
-        result += indent + "        fullWidth += childWidth;\r\n";
-        result += indent + "        hasSkippedText = hasSkippedText || " + getPropertyAccess(child) + ".hasSkippedText();\r\n";
-        if (child.isToken) {
-            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
-            if (couldBeRegularExpressionToken(child)) {
-                result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".tokenKind);\r\n";
-            }
-        } else {
-            result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";
-            result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || " + getPropertyAccess(child) + ".hasRegularExpressionToken();\r\n";
-        }
-        if (child.isOptional) {
-            result += "        }\r\n";
-        }
-    }
-    result += "\r\n        return (fullWidth << Constants.NodeFullWidthShift)";
-    result += "\r\n             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)";
-    result += "\r\n             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)";
-    result += "\r\n             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);\r\n";
-    result += "    }\r\n";
-    return result;
-}
 function generateStructuralEqualsMethod(definition) {
     if (definition.isAbstract) {
         return "";
@@ -5434,7 +5485,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner1.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedText(): bool { return false; }\r\n";
-    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): bool { return false; }\r\n" + "        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): bool { return false; }\r\n" + "        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
     result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";
     result += "    }\r\n";

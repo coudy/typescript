@@ -12,6 +12,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 1024,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -123,6 +124,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 459,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -583,9 +585,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 87,
+                            "isIncrementallyReusable": false,
                             "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 84,
+                                "isIncrementallyReusable": false,
                                 "expression": {
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 31,
@@ -623,6 +627,7 @@
                                 "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 53,
+                                    "isIncrementallyReusable": false,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
@@ -669,6 +674,7 @@
                                         {
                                             "kind": "ObjectLiteralExpression",
                                             "fullWidth": 38,
+                                            "isIncrementallyReusable": false,
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,
@@ -687,6 +693,7 @@
                                                 {
                                                     "kind": "SimplePropertyAssignment",
                                                     "fullWidth": 26,
+                                                    "isIncrementallyReusable": false,
                                                     "propertyName": {
                                                         "kind": "IdentifierName",
                                                         "width": 3,
@@ -915,6 +922,7 @@
                         {
                             "kind": "ReturnStatement",
                             "fullWidth": 118,
+                            "isIncrementallyReusable": false,
                             "returnKeyword": {
                                 "kind": "ReturnKeyword",
                                 "width": 6,
@@ -943,12 +951,15 @@
                             "expression": {
                                 "kind": "LogicalAndExpression",
                                 "fullWidth": 98,
+                                "isIncrementallyReusable": false,
                                 "left": {
                                     "kind": "LogicalAndExpression",
                                     "fullWidth": 72,
+                                    "isIncrementallyReusable": false,
                                     "left": {
                                         "kind": "LogicalAndExpression",
                                         "fullWidth": 51,
+                                        "isIncrementallyReusable": false,
                                         "left": {
                                             "kind": "InvocationExpression",
                                             "fullWidth": 27,
@@ -1019,9 +1030,11 @@
                                         "right": {
                                             "kind": "EqualsExpression",
                                             "fullWidth": 21,
+                                            "isIncrementallyReusable": false,
                                             "left": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 9,
+                                                "isIncrementallyReusable": false,
                                                 "expression": {
                                                     "kind": "IdentifierName",
                                                     "width": 4,

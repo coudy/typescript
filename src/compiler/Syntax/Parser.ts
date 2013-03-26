@@ -879,9 +879,7 @@ module TypeScript.Parser {
 
                 if (!this.intersectsWithChangeRangeSpanInOriginalText(this.absolutePosition(), node.fullWidth())) {
                     // Didn't intersect with the change range.
-                    if (!node.hasSkippedText() &&
-                        !node.hasZeroWidthToken() &&
-                        !node.hasRegularExpressionToken()) {
+                    if (node.isIncrementallyReusable()) {
 
                         // Didn't contain anything that would make it unusable.  Awesome.  This is
                         // a node we can reuse.
@@ -911,10 +909,7 @@ module TypeScript.Parser {
             if (token !== null) {
                 if (!this.intersectsWithChangeRangeSpanInOriginalText(position, token.fullWidth())) {
                     // Didn't intersect with the change range.
-                    if (!token.hasSkippedText() &&
-                        token.width() > 0 &&
-                        !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind) &&
-                        !SyntaxFacts.isParserGenerated(token.tokenKind)) {
+                    if (token.isIncrementallyReusable()) {
 
                         // Didn't contain anything that would make it unusable.  Awesome.  This is
                         // a token we can reuse.

@@ -12,6 +12,7 @@
             {
                 "kind": "InterfaceDeclaration",
                 "fullWidth": 46,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "interfaceKeyword": {
                     "kind": "InterfaceKeyword",
@@ -43,6 +44,7 @@
                 "body": {
                     "kind": "ObjectType",
                     "fullWidth": 32,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -61,6 +63,7 @@
                         {
                             "kind": "MethodSignature",
                             "fullWidth": 23,
+                            "isIncrementallyReusable": false,
                             "propertyName": {
                                 "kind": "IdentifierName",
                                 "width": 6,
@@ -229,10 +232,12 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 21,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 18,
+                    "isIncrementallyReusable": false,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
@@ -250,6 +255,7 @@
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 14,
+                            "isIncrementallyReusable": false,
                             "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
@@ -267,6 +273,7 @@
                             "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 12,
+                                "isIncrementallyReusable": false,
                                 "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
@@ -283,9 +290,11 @@
                                 "value": {
                                     "kind": "InvocationExpression",
                                     "fullWidth": 10,
+                                    "isIncrementallyReusable": false,
                                     "expression": {
                                         "kind": "MemberAccessExpression",
                                         "fullWidth": 8,
+                                        "isIncrementallyReusable": false,
                                         "expression": {
                                             "kind": "IdentifierName",
                                             "width": 1,

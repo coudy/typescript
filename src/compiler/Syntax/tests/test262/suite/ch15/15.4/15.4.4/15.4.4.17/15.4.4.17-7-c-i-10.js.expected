@@ -12,6 +12,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 1023,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -123,6 +124,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 449,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -729,9 +731,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 171,
+                            "isIncrementallyReusable": false,
                             "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 168,
+                                "isIncrementallyReusable": false,
                                 "expression": {
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 31,
@@ -769,6 +773,7 @@
                                 "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 137,
+                                    "isIncrementallyReusable": false,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
@@ -815,6 +820,7 @@
                                         {
                                             "kind": "ObjectLiteralExpression",
                                             "fullWidth": 124,
+                                            "isIncrementallyReusable": false,
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,
@@ -833,6 +839,7 @@
                                                 {
                                                     "kind": "SimplePropertyAssignment",
                                                     "fullWidth": 77,
+                                                    "isIncrementallyReusable": false,
                                                     "propertyName": {
                                                         "kind": "IdentifierName",
                                                         "width": 3,

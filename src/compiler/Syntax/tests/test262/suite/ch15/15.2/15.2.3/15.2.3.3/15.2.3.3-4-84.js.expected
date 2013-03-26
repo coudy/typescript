@@ -12,6 +12,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 865,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -123,6 +124,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 272,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -301,6 +303,7 @@
                         {
                             "kind": "IfStatement",
                             "fullWidth": 184,
+                            "isIncrementallyReusable": false,
                             "ifKeyword": {
                                 "kind": "IfKeyword",
                                 "width": 2,
@@ -329,15 +332,19 @@
                             "condition": {
                                 "kind": "LogicalAndExpression",
                                 "fullWidth": 150,
+                                "isIncrementallyReusable": false,
                                 "left": {
                                     "kind": "LogicalAndExpression",
                                     "fullWidth": 114,
+                                    "isIncrementallyReusable": false,
                                     "left": {
                                         "kind": "LogicalAndExpression",
                                         "fullWidth": 78,
+                                        "isIncrementallyReusable": false,
                                         "left": {
                                             "kind": "EqualsExpression",
                                             "fullWidth": 45,
+                                            "isIncrementallyReusable": false,
                                             "left": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 11,
@@ -383,6 +390,7 @@
                                             "right": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 30,
+                                                "isIncrementallyReusable": false,
                                                 "expression": {
                                                     "kind": "MemberAccessExpression",
                                                     "fullWidth": 17,

@@ -603,10 +603,12 @@
                         {
                             "kind": "VariableStatement",
                             "fullWidth": 29,
+                            "isIncrementallyReusable": false,
                             "modifiers": [],
                             "variableDeclaration": {
                                 "kind": "VariableDeclaration",
                                 "fullWidth": 26,
+                                "isIncrementallyReusable": false,
                                 "varKeyword": {
                                     "kind": "VarKeyword",
                                     "width": 3,
@@ -631,6 +633,7 @@
                                     {
                                         "kind": "VariableDeclarator",
                                         "fullWidth": 20,
+                                        "isIncrementallyReusable": false,
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 2,
@@ -648,6 +651,7 @@
                                         "equalsValueClause": {
                                             "kind": "EqualsValueClause",
                                             "fullWidth": 17,
+                                            "isIncrementallyReusable": false,
                                             "equalsToken": {
                                                 "kind": "EqualsToken",
                                                 "width": 1,
@@ -664,6 +668,7 @@
                                             "value": {
                                                 "kind": "ObjectLiteralExpression",
                                                 "fullWidth": 15,
+                                                "isIncrementallyReusable": false,
                                                 "openBraceToken": {
                                                     "kind": "OpenBraceToken",
                                                     "width": 1,
@@ -681,6 +686,7 @@
                                                     {
                                                         "kind": "SimplePropertyAssignment",
                                                         "fullWidth": 12,
+                                                        "isIncrementallyReusable": false,
                                                         "propertyName": {
                                                             "kind": "IdentifierName",
                                                             "width": 3,
@@ -1003,6 +1009,7 @@
                         {
                             "kind": "IfStatement",
                             "fullWidth": 121,
+                            "isIncrementallyReusable": false,
                             "ifKeyword": {
                                 "kind": "IfKeyword",
                                 "width": 2,
@@ -1036,15 +1043,19 @@
                             "condition": {
                                 "kind": "LogicalAndExpression",
                                 "fullWidth": 85,
+                                "isIncrementallyReusable": false,
                                 "left": {
                                     "kind": "LogicalAndExpression",
                                     "fullWidth": 51,
+                                    "isIncrementallyReusable": false,
                                     "left": {
                                         "kind": "EqualsExpression",
                                         "fullWidth": 18,
+                                        "isIncrementallyReusable": false,
                                         "left": {
                                             "kind": "MemberAccessExpression",
                                             "fullWidth": 7,
+                                            "isIncrementallyReusable": false,
                                             "expression": {
                                                 "kind": "IdentifierName",
                                                 "width": 2,

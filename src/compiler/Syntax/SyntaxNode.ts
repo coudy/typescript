@@ -90,7 +90,7 @@ module TypeScript {
                 fullWidth: this.fullWidth()
             };
 
-            if (this.hasSkippedText() || this.hasZeroWidthToken() || this.hasRegularExpressionToken()) {
+            if (!this.isIncrementallyReusable()) {
                 result.isIncrementallyReusable = false;
             }
 
@@ -162,32 +162,8 @@ module TypeScript {
             return false;
         }
 
-        public hasSkippedText(): bool {
-            return (this.data() & SyntaxConstants.NodeSkippedTextMask) !== 0;
-        }
-
-        public hasZeroWidthToken(): bool {
-            return (this.data() & SyntaxConstants.NodeZeroWidthTokenMask) !== 0;
-        }
-
-        // True if this node contains a regex token somewhere under it.  A regex token is either a 
-        // regex itself (i.e. /foo/), or is a token which could start a regex (i.e. "/" or "/=").  This
-        // data is used by the incremental parser to decide if a node can be reused.  Due to the 
-        // lookahead nature of regex tokens, a node containing a regex token cannot be reused.  Normally,
-        // changes to text only affect the tokens directly intersected.  However, because regex tokens 
-        // have such unbounded lookahead (technically bounded at the end of a line, but htat's minor), 
-        // we need to recheck them to see if they've changed due to the edit.  For example, if you had:
-        //
-        //      while (true) /3; return;
-        //
-        // And you changed it to:
-        //
-        //      while (true) /3; return/;
-        //
-        // Then even though only the 'return' and ';' colons were touched, we'd want to rescan the '/'
-        // token which we would then realize was a regex.
-        public hasRegularExpressionToken(): bool {
-            return (this.data() & SyntaxConstants.NodeRegularExpressionTokenMask) !== 0;
+        public isIncrementallyReusable(): bool {
+            return (this.data() & SyntaxConstants.NodeIncrementallyReusableMask) !== 0;
         }
 
         // True if this node was parsed while the parser was in 'strict' mode.  A node parsed in strict
@@ -207,12 +183,9 @@ module TypeScript {
 
             var fullWidth = 0;
             var childWidth = 0;
-            var hasSkippedText = false;
 
-            // If we have no children (like an OmmittedExpressionSyntax), we automatically have a zero 
-            // width token.
-            var hasZeroWidthToken = slotCount === 0;
-            var hasRegularExpressionToken = false;
+            // If we have no children (like an OmmittedExpressionSyntax), we're automatically not reusable.
+            var isIncrementallyReusable = slotCount !== 0;
 
             for (var i = 0, n = slotCount; i < n; i++) {
                 var element = this.childAt(i);
@@ -221,24 +194,14 @@ module TypeScript {
                     childWidth = element.fullWidth();
                     fullWidth += childWidth;
 
-                    if (!hasSkippedText) {
-                        hasSkippedText = element.hasSkippedText();
-                    }
-
-                    if (!hasZeroWidthToken) {
-                        hasZeroWidthToken = element.hasZeroWidthToken();
-                    }
-
-                    if (!hasRegularExpressionToken) {
-                        hasRegularExpressionToken = element.hasRegularExpressionToken();
+                    if (isIncrementallyReusable) {
+                        isIncrementallyReusable = element.isIncrementallyReusable();
                     }
                 }
             }
 
             return (fullWidth << SyntaxConstants.NodeFullWidthShift)
-                 | (hasSkippedText ? SyntaxConstants.NodeSkippedTextMask : 0)
-                 | (hasZeroWidthToken ? SyntaxConstants.NodeZeroWidthTokenMask : 0)
-                 | (hasRegularExpressionToken ? SyntaxConstants.NodeRegularExpressionTokenMask : 0);
+                 | (isIncrementallyReusable ? SyntaxConstants.NodeIncrementallyReusableMask : 0);
         }
 
         private data(): number {

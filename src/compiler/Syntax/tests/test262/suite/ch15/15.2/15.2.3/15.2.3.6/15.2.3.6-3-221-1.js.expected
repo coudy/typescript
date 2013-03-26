@@ -12,6 +12,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 1052,
+                "isIncrementallyReusable": false,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -123,6 +124,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 407,
+                    "isIncrementallyReusable": false,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -236,6 +238,7 @@
                         {
                             "kind": "TryStatement",
                             "fullWidth": 374,
+                            "isIncrementallyReusable": false,
                             "tryKeyword": {
                                 "kind": "TryKeyword",
                                 "width": 3,
@@ -259,6 +262,7 @@
                             "block": {
                                 "kind": "Block",
                                 "fullWidth": 297,
+                                "isIncrementallyReusable": false,
                                 "openBraceToken": {
                                     "kind": "OpenBraceToken",
                                     "width": 1,
@@ -277,12 +281,15 @@
                                     {
                                         "kind": "ExpressionStatement",
                                         "fullWidth": 113,
+                                        "isIncrementallyReusable": false,
                                         "expression": {
                                             "kind": "AssignmentExpression",
                                             "fullWidth": 110,
+                                            "isIncrementallyReusable": false,
                                             "left": {
                                                 "kind": "MemberAccessExpression",
                                                 "fullWidth": 34,
+                                                "isIncrementallyReusable": false,
                                                 "expression": {
                                                     "kind": "MemberAccessExpression",
                                                     "fullWidth": 29,
@@ -838,6 +845,7 @@
                             "finallyClause": {
                                 "kind": "FinallyClause",
                                 "fullWidth": 65,
+                                "isIncrementallyReusable": false,
                                 "finallyKeyword": {
                                     "kind": "FinallyKeyword",
                                     "width": 7,
@@ -854,6 +862,7 @@
                                 "block": {
                                     "kind": "Block",
                                     "fullWidth": 57,
+                                    "isIncrementallyReusable": false,
                                     "openBraceToken": {
                                         "kind": "OpenBraceToken",
                                         "width": 1,
@@ -872,9 +881,11 @@
                                         {
                                             "kind": "ExpressionStatement",
                                             "fullWidth": 43,
+                                            "isIncrementallyReusable": false,
                                             "expression": {
                                                 "kind": "DeleteExpression",
                                                 "fullWidth": 40,
+                                                "isIncrementallyReusable": false,
                                                 "deleteKeyword": {
                                                     "kind": "DeleteKeyword",
                                                     "width": 6,
@@ -898,6 +909,7 @@
                                                 "expression": {
                                                     "kind": "MemberAccessExpression",
                                                     "fullWidth": 21,
+                                                    "isIncrementallyReusable": false,
                                                     "expression": {
                                                         "kind": "MemberAccessExpression",
                                                         "fullWidth": 17,
