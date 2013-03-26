@@ -225,6 +225,12 @@ module TypeScript {
             code: 1034
         },
 
+        Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier: {
+            category: DiagnosticCategory.Error,
+            message: "Modules in implementation files with quoted names must have the 'declare' modifier.",
+            code: 1035
+        },
+
 
 
 

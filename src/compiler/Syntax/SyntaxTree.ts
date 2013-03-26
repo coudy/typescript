@@ -109,6 +109,16 @@ module TypeScript {
             return this.childFullStart(parent, child) + child.leadingTriviaWidth();
         }
 
+        private containsToken(list: ISyntaxList, kind: SyntaxKind): bool {
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                if (list.childAt(i).kind() === kind) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private pushDiagnostic(start: number, length: number, diagnosticCode: DiagnosticCode, args: any[] = null): void {
             this.diagnostics.push(new SyntaxDiagnostic(
                 this.fileName, start, length, diagnosticCode, args));
@@ -415,6 +425,21 @@ module TypeScript {
             }
 
             super.visitInvocationExpression(node);
+        }
+
+        visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
+            if (this.isDeclaration) {
+            }
+            else {
+                if (node.stringLiteral && !this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
+                    var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
+                    this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral,
+                        DiagnosticCode.Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier);
+                    return;
+                }
+            }
+
+            super.visitModuleDeclaration(node);
         }
     }
 }

@@ -2353,8 +2353,12 @@ module TypeScript.Parser {
 
             // 'module' is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
             // that we're actually looking at a module construct and not some javascript expression.
-            return this.currentToken().tokenKind === SyntaxKind.ModuleKeyword &&
-                   this.isIdentifier(this.peekToken(1));
+            if (this.currentToken().tokenKind === SyntaxKind.ModuleKeyword) {
+                var token1 = this.peekToken(1);
+                return this.isIdentifier(token1) || token1.tokenKind === SyntaxKind.StringLiteral;
+            }
+
+            return false;
         }
 
         private parseModuleDeclaration(): ModuleDeclarationSyntax {
