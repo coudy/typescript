@@ -274,6 +274,42 @@ module TypeScript {
             super.visitClassDeclaration(node);
         }
 
+        checkInterfaceDeclarationHeritageClauses(node: InterfaceDeclarationSyntax): void {
+            var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
+            var heritageClauseFullStart = heritageClausesFullStart;
+
+            var seenExtendsClause = false;
+
+            for (var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                Debug.assert(i <= 1);
+                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
+
+                if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
+                    if (seenExtendsClause) {
+                        this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
+                            DiagnosticCode._extends__clause_already_seen);
+                        return;
+                    }
+
+                    seenExtendsClause = true;
+                }
+                else {
+                    Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
+                    this.pushDiagnostic1(heritageClauseFullStart, heritageClause,
+                        DiagnosticCode.Interface_declaration_cannot_have__implements__clause);
+                    return;
+                }
+
+                heritageClauseFullStart += heritageClause.fullWidth();
+            }
+        }
+
+        visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
+            this.checkInterfaceDeclarationHeritageClauses(node);
+
+            super.visitInterfaceDeclaration(node);
+        }
+
         checkClassElementModifiers(list: ISyntaxList): void {
             var modifierFullStart = this.position();
 

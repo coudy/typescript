@@ -38,6 +38,7 @@ module TypeScript {
         Accessibility_modifier_must_precede__static__modifier,
         _static__modifier_already_seen,
         _0__modifier_cannot_appear_on_a_class_element,
+        Interface_declaration_cannot_have__implements__clause,
 
 
 

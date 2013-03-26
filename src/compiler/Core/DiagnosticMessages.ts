@@ -207,7 +207,11 @@ module TypeScript {
             code: 1031
         },
 
-
+        Interface_declaration_cannot_have__implements__clause: {
+            category: DiagnosticCategory.Error,
+            message: "Interface declaration cannot have 'implements' clause.",
+            code: 1032
+        },
 
 
 
