@@ -4,7 +4,6 @@
 ///<reference path='Emitter.ts' />
 ///<reference path='PrettyPrinter.ts' />
 ///<reference path='Test262.ts' />
-///<reference path='Top1000.ts' />
 ///<reference path='tests\IncrementalParserTests.ts' />
 ///<reference path='..\Core\Environment.ts' />
 ///<reference path='..\..\Harness\Diff.ts' />
@@ -559,69 +558,8 @@ class Program {
             Environment.standardOut.WriteLine(skippedTests[i]);
         }
     }
-
-    runTop1000(): void {
-        Environment.standardOut.WriteLine("Testing top 1000 sites.");
-
-        var path = "C:\\Temp\\TopJSFiles";
-        var testFiles = Environment.listFiles(path, null, { recursive: true });
-
-        var testCount = 0;
-        var failCount = 0;
-        var skippedTests: string[] = [];
-
-        for (var index in testFiles) {
-            var fileName: string = testFiles[index];
-
-            if (specificFile !== undefined && fileName.indexOf(specificFile) < 0) {
-                continue;
-            }
-
-            var canParseSuccessfully = expectedTop1000Failures[fileName.substr(path.length + 1)] === undefined;
-            var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
-
-            testCount++;
-
-            try {
-                var stringText = TypeScript.TextFactory.createText(contents);
-                var tree = TypeScript.Parser.parse(fileName, stringText, false, TypeScript.LanguageVersion.EcmaScript5);
-
-            //Environment.standardOut.WriteLine(fileName);
-            // Environment.standardOut.Write(".");
-
-                if (canParseSuccessfully) {
-                    if (tree.diagnostics() && tree.diagnostics().length > 0) {
-                        Environment.standardOut.WriteLine("Unexpected failure: " + fileName);
-                        failCount++;
-                    }
-                }
-                else {
-                    // We expected to fail on this.  Report an error if we don't.
-                    if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
-                        Environment.standardOut.WriteLine("Unexpected success: " + fileName);
-                        failCount++;
-                    }
-                }
-            }
-            catch (e) {
-                failCount++;
-                this.handleException(fileName, e);
-            }
-        }
-
-        Environment.standardOut.WriteLine("");
-        Environment.standardOut.WriteLine("Top 1000 results:");
-        Environment.standardOut.WriteLine("Test Count: " + testCount);
-        Environment.standardOut.WriteLine("Skip Count: " + skippedTests.length);
-        Environment.standardOut.WriteLine("Fail Count: " + failCount);
-
-        for (var i = 0; i < skippedTests.length; i++) {
-            Environment.standardOut.WriteLine(skippedTests[i]);
-        }
-    }
 }
 
-// (<any>WScript).StdIn.ReadLine();
 var totalTime = 0;
 var totalSize = 0;
 var program = new Program();
@@ -641,15 +579,6 @@ if (false) {
     totalTime = 0;
     totalSize = 0;
     program.run262();
-    Environment.standardOut.WriteLine("Total time: " + totalTime);
-    Environment.standardOut.WriteLine("Total size: " + totalSize);
-}
-
-// Test Top 1000 sites.
-if (false) {
-    totalTime = 0;
-    totalSize = 0;
-    program.runTop1000();
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
