@@ -96,6 +96,7 @@ module TypeScript {
 
     class GrammarCheckerWalker extends PositionTrackingWalker {
         private inAmbientDeclaration: bool;
+        private currentConstructor: ConstructorDeclarationSyntax = null;
 
         constructor(private fileName: string,
                     private diagnostics: IDiagnostic[],
@@ -150,7 +151,7 @@ module TypeScript {
             super.visitCatchClause(node);
         }
 
-        private visitParameterList(node: ParameterListSyntax): void {
+        private checkParameterListOrder(node: ParameterListSyntax): bool {
             var parametersPosition = this.childFullStart(node, node.parameters);
             var parameterFullStart = parametersPosition;
 
@@ -168,7 +169,7 @@ module TypeScript {
                             this.pushDiagnostic1(
                                 parameterFullStart, parameter,
                                 DiagnosticCode.Rest_parameter_must_be_last_in_list);
-                            break;
+                            return true;
                         }
                     }
                     else if (parameter.questionToken || parameter.equalsValueClause) {
@@ -178,7 +179,7 @@ module TypeScript {
                             this.pushDiagnostic1(
                                 parameterFullStart, parameter,
                                 DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer);
-                            break;
+                            return true;
                         }
                     }
                     else {
@@ -186,14 +187,52 @@ module TypeScript {
                             this.pushDiagnostic1(
                                 parameterFullStart, parameter,
                                 DiagnosticCode.Required_parameter_cannot_follow_optional_parameter);
-                            break;
+                            return true;
                         }
                     }
                 }
 
                 parameterFullStart += nodeOrToken.fullWidth();
             }
-            
+
+            return false;
+        }
+
+        private checkParameterListAcessibilityModifiers(node: ParameterListSyntax): bool {
+            // Only constructor parameters can have public/private modifiers.
+            if (this.currentConstructor !== null &&
+                this.currentConstructor.parameterList === node) {
+                return false;
+            }
+
+            var parametersPosition = this.childFullStart(node, node.parameters);
+            var parameterFullStart = parametersPosition;
+
+            for (var i = 0, n = node.parameters.childCount(); i < n; i++) {
+                var nodeOrToken = node.parameters.childAt(i);
+                if (i % 2 === 0) {
+                    var parameter = <ParameterSyntax>node.parameters.childAt(i);
+
+                    if (parameter.publicOrPrivateKeyword) {
+                        var keywordFullStart = parameterFullStart + Syntax.childOffset(parameter, parameter.publicOrPrivateKeyword);
+                        this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
+                            DiagnosticCode.Only_constructor_declarations_can_have_accessibility_modifiers);
+                    }
+                }
+
+                parameterFullStart += nodeOrToken.fullWidth();
+            }
+
+            return false;
+        }
+
+        private visitParameterList(node: ParameterListSyntax): void {
+            if (this.checkParameterListAcessibilityModifiers(node) ||
+                this.checkParameterListOrder(node)) {
+                this.skip(node);
+                return;
+            }
+
             super.visitParameterList(node);
         }
 
@@ -771,6 +810,13 @@ module TypeScript {
             }
 
             super.visitEqualsValueClause(node);
+        }
+
+        private visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {
+            var savedCurrentConstructor = this.currentConstructor;
+            this.currentConstructor = node;
+            super.visitConstructorDeclaration(node);
+            this.currentConstructor = savedCurrentConstructor;
         }
     }
 }

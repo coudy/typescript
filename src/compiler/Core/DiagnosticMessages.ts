@@ -255,6 +255,13 @@ module TypeScript {
             code: 1039
         },
 
+        Only_constructor_declarations_can_have_accessibility_modifiers: {
+            category: DiagnosticCategory.Error,
+            message: "Only constructor declarations can have accessibility modifiers.",
+            code: 1040
+        },
+
+
 
 
         // Semantic errors start at 200.
