@@ -152,8 +152,7 @@ module TypeScript {
         }
 
         private checkParameterListOrder(node: ParameterListSyntax): bool {
-            var parametersPosition = this.childFullStart(node, node.parameters);
-            var parameterFullStart = parametersPosition;
+            var parameterFullStart = this.childFullStart(node, node.parameters);
 
             var seenOptionalParameter = false;
             var parameterCount = node.parameters.nonSeparatorCount();
@@ -205,8 +204,7 @@ module TypeScript {
                 return false;
             }
 
-            var parametersPosition = this.childFullStart(node, node.parameters);
-            var parameterFullStart = parametersPosition;
+            var parameterFullStart = this.childFullStart(node, node.parameters);
 
             for (var i = 0, n = node.parameters.childCount(); i < n; i++) {
                 var nodeOrToken = node.parameters.childAt(i);
@@ -299,8 +297,7 @@ module TypeScript {
         }
 
         private checkClassDeclarationHeritageClauses(node: ClassDeclarationSyntax): bool {
-            var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
-            var heritageClauseFullStart = heritageClausesFullStart;
+            var heritageClauseFullStart = this.childFullStart(node, node.heritageClauses);
 
             var seenExtendsClause = false;
             var seenImplementsClause = false;
@@ -361,13 +358,64 @@ module TypeScript {
             return false;
         }
 
-        private visitClassDeclaration(node: ClassDeclarationSyntax): void {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers)) {
-                this.skip(node);
-                return;
+        private checkClassOverloads(node: ClassDeclarationSyntax): bool {
+            if (!this.inAmbientDeclaration) {
+                var classElementFullStart = this.childFullStart(node, node.classElements);
+
+                var inFunctionOverloadChain = false;
+                var inConstructorOverloadChain = false;
+
+                for (var i = 0, n = node.classElements.childCount(); i < n; i++) {
+                    var classElement = <IClassElementSyntax>node.classElements.childAt(i);
+                    var lastElement = i === (n - 1)
+
+                    if (inFunctionOverloadChain) {
+                        if (classElement.kind() !== SyntaxKind.MemberFunctionDeclaration) {
+                            this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
+                                DiagnosticCode.Function_implementation_expected);
+                            return true;
+                        }
+                    }
+                    else if (inConstructorOverloadChain) {
+                        if (classElement.kind() !== SyntaxKind.ConstructorDeclaration) {
+                            this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
+                                DiagnosticCode.Constructor_implementation_expected);
+                            return true;
+                        }
+                    }
+
+                    if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
+                        var memberFunctionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
+
+                        inFunctionOverloadChain = memberFunctionDeclaration.block === null;
+                        if (lastElement && inFunctionOverloadChain) {
+                            this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
+                                DiagnosticCode.Function_implementation_expected);
+                            return true;
+                        }
+                    }
+                    else if (classElement.kind() === SyntaxKind.ConstructorDeclaration) {
+                        var constructorDeclaration = <ConstructorDeclarationSyntax>classElement;
+
+                        inConstructorOverloadChain = constructorDeclaration.block === null;
+                        if (lastElement && inConstructorOverloadChain) {
+                            this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
+                                DiagnosticCode.Constructor_implementation_expected);
+                            return true;
+                        }
+                    }
+
+                    classElementFullStart += classElement.fullWidth();
+                }
             }
 
-            if (this.checkClassDeclarationHeritageClauses(node)) {
+            return false;
+        }
+
+        private visitClassDeclaration(node: ClassDeclarationSyntax): void {
+            if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkClassDeclarationHeritageClauses(node) ||
+                this.checkClassOverloads(node)) {
                 this.skip(node);
                 return;
             }
@@ -379,8 +427,7 @@ module TypeScript {
         }
 
         private checkInterfaceDeclarationHeritageClauses(node: InterfaceDeclarationSyntax): void {
-            var heritageClausesFullStart = this.childFullStart(node, node.heritageClauses);
-            var heritageClauseFullStart = heritageClausesFullStart;
+            var heritageClauseFullStart = this.childFullStart(node, node.heritageClauses);
 
             var seenExtendsClause = false;
 
@@ -483,8 +530,7 @@ module TypeScript {
         }
 
         private checkEnumDeclarationElements(node: EnumDeclarationSyntax): bool {
-            var enumElementsFullStart = this.childFullStart(node, node.enumElements);
-            var enumElementFullStart = enumElementsFullStart;
+            var enumElementFullStart = this.childFullStart(node, node.enumElements);
             var seenExplicitMember = false;
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 var nodeOrToken = node.enumElements.childAt(i);

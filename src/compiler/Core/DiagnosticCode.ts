@@ -47,6 +47,9 @@ module TypeScript {
         _declare__modifier_not_allowed_for_code_already_in_an_ambient_context,
         Initializers_are_not_allowed_in_ambient_contexts,
         Only_constructor_declarations_can_have_accessibility_modifiers,
+        Function_implementation_expected,
+        Constructor_implementation_expected,
+
 
 
 

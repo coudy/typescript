@@ -261,6 +261,20 @@ module TypeScript {
             code: 1040
         },
 
+        Function_implementation_expected: {
+            category: DiagnosticCategory.Error,
+            message: "Function implementation expected.",
+            code: 1041
+        },
+
+        Constructor_implementation_expected: {
+            category: DiagnosticCategory.Error,
+            message: "Constructor implementation expected.",
+            code: 1042
+        },
+
+
+
 
 
 

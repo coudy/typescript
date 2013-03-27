@@ -47,6 +47,10 @@ module TypeScript {
         _declare__modifier_not_allowed_for_code_already_in_an_ambient_context: DiagnosticInfo;
         Initializers_are_not_allowed_in_ambient_contexts: DiagnosticInfo;
         Only_constructor_declarations_can_have_accessibility_modifiers: DiagnosticInfo;
+        Function_implementation_expected: DiagnosticInfo;
+        Constructor_implementation_expected: DiagnosticInfo;
+
+
 
 
 
