@@ -198,9 +198,13 @@ module TypeScript {
         }
 
         private checkParameterListAcessibilityModifiers(node: ParameterListSyntax): bool {
-            // Only constructor parameters can have public/private modifiers.
+            // Only constructor parameters can have public/private modifiers.  Also, the constructor
+            // needs to have a body, and it can't be in an ambient context.
             if (this.currentConstructor !== null &&
-                this.currentConstructor.parameterList === node) {
+                this.currentConstructor.parameterList === node &&
+                this.currentConstructor.block &&
+                !this.inAmbientDeclaration) {
+
                 return false;
             }
 
@@ -214,7 +218,7 @@ module TypeScript {
                     if (parameter.publicOrPrivateKeyword) {
                         var keywordFullStart = parameterFullStart + Syntax.childOffset(parameter, parameter.publicOrPrivateKeyword);
                         this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
-                            DiagnosticCode.Only_constructor_declarations_can_have_accessibility_modifiers);
+                            DiagnosticCode.Overload_and_ambient_signatures_cannot_specify_parameter_properties);
                     }
                 }
 

@@ -255,9 +255,9 @@ module TypeScript {
             code: 1039
         },
 
-        Only_constructor_declarations_can_have_accessibility_modifiers: {
+        Overload_and_ambient_signatures_cannot_specify_parameter_properties: {
             category: DiagnosticCategory.Error,
-            message: "Only constructor declarations can have accessibility modifiers.",
+            message: "Overload and ambient signatures cannot specify parameter properties.",
             code: 1040
         },
 

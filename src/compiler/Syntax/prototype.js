@@ -475,8 +475,8 @@ var TypeScript;
         DiagnosticCode._declare__modifier_not_allowed_for_code_already_in_an_ambient_context = 40;
         DiagnosticCode._map[41] = "Initializers_are_not_allowed_in_ambient_contexts";
         DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts = 41;
-        DiagnosticCode._map[42] = "Only_constructor_declarations_can_have_accessibility_modifiers";
-        DiagnosticCode.Only_constructor_declarations_can_have_accessibility_modifiers = 42;
+        DiagnosticCode._map[42] = "Overload_and_ambient_signatures_cannot_specify_parameter_properties";
+        DiagnosticCode.Overload_and_ambient_signatures_cannot_specify_parameter_properties = 42;
         DiagnosticCode._map[43] = "Function_implementation_expected";
         DiagnosticCode.Function_implementation_expected = 43;
         DiagnosticCode._map[44] = "Constructor_implementation_expected";
@@ -733,9 +733,9 @@ var TypeScript;
             message: "Initializers are not allowed in ambient contexts.",
             code: 1039
         },
-        Only_constructor_declarations_can_have_accessibility_modifiers: {
+        Overload_and_ambient_signatures_cannot_specify_parameter_properties: {
             category: 1 /* Error */ ,
-            message: "Only constructor declarations can have accessibility modifiers.",
+            message: "Overload and ambient signatures cannot specify parameter properties.",
             code: 1040
         },
         Function_implementation_expected: {
@@ -19360,7 +19360,7 @@ var TypeScript;
             return false;
         };
         GrammarCheckerWalker.prototype.checkParameterListAcessibilityModifiers = function (node) {
-            if (this.currentConstructor !== null && this.currentConstructor.parameterList === node) {
+            if (this.currentConstructor !== null && this.currentConstructor.parameterList === node && this.currentConstructor.block && !this.inAmbientDeclaration) {
                 return false;
             }
             var parameterFullStart = this.childFullStart(node, node.parameters);
@@ -19370,7 +19370,7 @@ var TypeScript;
                     var parameter = node.parameters.childAt(i);
                     if (parameter.publicOrPrivateKeyword) {
                         var keywordFullStart = parameterFullStart + TypeScript.Syntax.childOffset(parameter, parameter.publicOrPrivateKeyword);
-                        this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword, 42 /* Only_constructor_declarations_can_have_accessibility_modifiers */ );
+                        this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword, 42 /* Overload_and_ambient_signatures_cannot_specify_parameter_properties */ );
                     }
                 }
                 parameterFullStart += nodeOrToken.fullWidth();
@@ -57353,7 +57353,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = false;
+var generate = true;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {
