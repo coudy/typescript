@@ -19464,7 +19464,7 @@ var TypeScript;
             return false;
         };
         GrammarCheckerWalker.prototype.checkClassOverloads = function (node) {
-            if (!this.inAmbientDeclaration) {
+            if (!this.inAmbientDeclaration && !this.containsToken(node.modifiers, 64 /* DeclareKeyword */ )) {
                 var classElementFullStart = this.childFullStart(node, node.classElements);
                 var inFunctionOverloadChain = false;
                 var inConstructorOverloadChain = false;

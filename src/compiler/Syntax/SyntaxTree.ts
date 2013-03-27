@@ -359,7 +359,7 @@ module TypeScript {
         }
 
         private checkClassOverloads(node: ClassDeclarationSyntax): bool {
-            if (!this.inAmbientDeclaration) {
+            if (!this.inAmbientDeclaration && !this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 var classElementFullStart = this.childFullStart(node, node.classElements);
 
                 var inFunctionOverloadChain = false;
