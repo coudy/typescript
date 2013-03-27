@@ -14,8 +14,7 @@ describe('Compiling unittests\\compiler\\callSignatureTests.ts', function() {
         var code  = 'var foo: {():void;};';
             code += 'var test = foo();'
             Harness.Compiler.compileString(code, 'call signatures', function(result) {
-            assert.equal(result.errors.length, 1);
-            assert.compilerWarning(result, 1, 20, "Cannot assign type 'void' to variable 'test'");
+            assert.equal(result.errors.length, 0);
         });
     });
 

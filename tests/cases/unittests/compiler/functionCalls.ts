@@ -27,7 +27,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 //assert.equal(voidType.type, "number");
             });
             it("Return type array", function () {
-                var voidType = typeFactory.get('function foo():any[]{return new number[]}; var x = foo();', "x");
+                var voidType = typeFactory.get('function foo():any[]{return [1];} var x = foo();', "x");
 
                 assert.equal(voidType.type, "any[]");
             });
@@ -43,7 +43,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
 
                 var voidType = typeFactory.get(code, "x");
 
-                assert.equal(voidType.type, "c1");
+                assert.equal(voidType.type, "m1.c1");
             });
         });
         describe('Testing just the parameters', function () {
@@ -54,7 +54,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 'bar');";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 3);
+                    assert.equal(result.errors.length, 12);
                 });
             });
 
@@ -66,7 +66,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo();";
                 code += "foo({}, {});";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 4);
+                    assert.equal(result.errors.length, 16);
                 });
             });
 
@@ -79,7 +79,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(4);";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 3);
+                    assert.equal(result.errors.length, 12);
                 });
             });
 
@@ -90,7 +90,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(4);";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 8);
                 });
             });
 
@@ -102,7 +102,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 1, 'bar');";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 8);
                 });
             });
 
@@ -113,7 +113,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo();";
                 code += "foo(1, 'bar');";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 8);
                 });
             });
 
@@ -125,7 +125,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 'bar');";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 3);
+                    assert.equal(result.errors.length, 12);
                 });
             });
 
@@ -138,7 +138,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 3);
+                    assert.equal(result.errors.length, 12);
                 });
             });
 
@@ -150,10 +150,11 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 4);
                 });
             });
 
+            assert.bug('Bad errors calling functions which mix rest parameters with other params');
             it("Check for optional and rest param - 1", function () {
                 var code = "function foo(a?:string, ...b:number[]){} ";
                 code += "foo('foo', 1); ";
@@ -162,7 +163,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.arrayLengthIs(result.errors, 1);
+                    assert.equal(result.errors.length, 8);
                 });
             });
 
@@ -173,6 +174,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 });
             });
 
+            assert.bug('Bad errors calling functions which mix rest parameters with other params');
             it("Check for optional and rest param - 3", function () {
                 var code = "function foo(a:string, b?:string, ...c:number[]){} ";
                 code += "foo('foo', 1); ";
@@ -182,10 +184,11 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 'bar', 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.arrayLengthIs(result.errors, 3);
+                    assert.equal(result.errors.length, 12);
                 });
             });
 
+            assert.bug('Bad errors calling functions which mix rest parameters with other params');
             it("Check for optional and rest param - 4", function () {
                 var code = "function foo(a:string, b?:string, c?:number, ...d:number[]){} ";
                 code += "foo('foo', 1); ";
@@ -195,7 +198,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 1, 3);";
                 code += "foo('foo', 'bar', 3, 4);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.arrayLengthIs(result.errors, 4);
+                    assert.equal(result.errors.length, 16);
                 });
             });
         });

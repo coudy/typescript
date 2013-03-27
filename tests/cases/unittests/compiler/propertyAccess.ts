@@ -14,8 +14,8 @@ describe('Property Access', function() {
     it("Type of expression is object", function() {
         var code = "var foo: { a: number; }; foo.a = 4; foo.b = 5;";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.compilerWarning(result, 1, 40, "The property 'b' does not exist on value of type '{ a: number; }'");
-            assert.equal(result.errors.length, 1);
+            assert.compilerWarning(result, 1, 40, "Could not find dotted symbol name 'b'");
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -29,14 +29,14 @@ describe('Property Access', function() {
     it("Type of expression is number", function() {
         var code = "var foo: number; foo.toBAZ();";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 1);
+            assert.equal(result.errors.length, 2);
         });
     });
 
     it("Type of expression is bool", function() {
         var code = "var foo: bool; foo.toBAZ();";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.equal(result.errors.length, 1);
+            assert.equal(result.errors.length, 2);
         });
     });
 

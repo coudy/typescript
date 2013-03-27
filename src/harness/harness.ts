@@ -108,7 +108,7 @@ module Harness {
             if (arr.length != length) {
                 var actual = '';
                 arr.forEach(n => actual = actual + '\n      ' + n.toString());
-                throwAssertError(new Error('Expected array to have ' + length + ' elements. Actual elements were:' + actual));
+                throwAssertError(new Error('Expected array to have ' + length + ' elements. Found ' + arr.length + '. Actual elements were:' + actual));
             }
         }
 
@@ -899,6 +899,7 @@ module Harness {
                 return this.compilesOk(testCode);
             }
 
+            /** Throws if this type object cannot be assigned to all of the given other types */
             public assertAssignmentCompatibleWith(others: any) {
                 others = this.normalizeToArray(others);
 
@@ -911,6 +912,7 @@ module Harness {
                 }
             }
 
+            /** Throws if this type object can be assigned to any of the given other types */
             public assertNotAssignmentCompatibleWith(others: any) {
                 others = this.normalizeToArray(others);
 
@@ -953,6 +955,7 @@ module Harness {
                 var targetPosition = -1;
                 if (typeof target === "string") {
                     targetIdentifier = target;
+                    targetPosition = code.indexOf(target);
                 }
                 else if (typeof target === "number") {
                     targetPosition = target;

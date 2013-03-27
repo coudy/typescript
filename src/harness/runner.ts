@@ -214,7 +214,7 @@ opts.flag('compiler', {
     set: function () {
         runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        runners.push(new ProjectRunner());
+        //runners.push(new ProjectRunner());
     }
 });
 
@@ -247,10 +247,15 @@ opts.flag('unittests', {
     }
 });
 
+opts.flag('samples', {
+    set: function () {
+        runners.push(new UnitTestRunner('samples'));
+    }
+});
+
 opts.flag('ls', {
     set: function () {
         runners.push(new UnitTestRunner('ls'));
-        runners.push(new FourslashRunner());
     }
 });
 
@@ -308,7 +313,7 @@ opts.parse(IO.arguments)
 if (runners.length === 0) {
     if (opts.unnamed.length === 0) {
         // compiler
-        //runners.push(new UnitTestRunner('compiler'));
+        runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
         //runners.push(new ProjectRunner());
 

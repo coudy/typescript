@@ -10,7 +10,7 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '   }'
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.equal(result.errors.length, 1);
+            assert.equal(result.errors.length, 2);
         });
     });
     
@@ -21,13 +21,13 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '   static s;'
             code += '   static b() {'
             code += '      v = 1;' // ERR
-            code += '      s = 1;' // OK
+            code += '      C.s = 1;' // OK
             code += '      this.p = 1;'// ERR
             code += '   }'
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.arrayLengthIs(result.errors, 1);
-            assert.compilerWarning(result, 1, 67, "The name 'v' does not exist in the current scope");
+            assert.arrayLengthIs(result.errors, 2);
+            assert.compilerWarning(result, 1, 67, "Could not find symbol 'v'");
         });
     });
 
@@ -58,9 +58,9 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '   }'
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.arrayLengthIs(result.errors, 2);
-            assert.compilerWarning(result, 1, 82, "The name 'v' does not exist in the current scope");
-            assert.compilerWarning(result, 1, 111, "The name 's' does not exist in the current scope");
+            assert.arrayLengthIs(result.errors, 4);
+            assert.compilerWarning(result, 1, 82, "Could not find symbol 'v'");
+            assert.compilerWarning(result, 1, 111, "Could not find symbol 's'");
         });
     });
 
@@ -74,9 +74,9 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '   }'
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.arrayLengthIs(result.errors, 2);
-            assert.compilerWarning(result, 1, 82, "The name 'v' does not exist in the current scope");
-            assert.compilerWarning(result, 1, 111, "The name 's' does not exist in the current scope");
+            assert.arrayLengthIs(result.errors, 4);
+            assert.compilerWarning(result, 1, 82, "Could not find symbol 'v'");
+            assert.compilerWarning(result, 1, 111, "Could not find symbol 's'");
         });
     });
     
@@ -90,9 +90,9 @@ describe('Compiling tests\\compiler\\scopeTests.ts', function() {
             code += '   }'
             code += '}';
         Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.arrayLengthIs(result.errors, 2);
-            assert.compilerWarning(result, 1, 82, "The name 'v' does not exist in the current scope");
-            assert.compilerWarning(result, 1, 111, "The name 's' does not exist in the current scope");
+            assert.arrayLengthIs(result.errors, 4);
+            assert.compilerWarning(result, 1, 82, "Could not find symbol 'v'");
+            assert.compilerWarning(result, 1, 111, "Could not find symbol 's'");
         });
     });
 });

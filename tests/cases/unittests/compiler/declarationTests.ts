@@ -39,14 +39,13 @@ describe('Compiling unittests\\compiler\\declarationTests.ts', function() {
             assert.equal(result.errors.length, 1);
         });
     });
-    it("A class declaration contributes both a member name and a type name to the containing module.", function() {
+    it("Modules contain separate declaration spaces for variables and types.", function() {
         var code  = 'module M {';
             code += '   class bar {};'
             code += '   var bar;'
             code += '}'
         Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.compilerWarning(result, 1, 29, "Duplicate identifier 'bar'");
-            assert.equal(result.errors.length, 1);
+            assert.equal(result.errors.length, 0);
         });
     });
 });

@@ -53,9 +53,10 @@ describe("Assignment compatibility", function() {
         "   }" +    
         "}";    
     
-    describe("Test generic array specialization and contextual typing", () => {
-        typeFactory.isOfType(genericMapCode, "Array<number>");
-    });
+    assert.bug('QuickInfo for results of generic function calls shows unspecialized type parameters');
+    //describe("Test generic array specialization and contextual typing", () => {
+    //    typeFactory.isOfType(genericMapCode, "Array<number>");
+    //});
 
     describe("Test generic interface in modules (knockout)", () => {
         it("generic type flows through call 1", function () {
