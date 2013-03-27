@@ -74,6 +74,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -143,7 +144,9 @@
                                                                                 "left": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 13,
-                                                                                    "text": "'//CHECK#1\\n'"
+                                                                                    "text": "'//CHECK#1\\n'",
+                                                                                    "value": "//CHECK#1\n",
+                                                                                    "valueText": "//CHECK#1\n"
                                                                                 },
                                                                                 "operatorToken": {
                                                                                     "kind": "PlusToken",
@@ -162,7 +165,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 25,
-                                                                                    "text": "'if ( NaN === null ) {\\n'"
+                                                                                    "text": "'if ( NaN === null ) {\\n'",
+                                                                                    "value": "if ( NaN === null ) {\n",
+                                                                                    "valueText": "if ( NaN === null ) {\n"
                                                                                 }
                                                                             },
                                                                             "operatorToken": {
@@ -182,7 +187,9 @@
                                                                             "right": {
                                                                                 "kind": "StringLiteral",
                                                                                 "width": 33,
-                                                                                "text": "'  $ERROR(\"#1: NaN === null\");\\n'"
+                                                                                "text": "'  $ERROR(\"#1: NaN === null\");\\n'",
+                                                                                "value": "  $ERROR(\"#1: NaN === null\");\n",
+                                                                                "valueText": "  $ERROR(\"#1: NaN === null\");\n"
                                                                             }
                                                                         },
                                                                         "operatorToken": {
@@ -202,7 +209,9 @@
                                                                         "right": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 5,
-                                                                            "text": "'}\\n'"
+                                                                            "text": "'}\\n'",
+                                                                            "value": "}\n",
+                                                                            "valueText": "}\n"
                                                                         }
                                                                     },
                                                                     "operatorToken": {
@@ -224,6 +233,8 @@
                                                                         "width": 13,
                                                                         "fullWidth": 14,
                                                                         "text": "'//CHECK#2\\n'",
+                                                                        "value": "//CHECK#2\n",
+                                                                        "valueText": "//CHECK#2\n",
                                                                         "hasLeadingTrivia": true,
                                                                         "hasLeadingNewLine": true,
                                                                         "leadingTrivia": [
@@ -251,7 +262,9 @@
                                                                 "right": {
                                                                     "kind": "StringLiteral",
                                                                     "width": 30,
-                                                                    "text": "'if ( Infinity === null ) {\\n'"
+                                                                    "text": "'if ( Infinity === null ) {\\n'",
+                                                                    "value": "if ( Infinity === null ) {\n",
+                                                                    "valueText": "if ( Infinity === null ) {\n"
                                                                 }
                                                             },
                                                             "operatorToken": {
@@ -271,7 +284,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 38,
-                                                                "text": "'  $ERROR(\"#2: Infinity === null\");\\n'"
+                                                                "text": "'  $ERROR(\"#2: Infinity === null\");\\n'",
+                                                                "value": "  $ERROR(\"#2: Infinity === null\");\n",
+                                                                "valueText": "  $ERROR(\"#2: Infinity === null\");\n"
                                                             }
                                                         },
                                                         "operatorToken": {
@@ -291,7 +306,9 @@
                                                         "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 5,
-                                                            "text": "'}\\n'"
+                                                            "text": "'}\\n'",
+                                                            "value": "}\n",
+                                                            "valueText": "}\n"
                                                         }
                                                     },
                                                     "operatorToken": {
@@ -313,6 +330,8 @@
                                                         "width": 13,
                                                         "fullWidth": 14,
                                                         "text": "'//CHECK#3\\n'",
+                                                        "value": "//CHECK#3\n",
+                                                        "valueText": "//CHECK#3\n",
                                                         "hasLeadingTrivia": true,
                                                         "hasLeadingNewLine": true,
                                                         "leadingTrivia": [
@@ -340,7 +359,9 @@
                                                 "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 31,
-                                                    "text": "'if ( undefined === null ) {\\n'"
+                                                    "text": "'if ( undefined === null ) {\\n'",
+                                                    "value": "if ( undefined === null ) {\n",
+                                                    "valueText": "if ( undefined === null ) {\n"
                                                 }
                                             },
                                             "operatorToken": {
@@ -360,7 +381,9 @@
                                             "right": {
                                                 "kind": "StringLiteral",
                                                 "width": 39,
-                                                "text": "'  $ERROR(\"#3: undefined === null\");\\n'"
+                                                "text": "'  $ERROR(\"#3: undefined === null\");\\n'",
+                                                "value": "  $ERROR(\"#3: undefined === null\");\n",
+                                                "valueText": "  $ERROR(\"#3: undefined === null\");\n"
                                             }
                                         },
                                         "operatorToken": {
@@ -380,7 +403,9 @@
                                         "right": {
                                             "kind": "StringLiteral",
                                             "width": 5,
-                                            "text": "'}\\n'"
+                                            "text": "'}\\n'",
+                                            "value": "}\n",
+                                            "valueText": "}\n"
                                         }
                                     },
                                     "operatorToken": {
@@ -400,7 +425,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "';\\n'"
+                                        "text": "';\\n'",
+                                        "value": ";\n",
+                                        "valueText": ";\n"
                                     }
                                 }
                             }
@@ -433,6 +460,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -456,6 +484,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr"
                             }
                         ],

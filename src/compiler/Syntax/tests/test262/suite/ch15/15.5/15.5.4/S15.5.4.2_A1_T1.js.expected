@@ -74,6 +74,7 @@
                                 "width": 13,
                                 "fullWidth": 14,
                                 "text": "__string__obj",
+                                "value": "__string__obj",
                                 "valueText": "__string__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -221,6 +225,7 @@
                                 "kind": "IdentifierName",
                                 "width": 13,
                                 "text": "__string__obj",
+                                "value": "__string__obj",
                                 "valueText": "__string__obj"
                             },
                             "dotToken": {
@@ -232,6 +237,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -278,7 +284,9 @@
                         "left": {
                             "kind": "StringLiteral",
                             "width": 2,
-                            "text": "\"\""
+                            "text": "\"\"",
+                            "value": "",
+                            "valueText": ""
                         },
                         "operatorToken": {
                             "kind": "PlusToken",
@@ -288,7 +296,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -334,6 +344,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -358,7 +369,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 108,
-                                                "text": "'#1: __string__obj = new String(1); __string__obj.toString() === \"\"+1. Actual: __string__obj.toString() ==='"
+                                                "text": "'#1: __string__obj = new String(1); __string__obj.toString() === \"\"+1. Actual: __string__obj.toString() ==='",
+                                                "value": "#1: __string__obj = new String(1); __string__obj.toString() === \"\"+1. Actual: __string__obj.toString() ===",
+                                                "valueText": "#1: __string__obj = new String(1); __string__obj.toString() === \"\"+1. Actual: __string__obj.toString() ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -375,6 +388,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 13,
                                                         "text": "__string__obj",
+                                                        "value": "__string__obj",
                                                         "valueText": "__string__obj"
                                                     },
                                                     "dotToken": {
@@ -386,6 +400,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "toString",
+                                                        "value": "toString",
                                                         "valueText": "toString"
                                                     }
                                                 },

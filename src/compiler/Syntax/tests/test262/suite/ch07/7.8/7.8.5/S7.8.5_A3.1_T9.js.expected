@@ -81,6 +81,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "regexp",
+                                "value": "regexp",
                                 "valueText": "regexp"
                             }
                         }
@@ -111,6 +112,7 @@
                         "kind": "IdentifierName",
                         "width": 4,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval"
                     },
                     "argumentList": {
@@ -125,7 +127,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 23,
-                                "text": "\"regexp = /(?:)/\\u006D\""
+                                "text": "\"regexp = /(?:)/\\u006D\"",
+                                "value": "regexp = /(?:)/m",
+                                "valueText": "regexp = /(?:)/m"
                             }
                         ],
                         "closeParenToken": {
@@ -181,6 +185,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "regexp",
+                            "value": "regexp",
                             "valueText": "regexp"
                         },
                         "dotToken": {
@@ -193,6 +198,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "multiline",
+                            "value": "multiline",
                             "valueText": "multiline",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -219,7 +225,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -264,6 +272,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -290,6 +299,8 @@
                                                 "width": 69,
                                                 "fullWidth": 70,
                                                 "text": "'#1: var regexp = /(?:)/\\\\u006D; regexp.multiline === true. Actual: '",
+                                                "value": "#1: var regexp = /(?:)/\\u006D; regexp.multiline === true. Actual: ",
+                                                "valueText": "#1: var regexp = /(?:)/\\u006D; regexp.multiline === true. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -326,6 +337,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "regexp",
+                                                        "value": "regexp",
                                                         "valueText": "regexp"
                                                     },
                                                     "dotToken": {
@@ -337,6 +349,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "multiline",
+                                                        "value": "multiline",
                                                         "valueText": "multiline"
                                                     }
                                                 },

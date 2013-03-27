@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -203,6 +204,7 @@
                                                 "width": 4,
                                                 "fullWidth": 8,
                                                 "text": "eval",
+                                                "value": "eval",
                                                 "valueText": "eval",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -229,6 +231,8 @@
                                                             "width": 27,
                                                             "fullWidth": 28,
                                                             "text": "'\"use strict\"; var x = \"\\\\'",
+                                                            "value": "\"use strict\"; var x = \"\\",
+                                                            "valueText": "\"use strict\"; var x = \"\\",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -253,7 +257,9 @@
                                                         "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 5,
-                                                            "text": "'1\";'"
+                                                            "text": "'1\";'",
+                                                            "value": "1\";",
+                                                            "valueText": "1\";"
                                                         }
                                                     }
                                                 ],
@@ -305,7 +311,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -377,6 +385,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "e",
+                                    "value": "e",
                                     "valueText": "e"
                                 },
                                 "closeParenToken": {
@@ -449,6 +458,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "e",
+                                                        "value": "e",
                                                         "valueText": "e",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -475,6 +485,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "SyntaxError",
+                                                        "value": "SyntaxError",
                                                         "valueText": "SyntaxError"
                                                     }
                                                 },
@@ -558,6 +569,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -573,6 +585,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

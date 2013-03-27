@@ -13328,7 +13328,6 @@ var TypeScript;
     (function (Syntax) {
         var VariableWidthTokenWithNoTrivia = (function () {
             function VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, textOrWidth) {
-                this._value = null;
                 this._sourceText = sourceText;
                 this._fullStart = fullStart;
                 this.tokenKind = kind;
@@ -13380,7 +13379,16 @@ var TypeScript;
                 return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
             };
             VariableWidthTokenWithNoTrivia.prototype.value = function () {
-                return this._value || (this._value = Syntax.value(this));
+                if ((this)._value === undefined) {
+                    (this)._value = Syntax.value(this);
+                }
+                return (this)._value;
+            };
+            VariableWidthTokenWithNoTrivia.prototype.valueText = function () {
+                if ((this)._valueText === undefined) {
+                    (this)._valueText = Syntax.valueText(this);
+                }
+                return (this)._valueText;
             };
             VariableWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -13459,7 +13467,6 @@ var TypeScript;
         Syntax.VariableWidthTokenWithNoTrivia = VariableWidthTokenWithNoTrivia;        
         var VariableWidthTokenWithLeadingTrivia = (function () {
             function VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth) {
-                this._value = null;
                 this._sourceText = sourceText;
                 this._fullStart = fullStart;
                 this.tokenKind = kind;
@@ -13512,7 +13519,16 @@ var TypeScript;
                 return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
-                return this._value || (this._value = Syntax.value(this));
+                if ((this)._value === undefined) {
+                    (this)._value = Syntax.value(this);
+                }
+                return (this)._value;
+            };
+            VariableWidthTokenWithLeadingTrivia.prototype.valueText = function () {
+                if ((this)._valueText === undefined) {
+                    (this)._valueText = Syntax.valueText(this);
+                }
+                return (this)._valueText;
             };
             VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -13591,7 +13607,6 @@ var TypeScript;
         Syntax.VariableWidthTokenWithLeadingTrivia = VariableWidthTokenWithLeadingTrivia;        
         var VariableWidthTokenWithTrailingTrivia = (function () {
             function VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, textOrWidth, trailingTriviaInfo) {
-                this._value = null;
                 this._sourceText = sourceText;
                 this._fullStart = fullStart;
                 this.tokenKind = kind;
@@ -13644,7 +13659,16 @@ var TypeScript;
                 return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
-                return this._value || (this._value = Syntax.value(this));
+                if ((this)._value === undefined) {
+                    (this)._value = Syntax.value(this);
+                }
+                return (this)._value;
+            };
+            VariableWidthTokenWithTrailingTrivia.prototype.valueText = function () {
+                if ((this)._valueText === undefined) {
+                    (this)._valueText = Syntax.valueText(this);
+                }
+                return (this)._valueText;
             };
             VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -13723,7 +13747,6 @@ var TypeScript;
         Syntax.VariableWidthTokenWithTrailingTrivia = VariableWidthTokenWithTrailingTrivia;        
         var VariableWidthTokenWithLeadingAndTrailingTrivia = (function () {
             function VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth, trailingTriviaInfo) {
-                this._value = null;
                 this._sourceText = sourceText;
                 this._fullStart = fullStart;
                 this.tokenKind = kind;
@@ -13777,7 +13800,16 @@ var TypeScript;
                 return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-                return this._value || (this._value = Syntax.value(this));
+                if ((this)._value === undefined) {
+                    (this)._value = Syntax.value(this);
+                }
+                return (this)._value;
+            };
+            VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
+                if ((this)._valueText === undefined) {
+                    (this)._valueText = Syntax.valueText(this);
+                }
+                return (this)._valueText;
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -13895,7 +13927,10 @@ var TypeScript;
                 return this.text();
             };
             FixedWidthTokenWithNoTrivia.prototype.value = function () {
-                return null;
+                return Syntax.value(this);
+            };
+            FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -14022,7 +14057,10 @@ var TypeScript;
                 return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
-                return null;
+                return Syntax.value(this);
+            };
+            FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -14149,7 +14187,10 @@ var TypeScript;
                 return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
-                return null;
+                return Syntax.value(this);
+            };
+            FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -14277,7 +14318,10 @@ var TypeScript;
                 return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-                return null;
+                return Syntax.value(this);
+            };
+            FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -14403,12 +14447,12 @@ var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
         function realizeToken(token) {
-            return new RealizedToken(token.tokenKind, token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
+            return new RealizedToken(token.tokenKind, token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia());
         }
         Syntax.realizeToken = realizeToken;
         function convertToIdentifierName(token) {
             TypeScript.Debug.assert(TypeScript.SyntaxFacts.isAnyKeyword(token.tokenKind));
-            return new RealizedToken(11 /* IdentifierName */ , token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
+            return new RealizedToken(11 /* IdentifierName */ , token.leadingTrivia(), token.text(), token.text(), token.text(), token.trailingTrivia());
         }
         Syntax.convertToIdentifierName = convertToIdentifierName;
         function tokenToJSON(token) {
@@ -14419,8 +14463,10 @@ var TypeScript;
                 result.fullWidth = token.fullWidth();
             }
             result.text = token.text();
-            if (token.value() !== null) {
-                result.valueText = token.value();
+            var value = token.value();
+            if (value !== null) {
+                result.value = value;
+                result.valueText = token.valueText();
             }
             if (token.hasLeadingTrivia()) {
                 result.hasLeadingTrivia = true;
@@ -14458,27 +14504,117 @@ var TypeScript;
         }
         Syntax.tokenToJSON = tokenToJSON;
         function value(token) {
-            if (token.tokenKind === 11 /* IdentifierName */ ) {
-                var text = token.text();
-                for(var i = 0; i < text.length; i++) {
-                    if (!TypeScript.Scanner1.isIdentifierPartCharacter[text.charCodeAt(i)]) {
-                        return null;
+            return value1(token.tokenKind, token.text());
+        }
+        Syntax.value = value;
+        function hexValue(text, start, length) {
+            var intChar = 0;
+            for(var i = 0; i < length; i++) {
+                var ch2 = text.charCodeAt(start + i);
+                if (!TypeScript.CharacterInfo.isHexDigit(ch2)) {
+                    break;
+                }
+                intChar = (intChar << 4) + TypeScript.CharacterInfo.hexValue(ch2);
+            }
+            return intChar;
+        }
+        var characterArray = [];
+        function convertEscapes(text) {
+            characterArray.length = 0;
+            for(var i = 0, n = text.length; i < n; i++) {
+                var ch = text.charCodeAt(i);
+                if (ch === 92 /* backslash */ ) {
+                    i++;
+                    if (i < n) {
+                        ch = text.charCodeAt(i);
+                        switch(ch) {
+                            case 48 /* _0 */ :
+                                characterArray.push(0 /* nullCharacter */ );
+                                continue;
+                            case 98 /* b */ :
+                                characterArray.push(8 /* backspace */ );
+                                continue;
+                            case 102 /* f */ :
+                                characterArray.push(12 /* formFeed */ );
+                                continue;
+                            case 110 /* n */ :
+                                characterArray.push(10 /* lineFeed */ );
+                                continue;
+                            case 114 /* r */ :
+                                characterArray.push(13 /* carriageReturn */ );
+                                continue;
+                            case 116 /* t */ :
+                                characterArray.push(9 /* tab */ );
+                                continue;
+                            case 118 /* v */ :
+                                characterArray.push(11 /* verticalTab */ );
+                                continue;
+                            case 120 /* x */ :
+                                characterArray.push(hexValue(text, i + 1, 2));
+                                i += 2;
+                                continue;
+                            case 117 /* u */ :
+                                characterArray.push(hexValue(text, i + 1, 4));
+                                i += 4;
+                                continue;
+                            default:
+                        }
                     }
                 }
-                return text;
-            } else if (token.tokenKind === 13 /* NumericLiteral */ ) {
+                characterArray.push(ch);
+            }
+            return String.fromCharCode.apply(null, characterArray);
+        }
+        function massageEscapes(text) {
+            return text.indexOf("\\") >= 0 ? convertEscapes(text) : text;
+        }
+        function value1(kind, text) {
+            if (kind === 11 /* IdentifierName */ ) {
+                return massageEscapes(text);
+            }
+            switch(kind) {
+                case 37 /* TrueKeyword */ :
+                    return true;
+                case 24 /* FalseKeyword */ :
+                    return false;
+                case 32 /* NullKeyword */ :
+                    return null;
+            }
+            if (TypeScript.SyntaxFacts.isAnyKeyword(kind) || TypeScript.SyntaxFacts.isAnyPunctuation(kind)) {
                 return null;
-            } else if (token.tokenKind === 14 /* StringLiteral */ ) {
-                return null;
-            } else if (token.tokenKind === 12 /* RegularExpressionLiteral */ ) {
-                return null;
-            } else if (token.tokenKind === 10 /* EndOfFileToken */  || token.tokenKind === 9 /* ErrorToken */ ) {
+            }
+            if (kind === 13 /* NumericLiteral */ ) {
+                return parseFloat(text);
+            } else if (kind === 14 /* StringLiteral */ ) {
+                if (text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0)) {
+                    return massageEscapes(text.substr(1, text.length - 2));
+                } else {
+                    return massageEscapes(text.substr(1));
+                }
+            } else if (kind === 12 /* RegularExpressionLiteral */ ) {
+                try  {
+                    var lastSlash = text.lastIndexOf("/");
+                    var body = text.substring(1, lastSlash);
+                    var flags = text.substring(lastSlash + 1);
+                    return new RegExp(body, flags);
+                } catch (e) {
+                    return null;
+                }
+            } else if (kind === 10 /* EndOfFileToken */  || kind === 9 /* ErrorToken */ ) {
                 return null;
             } else {
                 throw TypeScript.Errors.invalidOperation();
             }
         }
-        Syntax.value = value;
+        function valueText1(kind, text) {
+            var value = value1(kind, text);
+            return value === null ? "" : value.toString();
+        }
+        function valueText(token) {
+            var value = token.value();
+            return value === null ? "" : value.toString();
+        }
+        Syntax.valueText = valueText;
         var EmptyToken = (function () {
             function EmptyToken(kind) {
                 this.tokenKind = kind;
@@ -14543,6 +14679,9 @@ var TypeScript;
             EmptyToken.prototype.value = function () {
                 return null;
             };
+            EmptyToken.prototype.valueText = function () {
+                return "";
+            };
             EmptyToken.prototype.hasLeadingTrivia = function () {
                 return false;
             };
@@ -14600,15 +14739,16 @@ var TypeScript;
         }
         Syntax.emptyToken = emptyToken;
         var RealizedToken = (function () {
-            function RealizedToken(tokenKind, leadingTrivia, text, value, trailingTrivia) {
+            function RealizedToken(tokenKind, leadingTrivia, text, value, valueText, trailingTrivia) {
                 this.tokenKind = tokenKind;
                 this._leadingTrivia = leadingTrivia;
                 this._text = text;
                 this._value = value;
+                this._valueText = valueText;
                 this._trailingTrivia = trailingTrivia;
             }
             RealizedToken.prototype.clone = function () {
-                return new RealizedToken(this.tokenKind, this._leadingTrivia, this._text, this._value, this._trailingTrivia);
+                return new RealizedToken(this.tokenKind, this._leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia);
             };
             RealizedToken.prototype.kind = function () {
                 return this.tokenKind;
@@ -14670,6 +14810,9 @@ var TypeScript;
             RealizedToken.prototype.value = function () {
                 return this._value;
             };
+            RealizedToken.prototype.valueText = function () {
+                return this._valueText;
+            };
             RealizedToken.prototype.hasLeadingTrivia = function () {
                 return this._leadingTrivia.count() > 0;
             };
@@ -14718,18 +14861,17 @@ var TypeScript;
                 this.trailingTrivia().collectTextElements(elements);
             };
             RealizedToken.prototype.withLeadingTrivia = function (leadingTrivia) {
-                return new RealizedToken(this.tokenKind, leadingTrivia, this._text, this._value, this._trailingTrivia);
+                return new RealizedToken(this.tokenKind, leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia);
             };
             RealizedToken.prototype.withTrailingTrivia = function (trailingTrivia) {
-                return new RealizedToken(this.tokenKind, this._leadingTrivia, this._text, this._value, trailingTrivia);
+                return new RealizedToken(this.tokenKind, this._leadingTrivia, this._text, this._value, this._valueText, trailingTrivia);
             };
             return RealizedToken;
         })();        
         function token(kind, info) {
             if (typeof info === "undefined") { info = null; }
             var text = (info !== null && info.text !== undefined) ? info.text : TypeScript.SyntaxFacts.getText(kind);
-            var value = (info !== null && info.value !== undefined) ? info.value : null;
-            return new RealizedToken(kind, TypeScript.Syntax.triviaList(info === null ? null : info.leadingTrivia), text, value, TypeScript.Syntax.triviaList(info === null ? null : info.trailingTrivia));
+            return new RealizedToken(kind, TypeScript.Syntax.triviaList(info === null ? null : info.leadingTrivia), text, value1(kind, text), valueText1(kind, text), TypeScript.Syntax.triviaList(info === null ? null : info.trailingTrivia));
         }
         Syntax.token = token;
         function identifier(text, info) {
@@ -57367,16 +57509,16 @@ var Program = (function () {
         }
         if (true) {
         }
+        Environment.standardOut.WriteLine("Testing Incremental 2.");
+        if (specificFile === undefined) {
+            TypeScript.IncrementalParserTests.runAllTests();
+        }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (fileName) {
             return _this.runParser(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
-        Environment.standardOut.WriteLine("Testing Incremental 2.");
-        if (specificFile === undefined) {
-            TypeScript.IncrementalParserTests.runAllTests();
-        }
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (fileName) {
             return _this.runEmitter(fileName, 1 /* EcmaScript5 */ , verify, generate, false);

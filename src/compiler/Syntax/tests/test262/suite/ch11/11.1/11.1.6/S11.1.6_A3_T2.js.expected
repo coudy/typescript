@@ -100,7 +100,9 @@
                         "expression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
@@ -132,7 +134,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -177,6 +181,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -203,6 +208,8 @@
                                                 "width": 25,
                                                 "fullWidth": 26,
                                                 "text": "'#1: (1) === 1. Actual: '",
+                                                "value": "#1: (1) === 1. Actual: ",
+                                                "valueText": "#1: (1) === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -243,7 +250,9 @@
                                                     "expression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "1"
+                                                        "text": "1",
+                                                        "value": 1,
+                                                        "valueText": "1"
                                                     },
                                                     "closeParenToken": {
                                                         "kind": "CloseParenToken",
@@ -344,6 +353,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -389,6 +399,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -403,7 +414,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -468,6 +481,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "closeParenToken": {
@@ -501,6 +515,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -546,6 +561,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -572,6 +588,8 @@
                                                 "width": 48,
                                                 "fullWidth": 49,
                                                 "text": "'#2: var x = new Number(1); (x) === x. Actual: '",
+                                                "value": "#2: var x = new Number(1); (x) === x. Actual: ",
+                                                "valueText": "#2: var x = new Number(1); (x) === x. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -613,6 +631,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     },
                                                     "closeParenToken": {

@@ -23,6 +23,7 @@
                             "width": 6,
                             "fullWidth": 569,
                             "text": "Object",
+                            "value": "Object",
                             "valueText": "Object",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -91,6 +92,7 @@
                             "kind": "IdentifierName",
                             "width": 14,
                             "text": "defineProperty",
+                            "value": "defineProperty",
                             "valueText": "defineProperty"
                         }
                     },
@@ -110,6 +112,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Object",
+                                    "value": "Object",
                                     "valueText": "Object"
                                 },
                                 "dotToken": {
@@ -121,6 +124,7 @@
                                     "kind": "IdentifierName",
                                     "width": 9,
                                     "text": "prototype",
+                                    "value": "prototype",
                                     "valueText": "prototype"
                                 }
                             },
@@ -147,6 +151,8 @@
                                 "width": 6,
                                 "fullWidth": 28,
                                 "text": "\"prop\"",
+                                "value": "prop",
+                                "valueText": "prop",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
                                     {
@@ -204,6 +210,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "value",
+                                            "value": "value",
                                             "valueText": "value"
                                         },
                                         "colonToken": {
@@ -222,7 +229,9 @@
                                         "expression": {
                                             "kind": "NumericLiteral",
                                             "width": 4,
-                                            "text": "1001"
+                                            "text": "1001",
+                                            "value": 1001,
+                                            "valueText": "1001"
                                         }
                                     },
                                     {
@@ -245,6 +254,7 @@
                                             "kind": "IdentifierName",
                                             "width": 8,
                                             "text": "writable",
+                                            "value": "writable",
                                             "valueText": "writable"
                                         },
                                         "colonToken": {
@@ -263,7 +273,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         }
                                     },
                                     {
@@ -286,6 +298,7 @@
                                             "kind": "IdentifierName",
                                             "width": 10,
                                             "text": "enumerable",
+                                            "value": "enumerable",
                                             "valueText": "enumerable"
                                         },
                                         "colonToken": {
@@ -304,7 +317,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         }
                                     },
                                     {
@@ -327,6 +342,7 @@
                                             "kind": "IdentifierName",
                                             "width": 12,
                                             "text": "configurable",
+                                            "value": "configurable",
                                             "valueText": "configurable"
                                         },
                                         "colonToken": {
@@ -345,7 +361,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         }
                                     }
                                 ],
@@ -428,6 +446,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "prop",
+                                "value": "prop",
                                 "valueText": "prop",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -456,7 +475,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 4,
-                                    "text": "1002"
+                                    "text": "1002",
+                                    "value": 1002,
+                                    "valueText": "1002"
                                 }
                             }
                         }
@@ -553,6 +574,7 @@
                                         "kind": "IdentifierName",
                                         "width": 14,
                                         "text": "hasOwnProperty",
+                                        "value": "hasOwnProperty",
                                         "valueText": "hasOwnProperty"
                                     }
                                 },
@@ -568,7 +590,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 6,
-                                            "text": "\"prop\""
+                                            "text": "\"prop\"",
+                                            "value": "prop",
+                                            "valueText": "prop"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -607,6 +631,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "prop",
+                                    "value": "prop",
                                     "valueText": "prop",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -632,7 +657,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 4,
-                                    "text": "1002"
+                                    "text": "1002",
+                                    "value": 1002,
+                                    "valueText": "1002"
                                 }
                             }
                         },
@@ -700,7 +727,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 61,
-                                "text": "\"this.prop should take precedence over Object.prototype.prop\""
+                                "text": "\"this.prop should take precedence over Object.prototype.prop\"",
+                                "value": "this.prop should take precedence over Object.prototype.prop",
+                                "valueText": "this.prop should take precedence over Object.prototype.prop"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",

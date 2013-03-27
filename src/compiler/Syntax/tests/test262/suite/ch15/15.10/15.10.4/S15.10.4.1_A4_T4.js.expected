@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 299,
                         "text": "__re",
+                        "value": "__re",
                         "valueText": "__re",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -98,6 +99,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "RegExp",
+                            "value": "RegExp",
                             "valueText": "RegExp"
                         },
                         "argumentList": {
@@ -146,7 +148,9 @@
                                     "expression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     }
                                 }
                             ],
@@ -221,6 +225,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -233,6 +238,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "source",
+                            "value": "source",
                             "valueText": "source",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -259,7 +265,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"null\""
+                        "text": "\"null\"",
+                        "value": "null",
+                        "valueText": "null"
                     }
                 },
                 "closeParenToken": {
@@ -304,6 +312,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -328,7 +337,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 71,
-                                                "text": "'#1: __re = new RegExp(null, void 0); __re.source === \"null\". Actual: '"
+                                                "text": "'#1: __re = new RegExp(null, void 0); __re.source === \"null\". Actual: '",
+                                                "value": "#1: __re = new RegExp(null, void 0); __re.source === \"null\". Actual: ",
+                                                "valueText": "#1: __re = new RegExp(null, void 0); __re.source === \"null\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -358,6 +369,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -369,6 +381,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "source",
+                                                        "value": "source",
                                                         "valueText": "source"
                                                     }
                                                 },
@@ -467,6 +480,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -479,6 +493,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "multiline",
+                            "value": "multiline",
                             "valueText": "multiline",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -505,7 +520,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -550,6 +567,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -576,6 +594,8 @@
                                                 "width": 73,
                                                 "fullWidth": 74,
                                                 "text": "'#2: __re = new RegExp(null, void 0); __re.multiline === false. Actual: '",
+                                                "value": "#2: __re = new RegExp(null, void 0); __re.multiline === false. Actual: ",
+                                                "valueText": "#2: __re = new RegExp(null, void 0); __re.multiline === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -612,6 +632,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -623,6 +644,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "multiline",
+                                                        "value": "multiline",
                                                         "valueText": "multiline"
                                                     }
                                                 },
@@ -721,6 +743,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -733,6 +756,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "global",
+                            "value": "global",
                             "valueText": "global",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -759,7 +783,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -804,6 +830,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -830,6 +857,8 @@
                                                 "width": 70,
                                                 "fullWidth": 71,
                                                 "text": "'#3: __re = new RegExp(null, void 0); __re.global === false. Actual: '",
+                                                "value": "#3: __re = new RegExp(null, void 0); __re.global === false. Actual: ",
+                                                "valueText": "#3: __re = new RegExp(null, void 0); __re.global === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -866,6 +895,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -877,6 +907,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "global",
+                                                        "value": "global",
                                                         "valueText": "global"
                                                     }
                                                 },
@@ -975,6 +1006,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -987,6 +1019,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "ignoreCase",
+                            "value": "ignoreCase",
                             "valueText": "ignoreCase",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1013,7 +1046,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -1058,6 +1093,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1084,6 +1120,8 @@
                                                 "width": 74,
                                                 "fullWidth": 75,
                                                 "text": "'#4: __re = new RegExp(null, void 0); __re.ignoreCase === false. Actual: '",
+                                                "value": "#4: __re = new RegExp(null, void 0); __re.ignoreCase === false. Actual: ",
+                                                "valueText": "#4: __re = new RegExp(null, void 0); __re.ignoreCase === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1120,6 +1158,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -1131,6 +1170,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "ignoreCase",
+                                                        "value": "ignoreCase",
                                                         "valueText": "ignoreCase"
                                                     }
                                                 },

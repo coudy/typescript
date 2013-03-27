@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -179,6 +180,7 @@
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "result",
+                                            "value": "result",
                                             "valueText": "result",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -207,7 +209,9 @@
                                             "value": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         }
                                     }
@@ -269,6 +273,7 @@
                                             "width": 17,
                                             "fullWidth": 18,
                                             "text": "expectedNullChars",
+                                            "value": "expectedNullChars",
                                             "valueText": "expectedNullChars",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -314,6 +319,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "Array",
+                                                    "value": "Array",
                                                     "valueText": "Array"
                                                 },
                                                 "argumentList": {
@@ -365,6 +371,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -382,7 +389,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -414,7 +423,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0000\""
+                                    "text": "\"\\\\u0000\"",
+                                    "value": "\\u0000",
+                                    "valueText": "\\u0000"
                                 }
                             },
                             "semicolonToken": {
@@ -446,6 +457,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -463,7 +475,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -495,7 +509,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0001\""
+                                    "text": "\"\\\\u0001\"",
+                                    "value": "\\u0001",
+                                    "valueText": "\\u0001"
                                 }
                             },
                             "semicolonToken": {
@@ -527,6 +543,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -544,7 +561,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "2"
+                                        "text": "2",
+                                        "value": 2,
+                                        "valueText": "2"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -576,7 +595,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0002\""
+                                    "text": "\"\\\\u0002\"",
+                                    "value": "\\u0002",
+                                    "valueText": "\\u0002"
                                 }
                             },
                             "semicolonToken": {
@@ -608,6 +629,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -625,7 +647,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "3"
+                                        "text": "3",
+                                        "value": 3,
+                                        "valueText": "3"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -657,7 +681,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0003\""
+                                    "text": "\"\\\\u0003\"",
+                                    "value": "\\u0003",
+                                    "valueText": "\\u0003"
                                 }
                             },
                             "semicolonToken": {
@@ -689,6 +715,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -706,7 +733,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "4"
+                                        "text": "4",
+                                        "value": 4,
+                                        "valueText": "4"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -738,7 +767,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0004\""
+                                    "text": "\"\\\\u0004\"",
+                                    "value": "\\u0004",
+                                    "valueText": "\\u0004"
                                 }
                             },
                             "semicolonToken": {
@@ -770,6 +801,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -787,7 +819,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "5"
+                                        "text": "5",
+                                        "value": 5,
+                                        "valueText": "5"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -819,7 +853,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0005\""
+                                    "text": "\"\\\\u0005\"",
+                                    "value": "\\u0005",
+                                    "valueText": "\\u0005"
                                 }
                             },
                             "semicolonToken": {
@@ -851,6 +887,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -868,7 +905,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "6"
+                                        "text": "6",
+                                        "value": 6,
+                                        "valueText": "6"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -900,7 +939,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0006\""
+                                    "text": "\"\\\\u0006\"",
+                                    "value": "\\u0006",
+                                    "valueText": "\\u0006"
                                 }
                             },
                             "semicolonToken": {
@@ -932,6 +973,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -949,7 +991,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "7"
+                                        "text": "7",
+                                        "value": 7,
+                                        "valueText": "7"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -981,7 +1025,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0007\""
+                                    "text": "\"\\\\u0007\"",
+                                    "value": "\\u0007",
+                                    "valueText": "\\u0007"
                                 }
                             },
                             "semicolonToken": {
@@ -1013,6 +1059,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1030,7 +1077,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "8"
+                                        "text": "8",
+                                        "value": 8,
+                                        "valueText": "8"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1062,7 +1111,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"\\\\b\""
+                                    "text": "\"\\\\b\"",
+                                    "value": "\\b",
+                                    "valueText": "\\b"
                                 }
                             },
                             "semicolonToken": {
@@ -1094,6 +1145,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1111,7 +1163,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "9"
+                                        "text": "9",
+                                        "value": 9,
+                                        "valueText": "9"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1143,7 +1197,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"\\\\t\""
+                                    "text": "\"\\\\t\"",
+                                    "value": "\\t",
+                                    "valueText": "\\t"
                                 }
                             },
                             "semicolonToken": {
@@ -1175,6 +1231,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1192,7 +1249,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "10"
+                                        "text": "10",
+                                        "value": 10,
+                                        "valueText": "10"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1224,7 +1283,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"\\\\n\""
+                                    "text": "\"\\\\n\"",
+                                    "value": "\\n",
+                                    "valueText": "\\n"
                                 }
                             },
                             "semicolonToken": {
@@ -1256,6 +1317,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1273,7 +1335,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "11"
+                                        "text": "11",
+                                        "value": 11,
+                                        "valueText": "11"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1305,7 +1369,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u000b\""
+                                    "text": "\"\\\\u000b\"",
+                                    "value": "\\u000b",
+                                    "valueText": "\\u000b"
                                 }
                             },
                             "semicolonToken": {
@@ -1337,6 +1403,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1354,7 +1421,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "12"
+                                        "text": "12",
+                                        "value": 12,
+                                        "valueText": "12"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1386,7 +1455,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"\\\\f\""
+                                    "text": "\"\\\\f\"",
+                                    "value": "\\f",
+                                    "valueText": "\\f"
                                 }
                             },
                             "semicolonToken": {
@@ -1418,6 +1489,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1435,7 +1507,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "13"
+                                        "text": "13",
+                                        "value": 13,
+                                        "valueText": "13"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1467,7 +1541,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"\\\\r\""
+                                    "text": "\"\\\\r\"",
+                                    "value": "\\r",
+                                    "valueText": "\\r"
                                 }
                             },
                             "semicolonToken": {
@@ -1499,6 +1575,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1516,7 +1593,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "14"
+                                        "text": "14",
+                                        "value": 14,
+                                        "valueText": "14"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1548,7 +1627,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u000e\""
+                                    "text": "\"\\\\u000e\"",
+                                    "value": "\\u000e",
+                                    "valueText": "\\u000e"
                                 }
                             },
                             "semicolonToken": {
@@ -1580,6 +1661,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1597,7 +1679,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "15"
+                                        "text": "15",
+                                        "value": 15,
+                                        "valueText": "15"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1629,7 +1713,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u000f\""
+                                    "text": "\"\\\\u000f\"",
+                                    "value": "\\u000f",
+                                    "valueText": "\\u000f"
                                 }
                             },
                             "semicolonToken": {
@@ -1661,6 +1747,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1678,7 +1765,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "16"
+                                        "text": "16",
+                                        "value": 16,
+                                        "valueText": "16"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1710,7 +1799,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0010\""
+                                    "text": "\"\\\\u0010\"",
+                                    "value": "\\u0010",
+                                    "valueText": "\\u0010"
                                 }
                             },
                             "semicolonToken": {
@@ -1742,6 +1833,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1759,7 +1851,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "17"
+                                        "text": "17",
+                                        "value": 17,
+                                        "valueText": "17"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1791,7 +1885,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0011\""
+                                    "text": "\"\\\\u0011\"",
+                                    "value": "\\u0011",
+                                    "valueText": "\\u0011"
                                 }
                             },
                             "semicolonToken": {
@@ -1823,6 +1919,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1840,7 +1937,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "18"
+                                        "text": "18",
+                                        "value": 18,
+                                        "valueText": "18"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1872,7 +1971,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0012\""
+                                    "text": "\"\\\\u0012\"",
+                                    "value": "\\u0012",
+                                    "valueText": "\\u0012"
                                 }
                             },
                             "semicolonToken": {
@@ -1904,6 +2005,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1921,7 +2023,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "19"
+                                        "text": "19",
+                                        "value": 19,
+                                        "valueText": "19"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1953,7 +2057,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0013\""
+                                    "text": "\"\\\\u0013\"",
+                                    "value": "\\u0013",
+                                    "valueText": "\\u0013"
                                 }
                             },
                             "semicolonToken": {
@@ -1985,6 +2091,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2002,7 +2109,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "20"
+                                        "text": "20",
+                                        "value": 20,
+                                        "valueText": "20"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2034,7 +2143,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0014\""
+                                    "text": "\"\\\\u0014\"",
+                                    "value": "\\u0014",
+                                    "valueText": "\\u0014"
                                 }
                             },
                             "semicolonToken": {
@@ -2066,6 +2177,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2083,7 +2195,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "21"
+                                        "text": "21",
+                                        "value": 21,
+                                        "valueText": "21"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2115,7 +2229,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0015\""
+                                    "text": "\"\\\\u0015\"",
+                                    "value": "\\u0015",
+                                    "valueText": "\\u0015"
                                 }
                             },
                             "semicolonToken": {
@@ -2147,6 +2263,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2164,7 +2281,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "22"
+                                        "text": "22",
+                                        "value": 22,
+                                        "valueText": "22"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2196,7 +2315,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0016\""
+                                    "text": "\"\\\\u0016\"",
+                                    "value": "\\u0016",
+                                    "valueText": "\\u0016"
                                 }
                             },
                             "semicolonToken": {
@@ -2228,6 +2349,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2245,7 +2367,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "23"
+                                        "text": "23",
+                                        "value": 23,
+                                        "valueText": "23"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2277,7 +2401,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0017\""
+                                    "text": "\"\\\\u0017\"",
+                                    "value": "\\u0017",
+                                    "valueText": "\\u0017"
                                 }
                             },
                             "semicolonToken": {
@@ -2309,6 +2435,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2326,7 +2453,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "24"
+                                        "text": "24",
+                                        "value": 24,
+                                        "valueText": "24"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2358,7 +2487,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0018\""
+                                    "text": "\"\\\\u0018\"",
+                                    "value": "\\u0018",
+                                    "valueText": "\\u0018"
                                 }
                             },
                             "semicolonToken": {
@@ -2390,6 +2521,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2407,7 +2539,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "25"
+                                        "text": "25",
+                                        "value": 25,
+                                        "valueText": "25"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2439,7 +2573,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u0019\""
+                                    "text": "\"\\\\u0019\"",
+                                    "value": "\\u0019",
+                                    "valueText": "\\u0019"
                                 }
                             },
                             "semicolonToken": {
@@ -2471,6 +2607,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2488,7 +2625,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "26"
+                                        "text": "26",
+                                        "value": 26,
+                                        "valueText": "26"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2520,7 +2659,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u001a\""
+                                    "text": "\"\\\\u001a\"",
+                                    "value": "\\u001a",
+                                    "valueText": "\\u001a"
                                 }
                             },
                             "semicolonToken": {
@@ -2552,6 +2693,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2569,7 +2711,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "27"
+                                        "text": "27",
+                                        "value": 27,
+                                        "valueText": "27"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2601,7 +2745,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u001b\""
+                                    "text": "\"\\\\u001b\"",
+                                    "value": "\\u001b",
+                                    "valueText": "\\u001b"
                                 }
                             },
                             "semicolonToken": {
@@ -2633,6 +2779,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2650,7 +2797,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "28"
+                                        "text": "28",
+                                        "value": 28,
+                                        "valueText": "28"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2682,7 +2831,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u001c\""
+                                    "text": "\"\\\\u001c\"",
+                                    "value": "\\u001c",
+                                    "valueText": "\\u001c"
                                 }
                             },
                             "semicolonToken": {
@@ -2714,6 +2865,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2731,7 +2883,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "29"
+                                        "text": "29",
+                                        "value": 29,
+                                        "valueText": "29"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2763,7 +2917,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u001d\""
+                                    "text": "\"\\\\u001d\"",
+                                    "value": "\\u001d",
+                                    "valueText": "\\u001d"
                                 }
                             },
                             "semicolonToken": {
@@ -2795,6 +2951,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2812,7 +2969,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "30"
+                                        "text": "30",
+                                        "value": 30,
+                                        "valueText": "30"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2844,7 +3003,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u001e\""
+                                    "text": "\"\\\\u001e\"",
+                                    "value": "\\u001e",
+                                    "valueText": "\\u001e"
                                 }
                             },
                             "semicolonToken": {
@@ -2876,6 +3037,7 @@
                                         "width": 17,
                                         "fullWidth": 25,
                                         "text": "expectedNullChars",
+                                        "value": "expectedNullChars",
                                         "valueText": "expectedNullChars",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -2893,7 +3055,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "31"
+                                        "text": "31",
+                                        "value": 31,
+                                        "valueText": "31"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -2925,7 +3089,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"\\\\u001f\""
+                                    "text": "\"\\\\u001f\"",
+                                    "value": "\\u001f",
+                                    "valueText": "\\u001f"
                                 }
                             },
                             "semicolonToken": {
@@ -3001,6 +3167,7 @@
                                             "width": 5,
                                             "fullWidth": 6,
                                             "text": "index",
+                                            "value": "index",
                                             "valueText": "index",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -3030,6 +3197,7 @@
                                 "kind": "IdentifierName",
                                 "width": 17,
                                 "text": "expectedNullChars",
+                                "value": "expectedNullChars",
                                 "valueText": "expectedNullChars"
                             },
                             "closeParenToken": {
@@ -3104,6 +3272,7 @@
                                                         "width": 3,
                                                         "fullWidth": 4,
                                                         "text": "str",
+                                                        "value": "str",
                                                         "valueText": "str",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -3139,6 +3308,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 4,
                                                                     "text": "JSON",
+                                                                    "value": "JSON",
                                                                     "valueText": "JSON"
                                                                 },
                                                                 "dotToken": {
@@ -3150,6 +3320,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 9,
                                                                     "text": "stringify",
+                                                                    "value": "stringify",
                                                                     "valueText": "stringify"
                                                                 }
                                                             },
@@ -3185,7 +3356,9 @@
                                                                                 "propertyName": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 6,
-                                                                                    "text": "\"name\""
+                                                                                    "text": "\"name\"",
+                                                                                    "value": "name",
+                                                                                    "valueText": "name"
                                                                                 },
                                                                                 "colonToken": {
                                                                                     "kind": "ColonToken",
@@ -3205,6 +3378,8 @@
                                                                                     "width": 390,
                                                                                     "fullWidth": 391,
                                                                                     "text": "\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u0008\\u0009\\u000A\\u000B\\u000C\\u000D\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001FJohn\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u0008\\u0009\\u000A\\u000B\\u000C\\u000D\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001F\"",
+                                                                                    "value": "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001fJohn\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f",
+                                                                                    "valueText": "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001fJohn\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
                                                                                         {
@@ -3259,6 +3434,7 @@
                                                 "width": 6,
                                                 "fullWidth": 19,
                                                 "text": "result",
+                                                "value": "result",
                                                 "valueText": "result",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -3307,6 +3483,7 @@
                                                             "width": 6,
                                                             "fullWidth": 7,
                                                             "text": "result",
+                                                            "value": "result",
                                                             "valueText": "result",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -3342,6 +3519,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 3,
                                                                         "text": "str",
+                                                                        "value": "str",
                                                                         "valueText": "str"
                                                                     },
                                                                     "dotToken": {
@@ -3353,6 +3531,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 7,
                                                                         "text": "indexOf",
+                                                                        "value": "indexOf",
                                                                         "valueText": "indexOf"
                                                                     }
                                                                 },
@@ -3372,6 +3551,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 17,
                                                                                 "text": "expectedNullChars",
+                                                                                "value": "expectedNullChars",
                                                                                 "valueText": "expectedNullChars"
                                                                             },
                                                                             "openBracketToken": {
@@ -3383,6 +3563,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 5,
                                                                                 "text": "index",
+                                                                                "value": "index",
                                                                                 "valueText": "index"
                                                                             },
                                                                             "closeBracketToken": {
@@ -3433,6 +3614,8 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -3470,6 +3653,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 3,
                                                                     "text": "str",
+                                                                    "value": "str",
                                                                     "valueText": "str"
                                                                 },
                                                                 "dotToken": {
@@ -3481,6 +3665,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 7,
                                                                     "text": "indexOf",
+                                                                    "value": "indexOf",
                                                                     "valueText": "indexOf"
                                                                 }
                                                             },
@@ -3500,6 +3685,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 17,
                                                                             "text": "expectedNullChars",
+                                                                            "value": "expectedNullChars",
                                                                             "valueText": "expectedNullChars"
                                                                         },
                                                                         "openBracketToken": {
@@ -3511,6 +3697,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 5,
                                                                             "text": "index",
+                                                                            "value": "index",
                                                                             "valueText": "index"
                                                                         },
                                                                         "closeBracketToken": {
@@ -3559,7 +3746,9 @@
                                                             "operand": {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             }
                                                         }
                                                     }
@@ -3637,6 +3826,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "result",
+                                "value": "result",
                                 "valueText": "result"
                             },
                             "semicolonToken": {
@@ -3688,6 +3878,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -3703,6 +3894,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

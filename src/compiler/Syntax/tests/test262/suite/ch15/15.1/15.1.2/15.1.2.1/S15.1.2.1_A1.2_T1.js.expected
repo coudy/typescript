@@ -81,6 +81,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }
@@ -111,6 +112,7 @@
                         "kind": "IdentifierName",
                         "width": 4,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval"
                     },
                     "argumentList": {
@@ -125,7 +127,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 7,
-                                "text": "\"x = 1\""
+                                "text": "\"x = 1\"",
+                                "value": "x = 1",
+                                "valueText": "x = 1"
                             },
                             {
                                 "kind": "CommaToken",
@@ -143,7 +147,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 7,
-                                "text": "\"x = 2\""
+                                "text": "\"x = 2\"",
+                                "value": "x = 2",
+                                "valueText": "x = 2"
                             }
                         ],
                         "closeParenToken": {
@@ -197,6 +203,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -222,7 +229,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -267,6 +276,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -293,6 +303,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#1: eval(\"x = 1\", \"x = 2\"); x === 1. Actual: '",
+                                                "value": "#1: eval(\"x = 1\", \"x = 2\"); x === 1. Actual: ",
+                                                "valueText": "#1: eval(\"x = 1\", \"x = 2\"); x === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -326,6 +338,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {

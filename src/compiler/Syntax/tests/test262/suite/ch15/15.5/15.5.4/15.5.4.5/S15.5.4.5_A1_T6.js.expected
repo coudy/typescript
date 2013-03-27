@@ -119,6 +119,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "String",
+                                    "value": "String",
                                     "valueText": "String"
                                 },
                                 "argumentList": {
@@ -133,7 +134,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 6,
-                                            "text": "\"lego\""
+                                            "text": "\"lego\"",
+                                            "value": "lego",
+                                            "valueText": "lego"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -152,6 +155,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "charCodeAt",
+                                "value": "charCodeAt",
                                 "valueText": "charCodeAt"
                             }
                         },
@@ -168,6 +172,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             ],
@@ -202,7 +207,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 4,
-                        "text": "0x6C"
+                        "text": "0x6C",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -247,6 +254,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -271,7 +279,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 100,
-                                                "text": "'#1: var x; new String(\"lego\").charCodeAt(x) === 0x6C. Actual: new String(\"lego\").charCodeAt(x) ==='"
+                                                "text": "'#1: var x; new String(\"lego\").charCodeAt(x) === 0x6C. Actual: new String(\"lego\").charCodeAt(x) ==='",
+                                                "value": "#1: var x; new String(\"lego\").charCodeAt(x) === 0x6C. Actual: new String(\"lego\").charCodeAt(x) ===",
+                                                "valueText": "#1: var x; new String(\"lego\").charCodeAt(x) === 0x6C. Actual: new String(\"lego\").charCodeAt(x) ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -304,6 +314,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "String",
+                                                            "value": "String",
                                                             "valueText": "String"
                                                         },
                                                         "argumentList": {
@@ -318,7 +329,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 6,
-                                                                    "text": "\"lego\""
+                                                                    "text": "\"lego\"",
+                                                                    "value": "lego",
+                                                                    "valueText": "lego"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -337,6 +350,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "charCodeAt",
+                                                        "value": "charCodeAt",
                                                         "valueText": "charCodeAt"
                                                     }
                                                 },
@@ -353,6 +367,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         }
                                                     ],
@@ -469,6 +484,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }

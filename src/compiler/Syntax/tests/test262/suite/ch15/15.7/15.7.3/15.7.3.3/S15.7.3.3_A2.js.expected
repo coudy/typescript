@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -114,6 +115,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "dotToken": {
@@ -125,6 +127,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "MIN_VALUE",
+                                        "value": "MIN_VALUE",
                                         "valueText": "MIN_VALUE"
                                     }
                                 }
@@ -160,6 +163,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -172,6 +176,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "MIN_VALUE",
+                            "value": "MIN_VALUE",
                             "valueText": "MIN_VALUE",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -198,7 +203,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -247,6 +254,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -259,6 +267,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "MIN_VALUE",
+                            "value": "MIN_VALUE",
                             "valueText": "MIN_VALUE",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -286,6 +295,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -331,6 +341,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -352,7 +363,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 72,
-                                            "text": "'#1: x = Number.MIN_VALUE; Number.MIN_VALUE = 1; Number.MIN_VALUE === x'"
+                                            "text": "'#1: x = Number.MIN_VALUE; Number.MIN_VALUE = 1; Number.MIN_VALUE === x'",
+                                            "value": "#1: x = Number.MIN_VALUE; Number.MIN_VALUE = 1; Number.MIN_VALUE === x",
+                                            "valueText": "#1: x = Number.MIN_VALUE; Number.MIN_VALUE = 1; Number.MIN_VALUE === x"
                                         }
                                     ],
                                     "closeParenToken": {

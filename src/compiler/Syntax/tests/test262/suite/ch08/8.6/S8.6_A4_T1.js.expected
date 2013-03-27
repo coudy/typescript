@@ -90,6 +90,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -131,6 +132,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "bar",
+                                                "value": "bar",
                                                 "valueText": "bar"
                                             },
                                             "colonToken": {
@@ -141,7 +143,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         },
                                         {
@@ -164,6 +168,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "some",
+                                                "value": "some",
                                                 "valueText": "some"
                                             },
                                             "colonToken": {
@@ -174,7 +179,9 @@
                                             "expression": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         },
                                         {
@@ -197,6 +204,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "foo",
+                                                "value": "foo",
                                                 "valueText": "foo"
                                             },
                                             "colonToken": {
@@ -207,7 +215,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\"a\""
+                                                "text": "\"a\"",
+                                                "value": "a",
+                                                "valueText": "a"
                                             }
                                         }
                                     ],
@@ -272,6 +282,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "count",
+                                "value": "count",
                                 "valueText": "count"
                             },
                             "equalsValueClause": {
@@ -285,7 +296,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -340,6 +353,7 @@
                     "width": 8,
                     "fullWidth": 9,
                     "text": "property",
+                    "value": "property",
                     "valueText": "property",
                     "hasTrailingTrivia": true,
                     "trailingTrivia": [
@@ -366,6 +380,7 @@
                     "kind": "IdentifierName",
                     "width": 3,
                     "text": "obj",
+                    "value": "obj",
                     "valueText": "obj"
                 },
                 "closeParenToken": {
@@ -391,6 +406,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "count",
+                            "value": "count",
                             "valueText": "count"
                         },
                         "operatorToken": {
@@ -452,6 +468,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -477,7 +494,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -514,6 +533,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -540,6 +560,8 @@
                                                 "width": 102,
                                                 "fullWidth": 103,
                                                 "text": "'#1: obj = {bar:true, some:1, foo:\"a\"}; count=0; for (property in obj) count++; count === 3. Actual: '",
+                                                "value": "#1: obj = {bar:true, some:1, foo:\"a\"}; count=0; for (property in obj) count++; count === 3. Actual: ",
+                                                "valueText": "#1: obj = {bar:true, some:1, foo:\"a\"}; count=0; for (property in obj) count++; count === 3. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -573,6 +595,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "count",
+                                                    "value": "count",
                                                     "valueText": "count"
                                                 },
                                                 "closeParenToken": {
@@ -692,6 +715,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "obj_",
+                                "value": "obj_",
                                 "valueText": "obj_",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -733,6 +757,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "bar",
+                                                "value": "bar",
                                                 "valueText": "bar"
                                             },
                                             "colonToken": {
@@ -743,7 +768,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         }
                                     ],
@@ -785,6 +812,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "obj_",
+                            "value": "obj_",
                             "valueText": "obj_"
                         },
                         "dotToken": {
@@ -797,6 +825,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "some",
+                            "value": "some",
                             "valueText": "some",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -823,7 +852,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -854,6 +885,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "obj_",
+                            "value": "obj_",
                             "valueText": "obj_"
                         },
                         "dotToken": {
@@ -866,6 +898,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "foo",
+                            "value": "foo",
                             "valueText": "foo",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -892,7 +925,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"a\""
+                        "text": "\"a\"",
+                        "value": "a",
+                        "valueText": "a"
                     }
                 },
                 "semicolonToken": {
@@ -921,6 +956,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -939,7 +975,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -991,6 +1029,7 @@
                     "width": 8,
                     "fullWidth": 9,
                     "text": "property",
+                    "value": "property",
                     "valueText": "property",
                     "hasTrailingTrivia": true,
                     "trailingTrivia": [
@@ -1017,6 +1056,7 @@
                     "kind": "IdentifierName",
                     "width": 4,
                     "text": "obj_",
+                    "value": "obj_",
                     "valueText": "obj_"
                 },
                 "closeParenToken": {
@@ -1042,6 +1082,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "count",
+                            "value": "count",
                             "valueText": "count"
                         },
                         "operatorToken": {
@@ -1103,6 +1144,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1128,7 +1170,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -1165,6 +1209,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1191,6 +1236,8 @@
                                                 "width": 118,
                                                 "fullWidth": 119,
                                                 "text": "'#2: obj_ = {bar:true}; obj_.some = 1; obj_.foo = \"a\"; count=0; for (property in obj_) count++; count === 3. Actual: '",
+                                                "value": "#2: obj_ = {bar:true}; obj_.some = 1; obj_.foo = \"a\"; count=0; for (property in obj_) count++; count === 3. Actual: ",
+                                                "valueText": "#2: obj_ = {bar:true}; obj_.some = 1; obj_.foo = \"a\"; count=0; for (property in obj_) count++; count === 3. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1224,6 +1271,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "count",
+                                                    "value": "count",
                                                     "valueText": "count"
                                                 },
                                                 "closeParenToken": {
@@ -1343,6 +1391,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "obj__",
+                                "value": "obj__",
                                 "valueText": "obj__",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1388,6 +1437,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -1438,6 +1488,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "obj__",
+                            "value": "obj__",
                             "valueText": "obj__"
                         },
                         "dotToken": {
@@ -1450,6 +1501,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "bar",
+                            "value": "bar",
                             "valueText": "bar",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1476,7 +1528,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "semicolonToken": {
@@ -1507,6 +1561,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "obj__",
+                            "value": "obj__",
                             "valueText": "obj__"
                         },
                         "dotToken": {
@@ -1519,6 +1574,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "some",
+                            "value": "some",
                             "valueText": "some",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1545,7 +1601,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -1576,6 +1634,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "obj__",
+                            "value": "obj__",
                             "valueText": "obj__"
                         },
                         "dotToken": {
@@ -1588,6 +1647,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "foo",
+                            "value": "foo",
                             "valueText": "foo",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1614,7 +1674,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"a\""
+                        "text": "\"a\"",
+                        "value": "a",
+                        "valueText": "a"
                     }
                 },
                 "semicolonToken": {
@@ -1643,6 +1705,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -1661,7 +1724,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -1713,6 +1778,7 @@
                     "width": 8,
                     "fullWidth": 9,
                     "text": "property",
+                    "value": "property",
                     "valueText": "property",
                     "hasTrailingTrivia": true,
                     "trailingTrivia": [
@@ -1739,6 +1805,7 @@
                     "kind": "IdentifierName",
                     "width": 5,
                     "text": "obj__",
+                    "value": "obj__",
                     "valueText": "obj__"
                 },
                 "closeParenToken": {
@@ -1764,6 +1831,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "count",
+                            "value": "count",
                             "valueText": "count"
                         },
                         "operatorToken": {
@@ -1825,6 +1893,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1850,7 +1919,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -1887,6 +1958,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1913,6 +1985,8 @@
                                                 "width": 134,
                                                 "fullWidth": 135,
                                                 "text": "'#3: obj__ = new Object(); obj__.bar = true; obj__.some = 1; obj__.foo = \"a\"; for (property in obj__)  count++; count === 3. Actual: '",
+                                                "value": "#3: obj__ = new Object(); obj__.bar = true; obj__.some = 1; obj__.foo = \"a\"; for (property in obj__)  count++; count === 3. Actual: ",
+                                                "valueText": "#3: obj__ = new Object(); obj__.bar = true; obj__.some = 1; obj__.foo = \"a\"; for (property in obj__)  count++; count === 3. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1946,6 +2020,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "count",
+                                                    "value": "count",
                                                     "valueText": "count"
                                                 },
                                                 "closeParenToken": {

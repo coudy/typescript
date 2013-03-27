@@ -100,6 +100,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "dotToken": {
@@ -112,6 +113,7 @@
                                 "width": 9,
                                 "fullWidth": 10,
                                 "text": "MIN_VALUE",
+                                "value": "MIN_VALUE",
                                 "valueText": "MIN_VALUE",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -139,7 +141,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -184,6 +188,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -205,7 +210,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#1: delete Number.MIN_VALUE === false'"
+                                            "text": "'#1: delete Number.MIN_VALUE === false'",
+                                            "value": "#1: delete Number.MIN_VALUE === false",
+                                            "valueText": "#1: delete Number.MIN_VALUE === false"
                                         }
                                     ],
                                     "closeParenToken": {

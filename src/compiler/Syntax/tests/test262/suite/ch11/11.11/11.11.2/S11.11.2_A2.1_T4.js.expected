@@ -93,6 +93,8 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "true",
+                                "value": true,
+                                "valueText": "true",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -118,6 +120,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         },
@@ -151,7 +154,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -196,6 +201,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -217,7 +223,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 26,
-                                            "text": "'#1: (true || x) === true'"
+                                            "text": "'#1: (true || x) === true'",
+                                            "value": "#1: (true || x) === true",
+                                            "valueText": "#1: (true || x) === true"
                                         }
                                     ],
                                     "closeParenToken": {

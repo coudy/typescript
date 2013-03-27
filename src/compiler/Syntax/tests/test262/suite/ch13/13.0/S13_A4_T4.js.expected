@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -128,6 +129,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "arguments",
+                                                "value": "arguments",
                                                 "valueText": "arguments"
                                             },
                                             "openBracketToken": {
@@ -138,7 +140,9 @@
                                             "argumentExpression": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "0"
+                                                "text": "0",
+                                                "value": 0,
+                                                "valueText": "0"
                                             },
                                             "closeBracketToken": {
                                                 "kind": "CloseBracketToken",
@@ -156,6 +160,7 @@
                                             "width": 4,
                                             "fullWidth": 5,
                                             "text": "name",
+                                            "value": "name",
                                             "valueText": "name",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -184,6 +189,8 @@
                                         "width": 3,
                                         "fullWidth": 4,
                                         "text": "\" \"",
+                                        "value": " ",
+                                        "valueText": " ",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -216,6 +223,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "arguments",
+                                            "value": "arguments",
                                             "valueText": "arguments"
                                         },
                                         "openBracketToken": {
@@ -226,7 +234,9 @@
                                         "argumentExpression": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "0"
+                                            "text": "0",
+                                            "value": 0,
+                                            "valueText": "0"
                                         },
                                         "closeBracketToken": {
                                             "kind": "CloseBracketToken",
@@ -243,6 +253,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "surname",
+                                        "value": "surname",
                                         "valueText": "surname"
                                     }
                                 }
@@ -349,6 +360,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -375,7 +387,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 10,
-                        "text": "\"function\""
+                        "text": "\"function\"",
+                        "value": "function",
+                        "valueText": "function"
                     }
                 },
                 "closeParenToken": {
@@ -420,6 +434,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -444,7 +459,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 61,
-                                                "text": "'#1: typeof __func === \"function\". Actual: typeof __func ==='"
+                                                "text": "'#1: typeof __func === \"function\". Actual: typeof __func ==='",
+                                                "value": "#1: typeof __func === \"function\". Actual: typeof __func ===",
+                                                "valueText": "#1: typeof __func === \"function\". Actual: typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -471,6 +488,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 }
                                             }
@@ -587,6 +605,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -614,6 +633,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "name",
+                                                "value": "name",
                                                 "valueText": "name"
                                             },
                                             "colonToken": {
@@ -624,7 +644,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "'fox'"
+                                                "text": "'fox'",
+                                                "value": "fox",
+                                                "valueText": "fox"
                                             }
                                         },
                                         {
@@ -647,6 +669,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "surname",
+                                                "value": "surname",
                                                 "valueText": "surname"
                                             },
                                             "colonToken": {
@@ -657,7 +680,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 8,
-                                                "text": "'malder'"
+                                                "text": "'malder'",
+                                                "value": "malder",
+                                                "valueText": "malder"
                                             }
                                         }
                                     ],
@@ -699,7 +724,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 12,
-                        "text": "\"fox malder\""
+                        "text": "\"fox malder\"",
+                        "value": "fox malder",
+                        "valueText": "fox malder"
                     }
                 },
                 "closeParenToken": {
@@ -744,6 +771,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -768,7 +796,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 121,
-                                                "text": "'#2: __func({name:\\'fox\\', surname:\\'malder\\'}) === \"fox malder\". Actual: __func({name:\\'fox\\', surname:\\'malder\\'}) ==='"
+                                                "text": "'#2: __func({name:\\'fox\\', surname:\\'malder\\'}) === \"fox malder\". Actual: __func({name:\\'fox\\', surname:\\'malder\\'}) ==='",
+                                                "value": "#2: __func({name:'fox', surname:'malder'}) === \"fox malder\". Actual: __func({name:'fox', surname:'malder'}) ===",
+                                                "valueText": "#2: __func({name:'fox', surname:'malder'}) === \"fox malder\". Actual: __func({name:'fox', surname:'malder'}) ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -782,6 +812,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -809,6 +840,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 4,
                                                                         "text": "name",
+                                                                        "value": "name",
                                                                         "valueText": "name"
                                                                     },
                                                                     "colonToken": {
@@ -819,7 +851,9 @@
                                                                     "expression": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 5,
-                                                                        "text": "'fox'"
+                                                                        "text": "'fox'",
+                                                                        "value": "fox",
+                                                                        "valueText": "fox"
                                                                     }
                                                                 },
                                                                 {
@@ -842,6 +876,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 7,
                                                                         "text": "surname",
+                                                                        "value": "surname",
                                                                         "valueText": "surname"
                                                                     },
                                                                     "colonToken": {
@@ -852,7 +887,9 @@
                                                                     "expression": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 8,
-                                                                        "text": "'malder'"
+                                                                        "text": "'malder'",
+                                                                        "value": "malder",
+                                                                        "valueText": "malder"
                                                                     }
                                                                 }
                                                             ],
@@ -957,6 +994,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "func__",
+                    "value": "func__",
                     "valueText": "func__"
                 },
                 "callSignature": {
@@ -978,6 +1016,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "arg",
+                                    "value": "arg",
                                     "valueText": "arg"
                                 }
                             }
@@ -1027,6 +1066,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         },
                                         "dotToken": {
@@ -1039,6 +1079,7 @@
                                             "width": 4,
                                             "fullWidth": 5,
                                             "text": "name",
+                                            "value": "name",
                                             "valueText": "name",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -1067,6 +1108,8 @@
                                         "width": 3,
                                         "fullWidth": 4,
                                         "text": "\" \"",
+                                        "value": " ",
+                                        "valueText": " ",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -1096,6 +1139,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "arg",
+                                        "value": "arg",
                                         "valueText": "arg"
                                     },
                                     "dotToken": {
@@ -1107,6 +1151,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "surname",
+                                        "value": "surname",
                                         "valueText": "surname"
                                     }
                                 }
@@ -1213,6 +1258,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "func__",
+                            "value": "func__",
                             "valueText": "func__",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1239,7 +1285,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 10,
-                        "text": "\"function\""
+                        "text": "\"function\"",
+                        "value": "function",
+                        "valueText": "function"
                     }
                 },
                 "closeParenToken": {
@@ -1284,6 +1332,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1308,7 +1357,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 61,
-                                                "text": "'#3: typeof func__ === \"function\". Actual: typeof __func ==='"
+                                                "text": "'#3: typeof func__ === \"function\". Actual: typeof __func ==='",
+                                                "value": "#3: typeof func__ === \"function\". Actual: typeof __func ===",
+                                                "valueText": "#3: typeof func__ === \"function\". Actual: typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1335,6 +1386,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 }
                                             }
@@ -1451,6 +1503,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "func__",
+                            "value": "func__",
                             "valueText": "func__"
                         },
                         "argumentList": {
@@ -1478,6 +1531,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "name",
+                                                "value": "name",
                                                 "valueText": "name"
                                             },
                                             "colonToken": {
@@ -1488,7 +1542,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 6,
-                                                "text": "'john'"
+                                                "text": "'john'",
+                                                "value": "john",
+                                                "valueText": "john"
                                             }
                                         },
                                         {
@@ -1511,6 +1567,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "surname",
+                                                "value": "surname",
                                                 "valueText": "surname"
                                             },
                                             "colonToken": {
@@ -1521,7 +1578,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 8,
-                                                "text": "'lennon'"
+                                                "text": "'lennon'",
+                                                "value": "lennon",
+                                                "valueText": "lennon"
                                             }
                                         }
                                     ],
@@ -1563,7 +1622,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 13,
-                        "text": "\"john lennon\""
+                        "text": "\"john lennon\"",
+                        "value": "john lennon",
+                        "valueText": "john lennon"
                     }
                 },
                 "closeParenToken": {
@@ -1608,6 +1669,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1632,7 +1694,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 124,
-                                                "text": "'#4: func__({name:\\'john\\', surname:\\'lennon\\'}) === \"john lennon\". Actual: __func({name:\\'john\\', surname:\\'lennon\\'}) ==='"
+                                                "text": "'#4: func__({name:\\'john\\', surname:\\'lennon\\'}) === \"john lennon\". Actual: __func({name:\\'john\\', surname:\\'lennon\\'}) ==='",
+                                                "value": "#4: func__({name:'john', surname:'lennon'}) === \"john lennon\". Actual: __func({name:'john', surname:'lennon'}) ===",
+                                                "valueText": "#4: func__({name:'john', surname:'lennon'}) === \"john lennon\". Actual: __func({name:'john', surname:'lennon'}) ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1646,6 +1710,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -1673,6 +1738,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 4,
                                                                         "text": "name",
+                                                                        "value": "name",
                                                                         "valueText": "name"
                                                                     },
                                                                     "colonToken": {
@@ -1683,7 +1749,9 @@
                                                                     "expression": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 6,
-                                                                        "text": "'john'"
+                                                                        "text": "'john'",
+                                                                        "value": "john",
+                                                                        "valueText": "john"
                                                                     }
                                                                 },
                                                                 {
@@ -1706,6 +1774,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 7,
                                                                         "text": "surname",
+                                                                        "value": "surname",
                                                                         "valueText": "surname"
                                                                     },
                                                                     "colonToken": {
@@ -1716,7 +1785,9 @@
                                                                     "expression": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 8,
-                                                                        "text": "'lennon'"
+                                                                        "text": "'lennon'",
+                                                                        "value": "lennon",
+                                                                        "valueText": "lennon"
                                                                     }
                                                                 }
                                                             ],

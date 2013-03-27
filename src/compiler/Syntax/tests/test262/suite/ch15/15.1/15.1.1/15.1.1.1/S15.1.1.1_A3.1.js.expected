@@ -98,6 +98,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -124,7 +125,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -169,6 +172,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -195,6 +199,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#1: delete NaN === false. Actual: '",
+                                                "value": "#1: delete NaN === false. Actual: ",
+                                                "valueText": "#1: delete NaN === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -244,6 +250,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "NaN",
+                                                        "value": "NaN",
                                                         "valueText": "NaN"
                                                     }
                                                 },

@@ -82,6 +82,8 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "\"x\\0y\"",
+                        "value": "x\u0000y",
+                        "valueText": "x\u0000y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -106,7 +108,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"x\""
+                        "text": "\"x\"",
+                        "value": "x",
+                        "valueText": "x"
                     }
                 },
                 "closeParenToken": {
@@ -151,6 +155,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -172,7 +177,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 21,
-                                            "text": "'#1: \"x\\\\0y\" !== \"x\"'"
+                                            "text": "'#1: \"x\\\\0y\" !== \"x\"'",
+                                            "value": "#1: \"x\\0y\" !== \"x\"",
+                                            "valueText": "#1: \"x\\0y\" !== \"x\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -287,6 +294,8 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "\"x\\0a\"",
+                                        "value": "x\u0000a",
+                                        "valueText": "x\u0000a",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -311,7 +320,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 6,
-                                        "text": "\"x\\0b\""
+                                        "text": "\"x\\0b\"",
+                                        "value": "x\u0000b",
+                                        "valueText": "x\u0000b"
                                     }
                                 },
                                 "closeParenToken": {
@@ -357,6 +368,8 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "\"x\\0b\"",
+                                        "value": "x\u0000b",
+                                        "valueText": "x\u0000b",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -381,7 +394,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 6,
-                                        "text": "\"x\\0c\""
+                                        "text": "\"x\\0c\"",
+                                        "value": "x\u0000c",
+                                        "valueText": "x\u0000c"
                                     }
                                 },
                                 "closeParenToken": {
@@ -440,6 +455,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -461,7 +477,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 59,
-                                            "text": "'#2: ((\"x\\\\0a\" < \"x\\\\0b\") && (\"x\\\\0b\" < \"x\\\\0c\")) === true'"
+                                            "text": "'#2: ((\"x\\\\0a\" < \"x\\\\0b\") && (\"x\\\\0b\" < \"x\\\\0c\")) === true'",
+                                            "value": "#2: ((\"x\\0a\" < \"x\\0b\") && (\"x\\0b\" < \"x\\0c\")) === true",
+                                            "valueText": "#2: ((\"x\\0a\" < \"x\\0b\") && (\"x\\0b\" < \"x\\0c\")) === true"
                                         }
                                     ],
                                     "closeParenToken": {

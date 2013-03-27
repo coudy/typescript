@@ -78,6 +78,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__constr",
+                                "value": "__constr",
                                 "valueText": "__constr",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -115,6 +116,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "String",
+                                            "value": "String",
                                             "valueText": "String"
                                         },
                                         "dotToken": {
@@ -126,6 +128,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "prototype",
+                                            "value": "prototype",
                                             "valueText": "prototype"
                                         }
                                     },
@@ -137,7 +140,9 @@
                                     "name": {
                                         "kind": "IdentifierName",
                                         "width": 11,
-                                        "text": "constructor"
+                                        "text": "constructor",
+                                        "value": "constructor",
+                                        "valueText": "constructor"
                                     }
                                 }
                             }
@@ -196,6 +201,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -241,6 +247,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "__constr",
+                                        "value": "__constr",
                                         "valueText": "__constr"
                                     },
                                     "argumentList": {
@@ -255,7 +262,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 14,
-                                                "text": "\"choosing one\""
+                                                "text": "\"choosing one\"",
+                                                "value": "choosing one",
+                                                "valueText": "choosing one"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -338,6 +347,7 @@
                         "width": 10,
                         "fullWidth": 11,
                         "text": "__instance",
+                        "value": "__instance",
                         "valueText": "__instance",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -355,7 +365,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 14,
-                        "text": "\"choosing one\""
+                        "text": "\"choosing one\"",
+                        "value": "choosing one",
+                        "valueText": "choosing one"
                     }
                 },
                 "closeParenToken": {
@@ -400,6 +412,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -424,7 +437,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 140,
-                                                "text": "'#0: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance ==\"choosing one\". Actual: __instance =='"
+                                                "text": "'#0: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance ==\"choosing one\". Actual: __instance =='",
+                                                "value": "#0: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance ==\"choosing one\". Actual: __instance ==",
+                                                "valueText": "#0: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance ==\"choosing one\". Actual: __instance =="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -436,6 +451,7 @@
                                                 "width": 10,
                                                 "fullWidth": 11,
                                                 "text": "__instance",
+                                                "value": "__instance",
                                                 "valueText": "__instance",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -565,6 +581,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance"
                         },
                         "dotToken": {
@@ -577,6 +594,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -603,6 +622,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "String",
+                        "value": "String",
                         "valueText": "String"
                     }
                 },
@@ -651,6 +671,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -677,7 +698,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 159,
-                                                "text": "'#1: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance.constructor === String. Actual: __instance.constructor ==='"
+                                                "text": "'#1: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance.constructor === String. Actual: __instance.constructor ==='",
+                                                "value": "#1: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance.constructor === String. Actual: __instance.constructor ===",
+                                                "valueText": "#1: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); __instance.constructor === String. Actual: __instance.constructor ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -692,6 +715,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 10,
                                                     "text": "__instance",
+                                                    "value": "__instance",
                                                     "valueText": "__instance"
                                                 },
                                                 "dotToken": {
@@ -704,6 +728,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -849,6 +875,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "dotToken": {
@@ -860,6 +887,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "prototype",
+                                        "value": "prototype",
                                         "valueText": "prototype"
                                     }
                                 },
@@ -872,6 +900,7 @@
                                     "kind": "IdentifierName",
                                     "width": 13,
                                     "text": "isPrototypeOf",
+                                    "value": "isPrototypeOf",
                                     "valueText": "isPrototypeOf"
                                 }
                             },
@@ -888,6 +917,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__instance",
+                                        "value": "__instance",
                                         "valueText": "__instance"
                                     }
                                 ],
@@ -947,6 +977,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -971,7 +1002,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 154,
-                                                "text": "'#2: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); String.prototype.isPrototypeOf(__instance) return true. Actual: '"
+                                                "text": "'#2: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); String.prototype.isPrototypeOf(__instance) return true. Actual: '",
+                                                "value": "#2: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); String.prototype.isPrototypeOf(__instance) return true. Actual: ",
+                                                "valueText": "#2: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); String.prototype.isPrototypeOf(__instance) return true. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -991,6 +1024,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "String",
+                                                            "value": "String",
                                                             "valueText": "String"
                                                         },
                                                         "dotToken": {
@@ -1002,6 +1036,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "prototype",
+                                                            "value": "prototype",
                                                             "valueText": "prototype"
                                                         }
                                                     },
@@ -1014,6 +1049,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 13,
                                                         "text": "isPrototypeOf",
+                                                        "value": "isPrototypeOf",
                                                         "valueText": "isPrototypeOf"
                                                     }
                                                 },
@@ -1030,6 +1066,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 10,
                                                             "text": "__instance",
+                                                            "value": "__instance",
                                                             "valueText": "__instance"
                                                         }
                                                     ],
@@ -1155,6 +1192,7 @@
                                 "width": 18,
                                 "fullWidth": 19,
                                 "text": "__to_string_result",
+                                "value": "__to_string_result",
                                 "valueText": "__to_string_result",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1189,7 +1227,9 @@
                                         "left": {
                                             "kind": "StringLiteral",
                                             "width": 10,
-                                            "text": "'[object '"
+                                            "text": "'[object '",
+                                            "value": "[object ",
+                                            "valueText": "[object "
                                         },
                                         "operatorToken": {
                                             "kind": "PlusToken",
@@ -1209,6 +1249,8 @@
                                             "width": 8,
                                             "fullWidth": 9,
                                             "text": "'String'",
+                                            "value": "String",
+                                            "valueText": "String",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -1226,7 +1268,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "']'"
+                                        "text": "']'",
+                                        "value": "]",
+                                        "valueText": "]"
                                     }
                                 }
                             }
@@ -1285,6 +1329,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -1296,6 +1341,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -1308,6 +1354,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "toString",
+                            "value": "toString",
                             "valueText": "toString"
                         }
                     }
@@ -1369,6 +1416,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance"
                             },
                             "dotToken": {
@@ -1380,6 +1428,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -1424,6 +1473,7 @@
                         "kind": "IdentifierName",
                         "width": 18,
                         "text": "__to_string_result",
+                        "value": "__to_string_result",
                         "valueText": "__to_string_result"
                     }
                 },
@@ -1469,6 +1519,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1499,7 +1550,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 203,
-                                                        "text": "'#3: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); delete String.prototype.toString; __instance.toString() === __to_string_result. Actual: __instance.toString() ==='"
+                                                        "text": "'#3: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); delete String.prototype.toString; __instance.toString() === __to_string_result. Actual: __instance.toString() ==='",
+                                                        "value": "#3: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); delete String.prototype.toString; __instance.toString() === __to_string_result. Actual: __instance.toString() ===",
+                                                        "valueText": "#3: __constr = String.prototype.constructor; __instance = new __constr(\"choosing one\"); delete String.prototype.toString; __instance.toString() === __to_string_result. Actual: __instance.toString() ==="
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -1516,6 +1569,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 10,
                                                                 "text": "__instance",
+                                                                "value": "__instance",
                                                                 "valueText": "__instance"
                                                             },
                                                             "dotToken": {
@@ -1527,6 +1581,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 8,
                                                                 "text": "toString",
+                                                                "value": "toString",
                                                                 "valueText": "toString"
                                                             }
                                                         },
@@ -1555,7 +1610,9 @@
                                                 "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 25,
-                                                    "text": "' __to_string_result ==='"
+                                                    "text": "' __to_string_result ==='",
+                                                    "value": " __to_string_result ===",
+                                                    "valueText": " __to_string_result ==="
                                                 }
                                             },
                                             "operatorToken": {
@@ -1568,6 +1625,7 @@
                                                 "width": 18,
                                                 "fullWidth": 19,
                                                 "text": "__to_string_result",
+                                                "value": "__to_string_result",
                                                 "valueText": "__to_string_result",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [

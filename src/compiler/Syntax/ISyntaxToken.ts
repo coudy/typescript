@@ -7,7 +7,9 @@ module TypeScript {
 
         // Text for this token, not including leading or trailing trivia.
         text(): string;
+
         value(): any;
+        valueText(): string;
 
         isIncrementallyReusable(): bool;
 
@@ -35,7 +37,6 @@ module TypeScript {
     export interface ITokenInfo {
         leadingTrivia?: ISyntaxTrivia[];
         text?: string;
-        value?: any;
         trailingTrivia?: ISyntaxTrivia[];
     }
 }

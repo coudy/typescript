@@ -113,7 +113,9 @@
                             "expression": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "1"
+                                "text": "1",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -162,6 +164,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -231,6 +234,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -256,7 +260,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"1\""
+                                        "text": "\"1\"",
+                                        "value": "1",
+                                        "valueText": "1"
                                     }
                                 },
                                 "closeParenToken": {
@@ -301,6 +307,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -322,7 +329,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 21,
-                                                            "text": "'#1: throw 1 !== \"1\"'"
+                                                            "text": "'#1: throw 1 !== \"1\"'",
+                                                            "value": "#1: throw 1 !== \"1\"",
+                                                            "valueText": "#1: throw 1 !== \"1\""
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -466,7 +475,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"1\""
+                                "text": "\"1\"",
+                                "value": "1",
+                                "valueText": "1"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -515,6 +526,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -584,6 +596,8 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "1",
+                                        "value": 1,
+                                        "valueText": "1",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -609,6 +623,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e"
                                     }
                                 },
@@ -654,6 +669,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -675,7 +691,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 21,
-                                                            "text": "'#2: 1 !== throw \"1\"'"
+                                                            "text": "'#2: 1 !== throw \"1\"'",
+                                                            "value": "#2: 1 !== throw \"1\"",
+                                                            "valueText": "#2: 1 !== throw \"1\""
                                                         }
                                                     ],
                                                     "closeParenToken": {

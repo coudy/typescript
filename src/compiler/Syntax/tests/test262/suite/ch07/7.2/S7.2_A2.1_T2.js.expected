@@ -82,6 +82,8 @@
                         "width": 11,
                         "fullWidth": 12,
                         "text": "\"\tstr\ting\t\"",
+                        "value": "\tstr\ting\t",
+                        "valueText": "\tstr\ting\t",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -106,7 +108,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 26,
-                        "text": "\"\\u0009str\\u0009ing\\u0009\""
+                        "text": "\"\\u0009str\\u0009ing\\u0009\"",
+                        "value": "\tstr\ting\t",
+                        "valueText": "\tstr\ting\t"
                     }
                 },
                 "closeParenToken": {
@@ -151,6 +155,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -172,7 +177,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 51,
-                                            "text": "'#1: \"\tstr\ting\t\" === \"\\\\u0009str\\\\u0009ing\\\\u0009\"'"
+                                            "text": "'#1: \"\tstr\ting\t\" === \"\\\\u0009str\\\\u0009ing\\\\u0009\"'",
+                                            "value": "#1: \"\tstr\ting\t\" === \"\\u0009str\\u0009ing\\u0009\"",
+                                            "valueText": "#1: \"\tstr\ting\t\" === \"\\u0009str\\u0009ing\\u0009\""
                                         }
                                     ],
                                     "closeParenToken": {

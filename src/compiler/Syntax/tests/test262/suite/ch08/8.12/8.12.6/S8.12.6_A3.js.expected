@@ -73,6 +73,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "equalsValueClause": {
@@ -129,6 +130,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -140,6 +142,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "hole",
+                            "value": "hole",
                             "valueText": "hole"
                         }
                     },
@@ -152,6 +155,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -226,6 +230,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -238,6 +243,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "hole",
+                            "value": "hole",
                             "valueText": "hole",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -265,6 +271,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -310,6 +317,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -336,6 +344,8 @@
                                                 "width": 76,
                                                 "fullWidth": 77,
                                                 "text": "'#1: var __obj={}; __obj.hole=undefined; __obj.hole === undefined. Actual: '",
+                                                "value": "#1: var __obj={}; __obj.hole=undefined; __obj.hole === undefined. Actual: ",
+                                                "valueText": "#1: var __obj={}; __obj.hole=undefined; __obj.hole === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -372,6 +382,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__obj",
+                                                        "value": "__obj",
                                                         "valueText": "__obj"
                                                     },
                                                     "dotToken": {
@@ -383,6 +394,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "hole",
+                                                        "value": "hole",
                                                         "valueText": "hole"
                                                     }
                                                 },
@@ -505,6 +517,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -517,6 +530,7 @@
                             "width": 8,
                             "fullWidth": 9,
                             "text": "notexist",
+                            "value": "notexist",
                             "valueText": "notexist",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -544,6 +558,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -589,6 +604,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -615,6 +631,8 @@
                                                 "width": 80,
                                                 "fullWidth": 81,
                                                 "text": "'#2: var __obj={}; __obj.hole=undefined; __obj.notexist === undefined. Actual: '",
+                                                "value": "#2: var __obj={}; __obj.hole=undefined; __obj.notexist === undefined. Actual: ",
+                                                "valueText": "#2: var __obj={}; __obj.hole=undefined; __obj.notexist === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -651,6 +669,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__obj",
+                                                        "value": "__obj",
                                                         "valueText": "__obj"
                                                     },
                                                     "dotToken": {
@@ -662,6 +681,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "notexist",
+                                                        "value": "notexist",
                                                         "valueText": "notexist"
                                                     }
                                                 },
@@ -798,6 +818,8 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "\"hole\"",
+                                "value": "hole",
+                                "valueText": "hole",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -823,6 +845,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             }
                         },
@@ -875,6 +898,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -896,7 +920,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 57,
-                                            "text": "'#3: var __obj={}; __obj.hole=undefined; \"hole\" in __obj'"
+                                            "text": "'#3: var __obj={}; __obj.hole=undefined; \"hole\" in __obj'",
+                                            "value": "#3: var __obj={}; __obj.hole=undefined; \"hole\" in __obj",
+                                            "valueText": "#3: var __obj={}; __obj.hole=undefined; \"hole\" in __obj"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1016,6 +1042,8 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "\"notexist\"",
+                            "value": "notexist",
+                            "valueText": "notexist",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -1041,6 +1069,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         }
                     },
@@ -1092,6 +1121,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1113,7 +1143,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 61,
-                                            "text": "'#4: var __obj={}; __obj.hole=undefined; \"notexist\" in __obj'"
+                                            "text": "'#4: var __obj={}; __obj.hole=undefined; \"notexist\" in __obj'",
+                                            "value": "#4: var __obj={}; __obj.hole=undefined; \"notexist\" in __obj",
+                                            "valueText": "#4: var __obj={}; __obj.hole=undefined; \"notexist\" in __obj"
                                         }
                                     ],
                                     "closeParenToken": {

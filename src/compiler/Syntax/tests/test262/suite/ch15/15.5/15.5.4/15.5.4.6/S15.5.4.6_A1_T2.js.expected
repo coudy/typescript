@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "Boolean",
+                                        "value": "Boolean",
                                         "valueText": "Boolean"
                                     }
                                 }
@@ -155,6 +157,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -175,6 +178,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "concat",
+                            "value": "concat",
                             "valueText": "concat",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -208,6 +212,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -219,6 +224,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -231,6 +237,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "concat",
+                            "value": "concat",
                             "valueText": "concat"
                         }
                     }
@@ -309,6 +316,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance"
                             },
                             "dotToken": {
@@ -320,6 +328,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "concat",
+                                "value": "concat",
                                 "valueText": "concat"
                             }
                         },
@@ -335,7 +344,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "\"\\u0041\""
+                                    "text": "\"\\u0041\"",
+                                    "value": "A",
+                                    "valueText": "A"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -345,7 +356,9 @@
                                 {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -358,7 +371,9 @@
                                     "left": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     },
                                     "operatorToken": {
                                         "kind": "PlusToken",
@@ -368,7 +383,9 @@
                                     "right": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     }
                                 }
                             ],
@@ -403,7 +420,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 13,
-                        "text": "\"falseAtrue2\""
+                        "text": "\"falseAtrue2\"",
+                        "value": "falseAtrue2",
+                        "valueText": "falseAtrue2"
                     }
                 },
                 "closeParenToken": {
@@ -448,6 +467,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -472,7 +492,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 146,
-                                                "text": "'#1: __instance = new Boolean; __instance.concat = String.prototype.concat;  __instance.concat(\"\\\\u0041\",true,true+1) === \"falseAtrue2\". Actual: '"
+                                                "text": "'#1: __instance = new Boolean; __instance.concat = String.prototype.concat;  __instance.concat(\"\\\\u0041\",true,true+1) === \"falseAtrue2\". Actual: '",
+                                                "value": "#1: __instance = new Boolean; __instance.concat = String.prototype.concat;  __instance.concat(\"\\u0041\",true,true+1) === \"falseAtrue2\". Actual: ",
+                                                "valueText": "#1: __instance = new Boolean; __instance.concat = String.prototype.concat;  __instance.concat(\"\\u0041\",true,true+1) === \"falseAtrue2\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -489,6 +511,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "__instance",
+                                                        "value": "__instance",
                                                         "valueText": "__instance"
                                                     },
                                                     "dotToken": {
@@ -500,6 +523,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "concat",
+                                                        "value": "concat",
                                                         "valueText": "concat"
                                                     }
                                                 },
@@ -515,7 +539,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 8,
-                                                            "text": "\"\\u0041\""
+                                                            "text": "\"\\u0041\"",
+                                                            "value": "A",
+                                                            "valueText": "A"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -525,7 +551,9 @@
                                                         {
                                                             "kind": "TrueKeyword",
                                                             "width": 4,
-                                                            "text": "true"
+                                                            "text": "true",
+                                                            "value": true,
+                                                            "valueText": "true"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -538,7 +566,9 @@
                                                             "left": {
                                                                 "kind": "TrueKeyword",
                                                                 "width": 4,
-                                                                "text": "true"
+                                                                "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true"
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -548,7 +578,9 @@
                                                             "right": {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             }
                                                         }
                                                     ],

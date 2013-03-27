@@ -82,6 +82,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "MyFunction",
+                                "value": "MyFunction",
                                 "valueText": "MyFunction",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,6 +128,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "Function",
+                                        "value": "Function",
                                         "valueText": "Function"
                                     },
                                     "argumentList": {
@@ -141,7 +143,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 13,
-                                                "text": "\"return this\""
+                                                "text": "\"return this\"",
+                                                "value": "return this",
+                                                "valueText": "return this"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -201,6 +205,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "argumentList": {
@@ -288,6 +293,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -314,6 +320,8 @@
                                                 "width": 83,
                                                 "fullWidth": 84,
                                                 "text": "'#1: var MyFunction = new Function(\"return this\"); MyFunction() === this. Actual: '",
+                                                "value": "#1: var MyFunction = new Function(\"return this\"); MyFunction() === this. Actual: ",
+                                                "valueText": "#1: var MyFunction = new Function(\"return this\"); MyFunction() === this. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -350,6 +358,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "MyFunction",
+                                                        "value": "MyFunction",
                                                         "valueText": "MyFunction"
                                                     },
                                                     "argumentList": {
@@ -426,6 +435,7 @@
                         "width": 10,
                         "fullWidth": 22,
                         "text": "MyFunction",
+                        "value": "MyFunction",
                         "valueText": "MyFunction",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -485,6 +495,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "Function",
+                            "value": "Function",
                             "valueText": "Function"
                         },
                         "argumentList": {
@@ -499,7 +510,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 23,
-                                    "text": "\"return eval(\\'this\\')\""
+                                    "text": "\"return eval(\\'this\\')\"",
+                                    "value": "return eval('this')",
+                                    "valueText": "return eval('this')"
                                 }
                             ],
                             "closeParenToken": {
@@ -556,6 +569,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "argumentList": {
@@ -643,6 +657,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -669,6 +684,8 @@
                                                 "width": 93,
                                                 "fullWidth": 94,
                                                 "text": "'#2: var MyFunction = new Function(\"return eval(\\'this\\')\"); MyFunction() === this. Actual: '",
+                                                "value": "#2: var MyFunction = new Function(\"return eval('this')\"); MyFunction() === this. Actual: ",
+                                                "valueText": "#2: var MyFunction = new Function(\"return eval('this')\"); MyFunction() === this. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -705,6 +722,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "MyFunction",
+                                                        "value": "MyFunction",
                                                         "valueText": "MyFunction"
                                                     },
                                                     "argumentList": {

@@ -76,6 +76,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -117,6 +118,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -179,7 +181,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 9,
-                                                                "text": "\"\\u0041B\""
+                                                                "text": "\"\\u0041B\"",
+                                                                "value": "AB",
+                                                                "valueText": "AB"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -235,6 +239,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -247,6 +252,7 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "toLowerCase",
+                            "value": "toLowerCase",
                             "valueText": "toLowerCase",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -280,6 +286,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -291,6 +298,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -303,6 +311,7 @@
                             "kind": "IdentifierName",
                             "width": 11,
                             "text": "toLowerCase",
+                            "value": "toLowerCase",
                             "valueText": "toLowerCase"
                         }
                     }
@@ -385,6 +394,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "dotToken": {
@@ -396,6 +406,7 @@
                                 "kind": "IdentifierName",
                                 "width": 11,
                                 "text": "toLowerCase",
+                                "value": "toLowerCase",
                                 "valueText": "toLowerCase"
                             }
                         },
@@ -431,7 +442,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"ab\""
+                        "text": "\"ab\"",
+                        "value": "ab",
+                        "valueText": "ab"
                     }
                 },
                 "closeParenToken": {
@@ -476,6 +489,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -500,7 +514,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 147,
-                                                "text": "'#1: var __obj = {toString:function(){return \"\\u0041B\";}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"ab\". Actual: '"
+                                                "text": "'#1: var __obj = {toString:function(){return \"\\u0041B\";}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"ab\". Actual: '",
+                                                "value": "#1: var __obj = {toString:function(){return \"AB\";}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"ab\". Actual: ",
+                                                "valueText": "#1: var __obj = {toString:function(){return \"AB\";}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"ab\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -517,6 +533,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__obj",
+                                                        "value": "__obj",
                                                         "valueText": "__obj"
                                                     },
                                                     "dotToken": {
@@ -528,6 +545,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "toLowerCase",
+                                                        "value": "toLowerCase",
                                                         "valueText": "toLowerCase"
                                                     }
                                                 },

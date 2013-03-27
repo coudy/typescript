@@ -98,6 +98,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -124,7 +125,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -169,6 +172,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -195,6 +199,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#1: typeof x === \"undefined\". Actual: '",
+                                                "value": "#1: typeof x === \"undefined\". Actual: ",
+                                                "valueText": "#1: typeof x === \"undefined\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -244,6 +250,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     }
                                                 },

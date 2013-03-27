@@ -131,6 +131,7 @@
                                             "width": 11,
                                             "fullWidth": 12,
                                             "text": "__evaluated",
+                                            "value": "__evaluated",
                                             "valueText": "__evaluated",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -163,6 +164,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "eval",
+                                                    "value": "eval",
                                                     "valueText": "eval"
                                                 },
                                                 "argumentList": {
@@ -177,7 +179,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 8,
-                                                            "text": "\"if(1);\""
+                                                            "text": "\"if(1);\"",
+                                                            "value": "if(1);",
+                                                            "valueText": "if(1);"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -242,6 +246,7 @@
                                     "width": 11,
                                     "fullWidth": 12,
                                     "text": "__evaluated",
+                                    "value": "__evaluated",
                                     "valueText": "__evaluated",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -268,6 +273,7 @@
                                     "kind": "IdentifierName",
                                     "width": 9,
                                     "text": "undefined",
+                                    "value": "undefined",
                                     "valueText": "undefined"
                                 }
                             },
@@ -313,6 +319,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -337,7 +344,9 @@
                                                         "left": {
                                                             "kind": "StringLiteral",
                                                             "width": 57,
-                                                            "text": "'#1: __evaluated === undefined. Actual:  __evaluated ==='"
+                                                            "text": "'#1: __evaluated === undefined. Actual:  __evaluated ==='",
+                                                            "value": "#1: __evaluated === undefined. Actual:  __evaluated ===",
+                                                            "valueText": "#1: __evaluated === undefined. Actual:  __evaluated ==="
                                                         },
                                                         "operatorToken": {
                                                             "kind": "PlusToken",
@@ -357,6 +366,7 @@
                                                             "width": 11,
                                                             "fullWidth": 13,
                                                             "text": "__evaluated",
+                                                            "value": "__evaluated",
                                                             "valueText": "__evaluated",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -462,6 +472,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -506,6 +517,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -527,7 +539,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 74,
-                                                "text": "'#1.1: \"__evaluated = eval(\"if(1);\")\" does not lead to throwing exception'"
+                                                "text": "'#1.1: \"__evaluated = eval(\"if(1);\")\" does not lead to throwing exception'",
+                                                "value": "#1.1: \"__evaluated = eval(\"if(1);\")\" does not lead to throwing exception",
+                                                "valueText": "#1.1: \"__evaluated = eval(\"if(1);\")\" does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {

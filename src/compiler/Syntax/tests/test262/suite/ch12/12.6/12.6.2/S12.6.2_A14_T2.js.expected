@@ -98,6 +98,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "callSignature": {
@@ -147,7 +148,9 @@
                                     "expression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     },
                                     "semicolonToken": {
                                         "kind": "SemicolonToken",
@@ -238,6 +241,7 @@
                                             "width": 9,
                                             "fullWidth": 10,
                                             "text": "__reached",
+                                            "value": "__reached",
                                             "valueText": "__reached",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -266,7 +270,9 @@
                                             "value": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         }
                                     }
@@ -414,6 +420,7 @@
                         "width": 9,
                         "fullWidth": 10,
                         "text": "__reached",
+                        "value": "__reached",
                         "valueText": "__reached",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -439,7 +446,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -484,6 +493,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -505,7 +515,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 63,
-                                            "text": "'#2: function expression inside of while expression is allowed'"
+                                            "text": "'#2: function expression inside of while expression is allowed'",
+                                            "value": "#2: function expression inside of while expression is allowed",
+                                            "valueText": "#2: function expression inside of while expression is allowed"
                                         }
                                     ],
                                     "closeParenToken": {

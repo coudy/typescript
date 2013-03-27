@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 10,
-                                    "text": "\".12345e6\""
+                                    "text": "\".12345e6\"",
+                                    "value": ".12345e6",
+                                    "valueText": ".12345e6"
                                 }
                             ],
                             "closeParenToken": {
@@ -151,7 +154,9 @@
                                 "expression": {
                                     "kind": "StringLiteral",
                                     "width": 7,
-                                    "text": "\"12345\""
+                                    "text": "\"12345\"",
+                                    "value": "12345",
+                                    "valueText": "12345"
                                 },
                                 "closeParenToken": {
                                     "kind": "CloseParenToken",
@@ -168,7 +173,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1e1"
+                            "text": "1e1",
+                            "value": 10,
+                            "valueText": "10"
                         }
                     }
                 },
@@ -214,6 +221,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -235,7 +243,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 43,
-                                            "text": "'#1: Number(\".12345e6\") === +(\"12345\")*1e1'"
+                                            "text": "'#1: Number(\".12345e6\") === +(\"12345\")*1e1'",
+                                            "value": "#1: Number(\".12345e6\") === +(\"12345\")*1e1",
+                                            "valueText": "#1: Number(\".12345e6\") === +(\"12345\")*1e1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -325,6 +335,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -339,7 +350,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\".12345e-3\""
+                                    "text": "\".12345e-3\"",
+                                    "value": ".12345e-3",
+                                    "valueText": ".12345e-3"
                                 }
                             ],
                             "closeParenToken": {
@@ -380,6 +393,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -394,7 +408,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 7,
-                                        "text": "\"12345\""
+                                        "text": "\"12345\"",
+                                        "value": "12345",
+                                        "valueText": "12345"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -412,7 +428,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 4,
-                            "text": "1e-8"
+                            "text": "1e-8",
+                            "value": 1e-8,
+                            "valueText": "1e-8"
                         }
                     }
                 },
@@ -458,6 +476,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -479,7 +498,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 50,
-                                            "text": "'#2: Number(\".12345e-3\") === Number(\"12345\")*1e-8'"
+                                            "text": "'#2: Number(\".12345e-3\") === Number(\"12345\")*1e-8'",
+                                            "value": "#2: Number(\".12345e-3\") === Number(\"12345\")*1e-8",
+                                            "valueText": "#2: Number(\".12345e-3\") === Number(\"12345\")*1e-8"
                                         }
                                     ],
                                     "closeParenToken": {

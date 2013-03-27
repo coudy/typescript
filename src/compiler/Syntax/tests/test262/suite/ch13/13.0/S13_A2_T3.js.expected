@@ -78,6 +78,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -138,6 +139,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "__func",
+                                                "value": "__func",
                                                 "valueText": "__func"
                                             },
                                             "callSignature": {
@@ -199,6 +201,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 9,
                                                                         "text": "arguments",
+                                                                        "value": "arguments",
                                                                         "valueText": "arguments"
                                                                     },
                                                                     "openBracketToken": {
@@ -209,7 +212,9 @@
                                                                     "argumentExpression": {
                                                                         "kind": "NumericLiteral",
                                                                         "width": 1,
-                                                                        "text": "0"
+                                                                        "text": "0",
+                                                                        "value": 0,
+                                                                        "valueText": "0"
                                                                     },
                                                                     "closeBracketToken": {
                                                                         "kind": "CloseBracketToken",
@@ -233,7 +238,9 @@
                                                                 "right": {
                                                                     "kind": "StringLiteral",
                                                                     "width": 3,
-                                                                    "text": "\"-\""
+                                                                    "text": "\"-\"",
+                                                                    "value": "-",
+                                                                    "valueText": "-"
                                                                 }
                                                             },
                                                             "operatorToken": {
@@ -256,6 +263,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 9,
                                                                     "text": "arguments",
+                                                                    "value": "arguments",
                                                                     "valueText": "arguments"
                                                                 },
                                                                 "openBracketToken": {
@@ -266,7 +274,9 @@
                                                                 "argumentExpression": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "1"
+                                                                    "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1"
                                                                 },
                                                                 "closeBracketToken": {
                                                                     "kind": "CloseBracketToken",
@@ -307,7 +317,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "\"Obi\""
+                                                "text": "\"Obi\"",
+                                                "value": "Obi",
+                                                "valueText": "Obi"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -317,7 +329,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "\"Wan\""
+                                                "text": "\"Wan\"",
+                                                "value": "Wan",
+                                                "valueText": "Wan"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -400,6 +414,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -425,7 +440,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"Obi-Wan\""
+                        "text": "\"Obi-Wan\"",
+                        "value": "Obi-Wan",
+                        "valueText": "Obi-Wan"
                     }
                 },
                 "closeParenToken": {
@@ -470,6 +487,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -494,7 +512,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 36,
-                                                "text": "'#1: x === \"Obi-Wan\". Actual: x ==='"
+                                                "text": "'#1: x === \"Obi-Wan\". Actual: x ==='",
+                                                "value": "#1: x === \"Obi-Wan\". Actual: x ===",
+                                                "valueText": "#1: x === \"Obi-Wan\". Actual: x ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -505,6 +525,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         }
@@ -638,6 +659,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -664,7 +686,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "'undefined'"
+                        "text": "'undefined'",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -709,6 +733,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -733,7 +758,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 64,
-                                                "text": "'#2: typeof __func === \\'undefined\\'. Actual: typeof __func ==='"
+                                                "text": "'#2: typeof __func === \\'undefined\\'. Actual: typeof __func ==='",
+                                                "value": "#2: typeof __func === 'undefined'. Actual: typeof __func ===",
+                                                "valueText": "#2: typeof __func === 'undefined'. Actual: typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -760,6 +787,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 }
                                             }

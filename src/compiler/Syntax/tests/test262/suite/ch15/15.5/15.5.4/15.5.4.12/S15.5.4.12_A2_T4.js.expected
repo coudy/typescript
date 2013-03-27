@@ -75,6 +75,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "bString",
+                                "value": "bString",
                                 "valueText": "bString",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -120,6 +121,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -134,7 +136,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 25,
-                                                "text": "\"one two three four five\""
+                                                "text": "\"one two three four five\"",
+                                                "value": "one two three four five",
+                                                "valueText": "one two three four five"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -195,6 +199,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "regExp",
+                                "value": "regExp",
                                 "valueText": "regExp",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -224,7 +229,9 @@
                                 "value": {
                                     "kind": "RegularExpressionLiteral",
                                     "width": 6,
-                                    "text": "/Four/"
+                                    "text": "/Four/",
+                                    "value": {},
+                                    "valueText": "/Four/"
                                 }
                             }
                         }
@@ -304,6 +311,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "bString",
+                                "value": "bString",
                                 "valueText": "bString"
                             },
                             "dotToken": {
@@ -315,6 +323,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "search",
+                                "value": "search",
                                 "valueText": "search"
                             }
                         },
@@ -331,6 +340,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "regExp",
+                                    "value": "regExp",
                                     "valueText": "regExp"
                                 }
                             ],
@@ -365,7 +375,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -411,6 +423,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -435,7 +448,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 118,
-                                                "text": "'#1: var bString = new String(\"one two three four five\"); var regExp = /Four/; bString.search(regExp)=== -1. Actual: '"
+                                                "text": "'#1: var bString = new String(\"one two three four five\"); var regExp = /Four/; bString.search(regExp)=== -1. Actual: '",
+                                                "value": "#1: var bString = new String(\"one two three four five\"); var regExp = /Four/; bString.search(regExp)=== -1. Actual: ",
+                                                "valueText": "#1: var bString = new String(\"one two three four five\"); var regExp = /Four/; bString.search(regExp)=== -1. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -452,6 +467,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "bString",
+                                                        "value": "bString",
                                                         "valueText": "bString"
                                                     },
                                                     "dotToken": {
@@ -463,6 +479,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "search",
+                                                        "value": "search",
                                                         "valueText": "search"
                                                     }
                                                 },
@@ -479,6 +496,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "regExp",
+                                                            "value": "regExp",
                                                             "valueText": "regExp"
                                                         }
                                                     ],

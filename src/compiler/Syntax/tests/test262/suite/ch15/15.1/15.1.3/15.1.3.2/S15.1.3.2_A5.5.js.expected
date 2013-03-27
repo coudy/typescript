@@ -97,6 +97,7 @@
                                 "kind": "IdentifierName",
                                 "width": 20,
                                 "text": "propertyIsEnumerable",
+                                "value": "propertyIsEnumerable",
                                 "valueText": "propertyIsEnumerable"
                             }
                         },
@@ -112,7 +113,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 20,
-                                    "text": "'decodeURIComponent'"
+                                    "text": "'decodeURIComponent'",
+                                    "value": "decodeURIComponent",
+                                    "valueText": "decodeURIComponent"
                                 }
                             ],
                             "closeParenToken": {
@@ -146,7 +149,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -191,6 +196,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -217,6 +223,8 @@
                                                 "width": 75,
                                                 "fullWidth": 76,
                                                 "text": "'#1: this.propertyIsEnumerable(\\'decodeURIComponent\\') === false. Actual: '",
+                                                "value": "#1: this.propertyIsEnumerable('decodeURIComponent') === false. Actual: ",
+                                                "valueText": "#1: this.propertyIsEnumerable('decodeURIComponent') === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -266,6 +274,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 20,
                                                             "text": "propertyIsEnumerable",
+                                                            "value": "propertyIsEnumerable",
                                                             "valueText": "propertyIsEnumerable"
                                                         }
                                                     },
@@ -281,7 +290,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 20,
-                                                                "text": "'decodeURIComponent'"
+                                                                "text": "'decodeURIComponent'",
+                                                                "value": "decodeURIComponent",
+                                                                "valueText": "decodeURIComponent"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -349,6 +360,7 @@
                         "width": 6,
                         "fullWidth": 18,
                         "text": "result",
+                        "value": "result",
                         "valueText": "result",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -391,7 +403,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "semicolonToken": {
@@ -435,6 +449,7 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": "p",
+                    "value": "p",
                     "valueText": "p",
                     "hasTrailingTrivia": true,
                     "trailingTrivia": [
@@ -521,6 +536,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "p",
+                                    "value": "p",
                                     "valueText": "p",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -546,7 +562,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 20,
-                                    "text": "\"decodeURIComponent\""
+                                    "text": "\"decodeURIComponent\"",
+                                    "value": "decodeURIComponent",
+                                    "valueText": "decodeURIComponent"
                                 }
                             },
                             "closeParenToken": {
@@ -591,6 +609,7 @@
                                                 "width": 6,
                                                 "fullWidth": 11,
                                                 "text": "result",
+                                                "value": "result",
                                                 "valueText": "result",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -623,7 +642,9 @@
                                             "right": {
                                                 "kind": "FalseKeyword",
                                                 "width": 5,
-                                                "text": "false"
+                                                "text": "false",
+                                                "value": false,
+                                                "valueText": "false"
                                             }
                                         },
                                         "semicolonToken": {
@@ -723,6 +744,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "result",
+                        "value": "result",
                         "valueText": "result",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -748,7 +770,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -793,6 +817,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -814,7 +839,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 106,
-                                            "text": "'#2: result = true; for (p in this) { if (p === \"decodeURIComponent\") result = false; }  result === true;'"
+                                            "text": "'#2: result = true; for (p in this) { if (p === \"decodeURIComponent\") result = false; }  result === true;'",
+                                            "value": "#2: result = true; for (p in this) { if (p === \"decodeURIComponent\") result = false; }  result === true;",
+                                            "valueText": "#2: result = true; for (p in this) { if (p === \"decodeURIComponent\") result = false; }  result === true;"
                                         }
                                     ],
                                     "closeParenToken": {

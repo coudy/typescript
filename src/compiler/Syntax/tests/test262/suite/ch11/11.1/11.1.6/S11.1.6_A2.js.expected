@@ -105,6 +105,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "closeParenToken": {
@@ -138,7 +139,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -183,6 +186,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -204,7 +208,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 25,
-                                            "text": "'#1: delete (x) === true'"
+                                            "text": "'#1: delete (x) === true'",
+                                            "value": "#1: delete (x) === true",
+                                            "valueText": "#1: delete (x) === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -315,6 +321,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "closeParenToken": {
@@ -348,7 +355,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -393,6 +402,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -419,6 +429,8 @@
                                                 "width": 42,
                                                 "fullWidth": 43,
                                                 "text": "'#2: typeof (x) === \"undefined\". Actual: '",
+                                                "value": "#2: typeof (x) === \"undefined\". Actual: ",
+                                                "valueText": "#2: typeof (x) === \"undefined\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -476,6 +488,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "closeParenToken": {
@@ -569,6 +582,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -696,6 +710,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "object",
+                                    "value": "object",
                                     "valueText": "object"
                                 },
                                 "dotToken": {
@@ -707,6 +722,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "prop",
+                                    "value": "prop",
                                     "valueText": "prop"
                                 }
                             },
@@ -741,7 +757,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -786,6 +804,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -807,7 +826,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 52,
-                                            "text": "'#3: var object = {}; delete (object.prop) === true'"
+                                            "text": "'#3: var object = {}; delete (object.prop) === true'",
+                                            "value": "#3: var object = {}; delete (object.prop) === true",
+                                            "valueText": "#3: var object = {}; delete (object.prop) === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -921,6 +942,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "object",
+                                    "value": "object",
                                     "valueText": "object"
                                 },
                                 "dotToken": {
@@ -932,6 +954,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "prop",
+                                    "value": "prop",
                                     "valueText": "prop"
                                 }
                             },
@@ -966,7 +989,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -1011,6 +1036,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1037,6 +1063,8 @@
                                                 "width": 69,
                                                 "fullWidth": 70,
                                                 "text": "'#4: var object = {}; typeof (object.prop) === \"undefined\". Actual: '",
+                                                "value": "#4: var object = {}; typeof (object.prop) === \"undefined\". Actual: ",
+                                                "valueText": "#4: var object = {}; typeof (object.prop) === \"undefined\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1097,6 +1125,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "object",
+                                                                "value": "object",
                                                                 "valueText": "object"
                                                             },
                                                             "dotToken": {
@@ -1108,6 +1137,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "prop",
+                                                                "value": "prop",
                                                                 "valueText": "prop"
                                                             }
                                                         },

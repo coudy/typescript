@@ -130,7 +130,9 @@
                             "condition": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -220,7 +222,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 13,
-                                                            "text": "\"instatement\""
+                                                            "text": "\"instatement\"",
+                                                            "value": "instatement",
+                                                            "valueText": "instatement"
                                                         },
                                                         "semicolonToken": {
                                                             "kind": "SemicolonToken",
@@ -286,6 +290,7 @@
                                     "width": 5,
                                     "fullWidth": 6,
                                     "text": "$FAIL",
+                                    "value": "$FAIL",
                                     "valueText": "$FAIL",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -307,7 +312,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 11,
-                                            "text": "\"#1 failed\""
+                                            "text": "\"#1 failed\"",
+                                            "value": "#1 failed",
+                                            "valueText": "#1 failed"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -372,6 +379,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -441,6 +449,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -466,7 +475,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 13,
-                                        "text": "\"instatement\""
+                                        "text": "\"instatement\"",
+                                        "value": "instatement",
+                                        "valueText": "instatement"
                                     }
                                 },
                                 "closeParenToken": {
@@ -511,6 +522,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -535,7 +547,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 57,
-                                                                "text": "'#1: Exception === \"instatement\". Actual:  Exception ==='"
+                                                                "text": "'#1: Exception === \"instatement\". Actual:  Exception ==='",
+                                                                "value": "#1: Exception === \"instatement\". Actual:  Exception ===",
+                                                                "valueText": "#1: Exception === \"instatement\". Actual:  Exception ==="
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -554,6 +568,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             }
                                                         }
@@ -731,7 +746,9 @@
                             "condition": {
                                 "kind": "FalseKeyword",
                                 "width": 5,
-                                "text": "false"
+                                "text": "false",
+                                "value": false,
+                                "valueText": "false"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -821,7 +838,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 12,
-                                                            "text": "\"truebranch\""
+                                                            "text": "\"truebranch\"",
+                                                            "value": "truebranch",
+                                                            "valueText": "truebranch"
                                                         },
                                                         "semicolonToken": {
                                                             "kind": "SemicolonToken",
@@ -949,7 +968,9 @@
                                                     "expression": {
                                                         "kind": "StringLiteral",
                                                         "width": 12,
-                                                        "text": "\"missbranch\""
+                                                        "text": "\"missbranch\"",
+                                                        "value": "missbranch",
+                                                        "valueText": "missbranch"
                                                     },
                                                     "semicolonToken": {
                                                         "kind": "SemicolonToken",
@@ -1014,6 +1035,7 @@
                                     "width": 5,
                                     "fullWidth": 6,
                                     "text": "$FAIL",
+                                    "value": "$FAIL",
                                     "valueText": "$FAIL",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1035,7 +1057,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 11,
-                                            "text": "\"#2 failed\""
+                                            "text": "\"#2 failed\"",
+                                            "value": "#2 failed",
+                                            "valueText": "#2 failed"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1100,6 +1124,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -1169,6 +1194,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -1194,7 +1220,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 12,
-                                        "text": "\"missbranch\""
+                                        "text": "\"missbranch\"",
+                                        "value": "missbranch",
+                                        "valueText": "missbranch"
                                     }
                                 },
                                 "closeParenToken": {
@@ -1239,6 +1267,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -1263,7 +1292,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 56,
-                                                                "text": "'#2: Exception === \"missbranch\". Actual:  Exception ==='"
+                                                                "text": "'#2: Exception === \"missbranch\". Actual:  Exception ==='",
+                                                                "value": "#2: Exception === \"missbranch\". Actual:  Exception ===",
+                                                                "valueText": "#2: Exception === \"missbranch\". Actual:  Exception ==="
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -1282,6 +1313,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             }
                                                         }

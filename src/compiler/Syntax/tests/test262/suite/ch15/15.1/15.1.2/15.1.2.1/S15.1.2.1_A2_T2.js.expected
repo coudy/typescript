@@ -81,6 +81,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }
@@ -111,6 +112,7 @@
                         "kind": "IdentifierName",
                         "width": 4,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval"
                     },
                     "argumentList": {
@@ -125,7 +127,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 18,
-                                "text": "\"x = 1; x\\u000A++\""
+                                "text": "\"x = 1; x\\u000A++\"",
+                                "value": "x = 1; x\n++",
+                                "valueText": "x = 1; x\n++"
                             }
                         ],
                         "closeParenToken": {

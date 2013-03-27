@@ -82,6 +82,7 @@
                     "kind": "IdentifierName",
                     "width": 4,
                     "text": "test",
+                    "value": "test",
                     "valueText": "test"
                 },
                 "callSignature": {
@@ -103,6 +104,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "arg",
+                                    "value": "arg",
                                     "valueText": "arg"
                                 }
                             }
@@ -201,6 +203,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         },
                                         "closeParenToken": {
@@ -234,7 +237,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"undefined\""
+                                    "text": "\"undefined\"",
+                                    "value": "undefined",
+                                    "valueText": "undefined"
                                 }
                             },
                             "closeParenToken": {
@@ -279,6 +284,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -305,6 +311,8 @@
                                                             "width": 79,
                                                             "fullWidth": 80,
                                                             "text": "'#1: Function argument that isn\\'t provided has a value of undefined. Actual: '",
+                                                            "value": "#1: Function argument that isn't provided has a value of undefined. Actual: ",
+                                                            "valueText": "#1: Function argument that isn't provided has a value of undefined. Actual: ",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -354,6 +362,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 3,
                                                                         "text": "arg",
+                                                                        "value": "arg",
                                                                         "valueText": "arg"
                                                                     },
                                                                     "closeParenToken": {
@@ -445,6 +454,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "test",
+                        "value": "test",
                         "valueText": "test",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,

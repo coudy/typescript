@@ -74,6 +74,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }
@@ -136,6 +137,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "__func",
+                                "value": "__func",
                                 "valueText": "__func",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -217,6 +219,7 @@
                                                         "width": 1,
                                                         "fullWidth": 6,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasLeadingTrivia": true,
                                                         "hasTrailingTrivia": true,
@@ -249,7 +252,9 @@
                                                     "right": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "1"
+                                                        "text": "1",
+                                                        "value": 1,
+                                                        "valueText": "1"
                                                     }
                                                 },
                                                 "semicolonToken": {
@@ -381,6 +386,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -424,6 +430,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -469,6 +476,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -493,7 +501,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 50,
-                                                "text": "'#1: __func() === undefined. Actual: __func() ==='"
+                                                "text": "'#1: __func() === undefined. Actual: __func() ==='",
+                                                "value": "#1: __func() === undefined. Actual: __func() ===",
+                                                "valueText": "#1: __func() === undefined. Actual: __func() ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -507,6 +517,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -644,6 +655,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     },
                     "operatorToken": {
@@ -654,7 +666,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -699,6 +713,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -723,7 +738,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 29,
-                                                "text": "'#2: x === 1. Actual: x === '"
+                                                "text": "'#2: x === 1. Actual: x === '",
+                                                "value": "#2: x === 1. Actual: x === ",
+                                                "valueText": "#2: x === 1. Actual: x === "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -734,6 +751,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         }

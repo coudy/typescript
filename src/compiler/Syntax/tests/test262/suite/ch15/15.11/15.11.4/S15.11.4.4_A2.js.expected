@@ -89,6 +89,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "err1",
+                                "value": "err1",
                                 "valueText": "err1"
                             },
                             "equalsValueClause": {
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Error",
+                                        "value": "Error",
                                         "valueText": "Error"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 7,
-                                                "text": "\"Error\""
+                                                "text": "\"Error\"",
+                                                "value": "Error",
+                                                "valueText": "Error"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -223,6 +227,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "toStr",
+                                            "value": "toStr",
                                             "valueText": "toStr"
                                         },
                                         "equalsValueClause": {
@@ -243,6 +248,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "err1",
+                                                        "value": "err1",
                                                         "valueText": "err1"
                                                     },
                                                     "dotToken": {
@@ -254,6 +260,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "toString",
+                                                        "value": "toString",
                                                         "valueText": "toString"
                                                     }
                                                 },
@@ -325,6 +332,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -361,6 +369,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -385,7 +394,9 @@
                                                 "left": {
                                                     "kind": "StringLiteral",
                                                     "width": 103,
-                                                    "text": "'#1: var err1=new Error(\"Error\"); var toStr=err1.toString(); lead to throwing exception. Exception is '"
+                                                    "text": "'#1: var err1=new Error(\"Error\"); var toStr=err1.toString(); lead to throwing exception. Exception is '",
+                                                    "value": "#1: var err1=new Error(\"Error\"); var toStr=err1.toString(); lead to throwing exception. Exception is ",
+                                                    "valueText": "#1: var err1=new Error(\"Error\"); var toStr=err1.toString(); lead to throwing exception. Exception is "
                                                 },
                                                 "operatorToken": {
                                                     "kind": "PlusToken",
@@ -396,6 +407,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "e",
+                                                    "value": "e",
                                                     "valueText": "e"
                                                 }
                                             }
@@ -468,6 +480,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "toStr",
+                        "value": "toStr",
                         "valueText": "toStr"
                     },
                     "operatorToken": {
@@ -479,6 +492,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -524,6 +538,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -548,7 +563,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 89,
-                                                "text": "'#2: var err1=new Error(\"Error\"); var toStr=err1.toString(); toStr!==undefined. Actual: '"
+                                                "text": "'#2: var err1=new Error(\"Error\"); var toStr=err1.toString(); toStr!==undefined. Actual: '",
+                                                "value": "#2: var err1=new Error(\"Error\"); var toStr=err1.toString(); toStr!==undefined. Actual: ",
+                                                "valueText": "#2: var err1=new Error(\"Error\"); var toStr=err1.toString(); toStr!==undefined. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -559,6 +576,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "toStr",
+                                                "value": "toStr",
                                                 "valueText": "toStr"
                                             }
                                         }

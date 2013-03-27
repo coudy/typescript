@@ -86,6 +86,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "regexp",
+                                "value": "regexp",
                                 "valueText": "regexp",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -115,7 +116,9 @@
                                 "value": {
                                     "kind": "RegularExpressionLiteral",
                                     "width": 8,
-                                    "text": "/(?:)/gi"
+                                    "text": "/(?:)/gi",
+                                    "value": {},
+                                    "valueText": "/(?:)/gi"
                                 }
                             }
                         }
@@ -171,6 +174,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "regexp",
+                            "value": "regexp",
                             "valueText": "regexp"
                         },
                         "dotToken": {
@@ -183,6 +187,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "global",
+                            "value": "global",
                             "valueText": "global",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -209,7 +214,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -254,6 +261,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -280,6 +288,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#1: var regexp = /(?:)/g; regexp.global === true. Actual: '",
+                                                "value": "#1: var regexp = /(?:)/g; regexp.global === true. Actual: ",
+                                                "valueText": "#1: var regexp = /(?:)/g; regexp.global === true. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -316,6 +326,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "regexp",
+                                                        "value": "regexp",
                                                         "valueText": "regexp"
                                                     },
                                                     "dotToken": {
@@ -327,6 +338,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "global",
+                                                        "value": "global",
                                                         "valueText": "global"
                                                     }
                                                 },
@@ -425,6 +437,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "regexp",
+                            "value": "regexp",
                             "valueText": "regexp"
                         },
                         "dotToken": {
@@ -437,6 +450,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "ignoreCase",
+                            "value": "ignoreCase",
                             "valueText": "ignoreCase",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -463,7 +477,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -508,6 +524,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -534,6 +551,8 @@
                                                 "width": 64,
                                                 "fullWidth": 65,
                                                 "text": "'#2: var regexp = /(?:)/g; regexp.ignoreCase === true. Actual: '",
+                                                "value": "#2: var regexp = /(?:)/g; regexp.ignoreCase === true. Actual: ",
+                                                "valueText": "#2: var regexp = /(?:)/g; regexp.ignoreCase === true. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -570,6 +589,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "regexp",
+                                                        "value": "regexp",
                                                         "valueText": "regexp"
                                                     },
                                                     "dotToken": {
@@ -581,6 +601,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "ignoreCase",
+                                                        "value": "ignoreCase",
                                                         "valueText": "ignoreCase"
                                                     }
                                                 },
@@ -679,6 +700,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "regexp",
+                            "value": "regexp",
                             "valueText": "regexp"
                         },
                         "dotToken": {
@@ -691,6 +713,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "multiline",
+                            "value": "multiline",
                             "valueText": "multiline",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -717,7 +740,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -762,6 +787,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -788,6 +814,8 @@
                                                 "width": 64,
                                                 "fullWidth": 65,
                                                 "text": "'#3: var regexp = /(?:)/g; regexp.multiline === false. Actual: '",
+                                                "value": "#3: var regexp = /(?:)/g; regexp.multiline === false. Actual: ",
+                                                "valueText": "#3: var regexp = /(?:)/g; regexp.multiline === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -824,6 +852,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "regexp",
+                                                        "value": "regexp",
                                                         "valueText": "regexp"
                                                     },
                                                     "dotToken": {
@@ -835,6 +864,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "multiline",
+                                                        "value": "multiline",
                                                         "valueText": "multiline"
                                                     }
                                                 },

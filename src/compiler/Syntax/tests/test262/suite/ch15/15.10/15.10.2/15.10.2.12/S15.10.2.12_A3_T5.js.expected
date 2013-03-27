@@ -83,6 +83,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "non_w",
+                                "value": "non_w",
                                 "valueText": "non_w",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -116,6 +117,8 @@
                                         "width": 44,
                                         "fullWidth": 45,
                                         "text": "\"\\f\\n\\r\\t\\v~`!@#$%^&*()-+={[}]|\\\\:;'<,>./? \"",
+                                        "value": "\f\n\r\t\u000b~`!@#$%^&*()-+={[}]|\\:;'<,>./? ",
+                                        "valueText": "\f\n\r\t\u000b~`!@#$%^&*()-+={[}]|\\:;'<,>./? ",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -140,7 +143,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "'\"'"
+                                        "text": "'\"'",
+                                        "value": "\"",
+                                        "valueText": "\""
                                     }
                                 }
                             }
@@ -199,7 +204,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 4,
-                                "text": "/\\w/"
+                                "text": "/\\w/",
+                                "value": {},
+                                "valueText": "/\\w/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -210,6 +217,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "exec",
+                                "value": "exec",
                                 "valueText": "exec"
                             }
                         },
@@ -226,6 +234,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "non_w",
+                                    "value": "non_w",
                                     "valueText": "non_w"
                                 }
                             ],
@@ -305,6 +314,7 @@
                                     "width": 6,
                                     "fullWidth": 9,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -326,7 +336,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 11,
-                                            "text": "'#1: non-w'"
+                                            "text": "'#1: non-w'",
+                                            "value": "#1: non-w",
+                                            "valueText": "#1: non-w"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -414,6 +426,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "non_W",
+                                "value": "non_W",
                                 "valueText": "non_W",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -442,7 +455,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 66,
-                                    "text": "\"_0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\""
+                                    "text": "\"_0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"",
+                                    "value": "_0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                                    "valueText": "_0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                 }
                             }
                         }
@@ -495,6 +510,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "regexp_w",
+                                "value": "regexp_w",
                                 "valueText": "regexp_w",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -524,7 +540,9 @@
                                 "value": {
                                     "kind": "RegularExpressionLiteral",
                                     "width": 5,
-                                    "text": "/\\w/g"
+                                    "text": "/\\w/g",
+                                    "value": {},
+                                    "valueText": "/\\w/g"
                                 }
                             }
                         }
@@ -574,6 +592,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "k",
+                                "value": "k",
                                 "valueText": "k",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -602,7 +621,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -657,6 +678,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "regexp_w",
+                                "value": "regexp_w",
                                 "valueText": "regexp_w"
                             },
                             "dotToken": {
@@ -668,6 +690,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "exec",
+                                "value": "exec",
                                 "valueText": "exec"
                             }
                         },
@@ -684,6 +707,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "non_W",
+                                    "value": "non_W",
                                     "valueText": "non_W"
                                 }
                             ],
@@ -763,6 +787,7 @@
                                     "width": 1,
                                     "fullWidth": 4,
                                     "text": "k",
+                                    "value": "k",
                                     "valueText": "k",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -849,6 +874,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "non_W",
+                            "value": "non_W",
                             "valueText": "non_W"
                         },
                         "dotToken": {
@@ -861,6 +887,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -888,6 +915,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "k",
+                        "value": "k",
                         "valueText": "k"
                     }
                 },
@@ -933,6 +961,7 @@
                                     "width": 6,
                                     "fullWidth": 9,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -954,7 +983,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 11,
-                                            "text": "'#2: non-W'"
+                                            "text": "'#2: non-W'",
+                                            "value": "#2: non-W",
+                                            "valueText": "#2: non-W"
                                         }
                                     ],
                                     "closeParenToken": {

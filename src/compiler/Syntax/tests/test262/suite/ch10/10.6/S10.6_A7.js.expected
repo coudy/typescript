@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 2,
                     "text": "f1",
+                    "value": "f1",
                     "valueText": "f1"
                 },
                 "callSignature": {
@@ -140,6 +141,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "arguments",
+                                "value": "arguments",
                                 "valueText": "arguments"
                             },
                             "semicolonToken": {
@@ -234,6 +236,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "i",
+                                "value": "i",
                                 "valueText": "i",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -262,7 +265,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             }
                         }
@@ -289,6 +294,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -314,7 +320,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "secondSemicolonToken": {
@@ -337,6 +345,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -406,6 +415,7 @@
                                             "kind": "IdentifierName",
                                             "width": 2,
                                             "text": "f1",
+                                            "value": "f1",
                                             "valueText": "f1"
                                         },
                                         "argumentList": {
@@ -420,7 +430,9 @@
                                                 {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "1"
+                                                    "text": "1",
+                                                    "value": 1,
+                                                    "valueText": "1"
                                                 },
                                                 {
                                                     "kind": "CommaToken",
@@ -430,7 +442,9 @@
                                                 {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "2"
+                                                    "text": "2",
+                                                    "value": 2,
+                                                    "valueText": "2"
                                                 },
                                                 {
                                                     "kind": "CommaToken",
@@ -440,7 +454,9 @@
                                                 {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "3"
+                                                    "text": "3",
+                                                    "value": 3,
+                                                    "valueText": "3"
                                                 },
                                                 {
                                                     "kind": "CommaToken",
@@ -450,7 +466,9 @@
                                                 {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "4"
+                                                    "text": "4",
+                                                    "value": 4,
+                                                    "valueText": "4"
                                                 },
                                                 {
                                                     "kind": "CommaToken",
@@ -460,7 +478,9 @@
                                                 {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "5"
+                                                    "text": "5",
+                                                    "value": 5,
+                                                    "valueText": "5"
                                                 }
                                             ],
                                             "closeParenToken": {
@@ -479,6 +499,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "i",
+                                        "value": "i",
                                         "valueText": "i"
                                     },
                                     "closeBracketToken": {
@@ -523,6 +544,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "i",
+                                            "value": "i",
                                             "valueText": "i"
                                         },
                                         "operatorToken": {
@@ -533,7 +555,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         }
                                     },
                                     "closeParenToken": {
@@ -568,6 +592,7 @@
                                         "width": 6,
                                         "fullWidth": 8,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -604,7 +629,9 @@
                                                                 "left": {
                                                                     "kind": "StringLiteral",
                                                                     "width": 3,
-                                                                    "text": "\"#\""
+                                                                    "text": "\"#\"",
+                                                                    "value": "#",
+                                                                    "valueText": "#"
                                                                 },
                                                                 "operatorToken": {
                                                                     "kind": "PlusToken",
@@ -615,6 +642,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "i",
+                                                                    "value": "i",
                                                                     "valueText": "i"
                                                                 }
                                                             },
@@ -626,7 +654,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 61,
-                                                                "text": "\": Returning function's arguments work wrong, f1(1,2,3,4,5)[\""
+                                                                "text": "\": Returning function's arguments work wrong, f1(1,2,3,4,5)[\"",
+                                                                "value": ": Returning function's arguments work wrong, f1(1,2,3,4,5)[",
+                                                                "valueText": ": Returning function's arguments work wrong, f1(1,2,3,4,5)["
                                                             }
                                                         },
                                                         "operatorToken": {
@@ -638,6 +668,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "i",
+                                                            "value": "i",
                                                             "valueText": "i"
                                                         }
                                                     },
@@ -649,7 +680,9 @@
                                                     "right": {
                                                         "kind": "StringLiteral",
                                                         "width": 8,
-                                                        "text": "\"] !== \""
+                                                        "text": "\"] !== \"",
+                                                        "value": "] !== ",
+                                                        "valueText": "] !== "
                                                     }
                                                 },
                                                 "operatorToken": {
@@ -672,6 +705,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "i",
+                                                            "value": "i",
                                                             "valueText": "i"
                                                         },
                                                         "operatorToken": {
@@ -682,7 +716,9 @@
                                                         "right": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "1"
+                                                            "text": "1",
+                                                            "value": 1,
+                                                            "valueText": "1"
                                                         }
                                                     },
                                                     "closeParenToken": {

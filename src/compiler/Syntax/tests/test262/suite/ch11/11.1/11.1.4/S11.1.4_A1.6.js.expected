@@ -78,6 +78,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "array",
+                                "value": "array",
                                 "valueText": "array",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -137,7 +138,9 @@
                                         {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "3"
+                                            "text": "3",
+                                            "value": 3,
+                                            "valueText": "3"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -252,6 +255,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -278,7 +282,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -323,6 +329,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -349,6 +356,8 @@
                                                 "width": 63,
                                                 "fullWidth": 64,
                                                 "text": "'#1: var array = [,,3,,,]; typeof array === \"object\". Actual: '",
+                                                "value": "#1: var array = [,,3,,,]; typeof array === \"object\". Actual: ",
+                                                "valueText": "#1: var array = [,,3,,,]; typeof array === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -398,6 +407,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     }
                                                 },
@@ -497,6 +507,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -524,6 +535,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "Array",
+                            "value": "Array",
                             "valueText": "Array",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -550,7 +562,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -595,6 +609,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -616,7 +631,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 59,
-                                            "text": "'#2: var array = [,,3,,,]; array instanceof Array === true'"
+                                            "text": "'#2: var array = [,,3,,,]; array instanceof Array === true'",
+                                            "value": "#2: var array = [,,3,,,]; array instanceof Array === true",
+                                            "valueText": "#2: var array = [,,3,,,]; array instanceof Array === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -706,6 +723,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array"
                         },
                         "dotToken": {
@@ -718,6 +736,7 @@
                             "width": 8,
                             "fullWidth": 9,
                             "text": "toString",
+                            "value": "toString",
                             "valueText": "toString",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -751,6 +770,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "dotToken": {
@@ -762,6 +782,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -774,6 +795,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "toString",
+                            "value": "toString",
                             "valueText": "toString"
                         }
                     }
@@ -820,6 +842,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -846,6 +869,8 @@
                                                 "width": 81,
                                                 "fullWidth": 82,
                                                 "text": "'#3: var array = [,,3,,,]; array.toString === Array.prototype.toString. Actual: '",
+                                                "value": "#3: var array = [,,3,,,]; array.toString === Array.prototype.toString. Actual: ",
+                                                "valueText": "#3: var array = [,,3,,,]; array.toString === Array.prototype.toString. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -882,6 +907,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     },
                                                     "dotToken": {
@@ -893,6 +919,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "toString",
+                                                        "value": "toString",
                                                         "valueText": "toString"
                                                     }
                                                 },
@@ -991,6 +1018,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array"
                         },
                         "dotToken": {
@@ -1003,6 +1031,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1029,7 +1058,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "closeParenToken": {
@@ -1074,6 +1105,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1100,6 +1132,8 @@
                                                 "width": 56,
                                                 "fullWidth": 57,
                                                 "text": "'#4: var array = [,,3,,,]; array.length === 5. Actual: '",
+                                                "value": "#4: var array = [,,3,,,]; array.length === 5. Actual: ",
+                                                "valueText": "#4: var array = [,,3,,,]; array.length === 5. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1136,6 +1170,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     },
                                                     "dotToken": {
@@ -1147,6 +1182,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -1245,6 +1281,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array"
                         },
                         "openBracketToken": {
@@ -1255,7 +1292,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1288,6 +1327,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1333,6 +1373,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1359,6 +1400,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#5: var array = [,,3,,,]; array[0] === undefined. Actual: '",
+                                                "value": "#5: var array = [,,3,,,]; array[0] === undefined. Actual: ",
+                                                "valueText": "#5: var array = [,,3,,,]; array[0] === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1395,6 +1438,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     },
                                                     "openBracketToken": {
@@ -1405,7 +1449,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "0"
+                                                        "text": "0",
+                                                        "value": 0,
+                                                        "valueText": "0"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1508,6 +1554,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array"
                         },
                         "openBracketToken": {
@@ -1518,7 +1565,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1551,6 +1600,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1596,6 +1646,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1622,6 +1673,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#6: var array = [,,3,,,]; array[1] === undefined. Actual: '",
+                                                "value": "#6: var array = [,,3,,,]; array[1] === undefined. Actual: ",
+                                                "valueText": "#6: var array = [,,3,,,]; array[1] === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1658,6 +1711,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     },
                                                     "openBracketToken": {
@@ -1668,7 +1722,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "1"
+                                                        "text": "1",
+                                                        "value": 1,
+                                                        "valueText": "1"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1771,6 +1827,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array"
                         },
                         "openBracketToken": {
@@ -1781,7 +1838,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "2"
+                            "text": "2",
+                            "value": 2,
+                            "valueText": "2"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1813,7 +1872,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -1858,6 +1919,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1884,6 +1946,8 @@
                                                 "width": 52,
                                                 "fullWidth": 53,
                                                 "text": "'#7: var array = [,,3,,,]; array[2] === 3. Actual: '",
+                                                "value": "#7: var array = [,,3,,,]; array[2] === 3. Actual: ",
+                                                "valueText": "#7: var array = [,,3,,,]; array[2] === 3. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1920,6 +1984,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     },
                                                     "openBracketToken": {
@@ -1930,7 +1995,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "2"
+                                                        "text": "2",
+                                                        "value": 2,
+                                                        "valueText": "2"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -2033,6 +2100,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array"
                         },
                         "openBracketToken": {
@@ -2043,7 +2111,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "3"
+                            "text": "3",
+                            "value": 3,
+                            "valueText": "3"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -2076,6 +2146,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -2121,6 +2192,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2147,6 +2219,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#8: var array = [,,3,,,]; array[3] === undefined. Actual: '",
+                                                "value": "#8: var array = [,,3,,,]; array[3] === undefined. Actual: ",
+                                                "valueText": "#8: var array = [,,3,,,]; array[3] === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2183,6 +2257,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     },
                                                     "openBracketToken": {
@@ -2193,7 +2268,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "3"
+                                                        "text": "3",
+                                                        "value": 3,
+                                                        "valueText": "3"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -2296,6 +2373,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "array",
+                            "value": "array",
                             "valueText": "array"
                         },
                         "openBracketToken": {
@@ -2306,7 +2384,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "4"
+                            "text": "4",
+                            "value": 4,
+                            "valueText": "4"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -2339,6 +2419,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -2384,6 +2465,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2410,6 +2492,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#9: var array = [,,3,,,]; array[4] === undefined. Actual: '",
+                                                "value": "#9: var array = [,,3,,,]; array[4] === undefined. Actual: ",
+                                                "valueText": "#9: var array = [,,3,,,]; array[4] === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2446,6 +2530,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "array",
+                                                        "value": "array",
                                                         "valueText": "array"
                                                     },
                                                     "openBracketToken": {
@@ -2456,7 +2541,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "4"
+                                                        "text": "4",
+                                                        "value": 4,
+                                                        "valueText": "4"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",

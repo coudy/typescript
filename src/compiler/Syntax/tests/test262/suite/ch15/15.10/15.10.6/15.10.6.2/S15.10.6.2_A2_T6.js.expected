@@ -19,6 +19,7 @@
                         "width": 10,
                         "fullWidth": 404,
                         "text": "__instance",
+                        "value": "__instance",
                         "valueText": "__instance",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -98,6 +99,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -112,7 +114,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 3,
-                                    "text": "1.0"
+                                    "text": "1.0",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             ],
                             "closeParenToken": {
@@ -152,6 +156,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -172,6 +177,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "exec",
+                            "value": "exec",
                             "valueText": "exec",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -205,6 +211,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "RegExp",
+                                "value": "RegExp",
                                 "valueText": "RegExp"
                             },
                             "dotToken": {
@@ -216,6 +223,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -228,6 +236,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "exec",
+                            "value": "exec",
                             "valueText": "exec"
                         }
                     }
@@ -309,6 +318,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -335,6 +345,8 @@
                                                 "width": 133,
                                                 "fullWidth": 134,
                                                 "text": "'#1.1: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance[\"exec\"](\"message to investigate\"). Actual: '",
+                                                "value": "#1.1: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance[\"exec\"](\"message to investigate\"). Actual: ",
+                                                "valueText": "#1.1: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance[\"exec\"](\"message to investigate\"). Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -374,6 +386,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 10,
                                                             "text": "__instance",
+                                                            "value": "__instance",
                                                             "valueText": "__instance"
                                                         },
                                                         "openBracketToken": {
@@ -384,7 +397,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 6,
-                                                            "text": "\"exec\""
+                                                            "text": "\"exec\"",
+                                                            "value": "exec",
+                                                            "valueText": "exec"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",
@@ -404,7 +419,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 24,
-                                                                "text": "\"message to investigate\""
+                                                                "text": "\"message to investigate\"",
+                                                                "value": "message to investigate",
+                                                                "valueText": "message to investigate"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -484,6 +501,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -564,6 +582,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -590,6 +609,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -623,7 +643,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -668,6 +690,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -694,6 +717,8 @@
                                                                 "width": 133,
                                                                 "fullWidth": 134,
                                                                 "text": "'#1.2: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance[\"exec\"](\"message to investigate\"). Actual: '",
+                                                                "value": "#1.2: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance[\"exec\"](\"message to investigate\"). Actual: ",
+                                                                "valueText": "#1.2: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance[\"exec\"](\"message to investigate\"). Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -727,6 +752,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

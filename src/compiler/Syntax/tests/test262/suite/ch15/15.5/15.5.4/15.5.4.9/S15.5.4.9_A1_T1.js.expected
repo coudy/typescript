@@ -74,6 +74,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "str1",
+                                "value": "str1",
                                 "valueText": "str1",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\"h\""
+                                                "text": "\"h\"",
+                                                "value": "h",
+                                                "valueText": "h"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -208,6 +212,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "str2",
+                                "value": "str2",
                                 "valueText": "str2",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -254,6 +259,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -275,7 +281,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 6,
-                                                "text": "\"\\x68\""
+                                                "text": "\"\\x68\"",
+                                                "value": "h",
+                                                "valueText": "h"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -338,6 +346,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "str1",
+                                "value": "str1",
                                 "valueText": "str1"
                             },
                             "dotToken": {
@@ -349,6 +358,7 @@
                                 "kind": "IdentifierName",
                                 "width": 13,
                                 "text": "localeCompare",
+                                "value": "localeCompare",
                                 "valueText": "localeCompare"
                             }
                         },
@@ -365,6 +375,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "str2",
+                                    "value": "str2",
                                     "valueText": "str2"
                                 }
                             ],
@@ -383,7 +394,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -420,6 +433,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -444,7 +458,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 105,
-                                                "text": "'#1: var str1 = new String(\"h\"); var str2 = new String (\"\\\\x68\"); str1.localeCompare(str2)===0. Actual: '"
+                                                "text": "'#1: var str1 = new String(\"h\"); var str2 = new String (\"\\\\x68\"); str1.localeCompare(str2)===0. Actual: '",
+                                                "value": "#1: var str1 = new String(\"h\"); var str2 = new String (\"\\x68\"); str1.localeCompare(str2)===0. Actual: ",
+                                                "valueText": "#1: var str1 = new String(\"h\"); var str2 = new String (\"\\x68\"); str1.localeCompare(str2)===0. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -461,6 +477,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "str1",
+                                                        "value": "str1",
                                                         "valueText": "str1"
                                                     },
                                                     "dotToken": {
@@ -472,6 +489,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 13,
                                                         "text": "localeCompare",
+                                                        "value": "localeCompare",
                                                         "valueText": "localeCompare"
                                                     }
                                                 },
@@ -488,6 +506,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "str2",
+                                                            "value": "str2",
                                                             "valueText": "str2"
                                                         }
                                                     ],
@@ -585,6 +604,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "str2",
+                                "value": "str2",
                                 "valueText": "str2",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -631,6 +651,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -652,7 +673,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 8,
-                                                "text": "\"\\u0068\""
+                                                "text": "\"\\u0068\"",
+                                                "value": "h",
+                                                "valueText": "h"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -715,6 +738,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "str1",
+                                "value": "str1",
                                 "valueText": "str1"
                             },
                             "dotToken": {
@@ -726,6 +750,7 @@
                                 "kind": "IdentifierName",
                                 "width": 13,
                                 "text": "localeCompare",
+                                "value": "localeCompare",
                                 "valueText": "localeCompare"
                             }
                         },
@@ -742,6 +767,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "str2",
+                                    "value": "str2",
                                     "valueText": "str2"
                                 }
                             ],
@@ -760,7 +786,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -797,6 +825,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -821,7 +850,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 107,
-                                                "text": "'#2: var str1 = new String(\"h\"); var str2 = new String (\"\\\\u0068\"); str1.localeCompare(str2)===0. Actual: '"
+                                                "text": "'#2: var str1 = new String(\"h\"); var str2 = new String (\"\\\\u0068\"); str1.localeCompare(str2)===0. Actual: '",
+                                                "value": "#2: var str1 = new String(\"h\"); var str2 = new String (\"\\u0068\"); str1.localeCompare(str2)===0. Actual: ",
+                                                "valueText": "#2: var str1 = new String(\"h\"); var str2 = new String (\"\\u0068\"); str1.localeCompare(str2)===0. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -838,6 +869,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "str1",
+                                                        "value": "str1",
                                                         "valueText": "str1"
                                                     },
                                                     "dotToken": {
@@ -849,6 +881,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 13,
                                                         "text": "localeCompare",
+                                                        "value": "localeCompare",
                                                         "valueText": "localeCompare"
                                                     }
                                                 },
@@ -865,6 +898,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "str2",
+                                                            "value": "str2",
                                                             "valueText": "str2"
                                                         }
                                                     ],
@@ -962,6 +996,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "str2",
+                                "value": "str2",
                                 "valueText": "str2",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1008,6 +1043,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -1029,7 +1065,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\"h\""
+                                                "text": "\"h\"",
+                                                "value": "h",
+                                                "valueText": "h"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1092,6 +1130,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "str1",
+                                "value": "str1",
                                 "valueText": "str1"
                             },
                             "dotToken": {
@@ -1103,6 +1142,7 @@
                                 "kind": "IdentifierName",
                                 "width": 13,
                                 "text": "localeCompare",
+                                "value": "localeCompare",
                                 "valueText": "localeCompare"
                             }
                         },
@@ -1119,6 +1159,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "str2",
+                                    "value": "str2",
                                     "valueText": "str2"
                                 }
                             ],
@@ -1137,7 +1178,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -1174,6 +1217,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1198,7 +1242,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 101,
-                                                "text": "'#3: var str1 = new String(\"h\"); var str2 = new String (\"h\"); str1.localeCompare(str2)===0. Actual: '"
+                                                "text": "'#3: var str1 = new String(\"h\"); var str2 = new String (\"h\"); str1.localeCompare(str2)===0. Actual: '",
+                                                "value": "#3: var str1 = new String(\"h\"); var str2 = new String (\"h\"); str1.localeCompare(str2)===0. Actual: ",
+                                                "valueText": "#3: var str1 = new String(\"h\"); var str2 = new String (\"h\"); str1.localeCompare(str2)===0. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1215,6 +1261,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "str1",
+                                                        "value": "str1",
                                                         "valueText": "str1"
                                                     },
                                                     "dotToken": {
@@ -1226,6 +1273,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 13,
                                                         "text": "localeCompare",
+                                                        "value": "localeCompare",
                                                         "valueText": "localeCompare"
                                                     }
                                                 },
@@ -1242,6 +1290,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "str2",
+                                                            "value": "str2",
                                                             "valueText": "str2"
                                                         }
                                                     ],

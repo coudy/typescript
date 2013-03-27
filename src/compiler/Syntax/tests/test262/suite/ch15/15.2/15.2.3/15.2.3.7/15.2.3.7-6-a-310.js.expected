@@ -92,6 +92,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -176,6 +177,7 @@
                                             "width": 3,
                                             "fullWidth": 4,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -300,6 +302,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 9,
                                                                         "text": "arguments",
+                                                                        "value": "arguments",
                                                                         "valueText": "arguments"
                                                                     },
                                                                     "semicolonToken": {
@@ -352,7 +355,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -370,7 +375,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "2"
+                                                                "text": "2",
+                                                                "value": 2,
+                                                                "valueText": "2"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -388,7 +395,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "3"
+                                                                "text": "3",
+                                                                "value": 3,
+                                                                "valueText": "3"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -456,6 +465,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "getFun",
+                                "value": "getFun",
                                 "valueText": "getFun"
                             },
                             "callSignature": {
@@ -529,7 +539,9 @@
                                         "expression": {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "\"genericPropertyString\""
+                                            "text": "\"genericPropertyString\"",
+                                            "value": "genericPropertyString",
+                                            "valueText": "genericPropertyString"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -598,6 +610,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "setFun",
+                                "value": "setFun",
                                 "valueText": "setFun"
                             },
                             "callSignature": {
@@ -619,6 +632,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "value",
+                                                "value": "value",
                                                 "valueText": "value"
                                             }
                                         }
@@ -670,6 +684,7 @@
                                                     "width": 3,
                                                     "fullWidth": 15,
                                                     "text": "arg",
+                                                    "value": "arg",
                                                     "valueText": "arg",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -689,6 +704,7 @@
                                                     "width": 12,
                                                     "fullWidth": 13,
                                                     "text": "verifySetFun",
+                                                    "value": "verifySetFun",
                                                     "valueText": "verifySetFun",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -716,6 +732,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "value",
+                                                "value": "value",
                                                 "valueText": "value"
                                             }
                                         },
@@ -774,6 +791,7 @@
                                         "width": 6,
                                         "fullWidth": 14,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -792,6 +810,7 @@
                                         "kind": "IdentifierName",
                                         "width": 14,
                                         "text": "defineProperty",
+                                        "value": "defineProperty",
                                         "valueText": "defineProperty"
                                     }
                                 },
@@ -809,6 +828,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         },
                                         {
@@ -827,7 +847,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 17,
-                                            "text": "\"genericProperty\""
+                                            "text": "\"genericProperty\"",
+                                            "value": "genericProperty",
+                                            "valueText": "genericProperty"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -870,6 +892,8 @@
                                                         "width": 3,
                                                         "fullWidth": 15,
                                                         "text": "get",
+                                                        "value": "get",
+                                                        "valueText": "get",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
                                                             {
@@ -895,6 +919,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "getFun",
+                                                        "value": "getFun",
                                                         "valueText": "getFun"
                                                     }
                                                 },
@@ -921,6 +946,8 @@
                                                         "width": 3,
                                                         "fullWidth": 15,
                                                         "text": "set",
+                                                        "value": "set",
+                                                        "valueText": "set",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
                                                             {
@@ -946,6 +973,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "setFun",
+                                                        "value": "setFun",
                                                         "valueText": "setFun"
                                                     }
                                                 },
@@ -971,6 +999,7 @@
                                                         "width": 12,
                                                         "fullWidth": 24,
                                                         "text": "configurable",
+                                                        "value": "configurable",
                                                         "valueText": "configurable",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -998,6 +1027,8 @@
                                                         "width": 5,
                                                         "fullWidth": 7,
                                                         "text": "false",
+                                                        "value": false,
+                                                        "valueText": "false",
                                                         "hasTrailingTrivia": true,
                                                         "hasTrailingNewLine": true,
                                                         "trailingTrivia": [
@@ -1110,6 +1141,7 @@
                                                     "width": 6,
                                                     "fullWidth": 18,
                                                     "text": "Object",
+                                                    "value": "Object",
                                                     "valueText": "Object",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -1128,6 +1160,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 16,
                                                     "text": "defineProperties",
+                                                    "value": "defineProperties",
                                                     "valueText": "defineProperties"
                                                 }
                                             },
@@ -1145,6 +1178,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "arg",
+                                                        "value": "arg",
                                                         "valueText": "arg"
                                                     },
                                                     {
@@ -1188,6 +1222,8 @@
                                                                     "width": 17,
                                                                     "fullWidth": 33,
                                                                     "text": "\"genericProperty\"",
+                                                                    "value": "genericProperty",
+                                                                    "valueText": "genericProperty",
                                                                     "hasLeadingTrivia": true,
                                                                     "leadingTrivia": [
                                                                         {
@@ -1237,6 +1273,8 @@
                                                                                 "width": 3,
                                                                                 "fullWidth": 23,
                                                                                 "text": "get",
+                                                                                "value": "get",
+                                                                                "valueText": "get",
                                                                                 "hasLeadingTrivia": true,
                                                                                 "leadingTrivia": [
                                                                                     {
@@ -1345,7 +1383,9 @@
                                                                                             "expression": {
                                                                                                 "kind": "StringLiteral",
                                                                                                 "width": 30,
-                                                                                                "text": "\"overideGenericPropertyString\""
+                                                                                                "text": "\"overideGenericPropertyString\"",
+                                                                                                "value": "overideGenericPropertyString",
+                                                                                                "valueText": "overideGenericPropertyString"
                                                                                             },
                                                                                             "semicolonToken": {
                                                                                                 "kind": "SemicolonToken",
@@ -1480,7 +1520,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -1544,6 +1586,7 @@
                                     "kind": "IdentifierName",
                                     "width": 2,
                                     "text": "ex",
+                                    "value": "ex",
                                     "valueText": "ex"
                                 },
                                 "closeParenToken": {
@@ -1611,6 +1654,7 @@
                                                         "width": 2,
                                                         "fullWidth": 3,
                                                         "text": "ex",
+                                                        "value": "ex",
                                                         "valueText": "ex",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -1638,6 +1682,7 @@
                                                         "width": 9,
                                                         "fullWidth": 10,
                                                         "text": "TypeError",
+                                                        "value": "TypeError",
                                                         "valueText": "TypeError",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -1670,6 +1715,7 @@
                                                         "width": 36,
                                                         "fullWidth": 52,
                                                         "text": "accessorPropertyAttributesAreCorrect",
+                                                        "value": "accessorPropertyAttributesAreCorrect",
                                                         "valueText": "accessorPropertyAttributesAreCorrect",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -1692,6 +1738,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 3,
                                                                 "text": "arg",
+                                                                "value": "arg",
                                                                 "valueText": "arg"
                                                             },
                                                             {
@@ -1710,7 +1757,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 17,
-                                                                "text": "\"genericProperty\""
+                                                                "text": "\"genericProperty\"",
+                                                                "value": "genericProperty",
+                                                                "valueText": "genericProperty"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -1729,6 +1778,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "getFun",
+                                                                "value": "getFun",
                                                                 "valueText": "getFun"
                                                             },
                                                             {
@@ -1748,6 +1798,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "setFun",
+                                                                "value": "setFun",
                                                                 "valueText": "setFun"
                                                             },
                                                             {
@@ -1766,7 +1817,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 14,
-                                                                "text": "\"verifySetFun\""
+                                                                "text": "\"verifySetFun\"",
+                                                                "value": "verifySetFun",
+                                                                "valueText": "verifySetFun"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -1784,7 +1837,9 @@
                                                             {
                                                                 "kind": "FalseKeyword",
                                                                 "width": 5,
-                                                                "text": "false"
+                                                                "text": "false",
+                                                                "value": false,
+                                                                "valueText": "false"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -1802,7 +1857,9 @@
                                                             {
                                                                 "kind": "FalseKeyword",
                                                                 "width": 5,
-                                                                "text": "false"
+                                                                "text": "false",
+                                                                "value": false,
+                                                                "valueText": "false"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -1820,7 +1877,9 @@
                                                             {
                                                                 "kind": "FalseKeyword",
                                                                 "width": 5,
-                                                                "text": "false"
+                                                                "text": "false",
+                                                                "value": false,
+                                                                "valueText": "false"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -1905,6 +1964,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -1920,6 +1980,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

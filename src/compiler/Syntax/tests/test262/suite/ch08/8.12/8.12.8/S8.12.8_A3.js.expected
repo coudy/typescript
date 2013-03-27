@@ -122,6 +122,7 @@
                                             "width": 5,
                                             "fullWidth": 6,
                                             "text": "__obj",
+                                            "value": "__obj",
                                             "valueText": "__obj",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -166,6 +167,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         },
                                                         "colonToken": {
@@ -247,7 +249,9 @@
                                                                         "expression": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 3,
-                                                                            "text": "\"1\""
+                                                                            "text": "\"1\"",
+                                                                            "value": "1",
+                                                                            "valueText": "1"
                                                                         },
                                                                         "semicolonToken": {
                                                                             "kind": "SemicolonToken",
@@ -284,6 +288,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "valueOf",
+                                                            "value": "valueOf",
                                                             "valueText": "valueOf"
                                                         },
                                                         "colonToken": {
@@ -379,6 +384,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 6,
                                                                                 "text": "Object",
+                                                                                "value": "Object",
                                                                                 "valueText": "Object"
                                                                             },
                                                                             "argumentList": {
@@ -476,6 +482,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -491,6 +498,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "__obj",
+                                                "value": "__obj",
                                                 "valueText": "__obj"
                                             }
                                         ],
@@ -525,7 +533,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             },
                             "closeParenToken": {
@@ -570,6 +580,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -596,6 +607,8 @@
                                                             "width": 130,
                                                             "fullWidth": 131,
                                                             "text": "'#1.1: var __obj = {toNumber: function() {return \"1\"}, valueOf: function() {return new Object();}}; Number(__obj) === 1. Actual: '",
+                                                            "value": "#1.1: var __obj = {toNumber: function() {return \"1\"}, valueOf: function() {return new Object();}}; Number(__obj) === 1. Actual: ",
+                                                            "valueText": "#1.1: var __obj = {toNumber: function() {return \"1\"}, valueOf: function() {return new Object();}}; Number(__obj) === 1. Actual: ",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -632,6 +645,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 6,
                                                                     "text": "Number",
+                                                                    "value": "Number",
                                                                     "valueText": "Number"
                                                                 },
                                                                 "argumentList": {
@@ -647,6 +661,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 5,
                                                                             "text": "__obj",
+                                                                            "value": "__obj",
                                                                             "valueText": "__obj"
                                                                         }
                                                                     ],
@@ -744,6 +759,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -789,6 +805,7 @@
                                         "width": 6,
                                         "fullWidth": 8,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -815,6 +832,8 @@
                                                     "width": 130,
                                                     "fullWidth": 131,
                                                     "text": "'#1.2: var __obj = {toNumber: function() {return \"1\"}, valueOf: function() {return new Object();}}; Number(__obj) === 1. Actual: '",
+                                                    "value": "#1.2: var __obj = {toNumber: function() {return \"1\"}, valueOf: function() {return new Object();}}; Number(__obj) === 1. Actual: ",
+                                                    "valueText": "#1.2: var __obj = {toNumber: function() {return \"1\"}, valueOf: function() {return new Object();}}; Number(__obj) === 1. Actual: ",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -848,6 +867,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "e",
+                                                        "value": "e",
                                                         "valueText": "e"
                                                     },
                                                     "closeParenToken": {

@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,6 +128,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -141,7 +143,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "0"
+                                                "text": "0",
+                                                "value": 0,
+                                                "valueText": "0"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -151,7 +155,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -161,7 +167,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "2"
+                                                "text": "2",
+                                                "value": 2,
+                                                "valueText": "2"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -171,7 +179,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "3"
+                                                "text": "3",
+                                                "value": 3,
+                                                "valueText": "3"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -234,6 +244,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -245,6 +256,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -288,7 +300,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"0,1,2,3\""
+                        "text": "\"0,1,2,3\"",
+                        "value": "0,1,2,3",
+                        "valueText": "0,1,2,3"
                     }
                 },
                 "closeParenToken": {
@@ -333,6 +347,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -359,6 +374,8 @@
                                                 "width": 62,
                                                 "fullWidth": 63,
                                                 "text": "'#1: x = new Array(0,1,2,3); x.join() === \"0,1,2,3\". Actual: '",
+                                                "value": "#1: x = new Array(0,1,2,3); x.join() === \"0,1,2,3\". Actual: ",
+                                                "valueText": "#1: x = new Array(0,1,2,3); x.join() === \"0,1,2,3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -398,6 +415,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -409,6 +427,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -486,6 +505,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -569,6 +589,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -579,7 +600,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -611,7 +634,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -642,6 +667,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -652,7 +678,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "3"
+                            "text": "3",
+                            "value": 3,
+                            "valueText": "3"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -684,7 +712,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "semicolonToken": {
@@ -736,6 +766,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -747,6 +778,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -790,7 +822,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"0,,,3\""
+                        "text": "\"0,,,3\"",
+                        "value": "0,,,3",
+                        "valueText": "0,,,3"
                     }
                 },
                 "closeParenToken": {
@@ -835,6 +869,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -861,6 +896,8 @@
                                                 "width": 64,
                                                 "fullWidth": 65,
                                                 "text": "'#2: x = []; x[0] = 0; x[3] = 3; x.join() === \"0,,,3\". Actual: '",
+                                                "value": "#2: x = []; x[0] = 0; x[3] = 3; x.join() === \"0,,,3\". Actual: ",
+                                                "valueText": "#2: x = []; x[0] = 0; x[3] = 3; x.join() === \"0,,,3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -900,6 +937,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -911,6 +949,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -988,6 +1027,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1071,6 +1111,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -1081,7 +1122,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1113,7 +1156,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -1165,6 +1210,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -1176,6 +1222,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -1219,7 +1266,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"0\""
+                        "text": "\"0\"",
+                        "value": "0",
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -1264,6 +1313,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1290,6 +1340,8 @@
                                                 "width": 50,
                                                 "fullWidth": 51,
                                                 "text": "'#3: x = []; x[0] = 0; x.join() === \"0\". Actual: '",
+                                                "value": "#3: x = []; x[0] = 0; x.join() === \"0\". Actual: ",
+                                                "valueText": "#3: x = []; x[0] = 0; x.join() === \"0\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1329,6 +1381,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -1340,6 +1393,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },

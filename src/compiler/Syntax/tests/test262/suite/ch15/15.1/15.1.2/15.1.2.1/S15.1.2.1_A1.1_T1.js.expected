@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -110,7 +111,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             }
                         }
@@ -162,6 +165,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -177,6 +181,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             ],
@@ -212,6 +217,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -257,6 +263,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -283,6 +290,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#1: x = 1; eval(x) === x. Actual: '",
+                                                "value": "#1: x = 1; eval(x) === x. Actual: ",
+                                                "valueText": "#1: x = 1; eval(x) === x. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -319,6 +328,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "eval",
+                                                        "value": "eval",
                                                         "valueText": "eval"
                                                     },
                                                     "argumentList": {
@@ -334,6 +344,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x"
                                                             }
                                                         ],
@@ -439,6 +450,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -453,7 +465,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             ],
                             "closeParenToken": {
@@ -487,7 +501,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -532,6 +548,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -558,6 +575,8 @@
                                                 "width": 29,
                                                 "fullWidth": 30,
                                                 "text": "'#2: eval(1) === 1. Actual: '",
+                                                "value": "#2: eval(1) === 1. Actual: ",
+                                                "valueText": "#2: eval(1) === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -594,6 +613,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "eval",
+                                                        "value": "eval",
                                                         "valueText": "eval"
                                                     },
                                                     "argumentList": {
@@ -608,7 +628,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -713,6 +735,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -727,7 +750,9 @@
                                 {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             ],
                             "closeParenToken": {
@@ -761,7 +786,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -806,6 +833,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -832,6 +860,8 @@
                                                 "width": 35,
                                                 "fullWidth": 36,
                                                 "text": "'#3: eval(true) === true. Actual: '",
+                                                "value": "#3: eval(true) === true. Actual: ",
+                                                "valueText": "#3: eval(true) === true. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -868,6 +898,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "eval",
+                                                        "value": "eval",
                                                         "valueText": "eval"
                                                     },
                                                     "argumentList": {
@@ -882,7 +913,9 @@
                                                             {
                                                                 "kind": "TrueKeyword",
                                                                 "width": 4,
-                                                                "text": "true"
+                                                                "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -987,6 +1020,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -1080,6 +1114,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1106,6 +1141,8 @@
                                                 "width": 35,
                                                 "fullWidth": 36,
                                                 "text": "'#4: eval(null) === null. Actual: '",
+                                                "value": "#4: eval(null) === null. Actual: ",
+                                                "valueText": "#4: eval(null) === null. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1142,6 +1179,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "eval",
+                                                        "value": "eval",
                                                         "valueText": "eval"
                                                     },
                                                     "argumentList": {
@@ -1261,6 +1299,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -1276,6 +1315,7 @@
                                     "kind": "IdentifierName",
                                     "width": 9,
                                     "text": "undefined",
+                                    "value": "undefined",
                                     "valueText": "undefined"
                                 }
                             ],
@@ -1311,6 +1351,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1356,6 +1397,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1382,6 +1424,8 @@
                                                 "width": 45,
                                                 "fullWidth": 46,
                                                 "text": "'#5: eval(undefined) === undefined. Actual: '",
+                                                "value": "#5: eval(undefined) === undefined. Actual: ",
+                                                "valueText": "#5: eval(undefined) === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1418,6 +1462,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "eval",
+                                                        "value": "eval",
                                                         "valueText": "eval"
                                                     },
                                                     "argumentList": {
@@ -1433,6 +1478,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 9,
                                                                 "text": "undefined",
+                                                                "value": "undefined",
                                                                 "valueText": "undefined"
                                                             }
                                                         ],

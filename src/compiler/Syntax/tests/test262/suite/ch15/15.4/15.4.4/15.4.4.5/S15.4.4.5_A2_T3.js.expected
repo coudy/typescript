@@ -74,6 +74,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -146,6 +147,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -158,6 +160,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "join",
+                            "value": "join",
                             "valueText": "join",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -191,6 +194,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "dotToken": {
@@ -202,6 +206,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -214,6 +219,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "join",
+                            "value": "join",
                             "valueText": "join"
                         }
                     }
@@ -247,6 +253,7 @@
                             "width": 3,
                             "fullWidth": 14,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -276,6 +283,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -302,7 +310,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "4.5"
+                        "text": "4.5",
+                        "value": 4.5,
+                        "valueText": "4.5"
                     }
                 },
                 "semicolonToken": {
@@ -354,6 +364,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "dotToken": {
@@ -365,6 +376,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -408,7 +420,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\",,,\""
+                        "text": "\",,,\"",
+                        "value": ",,,",
+                        "valueText": ",,,"
                     }
                 },
                 "closeParenToken": {
@@ -453,6 +467,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -479,6 +494,8 @@
                                                 "width": 101,
                                                 "fullWidth": 102,
                                                 "text": "'#1: var obj = {}; obj.length = 4.5; obj.join = Array.prototype.join; obj.join() === \",,,\". Actual: '",
+                                                "value": "#1: var obj = {}; obj.length = 4.5; obj.join = Array.prototype.join; obj.join() === \",,,\". Actual: ",
+                                                "valueText": "#1: var obj = {}; obj.length = 4.5; obj.join = Array.prototype.join; obj.join() === \",,,\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -518,6 +535,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "obj",
+                                                            "value": "obj",
                                                             "valueText": "obj"
                                                         },
                                                         "dotToken": {
@@ -529,6 +547,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -609,6 +628,7 @@
                             "width": 3,
                             "fullWidth": 14,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -636,7 +656,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -669,6 +691,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -700,6 +723,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -710,7 +734,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -742,7 +768,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -773,6 +801,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -783,7 +812,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "2"
+                            "text": "2",
+                            "value": 2,
+                            "valueText": "2"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -867,6 +898,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "dotToken": {
@@ -878,6 +910,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -921,7 +954,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\",1,,\""
+                        "text": "\",1,,\"",
+                        "value": ",1,,",
+                        "valueText": ",1,,"
                     }
                 },
                 "closeParenToken": {
@@ -966,6 +1001,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -992,6 +1028,8 @@
                                                 "width": 149,
                                                 "fullWidth": 150,
                                                 "text": "'#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === \",1,,\". Actual: '",
+                                                "value": "#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === \",1,,\". Actual: ",
+                                                "valueText": "#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === \",1,,\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1031,6 +1069,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "obj",
+                                                            "value": "obj",
                                                             "valueText": "obj"
                                                         },
                                                         "dotToken": {
@@ -1042,6 +1081,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -1156,6 +1196,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -1168,6 +1209,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1194,7 +1236,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "4.5"
+                        "text": "4.5",
+                        "value": 4.5,
+                        "valueText": "4.5"
                     }
                 },
                 "closeParenToken": {
@@ -1239,6 +1283,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1265,6 +1310,8 @@
                                                 "width": 158,
                                                 "fullWidth": 159,
                                                 "text": "'#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === 4.5. Actual: '",
+                                                "value": "#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === 4.5. Actual: ",
+                                                "valueText": "#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === 4.5. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1301,6 +1348,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -1312,6 +1360,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -1403,6 +1452,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1475,6 +1525,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -1487,6 +1538,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "join",
+                            "value": "join",
                             "valueText": "join",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1520,6 +1572,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "dotToken": {
@@ -1531,6 +1584,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -1543,6 +1597,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "join",
+                            "value": "join",
                             "valueText": "join"
                         }
                     }
@@ -1608,6 +1663,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1653,6 +1709,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -1667,7 +1724,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 3,
-                                                "text": "4.5"
+                                                "text": "4.5",
+                                                "value": 4.5,
+                                                "valueText": "4.5"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1709,6 +1768,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -1721,6 +1781,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1748,6 +1809,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -1800,6 +1862,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "dotToken": {
@@ -1811,6 +1874,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -1854,7 +1918,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\",,,\""
+                        "text": "\",,,\"",
+                        "value": ",,,",
+                        "valueText": ",,,"
                     }
                 },
                 "closeParenToken": {
@@ -1899,6 +1965,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1925,6 +1992,8 @@
                                                 "width": 124,
                                                 "fullWidth": 125,
                                                 "text": "'#4: var obj = {}; var x = new Number(4.5); obj.length = x; obj.join = Array.prototype.join; obj.join() === \",,,\". Actual: '",
+                                                "value": "#4: var obj = {}; var x = new Number(4.5); obj.length = x; obj.join = Array.prototype.join; obj.join() === \",,,\". Actual: ",
+                                                "valueText": "#4: var obj = {}; var x = new Number(4.5); obj.length = x; obj.join = Array.prototype.join; obj.join() === \",,,\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1964,6 +2033,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "obj",
+                                                            "value": "obj",
                                                             "valueText": "obj"
                                                         },
                                                         "dotToken": {
@@ -1975,6 +2045,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -2055,6 +2126,7 @@
                             "width": 3,
                             "fullWidth": 14,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -2082,7 +2154,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -2115,6 +2189,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -2146,6 +2221,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -2156,7 +2232,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -2188,7 +2266,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -2219,6 +2299,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -2229,7 +2310,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "2"
+                            "text": "2",
+                            "value": 2,
+                            "valueText": "2"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -2313,6 +2396,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "dotToken": {
@@ -2324,6 +2408,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -2367,7 +2452,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\",1,,\""
+                        "text": "\",1,,\"",
+                        "value": ",1,,",
+                        "valueText": ",1,,"
                     }
                 },
                 "closeParenToken": {
@@ -2412,6 +2499,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2438,6 +2526,8 @@
                                                 "width": 172,
                                                 "fullWidth": 173,
                                                 "text": "'#5: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === \",1,,\". Actual: '",
+                                                "value": "#5: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === \",1,,\". Actual: ",
+                                                "valueText": "#5: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === \",1,,\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2477,6 +2567,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "obj",
+                                                            "value": "obj",
                                                             "valueText": "obj"
                                                         },
                                                         "dotToken": {
@@ -2488,6 +2579,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -2602,6 +2694,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -2614,6 +2707,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2641,6 +2735,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -2686,6 +2781,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2712,6 +2808,8 @@
                                                 "width": 179,
                                                 "fullWidth": 180,
                                                 "text": "'#6: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === x. Actual: '",
+                                                "value": "#6: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === x. Actual: ",
+                                                "valueText": "#6: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === x. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2748,6 +2846,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -2759,6 +2858,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },

@@ -99,6 +99,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "chars",
+                                "value": "chars",
                                 "valueText": "chars",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,7 +128,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 4,
-                                    "text": "\"𐒠\""
+                                    "text": "\"𐒠\"",
+                                    "value": "𐒠",
+                                    "valueText": "𐒠"
                                 }
                             }
                         }
@@ -180,6 +183,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "chars",
+                            "value": "chars",
                             "valueText": "chars"
                         },
                         "dotToken": {
@@ -192,6 +196,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -218,7 +223,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -263,6 +270,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -284,7 +292,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 88,
-                                            "text": "\"A character outside the BMP (Unicode CodePoint > 0xFFFF) should consume two code units\""
+                                            "text": "\"A character outside the BMP (Unicode CodePoint > 0xFFFF) should consume two code units\"",
+                                            "value": "A character outside the BMP (Unicode CodePoint > 0xFFFF) should consume two code units",
+                                            "valueText": "A character outside the BMP (Unicode CodePoint > 0xFFFF) should consume two code units"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -352,6 +362,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "chars",
+                                "value": "chars",
                                 "valueText": "chars"
                             },
                             "dotToken": {
@@ -363,6 +374,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "charCodeAt",
+                                "value": "charCodeAt",
                                 "valueText": "charCodeAt"
                             }
                         },
@@ -378,7 +390,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             ],
                             "closeParenToken": {
@@ -412,7 +426,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 6,
-                        "text": "0xD801"
+                        "text": "0xD801",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -457,6 +473,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -478,7 +495,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 64,
-                                            "text": "\"First code unit of surrogate pair for 0x104A0 should be 0xD801\""
+                                            "text": "\"First code unit of surrogate pair for 0x104A0 should be 0xD801\"",
+                                            "value": "First code unit of surrogate pair for 0x104A0 should be 0xD801",
+                                            "valueText": "First code unit of surrogate pair for 0x104A0 should be 0xD801"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -555,6 +574,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "chars",
+                                "value": "chars",
                                 "valueText": "chars"
                             },
                             "dotToken": {
@@ -566,6 +586,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "charCodeAt",
+                                "value": "charCodeAt",
                                 "valueText": "charCodeAt"
                             }
                         },
@@ -581,7 +602,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             ],
                             "closeParenToken": {
@@ -615,7 +638,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 6,
-                        "text": "0xDCA0"
+                        "text": "0xDCA0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -660,6 +685,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -681,7 +707,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 65,
-                                            "text": "\"Second code unit of surrogate pair for 0x104A0 should be 0xDCA0\""
+                                            "text": "\"Second code unit of surrogate pair for 0x104A0 should be 0xDCA0\"",
+                                            "value": "Second code unit of surrogate pair for 0x104A0 should be 0xDCA0",
+                                            "valueText": "Second code unit of surrogate pair for 0x104A0 should be 0xDCA0"
                                         }
                                     ],
                                     "closeParenToken": {

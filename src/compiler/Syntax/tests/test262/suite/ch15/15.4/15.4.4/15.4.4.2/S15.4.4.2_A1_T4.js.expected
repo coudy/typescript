@@ -86,6 +86,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -130,6 +131,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -211,7 +213,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"+\""
+                                                                "text": "\"+\"",
+                                                                "value": "+",
+                                                                "valueText": "+"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -283,6 +287,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -328,6 +333,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -343,6 +349,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "object",
+                                                "value": "object",
                                                 "valueText": "object"
                                             }
                                         ],
@@ -406,6 +413,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -417,6 +425,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -467,6 +476,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -478,6 +488,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -540,6 +551,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -566,6 +578,8 @@
                                                 "width": 118,
                                                 "fullWidth": 119,
                                                 "text": "'#1.1: var object = {valueOf: function() {return \"+\"}} var x = new Array(object); x.toString() === x.join(). Actual: '",
+                                                "value": "#1.1: var object = {valueOf: function() {return \"+\"}} var x = new Array(object); x.toString() === x.join(). Actual: ",
+                                                "valueText": "#1.1: var object = {valueOf: function() {return \"+\"}} var x = new Array(object); x.toString() === x.join(). Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -605,6 +619,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -616,6 +631,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -755,6 +771,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             },
                                             "dotToken": {
@@ -766,6 +783,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             }
                                         },
@@ -809,7 +827,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 17,
-                                        "text": "\"[object Object]\""
+                                        "text": "\"[object Object]\"",
+                                        "value": "[object Object]",
+                                        "valueText": "[object Object]"
                                     }
                                 },
                                 "closeParenToken": {
@@ -854,6 +874,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -880,6 +901,8 @@
                                                                 "width": 127,
                                                                 "fullWidth": 128,
                                                                 "text": "'#1.2: var object = {valueOf: function() {return \"+\"}} var x = new Array(object); x.toString() === \"[object Object]\". Actual: '",
+                                                                "value": "#1.2: var object = {valueOf: function() {return \"+\"}} var x = new Array(object); x.toString() === \"[object Object]\". Actual: ",
+                                                                "valueText": "#1.2: var object = {valueOf: function() {return \"+\"}} var x = new Array(object); x.toString() === \"[object Object]\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -919,6 +942,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "x",
+                                                                            "value": "x",
                                                                             "valueText": "x"
                                                                         },
                                                                         "dotToken": {
@@ -930,6 +954,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         }
                                                                     },
@@ -1070,6 +1095,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1114,6 +1140,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -1195,7 +1222,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"+\""
+                                                                "text": "\"+\"",
+                                                                "value": "+",
+                                                                "valueText": "+"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -1233,6 +1262,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -1314,7 +1344,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"*\""
+                                                                "text": "\"*\"",
+                                                                "value": "*",
+                                                                "valueText": "*"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -1386,6 +1418,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1431,6 +1464,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -1446,6 +1480,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "object",
+                                                "value": "object",
                                                 "valueText": "object"
                                             }
                                         ],
@@ -1509,6 +1544,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -1520,6 +1556,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -1570,6 +1607,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -1581,6 +1619,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -1643,6 +1682,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1669,6 +1709,8 @@
                                                 "width": 153,
                                                 "fullWidth": 154,
                                                 "text": "'#2.1: var object = {valueOf: function() {return \"+\"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                "value": "#2.1: var object = {valueOf: function() {return \"+\"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                "valueText": "#2.1: var object = {valueOf: function() {return \"+\"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1708,6 +1750,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -1719,6 +1762,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -1858,6 +1902,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             },
                                             "dotToken": {
@@ -1869,6 +1914,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             }
                                         },
@@ -1912,7 +1958,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"*\""
+                                        "text": "\"*\"",
+                                        "value": "*",
+                                        "valueText": "*"
                                     }
                                 },
                                 "closeParenToken": {
@@ -1957,6 +2005,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -1983,6 +2032,8 @@
                                                                 "width": 148,
                                                                 "fullWidth": 149,
                                                                 "text": "'#2.2: var object = {valueOf: function() {return \"+\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                                "value": "#2.2: var object = {valueOf: function() {return \"+\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                                "valueText": "#2.2: var object = {valueOf: function() {return \"+\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -2022,6 +2073,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "x",
+                                                                            "value": "x",
                                                                             "valueText": "x"
                                                                         },
                                                                         "dotToken": {
@@ -2033,6 +2085,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         }
                                                                     },
@@ -2181,6 +2234,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2225,6 +2279,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -2306,7 +2361,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"+\""
+                                                                "text": "\"+\"",
+                                                                "value": "+",
+                                                                "valueText": "+"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -2344,6 +2401,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -2507,6 +2565,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2552,6 +2611,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -2567,6 +2627,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "object",
+                                                "value": "object",
                                                 "valueText": "object"
                                             }
                                         ],
@@ -2630,6 +2691,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -2641,6 +2703,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -2691,6 +2754,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -2702,6 +2766,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -2764,6 +2829,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2790,6 +2856,8 @@
                                                 "width": 152,
                                                 "fullWidth": 153,
                                                 "text": "'#3.1: var object = {valueOf: function() {return x.join()}, toString: function() {return {}}} var x = new Array(object); x.toString() === \"+\". Actual: '",
+                                                "value": "#3.1: var object = {valueOf: function() {return x.join()}, toString: function() {return {}}} var x = new Array(object); x.toString() === \"+\". Actual: ",
+                                                "valueText": "#3.1: var object = {valueOf: function() {return x.join()}, toString: function() {return {}}} var x = new Array(object); x.toString() === \"+\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2829,6 +2897,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -2840,6 +2909,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -2979,6 +3049,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             },
                                             "dotToken": {
@@ -2990,6 +3061,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             }
                                         },
@@ -3033,7 +3105,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"+\""
+                                        "text": "\"+\"",
+                                        "value": "+",
+                                        "valueText": "+"
                                     }
                                 },
                                 "closeParenToken": {
@@ -3078,6 +3152,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -3104,6 +3179,8 @@
                                                                 "width": 147,
                                                                 "fullWidth": 148,
                                                                 "text": "'#3.2: var object = {valueOf: function() {return \"+\"}, toString: function() {return {}}} var x = new Array(object); x.toString() === \"+\". Actual: '",
+                                                                "value": "#3.2: var object = {valueOf: function() {return \"+\"}, toString: function() {return {}}} var x = new Array(object); x.toString() === \"+\". Actual: ",
+                                                                "valueText": "#3.2: var object = {valueOf: function() {return \"+\"}, toString: function() {return {}}} var x = new Array(object); x.toString() === \"+\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -3143,6 +3220,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "x",
+                                                                            "value": "x",
                                                                             "valueText": "x"
                                                                         },
                                                                         "dotToken": {
@@ -3154,6 +3232,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         }
                                                                     },
@@ -3337,6 +3416,7 @@
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "object",
+                                            "value": "object",
                                             "valueText": "object",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -3381,6 +3461,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "valueOf",
+                                                            "value": "valueOf",
                                                             "valueText": "valueOf"
                                                         },
                                                         "colonToken": {
@@ -3462,7 +3543,9 @@
                                                                         "expression": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 7,
-                                                                            "text": "\"error\""
+                                                                            "text": "\"error\"",
+                                                                            "value": "error",
+                                                                            "valueText": "error"
                                                                         },
                                                                         "semicolonToken": {
                                                                             "kind": "SemicolonToken",
@@ -3500,6 +3583,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         },
                                                         "colonToken": {
@@ -3581,7 +3665,9 @@
                                                                         "expression": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 3,
-                                                                            "text": "\"*\""
+                                                                            "text": "\"*\"",
+                                                                            "value": "*",
+                                                                            "valueText": "*"
                                                                         },
                                                                         "semicolonToken": {
                                                                             "kind": "SemicolonToken",
@@ -3660,6 +3746,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -3705,6 +3792,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "Array",
+                                                    "value": "Array",
                                                     "valueText": "Array"
                                                 },
                                                 "argumentList": {
@@ -3720,6 +3808,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "object",
+                                                            "value": "object",
                                                             "valueText": "object"
                                                         }
                                                     ],
@@ -3790,6 +3879,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x"
                                         },
                                         "dotToken": {
@@ -3801,6 +3891,7 @@
                                             "kind": "IdentifierName",
                                             "width": 8,
                                             "text": "toString",
+                                            "value": "toString",
                                             "valueText": "toString"
                                         }
                                     },
@@ -3851,6 +3942,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x"
                                         },
                                         "dotToken": {
@@ -3862,6 +3954,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "join",
+                                            "value": "join",
                                             "valueText": "join"
                                         }
                                     },
@@ -3924,6 +4017,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -3950,6 +4044,8 @@
                                                             "width": 156,
                                                             "fullWidth": 157,
                                                             "text": "'#4.1: var object = {valueOf: function() {throw \"error\"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                            "value": "#4.1: var object = {valueOf: function() {throw \"error\"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                            "valueText": "#4.1: var object = {valueOf: function() {throw \"error\"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -3989,6 +4085,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "x",
+                                                                        "value": "x",
                                                                         "valueText": "x"
                                                                     },
                                                                     "dotToken": {
@@ -4000,6 +4097,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 8,
                                                                         "text": "toString",
+                                                                        "value": "toString",
                                                                         "valueText": "toString"
                                                                     }
                                                                 },
@@ -4146,6 +4244,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -4157,6 +4256,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -4200,7 +4300,9 @@
                                                 "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 3,
-                                                    "text": "\"*\""
+                                                    "text": "\"*\"",
+                                                    "value": "*",
+                                                    "valueText": "*"
                                                 }
                                             },
                                             "closeParenToken": {
@@ -4245,6 +4347,7 @@
                                                                 "width": 6,
                                                                 "fullWidth": 12,
                                                                 "text": "$ERROR",
+                                                                "value": "$ERROR",
                                                                 "valueText": "$ERROR",
                                                                 "hasLeadingTrivia": true,
                                                                 "leadingTrivia": [
@@ -4271,6 +4374,8 @@
                                                                             "width": 151,
                                                                             "fullWidth": 152,
                                                                             "text": "'#4.2: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                                            "value": "#4.2: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                                            "valueText": "#4.2: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                                             "hasTrailingTrivia": true,
                                                                             "trailingTrivia": [
                                                                                 {
@@ -4310,6 +4415,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 1,
                                                                                         "text": "x",
+                                                                                        "value": "x",
                                                                                         "valueText": "x"
                                                                                     },
                                                                                     "dotToken": {
@@ -4321,6 +4427,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 8,
                                                                                         "text": "toString",
+                                                                                        "value": "toString",
                                                                                         "valueText": "toString"
                                                                                     }
                                                                                 },
@@ -4460,6 +4567,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -4529,6 +4637,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -4554,7 +4663,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 7,
-                                        "text": "\"error\""
+                                        "text": "\"error\"",
+                                        "value": "error",
+                                        "valueText": "error"
                                     }
                                 },
                                 "closeParenToken": {
@@ -4599,6 +4710,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -4620,7 +4732,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 151,
-                                                            "text": "'#4.3: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() not throw \"error\"'"
+                                                            "text": "'#4.3: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() not throw \"error\"'",
+                                                            "value": "#4.3: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() not throw \"error\"",
+                                                            "valueText": "#4.3: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() not throw \"error\""
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -4712,6 +4826,7 @@
                                                         "width": 6,
                                                         "fullWidth": 10,
                                                         "text": "$ERROR",
+                                                        "value": "$ERROR",
                                                         "valueText": "$ERROR",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -4738,6 +4853,8 @@
                                                                     "width": 159,
                                                                     "fullWidth": 160,
                                                                     "text": "'#4.4: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() not throw Error. Actual: '",
+                                                                    "value": "#4.4: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() not throw Error. Actual: ",
+                                                                    "valueText": "#4.4: var object = {valueOf: function() {throw \"error\"}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() not throw Error. Actual: ",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -4771,6 +4888,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "e",
+                                                                        "value": "e",
                                                                         "valueText": "e"
                                                                     },
                                                                     "closeParenToken": {
@@ -4895,6 +5013,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -4939,6 +5058,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -5020,7 +5140,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"*\""
+                                                                "text": "\"*\"",
+                                                                "value": "*",
+                                                                "valueText": "*"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -5092,6 +5214,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -5137,6 +5260,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -5152,6 +5276,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "object",
+                                                "value": "object",
                                                 "valueText": "object"
                                             }
                                         ],
@@ -5215,6 +5340,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -5226,6 +5352,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -5276,6 +5403,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -5287,6 +5415,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -5349,6 +5478,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -5375,6 +5505,8 @@
                                                 "width": 119,
                                                 "fullWidth": 120,
                                                 "text": "'#5.1: var object = {toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                "value": "#5.1: var object = {toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                "valueText": "#5.1: var object = {toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -5414,6 +5546,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -5425,6 +5558,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -5564,6 +5698,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             },
                                             "dotToken": {
@@ -5575,6 +5710,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             }
                                         },
@@ -5618,7 +5754,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"*\""
+                                        "text": "\"*\"",
+                                        "value": "*",
+                                        "valueText": "*"
                                     }
                                 },
                                 "closeParenToken": {
@@ -5663,6 +5801,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -5689,6 +5828,8 @@
                                                                 "width": 114,
                                                                 "fullWidth": 115,
                                                                 "text": "'#5.2: var object = {toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                                "value": "#5.2: var object = {toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                                "valueText": "#5.2: var object = {toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -5728,6 +5869,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "x",
+                                                                            "value": "x",
                                                                             "valueText": "x"
                                                                         },
                                                                         "dotToken": {
@@ -5739,6 +5881,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         }
                                                                     },
@@ -5879,6 +6022,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -5923,6 +6067,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -6052,6 +6197,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -6133,7 +6279,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"*\""
+                                                                "text": "\"*\"",
+                                                                "value": "*",
+                                                                "valueText": "*"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -6205,6 +6353,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -6250,6 +6399,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -6265,6 +6415,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "object",
+                                                "value": "object",
                                                 "valueText": "object"
                                             }
                                         ],
@@ -6328,6 +6479,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -6339,6 +6491,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -6389,6 +6542,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -6400,6 +6554,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -6462,6 +6617,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -6488,6 +6644,8 @@
                                                 "width": 152,
                                                 "fullWidth": 153,
                                                 "text": "'#6.1: var object = {valueOf: function() {return {}}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                "value": "#6.1: var object = {valueOf: function() {return {}}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                "valueText": "#6.1: var object = {valueOf: function() {return {}}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -6527,6 +6685,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -6538,6 +6697,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -6677,6 +6837,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             },
                                             "dotToken": {
@@ -6688,6 +6849,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             }
                                         },
@@ -6731,7 +6893,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"*\""
+                                        "text": "\"*\"",
+                                        "value": "*",
+                                        "valueText": "*"
                                     }
                                 },
                                 "closeParenToken": {
@@ -6776,6 +6940,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -6802,6 +6967,8 @@
                                                                 "width": 147,
                                                                 "fullWidth": 148,
                                                                 "text": "'#6.2: var object = {valueOf: function() {return {}}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: '",
+                                                                "value": "#6.2: var object = {valueOf: function() {return {}}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
+                                                                "valueText": "#6.2: var object = {valueOf: function() {return {}}, toString: function() {return \"*\"}} var x = new Array(object); x.toString() === \"*\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -6841,6 +7008,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "x",
+                                                                            "value": "x",
                                                                             "valueText": "x"
                                                                         },
                                                                         "dotToken": {
@@ -6852,6 +7020,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         }
                                                                     },
@@ -7035,6 +7204,7 @@
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "object",
+                                            "value": "object",
                                             "valueText": "object",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -7079,6 +7249,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "valueOf",
+                                                            "value": "valueOf",
                                                             "valueText": "valueOf"
                                                         },
                                                         "colonToken": {
@@ -7160,7 +7331,9 @@
                                                                         "expression": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 3,
-                                                                            "text": "\"+\""
+                                                                            "text": "\"+\"",
+                                                                            "value": "+",
+                                                                            "valueText": "+"
                                                                         },
                                                                         "semicolonToken": {
                                                                             "kind": "SemicolonToken",
@@ -7198,6 +7371,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         },
                                                         "colonToken": {
@@ -7279,7 +7453,9 @@
                                                                         "expression": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 7,
-                                                                            "text": "\"error\""
+                                                                            "text": "\"error\"",
+                                                                            "value": "error",
+                                                                            "valueText": "error"
                                                                         },
                                                                         "semicolonToken": {
                                                                             "kind": "SemicolonToken",
@@ -7358,6 +7534,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -7403,6 +7580,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "Array",
+                                                    "value": "Array",
                                                     "valueText": "Array"
                                                 },
                                                 "argumentList": {
@@ -7418,6 +7596,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "object",
+                                                            "value": "object",
                                                             "valueText": "object"
                                                         }
                                                     ],
@@ -7461,6 +7640,7 @@
                                         "width": 1,
                                         "fullWidth": 3,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -7479,6 +7659,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "toString",
+                                        "value": "toString",
                                         "valueText": "toString"
                                     }
                                 },
@@ -7524,6 +7705,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -7550,6 +7732,8 @@
                                                 "width": 157,
                                                 "fullWidth": 158,
                                                 "text": "'#7.1: var object = {valueOf: function() {return \"+\"}, toString: function() {throw \"error\"}} var x = new Array(object); x.toString() throw \"error\". Actual: '",
+                                                "value": "#7.1: var object = {valueOf: function() {return \"+\"}, toString: function() {throw \"error\"}} var x = new Array(object); x.toString() throw \"error\". Actual: ",
+                                                "valueText": "#7.1: var object = {valueOf: function() {return \"+\"}, toString: function() {throw \"error\"}} var x = new Array(object); x.toString() throw \"error\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -7589,6 +7773,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -7600,6 +7785,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -7694,6 +7880,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -7763,6 +7950,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -7788,7 +7976,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 7,
-                                        "text": "\"error\""
+                                        "text": "\"error\"",
+                                        "value": "error",
+                                        "valueText": "error"
                                     }
                                 },
                                 "closeParenToken": {
@@ -7833,6 +8023,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -7859,6 +8050,8 @@
                                                                 "width": 157,
                                                                 "fullWidth": 158,
                                                                 "text": "'#7.2: var object = {valueOf: function() {return \"+\"}, toString: function() {throw \"error\"}} var x = new Array(object); x.toString() throw \"error\". Actual: '",
+                                                                "value": "#7.2: var object = {valueOf: function() {return \"+\"}, toString: function() {throw \"error\"}} var x = new Array(object); x.toString() throw \"error\". Actual: ",
+                                                                "valueText": "#7.2: var object = {valueOf: function() {return \"+\"}, toString: function() {throw \"error\"}} var x = new Array(object); x.toString() throw \"error\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -7892,6 +8085,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {
@@ -8062,6 +8256,7 @@
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "object",
+                                            "value": "object",
                                             "valueText": "object",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -8106,6 +8301,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "valueOf",
+                                                            "value": "valueOf",
                                                             "valueText": "valueOf"
                                                         },
                                                         "colonToken": {
@@ -8235,6 +8431,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         },
                                                         "colonToken": {
@@ -8405,6 +8602,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -8450,6 +8648,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "Array",
+                                                    "value": "Array",
                                                     "valueText": "Array"
                                                 },
                                                 "argumentList": {
@@ -8465,6 +8664,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "object",
+                                                            "value": "object",
                                                             "valueText": "object"
                                                         }
                                                     ],
@@ -8508,6 +8708,7 @@
                                         "width": 1,
                                         "fullWidth": 3,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -8526,6 +8727,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "toString",
+                                        "value": "toString",
                                         "valueText": "toString"
                                     }
                                 },
@@ -8571,6 +8773,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -8597,6 +8800,8 @@
                                                 "width": 154,
                                                 "fullWidth": 155,
                                                 "text": "'#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: '",
+                                                "value": "#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ",
+                                                "valueText": "#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -8636,6 +8841,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -8647,6 +8853,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -8741,6 +8948,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -8821,6 +9029,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -8847,6 +9056,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -8880,7 +9090,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -8925,6 +9137,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -8951,6 +9164,8 @@
                                                                 "width": 154,
                                                                 "fullWidth": 155,
                                                                 "text": "'#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: '",
+                                                                "value": "#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ",
+                                                                "valueText": "#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -8984,6 +9199,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

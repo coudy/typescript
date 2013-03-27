@@ -74,6 +74,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__reg",
+                                "value": "__reg",
                                 "valueText": "__reg",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "RegExp",
+                                        "value": "RegExp",
                                         "valueText": "RegExp"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 4,
-                                                "text": "\"77\""
+                                                "text": "\"77\"",
+                                                "value": "77",
+                                                "valueText": "77"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -220,7 +224,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 32,
-                                "text": "\"ABB\\u0041BABAB\\u0037\\u0037BBAA\""
+                                "text": "\"ABB\\u0041BABAB\\u0037\\u0037BBAA\"",
+                                "value": "ABBABABAB77BBAA",
+                                "valueText": "ABBABABAB77BBAA"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -231,6 +237,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "replace",
+                                "value": "replace",
                                 "valueText": "replace"
                             }
                         },
@@ -247,6 +254,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "__reg",
+                                    "value": "__reg",
                                     "valueText": "__reg"
                                 },
                                 {
@@ -265,7 +273,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             ],
                             "closeParenToken": {
@@ -299,7 +309,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 21,
-                        "text": "\"ABBABABAB\\u0031BBAA\""
+                        "text": "\"ABBABABAB\\u0031BBAA\"",
+                        "value": "ABBABABAB1BBAA",
+                        "valueText": "ABBABABAB1BBAA"
                     }
                 },
                 "closeParenToken": {
@@ -344,6 +356,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -368,7 +381,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 126,
-                                                "text": "'#1: var __reg = new RegExp(\"77\"); \"ABB\\\\u0041BABAB\\\\u0037\\\\u0037BBAA\".replace(__reg, 1) === \"ABBABABAB\\\\u0031BBAA\". Actual: '"
+                                                "text": "'#1: var __reg = new RegExp(\"77\"); \"ABB\\\\u0041BABAB\\\\u0037\\\\u0037BBAA\".replace(__reg, 1) === \"ABBABABAB\\\\u0031BBAA\". Actual: '",
+                                                "value": "#1: var __reg = new RegExp(\"77\"); \"ABB\\u0041BABAB\\u0037\\u0037BBAA\".replace(__reg, 1) === \"ABBABABAB\\u0031BBAA\". Actual: ",
+                                                "valueText": "#1: var __reg = new RegExp(\"77\"); \"ABB\\u0041BABAB\\u0037\\u0037BBAA\".replace(__reg, 1) === \"ABBABABAB\\u0031BBAA\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -392,7 +407,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 32,
-                                                            "text": "\"ABB\\u0041BABAB\\u0037\\u0037BBAA\""
+                                                            "text": "\"ABB\\u0041BABAB\\u0037\\u0037BBAA\"",
+                                                            "value": "ABBABABAB77BBAA",
+                                                            "valueText": "ABBABABAB77BBAA"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -403,6 +420,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "replace",
+                                                            "value": "replace",
                                                             "valueText": "replace"
                                                         }
                                                     },
@@ -419,6 +437,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 5,
                                                                 "text": "__reg",
+                                                                "value": "__reg",
                                                                 "valueText": "__reg"
                                                             },
                                                             {
@@ -437,7 +456,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             }
                                                         ],
                                                         "closeParenToken": {

@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -87,6 +88,7 @@
                                     "kind": "IdentifierName",
                                     "width": 9,
                                     "text": "arguments",
+                                    "value": "arguments",
                                     "valueText": "arguments"
                                 }
                             }
@@ -143,6 +145,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "arguments",
+                                "value": "arguments",
                                 "valueText": "arguments"
                             },
                             "semicolonToken": {
@@ -242,6 +245,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -256,7 +260,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 2,
-                                    "text": "42"
+                                    "text": "42",
+                                    "value": 42,
+                                    "valueText": "42"
                                 }
                             ],
                             "closeParenToken": {
@@ -290,7 +296,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "42"
+                        "text": "42",
+                        "value": 42,
+                        "valueText": "42"
                     }
                 },
                 "closeParenToken": {
@@ -335,6 +343,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -356,7 +365,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 63,
-                                            "text": "'#1: \"arguments\" variable overrides ActivationObject.arguments'"
+                                            "text": "'#1: \"arguments\" variable overrides ActivationObject.arguments'",
+                                            "value": "#1: \"arguments\" variable overrides ActivationObject.arguments",
+                                            "valueText": "#1: \"arguments\" variable overrides ActivationObject.arguments"
                                         }
                                     ],
                                     "closeParenToken": {

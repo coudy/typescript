@@ -100,6 +100,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "isNaN",
+                                    "value": "isNaN",
                                     "valueText": "isNaN"
                                 },
                                 "argumentList": {
@@ -118,6 +119,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 10,
                                                 "text": "parseFloat",
+                                                "value": "parseFloat",
                                                 "valueText": "parseFloat"
                                             },
                                             "argumentList": {
@@ -149,6 +151,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "Boolean",
+                                                            "value": "Boolean",
                                                             "valueText": "Boolean"
                                                         },
                                                         "argumentList": {
@@ -163,7 +166,9 @@
                                                                 {
                                                                     "kind": "TrueKeyword",
                                                                     "width": 4,
-                                                                    "text": "true"
+                                                                    "text": "true",
+                                                                    "value": true,
+                                                                    "valueText": "true"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -217,6 +222,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "isNaN",
+                                    "value": "isNaN",
                                     "valueText": "isNaN"
                                 },
                                 "argumentList": {
@@ -235,6 +241,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 10,
                                                 "text": "parseFloat",
+                                                "value": "parseFloat",
                                                 "valueText": "parseFloat"
                                             },
                                             "argumentList": {
@@ -249,7 +256,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 5,
-                                                        "text": "\"NaN\""
+                                                        "text": "\"NaN\"",
+                                                        "value": "NaN",
+                                                        "valueText": "NaN"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -317,6 +326,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -343,6 +353,8 @@
                                                 "width": 98,
                                                 "fullWidth": 99,
                                                 "text": "'#1: parseFloat(new Boolean(true)) === Not-a-Number; parseFloat(\"NaN\") === Not-a-Number. Actual: '",
+                                                "value": "#1: parseFloat(new Boolean(true)) === Not-a-Number; parseFloat(\"NaN\") === Not-a-Number. Actual: ",
+                                                "valueText": "#1: parseFloat(new Boolean(true)) === Not-a-Number; parseFloat(\"NaN\") === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -379,6 +391,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -393,7 +406,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 5,
-                                                                "text": "\"NaN\""
+                                                                "text": "\"NaN\"",
+                                                                "value": "NaN",
+                                                                "valueText": "NaN"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -498,6 +513,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "argumentList": {
@@ -516,6 +532,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "parseFloat",
+                                        "value": "parseFloat",
                                         "valueText": "parseFloat"
                                     },
                                     "argumentList": {
@@ -547,6 +564,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "Boolean",
+                                                    "value": "Boolean",
                                                     "valueText": "Boolean"
                                                 },
                                                 "argumentList": {
@@ -561,7 +579,9 @@
                                                         {
                                                             "kind": "FalseKeyword",
                                                             "width": 5,
-                                                            "text": "false"
+                                                            "text": "false",
+                                                            "value": false,
+                                                            "valueText": "false"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -611,7 +631,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"NaN\""
+                        "text": "\"NaN\"",
+                        "value": "NaN",
+                        "valueText": "NaN"
                     }
                 },
                 "closeParenToken": {
@@ -656,6 +678,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -682,6 +705,8 @@
                                                 "width": 64,
                                                 "fullWidth": 65,
                                                 "text": "'#2: String(parseFloat(new Boolean(false))) === \"NaN\". Actual: '",
+                                                "value": "#2: String(parseFloat(new Boolean(false))) === \"NaN\". Actual: ",
+                                                "valueText": "#2: String(parseFloat(new Boolean(false))) === \"NaN\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -718,6 +743,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "String",
+                                                        "value": "String",
                                                         "valueText": "String"
                                                     },
                                                     "argumentList": {
@@ -736,6 +762,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 10,
                                                                     "text": "parseFloat",
+                                                                    "value": "parseFloat",
                                                                     "valueText": "parseFloat"
                                                                 },
                                                                 "argumentList": {
@@ -767,6 +794,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 7,
                                                                                 "text": "Boolean",
+                                                                                "value": "Boolean",
                                                                                 "valueText": "Boolean"
                                                                             },
                                                                             "argumentList": {
@@ -781,7 +809,9 @@
                                                                                     {
                                                                                         "kind": "FalseKeyword",
                                                                                         "width": 5,
-                                                                                        "text": "false"
+                                                                                        "text": "false",
+                                                                                        "value": false,
+                                                                                        "valueText": "false"
                                                                                     }
                                                                                 ],
                                                                                 "closeParenToken": {

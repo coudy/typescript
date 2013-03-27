@@ -98,6 +98,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "items",
+                                "value": "items",
                                 "valueText": "items",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -143,6 +144,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -165,7 +167,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "\"one\""
+                                                "text": "\"one\"",
+                                                "value": "one",
+                                                "valueText": "one"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -183,7 +187,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "\"two\""
+                                                "text": "\"two\"",
+                                                "value": "two",
+                                                "valueText": "two"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -203,6 +209,8 @@
                                                 "width": 7,
                                                 "fullWidth": 8,
                                                 "text": "\"three\"",
+                                                "value": "three",
+                                                "valueText": "three",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -288,6 +296,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "itemsRef",
+                                "value": "itemsRef",
                                 "valueText": "itemsRef",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -317,6 +326,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "items",
+                                    "value": "items",
                                     "valueText": "items"
                                 }
                             }
@@ -349,6 +359,7 @@
                         "width": 5,
                         "fullWidth": 44,
                         "text": "items",
+                        "value": "items",
                         "valueText": "items",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -412,6 +423,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "Array",
+                            "value": "Array",
                             "valueText": "Array"
                         },
                         "argumentList": {
@@ -434,7 +446,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"new\""
+                                    "text": "\"new\"",
+                                    "value": "new",
+                                    "valueText": "new"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -454,6 +468,8 @@
                                     "width": 7,
                                     "fullWidth": 8,
                                     "text": "\"array\"",
+                                    "value": "array",
+                                    "valueText": "array",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -545,6 +561,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "items",
+                        "value": "items",
                         "valueText": "items",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -572,6 +589,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "itemsRef",
+                        "value": "itemsRef",
                         "valueText": "itemsRef",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -616,6 +634,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -637,7 +656,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 130,
-                                            "text": "'#1: var items = new Array( \"one\", \"two\", \"three\" ); var itemsRef = items; items = new Array( \"new\", \"array\" ); items != itemsRef'"
+                                            "text": "'#1: var items = new Array( \"one\", \"two\", \"three\" ); var itemsRef = items; items = new Array( \"new\", \"array\" ); items != itemsRef'",
+                                            "value": "#1: var items = new Array( \"one\", \"two\", \"three\" ); var itemsRef = items; items = new Array( \"new\", \"array\" ); items != itemsRef",
+                                            "valueText": "#1: var items = new Array( \"one\", \"two\", \"three\" ); var itemsRef = items; items = new Array( \"new\", \"array\" ); items != itemsRef"
                                         }
                                     ],
                                     "closeParenToken": {

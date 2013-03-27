@@ -74,6 +74,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -146,6 +147,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -158,6 +160,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "push",
+                            "value": "push",
                             "valueText": "push",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -191,6 +194,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "dotToken": {
@@ -202,6 +206,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -214,6 +219,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "push",
+                            "value": "push",
                             "valueText": "push"
                         }
                     }
@@ -246,6 +252,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -258,6 +265,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -292,7 +300,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -357,6 +367,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "push",
+                                "value": "push",
                                 "valueText": "push",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -392,6 +403,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj"
                                         },
                                         "dotToken": {
@@ -403,6 +415,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "push",
+                                            "value": "push",
                                             "valueText": "push"
                                         }
                                     },
@@ -418,7 +431,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\"x\""
+                                                "text": "\"x\"",
+                                                "value": "x",
+                                                "valueText": "x"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -436,7 +451,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\"y\""
+                                                "text": "\"y\"",
+                                                "value": "y",
+                                                "valueText": "y"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -454,7 +471,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\"z\""
+                                                "text": "\"z\"",
+                                                "value": "z",
+                                                "valueText": "z"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -512,6 +531,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "push",
+                        "value": "push",
                         "valueText": "push",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -537,7 +557,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 10,
-                        "text": "4294967298"
+                        "text": "4294967298",
+                        "value": 4294967298,
+                        "valueText": "4294967298"
                     }
                 },
                 "closeParenToken": {
@@ -582,6 +604,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -608,6 +631,8 @@
                                                 "width": 118,
                                                 "fullWidth": 119,
                                                 "text": "'#1: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\") === 4294967298. Actual: '",
+                                                "value": "#1: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\") === 4294967298. Actual: ",
+                                                "valueText": "#1: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\") === 4294967298. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -641,6 +666,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "push",
+                                                    "value": "push",
                                                     "valueText": "push"
                                                 },
                                                 "closeParenToken": {
@@ -738,6 +764,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -750,6 +777,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -776,7 +804,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 10,
-                        "text": "4294967298"
+                        "text": "4294967298",
+                        "value": 4294967298,
+                        "valueText": "4294967298"
                     }
                 },
                 "closeParenToken": {
@@ -821,6 +851,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -847,6 +878,8 @@
                                                 "width": 130,
                                                 "fullWidth": 131,
                                                 "text": "'#2: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj.length === 4294967298. Actual: '",
+                                                "value": "#2: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj.length === 4294967298. Actual: ",
+                                                "valueText": "#2: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj.length === 4294967298. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -883,6 +916,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -894,6 +928,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -992,6 +1027,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -1002,7 +1038,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 10,
-                            "text": "4294967295"
+                            "text": "4294967295",
+                            "value": 4294967295,
+                            "valueText": "4294967295"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1034,7 +1072,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"x\""
+                        "text": "\"x\"",
+                        "value": "x",
+                        "valueText": "x"
                     }
                 },
                 "closeParenToken": {
@@ -1079,6 +1119,7 @@
                                     "width": 6,
                                     "fullWidth": 9,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1105,6 +1146,8 @@
                                                 "width": 128,
                                                 "fullWidth": 129,
                                                 "text": "'#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967295] === \"x\". Actual: '",
+                                                "value": "#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967295] === \"x\". Actual: ",
+                                                "valueText": "#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967295] === \"x\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1141,6 +1184,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "openBracketToken": {
@@ -1151,7 +1195,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 10,
-                                                        "text": "4294967295"
+                                                        "text": "4294967295",
+                                                        "value": 4294967295,
+                                                        "valueText": "4294967295"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1254,6 +1300,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -1264,7 +1311,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 10,
-                            "text": "4294967296"
+                            "text": "4294967296",
+                            "value": 4294967296,
+                            "valueText": "4294967296"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1296,7 +1345,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"y\""
+                        "text": "\"y\"",
+                        "value": "y",
+                        "valueText": "y"
                     }
                 },
                 "closeParenToken": {
@@ -1341,6 +1392,7 @@
                                     "width": 6,
                                     "fullWidth": 9,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1367,6 +1419,8 @@
                                                 "width": 128,
                                                 "fullWidth": 129,
                                                 "text": "'#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967296] === \"y\". Actual: '",
+                                                "value": "#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967296] === \"y\". Actual: ",
+                                                "valueText": "#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967296] === \"y\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1403,6 +1457,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "openBracketToken": {
@@ -1413,7 +1468,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 10,
-                                                        "text": "4294967296"
+                                                        "text": "4294967296",
+                                                        "value": 4294967296,
+                                                        "valueText": "4294967296"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1520,6 +1577,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -1530,7 +1588,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 10,
-                            "text": "4294967297"
+                            "text": "4294967297",
+                            "value": 4294967297,
+                            "valueText": "4294967297"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1562,7 +1622,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"z\""
+                        "text": "\"z\"",
+                        "value": "z",
+                        "valueText": "z"
                     }
                 },
                 "closeParenToken": {
@@ -1607,6 +1669,7 @@
                                     "width": 6,
                                     "fullWidth": 9,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1633,6 +1696,8 @@
                                                 "width": 128,
                                                 "fullWidth": 129,
                                                 "text": "'#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967297] === \"z\". Actual: '",
+                                                "value": "#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967297] === \"z\". Actual: ",
+                                                "valueText": "#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push(\"x\", \"y\", \"z\"); obj[4294967297] === \"z\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1669,6 +1734,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "openBracketToken": {
@@ -1679,7 +1745,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 10,
-                                                        "text": "4294967297"
+                                                        "text": "4294967297",
+                                                        "value": 4294967297,
+                                                        "valueText": "4294967297"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",

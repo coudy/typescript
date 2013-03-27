@@ -92,6 +92,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -179,6 +180,7 @@
                                             "width": 3,
                                             "fullWidth": 4,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -232,6 +234,7 @@
                                                             "width": 4,
                                                             "fullWidth": 8,
                                                             "text": "prop",
+                                                            "value": "prop",
                                                             "valueText": "prop",
                                                             "hasLeadingTrivia": true,
                                                             "leadingTrivia": [
@@ -249,7 +252,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 2,
-                                                            "text": "42"
+                                                            "text": "42",
+                                                            "value": 42,
+                                                            "valueText": "42"
                                                         }
                                                     },
                                                     {
@@ -275,6 +280,7 @@
                                                             "width": 6,
                                                             "fullWidth": 10,
                                                             "text": "toJSON",
+                                                            "value": "toJSON",
                                                             "valueText": "toJSON",
                                                             "hasLeadingTrivia": true,
                                                             "leadingTrivia": [
@@ -371,7 +377,9 @@
                                                                         "expression": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 18,
-                                                                            "text": "'fortytwo objects'"
+                                                                            "text": "'fortytwo objects'",
+                                                                            "value": "fortytwo objects",
+                                                                            "valueText": "fortytwo objects"
                                                                         },
                                                                         "semicolonToken": {
                                                                             "kind": "SemicolonToken",
@@ -467,6 +475,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "JSON",
+                                            "value": "JSON",
                                             "valueText": "JSON"
                                         },
                                         "dotToken": {
@@ -478,6 +487,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "stringify",
+                                            "value": "stringify",
                                             "valueText": "stringify"
                                         }
                                     },
@@ -503,6 +513,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     }
                                                 ],
@@ -544,7 +555,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 22,
-                                    "text": "'[\"fortytwo objects\"]'"
+                                    "text": "'[\"fortytwo objects\"]'",
+                                    "value": "[\"fortytwo objects\"]",
+                                    "valueText": "[\"fortytwo objects\"]"
                                 }
                             },
                             "semicolonToken": {
@@ -596,6 +609,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -611,6 +625,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

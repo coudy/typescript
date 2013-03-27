@@ -108,6 +108,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "String",
+                                    "value": "String",
                                     "valueText": "String"
                                 },
                                 "dotToken": {
@@ -119,6 +120,7 @@
                                     "kind": "IdentifierName",
                                     "width": 14,
                                     "text": "hasOwnProperty",
+                                    "value": "hasOwnProperty",
                                     "valueText": "hasOwnProperty"
                                 }
                             },
@@ -134,7 +136,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 11,
-                                        "text": "'prototype'"
+                                        "text": "'prototype'",
+                                        "value": "prototype",
+                                        "valueText": "prototype"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -193,6 +197,7 @@
                                     "width": 5,
                                     "fullWidth": 7,
                                     "text": "$FAIL",
+                                    "value": "$FAIL",
                                     "valueText": "$FAIL",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -217,7 +222,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 64,
-                                                "text": "'#1: String.hasOwnProperty(\\'prototype\\') return true. Actual: '"
+                                                "text": "'#1: String.hasOwnProperty(\\'prototype\\') return true. Actual: '",
+                                                "value": "#1: String.hasOwnProperty('prototype') return true. Actual: ",
+                                                "valueText": "#1: String.hasOwnProperty('prototype') return true. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -234,6 +241,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "String",
+                                                        "value": "String",
                                                         "valueText": "String"
                                                     },
                                                     "dotToken": {
@@ -245,6 +253,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 14,
                                                         "text": "hasOwnProperty",
+                                                        "value": "hasOwnProperty",
                                                         "valueText": "hasOwnProperty"
                                                     }
                                                 },
@@ -260,7 +269,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 11,
-                                                            "text": "'prototype'"
+                                                            "text": "'prototype'",
+                                                            "value": "prototype",
+                                                            "valueText": "prototype"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -365,6 +376,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -397,6 +409,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "dotToken": {
@@ -408,6 +421,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "prototype",
+                                        "value": "prototype",
                                         "valueText": "prototype"
                                     }
                                 }
@@ -444,6 +458,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -464,6 +479,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "prototype",
+                            "value": "prototype",
                             "valueText": "prototype",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -542,7 +558,9 @@
                                     "expression": {
                                         "kind": "StringLiteral",
                                         "width": 9,
-                                        "text": "\"shifted\""
+                                        "text": "\"shifted\"",
+                                        "value": "shifted",
+                                        "valueText": "shifted"
                                     },
                                     "semicolonToken": {
                                         "kind": "SemicolonToken",
@@ -630,6 +648,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "dotToken": {
@@ -642,6 +661,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "prototype",
+                            "value": "prototype",
                             "valueText": "prototype",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -669,6 +689,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "__obj",
+                        "value": "__obj",
                         "valueText": "__obj"
                     }
                 },
@@ -714,6 +735,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -738,7 +760,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 138,
-                                                "text": "'#2: __obj = String.prototype; String.prototype = function(){return \"shifted\";}; String.prototype === __obj. Actual: String.prototype ==='"
+                                                "text": "'#2: __obj = String.prototype; String.prototype = function(){return \"shifted\";}; String.prototype === __obj. Actual: String.prototype ==='",
+                                                "value": "#2: __obj = String.prototype; String.prototype = function(){return \"shifted\";}; String.prototype === __obj. Actual: String.prototype ===",
+                                                "valueText": "#2: __obj = String.prototype; String.prototype = function(){return \"shifted\";}; String.prototype === __obj. Actual: String.prototype ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -752,6 +776,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "String",
+                                                    "value": "String",
                                                     "valueText": "String"
                                                 },
                                                 "dotToken": {
@@ -764,6 +789,7 @@
                                                     "width": 9,
                                                     "fullWidth": 10,
                                                     "text": "prototype",
+                                                    "value": "prototype",
                                                     "valueText": "prototype",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [

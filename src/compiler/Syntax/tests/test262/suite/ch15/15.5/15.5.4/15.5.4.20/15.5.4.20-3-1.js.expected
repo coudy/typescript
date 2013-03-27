@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -179,6 +180,7 @@
                                             "width": 18,
                                             "fullWidth": 19,
                                             "text": "lineTerminatorsStr",
+                                            "value": "lineTerminatorsStr",
                                             "valueText": "lineTerminatorsStr",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -207,7 +209,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 26,
-                                                "text": "\"\\u000A\\u000D\\u2028\\u2029\""
+                                                "text": "\"\\u000A\\u000D\\u2028\\u2029\"",
+                                                "value": "\n\r\u2028\u2029",
+                                                "valueText": "\n\r\u2028\u2029"
                                             }
                                         }
                                     }
@@ -272,6 +276,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 18,
                                                 "text": "lineTerminatorsStr",
+                                                "value": "lineTerminatorsStr",
                                                 "valueText": "lineTerminatorsStr"
                                             },
                                             "dotToken": {
@@ -283,6 +288,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "trim",
+                                                "value": "trim",
                                                 "valueText": "trim"
                                             }
                                         },
@@ -326,7 +332,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 2,
-                                        "text": "\"\""
+                                        "text": "\"\"",
+                                        "value": "",
+                                        "valueText": ""
                                     }
                                 },
                                 "closeParenToken": {
@@ -384,6 +392,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -399,6 +408,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

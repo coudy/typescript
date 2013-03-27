@@ -74,6 +74,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "aString",
+                                "value": "aString",
                                 "valueText": "aString",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 13,
-                                                "text": "\"test string\""
+                                                "text": "\"test string\"",
+                                                "value": "test string",
+                                                "valueText": "test string"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -221,6 +225,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "aString",
+                                "value": "aString",
                                 "valueText": "aString"
                             },
                             "dotToken": {
@@ -232,6 +237,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "search",
+                                "value": "search",
                                 "valueText": "search"
                             }
                         },
@@ -247,7 +253,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "\"string\""
+                                    "text": "\"string\"",
+                                    "value": "string",
+                                    "valueText": "string"
                                 }
                             ],
                             "closeParenToken": {
@@ -273,7 +281,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "closeParenToken": {
@@ -318,6 +328,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -342,7 +353,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 86,
-                                                "text": "'#1: var aString = new String(\"test string\"); aString.search(\"string\")=== 5. Actual: '"
+                                                "text": "'#1: var aString = new String(\"test string\"); aString.search(\"string\")=== 5. Actual: '",
+                                                "value": "#1: var aString = new String(\"test string\"); aString.search(\"string\")=== 5. Actual: ",
+                                                "valueText": "#1: var aString = new String(\"test string\"); aString.search(\"string\")=== 5. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -359,6 +372,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "aString",
+                                                        "value": "aString",
                                                         "valueText": "aString"
                                                     },
                                                     "dotToken": {
@@ -370,6 +384,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "search",
+                                                        "value": "search",
                                                         "valueText": "search"
                                                     }
                                                 },
@@ -385,7 +400,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 8,
-                                                            "text": "\"string\""
+                                                            "text": "\"string\"",
+                                                            "value": "string",
+                                                            "valueText": "string"
                                                         }
                                                     ],
                                                     "closeParenToken": {

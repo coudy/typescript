@@ -73,6 +73,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "equalsValueClause": {
@@ -172,6 +173,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "dotToken": {
@@ -183,6 +185,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -234,6 +237,8 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "\"[object \"",
+                                "value": "[object ",
+                                "valueText": "[object ",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -260,6 +265,8 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "'Object'",
+                                "value": "Object",
+                                "valueText": "Object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -285,7 +292,9 @@
                         "right": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"]\""
+                            "text": "\"]\"",
+                            "value": "]",
+                            "valueText": "]"
                         }
                     }
                 },
@@ -323,6 +332,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -349,6 +359,8 @@
                                                 "width": 80,
                                                 "fullWidth": 81,
                                                 "text": "'#1: var __obj={}; __obj.toString() === \"[object \" + \\'Object\\' + \"]\". Actual: '",
+                                                "value": "#1: var __obj={}; __obj.toString() === \"[object \" + 'Object' + \"]\". Actual: ",
+                                                "valueText": "#1: var __obj={}; __obj.toString() === \"[object \" + 'Object' + \"]\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -388,6 +400,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "__obj",
+                                                            "value": "__obj",
                                                             "valueText": "__obj"
                                                         },
                                                         "dotToken": {
@@ -399,6 +412,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },

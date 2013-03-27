@@ -70,6 +70,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "count",
+                            "value": "count",
                             "valueText": "count"
                         }
                     },
@@ -81,7 +82,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -139,6 +142,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "testScreen",
+                                "value": "testScreen",
                                 "valueText": "testScreen",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -183,6 +187,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "touch",
+                                                "value": "touch",
                                                 "valueText": "touch"
                                             },
                                             "colonToken": {
@@ -239,6 +244,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 5,
                                                                     "text": "count",
+                                                                    "value": "count",
                                                                     "valueText": "count"
                                                                 },
                                                                 "operatorToken": {
@@ -302,6 +308,7 @@
                             "width": 10,
                             "fullWidth": 99,
                             "text": "testScreen",
+                            "value": "testScreen",
                             "valueText": "testScreen",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -334,6 +341,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "touch",
+                            "value": "touch",
                             "valueText": "touch"
                         }
                     },
@@ -397,6 +405,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -414,7 +423,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -459,6 +470,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -485,6 +497,8 @@
                                                 "width": 103,
                                                 "fullWidth": 104,
                                                 "text": "'#1: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); count === 1. Actual: '",
+                                                "value": "#1: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); count === 1. Actual: ",
+                                                "valueText": "#1: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); count === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -518,6 +532,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "count",
+                                                    "value": "count",
                                                     "valueText": "count"
                                                 },
                                                 "closeParenToken": {
@@ -581,6 +596,7 @@
                             "width": 10,
                             "fullWidth": 182,
                             "text": "testScreen",
+                            "value": "testScreen",
                             "valueText": "testScreen",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -632,7 +648,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 7,
-                            "text": "'touch'"
+                            "text": "'touch'",
+                            "value": "touch",
+                            "valueText": "touch"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -700,6 +718,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -717,7 +736,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -762,6 +783,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -788,6 +810,8 @@
                                                 "width": 128,
                                                 "fullWidth": 129,
                                                 "text": "'#2: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); testScreen[\\'touch\\'](); count === 2. Actual: '",
+                                                "value": "#2: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); testScreen['touch'](); count === 2. Actual: ",
+                                                "valueText": "#2: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); testScreen['touch'](); count === 2. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -821,6 +845,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "count",
+                                                    "value": "count",
                                                     "valueText": "count"
                                                 },
                                                 "closeParenToken": {

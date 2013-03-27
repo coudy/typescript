@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "parseInt",
+                            "value": "parseInt",
                             "valueText": "parseInt"
                         },
                         "argumentList": {
@@ -115,6 +116,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -137,7 +139,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "1"
+                                                    "text": "1",
+                                                    "value": 1,
+                                                    "valueText": "1"
                                                 }
                                             }
                                         ],
@@ -184,6 +188,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "parseInt",
+                            "value": "parseInt",
                             "valueText": "parseInt"
                         },
                         "argumentList": {
@@ -198,7 +203,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 4,
-                                    "text": "\"-1\""
+                                    "text": "\"-1\"",
+                                    "value": "-1",
+                                    "valueText": "-1"
                                 }
                             ],
                             "closeParenToken": {
@@ -251,6 +258,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -277,6 +285,8 @@
                                                 "width": 59,
                                                 "fullWidth": 60,
                                                 "text": "'#1: parseInt(new Number(-1)) === parseInt(\"-1\"). Actual: '",
+                                                "value": "#1: parseInt(new Number(-1)) === parseInt(\"-1\"). Actual: ",
+                                                "valueText": "#1: parseInt(new Number(-1)) === parseInt(\"-1\"). Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -313,6 +323,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "parseInt",
+                                                        "value": "parseInt",
                                                         "valueText": "parseInt"
                                                     },
                                                     "argumentList": {
@@ -344,6 +355,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 6,
                                                                     "text": "Number",
+                                                                    "value": "Number",
                                                                     "valueText": "Number"
                                                                 },
                                                                 "argumentList": {
@@ -366,7 +378,9 @@
                                                                             "operand": {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 1,
-                                                                                "text": "1"
+                                                                                "text": "1",
+                                                                                "value": 1,
+                                                                                "valueText": "1"
                                                                             }
                                                                         }
                                                                     ],
@@ -480,6 +494,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "argumentList": {
@@ -498,6 +513,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "parseInt",
+                                        "value": "parseInt",
                                         "valueText": "parseInt"
                                     },
                                     "argumentList": {
@@ -529,6 +545,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "Number",
+                                                    "value": "Number",
                                                     "valueText": "Number"
                                                 },
                                                 "argumentList": {
@@ -544,6 +561,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "Infinity",
+                                                            "value": "Infinity",
                                                             "valueText": "Infinity"
                                                         }
                                                     ],
@@ -594,7 +612,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"NaN\""
+                        "text": "\"NaN\"",
+                        "value": "NaN",
+                        "valueText": "NaN"
                     }
                 },
                 "closeParenToken": {
@@ -639,6 +659,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -665,6 +686,8 @@
                                                 "width": 64,
                                                 "fullWidth": 65,
                                                 "text": "'#2: String(parseInt(new Number(Infinity))) === \"NaN\". Actual: '",
+                                                "value": "#2: String(parseInt(new Number(Infinity))) === \"NaN\". Actual: ",
+                                                "valueText": "#2: String(parseInt(new Number(Infinity))) === \"NaN\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -701,6 +724,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "String",
+                                                        "value": "String",
                                                         "valueText": "String"
                                                     },
                                                     "argumentList": {
@@ -719,6 +743,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 8,
                                                                     "text": "parseInt",
+                                                                    "value": "parseInt",
                                                                     "valueText": "parseInt"
                                                                 },
                                                                 "argumentList": {
@@ -750,6 +775,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 6,
                                                                                 "text": "Number",
+                                                                                "value": "Number",
                                                                                 "valueText": "Number"
                                                                             },
                                                                             "argumentList": {
@@ -765,6 +791,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 8,
                                                                                         "text": "Infinity",
+                                                                                        "value": "Infinity",
                                                                                         "valueText": "Infinity"
                                                                                     }
                                                                                 ],
@@ -886,6 +913,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "argumentList": {
@@ -904,6 +932,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "parseInt",
+                                        "value": "parseInt",
                                         "valueText": "parseInt"
                                     },
                                     "argumentList": {
@@ -935,6 +964,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "Number",
+                                                    "value": "Number",
                                                     "valueText": "Number"
                                                 },
                                                 "argumentList": {
@@ -950,6 +980,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "NaN",
+                                                            "value": "NaN",
                                                             "valueText": "NaN"
                                                         }
                                                     ],
@@ -1000,7 +1031,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"NaN\""
+                        "text": "\"NaN\"",
+                        "value": "NaN",
+                        "valueText": "NaN"
                     }
                 },
                 "closeParenToken": {
@@ -1045,6 +1078,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1071,6 +1105,8 @@
                                                 "width": 59,
                                                 "fullWidth": 60,
                                                 "text": "'#3: String(parseInt(new Number(NaN))) === \"NaN\". Actual: '",
+                                                "value": "#3: String(parseInt(new Number(NaN))) === \"NaN\". Actual: ",
+                                                "valueText": "#3: String(parseInt(new Number(NaN))) === \"NaN\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1107,6 +1143,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "String",
+                                                        "value": "String",
                                                         "valueText": "String"
                                                     },
                                                     "argumentList": {
@@ -1125,6 +1162,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 8,
                                                                     "text": "parseInt",
+                                                                    "value": "parseInt",
                                                                     "valueText": "parseInt"
                                                                 },
                                                                 "argumentList": {
@@ -1156,6 +1194,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 6,
                                                                                 "text": "Number",
+                                                                                "value": "Number",
                                                                                 "valueText": "Number"
                                                                             },
                                                                             "argumentList": {
@@ -1171,6 +1210,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 3,
                                                                                         "text": "NaN",
+                                                                                        "value": "NaN",
                                                                                         "valueText": "NaN"
                                                                                     }
                                                                                 ],

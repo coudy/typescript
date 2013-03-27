@@ -76,6 +76,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -117,6 +118,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -179,7 +181,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 9,
-                                                                "text": "\"\\u0041B\""
+                                                                "text": "\"\\u0041B\"",
+                                                                "value": "AB",
+                                                                "valueText": "AB"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -252,6 +256,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "__obj2",
+                                "value": "__obj2",
                                 "valueText": "__obj2",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -293,6 +298,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -356,6 +362,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 3,
                                                                 "text": "NaN",
+                                                                "value": "NaN",
                                                                 "valueText": "NaN"
                                                             },
                                                             "semicolonToken": {
@@ -428,6 +435,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -456,7 +464,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 16,
-                                    "text": "\"ABB\\u0041BABAB\""
+                                    "text": "\"ABB\\u0041BABAB\"",
+                                    "value": "ABBABABAB",
+                                    "valueText": "ABBABABAB"
                                 }
                             }
                         }
@@ -520,6 +530,7 @@
                     "kind": "IdentifierName",
                     "width": 5,
                     "text": "__str",
+                    "value": "__str",
                     "valueText": "__str"
                 },
                 "closeParenToken": {
@@ -583,6 +594,7 @@
                                         "kind": "IdentifierName",
                                         "width": 11,
                                         "text": "lastIndexOf",
+                                        "value": "lastIndexOf",
                                         "valueText": "lastIndexOf"
                                     },
                                     "argumentList": {
@@ -598,6 +610,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "__obj",
+                                                "value": "__obj",
                                                 "valueText": "__obj"
                                             },
                                             {
@@ -617,6 +630,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "__obj2",
+                                                "value": "__obj2",
                                                 "valueText": "__obj2"
                                             }
                                         ],
@@ -651,7 +665,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "7"
+                                    "text": "7",
+                                    "value": 7,
+                                    "valueText": "7"
                                 }
                             },
                             "closeParenToken": {
@@ -696,6 +712,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -720,7 +737,9 @@
                                                         "left": {
                                                             "kind": "StringLiteral",
                                                             "width": 186,
-                                                            "text": "'#1: var x; var __obj = {toString:function(){return \"\\u0041B\";}}; var __obj2 = {valueOf:function(){return NaN;}}; var __str = \"ABB\\u0041BABAB\";lastIndexOf(__obj, __obj2) === 7. Actual: '"
+                                                            "text": "'#1: var x; var __obj = {toString:function(){return \"\\u0041B\";}}; var __obj2 = {valueOf:function(){return NaN;}}; var __str = \"ABB\\u0041BABAB\";lastIndexOf(__obj, __obj2) === 7. Actual: '",
+                                                            "value": "#1: var x; var __obj = {toString:function(){return \"AB\";}}; var __obj2 = {valueOf:function(){return NaN;}}; var __str = \"ABBABABAB\";lastIndexOf(__obj, __obj2) === 7. Actual: ",
+                                                            "valueText": "#1: var x; var __obj = {toString:function(){return \"AB\";}}; var __obj2 = {valueOf:function(){return NaN;}}; var __str = \"ABBABABAB\";lastIndexOf(__obj, __obj2) === 7. Actual: "
                                                         },
                                                         "operatorToken": {
                                                             "kind": "PlusToken",
@@ -734,6 +753,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 11,
                                                                 "text": "lastIndexOf",
+                                                                "value": "lastIndexOf",
                                                                 "valueText": "lastIndexOf"
                                                             },
                                                             "argumentList": {
@@ -749,6 +769,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 5,
                                                                         "text": "__obj",
+                                                                        "value": "__obj",
                                                                         "valueText": "__obj"
                                                                     },
                                                                     {
@@ -768,6 +789,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 6,
                                                                         "text": "__obj2",
+                                                                        "value": "__obj2",
                                                                         "valueText": "__obj2"
                                                                     }
                                                                 ],
@@ -904,6 +926,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }

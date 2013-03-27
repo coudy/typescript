@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 299,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -70,7 +71,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 24,
-                                "text": "\"var x = asdf\\u000Dghjk\""
+                                "text": "\"var x = asdf\\u000Dghjk\"",
+                                "value": "var x = asdf\rghjk",
+                                "valueText": "var x = asdf\rghjk"
                             }
                         ],
                         "closeParenToken": {

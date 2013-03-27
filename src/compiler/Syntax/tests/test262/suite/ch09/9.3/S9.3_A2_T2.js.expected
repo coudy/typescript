@@ -131,7 +131,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -176,6 +178,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -202,6 +205,8 @@
                                                 "width": 31,
                                                 "fullWidth": 32,
                                                 "text": "'#1.1: +(null) === 0. Actual: '",
+                                                "value": "#1.1: +(null) === 0. Actual: ",
+                                                "valueText": "#1.1: +(null) === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -384,7 +389,9 @@
                                         "left": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         },
                                         "operatorToken": {
                                             "kind": "SlashToken",
@@ -448,6 +455,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "Number",
+                                            "value": "Number",
                                             "valueText": "Number"
                                         },
                                         "dotToken": {
@@ -459,6 +467,7 @@
                                             "kind": "IdentifierName",
                                             "width": 17,
                                             "text": "POSITIVE_INFINITY",
+                                            "value": "POSITIVE_INFINITY",
                                             "valueText": "POSITIVE_INFINITY"
                                         }
                                     }
@@ -505,6 +514,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -526,7 +536,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 34,
-                                                            "text": "'#1.2: +(null) === +0. Actual: -0'"
+                                                            "text": "'#1.2: +(null) === +0. Actual: -0'",
+                                                            "value": "#1.2: +(null) === +0. Actual: -0",
+                                                            "valueText": "#1.2: +(null) === +0. Actual: -0"
                                                         }
                                                     ],
                                                     "closeParenToken": {

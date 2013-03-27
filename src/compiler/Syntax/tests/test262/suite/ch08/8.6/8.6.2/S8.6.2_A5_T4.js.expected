@@ -74,6 +74,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "__count",
+                                "value": "__count",
                                 "valueText": "__count"
                             },
                             "equalsValueClause": {
@@ -87,7 +88,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -141,7 +144,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "\"beep\""
+                            "text": "\"beep\"",
+                            "value": "beep",
+                            "valueText": "beep"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -203,6 +208,7 @@
                                             "kind": "IdentifierName",
                                             "width": 7,
                                             "text": "__count",
+                                            "value": "__count",
                                             "valueText": "__count"
                                         },
                                         "operatorToken": {
@@ -252,6 +258,7 @@
                         "width": 4,
                         "fullWidth": 93,
                         "text": "beep",
+                        "value": "beep",
                         "valueText": "beep",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -335,6 +342,7 @@
                         "width": 7,
                         "fullWidth": 8,
                         "text": "__count",
+                        "value": "__count",
                         "valueText": "__count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -352,7 +360,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -397,6 +407,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -423,6 +434,8 @@
                                                 "width": 84,
                                                 "fullWidth": 85,
                                                 "text": "'#1: __count=0; this[\"beep\"]=function(){__count++}; beep(); __count === 1. Actual: '",
+                                                "value": "#1: __count=0; this[\"beep\"]=function(){__count++}; beep(); __count === 1. Actual: ",
+                                                "valueText": "#1: __count=0; this[\"beep\"]=function(){__count++}; beep(); __count === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -456,6 +469,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__count",
+                                                    "value": "__count",
                                                     "valueText": "__count"
                                                 },
                                                 "closeParenToken": {
@@ -569,7 +583,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "\"beep\""
+                            "text": "\"beep\"",
+                            "value": "beep",
+                            "valueText": "beep"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -637,6 +653,7 @@
                         "width": 7,
                         "fullWidth": 8,
                         "text": "__count",
+                        "value": "__count",
                         "valueText": "__count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -654,7 +671,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -699,6 +718,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -725,6 +745,8 @@
                                                 "width": 100,
                                                 "fullWidth": 101,
                                                 "text": "'#2: __count=0; this[\"beep\"]=function(){__count++}; beep(); this[\"beep\"](); __count === 2. Actual: '",
+                                                "value": "#2: __count=0; this[\"beep\"]=function(){__count++}; beep(); this[\"beep\"](); __count === 2. Actual: ",
+                                                "valueText": "#2: __count=0; this[\"beep\"]=function(){__count++}; beep(); this[\"beep\"](); __count === 2. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -758,6 +780,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__count",
+                                                    "value": "__count",
                                                     "valueText": "__count"
                                                 },
                                                 "closeParenToken": {

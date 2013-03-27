@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -174,6 +175,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "o",
+                                            "value": "o",
                                             "valueText": "o",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -215,6 +217,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "foo",
+                                                            "value": "foo",
                                                             "valueText": "foo"
                                                         },
                                                         "colonToken": {
@@ -233,7 +236,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "1"
+                                                            "text": "1",
+                                                            "value": 1,
+                                                            "valueText": "1"
                                                         }
                                                     }
                                                 ],
@@ -299,6 +304,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "o",
+                                "value": "o",
                                 "valueText": "o"
                             },
                             "closeParenToken": {
@@ -343,6 +349,7 @@
                                                 "width": 3,
                                                 "fullWidth": 8,
                                                 "text": "foo",
+                                                "value": "foo",
                                                 "valueText": "foo",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -375,7 +382,9 @@
                                             "right": {
                                                 "kind": "NumericLiteral",
                                                 "width": 2,
-                                                "text": "42"
+                                                "text": "42",
+                                                "value": 42,
+                                                "valueText": "42"
                                             }
                                         },
                                         "semicolonToken": {
@@ -471,6 +480,7 @@
                                             "width": 3,
                                             "fullWidth": 7,
                                             "text": "foo",
+                                            "value": "foo",
                                             "valueText": "foo",
                                             "hasLeadingTrivia": true,
                                             "leadingTrivia": [
@@ -550,6 +560,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "e",
+                                    "value": "e",
                                     "valueText": "e"
                                 },
                                 "closeParenToken": {
@@ -609,7 +620,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             },
                                             "semicolonToken": {
                                                 "kind": "SemicolonToken",
@@ -685,6 +698,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -700,6 +714,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

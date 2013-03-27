@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -149,6 +150,7 @@
                                     "width": 4,
                                     "fullWidth": 14,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "hasLeadingNewLine": true,
@@ -175,7 +177,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 78,
-                                            "text": "\"'use strict'; var _13_0_17_fun = new Function('eval = 42;'); _13_0_17_fun();\""
+                                            "text": "\"'use strict'; var _13_0_17_fun = new Function('eval = 42;'); _13_0_17_fun();\"",
+                                            "value": "'use strict'; var _13_0_17_fun = new Function('eval = 42;'); _13_0_17_fun();",
+                                            "valueText": "'use strict'; var _13_0_17_fun = new Function('eval = 42;'); _13_0_17_fun();"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -226,7 +230,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -277,6 +283,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -292,6 +299,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

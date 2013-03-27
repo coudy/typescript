@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 25,
-                                    "text": "\"var x = 0; x\\u0009--; x\""
+                                    "text": "\"var x = 0; x\\u0009--; x\"",
+                                    "value": "var x = 0; x\t--; x",
+                                    "valueText": "var x = 0; x\t--; x"
                                 }
                             ],
                             "closeParenToken": {
@@ -140,7 +143,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -186,6 +191,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -212,6 +218,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#1: var x = 0; x\\\\u0009--; x === -1. Actual: '",
+                                                "value": "#1: var x = 0; x\\u0009--; x === -1. Actual: ",
+                                                "valueText": "#1: var x = 0; x\\u0009--; x === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -245,6 +253,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -342,6 +351,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -356,7 +366,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 25,
-                                    "text": "\"var x = 0; x\\u000B--; x\""
+                                    "text": "\"var x = 0; x\\u000B--; x\"",
+                                    "value": "var x = 0; x\u000b--; x",
+                                    "valueText": "var x = 0; x\u000b--; x"
                                 }
                             ],
                             "closeParenToken": {
@@ -398,7 +410,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -444,6 +458,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -470,6 +485,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#2: var x = 0; x\\\\u000B--; x === -1. Actual: '",
+                                                "value": "#2: var x = 0; x\\u000B--; x === -1. Actual: ",
+                                                "valueText": "#2: var x = 0; x\\u000B--; x === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -503,6 +520,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -604,6 +622,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -618,7 +637,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 25,
-                                    "text": "\"var x = 0; x\\u000C--; x\""
+                                    "text": "\"var x = 0; x\\u000C--; x\"",
+                                    "value": "var x = 0; x\f--; x",
+                                    "valueText": "var x = 0; x\f--; x"
                                 }
                             ],
                             "closeParenToken": {
@@ -660,7 +681,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -706,6 +729,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -732,6 +756,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#3: var x = 0; x\\\\u000C--; x === -1. Actual: '",
+                                                "value": "#3: var x = 0; x\\u000C--; x === -1. Actual: ",
+                                                "valueText": "#3: var x = 0; x\\u000C--; x === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -765,6 +791,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -862,6 +889,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -876,7 +904,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 25,
-                                    "text": "\"var x = 0; x\\u0020--; x\""
+                                    "text": "\"var x = 0; x\\u0020--; x\"",
+                                    "value": "var x = 0; x --; x",
+                                    "valueText": "var x = 0; x --; x"
                                 }
                             ],
                             "closeParenToken": {
@@ -918,7 +948,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -964,6 +996,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -990,6 +1023,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#4: var x = 0; x\\\\u0020--; x === -1. Actual: '",
+                                                "value": "#4: var x = 0; x\\u0020--; x === -1. Actual: ",
+                                                "valueText": "#4: var x = 0; x\\u0020--; x === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1023,6 +1058,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -1120,6 +1156,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -1134,7 +1171,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 25,
-                                    "text": "\"var x = 0; x\\u00A0--; x\""
+                                    "text": "\"var x = 0; x\\u00A0--; x\"",
+                                    "value": "var x = 0; x --; x",
+                                    "valueText": "var x = 0; x --; x"
                                 }
                             ],
                             "closeParenToken": {
@@ -1176,7 +1215,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -1222,6 +1263,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1248,6 +1290,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#5: var x = 0; x\\\\u00A0--; x === -1. Actual: '",
+                                                "value": "#5: var x = 0; x\\u00A0--; x === -1. Actual: ",
+                                                "valueText": "#5: var x = 0; x\\u00A0--; x === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1281,6 +1325,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -1378,6 +1423,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -1392,7 +1438,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 49,
-                                    "text": "\"var x = 0; x\\u0009\\u000B\\u000C\\u0020\\u00A0--; x\""
+                                    "text": "\"var x = 0; x\\u0009\\u000B\\u000C\\u0020\\u00A0--; x\"",
+                                    "value": "var x = 0; x\t\u000b\f  --; x",
+                                    "valueText": "var x = 0; x\t\u000b\f  --; x"
                                 }
                             ],
                             "closeParenToken": {
@@ -1434,7 +1482,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -1480,6 +1530,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1506,6 +1557,8 @@
                                                 "width": 75,
                                                 "fullWidth": 76,
                                                 "text": "'#6: var x = 0; x\\\\u0009\\\\u000B\\\\u000C\\\\u0020\\\\u00A0--; x === -1. Actual: '",
+                                                "value": "#6: var x = 0; x\\u0009\\u000B\\u000C\\u0020\\u00A0--; x === -1. Actual: ",
+                                                "valueText": "#6: var x = 0; x\\u0009\\u000B\\u000C\\u0020\\u00A0--; x === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1539,6 +1592,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {

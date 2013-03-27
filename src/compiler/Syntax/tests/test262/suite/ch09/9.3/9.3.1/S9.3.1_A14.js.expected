@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 13,
-                                    "text": "\"+1234567890\""
+                                    "text": "\"+1234567890\"",
+                                    "value": "+1234567890",
+                                    "valueText": "+1234567890"
                                 }
                             ],
                             "closeParenToken": {
@@ -148,7 +151,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 12,
-                                "text": "\"1234567890\""
+                                "text": "\"1234567890\"",
+                                "value": "1234567890",
+                                "valueText": "1234567890"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -200,6 +205,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -221,7 +227,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 47,
-                                            "text": "'#1: Number(\"+1234567890\") === +(\"1234567890\")'"
+                                            "text": "'#1: Number(\"+1234567890\") === +(\"1234567890\")'",
+                                            "value": "#1: Number(\"+1234567890\") === +(\"1234567890\")",
+                                            "valueText": "#1: Number(\"+1234567890\") === +(\"1234567890\")"
                                         }
                                     ],
                                     "closeParenToken": {

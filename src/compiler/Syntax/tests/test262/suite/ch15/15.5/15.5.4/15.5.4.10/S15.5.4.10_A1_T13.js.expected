@@ -76,6 +76,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -117,6 +118,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -218,6 +220,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -280,7 +283,9 @@
                                                             "expression": {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -384,7 +389,9 @@
                                 "expression": {
                                     "kind": "StringLiteral",
                                     "width": 32,
-                                    "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\""
+                                    "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\"",
+                                    "value": "ABBAB1ABAB1BBAA",
+                                    "valueText": "ABBAB1ABAB1BBAA"
                                 },
                                 "dotToken": {
                                     "kind": "DotToken",
@@ -395,6 +402,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "match",
+                                    "value": "match",
                                     "valueText": "match"
                                 }
                             },
@@ -411,6 +419,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "__obj",
+                                        "value": "__obj",
                                         "valueText": "__obj"
                                     }
                                 ],
@@ -429,7 +438,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -453,7 +464,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"1\""
+                        "text": "\"1\"",
+                        "value": "1",
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -498,6 +511,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -522,7 +536,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 151,
-                                                "text": "'#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\\\u0041B\\\\u0031ABAB\\\\u0031BBAA\".match(__obj)[0] ===\"1\". Actual: '"
+                                                "text": "'#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\\\u0041B\\\\u0031ABAB\\\\u0031BBAA\".match(__obj)[0] ===\"1\". Actual: '",
+                                                "value": "#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\u0041B\\u0031ABAB\\u0031BBAA\".match(__obj)[0] ===\"1\". Actual: ",
+                                                "valueText": "#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\u0041B\\u0031ABAB\\u0031BBAA\".match(__obj)[0] ===\"1\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -549,7 +565,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 32,
-                                                                "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\""
+                                                                "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\"",
+                                                                "value": "ABBAB1ABAB1BBAA",
+                                                                "valueText": "ABBAB1ABAB1BBAA"
                                                             },
                                                             "dotToken": {
                                                                 "kind": "DotToken",
@@ -560,6 +578,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 5,
                                                                 "text": "match",
+                                                                "value": "match",
                                                                 "valueText": "match"
                                                             }
                                                         },
@@ -576,6 +595,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 5,
                                                                     "text": "__obj",
+                                                                    "value": "__obj",
                                                                     "valueText": "__obj"
                                                                 }
                                                             ],
@@ -594,7 +614,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "0"
+                                                        "text": "0",
+                                                        "value": 0,
+                                                        "valueText": "0"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -734,7 +756,9 @@
                                 "expression": {
                                     "kind": "StringLiteral",
                                     "width": 32,
-                                    "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\""
+                                    "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\"",
+                                    "value": "ABBAB1ABAB1BBAA",
+                                    "valueText": "ABBAB1ABAB1BBAA"
                                 },
                                 "dotToken": {
                                     "kind": "DotToken",
@@ -745,6 +769,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "match",
+                                    "value": "match",
                                     "valueText": "match"
                                 }
                             },
@@ -761,6 +786,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "__obj",
+                                        "value": "__obj",
                                         "valueText": "__obj"
                                     }
                                 ],
@@ -781,6 +807,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -807,7 +834,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -852,6 +881,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -876,7 +906,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 154,
-                                                "text": "'#3: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\\\u0041B\\\\u0031ABAB\\\\u0031BBAA\".match(__obj).length === 1. Actual: '"
+                                                "text": "'#3: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\\\u0041B\\\\u0031ABAB\\\\u0031BBAA\".match(__obj).length === 1. Actual: '",
+                                                "value": "#3: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\u0041B\\u0031ABAB\\u0031BBAA\".match(__obj).length === 1. Actual: ",
+                                                "valueText": "#3: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; \"ABB\\u0041B\\u0031ABAB\\u0031BBAA\".match(__obj).length === 1. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -903,7 +935,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 32,
-                                                                "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\""
+                                                                "text": "\"ABB\\u0041B\\u0031ABAB\\u0031BBAA\"",
+                                                                "value": "ABBAB1ABAB1BBAA",
+                                                                "valueText": "ABBAB1ABAB1BBAA"
                                                             },
                                                             "dotToken": {
                                                                 "kind": "DotToken",
@@ -914,6 +948,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 5,
                                                                 "text": "match",
+                                                                "value": "match",
                                                                 "valueText": "match"
                                                             }
                                                         },
@@ -930,6 +965,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 5,
                                                                     "text": "__obj",
+                                                                    "value": "__obj",
                                                                     "valueText": "__obj"
                                                                 }
                                                             ],
@@ -949,6 +985,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },

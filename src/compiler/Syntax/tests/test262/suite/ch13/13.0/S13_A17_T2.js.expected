@@ -124,6 +124,7 @@
                                             "width": 8,
                                             "fullWidth": 9,
                                             "text": "__result",
+                                            "value": "__result",
                                             "valueText": "__result",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -156,6 +157,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -204,6 +206,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -225,7 +228,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 56,
-                                            "text": "\"#1: var __result = __func() lead to throwing exception\""
+                                            "text": "\"#1: var __result = __func() lead to throwing exception\"",
+                                            "value": "#1: var __result = __func() lead to throwing exception",
+                                            "valueText": "#1: var __result = __func() lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -282,6 +287,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -362,6 +368,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -388,6 +395,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -421,7 +429,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -466,6 +476,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -492,6 +503,8 @@
                                                                 "width": 47,
                                                                 "fullWidth": 48,
                                                                 "text": "'#1.2: func should throw a TypeError  Actual: '",
+                                                                "value": "#1.2: func should throw a TypeError  Actual: ",
+                                                                "valueText": "#1.2: func should throw a TypeError  Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -525,6 +538,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {
@@ -665,6 +679,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "__func",
+                                "value": "__func",
                                 "valueText": "__func",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -710,6 +725,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "__func",
+                                        "value": "__func",
                                         "valueText": "__func"
                                     },
                                     "callSignature": {
@@ -759,7 +775,9 @@
                                                 "expression": {
                                                     "kind": "StringLiteral",
                                                     "width": 5,
-                                                    "text": "\"ONE\""
+                                                    "text": "\"ONE\"",
+                                                    "value": "ONE",
+                                                    "valueText": "ONE"
                                                 },
                                                 "semicolonToken": {
                                                     "kind": "SemicolonToken",
@@ -848,6 +866,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__result",
+                                "value": "__result",
                                 "valueText": "__result",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -880,6 +899,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "__func",
+                                        "value": "__func",
                                         "valueText": "__func"
                                     },
                                     "argumentList": {
@@ -946,6 +966,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "__result",
+                        "value": "__result",
                         "valueText": "__result",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -971,7 +992,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"ONE\""
+                        "text": "\"ONE\"",
+                        "value": "ONE",
+                        "valueText": "ONE"
                     }
                 },
                 "closeParenToken": {
@@ -1016,6 +1039,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1040,7 +1064,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 46,
-                                                "text": "'#2: __result === \"ONE\". Actual: __result ==='"
+                                                "text": "'#2: __result === \"ONE\". Actual: __result ==='",
+                                                "value": "#2: __result === \"ONE\". Actual: __result ===",
+                                                "valueText": "#2: __result === \"ONE\". Actual: __result ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1051,6 +1077,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "__result",
+                                                "value": "__result",
                                                 "valueText": "__result"
                                             }
                                         }
@@ -1105,6 +1132,7 @@
                         "width": 6,
                         "fullWidth": 90,
                         "text": "__func",
+                        "value": "__func",
                         "valueText": "__func",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1172,6 +1200,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "callSignature": {
@@ -1221,7 +1250,9 @@
                                     "expression": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "\"TWO\""
+                                        "text": "\"TWO\"",
+                                        "value": "TWO",
+                                        "valueText": "TWO"
                                     },
                                     "semicolonToken": {
                                         "kind": "SemicolonToken",
@@ -1307,6 +1338,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__result",
+                                "value": "__result",
                                 "valueText": "__result",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1339,6 +1371,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "__func",
+                                        "value": "__func",
                                         "valueText": "__func"
                                     },
                                     "argumentList": {
@@ -1405,6 +1438,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "__result",
+                        "value": "__result",
                         "valueText": "__result",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1430,7 +1464,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"TWO\""
+                        "text": "\"TWO\"",
+                        "value": "TWO",
+                        "valueText": "TWO"
                     }
                 },
                 "closeParenToken": {
@@ -1475,6 +1511,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1499,7 +1536,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 46,
-                                                "text": "'#3: __result === \"TWO\". Actual: __result ==='"
+                                                "text": "'#3: __result === \"TWO\". Actual: __result ==='",
+                                                "value": "#3: __result === \"TWO\". Actual: __result ===",
+                                                "valueText": "#3: __result === \"TWO\". Actual: __result ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1510,6 +1549,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "__result",
+                                                "value": "__result",
                                                 "valueText": "__result"
                                             }
                                         }

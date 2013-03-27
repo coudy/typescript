@@ -25,6 +25,7 @@
                                 "width": 6,
                                 "fullWidth": 417,
                                 "text": "Object",
+                                "value": "Object",
                                 "valueText": "Object",
                                 "hasLeadingTrivia": true,
                                 "hasLeadingComment": true,
@@ -73,6 +74,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -86,6 +88,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "myproperty",
+                            "value": "myproperty",
                             "valueText": "myproperty",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -112,7 +115,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -181,6 +186,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "dotToken": {
@@ -192,6 +198,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -205,6 +212,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "myproperty",
+                            "value": "myproperty",
                             "valueText": "myproperty",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -231,7 +239,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -276,6 +286,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -302,6 +313,8 @@
                                                 "width": 81,
                                                 "fullWidth": 82,
                                                 "text": "'#1: Object.prototype.myproperty = 1; Array.prototype.myproperty === 1. Actual: '",
+                                                "value": "#1: Object.prototype.myproperty = 1; Array.prototype.myproperty === 1. Actual: ",
+                                                "valueText": "#1: Object.prototype.myproperty = 1; Array.prototype.myproperty === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -341,6 +354,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "Array",
+                                                            "value": "Array",
                                                             "valueText": "Array"
                                                         },
                                                         "dotToken": {
@@ -352,6 +366,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "prototype",
+                                                            "value": "prototype",
                                                             "valueText": "prototype"
                                                         }
                                                     },
@@ -364,6 +379,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "myproperty",
+                                                        "value": "myproperty",
                                                         "valueText": "myproperty"
                                                     }
                                                 },
@@ -468,6 +484,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "Array",
+                                    "value": "Array",
                                     "valueText": "Array"
                                 },
                                 "dotToken": {
@@ -479,6 +496,7 @@
                                     "kind": "IdentifierName",
                                     "width": 9,
                                     "text": "prototype",
+                                    "value": "prototype",
                                     "valueText": "prototype"
                                 }
                             },
@@ -491,6 +509,7 @@
                                 "kind": "IdentifierName",
                                 "width": 14,
                                 "text": "hasOwnProperty",
+                                "value": "hasOwnProperty",
                                 "valueText": "hasOwnProperty"
                             }
                         },
@@ -506,7 +525,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 12,
-                                    "text": "'myproperty'"
+                                    "text": "'myproperty'",
+                                    "value": "myproperty",
+                                    "valueText": "myproperty"
                                 }
                             ],
                             "closeParenToken": {
@@ -540,7 +561,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -585,6 +608,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -611,6 +635,8 @@
                                                 "width": 105,
                                                 "fullWidth": 106,
                                                 "text": "'#2: Object.prototype.myproperty = 1; Array.prototype.hasOwnProperty(\\'myproperty\\') === false. Actual: '",
+                                                "value": "#2: Object.prototype.myproperty = 1; Array.prototype.hasOwnProperty('myproperty') === false. Actual: ",
+                                                "valueText": "#2: Object.prototype.myproperty = 1; Array.prototype.hasOwnProperty('myproperty') === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -653,6 +679,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 5,
                                                                 "text": "Array",
+                                                                "value": "Array",
                                                                 "valueText": "Array"
                                                             },
                                                             "dotToken": {
@@ -664,6 +691,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 9,
                                                                 "text": "prototype",
+                                                                "value": "prototype",
                                                                 "valueText": "prototype"
                                                             }
                                                         },
@@ -676,6 +704,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 14,
                                                             "text": "hasOwnProperty",
+                                                            "value": "hasOwnProperty",
                                                             "valueText": "hasOwnProperty"
                                                         }
                                                     },
@@ -691,7 +720,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 12,
-                                                                "text": "'myproperty'"
+                                                                "text": "'myproperty'",
+                                                                "value": "myproperty",
+                                                                "valueText": "myproperty"
                                                             }
                                                         ],
                                                         "closeParenToken": {

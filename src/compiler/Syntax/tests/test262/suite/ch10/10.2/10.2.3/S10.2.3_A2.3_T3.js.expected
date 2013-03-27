@@ -74,6 +74,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -206,7 +207,9 @@
                                                                                                                                                                     "left": {
                                                                                                                                                                         "kind": "StringLiteral",
                                                                                                                                                                         "width": 13,
-                                                                                                                                                                        "text": "'//CHECK#1\\n'"
+                                                                                                                                                                        "text": "'//CHECK#1\\n'",
+                                                                                                                                                                        "value": "//CHECK#1\n",
+                                                                                                                                                                        "valueText": "//CHECK#1\n"
                                                                                                                                                                     },
                                                                                                                                                                     "operatorToken": {
                                                                                                                                                                         "kind": "PlusToken",
@@ -225,7 +228,9 @@
                                                                                                                                                                     "right": {
                                                                                                                                                                         "kind": "StringLiteral",
                                                                                                                                                                         "width": 25,
-                                                                                                                                                                        "text": "'for (var x in this) {\\n'"
+                                                                                                                                                                        "text": "'for (var x in this) {\\n'",
+                                                                                                                                                                        "value": "for (var x in this) {\n",
+                                                                                                                                                                        "valueText": "for (var x in this) {\n"
                                                                                                                                                                     }
                                                                                                                                                                 },
                                                                                                                                                                 "operatorToken": {
@@ -245,7 +250,9 @@
                                                                                                                                                                 "right": {
                                                                                                                                                                     "kind": "StringLiteral",
                                                                                                                                                                     "width": 31,
-                                                                                                                                                                    "text": "'  if ( x === \\'Object\\' ) {\\n'"
+                                                                                                                                                                    "text": "'  if ( x === \\'Object\\' ) {\\n'",
+                                                                                                                                                                    "value": "  if ( x === 'Object' ) {\n",
+                                                                                                                                                                    "valueText": "  if ( x === 'Object' ) {\n"
                                                                                                                                                                 }
                                                                                                                                                             },
                                                                                                                                                             "operatorToken": {
@@ -265,7 +272,9 @@
                                                                                                                                                             "right": {
                                                                                                                                                                 "kind": "StringLiteral",
                                                                                                                                                                 "width": 57,
-                                                                                                                                                                "text": "'    $ERROR(\"#1: \\'Object\\' have attribute DontEnum\");\\n'"
+                                                                                                                                                                "text": "'    $ERROR(\"#1: \\'Object\\' have attribute DontEnum\");\\n'",
+                                                                                                                                                                "value": "    $ERROR(\"#1: 'Object' have attribute DontEnum\");\n",
+                                                                                                                                                                "valueText": "    $ERROR(\"#1: 'Object' have attribute DontEnum\");\n"
                                                                                                                                                             }
                                                                                                                                                         },
                                                                                                                                                         "operatorToken": {
@@ -285,7 +294,9 @@
                                                                                                                                                         "right": {
                                                                                                                                                             "kind": "StringLiteral",
                                                                                                                                                             "width": 39,
-                                                                                                                                                            "text": "'  } else if ( x === \\'Function\\') {\\n'"
+                                                                                                                                                            "text": "'  } else if ( x === \\'Function\\') {\\n'",
+                                                                                                                                                            "value": "  } else if ( x === 'Function') {\n",
+                                                                                                                                                            "valueText": "  } else if ( x === 'Function') {\n"
                                                                                                                                                         }
                                                                                                                                                     },
                                                                                                                                                     "operatorToken": {
@@ -305,7 +316,9 @@
                                                                                                                                                     "right": {
                                                                                                                                                         "kind": "StringLiteral",
                                                                                                                                                         "width": 59,
-                                                                                                                                                        "text": "'    $ERROR(\"#1: \\'Function\\' have attribute DontEnum\");\\n'"
+                                                                                                                                                        "text": "'    $ERROR(\"#1: \\'Function\\' have attribute DontEnum\");\\n'",
+                                                                                                                                                        "value": "    $ERROR(\"#1: 'Function' have attribute DontEnum\");\n",
+                                                                                                                                                        "valueText": "    $ERROR(\"#1: 'Function' have attribute DontEnum\");\n"
                                                                                                                                                     }
                                                                                                                                                 },
                                                                                                                                                 "operatorToken": {
@@ -325,7 +338,9 @@
                                                                                                                                                 "right": {
                                                                                                                                                     "kind": "StringLiteral",
                                                                                                                                                     "width": 38,
-                                                                                                                                                    "text": "'  } else if ( x === \\'String\\' ) {\\n'"
+                                                                                                                                                    "text": "'  } else if ( x === \\'String\\' ) {\\n'",
+                                                                                                                                                    "value": "  } else if ( x === 'String' ) {\n",
+                                                                                                                                                    "valueText": "  } else if ( x === 'String' ) {\n"
                                                                                                                                                 }
                                                                                                                                             },
                                                                                                                                             "operatorToken": {
@@ -345,7 +360,9 @@
                                                                                                                                             "right": {
                                                                                                                                                 "kind": "StringLiteral",
                                                                                                                                                 "width": 57,
-                                                                                                                                                "text": "'    $ERROR(\"#1: \\'String\\' have attribute DontEnum\");\\n'"
+                                                                                                                                                "text": "'    $ERROR(\"#1: \\'String\\' have attribute DontEnum\");\\n'",
+                                                                                                                                                "value": "    $ERROR(\"#1: 'String' have attribute DontEnum\");\n",
+                                                                                                                                                "valueText": "    $ERROR(\"#1: 'String' have attribute DontEnum\");\n"
                                                                                                                                             }
                                                                                                                                         },
                                                                                                                                         "operatorToken": {
@@ -365,7 +382,9 @@
                                                                                                                                         "right": {
                                                                                                                                             "kind": "StringLiteral",
                                                                                                                                             "width": 38,
-                                                                                                                                            "text": "'  } else if ( x === \\'Number\\' ) {\\n'"
+                                                                                                                                            "text": "'  } else if ( x === \\'Number\\' ) {\\n'",
+                                                                                                                                            "value": "  } else if ( x === 'Number' ) {\n",
+                                                                                                                                            "valueText": "  } else if ( x === 'Number' ) {\n"
                                                                                                                                         }
                                                                                                                                     },
                                                                                                                                     "operatorToken": {
@@ -385,7 +404,9 @@
                                                                                                                                     "right": {
                                                                                                                                         "kind": "StringLiteral",
                                                                                                                                         "width": 57,
-                                                                                                                                        "text": "'    $ERROR(\"#1: \\'Number\\' have attribute DontEnum\");\\n'"
+                                                                                                                                        "text": "'    $ERROR(\"#1: \\'Number\\' have attribute DontEnum\");\\n'",
+                                                                                                                                        "value": "    $ERROR(\"#1: 'Number' have attribute DontEnum\");\n",
+                                                                                                                                        "valueText": "    $ERROR(\"#1: 'Number' have attribute DontEnum\");\n"
                                                                                                                                     }
                                                                                                                                 },
                                                                                                                                 "operatorToken": {
@@ -405,7 +426,9 @@
                                                                                                                                 "right": {
                                                                                                                                     "kind": "StringLiteral",
                                                                                                                                     "width": 37,
-                                                                                                                                    "text": "'  } else if ( x === \\'Array\\' ) {\\n'"
+                                                                                                                                    "text": "'  } else if ( x === \\'Array\\' ) {\\n'",
+                                                                                                                                    "value": "  } else if ( x === 'Array' ) {\n",
+                                                                                                                                    "valueText": "  } else if ( x === 'Array' ) {\n"
                                                                                                                                 }
                                                                                                                             },
                                                                                                                             "operatorToken": {
@@ -425,7 +448,9 @@
                                                                                                                             "right": {
                                                                                                                                 "kind": "StringLiteral",
                                                                                                                                 "width": 56,
-                                                                                                                                "text": "'    $ERROR(\"#1: \\'Array\\' have attribute DontEnum\");\\n'"
+                                                                                                                                "text": "'    $ERROR(\"#1: \\'Array\\' have attribute DontEnum\");\\n'",
+                                                                                                                                "value": "    $ERROR(\"#1: 'Array' have attribute DontEnum\");\n",
+                                                                                                                                "valueText": "    $ERROR(\"#1: 'Array' have attribute DontEnum\");\n"
                                                                                                                             }
                                                                                                                         },
                                                                                                                         "operatorToken": {
@@ -445,7 +470,9 @@
                                                                                                                         "right": {
                                                                                                                             "kind": "StringLiteral",
                                                                                                                             "width": 39,
-                                                                                                                            "text": "'  } else if ( x === \\'Boolean\\' ) {\\n'"
+                                                                                                                            "text": "'  } else if ( x === \\'Boolean\\' ) {\\n'",
+                                                                                                                            "value": "  } else if ( x === 'Boolean' ) {\n",
+                                                                                                                            "valueText": "  } else if ( x === 'Boolean' ) {\n"
                                                                                                                         }
                                                                                                                     },
                                                                                                                     "operatorToken": {
@@ -465,7 +492,9 @@
                                                                                                                     "right": {
                                                                                                                         "kind": "StringLiteral",
                                                                                                                         "width": 58,
-                                                                                                                        "text": "'    $ERROR(\"#1: \\'Boolean\\' have attribute DontEnum\");\\n'"
+                                                                                                                        "text": "'    $ERROR(\"#1: \\'Boolean\\' have attribute DontEnum\");\\n'",
+                                                                                                                        "value": "    $ERROR(\"#1: 'Boolean' have attribute DontEnum\");\n",
+                                                                                                                        "valueText": "    $ERROR(\"#1: 'Boolean' have attribute DontEnum\");\n"
                                                                                                                     }
                                                                                                                 },
                                                                                                                 "operatorToken": {
@@ -485,7 +514,9 @@
                                                                                                                 "right": {
                                                                                                                     "kind": "StringLiteral",
                                                                                                                     "width": 36,
-                                                                                                                    "text": "'  } else if ( x === \\'Date\\' ) {\\n'"
+                                                                                                                    "text": "'  } else if ( x === \\'Date\\' ) {\\n'",
+                                                                                                                    "value": "  } else if ( x === 'Date' ) {\n",
+                                                                                                                    "valueText": "  } else if ( x === 'Date' ) {\n"
                                                                                                                 }
                                                                                                             },
                                                                                                             "operatorToken": {
@@ -505,7 +536,9 @@
                                                                                                             "right": {
                                                                                                                 "kind": "StringLiteral",
                                                                                                                 "width": 55,
-                                                                                                                "text": "'    $ERROR(\"#1: \\'Date\\' have attribute DontEnum\");\\n'"
+                                                                                                                "text": "'    $ERROR(\"#1: \\'Date\\' have attribute DontEnum\");\\n'",
+                                                                                                                "value": "    $ERROR(\"#1: 'Date' have attribute DontEnum\");\n",
+                                                                                                                "valueText": "    $ERROR(\"#1: 'Date' have attribute DontEnum\");\n"
                                                                                                             }
                                                                                                         },
                                                                                                         "operatorToken": {
@@ -525,7 +558,9 @@
                                                                                                         "right": {
                                                                                                             "kind": "StringLiteral",
                                                                                                             "width": 38,
-                                                                                                            "text": "'  } else if ( x === \\'RegExp\\' ) {\\n'"
+                                                                                                            "text": "'  } else if ( x === \\'RegExp\\' ) {\\n'",
+                                                                                                            "value": "  } else if ( x === 'RegExp' ) {\n",
+                                                                                                            "valueText": "  } else if ( x === 'RegExp' ) {\n"
                                                                                                         }
                                                                                                     },
                                                                                                     "operatorToken": {
@@ -545,7 +580,9 @@
                                                                                                     "right": {
                                                                                                         "kind": "StringLiteral",
                                                                                                         "width": 57,
-                                                                                                        "text": "'    $ERROR(\"#1: \\'RegExp\\' have attribute DontEnum\");\\n'"
+                                                                                                        "text": "'    $ERROR(\"#1: \\'RegExp\\' have attribute DontEnum\");\\n'",
+                                                                                                        "value": "    $ERROR(\"#1: 'RegExp' have attribute DontEnum\");\n",
+                                                                                                        "valueText": "    $ERROR(\"#1: 'RegExp' have attribute DontEnum\");\n"
                                                                                                     }
                                                                                                 },
                                                                                                 "operatorToken": {
@@ -565,7 +602,9 @@
                                                                                                 "right": {
                                                                                                     "kind": "StringLiteral",
                                                                                                     "width": 37,
-                                                                                                    "text": "'  } else if ( x === \\'Error\\' ) {\\n'"
+                                                                                                    "text": "'  } else if ( x === \\'Error\\' ) {\\n'",
+                                                                                                    "value": "  } else if ( x === 'Error' ) {\n",
+                                                                                                    "valueText": "  } else if ( x === 'Error' ) {\n"
                                                                                                 }
                                                                                             },
                                                                                             "operatorToken": {
@@ -585,7 +624,9 @@
                                                                                             "right": {
                                                                                                 "kind": "StringLiteral",
                                                                                                 "width": 56,
-                                                                                                "text": "'    $ERROR(\"#1: \\'Error\\' have attribute DontEnum\");\\n'"
+                                                                                                "text": "'    $ERROR(\"#1: \\'Error\\' have attribute DontEnum\");\\n'",
+                                                                                                "value": "    $ERROR(\"#1: 'Error' have attribute DontEnum\");\n",
+                                                                                                "valueText": "    $ERROR(\"#1: 'Error' have attribute DontEnum\");\n"
                                                                                             }
                                                                                         },
                                                                                         "operatorToken": {
@@ -605,7 +646,9 @@
                                                                                         "right": {
                                                                                             "kind": "StringLiteral",
                                                                                             "width": 41,
-                                                                                            "text": "'  } else if ( x === \\'EvalError\\' ) {\\n'"
+                                                                                            "text": "'  } else if ( x === \\'EvalError\\' ) {\\n'",
+                                                                                            "value": "  } else if ( x === 'EvalError' ) {\n",
+                                                                                            "valueText": "  } else if ( x === 'EvalError' ) {\n"
                                                                                         }
                                                                                     },
                                                                                     "operatorToken": {
@@ -625,7 +668,9 @@
                                                                                     "right": {
                                                                                         "kind": "StringLiteral",
                                                                                         "width": 60,
-                                                                                        "text": "'    $ERROR(\"#1: \\'EvalError\\' have attribute DontEnum\");\\n'"
+                                                                                        "text": "'    $ERROR(\"#1: \\'EvalError\\' have attribute DontEnum\");\\n'",
+                                                                                        "value": "    $ERROR(\"#1: 'EvalError' have attribute DontEnum\");\n",
+                                                                                        "valueText": "    $ERROR(\"#1: 'EvalError' have attribute DontEnum\");\n"
                                                                                     }
                                                                                 },
                                                                                 "operatorToken": {
@@ -645,7 +690,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 42,
-                                                                                    "text": "'  } else if ( x === \\'RangeError\\' ) {\\n'"
+                                                                                    "text": "'  } else if ( x === \\'RangeError\\' ) {\\n'",
+                                                                                    "value": "  } else if ( x === 'RangeError' ) {\n",
+                                                                                    "valueText": "  } else if ( x === 'RangeError' ) {\n"
                                                                                 }
                                                                             },
                                                                             "operatorToken": {
@@ -665,7 +712,9 @@
                                                                             "right": {
                                                                                 "kind": "StringLiteral",
                                                                                 "width": 61,
-                                                                                "text": "'    $ERROR(\"#1: \\'RangeError\\' have attribute DontEnum\");\\n'"
+                                                                                "text": "'    $ERROR(\"#1: \\'RangeError\\' have attribute DontEnum\");\\n'",
+                                                                                "value": "    $ERROR(\"#1: 'RangeError' have attribute DontEnum\");\n",
+                                                                                "valueText": "    $ERROR(\"#1: 'RangeError' have attribute DontEnum\");\n"
                                                                             }
                                                                         },
                                                                         "operatorToken": {
@@ -685,7 +734,9 @@
                                                                         "right": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 46,
-                                                                            "text": "'  } else if ( x === \\'ReferenceError\\' ) {\\n'"
+                                                                            "text": "'  } else if ( x === \\'ReferenceError\\' ) {\\n'",
+                                                                            "value": "  } else if ( x === 'ReferenceError' ) {\n",
+                                                                            "valueText": "  } else if ( x === 'ReferenceError' ) {\n"
                                                                         }
                                                                     },
                                                                     "operatorToken": {
@@ -705,7 +756,9 @@
                                                                     "right": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 65,
-                                                                        "text": "'    $ERROR(\"#1: \\'ReferenceError\\' have attribute DontEnum\");\\n'"
+                                                                        "text": "'    $ERROR(\"#1: \\'ReferenceError\\' have attribute DontEnum\");\\n'",
+                                                                        "value": "    $ERROR(\"#1: 'ReferenceError' have attribute DontEnum\");\n",
+                                                                        "valueText": "    $ERROR(\"#1: 'ReferenceError' have attribute DontEnum\");\n"
                                                                     }
                                                                 },
                                                                 "operatorToken": {
@@ -725,7 +778,9 @@
                                                                 "right": {
                                                                     "kind": "StringLiteral",
                                                                     "width": 43,
-                                                                    "text": "'  } else if ( x === \\'SyntaxError\\' ) {\\n'"
+                                                                    "text": "'  } else if ( x === \\'SyntaxError\\' ) {\\n'",
+                                                                    "value": "  } else if ( x === 'SyntaxError' ) {\n",
+                                                                    "valueText": "  } else if ( x === 'SyntaxError' ) {\n"
                                                                 }
                                                             },
                                                             "operatorToken": {
@@ -745,7 +800,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 62,
-                                                                "text": "'    $ERROR(\"#1: \\'SyntaxError\\' have attribute DontEnum\");\\n'"
+                                                                "text": "'    $ERROR(\"#1: \\'SyntaxError\\' have attribute DontEnum\");\\n'",
+                                                                "value": "    $ERROR(\"#1: 'SyntaxError' have attribute DontEnum\");\n",
+                                                                "valueText": "    $ERROR(\"#1: 'SyntaxError' have attribute DontEnum\");\n"
                                                             }
                                                         },
                                                         "operatorToken": {
@@ -765,7 +822,9 @@
                                                         "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 41,
-                                                            "text": "'  } else if ( x === \\'TypeError\\' ) {\\n'"
+                                                            "text": "'  } else if ( x === \\'TypeError\\' ) {\\n'",
+                                                            "value": "  } else if ( x === 'TypeError' ) {\n",
+                                                            "valueText": "  } else if ( x === 'TypeError' ) {\n"
                                                         }
                                                     },
                                                     "operatorToken": {
@@ -785,7 +844,9 @@
                                                     "right": {
                                                         "kind": "StringLiteral",
                                                         "width": 60,
-                                                        "text": "'    $ERROR(\"#1: \\'TypeError\\' have attribute DontEnum\");\\n'"
+                                                        "text": "'    $ERROR(\"#1: \\'TypeError\\' have attribute DontEnum\");\\n'",
+                                                        "value": "    $ERROR(\"#1: 'TypeError' have attribute DontEnum\");\n",
+                                                        "valueText": "    $ERROR(\"#1: 'TypeError' have attribute DontEnum\");\n"
                                                     }
                                                 },
                                                 "operatorToken": {
@@ -805,7 +866,9 @@
                                                 "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 40,
-                                                    "text": "'  } else if ( x === \\'URIError\\' ) {\\n'"
+                                                    "text": "'  } else if ( x === \\'URIError\\' ) {\\n'",
+                                                    "value": "  } else if ( x === 'URIError' ) {\n",
+                                                    "valueText": "  } else if ( x === 'URIError' ) {\n"
                                                 }
                                             },
                                             "operatorToken": {
@@ -825,7 +888,9 @@
                                             "right": {
                                                 "kind": "StringLiteral",
                                                 "width": 59,
-                                                "text": "'    $ERROR(\"#1: \\'URIError\\' have attribute DontEnum\");\\n'"
+                                                "text": "'    $ERROR(\"#1: \\'URIError\\' have attribute DontEnum\");\\n'",
+                                                "value": "    $ERROR(\"#1: 'URIError' have attribute DontEnum\");\n",
+                                                "valueText": "    $ERROR(\"#1: 'URIError' have attribute DontEnum\");\n"
                                             }
                                         },
                                         "operatorToken": {
@@ -845,7 +910,9 @@
                                         "right": {
                                             "kind": "StringLiteral",
                                             "width": 7,
-                                            "text": "'  }\\n'"
+                                            "text": "'  }\\n'",
+                                            "value": "  }\n",
+                                            "valueText": "  }\n"
                                         }
                                     },
                                     "operatorToken": {
@@ -865,7 +932,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "'}\\n'"
+                                        "text": "'}\\n'",
+                                        "value": "}\n",
+                                        "valueText": "}\n"
                                     }
                                 }
                             }
@@ -898,6 +967,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -921,6 +991,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr"
                             }
                         ],

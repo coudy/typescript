@@ -91,6 +91,7 @@
                                     "width": 9,
                                     "fullWidth": 11,
                                     "text": "undefined",
+                                    "value": "undefined",
                                     "valueText": "undefined",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -108,7 +109,9 @@
                                 "argumentExpression": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "'foo'"
+                                    "text": "'foo'",
+                                    "value": "foo",
+                                    "valueText": "foo"
                                 },
                                 "closeBracketToken": {
                                     "kind": "CloseBracketToken",
@@ -142,6 +145,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -168,6 +172,8 @@
                                                 "width": 57,
                                                 "fullWidth": 58,
                                                 "text": "'#1.1: undefined[\\'foo\\'] must throw TypeError. Actual: '",
+                                                "value": "#1.1: undefined['foo'] must throw TypeError. Actual: ",
+                                                "valueText": "#1.1: undefined['foo'] must throw TypeError. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -204,6 +210,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "undefined",
+                                                        "value": "undefined",
                                                         "valueText": "undefined"
                                                     },
                                                     "openBracketToken": {
@@ -214,7 +221,9 @@
                                                     "argumentExpression": {
                                                         "kind": "StringLiteral",
                                                         "width": 5,
-                                                        "text": "'foo'"
+                                                        "text": "'foo'",
+                                                        "value": "foo",
+                                                        "valueText": "foo"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -285,6 +294,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -350,6 +360,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -376,6 +387,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -409,7 +421,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -446,6 +460,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -472,6 +487,8 @@
                                                                 "width": 57,
                                                                 "fullWidth": 58,
                                                                 "text": "'#1.2: undefined[\\'foo\\'] must throw TypeError. Actual: '",
+                                                                "value": "#1.2: undefined['foo'] must throw TypeError. Actual: ",
+                                                                "valueText": "#1.2: undefined['foo'] must throw TypeError. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -505,6 +522,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {
@@ -648,6 +666,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "undefined",
+                                "value": "undefined",
                                 "valueText": "undefined"
                             },
                             "closeParenToken": {
@@ -674,6 +693,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -699,7 +719,9 @@
                                     "right": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "2"
+                                        "text": "2",
+                                        "value": 2,
+                                        "valueText": "2"
                                     }
                                 },
                                 "semicolonToken": {
@@ -729,6 +751,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -755,6 +778,8 @@
                                                 "width": 66,
                                                 "fullWidth": 67,
                                                 "text": "'#2.1: with(undefined) x = 2 must throw TypeError. Actual: x === '",
+                                                "value": "#2.1: with(undefined) x = 2 must throw TypeError. Actual: x === ",
+                                                "valueText": "#2.1: with(undefined) x = 2 must throw TypeError. Actual: x === ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -788,6 +813,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -853,6 +879,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -918,6 +945,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -944,6 +972,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -977,7 +1006,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -1014,6 +1045,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -1040,6 +1072,8 @@
                                                                 "width": 60,
                                                                 "fullWidth": 61,
                                                                 "text": "'#2.2: with(undefined) x = 2 must throw TypeError. Actual: '",
+                                                                "value": "#2.2: with(undefined) x = 2 must throw TypeError. Actual: ",
+                                                                "valueText": "#2.2: with(undefined) x = 2 must throw TypeError. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -1073,6 +1107,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

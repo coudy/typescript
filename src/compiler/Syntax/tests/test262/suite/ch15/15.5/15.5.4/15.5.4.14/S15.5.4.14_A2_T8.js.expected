@@ -75,6 +75,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__string",
+                                "value": "__string",
                                 "valueText": "__string",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 37,
-                                    "text": "\"thisnullisnullanullstringnullobject\""
+                                    "text": "\"thisnullisnullanullstringnullobject\"",
+                                    "value": "thisnullisnullanullstringnullobject",
+                                    "valueText": "thisnullisnullanullstringnullobject"
                                 }
                             }
                         }
@@ -153,6 +156,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__expected",
+                                "value": "__expected",
                                 "valueText": "__expected",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -190,7 +194,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 6,
-                                            "text": "\"this\""
+                                            "text": "\"this\"",
+                                            "value": "this",
+                                            "valueText": "this"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -208,7 +214,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 4,
-                                            "text": "\"is\""
+                                            "text": "\"is\"",
+                                            "value": "is",
+                                            "valueText": "is"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -226,7 +234,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 3,
-                                            "text": "\"a\""
+                                            "text": "\"a\"",
+                                            "value": "a",
+                                            "valueText": "a"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -244,7 +254,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 8,
-                                            "text": "\"string\""
+                                            "text": "\"string\"",
+                                            "value": "string",
+                                            "valueText": "string"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -262,7 +274,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 8,
-                                            "text": "\"object\""
+                                            "text": "\"object\"",
+                                            "value": "object",
+                                            "valueText": "object"
                                         }
                                     ],
                                     "closeBracketToken": {
@@ -327,6 +341,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "__split",
+                                "value": "__split",
                                 "valueText": "__split",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -362,6 +377,7 @@
                                             "kind": "IdentifierName",
                                             "width": 8,
                                             "text": "__string",
+                                            "value": "__string",
                                             "valueText": "__string"
                                         },
                                         "dotToken": {
@@ -373,6 +389,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "split",
+                                            "value": "split",
                                             "valueText": "split"
                                         }
                                     },
@@ -476,6 +493,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -488,6 +506,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -514,6 +534,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "Array",
+                        "value": "Array",
                         "valueText": "Array"
                     }
                 },
@@ -562,6 +583,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -588,7 +610,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 189,
-                                                "text": "'#1: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.constructor === Array. Actual: '"
+                                                "text": "'#1: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.constructor === Array. Actual: '",
+                                                "value": "#1: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.constructor === Array. Actual: ",
+                                                "valueText": "#1: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.constructor === Array. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -603,6 +627,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -615,6 +640,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -737,6 +764,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -749,6 +777,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -779,6 +808,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -790,6 +820,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -836,6 +867,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -860,7 +892,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 196,
-                                                "text": "'#2: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.length === __expected.length. Actual: '"
+                                                "text": "'#2: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.length === __expected.length. Actual: '",
+                                                "value": "#2: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.length === __expected.length. Actual: ",
+                                                "valueText": "#2: var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __split.length === __expected.length. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -874,6 +908,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -886,6 +921,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -1032,6 +1068,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "i",
+                                "value": "i",
                                 "valueText": "i",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1060,7 +1097,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -1087,6 +1126,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1116,6 +1156,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -1127,6 +1168,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -1151,6 +1193,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -1236,6 +1279,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__expected",
+                                        "value": "__expected",
                                         "valueText": "__expected"
                                     },
                                     "openBracketToken": {
@@ -1247,6 +1291,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "i",
+                                        "value": "i",
                                         "valueText": "i"
                                     },
                                     "closeBracketToken": {
@@ -1267,6 +1312,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "__split",
+                                        "value": "__split",
                                         "valueText": "__split"
                                     },
                                     "openBracketToken": {
@@ -1278,6 +1324,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "i",
+                                        "value": "i",
                                         "valueText": "i"
                                     },
                                     "closeBracketToken": {
@@ -1329,6 +1376,7 @@
                                                 "width": 6,
                                                 "fullWidth": 12,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -1371,7 +1419,9 @@
                                                                                 "left": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 5,
-                                                                                    "text": "'#3.'"
+                                                                                    "text": "'#3.'",
+                                                                                    "value": "#3.",
+                                                                                    "valueText": "#3."
                                                                                 },
                                                                                 "operatorToken": {
                                                                                     "kind": "PlusToken",
@@ -1382,6 +1432,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 1,
                                                                                     "text": "i",
+                                                                                    "value": "i",
                                                                                     "valueText": "i"
                                                                                 }
                                                                             },
@@ -1393,7 +1444,9 @@
                                                                             "right": {
                                                                                 "kind": "StringLiteral",
                                                                                 "width": 159,
-                                                                                "text": "': var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __expected['"
+                                                                                "text": "': var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __expected['",
+                                                                                "value": ": var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __expected[",
+                                                                                "valueText": ": var __string = \"thisnullisnullanullstringnullobject\"; var __expected = [\"this\", \"is\", \"a\", \"string\", \"object\"]; __split = __string.split(null); __expected["
                                                                             }
                                                                         },
                                                                         "operatorToken": {
@@ -1405,6 +1458,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "i",
+                                                                            "value": "i",
                                                                             "valueText": "i"
                                                                         }
                                                                     },
@@ -1416,7 +1470,9 @@
                                                                     "right": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 6,
-                                                                        "text": "']==='"
+                                                                        "text": "']==='",
+                                                                        "value": "]===",
+                                                                        "valueText": "]==="
                                                                     }
                                                                 },
                                                                 "operatorToken": {
@@ -1431,6 +1487,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 7,
                                                                         "text": "__split",
+                                                                        "value": "__split",
                                                                         "valueText": "__split"
                                                                     },
                                                                     "openBracketToken": {
@@ -1442,6 +1499,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "i",
+                                                                        "value": "i",
                                                                         "valueText": "i"
                                                                     },
                                                                     "closeBracketToken": {
@@ -1459,7 +1517,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 12,
-                                                                "text": "'. Actual: '"
+                                                                "text": "'. Actual: '",
+                                                                "value": ". Actual: ",
+                                                                "valueText": ". Actual: "
                                                             }
                                                         },
                                                         "operatorToken": {
@@ -1474,6 +1534,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 10,
                                                                 "text": "__expected",
+                                                                "value": "__expected",
                                                                 "valueText": "__expected"
                                                             },
                                                             "openBracketToken": {
@@ -1485,6 +1546,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "i",
+                                                                "value": "i",
                                                                 "valueText": "i"
                                                             },
                                                             "closeBracketToken": {

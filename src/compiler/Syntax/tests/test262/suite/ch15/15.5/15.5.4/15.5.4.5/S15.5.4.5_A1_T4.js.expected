@@ -102,7 +102,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 7,
-                                "text": "\"smart\""
+                                "text": "\"smart\"",
+                                "value": "smart",
+                                "valueText": "smart"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -113,6 +115,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "charCodeAt",
+                                "value": "charCodeAt",
                                 "valueText": "charCodeAt"
                             }
                         },
@@ -156,7 +159,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 4,
-                        "text": "0x73"
+                        "text": "0x73",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -201,6 +206,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -225,7 +231,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 69,
-                                                "text": "'#1: \"smart\".charCodeAt() === 0x73. Actual: \"smart\".charCodeAt() ==='"
+                                                "text": "'#1: \"smart\".charCodeAt() === 0x73. Actual: \"smart\".charCodeAt() ==='",
+                                                "value": "#1: \"smart\".charCodeAt() === 0x73. Actual: \"smart\".charCodeAt() ===",
+                                                "valueText": "#1: \"smart\".charCodeAt() === 0x73. Actual: \"smart\".charCodeAt() ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -249,7 +257,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 7,
-                                                            "text": "\"smart\""
+                                                            "text": "\"smart\"",
+                                                            "value": "smart",
+                                                            "valueText": "smart"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -260,6 +270,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 10,
                                                             "text": "charCodeAt",
+                                                            "value": "charCodeAt",
                                                             "valueText": "charCodeAt"
                                                         }
                                                     },

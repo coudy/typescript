@@ -75,6 +75,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__string",
+                                "value": "__string",
                                 "valueText": "__string",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -116,6 +117,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -225,6 +227,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -287,7 +290,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 8,
-                                                                "text": "\"aabaac\""
+                                                                "text": "\"aabaac\"",
+                                                                "value": "aabaac",
+                                                                "valueText": "aabaac"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -343,6 +348,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "__re",
+                        "value": "__re",
                         "valueText": "__re",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -368,7 +374,9 @@
                     "right": {
                         "kind": "RegularExpressionLiteral",
                         "width": 21,
-                        "text": "/(aa|aabaac|ba|b|c)*/"
+                        "text": "/(aa|aabaac|ba|b|c)*/",
+                        "value": {},
+                        "valueText": "/(aa|aabaac|ba|b|c)*/"
                     }
                 },
                 "semicolonToken": {
@@ -437,6 +445,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re"
                             },
                             "dotToken": {
@@ -448,6 +457,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -464,6 +474,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__string",
+                                    "value": "__string",
                                     "valueText": "__string"
                                 }
                             ],
@@ -516,6 +527,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "__re",
+                                        "value": "__re",
                                         "valueText": "__re"
                                     },
                                     "dotToken": {
@@ -527,6 +539,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "exec",
+                                        "value": "exec",
                                         "valueText": "exec"
                                     }
                                 },
@@ -543,6 +556,7 @@
                                             "kind": "IdentifierName",
                                             "width": 8,
                                             "text": "__string",
+                                            "value": "__string",
                                             "valueText": "__string"
                                         }
                                     ],
@@ -629,6 +643,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -650,7 +665,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 178,
-                                            "text": "'#0: var __string = {toString:function(){return {};}, valueOf:function(){return \"aabaac\";}}; __re = /(aa|aabaac|ba|b|c)*/; __re.test(__string) === (__re.exec(__string) !== null)'"
+                                            "text": "'#0: var __string = {toString:function(){return {};}, valueOf:function(){return \"aabaac\";}}; __re = /(aa|aabaac|ba|b|c)*/; __re.test(__string) === (__re.exec(__string) !== null)'",
+                                            "value": "#0: var __string = {toString:function(){return {};}, valueOf:function(){return \"aabaac\";}}; __re = /(aa|aabaac|ba|b|c)*/; __re.test(__string) === (__re.exec(__string) !== null)",
+                                            "valueText": "#0: var __string = {toString:function(){return {};}, valueOf:function(){return \"aabaac\";}}; __re = /(aa|aabaac|ba|b|c)*/; __re.test(__string) === (__re.exec(__string) !== null)"
                                         }
                                     ],
                                     "closeParenToken": {

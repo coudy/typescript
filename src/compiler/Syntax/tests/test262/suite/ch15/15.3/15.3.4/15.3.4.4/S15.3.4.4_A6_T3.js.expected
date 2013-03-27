@@ -73,6 +73,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "i",
+                                "value": "i",
                                 "valueText": "i"
                             },
                             "equalsValueClause": {
@@ -86,7 +87,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -143,6 +146,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "p",
+                                "value": "p",
                                 "valueText": "p"
                             },
                             "equalsValueClause": {
@@ -169,6 +173,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -234,7 +239,9 @@
                                                                 "left": {
                                                                     "kind": "StringLiteral",
                                                                     "width": 3,
-                                                                    "text": "\"a\""
+                                                                    "text": "\"a\"",
+                                                                    "value": "a",
+                                                                    "valueText": "a"
                                                                 },
                                                                 "operatorToken": {
                                                                     "kind": "PlusToken",
@@ -261,6 +268,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "i",
+                                                                            "value": "i",
                                                                             "valueText": "i"
                                                                         }
                                                                     },
@@ -348,6 +356,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "equalsValueClause": {
@@ -409,6 +418,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "Function",
+                                "value": "Function",
                                 "valueText": "Function",
                                 "hasLeadingTrivia": true,
                                 "hasLeadingNewLine": true,
@@ -432,6 +442,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "p",
+                                        "value": "p",
                                         "valueText": "p"
                                     },
                                     {
@@ -442,7 +453,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 7,
-                                        "text": "\"a2,a3\""
+                                        "text": "\"a2,a3\"",
+                                        "value": "a2,a3",
+                                        "valueText": "a2,a3"
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -452,7 +465,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"this.shifted=a1;\""
+                                        "text": "\"this.shifted=a1;\"",
+                                        "value": "this.shifted=a1;",
+                                        "valueText": "this.shifted=a1;"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -471,6 +486,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "call",
+                            "value": "call",
                             "valueText": "call"
                         }
                     },
@@ -487,6 +503,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             {
@@ -522,6 +539,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "Array",
+                                    "value": "Array",
                                     "valueText": "Array"
                                 },
                                 "argumentList": {
@@ -536,7 +554,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 6,
-                                            "text": "\"nine\""
+                                            "text": "\"nine\"",
+                                            "value": "nine",
+                                            "valueText": "nine"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -546,7 +566,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 6,
-                                            "text": "\"inch\""
+                                            "text": "\"inch\"",
+                                            "value": "inch",
+                                            "valueText": "inch"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -556,7 +578,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 7,
-                                            "text": "\"nails\""
+                                            "text": "\"nails\"",
+                                            "value": "nails",
+                                            "valueText": "nails"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -640,6 +664,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "openBracketToken": {
@@ -650,7 +675,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 9,
-                                "text": "\"shifted\""
+                                "text": "\"shifted\"",
+                                "value": "shifted",
+                                "valueText": "shifted"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -668,6 +695,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -694,7 +722,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -739,6 +769,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -760,7 +791,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 162,
-                                            "text": "'#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object'"
+                                            "text": "'#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object'",
+                                            "value": "#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object",
+                                            "valueText": "#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -867,6 +900,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj"
                                         },
                                         "openBracketToken": {
@@ -877,7 +911,9 @@
                                         "argumentExpression": {
                                             "kind": "StringLiteral",
                                             "width": 9,
-                                            "text": "\"shifted\""
+                                            "text": "\"shifted\"",
+                                            "value": "shifted",
+                                            "valueText": "shifted"
                                         },
                                         "closeBracketToken": {
                                             "kind": "CloseBracketToken",
@@ -893,7 +929,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -925,7 +963,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 6,
-                                    "text": "\"nine\""
+                                    "text": "\"nine\"",
+                                    "value": "nine",
+                                    "valueText": "nine"
                                 }
                             },
                             "closeParenToken": {
@@ -960,6 +1000,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj"
                                         },
                                         "openBracketToken": {
@@ -970,7 +1011,9 @@
                                         "argumentExpression": {
                                             "kind": "StringLiteral",
                                             "width": 9,
-                                            "text": "\"shifted\""
+                                            "text": "\"shifted\"",
+                                            "value": "shifted",
+                                            "valueText": "shifted"
                                         },
                                         "closeBracketToken": {
                                             "kind": "CloseBracketToken",
@@ -986,7 +1029,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1018,7 +1063,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 6,
-                                    "text": "\"inch\""
+                                    "text": "\"inch\"",
+                                    "value": "inch",
+                                    "valueText": "inch"
                                 }
                             },
                             "closeParenToken": {
@@ -1054,6 +1101,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "obj",
+                                        "value": "obj",
                                         "valueText": "obj"
                                     },
                                     "openBracketToken": {
@@ -1064,7 +1112,9 @@
                                     "argumentExpression": {
                                         "kind": "StringLiteral",
                                         "width": 9,
-                                        "text": "\"shifted\""
+                                        "text": "\"shifted\"",
+                                        "value": "shifted",
+                                        "valueText": "shifted"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -1080,7 +1130,9 @@
                                 "argumentExpression": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 },
                                 "closeBracketToken": {
                                     "kind": "CloseBracketToken",
@@ -1112,7 +1164,9 @@
                             "right": {
                                 "kind": "StringLiteral",
                                 "width": 7,
-                                "text": "\"nails\""
+                                "text": "\"nails\"",
+                                "value": "nails",
+                                "valueText": "nails"
                             }
                         },
                         "closeParenToken": {
@@ -1164,6 +1218,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1185,7 +1240,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 162,
-                                            "text": "'#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object'"
+                                            "text": "'#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object'",
+                                            "value": "#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object",
+                                            "valueText": "#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1300,7 +1357,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 9,
-                                "text": "\"shifted\""
+                                "text": "\"shifted\"",
+                                "value": "shifted",
+                                "valueText": "shifted"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -1333,7 +1392,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -1378,6 +1439,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1399,7 +1461,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 162,
-                                            "text": "'#3: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object'"
+                                            "text": "'#3: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object'",
+                                            "value": "#3: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object",
+                                            "valueText": "#3: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object"
                                         }
                                     ],
                                     "closeParenToken": {

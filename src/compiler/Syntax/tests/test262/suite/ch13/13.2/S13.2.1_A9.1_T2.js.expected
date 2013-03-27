@@ -74,6 +74,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }
@@ -132,6 +133,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "__func",
+                                "value": "__func",
                                 "valueText": "__func",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -213,6 +215,7 @@
                                                         "width": 1,
                                                         "fullWidth": 6,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasLeadingTrivia": true,
                                                         "hasTrailingTrivia": true,
@@ -245,7 +248,9 @@
                                                     "right": {
                                                         "kind": "TrueKeyword",
                                                         "width": 4,
-                                                        "text": "true"
+                                                        "text": "true",
+                                                        "value": true,
+                                                        "valueText": "true"
                                                     }
                                                 },
                                                 "semicolonToken": {
@@ -346,6 +351,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -389,6 +395,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -434,6 +441,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -458,7 +466,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 50,
-                                                "text": "'#1: __func() === undefined. Actual: __func() ==='"
+                                                "text": "'#1: __func() === undefined. Actual: __func() ==='",
+                                                "value": "#1: __func() === undefined. Actual: __func() ===",
+                                                "valueText": "#1: __func() === undefined. Actual: __func() ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -472,6 +482,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -614,6 +625,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -659,6 +671,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -683,7 +696,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 32,
-                                                "text": "'#2: x === true. Actual: x === '"
+                                                "text": "'#2: x === true. Actual: x === '",
+                                                "value": "#2: x === true. Actual: x === ",
+                                                "valueText": "#2: x === true. Actual: x === "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -694,6 +709,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         }

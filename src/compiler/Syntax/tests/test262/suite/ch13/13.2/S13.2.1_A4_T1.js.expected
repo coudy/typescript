@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -87,6 +88,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "__arg",
+                                    "value": "__arg",
                                     "valueText": "__arg"
                                 }
                             }
@@ -130,6 +132,7 @@
                                         "width": 5,
                                         "fullWidth": 9,
                                         "text": "__arg",
+                                        "value": "__arg",
                                         "valueText": "__arg",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -148,6 +151,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "foo",
+                                        "value": "foo",
                                         "valueText": "foo"
                                     }
                                 },
@@ -159,7 +163,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "7"
+                                    "text": "7",
+                                    "value": 7,
+                                    "valueText": "7"
                                 }
                             },
                             "semicolonToken": {
@@ -230,6 +236,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "equalsValueClause": {
@@ -285,6 +292,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "__func",
+                        "value": "__func",
                         "valueText": "__func",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -308,6 +316,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             }
                         ],
@@ -389,6 +398,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -401,6 +411,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "foo",
+                            "value": "foo",
                             "valueText": "foo",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -427,7 +438,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "7"
+                        "text": "7",
+                        "value": 7,
+                        "valueText": "7"
                     }
                 },
                 "closeParenToken": {
@@ -472,6 +485,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -496,7 +510,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 44,
-                                                "text": "'#1: __obj.foo === 7. Actual: __obj.foo ==='"
+                                                "text": "'#1: __obj.foo === 7. Actual: __obj.foo ==='",
+                                                "value": "#1: __obj.foo === 7. Actual: __obj.foo ===",
+                                                "valueText": "#1: __obj.foo === 7. Actual: __obj.foo ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -510,6 +526,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__obj",
+                                                    "value": "__obj",
                                                     "valueText": "__obj"
                                                 },
                                                 "dotToken": {
@@ -521,6 +538,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 3,
                                                     "text": "foo",
+                                                    "value": "foo",
                                                     "valueText": "foo"
                                                 }
                                             }

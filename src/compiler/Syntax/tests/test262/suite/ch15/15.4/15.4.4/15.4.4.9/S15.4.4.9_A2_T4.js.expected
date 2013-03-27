@@ -74,6 +74,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -146,6 +147,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -156,7 +158,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"0\""
+                            "text": "\"0\"",
+                            "value": "0",
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -188,7 +192,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -219,6 +225,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -229,7 +236,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"3\""
+                            "text": "\"3\"",
+                            "value": "3",
+                            "valueText": "3"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -261,7 +270,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "semicolonToken": {
@@ -292,6 +303,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -304,6 +316,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "shift",
+                            "value": "shift",
                             "valueText": "shift",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -337,6 +350,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "dotToken": {
@@ -348,6 +362,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -360,6 +375,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "shift",
+                            "value": "shift",
                             "valueText": "shift"
                         }
                     }
@@ -393,6 +409,7 @@
                             "width": 3,
                             "fullWidth": 14,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -422,6 +439,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -448,7 +466,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "4"
+                        "text": "4",
+                        "value": 4,
+                        "valueText": "4"
                     }
                 },
                 "semicolonToken": {
@@ -495,6 +515,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "shift",
+                                "value": "shift",
                                 "valueText": "shift",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -530,6 +551,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj"
                                         },
                                         "dotToken": {
@@ -541,6 +563,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "shift",
+                                            "value": "shift",
                                             "valueText": "shift"
                                         }
                                     },
@@ -608,6 +631,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "shift",
+                        "value": "shift",
                         "valueText": "shift",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -633,7 +657,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -678,6 +704,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -704,6 +731,8 @@
                                                 "width": 126,
                                                 "fullWidth": 127,
                                                 "text": "'#1: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift() === 0. Actual: '",
+                                                "value": "#1: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift() === 0. Actual: ",
+                                                "valueText": "#1: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift() === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -737,6 +766,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "shift",
+                                                    "value": "shift",
                                                     "valueText": "shift"
                                                 },
                                                 "closeParenToken": {
@@ -838,6 +868,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -850,6 +881,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -876,7 +908,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -921,6 +955,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -947,6 +982,8 @@
                                                 "width": 138,
                                                 "fullWidth": 139,
                                                 "text": "'#2: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.length === 3. Actual: '",
+                                                "value": "#2: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.length === 3. Actual: ",
+                                                "valueText": "#2: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.length === 3. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -983,6 +1020,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -994,6 +1032,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -1090,6 +1129,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "shift",
+                                "value": "shift",
                                 "valueText": "shift",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1125,6 +1165,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj"
                                         },
                                         "dotToken": {
@@ -1136,6 +1177,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "shift",
+                                            "value": "shift",
                                             "valueText": "shift"
                                         }
                                     },
@@ -1203,6 +1245,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "shift",
+                        "value": "shift",
                         "valueText": "shift",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1229,6 +1272,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1274,6 +1318,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1300,6 +1345,8 @@
                                                 "width": 147,
                                                 "fullWidth": 148,
                                                 "text": "'#3: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift() === undefined. Actual: '",
+                                                "value": "#3: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift() === undefined. Actual: ",
+                                                "valueText": "#3: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift() === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1333,6 +1380,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "shift",
+                                                    "value": "shift",
                                                     "valueText": "shift"
                                                 },
                                                 "closeParenToken": {
@@ -1434,6 +1482,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -1446,6 +1495,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1472,7 +1522,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -1517,6 +1569,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1543,6 +1596,8 @@
                                                 "width": 151,
                                                 "fullWidth": 152,
                                                 "text": "'#4: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length === 2. Actual: '",
+                                                "value": "#4: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length === 2. Actual: ",
+                                                "valueText": "#4: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length === 2. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1579,6 +1634,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -1590,6 +1646,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -1654,6 +1711,7 @@
                             "width": 3,
                             "fullWidth": 14,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -1683,6 +1741,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1709,7 +1768,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -1756,6 +1817,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "shift",
+                                "value": "shift",
                                 "valueText": "shift",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1791,6 +1853,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj"
                                         },
                                         "dotToken": {
@@ -1802,6 +1865,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "shift",
+                                            "value": "shift",
                                             "valueText": "shift"
                                         }
                                     },
@@ -1869,6 +1933,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "shift",
+                        "value": "shift",
                         "valueText": "shift",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1895,6 +1960,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1940,6 +2006,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1966,6 +2033,8 @@
                                                 "width": 176,
                                                 "fullWidth": 177,
                                                 "text": "'#5: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length = 1; obj.shift() === undefined. Actual: '",
+                                                "value": "#5: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length = 1; obj.shift() === undefined. Actual: ",
+                                                "valueText": "#5: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length = 1; obj.shift() === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1999,6 +2068,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "shift",
+                                                    "value": "shift",
                                                     "valueText": "shift"
                                                 },
                                                 "closeParenToken": {
@@ -2100,6 +2170,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -2112,6 +2183,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2138,7 +2210,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -2183,6 +2257,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2209,6 +2284,8 @@
                                                 "width": 180,
                                                 "fullWidth": 181,
                                                 "text": "'#6: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length = 1; obj.shift(); obj.length === 0. Actual: '",
+                                                "value": "#6: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length = 1; obj.shift(); obj.length === 0. Actual: ",
+                                                "valueText": "#6: var obj = {}; obj[\"0\"] = 0; obj[\"3\"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length = 1; obj.shift(); obj.length === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2245,6 +2322,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -2256,6 +2334,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },

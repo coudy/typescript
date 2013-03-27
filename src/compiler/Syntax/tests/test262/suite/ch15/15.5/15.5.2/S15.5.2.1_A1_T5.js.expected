@@ -75,6 +75,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -120,6 +121,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -135,6 +137,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "NaN",
+                                                "value": "NaN",
                                                 "valueText": "NaN"
                                             }
                                         ],
@@ -234,6 +237,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "__str",
+                            "value": "__str",
                             "valueText": "__str",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -260,7 +264,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -305,6 +311,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -329,7 +336,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 82,
-                                                "text": "'#1: __str = new String(NaN); typeof __str === \"object\". Actual: typeof __str ==='"
+                                                "text": "'#1: __str = new String(NaN); typeof __str === \"object\". Actual: typeof __str ==='",
+                                                "value": "#1: __str = new String(NaN); typeof __str === \"object\". Actual: typeof __str ===",
+                                                "valueText": "#1: __str = new String(NaN); typeof __str === \"object\". Actual: typeof __str ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -357,6 +366,7 @@
                                                     "width": 5,
                                                     "fullWidth": 6,
                                                     "text": "__str",
+                                                    "value": "__str",
                                                     "valueText": "__str",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -487,6 +497,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__str",
+                            "value": "__str",
                             "valueText": "__str"
                         },
                         "dotToken": {
@@ -499,6 +510,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -525,6 +538,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "String",
+                        "value": "String",
                         "valueText": "String"
                     }
                 },
@@ -573,6 +587,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -599,7 +614,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 92,
-                                                "text": "'#1.5: __str = new String(NaN); __str.constructor === String. Actual: __str.constructor ==='"
+                                                "text": "'#1.5: __str = new String(NaN); __str.constructor === String. Actual: __str.constructor ==='",
+                                                "value": "#1.5: __str = new String(NaN); __str.constructor === String. Actual: __str.constructor ===",
+                                                "valueText": "#1.5: __str = new String(NaN); __str.constructor === String. Actual: __str.constructor ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -614,6 +631,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__str",
+                                                    "value": "__str",
                                                     "valueText": "__str"
                                                 },
                                                 "dotToken": {
@@ -626,6 +644,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -752,6 +772,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "__str",
+                        "value": "__str",
                         "valueText": "__str",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -786,7 +807,9 @@
                                 "left": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 },
                                 "operatorToken": {
                                     "kind": "SlashToken",
@@ -796,7 +819,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 3,
-                                    "text": "\"s\""
+                                    "text": "\"s\"",
+                                    "value": "s",
+                                    "valueText": "s"
                                 }
                             },
                             "closeParenToken": {
@@ -813,7 +838,9 @@
                         "right": {
                             "kind": "StringLiteral",
                             "width": 2,
-                            "text": "\"\""
+                            "text": "\"\"",
+                            "value": "",
+                            "valueText": ""
                         }
                     }
                 },
@@ -859,6 +886,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -883,7 +911,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 67,
-                                                "text": "'#2: __str = new String(NaN); __str ==(1/\"s\")+\"\". Actual: __str =='"
+                                                "text": "'#2: __str = new String(NaN); __str ==(1/\"s\")+\"\". Actual: __str =='",
+                                                "value": "#2: __str = new String(NaN); __str ==(1/\"s\")+\"\". Actual: __str ==",
+                                                "valueText": "#2: __str = new String(NaN); __str ==(1/\"s\")+\"\". Actual: __str =="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -895,6 +925,7 @@
                                                 "width": 5,
                                                 "fullWidth": 6,
                                                 "text": "__str",
+                                                "value": "__str",
                                                 "valueText": "__str",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [

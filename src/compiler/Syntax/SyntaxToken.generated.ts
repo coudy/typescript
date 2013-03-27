@@ -6,7 +6,6 @@ module TypeScript.Syntax {
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _textOrWidth: any;
-        private _value: any = null;
 
         constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, textOrWidth: any) {
             this._sourceText = sourceText;
@@ -50,7 +49,22 @@ module TypeScript.Syntax {
 
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
-        public value(): any { return this._value || (this._value = value(this)); }
+        public value(): any {
+            if ((<any>this)._value === undefined) {
+                (<any>this)._value = value(this);
+            }
+
+            return (<any>this)._value;
+        }
+
+        public valueText(): string {
+            if ((<any>this)._valueText === undefined) {
+                (<any>this)._valueText = valueText(this);
+            }
+
+            return (<any>this)._valueText;
+        }
+
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingComment(): bool { return false; }
         public hasLeadingNewLine(): bool { return false; }
@@ -94,7 +108,6 @@ module TypeScript.Syntax {
         public tokenKind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _textOrWidth: any;
-        private _value: any = null;
 
         constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any) {
             this._sourceText = sourceText;
@@ -140,7 +153,22 @@ module TypeScript.Syntax {
 
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
-        public value(): any { return this._value || (this._value = value(this)); }
+        public value(): any {
+            if ((<any>this)._value === undefined) {
+                (<any>this)._value = value(this);
+            }
+
+            return (<any>this)._value;
+        }
+
+        public valueText(): string {
+            if ((<any>this)._valueText === undefined) {
+                (<any>this)._valueText = valueText(this);
+            }
+
+            return (<any>this)._valueText;
+        }
+
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingComment(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLine(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
@@ -183,7 +211,6 @@ module TypeScript.Syntax {
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _textOrWidth: any;
-        private _value: any = null;
         private _trailingTriviaInfo: number;
 
         constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, textOrWidth: any, trailingTriviaInfo: number) {
@@ -230,7 +257,22 @@ module TypeScript.Syntax {
 
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
-        public value(): any { return this._value || (this._value = value(this)); }
+        public value(): any {
+            if ((<any>this)._value === undefined) {
+                (<any>this)._value = value(this);
+            }
+
+            return (<any>this)._value;
+        }
+
+        public valueText(): string {
+            if ((<any>this)._valueText === undefined) {
+                (<any>this)._valueText = valueText(this);
+            }
+
+            return (<any>this)._valueText;
+        }
+
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingComment(): bool { return false; }
         public hasLeadingNewLine(): bool { return false; }
@@ -274,7 +316,6 @@ module TypeScript.Syntax {
         public tokenKind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _textOrWidth: any;
-        private _value: any = null;
         private _trailingTriviaInfo: number;
 
         constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any, trailingTriviaInfo: number) {
@@ -323,7 +364,22 @@ module TypeScript.Syntax {
 
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
-        public value(): any { return this._value || (this._value = value(this)); }
+        public value(): any {
+            if ((<any>this)._value === undefined) {
+                (<any>this)._value = value(this);
+            }
+
+            return (<any>this)._value;
+        }
+
+        public valueText(): string {
+            if ((<any>this)._valueText === undefined) {
+                (<any>this)._valueText = valueText(this);
+            }
+
+            return (<any>this)._valueText;
+        }
+
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingComment(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLine(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
@@ -388,7 +444,8 @@ module TypeScript.Syntax {
         public text(): string { return SyntaxFacts.getText(this.tokenKind); }
         public fullText(): string { return this.text(); }
 
-        public value(): any { return null; }
+        public value(): any { return value(this); }
+        public valueText(): string { return valueText(this); }
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingComment(): bool { return false; }
         public hasLeadingNewLine(): bool { return false; }
@@ -465,7 +522,8 @@ module TypeScript.Syntax {
         public text(): string { return SyntaxFacts.getText(this.tokenKind); }
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
-        public value(): any { return null; }
+        public value(): any { return value(this); }
+        public valueText(): string { return valueText(this); }
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingComment(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLine(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }
@@ -542,7 +600,8 @@ module TypeScript.Syntax {
         public text(): string { return SyntaxFacts.getText(this.tokenKind); }
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
-        public value(): any { return null; }
+        public value(): any { return value(this); }
+        public valueText(): string { return valueText(this); }
         public hasLeadingTrivia(): bool { return false; }
         public hasLeadingComment(): bool { return false; }
         public hasLeadingNewLine(): bool { return false; }
@@ -622,7 +681,8 @@ module TypeScript.Syntax {
         public text(): string { return SyntaxFacts.getText(this.tokenKind); }
         public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }
 
-        public value(): any { return null; }
+        public value(): any { return value(this); }
+        public valueText(): string { return valueText(this); }
         public hasLeadingTrivia(): bool { return true; }
         public hasLeadingComment(): bool { return hasTriviaComment(this._leadingTriviaInfo); }
         public hasLeadingNewLine(): bool { return hasTriviaNewLine(this._leadingTriviaInfo); }

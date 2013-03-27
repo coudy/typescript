@@ -103,6 +103,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -131,6 +132,8 @@
                                                 "width": 86,
                                                 "fullWidth": 87,
                                                 "text": "'#1.1: /[a-z]/.exec({toString:function(){throw \"intostr\"}}) throw \"intostr\". Actual: '",
+                                                "value": "#1.1: /[a-z]/.exec({toString:function(){throw \"intostr\"}}) throw \"intostr\". Actual: ",
+                                                "valueText": "#1.1: /[a-z]/.exec({toString:function(){throw \"intostr\"}}) throw \"intostr\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -172,7 +175,9 @@
                                                         "expression": {
                                                             "kind": "RegularExpressionLiteral",
                                                             "width": 7,
-                                                            "text": "/[a-z]/"
+                                                            "text": "/[a-z]/",
+                                                            "value": {},
+                                                            "valueText": "/[a-z]/"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -183,6 +188,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "exec",
+                                                            "value": "exec",
                                                             "valueText": "exec"
                                                         }
                                                     },
@@ -214,6 +220,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         },
                                                                         "colonToken": {
@@ -279,7 +286,9 @@
                                                                                         "expression": {
                                                                                             "kind": "StringLiteral",
                                                                                             "width": 9,
-                                                                                            "text": "\"intostr\""
+                                                                                            "text": "\"intostr\"",
+                                                                                            "value": "intostr",
+                                                                                            "valueText": "intostr"
                                                                                         },
                                                                                         "semicolonToken": {
                                                                                             "kind": "SemicolonToken",
@@ -381,6 +390,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -450,6 +460,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -475,7 +486,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 9,
-                                        "text": "\"intostr\""
+                                        "text": "\"intostr\"",
+                                        "value": "intostr",
+                                        "valueText": "intostr"
                                     }
                                 },
                                 "closeParenToken": {
@@ -520,6 +533,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -546,6 +560,8 @@
                                                                 "width": 86,
                                                                 "fullWidth": 87,
                                                                 "text": "'#1.2: /[a-z]/.exec({toString:function(){throw \"intostr\"}}) throw \"intostr\". Actual: '",
+                                                                "value": "#1.2: /[a-z]/.exec({toString:function(){throw \"intostr\"}}) throw \"intostr\". Actual: ",
+                                                                "valueText": "#1.2: /[a-z]/.exec({toString:function(){throw \"intostr\"}}) throw \"intostr\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -579,6 +595,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

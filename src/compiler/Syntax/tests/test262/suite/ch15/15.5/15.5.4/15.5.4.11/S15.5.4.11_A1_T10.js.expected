@@ -74,6 +74,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -115,6 +116,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -177,7 +179,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 9,
-                                                                "text": "\"\\u0041B\""
+                                                                "text": "\"\\u0041B\"",
+                                                                "value": "AB",
+                                                                "valueText": "AB"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -257,6 +261,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -285,7 +290,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 16,
-                                    "text": "\"ABB\\u0041BABAB\""
+                                    "text": "\"ABB\\u0041BABAB\"",
+                                    "value": "ABBABABAB",
+                                    "valueText": "ABBABABAB"
                                 }
                             }
                         }
@@ -349,6 +356,7 @@
                     "kind": "IdentifierName",
                     "width": 5,
                     "text": "__str",
+                    "value": "__str",
                     "valueText": "__str"
                 },
                 "closeParenToken": {
@@ -412,6 +420,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "replace",
+                                        "value": "replace",
                                         "valueText": "replace"
                                     },
                                     "argumentList": {
@@ -427,6 +436,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "__obj",
+                                                "value": "__obj",
                                                 "valueText": "__obj"
                                             },
                                             {
@@ -498,6 +508,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x"
                                                             },
                                                             "semicolonToken": {
@@ -546,7 +557,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 18,
-                                    "text": "\"undefinedBABABAB\""
+                                    "text": "\"undefinedBABABAB\"",
+                                    "value": "undefinedBABABAB",
+                                    "valueText": "undefinedBABABAB"
                                 }
                             },
                             "closeParenToken": {
@@ -591,6 +604,7 @@
                                                 "width": 6,
                                                 "fullWidth": 12,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -615,7 +629,9 @@
                                                         "left": {
                                                             "kind": "StringLiteral",
                                                             "width": 167,
-                                                            "text": "'#1: var x; var __obj = {toString:function(){return \"\\u0041B\";}}; var __str = \"ABB\\u0041BABAB\"; replace(__obj, function(){return x;}) === \"undefinedBABABAB\". Actual: '"
+                                                            "text": "'#1: var x; var __obj = {toString:function(){return \"\\u0041B\";}}; var __str = \"ABB\\u0041BABAB\"; replace(__obj, function(){return x;}) === \"undefinedBABABAB\". Actual: '",
+                                                            "value": "#1: var x; var __obj = {toString:function(){return \"AB\";}}; var __str = \"ABBABABAB\"; replace(__obj, function(){return x;}) === \"undefinedBABABAB\". Actual: ",
+                                                            "valueText": "#1: var x; var __obj = {toString:function(){return \"AB\";}}; var __str = \"ABBABABAB\"; replace(__obj, function(){return x;}) === \"undefinedBABABAB\". Actual: "
                                                         },
                                                         "operatorToken": {
                                                             "kind": "PlusToken",
@@ -629,6 +645,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 7,
                                                                 "text": "replace",
+                                                                "value": "replace",
                                                                 "valueText": "replace"
                                                             },
                                                             "argumentList": {
@@ -644,6 +661,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 5,
                                                                         "text": "__obj",
+                                                                        "value": "__obj",
                                                                         "valueText": "__obj"
                                                                     },
                                                                     {
@@ -715,6 +733,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 1,
                                                                                         "text": "x",
+                                                                                        "value": "x",
                                                                                         "valueText": "x"
                                                                                     },
                                                                                     "semicolonToken": {
@@ -865,6 +884,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }

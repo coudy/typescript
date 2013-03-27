@@ -123,7 +123,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -151,6 +153,7 @@
                             "width": 6,
                             "fullWidth": 8,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -172,7 +175,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 95,
-                                    "text": "'#1: The this value associated with an executioncontext is immutable. Actual: this was deleted'"
+                                    "text": "'#1: The this value associated with an executioncontext is immutable. Actual: this was deleted'",
+                                    "value": "#1: The this value associated with an executioncontext is immutable. Actual: this was deleted",
+                                    "valueText": "#1: The this value associated with an executioncontext is immutable. Actual: this was deleted"
                                 }
                             ],
                             "closeParenToken": {

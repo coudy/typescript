@@ -97,6 +97,7 @@
                                 "kind": "IdentifierName",
                                 "width": 20,
                                 "text": "propertyIsEnumerable",
+                                "value": "propertyIsEnumerable",
                                 "valueText": "propertyIsEnumerable"
                             }
                         },
@@ -112,7 +113,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 7,
-                                    "text": "'isNaN'"
+                                    "text": "'isNaN'",
+                                    "value": "isNaN",
+                                    "valueText": "isNaN"
                                 }
                             ],
                             "closeParenToken": {
@@ -146,7 +149,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -191,6 +196,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -217,6 +223,8 @@
                                                 "width": 62,
                                                 "fullWidth": 63,
                                                 "text": "'#1: this.propertyIsEnumerable(\\'isNaN\\') === false. Actual: '",
+                                                "value": "#1: this.propertyIsEnumerable('isNaN') === false. Actual: ",
+                                                "valueText": "#1: this.propertyIsEnumerable('isNaN') === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -266,6 +274,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 20,
                                                             "text": "propertyIsEnumerable",
+                                                            "value": "propertyIsEnumerable",
                                                             "valueText": "propertyIsEnumerable"
                                                         }
                                                     },
@@ -281,7 +290,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 7,
-                                                                "text": "'isNaN'"
+                                                                "text": "'isNaN'",
+                                                                "value": "isNaN",
+                                                                "valueText": "isNaN"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -384,6 +395,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "result",
+                                "value": "result",
                                 "valueText": "result",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -412,7 +424,9 @@
                                 "value": {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             }
                         }
@@ -459,6 +473,7 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": "p",
+                    "value": "p",
                     "valueText": "p",
                     "hasTrailingTrivia": true,
                     "trailingTrivia": [
@@ -545,6 +560,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "p",
+                                    "value": "p",
                                     "valueText": "p",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -570,7 +586,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 7,
-                                    "text": "\"isNaN\""
+                                    "text": "\"isNaN\"",
+                                    "value": "isNaN",
+                                    "valueText": "isNaN"
                                 }
                             },
                             "closeParenToken": {
@@ -615,6 +633,7 @@
                                                 "width": 6,
                                                 "fullWidth": 11,
                                                 "text": "result",
+                                                "value": "result",
                                                 "valueText": "result",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -647,7 +666,9 @@
                                             "right": {
                                                 "kind": "FalseKeyword",
                                                 "width": 5,
-                                                "text": "false"
+                                                "text": "false",
+                                                "value": false,
+                                                "valueText": "false"
                                             }
                                         },
                                         "semicolonToken": {
@@ -747,6 +768,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "result",
+                        "value": "result",
                         "valueText": "result",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -772,7 +794,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -817,6 +841,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -838,7 +863,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 93,
-                                            "text": "'#2: result = true; for (p in this) { if (p === \"isNaN\") result = false; }  result === true;'"
+                                            "text": "'#2: result = true; for (p in this) { if (p === \"isNaN\") result = false; }  result === true;'",
+                                            "value": "#2: result = true; for (p in this) { if (p === \"isNaN\") result = false; }  result === true;",
+                                            "valueText": "#2: result = true; for (p in this) { if (p === \"isNaN\") result = false; }  result === true;"
                                         }
                                     ],
                                     "closeParenToken": {

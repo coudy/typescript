@@ -19,6 +19,7 @@
                         "width": 1,
                         "fullWidth": 397,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -89,7 +90,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -146,6 +149,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -160,7 +164,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u0009|=\\u00091\""
+                                        "text": "\"x\\u0009|=\\u00091\"",
+                                        "value": "x\t|=\t1",
+                                        "valueText": "x\t|=\t1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -200,7 +206,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -245,6 +253,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -266,7 +275,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#1: x = 0; (x\\\\u0009|=\\\\u00091) === 1'"
+                                            "text": "'#1: x = 0; (x\\\\u0009|=\\\\u00091) === 1'",
+                                            "value": "#1: x = 0; (x\\u0009|=\\u00091) === 1",
+                                            "valueText": "#1: x = 0; (x\\u0009|=\\u00091) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -319,6 +330,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -361,7 +373,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -418,6 +432,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -432,7 +447,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u000B|=\\u000B1\""
+                                        "text": "\"x\\u000B|=\\u000B1\"",
+                                        "value": "x\u000b|=\u000b1",
+                                        "valueText": "x\u000b|=\u000b1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -472,7 +489,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -517,6 +536,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -538,7 +558,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#2: x = 0; (x\\\\u000B|=\\\\u000B1) === 1'"
+                                            "text": "'#2: x = 0; (x\\\\u000B|=\\\\u000B1) === 1'",
+                                            "value": "#2: x = 0; (x\\u000B|=\\u000B1) === 1",
+                                            "valueText": "#2: x = 0; (x\\u000B|=\\u000B1) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -595,6 +617,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -637,7 +660,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -694,6 +719,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -708,7 +734,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u000C|=\\u000C1\""
+                                        "text": "\"x\\u000C|=\\u000C1\"",
+                                        "value": "x\f|=\f1",
+                                        "valueText": "x\f|=\f1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -748,7 +776,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -793,6 +823,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -814,7 +845,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#3: x = 0; (x\\\\u000C|=\\\\u000C1) === 1'"
+                                            "text": "'#3: x = 0; (x\\\\u000C|=\\\\u000C1) === 1'",
+                                            "value": "#3: x = 0; (x\\u000C|=\\u000C1) === 1",
+                                            "valueText": "#3: x = 0; (x\\u000C|=\\u000C1) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -867,6 +900,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -909,7 +943,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -966,6 +1002,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -980,7 +1017,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u0020|=\\u00201\""
+                                        "text": "\"x\\u0020|=\\u00201\"",
+                                        "value": "x |= 1",
+                                        "valueText": "x |= 1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1020,7 +1059,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1065,6 +1106,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1086,7 +1128,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#4: x = 0; (x\\\\u0020|=\\\\u00201) === 1'"
+                                            "text": "'#4: x = 0; (x\\\\u0020|=\\\\u00201) === 1'",
+                                            "value": "#4: x = 0; (x\\u0020|=\\u00201) === 1",
+                                            "valueText": "#4: x = 0; (x\\u0020|=\\u00201) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1139,6 +1183,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1181,7 +1226,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -1238,6 +1285,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -1252,7 +1300,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u00A0|=\\u00A01\""
+                                        "text": "\"x\\u00A0|=\\u00A01\"",
+                                        "value": "x |= 1",
+                                        "valueText": "x |= 1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1292,7 +1342,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1337,6 +1389,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1358,7 +1411,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#5: x = 0; (x\\\\u00A0|=\\\\u00A01) === 1'"
+                                            "text": "'#5: x = 0; (x\\\\u00A0|=\\\\u00A01) === 1'",
+                                            "value": "#5: x = 0; (x\\u00A0|=\\u00A01) === 1",
+                                            "valueText": "#5: x = 0; (x\\u00A0|=\\u00A01) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1411,6 +1466,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1453,7 +1509,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -1510,6 +1568,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -1524,7 +1583,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u000A|=\\u000A1\""
+                                        "text": "\"x\\u000A|=\\u000A1\"",
+                                        "value": "x\n|=\n1",
+                                        "valueText": "x\n|=\n1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1564,7 +1625,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1609,6 +1672,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1630,7 +1694,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#6: x = 0; (x\\\\u000A|=\\\\u000A1) === 1'"
+                                            "text": "'#6: x = 0; (x\\\\u000A|=\\\\u000A1) === 1'",
+                                            "value": "#6: x = 0; (x\\u000A|=\\u000A1) === 1",
+                                            "valueText": "#6: x = 0; (x\\u000A|=\\u000A1) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1687,6 +1753,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1729,7 +1796,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -1786,6 +1855,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -1800,7 +1870,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u000D|=\\u000D1\""
+                                        "text": "\"x\\u000D|=\\u000D1\"",
+                                        "value": "x\r|=\r1",
+                                        "valueText": "x\r|=\r1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1840,7 +1912,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1885,6 +1959,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1906,7 +1981,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#7: x = 0; (x\\\\u000D|=\\\\u000D1) === 1'"
+                                            "text": "'#7: x = 0; (x\\\\u000D|=\\\\u000D1) === 1'",
+                                            "value": "#7: x = 0; (x\\u000D|=\\u000D1) === 1",
+                                            "valueText": "#7: x = 0; (x\\u000D|=\\u000D1) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1959,6 +2036,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -2001,7 +2079,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -2058,6 +2138,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -2072,7 +2153,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u2028|=\\u20281\""
+                                        "text": "\"x\\u2028|=\\u20281\"",
+                                        "value": "x\u2028|=\u20281",
+                                        "valueText": "x\u2028|=\u20281"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -2112,7 +2195,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -2157,6 +2242,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2178,7 +2264,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#8: x = 0; (x\\\\u2028|=\\\\u20281) === 1'"
+                                            "text": "'#8: x = 0; (x\\\\u2028|=\\\\u20281) === 1'",
+                                            "value": "#8: x = 0; (x\\u2028|=\\u20281) === 1",
+                                            "valueText": "#8: x = 0; (x\\u2028|=\\u20281) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -2231,6 +2319,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -2273,7 +2362,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -2330,6 +2421,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -2344,7 +2436,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 18,
-                                        "text": "\"x\\u2029|=\\u20291\""
+                                        "text": "\"x\\u2029|=\\u20291\"",
+                                        "value": "x\u2029|=\u20291",
+                                        "valueText": "x\u2029|=\u20291"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -2384,7 +2478,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -2429,6 +2525,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2450,7 +2547,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#9: x = 0; (x\\\\u2029|=\\\\u20291) === 1'"
+                                            "text": "'#9: x = 0; (x\\\\u2029|=\\\\u20291) === 1'",
+                                            "value": "#9: x = 0; (x\\u2029|=\\u20291) === 1",
+                                            "valueText": "#9: x = 0; (x\\u2029|=\\u20291) === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -2503,6 +2602,7 @@
                         "width": 1,
                         "fullWidth": 15,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -2549,7 +2649,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -2606,6 +2708,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "eval",
+                                "value": "eval",
                                 "valueText": "eval"
                             },
                             "argumentList": {
@@ -2620,7 +2723,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 114,
-                                        "text": "\"x\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029|=\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u20291\""
+                                        "text": "\"x\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029|=\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u20291\"",
+                                        "value": "x\t\u000b\f  \n\r\u2028\u2029|=\t\u000b\f  \n\r\u2028\u20291",
+                                        "valueText": "x\t\u000b\f  \n\r\u2028\u2029|=\t\u000b\f  \n\r\u2028\u20291"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -2660,7 +2765,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -2705,6 +2812,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2726,7 +2834,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 152,
-                                            "text": "'#10: x = 0; (x\\\\u0009\\\\u000B\\\\u000C\\\\u0020\\\\u00A0\\\\u000A\\\\u000D\\\\u2028\\\\u2029|=\\\\u0009\\\\u000B\\\\u000C\\\\u0020\\\\u00A0\\\\u000A\\\\u000D\\\\u2028\\\\u20291) === 1'"
+                                            "text": "'#10: x = 0; (x\\\\u0009\\\\u000B\\\\u000C\\\\u0020\\\\u00A0\\\\u000A\\\\u000D\\\\u2028\\\\u2029|=\\\\u0009\\\\u000B\\\\u000C\\\\u0020\\\\u00A0\\\\u000A\\\\u000D\\\\u2028\\\\u20291) === 1'",
+                                            "value": "#10: x = 0; (x\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029|=\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u20291) === 1",
+                                            "valueText": "#10: x = 0; (x\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029|=\\u0009\\u000B\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u20291) === 1"
                                         }
                                     ],
                                     "closeParenToken": {

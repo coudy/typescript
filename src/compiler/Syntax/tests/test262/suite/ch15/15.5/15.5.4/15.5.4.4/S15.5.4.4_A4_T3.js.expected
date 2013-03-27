@@ -99,6 +99,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "i",
+                                "value": "i",
                                 "valueText": "i"
                             },
                             "equalsValueClause": {
@@ -112,7 +113,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "6"
+                                    "text": "6",
+                                    "value": 6,
+                                    "valueText": "6"
                                 }
                             }
                         }
@@ -138,6 +141,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -148,7 +152,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "8"
+                        "text": "8",
+                        "value": 8,
+                        "valueText": "8"
                     }
                 },
                 "secondSemicolonToken": {
@@ -171,6 +177,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -250,7 +257,9 @@
                                         "expression": {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "\"ABC\\u0041\\u0042\\u0043\""
+                                            "text": "\"ABC\\u0041\\u0042\\u0043\"",
+                                            "value": "ABCABC",
+                                            "valueText": "ABCABC"
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -261,6 +270,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "charAt",
+                                            "value": "charAt",
                                             "valueText": "charAt"
                                         }
                                     },
@@ -277,6 +287,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "i",
+                                                "value": "i",
                                                 "valueText": "i"
                                             }
                                         ],
@@ -317,7 +328,9 @@
                                         "expression": {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "\"\\u0041\\u0042\\u0043ABC\""
+                                            "text": "\"\\u0041\\u0042\\u0043ABC\"",
+                                            "value": "ABCABC",
+                                            "valueText": "ABCABC"
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -328,6 +341,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "substring",
+                                            "value": "substring",
                                             "valueText": "substring"
                                         }
                                     },
@@ -344,6 +358,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "i",
+                                                "value": "i",
                                                 "valueText": "i"
                                             },
                                             {
@@ -366,6 +381,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "i",
+                                                    "value": "i",
                                                     "valueText": "i"
                                                 },
                                                 "operatorToken": {
@@ -376,7 +392,9 @@
                                                 "right": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "1"
+                                                    "text": "1",
+                                                    "value": 1,
+                                                    "valueText": "1"
                                                 }
                                             }
                                         ],
@@ -430,6 +448,7 @@
                                                 "width": 6,
                                                 "fullWidth": 12,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -484,7 +503,9 @@
                                                                                                 "left": {
                                                                                                     "kind": "StringLiteral",
                                                                                                     "width": 3,
-                                                                                                    "text": "'#'"
+                                                                                                    "text": "'#'",
+                                                                                                    "value": "#",
+                                                                                                    "valueText": "#"
                                                                                                 },
                                                                                                 "operatorToken": {
                                                                                                     "kind": "PlusToken",
@@ -506,6 +527,7 @@
                                                                                                             "kind": "IdentifierName",
                                                                                                             "width": 1,
                                                                                                             "text": "i",
+                                                                                                            "value": "i",
                                                                                                             "valueText": "i"
                                                                                                         },
                                                                                                         "operatorToken": {
@@ -516,7 +538,9 @@
                                                                                                         "right": {
                                                                                                             "kind": "NumericLiteral",
                                                                                                             "width": 1,
-                                                                                                            "text": "5"
+                                                                                                            "text": "5",
+                                                                                                            "value": 5,
+                                                                                                            "valueText": "5"
                                                                                                         }
                                                                                                     },
                                                                                                     "closeParenToken": {
@@ -534,7 +558,9 @@
                                                                                             "right": {
                                                                                                 "kind": "StringLiteral",
                                                                                                 "width": 38,
-                                                                                                "text": "': \"ABC\\\\u0041\\\\u0042\\\\u0043\".charAt('"
+                                                                                                "text": "': \"ABC\\\\u0041\\\\u0042\\\\u0043\".charAt('",
+                                                                                                "value": ": \"ABC\\u0041\\u0042\\u0043\".charAt(",
+                                                                                                "valueText": ": \"ABC\\u0041\\u0042\\u0043\".charAt("
                                                                                             }
                                                                                         },
                                                                                         "operatorToken": {
@@ -546,6 +572,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 1,
                                                                                             "text": "i",
+                                                                                            "value": "i",
                                                                                             "valueText": "i"
                                                                                         }
                                                                                     },
@@ -557,7 +584,9 @@
                                                                                     "right": {
                                                                                         "kind": "StringLiteral",
                                                                                         "width": 45,
-                                                                                        "text": "') === \"\\\\u0041\\\\u0042\\\\u0043ABC\".substring('"
+                                                                                        "text": "') === \"\\\\u0041\\\\u0042\\\\u0043ABC\".substring('",
+                                                                                        "value": ") === \"\\u0041\\u0042\\u0043ABC\".substring(",
+                                                                                        "valueText": ") === \"\\u0041\\u0042\\u0043ABC\".substring("
                                                                                     }
                                                                                 },
                                                                                 "operatorToken": {
@@ -569,6 +598,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 1,
                                                                                     "text": "i",
+                                                                                    "value": "i",
                                                                                     "valueText": "i"
                                                                                 }
                                                                             },
@@ -580,7 +610,9 @@
                                                                             "right": {
                                                                                 "kind": "StringLiteral",
                                                                                 "width": 4,
-                                                                                "text": "', '"
+                                                                                "text": "', '",
+                                                                                "value": ", ",
+                                                                                "valueText": ", "
                                                                             }
                                                                         },
                                                                         "operatorToken": {
@@ -603,6 +635,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 1,
                                                                                     "text": "i",
+                                                                                    "value": "i",
                                                                                     "valueText": "i"
                                                                                 },
                                                                                 "operatorToken": {
@@ -613,7 +646,9 @@
                                                                                 "right": {
                                                                                     "kind": "NumericLiteral",
                                                                                     "width": 1,
-                                                                                    "text": "1"
+                                                                                    "text": "1",
+                                                                                    "value": 1,
+                                                                                    "valueText": "1"
                                                                                 }
                                                                             },
                                                                             "closeParenToken": {
@@ -631,7 +666,9 @@
                                                                     "right": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 47,
-                                                                        "text": "'). Actual: \"ABC\\\\u0041\\\\u0042\\\\u0043\".charAt('"
+                                                                        "text": "'). Actual: \"ABC\\\\u0041\\\\u0042\\\\u0043\".charAt('",
+                                                                        "value": "). Actual: \"ABC\\u0041\\u0042\\u0043\".charAt(",
+                                                                        "valueText": "). Actual: \"ABC\\u0041\\u0042\\u0043\".charAt("
                                                                     }
                                                                 },
                                                                 "operatorToken": {
@@ -643,6 +680,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "i",
+                                                                    "value": "i",
                                                                     "valueText": "i"
                                                                 }
                                                             },
@@ -654,7 +692,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 7,
-                                                                "text": "') ==='"
+                                                                "text": "') ==='",
+                                                                "value": ") ===",
+                                                                "valueText": ") ==="
                                                             }
                                                         },
                                                         "operatorToken": {
@@ -679,7 +719,9 @@
                                                                     "expression": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 23,
-                                                                        "text": "\"ABC\\u0041\\u0042\\u0043\""
+                                                                        "text": "\"ABC\\u0041\\u0042\\u0043\"",
+                                                                        "value": "ABCABC",
+                                                                        "valueText": "ABCABC"
                                                                     },
                                                                     "dotToken": {
                                                                         "kind": "DotToken",
@@ -690,6 +732,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 6,
                                                                         "text": "charAt",
+                                                                        "value": "charAt",
                                                                         "valueText": "charAt"
                                                                     }
                                                                 },
@@ -706,6 +749,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "i",
+                                                                            "value": "i",
                                                                             "valueText": "i"
                                                                         }
                                                                     ],

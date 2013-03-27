@@ -20,6 +20,7 @@
                         "width": 7,
                         "fullWidth": 357,
                         "text": "FACTORY",
+                        "value": "FACTORY",
                         "valueText": "FACTORY",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -99,6 +100,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "Function",
+                            "value": "Function",
                             "valueText": "Function"
                         },
                         "argumentList": {
@@ -113,7 +115,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"arg1,arg2\""
+                                    "text": "\"arg1,arg2\"",
+                                    "value": "arg1,arg2",
+                                    "valueText": "arg1,arg2"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -123,7 +127,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 43,
-                                    "text": "\"var x =1; this.y=arg1+arg2;return \\\"OK\\\";\""
+                                    "text": "\"var x =1; this.y=arg1+arg2;return \\\"OK\\\";\"",
+                                    "value": "var x =1; this.y=arg1+arg2;return \"OK\";",
+                                    "valueText": "var x =1; this.y=arg1+arg2;return \"OK\";"
                                 }
                             ],
                             "closeParenToken": {
@@ -160,6 +166,7 @@
                         "width": 3,
                         "fullWidth": 4,
                         "text": "obj",
+                        "value": "obj",
                         "valueText": "obj",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -202,6 +209,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "FACTORY",
+                            "value": "FACTORY",
                             "valueText": "FACTORY"
                         },
                         "argumentList": {
@@ -216,7 +224,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 3,
-                                    "text": "\"1\""
+                                    "text": "\"1\"",
+                                    "value": "1",
+                                    "valueText": "1"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -226,7 +236,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             ],
                             "closeParenToken": {
@@ -314,6 +326,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -340,7 +353,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -385,6 +400,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -406,7 +422,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 58,
-                                            "text": "'#1: every function instance has a [[Construct]] property'"
+                                            "text": "'#1: every function instance has a [[Construct]] property'",
+                                            "value": "#1: every function instance has a [[Construct]] property",
+                                            "valueText": "#1: every function instance has a [[Construct]] property"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -499,6 +517,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -511,6 +530,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -537,6 +558,7 @@
                         "kind": "IdentifierName",
                         "width": 7,
                         "text": "FACTORY",
+                        "value": "FACTORY",
                         "valueText": "FACTORY"
                     }
                 },
@@ -582,6 +604,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -603,7 +626,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 58,
-                                            "text": "'#2: every function instance has a [[Construct]] property'"
+                                            "text": "'#2: every function instance has a [[Construct]] property'",
+                                            "value": "#2: every function instance has a [[Construct]] property",
+                                            "valueText": "#2: every function instance has a [[Construct]] property"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -693,6 +718,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -705,6 +731,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -731,7 +758,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"12\""
+                        "text": "\"12\"",
+                        "value": "12",
+                        "valueText": "12"
                     }
                 },
                 "closeParenToken": {
@@ -776,6 +805,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -797,7 +827,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 58,
-                                            "text": "'#3: every function instance has a [[Construct]] property'"
+                                            "text": "'#3: every function instance has a [[Construct]] property'",
+                                            "value": "#3: every function instance has a [[Construct]] property",
+                                            "valueText": "#3: every function instance has a [[Construct]] property"
                                         }
                                     ],
                                     "closeParenToken": {

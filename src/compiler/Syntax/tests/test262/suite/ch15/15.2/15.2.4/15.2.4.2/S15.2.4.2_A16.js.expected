@@ -85,6 +85,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "dotToken": {
@@ -96,6 +97,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "prototype",
+                                        "value": "prototype",
                                         "valueText": "prototype"
                                     }
                                 },
@@ -108,6 +110,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "toString",
+                                    "value": "toString",
                                     "valueText": "toString"
                                 }
                             },
@@ -120,6 +123,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "call",
+                                "value": "call",
                                 "valueText": "call"
                             }
                         },
@@ -135,7 +139,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "'foo'"
+                                    "text": "'foo'",
+                                    "value": "foo",
+                                    "valueText": "foo"
                                 }
                             ],
                             "closeParenToken": {
@@ -169,7 +175,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 17,
-                        "text": "\"[object String]\""
+                        "text": "\"[object String]\"",
+                        "value": "[object String]",
+                        "valueText": "[object String]"
                     }
                 },
                 "closeParenToken": {
@@ -214,6 +222,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -240,6 +249,8 @@
                                                 "width": 59,
                                                 "fullWidth": 60,
                                                 "text": "'Let O be the result of calling ToObject passing the this '",
+                                                "value": "Let O be the result of calling ToObject passing the this ",
+                                                "valueText": "Let O be the result of calling ToObject passing the this ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -267,6 +278,8 @@
                                                 "width": 24,
                                                 "fullWidth": 33,
                                                 "text": "'value as the argument.'",
+                                                "value": "value as the argument.",
+                                                "valueText": "value as the argument.",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
                                                     {

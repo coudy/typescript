@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -87,6 +88,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "arg",
+                                    "value": "arg",
                                     "valueText": "arg"
                                 }
                             }
@@ -135,6 +137,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "arg",
+                                    "value": "arg",
                                     "valueText": "arg"
                                 }
                             },
@@ -240,6 +243,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -266,7 +270,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 10,
-                        "text": "\"function\""
+                        "text": "\"function\"",
+                        "value": "function",
+                        "valueText": "function"
                     }
                 },
                 "closeParenToken": {
@@ -311,6 +317,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -335,7 +342,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 61,
-                                                "text": "'#1: typeof __func === \"function\". Actual: typeof __func ==='"
+                                                "text": "'#1: typeof __func === \"function\". Actual: typeof __func ==='",
+                                                "value": "#1: typeof __func === \"function\". Actual: typeof __func ===",
+                                                "valueText": "#1: typeof __func === \"function\". Actual: typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -362,6 +371,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 }
                                             }
@@ -478,6 +488,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -492,7 +503,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             ],
                             "closeParenToken": {
@@ -526,7 +539,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -571,6 +586,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -595,7 +611,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 44,
-                                                "text": "'#2: __func(1) === 2. Actual: __func(1) ==='"
+                                                "text": "'#2: __func(1) === 2. Actual: __func(1) ==='",
+                                                "value": "#2: __func(1) === 2. Actual: __func(1) ===",
+                                                "valueText": "#2: __func(1) === 2. Actual: __func(1) ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -609,6 +627,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -623,7 +642,9 @@
                                                         {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "1"
+                                                            "text": "1",
+                                                            "value": 1,
+                                                            "valueText": "1"
                                                         }
                                                     ],
                                                     "closeParenToken": {

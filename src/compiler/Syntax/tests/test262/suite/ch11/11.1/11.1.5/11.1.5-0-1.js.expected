@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -174,6 +175,7 @@
                                             "width": 2,
                                             "fullWidth": 3,
                                             "text": "s1",
+                                            "value": "s1",
                                             "valueText": "s1",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -202,7 +204,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 11,
-                                                "text": "\"In getter\""
+                                                "text": "\"In getter\"",
+                                                "value": "In getter",
+                                                "valueText": "In getter"
                                             }
                                         }
                                     }
@@ -259,6 +263,7 @@
                                             "width": 2,
                                             "fullWidth": 3,
                                             "text": "s2",
+                                            "value": "s2",
                                             "valueText": "s2",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -287,7 +292,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 11,
-                                                "text": "\"In setter\""
+                                                "text": "\"In setter\"",
+                                                "value": "In setter",
+                                                "valueText": "In setter"
                                             }
                                         }
                                     }
@@ -344,6 +351,7 @@
                                             "width": 2,
                                             "fullWidth": 3,
                                             "text": "s3",
+                                            "value": "s3",
                                             "valueText": "s3",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -372,7 +380,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 20,
-                                                "text": "\"Modified by setter\""
+                                                "text": "\"Modified by setter\"",
+                                                "value": "Modified by setter",
+                                                "valueText": "Modified by setter"
                                             }
                                         }
                                     }
@@ -404,6 +414,7 @@
                                     "width": 4,
                                     "fullWidth": 6,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -425,7 +436,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 64,
-                                            "text": "\"var o = {get foo(){ return s1;},set foo(arg){return s2 = s3}};\""
+                                            "text": "\"var o = {get foo(){ return s1;},set foo(arg){return s2 = s3}};\"",
+                                            "value": "var o = {get foo(){ return s1;},set foo(arg){return s2 = s3}};",
+                                            "valueText": "var o = {get foo(){ return s1;},set foo(arg){return s2 = s3}};"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -481,6 +494,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "o",
+                                        "value": "o",
                                         "valueText": "o"
                                     },
                                     "dotToken": {
@@ -493,6 +507,7 @@
                                         "width": 3,
                                         "fullWidth": 4,
                                         "text": "foo",
+                                        "value": "foo",
                                         "valueText": "foo",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -520,6 +535,7 @@
                                     "kind": "IdentifierName",
                                     "width": 2,
                                     "text": "s1",
+                                    "value": "s1",
                                     "valueText": "s1"
                                 }
                             },
@@ -567,7 +583,9 @@
                                 "expression": {
                                     "kind": "FalseKeyword",
                                     "width": 5,
-                                    "text": "false"
+                                    "text": "false",
+                                    "value": false,
+                                    "valueText": "false"
                                 },
                                 "semicolonToken": {
                                     "kind": "SemicolonToken",
@@ -599,6 +617,7 @@
                                         "width": 1,
                                         "fullWidth": 3,
                                         "text": "o",
+                                        "value": "o",
                                         "valueText": "o",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -617,6 +636,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "foo",
+                                        "value": "foo",
                                         "valueText": "foo"
                                     }
                                 },
@@ -628,7 +648,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 2,
-                                    "text": "10"
+                                    "text": "10",
+                                    "value": 10,
+                                    "valueText": "10"
                                 }
                             },
                             "semicolonToken": {
@@ -675,6 +697,7 @@
                                     "width": 2,
                                     "fullWidth": 3,
                                     "text": "s2",
+                                    "value": "s2",
                                     "valueText": "s2",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -701,6 +724,7 @@
                                     "kind": "IdentifierName",
                                     "width": 2,
                                     "text": "s3",
+                                    "value": "s3",
                                     "valueText": "s3"
                                 }
                             },
@@ -748,7 +772,9 @@
                                 "expression": {
                                     "kind": "FalseKeyword",
                                     "width": 5,
-                                    "text": "false"
+                                    "text": "false",
+                                    "value": false,
+                                    "valueText": "false"
                                 },
                                 "semicolonToken": {
                                     "kind": "SemicolonToken",
@@ -792,7 +818,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -843,6 +871,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -858,6 +887,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

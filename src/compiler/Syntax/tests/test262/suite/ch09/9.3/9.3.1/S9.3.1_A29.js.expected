@@ -96,7 +96,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 5,
-                                "text": "\"0xd\""
+                                "text": "\"0xd\"",
+                                "value": "0xd",
+                                "valueText": "0xd"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -129,7 +131,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "13"
+                        "text": "13",
+                        "value": 13,
+                        "valueText": "13"
                     }
                 },
                 "closeParenToken": {
@@ -174,6 +178,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -200,6 +205,8 @@
                                                 "width": 31,
                                                 "fullWidth": 32,
                                                 "text": "'#1: +(\"0xd\") === 13. Actual: '",
+                                                "value": "#1: +(\"0xd\") === 13. Actual: ",
+                                                "valueText": "#1: +(\"0xd\") === 13. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -248,7 +255,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 5,
-                                                            "text": "\"0xd\""
+                                                            "text": "\"0xd\"",
+                                                            "value": "0xd",
+                                                            "valueText": "0xd"
                                                         },
                                                         "closeParenToken": {
                                                             "kind": "CloseParenToken",
@@ -352,6 +361,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -366,7 +376,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"0xD\""
+                                    "text": "\"0xD\"",
+                                    "value": "0xD",
+                                    "valueText": "0xD"
                                 }
                             ],
                             "closeParenToken": {
@@ -400,7 +412,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "13"
+                        "text": "13",
+                        "value": 13,
+                        "valueText": "13"
                     }
                 },
                 "closeParenToken": {
@@ -445,6 +459,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -471,6 +486,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#2: Number(\"0xD\") === 13. Actual: '",
+                                                "value": "#2: Number(\"0xD\") === 13. Actual: ",
+                                                "valueText": "#2: Number(\"0xD\") === 13. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -507,6 +524,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "Number",
+                                                        "value": "Number",
                                                         "valueText": "Number"
                                                     },
                                                     "argumentList": {
@@ -521,7 +539,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 5,
-                                                                "text": "\"0xD\""
+                                                                "text": "\"0xD\"",
+                                                                "value": "0xD",
+                                                                "valueText": "0xD"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -626,6 +646,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -640,7 +661,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"0Xd\""
+                                    "text": "\"0Xd\"",
+                                    "value": "0Xd",
+                                    "valueText": "0Xd"
                                 }
                             ],
                             "closeParenToken": {
@@ -674,7 +697,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "13"
+                        "text": "13",
+                        "value": 13,
+                        "valueText": "13"
                     }
                 },
                 "closeParenToken": {
@@ -719,6 +744,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -745,6 +771,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#3: Number(\"0Xd\") === 13. Actual: '",
+                                                "value": "#3: Number(\"0Xd\") === 13. Actual: ",
+                                                "valueText": "#3: Number(\"0Xd\") === 13. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -781,6 +809,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "Number",
+                                                        "value": "Number",
                                                         "valueText": "Number"
                                                     },
                                                     "argumentList": {
@@ -795,7 +824,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 5,
-                                                                "text": "\"0Xd\""
+                                                                "text": "\"0Xd\"",
+                                                                "value": "0Xd",
+                                                                "valueText": "0Xd"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -900,6 +931,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -914,7 +946,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"0XD\""
+                                    "text": "\"0XD\"",
+                                    "value": "0XD",
+                                    "valueText": "0XD"
                                 }
                             ],
                             "closeParenToken": {
@@ -948,7 +982,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "13"
+                        "text": "13",
+                        "value": 13,
+                        "valueText": "13"
                     }
                 },
                 "closeParenToken": {
@@ -993,6 +1029,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1019,6 +1056,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#4: Number(\"0XD\") === 13. Actual: '",
+                                                "value": "#4: Number(\"0XD\") === 13. Actual: ",
+                                                "valueText": "#4: Number(\"0XD\") === 13. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1055,6 +1094,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "Number",
+                                                        "value": "Number",
                                                         "valueText": "Number"
                                                     },
                                                     "argumentList": {
@@ -1069,7 +1109,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 5,
-                                                                "text": "\"0XD\""
+                                                                "text": "\"0XD\"",
+                                                                "value": "0XD",
+                                                                "valueText": "0XD"
                                                             }
                                                         ],
                                                         "closeParenToken": {

@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 381,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -80,6 +81,8 @@
                                 "width": 42,
                                 "fullWidth": 43,
                                 "text": "\" Function(\\\"this.feat=1\\\").call(void 0) \"",
+                                "value": " Function(\"this.feat=1\").call(void 0) ",
+                                "valueText": " Function(\"this.feat=1\").call(void 0) ",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -172,7 +175,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "\"feat\""
+                            "text": "\"feat\"",
+                            "value": "feat",
+                            "valueText": "feat"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -204,7 +209,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -249,6 +256,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -270,7 +278,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 104,
-                                            "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'"
+                                            "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'",
+                                            "value": "#1: If thisArg is null or undefined, the called function is passed the global object as the this value",
+                                            "valueText": "#1: If thisArg is null or undefined, the called function is passed the global object as the this value"
                                         }
                                     ],
                                     "closeParenToken": {

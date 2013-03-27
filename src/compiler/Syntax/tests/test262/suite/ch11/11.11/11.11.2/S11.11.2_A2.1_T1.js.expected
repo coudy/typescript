@@ -93,6 +93,8 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "true",
+                                "value": true,
+                                "valueText": "true",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -117,7 +119,9 @@
                             "right": {
                                 "kind": "FalseKeyword",
                                 "width": 5,
-                                "text": "false"
+                                "text": "false",
+                                "value": false,
+                                "valueText": "false"
                             }
                         },
                         "closeParenToken": {
@@ -150,7 +154,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -195,6 +201,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -216,7 +223,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 30,
-                                            "text": "'#1: (true || false) === true'"
+                                            "text": "'#1: (true || false) === true'",
+                                            "value": "#1: (true || false) === true",
+                                            "valueText": "#1: (true || false) === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -315,6 +324,8 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "false",
+                                "value": false,
+                                "valueText": "false",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -339,7 +350,9 @@
                             "right": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             }
                         },
                         "closeParenToken": {
@@ -372,7 +385,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -417,6 +432,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -438,7 +454,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 30,
-                                            "text": "'#2: (false || true) === true'"
+                                            "text": "'#2: (false || true) === true'",
+                                            "value": "#2: (false || true) === true",
+                                            "valueText": "#2: (false || true) === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -526,6 +544,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -571,6 +590,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "Boolean",
+                                        "value": "Boolean",
                                         "valueText": "Boolean"
                                     },
                                     "argumentList": {
@@ -585,7 +605,9 @@
                                             {
                                                 "kind": "FalseKeyword",
                                                 "width": 5,
-                                                "text": "false"
+                                                "text": "false",
+                                                "value": false,
+                                                "valueText": "false"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -654,6 +676,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -679,7 +702,9 @@
                             "right": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             }
                         },
                         "closeParenToken": {
@@ -713,6 +738,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -758,6 +784,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -779,7 +806,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 47,
-                                            "text": "'#3: var x = Boolean(false); (x || true) === x'"
+                                            "text": "'#3: var x = Boolean(false); (x || true) === x'",
+                                            "value": "#3: var x = Boolean(false); (x || true) === x",
+                                            "valueText": "#3: var x = Boolean(false); (x || true) === x"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -867,6 +896,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -912,6 +942,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "Boolean",
+                                        "value": "Boolean",
                                         "valueText": "Boolean"
                                     },
                                     "argumentList": {
@@ -926,7 +957,9 @@
                                             {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -995,6 +1028,8 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "false",
+                                "value": false,
+                                "valueText": "false",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -1020,6 +1055,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y"
                             }
                         },
@@ -1054,6 +1090,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y"
                     }
                 },
@@ -1099,6 +1136,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1120,7 +1158,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 47,
-                                            "text": "'#4: var y = Boolean(true); (false || y) === y'"
+                                            "text": "'#4: var y = Boolean(true); (false || y) === y'",
+                                            "value": "#4: var y = Boolean(true); (false || y) === y",
+                                            "valueText": "#4: var y = Boolean(true); (false || y) === y"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1208,6 +1248,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1253,6 +1294,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "Boolean",
+                                        "value": "Boolean",
                                         "valueText": "Boolean"
                                     },
                                     "argumentList": {
@@ -1267,7 +1309,9 @@
                                             {
                                                 "kind": "FalseKeyword",
                                                 "width": 5,
-                                                "text": "false"
+                                                "text": "false",
+                                                "value": false,
+                                                "valueText": "false"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1325,6 +1369,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1370,6 +1415,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "Boolean",
+                                        "value": "Boolean",
                                         "valueText": "Boolean"
                                     },
                                     "argumentList": {
@@ -1384,7 +1430,9 @@
                                             {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1453,6 +1501,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1479,6 +1528,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y"
                             }
                         },
@@ -1513,6 +1563,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -1558,6 +1609,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1579,7 +1631,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 75,
-                                            "text": "'#5: var x = new Boolean(false); var y = new Boolean(true); (x || y) === x'"
+                                            "text": "'#5: var x = new Boolean(false); var y = new Boolean(true); (x || y) === x'",
+                                            "value": "#5: var x = new Boolean(false); var y = new Boolean(true); (x || y) === x",
+                                            "valueText": "#5: var x = new Boolean(false); var y = new Boolean(true); (x || y) === x"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1667,6 +1721,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1695,7 +1750,9 @@
                                 "value": {
                                     "kind": "FalseKeyword",
                                     "width": 5,
-                                    "text": "false"
+                                    "text": "false",
+                                    "value": false,
+                                    "valueText": "false"
                                 }
                             }
                         }
@@ -1745,6 +1802,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1790,6 +1848,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "Boolean",
+                                        "value": "Boolean",
                                         "valueText": "Boolean"
                                     },
                                     "argumentList": {
@@ -1804,7 +1863,9 @@
                                             {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1873,6 +1934,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1899,6 +1961,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y"
                             }
                         },
@@ -1933,6 +1996,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y"
                     }
                 },
@@ -1978,6 +2042,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1999,7 +2064,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 62,
-                                            "text": "'#6: var x = false; var y = new Boolean(true); (x || y) === y'"
+                                            "text": "'#6: var x = false; var y = new Boolean(true); (x || y) === y'",
+                                            "value": "#6: var x = false; var y = new Boolean(true); (x || y) === y",
+                                            "valueText": "#6: var x = false; var y = new Boolean(true); (x || y) === y"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -2087,6 +2154,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "objectx",
+                                "value": "objectx",
                                 "valueText": "objectx",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2132,6 +2200,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -2198,6 +2267,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "objecty",
+                                "value": "objecty",
                                 "valueText": "objecty",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2243,6 +2313,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -2293,6 +2364,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "objectx",
+                            "value": "objectx",
                             "valueText": "objectx"
                         },
                         "dotToken": {
@@ -2305,6 +2377,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2331,7 +2404,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "semicolonToken": {
@@ -2362,6 +2437,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "objecty",
+                            "value": "objecty",
                             "valueText": "objecty"
                         },
                         "dotToken": {
@@ -2374,6 +2450,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2400,7 +2477,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.1"
+                        "text": "1.1",
+                        "value": 1.1,
+                        "valueText": "1.1"
                     }
                 },
                 "semicolonToken": {
@@ -2460,6 +2539,7 @@
                                     "kind": "IdentifierName",
                                     "width": 7,
                                     "text": "objectx",
+                                    "value": "objectx",
                                     "valueText": "objectx"
                                 },
                                 "dotToken": {
@@ -2472,6 +2552,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "prop",
+                                    "value": "prop",
                                     "valueText": "prop",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -2502,6 +2583,7 @@
                                     "kind": "IdentifierName",
                                     "width": 7,
                                     "text": "objecty",
+                                    "value": "objecty",
                                     "valueText": "objecty"
                                 },
                                 "dotToken": {
@@ -2513,6 +2595,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "prop",
+                                    "value": "prop",
                                     "valueText": "prop"
                                 }
                             }
@@ -2551,6 +2634,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "objecty",
+                            "value": "objecty",
                             "valueText": "objecty"
                         },
                         "dotToken": {
@@ -2562,6 +2646,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop"
                         }
                     }
@@ -2608,6 +2693,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2629,7 +2715,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 149,
-                                            "text": "'#7: var objectx = new Object(); var objecty = new Object(); objectx.prop = false; objecty.prop = 1; (objectx.prop || objecty.prop) === objecty.prop'"
+                                            "text": "'#7: var objectx = new Object(); var objecty = new Object(); objectx.prop = false; objecty.prop = 1; (objectx.prop || objecty.prop) === objecty.prop'",
+                                            "value": "#7: var objectx = new Object(); var objecty = new Object(); objectx.prop = false; objecty.prop = 1; (objectx.prop || objecty.prop) === objecty.prop",
+                                            "valueText": "#7: var objectx = new Object(); var objecty = new Object(); objectx.prop = false; objecty.prop = 1; (objectx.prop || objecty.prop) === objecty.prop"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -2717,6 +2805,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "objectx",
+                                "value": "objectx",
                                 "valueText": "objectx",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2762,6 +2851,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -2828,6 +2918,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "objecty",
+                                "value": "objecty",
                                 "valueText": "objecty",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2873,6 +2964,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -2923,6 +3015,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "objectx",
+                            "value": "objectx",
                             "valueText": "objectx"
                         },
                         "dotToken": {
@@ -2935,6 +3028,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2961,7 +3055,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.1"
+                        "text": "1.1",
+                        "value": 1.1,
+                        "valueText": "1.1"
                     }
                 },
                 "semicolonToken": {
@@ -2992,6 +3088,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "objecty",
+                            "value": "objecty",
                             "valueText": "objecty"
                         },
                         "dotToken": {
@@ -3004,6 +3101,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -3030,7 +3128,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "semicolonToken": {
@@ -3090,6 +3190,7 @@
                                     "kind": "IdentifierName",
                                     "width": 7,
                                     "text": "objectx",
+                                    "value": "objectx",
                                     "valueText": "objectx"
                                 },
                                 "dotToken": {
@@ -3102,6 +3203,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "prop",
+                                    "value": "prop",
                                     "valueText": "prop",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -3132,6 +3234,7 @@
                                     "kind": "IdentifierName",
                                     "width": 7,
                                     "text": "objecty",
+                                    "value": "objecty",
                                     "valueText": "objecty"
                                 },
                                 "dotToken": {
@@ -3143,6 +3246,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "prop",
+                                    "value": "prop",
                                     "valueText": "prop"
                                 }
                             }
@@ -3181,6 +3285,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "objectx",
+                            "value": "objectx",
                             "valueText": "objectx"
                         },
                         "dotToken": {
@@ -3192,6 +3297,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop"
                         }
                     }
@@ -3238,6 +3344,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3259,7 +3366,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 151,
-                                            "text": "'#8: var objectx = new Object(); var objecty = new Object(); objectx.prop = 1.1; objecty.prop = false; (objectx.prop || objecty.prop) === objectx.prop'"
+                                            "text": "'#8: var objectx = new Object(); var objecty = new Object(); objectx.prop = 1.1; objecty.prop = false; (objectx.prop || objecty.prop) === objectx.prop'",
+                                            "value": "#8: var objectx = new Object(); var objecty = new Object(); objectx.prop = 1.1; objecty.prop = false; (objectx.prop || objecty.prop) === objectx.prop",
+                                            "valueText": "#8: var objectx = new Object(); var objecty = new Object(); objectx.prop = 1.1; objecty.prop = false; (objectx.prop || objecty.prop) === objectx.prop"
                                         }
                                     ],
                                     "closeParenToken": {

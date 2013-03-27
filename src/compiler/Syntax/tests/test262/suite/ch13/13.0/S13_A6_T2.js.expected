@@ -124,6 +124,7 @@
                                             "width": 8,
                                             "fullWidth": 9,
                                             "text": "__result",
+                                            "value": "__result",
                                             "valueText": "__result",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -156,6 +157,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -225,6 +227,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -269,6 +272,7 @@
                                         "width": 5,
                                         "fullWidth": 9,
                                         "text": "$FAIL",
+                                        "value": "$FAIL",
                                         "valueText": "$FAIL",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -290,7 +294,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 85,
-                                                "text": "\"#1: Function call can appears in the program before the FunctionDeclaration appears\""
+                                                "text": "\"#1: Function call can appears in the program before the FunctionDeclaration appears\"",
+                                                "value": "#1: Function call can appears in the program before the FunctionDeclaration appears",
+                                                "valueText": "#1: Function call can appears in the program before the FunctionDeclaration appears"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -362,6 +368,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "__result",
+                        "value": "__result",
                         "valueText": "__result",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -387,7 +394,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"SECOND\""
+                        "text": "\"SECOND\"",
+                        "value": "SECOND",
+                        "valueText": "SECOND"
                     }
                 },
                 "closeParenToken": {
@@ -432,6 +441,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -456,7 +466,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 51,
-                                                "text": "'#1.1: __result === \"SECOND\". Actual: __result ==='"
+                                                "text": "'#1.1: __result === \"SECOND\". Actual: __result ==='",
+                                                "value": "#1.1: __result === \"SECOND\". Actual: __result ===",
+                                                "valueText": "#1.1: __result === \"SECOND\". Actual: __result ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -467,6 +479,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "__result",
+                                                "value": "__result",
                                                 "valueText": "__result"
                                             }
                                         }
@@ -556,6 +569,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -605,7 +619,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 7,
-                                "text": "\"FIRST\""
+                                "text": "\"FIRST\"",
+                                "value": "FIRST",
+                                "valueText": "FIRST"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -650,6 +666,7 @@
                         "width": 8,
                         "fullWidth": 99,
                         "text": "__result",
+                        "value": "__result",
                         "valueText": "__result",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -704,6 +721,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -767,6 +785,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "__result",
+                        "value": "__result",
                         "valueText": "__result",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -792,7 +811,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"SECOND\""
+                        "text": "\"SECOND\"",
+                        "value": "SECOND",
+                        "valueText": "SECOND"
                     }
                 },
                 "closeParenToken": {
@@ -837,6 +858,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -861,7 +883,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 49,
-                                                "text": "'#2: __result === \"SECOND\". Actual: __result ==='"
+                                                "text": "'#2: __result === \"SECOND\". Actual: __result ==='",
+                                                "value": "#2: __result === \"SECOND\". Actual: __result ===",
+                                                "valueText": "#2: __result === \"SECOND\". Actual: __result ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -872,6 +896,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "__result",
+                                                "value": "__result",
                                                 "valueText": "__result"
                                             }
                                         }
@@ -961,6 +986,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -1010,7 +1036,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 8,
-                                "text": "\"SECOND\""
+                                "text": "\"SECOND\"",
+                                "value": "SECOND",
+                                "valueText": "SECOND"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",

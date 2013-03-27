@@ -94,7 +94,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 6,
-                                "text": "\"abcd\""
+                                "text": "\"abcd\"",
+                                "value": "abcd",
+                                "valueText": "abcd"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -105,6 +107,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "indexOf",
+                                "value": "indexOf",
                                 "valueText": "indexOf"
                             }
                         },
@@ -120,7 +123,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "\"abcdab\""
+                                    "text": "\"abcdab\"",
+                                    "value": "abcdab",
+                                    "valueText": "abcdab"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -130,7 +135,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             ],
                             "closeParenToken": {
@@ -156,7 +163,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -202,6 +211,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -226,7 +236,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 47,
-                                                "text": "'#1: \"abcd\".indexOf(\"abcdab\",0)===-1. Actual: '"
+                                                "text": "'#1: \"abcd\".indexOf(\"abcdab\",0)===-1. Actual: '",
+                                                "value": "#1: \"abcd\".indexOf(\"abcdab\",0)===-1. Actual: ",
+                                                "valueText": "#1: \"abcd\".indexOf(\"abcdab\",0)===-1. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -250,7 +262,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 6,
-                                                            "text": "\"abcd\""
+                                                            "text": "\"abcd\"",
+                                                            "value": "abcd",
+                                                            "valueText": "abcd"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -261,6 +275,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "indexOf",
+                                                            "value": "indexOf",
                                                             "valueText": "indexOf"
                                                         }
                                                     },
@@ -276,7 +291,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 8,
-                                                                "text": "\"abcdab\""
+                                                                "text": "\"abcdab\"",
+                                                                "value": "abcdab",
+                                                                "valueText": "abcdab"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -286,7 +303,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "0"
+                                                                "text": "0",
+                                                                "value": 0,
+                                                                "valueText": "0"
                                                             }
                                                         ],
                                                         "closeParenToken": {

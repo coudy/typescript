@@ -82,7 +82,9 @@
                 "condition": {
                     "kind": "NumericLiteral",
                     "width": 1,
-                    "text": "0"
+                    "text": "0",
+                    "value": 0,
+                    "valueText": "0"
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -109,6 +111,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -130,7 +133,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 44,
-                                    "text": "'#1: 0 in expression is evaluated to false '"
+                                    "text": "'#1: 0 in expression is evaluated to false '",
+                                    "value": "#1: 0 in expression is evaluated to false ",
+                                    "valueText": "#1: 0 in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -214,7 +219,9 @@
                 "condition": {
                     "kind": "FalseKeyword",
                     "width": 5,
-                    "text": "false"
+                    "text": "false",
+                    "value": false,
+                    "valueText": "false"
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -241,6 +248,7 @@
                             "width": 6,
                             "fullWidth": 10,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -262,7 +270,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 48,
-                                    "text": "'#2: false in expression is evaluated to false '"
+                                    "text": "'#2: false in expression is evaluated to false '",
+                                    "value": "#2: false in expression is evaluated to false ",
+                                    "valueText": "#2: false in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -373,6 +383,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -394,7 +405,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 47,
-                                    "text": "'#3: null in expression is evaluated to false '"
+                                    "text": "'#3: null in expression is evaluated to false '",
+                                    "value": "#3: null in expression is evaluated to false ",
+                                    "valueText": "#3: null in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -479,6 +492,7 @@
                     "kind": "IdentifierName",
                     "width": 9,
                     "text": "undefined",
+                    "value": "undefined",
                     "valueText": "undefined"
                 },
                 "closeParenToken": {
@@ -506,6 +520,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -527,7 +542,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 52,
-                                    "text": "'#4: undefined in expression is evaluated to false '"
+                                    "text": "'#4: undefined in expression is evaluated to false '",
+                                    "value": "#4: undefined in expression is evaluated to false ",
+                                    "valueText": "#4: undefined in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -611,7 +628,9 @@
                 "condition": {
                     "kind": "StringLiteral",
                     "width": 2,
-                    "text": "\"\""
+                    "text": "\"\"",
+                    "value": "",
+                    "valueText": ""
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -638,6 +657,7 @@
                             "width": 6,
                             "fullWidth": 10,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -659,7 +679,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 55,
-                                    "text": "'#5: empty string in expression is evaluated to false '"
+                                    "text": "'#5: empty string in expression is evaluated to false '",
+                                    "value": "#5: empty string in expression is evaluated to false ",
+                                    "valueText": "#5: empty string in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -744,6 +766,7 @@
                     "kind": "IdentifierName",
                     "width": 3,
                     "text": "NaN",
+                    "value": "NaN",
                     "valueText": "NaN"
                 },
                 "closeParenToken": {
@@ -771,6 +794,7 @@
                             "width": 6,
                             "fullWidth": 10,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -792,7 +816,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 46,
-                                    "text": "'#5: NaN in expression is evaluated to false '"
+                                    "text": "'#5: NaN in expression is evaluated to false '",
+                                    "value": "#5: NaN in expression is evaluated to false ",
+                                    "valueText": "#5: NaN in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {

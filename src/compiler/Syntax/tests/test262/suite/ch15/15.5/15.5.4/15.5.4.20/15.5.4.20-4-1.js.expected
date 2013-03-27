@@ -92,6 +92,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -170,6 +171,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "s",
+                                            "value": "s",
                                             "valueText": "s",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -200,6 +202,8 @@
                                                 "width": 22,
                                                 "fullWidth": 24,
                                                 "text": "\"\\u0009a b\\\r\nc \\u0009\"",
+                                                "value": "\ta b\r\nc \t",
+                                                "valueText": "\ta b\r\nc \t",
                                                 "hasTrailingTrivia": true,
                                                 "hasTrailingNewLine": true,
                                                 "trailingTrivia": [
@@ -273,6 +277,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "s",
+                                            "value": "s",
                                             "valueText": "s"
                                         },
                                         "dotToken": {
@@ -284,6 +289,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "trim",
+                                            "value": "trim",
                                             "valueText": "trim"
                                         }
                                     },
@@ -327,7 +333,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 6,
-                                    "text": "\"a bc\""
+                                    "text": "\"a bc\"",
+                                    "value": "a bc",
+                                    "valueText": "a bc"
                                 }
                             },
                             "closeParenToken": {
@@ -387,7 +395,9 @@
                                         "expression": {
                                             "kind": "TrueKeyword",
                                             "width": 4,
-                                            "text": "true"
+                                            "text": "true",
+                                            "value": true,
+                                            "valueText": "true"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -462,6 +472,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -477,6 +488,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

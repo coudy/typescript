@@ -78,6 +78,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -138,6 +139,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "__func",
+                                                "value": "__func",
                                                 "valueText": "__func"
                                             },
                                             "callSignature": {
@@ -159,6 +161,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 3,
                                                                 "text": "arg",
+                                                                "value": "arg",
                                                                 "valueText": "arg"
                                                             }
                                                         }
@@ -201,6 +204,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "arg",
+                                                            "value": "arg",
                                                             "valueText": "arg"
                                                         },
                                                         "semicolonToken": {
@@ -235,7 +239,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -318,6 +324,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -343,7 +350,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -388,6 +397,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -412,7 +422,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 28,
-                                                "text": "'#1: x === 1. Actual: x ==='"
+                                                "text": "'#1: x === 1. Actual: x ==='",
+                                                "value": "#1: x === 1. Actual: x ===",
+                                                "valueText": "#1: x === 1. Actual: x ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -423,6 +435,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         }
@@ -556,6 +569,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -582,7 +596,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "'undefined'"
+                        "text": "'undefined'",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -627,6 +643,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -651,7 +668,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 64,
-                                                "text": "'#2: typeof __func === \\'undefined\\'. Actual: typeof __func ==='"
+                                                "text": "'#2: typeof __func === \\'undefined\\'. Actual: typeof __func ==='",
+                                                "value": "#2: typeof __func === 'undefined'. Actual: typeof __func ===",
+                                                "valueText": "#2: typeof __func === 'undefined'. Actual: typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -678,6 +697,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 }
                                             }

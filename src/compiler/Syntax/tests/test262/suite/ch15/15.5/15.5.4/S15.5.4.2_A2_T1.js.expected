@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__toString",
+                                "value": "__toString",
                                 "valueText": "__toString",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -109,6 +110,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "String",
+                                            "value": "String",
                                             "valueText": "String"
                                         },
                                         "dotToken": {
@@ -120,6 +122,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "prototype",
+                                            "value": "prototype",
                                             "valueText": "prototype"
                                         }
                                     },
@@ -132,6 +135,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "toString",
+                                        "value": "toString",
                                         "valueText": "toString"
                                     }
                                 }
@@ -224,6 +228,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__toString",
+                            "value": "__toString",
                             "valueText": "__toString",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -250,7 +255,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 10,
-                        "text": "\"function\""
+                        "text": "\"function\"",
+                        "value": "function",
+                        "valueText": "function"
                     }
                 },
                 "closeParenToken": {
@@ -295,6 +302,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -319,7 +327,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 109,
-                                                "text": "'#1: __toString = String.prototype.toString; typeof __toString === \"function\". Actual: typeof __toString ==='"
+                                                "text": "'#1: __toString = String.prototype.toString; typeof __toString === \"function\". Actual: typeof __toString ==='",
+                                                "value": "#1: __toString = String.prototype.toString; typeof __toString === \"function\". Actual: typeof __toString ===",
+                                                "valueText": "#1: __toString = String.prototype.toString; typeof __toString === \"function\". Actual: typeof __toString ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -347,6 +357,7 @@
                                                     "width": 10,
                                                     "fullWidth": 11,
                                                     "text": "__toString",
+                                                    "value": "__toString",
                                                     "valueText": "__toString",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -517,6 +528,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -549,6 +561,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 10,
                                                     "text": "__toString",
+                                                    "value": "__toString",
                                                     "valueText": "__toString"
                                                 },
                                                 "argumentList": {
@@ -597,6 +610,7 @@
                                     "width": 5,
                                     "fullWidth": 7,
                                     "text": "$FAIL",
+                                    "value": "$FAIL",
                                     "valueText": "$FAIL",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -618,7 +632,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 96,
-                                            "text": "'#2: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception'"
+                                            "text": "'#2: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception'",
+                                            "value": "#2: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception",
+                                            "valueText": "#2: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -683,6 +699,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -768,6 +785,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -794,6 +812,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -846,6 +865,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -870,7 +890,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 157,
-                                                                "text": "'#2.1: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception. Exception is instance of TypeError. Actual: exception is '"
+                                                                "text": "'#2.1: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception. Exception is instance of TypeError. Actual: exception is '",
+                                                                "value": "#2.1: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception. Exception is instance of TypeError. Actual: exception is ",
+                                                                "valueText": "#2.1: \"__toString = String.prototype.toString; var x = __toString();\" lead to throwing exception. Exception is instance of TypeError. Actual: exception is "
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -881,6 +903,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             }
                                                         }

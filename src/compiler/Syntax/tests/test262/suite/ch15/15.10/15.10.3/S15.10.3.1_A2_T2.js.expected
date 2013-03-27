@@ -75,6 +75,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             }
                         }
@@ -190,6 +193,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -218,6 +222,8 @@
                                                 "width": 64,
                                                 "fullWidth": 65,
                                                 "text": "'#1.1: var x = 1; RegExp(/[a-b]?/, x) throw TypeError. Actual: '",
+                                                "value": "#1.1: var x = 1; RegExp(/[a-b]?/, x) throw TypeError. Actual: ",
+                                                "valueText": "#1.1: var x = 1; RegExp(/[a-b]?/, x) throw TypeError. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -256,6 +262,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "RegExp",
+                                                        "value": "RegExp",
                                                         "valueText": "RegExp"
                                                     },
                                                     "argumentList": {
@@ -271,7 +278,9 @@
                                                             {
                                                                 "kind": "RegularExpressionLiteral",
                                                                 "width": 8,
-                                                                "text": "/[a-b]?/"
+                                                                "text": "/[a-b]?/",
+                                                                "value": {},
+                                                                "valueText": "/[a-b]?/"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -290,6 +299,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x"
                                                             }
                                                         ],
@@ -370,6 +380,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -450,6 +461,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -476,6 +488,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -509,7 +522,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -554,6 +569,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -580,6 +596,8 @@
                                                                 "width": 64,
                                                                 "fullWidth": 65,
                                                                 "text": "'#1.2: var x = 1; RegExp(/[a-b]?/, x) throw TypeError. Actual: '",
+                                                                "value": "#1.2: var x = 1; RegExp(/[a-b]?/, x) throw TypeError. Actual: ",
+                                                                "valueText": "#1.2: var x = 1; RegExp(/[a-b]?/, x) throw TypeError. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -613,6 +631,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

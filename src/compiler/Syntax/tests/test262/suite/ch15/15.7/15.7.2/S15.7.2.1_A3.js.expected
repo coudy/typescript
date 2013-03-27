@@ -83,6 +83,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "x1",
+                                "value": "x1",
                                 "valueText": "x1",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -128,6 +129,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -142,7 +144,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -205,6 +209,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "x1",
+                                "value": "x1",
                                 "valueText": "x1"
                             },
                             "dotToken": {
@@ -216,6 +221,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -259,7 +265,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -304,6 +312,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -325,7 +334,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 48,
-                                            "text": "'#1: var x1 = new Number(1); x1.valueOf() === 1'"
+                                            "text": "'#1: var x1 = new Number(1); x1.valueOf() === 1'",
+                                            "value": "#1: var x1 = new Number(1); x1.valueOf() === 1",
+                                            "valueText": "#1: var x1 = new Number(1); x1.valueOf() === 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -413,6 +424,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "x2",
+                                "value": "x2",
                                 "valueText": "x2",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -458,6 +470,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -530,6 +543,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "x2",
+                                "value": "x2",
                                 "valueText": "x2"
                             },
                             "dotToken": {
@@ -541,6 +555,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -584,7 +599,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -629,6 +646,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -650,7 +668,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 49,
-                                            "text": "'#2.1: var x2 = new Number(); x2.valueOf() === 0'"
+                                            "text": "'#2.1: var x2 = new Number(); x2.valueOf() === 0'",
+                                            "value": "#2.1: var x2 = new Number(); x2.valueOf() === 0",
+                                            "valueText": "#2.1: var x2 = new Number(); x2.valueOf() === 0"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -740,7 +760,9 @@
                                 "left": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 },
                                 "operatorToken": {
                                     "kind": "SlashToken",
@@ -757,6 +779,7 @@
                                             "kind": "IdentifierName",
                                             "width": 2,
                                             "text": "x2",
+                                            "value": "x2",
                                             "valueText": "x2"
                                         },
                                         "dotToken": {
@@ -768,6 +791,7 @@
                                             "kind": "IdentifierName",
                                             "width": 7,
                                             "text": "valueOf",
+                                            "value": "valueOf",
                                             "valueText": "valueOf"
                                         }
                                     },
@@ -816,6 +840,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 },
                                 "dotToken": {
@@ -828,6 +853,7 @@
                                     "width": 17,
                                     "fullWidth": 18,
                                     "text": "POSITIVE_INFINITY",
+                                    "value": "POSITIVE_INFINITY",
                                     "valueText": "POSITIVE_INFINITY",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -881,6 +907,7 @@
                                             "width": 6,
                                             "fullWidth": 8,
                                             "text": "$ERROR",
+                                            "value": "$ERROR",
                                             "valueText": "$ERROR",
                                             "hasLeadingTrivia": true,
                                             "leadingTrivia": [
@@ -902,7 +929,9 @@
                                                 {
                                                     "kind": "StringLiteral",
                                                     "width": 50,
-                                                    "text": "'#2.2: var x2 = new Number(); x2.valueOf() === +0'"
+                                                    "text": "'#2.2: var x2 = new Number(); x2.valueOf() === +0'",
+                                                    "value": "#2.2: var x2 = new Number(); x2.valueOf() === +0",
+                                                    "valueText": "#2.2: var x2 = new Number(); x2.valueOf() === +0"
                                                 }
                                             ],
                                             "closeParenToken": {

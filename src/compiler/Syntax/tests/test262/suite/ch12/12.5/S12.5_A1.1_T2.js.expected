@@ -73,6 +73,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "c",
+                                "value": "c",
                                 "valueText": "c"
                             },
                             "equalsValueClause": {
@@ -86,7 +87,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -145,7 +148,9 @@
                 "condition": {
                     "kind": "NumericLiteral",
                     "width": 1,
-                    "text": "0"
+                    "text": "0",
+                    "value": 0,
+                    "valueText": "0"
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -172,6 +177,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -193,7 +199,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 46,
-                                    "text": "'#1.1: 0 in expression is evaluated to false '"
+                                    "text": "'#1.1: 0 in expression is evaluated to false '",
+                                    "value": "#1.1: 0 in expression is evaluated to false ",
+                                    "valueText": "#1.1: 0 in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -246,6 +254,7 @@
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "c",
+                                "value": "c",
                                 "valueText": "c",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
@@ -306,6 +315,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "c",
+                        "value": "c",
                         "valueText": "c"
                     },
                     "operatorToken": {
@@ -316,7 +326,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -342,6 +354,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -356,7 +369,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 33,
-                                    "text": "'#1.2: else branch don`t execute'"
+                                    "text": "'#1.2: else branch don`t execute'",
+                                    "value": "#1.2: else branch don`t execute",
+                                    "valueText": "#1.2: else branch don`t execute"
                                 }
                             ],
                             "closeParenToken": {
@@ -440,7 +455,9 @@
                 "condition": {
                     "kind": "FalseKeyword",
                     "width": 5,
-                    "text": "false"
+                    "text": "false",
+                    "value": false,
+                    "valueText": "false"
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -467,6 +484,7 @@
                             "width": 6,
                             "fullWidth": 10,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -488,7 +506,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 50,
-                                    "text": "'#2.1: false in expression is evaluated to false '"
+                                    "text": "'#2.1: false in expression is evaluated to false '",
+                                    "value": "#2.1: false in expression is evaluated to false ",
+                                    "valueText": "#2.1: false in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -541,6 +561,7 @@
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "c",
+                                "value": "c",
                                 "valueText": "c",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
@@ -601,6 +622,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "c",
+                        "value": "c",
                         "valueText": "c"
                     },
                     "operatorToken": {
@@ -611,7 +633,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -637,6 +661,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -651,7 +676,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 33,
-                                    "text": "'#2.2: else branch don`t execute'"
+                                    "text": "'#2.2: else branch don`t execute'",
+                                    "value": "#2.2: else branch don`t execute",
+                                    "valueText": "#2.2: else branch don`t execute"
                                 }
                             ],
                             "closeParenToken": {
@@ -762,6 +789,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -783,7 +811,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 49,
-                                    "text": "'#3.1: null in expression is evaluated to false '"
+                                    "text": "'#3.1: null in expression is evaluated to false '",
+                                    "value": "#3.1: null in expression is evaluated to false ",
+                                    "valueText": "#3.1: null in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -836,6 +866,7 @@
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "c",
+                                "value": "c",
                                 "valueText": "c",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
@@ -896,6 +927,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "c",
+                        "value": "c",
                         "valueText": "c"
                     },
                     "operatorToken": {
@@ -906,7 +938,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -932,6 +966,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -946,7 +981,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 33,
-                                    "text": "'#3.2: else branch don`t execute'"
+                                    "text": "'#3.2: else branch don`t execute'",
+                                    "value": "#3.2: else branch don`t execute",
+                                    "valueText": "#3.2: else branch don`t execute"
                                 }
                             ],
                             "closeParenToken": {
@@ -1031,6 +1068,7 @@
                     "kind": "IdentifierName",
                     "width": 9,
                     "text": "undefined",
+                    "value": "undefined",
                     "valueText": "undefined"
                 },
                 "closeParenToken": {
@@ -1058,6 +1096,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -1079,7 +1118,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 54,
-                                    "text": "'#4.1: undefined in expression is evaluated to false '"
+                                    "text": "'#4.1: undefined in expression is evaluated to false '",
+                                    "value": "#4.1: undefined in expression is evaluated to false ",
+                                    "valueText": "#4.1: undefined in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -1132,6 +1173,7 @@
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "c",
+                                "value": "c",
                                 "valueText": "c",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
@@ -1192,6 +1234,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "c",
+                        "value": "c",
                         "valueText": "c"
                     },
                     "operatorToken": {
@@ -1202,7 +1245,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "4"
+                        "text": "4",
+                        "value": 4,
+                        "valueText": "4"
                     }
                 },
                 "closeParenToken": {
@@ -1228,6 +1273,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -1242,7 +1288,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 33,
-                                    "text": "'#4.2: else branch don`t execute'"
+                                    "text": "'#4.2: else branch don`t execute'",
+                                    "value": "#4.2: else branch don`t execute",
+                                    "valueText": "#4.2: else branch don`t execute"
                                 }
                             ],
                             "closeParenToken": {
@@ -1326,7 +1374,9 @@
                 "condition": {
                     "kind": "StringLiteral",
                     "width": 2,
-                    "text": "\"\""
+                    "text": "\"\"",
+                    "value": "",
+                    "valueText": ""
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -1353,6 +1403,7 @@
                             "width": 6,
                             "fullWidth": 10,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -1374,7 +1425,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 57,
-                                    "text": "'#5.1: empty string in expression is evaluated to false '"
+                                    "text": "'#5.1: empty string in expression is evaluated to false '",
+                                    "value": "#5.1: empty string in expression is evaluated to false ",
+                                    "valueText": "#5.1: empty string in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -1427,6 +1480,7 @@
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "c",
+                                "value": "c",
                                 "valueText": "c",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
@@ -1487,6 +1541,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "c",
+                        "value": "c",
                         "valueText": "c"
                     },
                     "operatorToken": {
@@ -1497,7 +1552,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "closeParenToken": {
@@ -1523,6 +1580,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -1537,7 +1595,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 33,
-                                    "text": "'#5.2: else branch don`t execute'"
+                                    "text": "'#5.2: else branch don`t execute'",
+                                    "value": "#5.2: else branch don`t execute",
+                                    "valueText": "#5.2: else branch don`t execute"
                                 }
                             ],
                             "closeParenToken": {
@@ -1622,6 +1682,7 @@
                     "kind": "IdentifierName",
                     "width": 3,
                     "text": "NaN",
+                    "value": "NaN",
                     "valueText": "NaN"
                 },
                 "closeParenToken": {
@@ -1649,6 +1710,7 @@
                             "width": 6,
                             "fullWidth": 10,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -1670,7 +1732,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 48,
-                                    "text": "'#6.1: NaN in expression is evaluated to false '"
+                                    "text": "'#6.1: NaN in expression is evaluated to false '",
+                                    "value": "#6.1: NaN in expression is evaluated to false ",
+                                    "valueText": "#6.1: NaN in expression is evaluated to false "
                                 }
                             ],
                             "closeParenToken": {
@@ -1723,6 +1787,7 @@
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "c",
+                                "value": "c",
                                 "valueText": "c",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
@@ -1783,6 +1848,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "c",
+                        "value": "c",
                         "valueText": "c"
                     },
                     "operatorToken": {
@@ -1793,7 +1859,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -1819,6 +1887,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -1833,7 +1902,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 33,
-                                    "text": "'#6.2: else branch don`t execute'"
+                                    "text": "'#6.2: else branch don`t execute'",
+                                    "value": "#6.2: else branch don`t execute",
+                                    "valueText": "#6.2: else branch don`t execute"
                                 }
                             ],
                             "closeParenToken": {

@@ -92,6 +92,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "dotToken": {
@@ -104,6 +105,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -130,7 +132,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -175,6 +179,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -199,7 +204,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 71,
-                                                "text": "'String has length property whose value is 1. Actual: String.length==='"
+                                                "text": "'String has length property whose value is 1. Actual: String.length==='",
+                                                "value": "String has length property whose value is 1. Actual: String.length===",
+                                                "valueText": "String has length property whose value is 1. Actual: String.length==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -213,6 +220,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "String",
+                                                    "value": "String",
                                                     "valueText": "String"
                                                 },
                                                 "dotToken": {
@@ -224,6 +232,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length"
                                                 }
                                             }

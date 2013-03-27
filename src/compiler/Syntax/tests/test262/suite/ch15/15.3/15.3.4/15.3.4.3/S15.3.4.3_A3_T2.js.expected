@@ -25,6 +25,7 @@
                                 "width": 8,
                                 "fullWidth": 360,
                                 "text": "Function",
+                                "value": "Function",
                                 "valueText": "Function",
                                 "hasLeadingTrivia": true,
                                 "hasLeadingComment": true,
@@ -76,7 +77,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 22,
-                                        "text": "\"this.field=\\\"green\\\"\""
+                                        "text": "\"this.field=\\\"green\\\"\"",
+                                        "value": "this.field=\"green\"",
+                                        "valueText": "this.field=\"green\""
                                     }
                                 ],
                                 "closeParenToken": {
@@ -95,6 +98,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "apply",
+                            "value": "apply",
                             "valueText": "apply"
                         }
                     },
@@ -192,7 +196,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 7,
-                            "text": "\"field\""
+                            "text": "\"field\"",
+                            "value": "field",
+                            "valueText": "field"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -224,7 +230,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"green\""
+                        "text": "\"green\"",
+                        "value": "green",
+                        "valueText": "green"
                     }
                 },
                 "closeParenToken": {
@@ -269,6 +277,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -290,7 +299,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 104,
-                                            "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'"
+                                            "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'",
+                                            "value": "#1: If thisArg is null or undefined, the called function is passed the global object as the this value",
+                                            "valueText": "#1: If thisArg is null or undefined, the called function is passed the global object as the this value"
                                         }
                                     ],
                                     "closeParenToken": {

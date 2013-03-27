@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "argumentList": {
@@ -106,7 +107,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 10,
-                                        "text": "1234567890"
+                                        "text": "1234567890",
+                                        "value": 1234567890,
+                                        "valueText": "1234567890"
                                     }
                                 }
                             ],
@@ -141,7 +144,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 13,
-                        "text": "\"-1234567890\""
+                        "text": "\"-1234567890\"",
+                        "value": "-1234567890",
+                        "valueText": "-1234567890"
                     }
                 },
                 "closeParenToken": {
@@ -186,6 +191,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -212,6 +218,8 @@
                                                 "width": 53,
                                                 "fullWidth": 54,
                                                 "text": "'#1: String(-1234567890) === \"-1234567890\". Actual: '",
+                                                "value": "#1: String(-1234567890) === \"-1234567890\". Actual: ",
+                                                "valueText": "#1: String(-1234567890) === \"-1234567890\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -248,6 +256,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "String",
+                                                        "value": "String",
                                                         "valueText": "String"
                                                     },
                                                     "argumentList": {
@@ -270,7 +279,9 @@
                                                                 "operand": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 10,
-                                                                    "text": "1234567890"
+                                                                    "text": "1234567890",
+                                                                    "value": 1234567890,
+                                                                    "valueText": "1234567890"
                                                                 }
                                                             }
                                                         ],
@@ -375,7 +386,9 @@
                         "left": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"-\""
+                            "text": "\"-\"",
+                            "value": "-",
+                            "valueText": "-"
                         },
                         "operatorToken": {
                             "kind": "PlusToken",
@@ -389,6 +402,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "argumentList": {
@@ -427,7 +441,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 10,
-                                                    "text": "1234567890"
+                                                    "text": "1234567890",
+                                                    "value": 1234567890,
+                                                    "valueText": "1234567890"
                                                 }
                                             },
                                             "closeParenToken": {
@@ -470,7 +486,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 13,
-                        "text": "\"-1234567890\""
+                        "text": "\"-1234567890\"",
+                        "value": "-1234567890",
+                        "valueText": "-1234567890"
                     }
                 },
                 "closeParenToken": {
@@ -515,6 +533,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -541,6 +560,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#2: \"-\"+String(-(-1234567890)) === \"-1234567890\". Actual: '",
+                                                "value": "#2: \"-\"+String(-(-1234567890)) === \"-1234567890\". Actual: ",
+                                                "valueText": "#2: \"-\"+String(-(-1234567890)) === \"-1234567890\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -576,7 +597,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 3,
-                                                        "text": "\"-\""
+                                                        "text": "\"-\"",
+                                                        "value": "-",
+                                                        "valueText": "-"
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -590,6 +613,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "String",
+                                                            "value": "String",
                                                             "valueText": "String"
                                                         },
                                                         "argumentList": {
@@ -628,7 +652,9 @@
                                                                             "operand": {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 10,
-                                                                                "text": "1234567890"
+                                                                                "text": "1234567890",
+                                                                                "value": 1234567890,
+                                                                                "valueText": "1234567890"
                                                                             }
                                                                         },
                                                                         "closeParenToken": {

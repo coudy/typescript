@@ -19,6 +19,7 @@
                         "width": 3,
                         "fullWidth": 413,
                         "text": "arr",
+                        "value": "arr",
                         "valueText": "arr",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -90,7 +91,9 @@
                             {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "1"
+                                "text": "1",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             {
                                 "kind": "CommaToken",
@@ -100,7 +103,9 @@
                             {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "2"
+                                "text": "2",
+                                "value": 2,
+                                "valueText": "2"
                             },
                             {
                                 "kind": "CommaToken",
@@ -110,7 +115,9 @@
                             {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "3"
+                                "text": "3",
+                                "value": 3,
+                                "valueText": "3"
                             },
                             {
                                 "kind": "CommaToken",
@@ -120,7 +127,9 @@
                             {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "4"
+                                "text": "4",
+                                "value": 4,
+                                "valueText": "4"
                             },
                             {
                                 "kind": "CommaToken",
@@ -130,7 +139,9 @@
                             {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "5"
+                                "text": "5",
+                                "value": 5,
+                                "valueText": "5"
                             }
                         ],
                         "closeBracketToken": {
@@ -166,6 +177,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -191,7 +203,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -292,6 +306,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval"
                                 },
                                 "argumentList": {
@@ -306,7 +321,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 10,
-                                            "text": "\"i in arr\""
+                                            "text": "\"i in arr\"",
+                                            "value": "i in arr",
+                                            "valueText": "i in arr"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -324,7 +341,9 @@
                             "condition": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "1"
+                                "text": "1",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "secondSemicolonToken": {
                                 "kind": "SemicolonToken",
@@ -437,6 +456,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -485,6 +505,7 @@
                                         "width": 6,
                                         "fullWidth": 8,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -506,7 +527,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 78,
-                                                "text": "'#1.1: for(eval(\"i in arr\");1;) {break;}; does not lead to throwing exception'"
+                                                "text": "'#1.1: for(eval(\"i in arr\");1;) {break;}; does not lead to throwing exception'",
+                                                "value": "#1.1: for(eval(\"i in arr\");1;) {break;}; does not lead to throwing exception",
+                                                "valueText": "#1.1: for(eval(\"i in arr\");1;) {break;}; does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -656,6 +679,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval"
                                 },
                                 "argumentList": {
@@ -670,7 +694,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 18,
-                                            "text": "\"var i = 1 in arr\""
+                                            "text": "\"var i = 1 in arr\"",
+                                            "value": "var i = 1 in arr",
+                                            "valueText": "var i = 1 in arr"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -688,7 +714,9 @@
                             "condition": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "1"
+                                "text": "1",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "secondSemicolonToken": {
                                 "kind": "SemicolonToken",
@@ -801,6 +829,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -849,6 +878,7 @@
                                         "width": 6,
                                         "fullWidth": 8,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -870,7 +900,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 86,
-                                                "text": "'#2.1: for(eval(\"var i = 1 in arr\");1;) {break;}; does not lead to throwing exception'"
+                                                "text": "'#2.1: for(eval(\"var i = 1 in arr\");1;) {break;}; does not lead to throwing exception'",
+                                                "value": "#2.1: for(eval(\"var i = 1 in arr\");1;) {break;}; does not lead to throwing exception",
+                                                "valueText": "#2.1: for(eval(\"var i = 1 in arr\");1;) {break;}; does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1020,6 +1052,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval"
                                 },
                                 "argumentList": {
@@ -1034,7 +1067,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 10,
-                                            "text": "\"1 in arr\""
+                                            "text": "\"1 in arr\"",
+                                            "value": "1 in arr",
+                                            "valueText": "1 in arr"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1052,7 +1087,9 @@
                             "condition": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "1"
+                                "text": "1",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "secondSemicolonToken": {
                                 "kind": "SemicolonToken",
@@ -1161,6 +1198,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -1209,6 +1247,7 @@
                                         "width": 6,
                                         "fullWidth": 8,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1230,7 +1269,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 78,
-                                                "text": "'#3.1: for(eval(\"1 in arr\");1;) {break;}; does not lead to throwing exception'"
+                                                "text": "'#3.1: for(eval(\"1 in arr\");1;) {break;}; does not lead to throwing exception'",
+                                                "value": "#3.1: for(eval(\"1 in arr\");1;) {break;}; does not lead to throwing exception",
+                                                "valueText": "#3.1: for(eval(\"1 in arr\");1;) {break;}; does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {

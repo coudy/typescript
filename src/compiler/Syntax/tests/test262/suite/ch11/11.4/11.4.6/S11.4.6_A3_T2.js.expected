@@ -90,6 +90,8 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "0.1",
+                            "value": 0.1,
+                            "valueText": "0.1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -115,7 +117,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "0.1"
+                        "text": "0.1",
+                        "value": 0.1,
+                        "valueText": "0.1"
                     }
                 },
                 "closeParenToken": {
@@ -160,6 +164,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -186,6 +191,8 @@
                                                 "width": 28,
                                                 "fullWidth": 29,
                                                 "text": "'#1: +0.1 === 0.1. Actual: '",
+                                                "value": "#1: +0.1 === 0.1. Actual: ",
+                                                "valueText": "#1: +0.1 === 0.1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -226,7 +233,9 @@
                                                     "operand": {
                                                         "kind": "NumericLiteral",
                                                         "width": 3,
-                                                        "text": "0.1"
+                                                        "text": "0.1",
+                                                        "value": 0.1,
+                                                        "valueText": "0.1"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -345,6 +354,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -367,7 +377,9 @@
                                         "operand": {
                                             "kind": "NumericLiteral",
                                             "width": 3,
-                                            "text": "1.1"
+                                            "text": "1.1",
+                                            "value": 1.1,
+                                            "valueText": "1.1"
                                         }
                                     }
                                 ],
@@ -411,7 +423,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.1"
+                            "text": "1.1",
+                            "value": 1.1,
+                            "valueText": "1.1"
                         }
                     }
                 },
@@ -457,6 +471,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -483,6 +498,8 @@
                                                 "width": 42,
                                                 "fullWidth": 43,
                                                 "text": "'#2: +new Number(-1.1) === -1.1. Actual: '",
+                                                "value": "#2: +new Number(-1.1) === -1.1. Actual: ",
+                                                "valueText": "#2: +new Number(-1.1) === -1.1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -540,6 +557,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "Number",
+                                                            "value": "Number",
                                                             "valueText": "Number"
                                                         },
                                                         "argumentList": {
@@ -562,7 +580,9 @@
                                                                     "operand": {
                                                                         "kind": "NumericLiteral",
                                                                         "width": 3,
-                                                                        "text": "1.1"
+                                                                        "text": "1.1",
+                                                                        "value": 1.1,
+                                                                        "valueText": "1.1"
                                                                     }
                                                                 }
                                                             ],

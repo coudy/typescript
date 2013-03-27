@@ -81,6 +81,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "a",
+                                "value": "a",
                                 "valueText": "a"
                             },
                             "equalsValueClause": {
@@ -94,7 +95,9 @@
                                 "value": {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             }
                         }
@@ -143,6 +146,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "b",
+                                "value": "b",
                                 "valueText": "b"
                             },
                             "equalsValueClause": {
@@ -156,7 +160,9 @@
                                 "value": {
                                     "kind": "FalseKeyword",
                                     "width": 5,
-                                    "text": "false"
+                                    "text": "false",
+                                    "value": false,
+                                    "valueText": "false"
                                 }
                             }
                         }
@@ -252,6 +258,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "a",
+                                                "value": "a",
                                                 "valueText": "a"
                                             },
                                             "operatorToken": {
@@ -279,6 +286,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "b",
+                                                        "value": "b",
                                                         "valueText": "b"
                                                     }
                                                 },
@@ -303,7 +311,9 @@
                                     "whenTrue": {
                                         "kind": "StringLiteral",
                                         "width": 11,
-                                        "text": "\"exception\""
+                                        "text": "\"exception\"",
+                                        "value": "exception",
+                                        "valueText": "exception"
                                     },
                                     "colonToken": {
                                         "kind": "ColonToken",
@@ -313,7 +323,9 @@
                                     "whenFalse": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "\" #1\""
+                                        "text": "\" #1\"",
+                                        "value": " #1",
+                                        "valueText": " #1"
                                     }
                                 },
                                 "closeParenToken": {
@@ -370,6 +382,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -430,6 +443,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e"
                                     },
                                     "operatorToken": {
@@ -440,7 +454,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 11,
-                                        "text": "\"exception\""
+                                        "text": "\"exception\"",
+                                        "value": "exception",
+                                        "valueText": "exception"
                                     }
                                 },
                                 "closeParenToken": {
@@ -466,6 +482,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "$ERROR",
+                                            "value": "$ERROR",
                                             "valueText": "$ERROR"
                                         },
                                         "argumentList": {
@@ -483,7 +500,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 69,
-                                                        "text": "'#1: Exception ===\"exception\"(operaton ? , ). Actual:  Exception ==='"
+                                                        "text": "'#1: Exception ===\"exception\"(operaton ? , ). Actual:  Exception ==='",
+                                                        "value": "#1: Exception ===\"exception\"(operaton ? , ). Actual:  Exception ===",
+                                                        "valueText": "#1: Exception ===\"exception\"(operaton ? , ). Actual:  Exception ==="
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -495,6 +514,7 @@
                                                         "width": 1,
                                                         "fullWidth": 3,
                                                         "text": "e",
+                                                        "value": "e",
                                                         "valueText": "e",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [

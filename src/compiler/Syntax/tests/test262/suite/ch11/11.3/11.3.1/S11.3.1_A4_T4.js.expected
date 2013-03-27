@@ -81,6 +81,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             }
                         }
@@ -130,6 +131,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -162,6 +164,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x"
                                     },
                                     "operatorToken": {
@@ -220,6 +223,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -235,6 +239,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "y",
+                                    "value": "y",
                                     "valueText": "y"
                                 }
                             ],
@@ -269,7 +274,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -314,6 +321,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -340,6 +348,8 @@
                                                 "width": 54,
                                                 "fullWidth": 55,
                                                 "text": "'#1: var x; var y = x++; y === Not-a-Number. Actual: '",
+                                                "value": "#1: var x; var y = x++; y === Not-a-Number. Actual: ",
+                                                "valueText": "#1: var x; var y = x++; y === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -373,6 +383,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "y",
+                                                    "value": "y",
                                                     "valueText": "y"
                                                 },
                                                 "closeParenToken": {
@@ -468,6 +479,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -546,6 +558,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -578,6 +591,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x"
                                     },
                                     "operatorToken": {
@@ -634,6 +648,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -659,7 +674,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -704,6 +721,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -730,6 +748,8 @@
                                                 "width": 50,
                                                 "fullWidth": 51,
                                                 "text": "'#2: var x = null; var y = x++; y === 0. Actual: '",
+                                                "value": "#2: var x = null; var y = x++; y === 0. Actual: ",
+                                                "valueText": "#2: var x = null; var y = x++; y === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -763,6 +783,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "y",
+                                                    "value": "y",
                                                     "valueText": "y"
                                                 },
                                                 "closeParenToken": {

@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -149,6 +150,7 @@
                                     "width": 8,
                                     "fullWidth": 16,
                                     "text": "Function",
+                                    "value": "Function",
                                     "valueText": "Function",
                                     "hasLeadingTrivia": true,
                                     "hasLeadingNewLine": true,
@@ -179,7 +181,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 66,
-                                            "text": "\"\\'use strict\\'; var f1 = Function( \\\"var o = {}; with (o) {};\\\")\""
+                                            "text": "\"\\'use strict\\'; var f1 = Function( \\\"var o = {}; with (o) {};\\\")\"",
+                                            "value": "'use strict'; var f1 = Function( \"var o = {}; with (o) {};\")",
+                                            "valueText": "'use strict'; var f1 = Function( \"var o = {}; with (o) {};\")"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -230,7 +234,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -290,6 +296,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -305,6 +312,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

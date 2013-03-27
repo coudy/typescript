@@ -83,6 +83,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "errorCount",
+                                "value": "errorCount",
                                 "valueText": "errorCount",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -111,7 +112,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -161,6 +164,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "count",
+                                "value": "count",
                                 "valueText": "count",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -189,7 +193,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -238,6 +244,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "indexP",
+                                "value": "indexP",
                                 "valueText": "indexP"
                             }
                         }
@@ -287,6 +294,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "indexO",
+                                "value": "indexO",
                                 "valueText": "indexO",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -315,7 +323,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -382,6 +392,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "index",
+                                "value": "index",
                                 "valueText": "index",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -410,7 +421,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -437,6 +450,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "index",
+                        "value": "index",
                         "valueText": "index",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -462,7 +476,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 5,
-                        "text": "65535"
+                        "text": "65535",
+                        "value": 65535,
+                        "valueText": "65535"
                     }
                 },
                 "secondSemicolonToken": {
@@ -485,6 +501,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "index",
+                        "value": "index",
                         "valueText": "index"
                     },
                     "operatorToken": {
@@ -575,6 +592,7 @@
                                             "width": 5,
                                             "fullWidth": 6,
                                             "text": "index",
+                                            "value": "index",
                                             "valueText": "index",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -600,7 +618,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 6,
-                                            "text": "0x0030"
+                                            "text": "0x0030",
+                                            "value": 0,
+                                            "valueText": "0"
                                         }
                                     },
                                     "closeParenToken": {
@@ -646,6 +666,7 @@
                                             "width": 5,
                                             "fullWidth": 6,
                                             "text": "index",
+                                            "value": "index",
                                             "valueText": "index",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -671,7 +692,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 6,
-                                            "text": "0x0039"
+                                            "text": "0x0039",
+                                            "value": 0,
+                                            "valueText": "0"
                                         }
                                     },
                                     "closeParenToken": {
@@ -752,6 +775,7 @@
                                                         "width": 3,
                                                         "fullWidth": 4,
                                                         "text": "hex",
+                                                        "value": "hex",
                                                         "valueText": "hex",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -784,6 +808,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 18,
                                                                 "text": "decimalToHexString",
+                                                                "value": "decimalToHexString",
                                                                 "valueText": "decimalToHexString"
                                                             },
                                                             "argumentList": {
@@ -799,6 +824,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 5,
                                                                         "text": "index",
+                                                                        "value": "index",
                                                                         "valueText": "index"
                                                                     }
                                                                 ],
@@ -866,6 +892,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 10,
                                                     "text": "parseFloat",
+                                                    "value": "parseFloat",
                                                     "valueText": "parseFloat"
                                                 },
                                                 "argumentList": {
@@ -885,6 +912,8 @@
                                                                 "width": 7,
                                                                 "fullWidth": 8,
                                                                 "text": "\"0.1e1\"",
+                                                                "value": "0.1e1",
+                                                                "valueText": "0.1e1",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -916,6 +945,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 6,
                                                                         "text": "String",
+                                                                        "value": "String",
                                                                         "valueText": "String"
                                                                     },
                                                                     "dotToken": {
@@ -927,6 +957,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 12,
                                                                         "text": "fromCharCode",
+                                                                        "value": "fromCharCode",
                                                                         "valueText": "fromCharCode"
                                                                     }
                                                                 },
@@ -943,6 +974,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 5,
                                                                             "text": "index",
+                                                                            "value": "index",
                                                                             "valueText": "index"
                                                                         }
                                                                     ],
@@ -986,7 +1018,9 @@
                                             "right": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         },
                                         "closeParenToken": {
@@ -1060,6 +1094,7 @@
                                                             "width": 6,
                                                             "fullWidth": 7,
                                                             "text": "indexO",
+                                                            "value": "indexO",
                                                             "valueText": "indexO",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -1085,7 +1120,9 @@
                                                         "right": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "0"
+                                                            "text": "0",
+                                                            "value": 0,
+                                                            "valueText": "0"
                                                         }
                                                     },
                                                     "closeParenToken": {
@@ -1134,6 +1171,7 @@
                                                                         "width": 6,
                                                                         "fullWidth": 15,
                                                                         "text": "indexO",
+                                                                        "value": "indexO",
                                                                         "valueText": "indexO",
                                                                         "hasLeadingTrivia": true,
                                                                         "hasTrailingTrivia": true,
@@ -1167,6 +1205,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 5,
                                                                         "text": "index",
+                                                                        "value": "index",
                                                                         "valueText": "index"
                                                                     }
                                                                 },
@@ -1288,6 +1327,7 @@
                                                                                     "width": 5,
                                                                                     "fullWidth": 6,
                                                                                     "text": "index",
+                                                                                    "value": "index",
                                                                                     "valueText": "index",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -1314,6 +1354,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 6,
                                                                                     "text": "indexP",
+                                                                                    "value": "indexP",
                                                                                     "valueText": "indexP"
                                                                                 }
                                                                             },
@@ -1347,7 +1388,9 @@
                                                                         "right": {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 1,
-                                                                            "text": "1"
+                                                                            "text": "1",
+                                                                            "value": 1,
+                                                                            "valueText": "1"
                                                                         }
                                                                     },
                                                                     "closeParenToken": {
@@ -1432,6 +1475,7 @@
                                                                                                 "width": 6,
                                                                                                 "fullWidth": 7,
                                                                                                 "text": "indexP",
+                                                                                                "value": "indexP",
                                                                                                 "valueText": "indexP",
                                                                                                 "hasTrailingTrivia": true,
                                                                                                 "trailingTrivia": [
@@ -1458,6 +1502,7 @@
                                                                                                 "kind": "IdentifierName",
                                                                                                 "width": 6,
                                                                                                 "text": "indexO",
+                                                                                                "value": "indexO",
                                                                                                 "valueText": "indexO"
                                                                                             }
                                                                                         },
@@ -1491,7 +1536,9 @@
                                                                                     "right": {
                                                                                         "kind": "NumericLiteral",
                                                                                         "width": 1,
-                                                                                        "text": "0"
+                                                                                        "text": "0",
+                                                                                        "value": 0,
+                                                                                        "valueText": "0"
                                                                                     }
                                                                                 },
                                                                                 "closeParenToken": {
@@ -1561,6 +1608,7 @@
                                                                                                             "width": 4,
                                                                                                             "fullWidth": 5,
                                                                                                             "text": "hexP",
+                                                                                                            "value": "hexP",
                                                                                                             "valueText": "hexP",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "trailingTrivia": [
@@ -1593,6 +1641,7 @@
                                                                                                                     "kind": "IdentifierName",
                                                                                                                     "width": 18,
                                                                                                                     "text": "decimalToHexString",
+                                                                                                                    "value": "decimalToHexString",
                                                                                                                     "valueText": "decimalToHexString"
                                                                                                                 },
                                                                                                                 "argumentList": {
@@ -1608,6 +1657,7 @@
                                                                                                                             "kind": "IdentifierName",
                                                                                                                             "width": 6,
                                                                                                                             "text": "indexP",
+                                                                                                                            "value": "indexP",
                                                                                                                             "valueText": "indexP"
                                                                                                                         }
                                                                                                                     ],
@@ -1673,6 +1723,7 @@
                                                                                                             "width": 4,
                                                                                                             "fullWidth": 5,
                                                                                                             "text": "hexO",
+                                                                                                            "value": "hexO",
                                                                                                             "valueText": "hexO",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "trailingTrivia": [
@@ -1705,6 +1756,7 @@
                                                                                                                     "kind": "IdentifierName",
                                                                                                                     "width": 18,
                                                                                                                     "text": "decimalToHexString",
+                                                                                                                    "value": "decimalToHexString",
                                                                                                                     "valueText": "decimalToHexString"
                                                                                                                 },
                                                                                                                 "argumentList": {
@@ -1720,6 +1772,7 @@
                                                                                                                             "kind": "IdentifierName",
                                                                                                                             "width": 6,
                                                                                                                             "text": "indexO",
+                                                                                                                            "value": "indexO",
                                                                                                                             "valueText": "indexO"
                                                                                                                         }
                                                                                                                     ],
@@ -1760,6 +1813,7 @@
                                                                                                     "width": 6,
                                                                                                     "fullWidth": 18,
                                                                                                     "text": "$ERROR",
+                                                                                                    "value": "$ERROR",
                                                                                                     "valueText": "$ERROR",
                                                                                                     "hasLeadingTrivia": true,
                                                                                                     "leadingTrivia": [
@@ -1795,6 +1849,8 @@
                                                                                                                             "width": 3,
                                                                                                                             "fullWidth": 4,
                                                                                                                             "text": "'#'",
+                                                                                                                            "value": "#",
+                                                                                                                            "valueText": "#",
                                                                                                                             "hasTrailingTrivia": true,
                                                                                                                             "trailingTrivia": [
                                                                                                                                 {
@@ -1821,6 +1877,7 @@
                                                                                                                             "width": 4,
                                                                                                                             "fullWidth": 5,
                                                                                                                             "text": "hexO",
+                                                                                                                            "value": "hexO",
                                                                                                                             "valueText": "hexO",
                                                                                                                             "hasTrailingTrivia": true,
                                                                                                                             "trailingTrivia": [
@@ -1849,6 +1906,8 @@
                                                                                                                         "width": 3,
                                                                                                                         "fullWidth": 4,
                                                                                                                         "text": "'-'",
+                                                                                                                        "value": "-",
+                                                                                                                        "valueText": "-",
                                                                                                                         "hasTrailingTrivia": true,
                                                                                                                         "trailingTrivia": [
                                                                                                                             {
@@ -1876,6 +1935,7 @@
                                                                                                                     "width": 4,
                                                                                                                     "fullWidth": 5,
                                                                                                                     "text": "hexP",
+                                                                                                                    "value": "hexP",
                                                                                                                     "valueText": "hexP",
                                                                                                                     "hasTrailingTrivia": true,
                                                                                                                     "trailingTrivia": [
@@ -1902,7 +1962,9 @@
                                                                                                             "right": {
                                                                                                                 "kind": "StringLiteral",
                                                                                                                 "width": 3,
-                                                                                                                "text": "' '"
+                                                                                                                "text": "' '",
+                                                                                                                "value": " ",
+                                                                                                                "valueText": " "
                                                                                                             }
                                                                                                         }
                                                                                                     ],
@@ -2032,6 +2094,7 @@
                                                                                                                 "width": 4,
                                                                                                                 "fullWidth": 5,
                                                                                                                 "text": "hexP",
+                                                                                                                "value": "hexP",
                                                                                                                 "valueText": "hexP",
                                                                                                                 "hasTrailingTrivia": true,
                                                                                                                 "trailingTrivia": [
@@ -2064,6 +2127,7 @@
                                                                                                                         "kind": "IdentifierName",
                                                                                                                         "width": 18,
                                                                                                                         "text": "decimalToHexString",
+                                                                                                                        "value": "decimalToHexString",
                                                                                                                         "valueText": "decimalToHexString"
                                                                                                                     },
                                                                                                                     "argumentList": {
@@ -2079,6 +2143,7 @@
                                                                                                                                 "kind": "IdentifierName",
                                                                                                                                 "width": 6,
                                                                                                                                 "text": "indexP",
+                                                                                                                                "value": "indexP",
                                                                                                                                 "valueText": "indexP"
                                                                                                                             }
                                                                                                                         ],
@@ -2119,6 +2184,7 @@
                                                                                                         "width": 6,
                                                                                                         "fullWidth": 18,
                                                                                                         "text": "$ERROR",
+                                                                                                        "value": "$ERROR",
                                                                                                         "valueText": "$ERROR",
                                                                                                         "hasLeadingTrivia": true,
                                                                                                         "leadingTrivia": [
@@ -2148,6 +2214,8 @@
                                                                                                                         "width": 3,
                                                                                                                         "fullWidth": 4,
                                                                                                                         "text": "'#'",
+                                                                                                                        "value": "#",
+                                                                                                                        "valueText": "#",
                                                                                                                         "hasTrailingTrivia": true,
                                                                                                                         "trailingTrivia": [
                                                                                                                             {
@@ -2174,6 +2242,7 @@
                                                                                                                         "width": 4,
                                                                                                                         "fullWidth": 5,
                                                                                                                         "text": "hexP",
+                                                                                                                        "value": "hexP",
                                                                                                                         "valueText": "hexP",
                                                                                                                         "hasTrailingTrivia": true,
                                                                                                                         "trailingTrivia": [
@@ -2200,7 +2269,9 @@
                                                                                                                 "right": {
                                                                                                                     "kind": "StringLiteral",
                                                                                                                     "width": 3,
-                                                                                                                    "text": "' '"
+                                                                                                                    "text": "' '",
+                                                                                                                    "value": " ",
+                                                                                                                    "valueText": " "
                                                                                                                 }
                                                                                                             }
                                                                                                         ],
@@ -2266,6 +2337,7 @@
                                                                                         "width": 6,
                                                                                         "fullWidth": 17,
                                                                                         "text": "indexO",
+                                                                                        "value": "indexO",
                                                                                         "valueText": "indexO",
                                                                                         "hasLeadingTrivia": true,
                                                                                         "hasTrailingTrivia": true,
@@ -2299,6 +2371,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 5,
                                                                                         "text": "index",
+                                                                                        "value": "index",
                                                                                         "valueText": "index"
                                                                                     }
                                                                                 },
@@ -2381,6 +2454,7 @@
                                                             "width": 6,
                                                             "fullWidth": 13,
                                                             "text": "indexP",
+                                                            "value": "indexP",
                                                             "valueText": "indexP",
                                                             "hasLeadingTrivia": true,
                                                             "hasTrailingTrivia": true,
@@ -2414,6 +2488,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "index",
+                                                            "value": "index",
                                                             "valueText": "index"
                                                         }
                                                     },
@@ -2443,6 +2518,7 @@
                                                             "width": 10,
                                                             "fullWidth": 16,
                                                             "text": "errorCount",
+                                                            "value": "errorCount",
                                                             "valueText": "errorCount",
                                                             "hasLeadingTrivia": true,
                                                             "leadingTrivia": [
@@ -2516,6 +2592,7 @@
                                                 "width": 5,
                                                 "fullWidth": 9,
                                                 "text": "count",
+                                                "value": "count",
                                                 "valueText": "count",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -2628,6 +2705,7 @@
                         "width": 10,
                         "fullWidth": 11,
                         "text": "errorCount",
+                        "value": "errorCount",
                         "valueText": "errorCount",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -2653,7 +2731,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -2734,6 +2814,7 @@
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "indexP",
+                                            "value": "indexP",
                                             "valueText": "indexP",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -2760,6 +2841,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "indexO",
+                                            "value": "indexO",
                                             "valueText": "indexO"
                                         }
                                     },
@@ -2793,7 +2875,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             },
                             "closeParenToken": {
@@ -2863,6 +2947,7 @@
                                                         "width": 4,
                                                         "fullWidth": 5,
                                                         "text": "hexP",
+                                                        "value": "hexP",
                                                         "valueText": "hexP",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -2895,6 +2980,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 18,
                                                                 "text": "decimalToHexString",
+                                                                "value": "decimalToHexString",
                                                                 "valueText": "decimalToHexString"
                                                             },
                                                             "argumentList": {
@@ -2910,6 +2996,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 6,
                                                                         "text": "indexP",
+                                                                        "value": "indexP",
                                                                         "valueText": "indexP"
                                                                     }
                                                                 ],
@@ -2975,6 +3062,7 @@
                                                         "width": 4,
                                                         "fullWidth": 5,
                                                         "text": "hexO",
+                                                        "value": "hexO",
                                                         "valueText": "hexO",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -3007,6 +3095,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 18,
                                                                 "text": "decimalToHexString",
+                                                                "value": "decimalToHexString",
                                                                 "valueText": "decimalToHexString"
                                                             },
                                                             "argumentList": {
@@ -3022,6 +3111,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 6,
                                                                         "text": "indexO",
+                                                                        "value": "indexO",
                                                                         "valueText": "indexO"
                                                                     }
                                                                 ],
@@ -3062,6 +3152,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -3097,6 +3188,8 @@
                                                                         "width": 3,
                                                                         "fullWidth": 4,
                                                                         "text": "'#'",
+                                                                        "value": "#",
+                                                                        "valueText": "#",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -3123,6 +3216,7 @@
                                                                         "width": 4,
                                                                         "fullWidth": 5,
                                                                         "text": "hexO",
+                                                                        "value": "hexO",
                                                                         "valueText": "hexO",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
@@ -3151,6 +3245,8 @@
                                                                     "width": 3,
                                                                     "fullWidth": 4,
                                                                     "text": "'-'",
+                                                                    "value": "-",
+                                                                    "valueText": "-",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -3178,6 +3274,7 @@
                                                                 "width": 4,
                                                                 "fullWidth": 5,
                                                                 "text": "hexP",
+                                                                "value": "hexP",
                                                                 "valueText": "hexP",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
@@ -3204,7 +3301,9 @@
                                                         "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 3,
-                                                            "text": "' '"
+                                                            "text": "' '",
+                                                            "value": " ",
+                                                            "valueText": " "
                                                         }
                                                     }
                                                 ],
@@ -3322,6 +3421,7 @@
                                                             "width": 4,
                                                             "fullWidth": 5,
                                                             "text": "hexP",
+                                                            "value": "hexP",
                                                             "valueText": "hexP",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -3354,6 +3454,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 18,
                                                                     "text": "decimalToHexString",
+                                                                    "value": "decimalToHexString",
                                                                     "valueText": "decimalToHexString"
                                                                 },
                                                                 "argumentList": {
@@ -3369,6 +3470,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 6,
                                                                             "text": "indexP",
+                                                                            "value": "indexP",
                                                                             "valueText": "indexP"
                                                                         }
                                                                     ],
@@ -3409,6 +3511,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -3438,6 +3541,8 @@
                                                                     "width": 3,
                                                                     "fullWidth": 4,
                                                                     "text": "'#'",
+                                                                    "value": "#",
+                                                                    "valueText": "#",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -3464,6 +3569,7 @@
                                                                     "width": 4,
                                                                     "fullWidth": 5,
                                                                     "text": "hexP",
+                                                                    "value": "hexP",
                                                                     "valueText": "hexP",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
@@ -3490,7 +3596,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "' '"
+                                                                "text": "' '",
+                                                                "value": " ",
+                                                                "valueText": " "
                                                             }
                                                         }
                                                     ],
@@ -3556,6 +3664,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3591,6 +3700,8 @@
                                                             "width": 15,
                                                             "fullWidth": 16,
                                                             "text": "'Total error: '",
+                                                            "value": "Total error: ",
+                                                            "valueText": "Total error: ",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -3617,6 +3728,7 @@
                                                             "width": 10,
                                                             "fullWidth": 11,
                                                             "text": "errorCount",
+                                                            "value": "errorCount",
                                                             "valueText": "errorCount",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -3645,6 +3757,8 @@
                                                         "width": 28,
                                                         "fullWidth": 29,
                                                         "text": "' bad Unicode character in '",
+                                                        "value": " bad Unicode character in ",
+                                                        "valueText": " bad Unicode character in ",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -3672,6 +3786,7 @@
                                                     "width": 5,
                                                     "fullWidth": 6,
                                                     "text": "count",
+                                                    "value": "count",
                                                     "valueText": "count",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -3698,7 +3813,9 @@
                                             "right": {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "' '"
+                                                "text": "' '",
+                                                "value": " ",
+                                                "valueText": " "
                                             }
                                         }
                                     ],
@@ -3771,6 +3888,7 @@
                     "kind": "IdentifierName",
                     "width": 18,
                     "text": "decimalToHexString",
+                    "value": "decimalToHexString",
                     "valueText": "decimalToHexString"
                 },
                 "callSignature": {
@@ -3792,6 +3910,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "n",
+                                    "value": "n",
                                     "valueText": "n"
                                 }
                             }
@@ -3841,6 +3960,7 @@
                                     "width": 1,
                                     "fullWidth": 4,
                                     "text": "n",
+                                    "value": "n",
                                     "valueText": "n",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -3877,6 +3997,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -3892,6 +4013,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "n",
+                                                "value": "n",
                                                 "valueText": "n"
                                             }
                                         ],
@@ -3954,6 +4076,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "h",
+                                            "value": "h",
                                             "valueText": "h",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -3982,7 +4105,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 2,
-                                                "text": "\"\""
+                                                "text": "\"\"",
+                                                "value": "",
+                                                "valueText": ""
                                             }
                                         }
                                     }
@@ -4057,6 +4182,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "i",
+                                            "value": "i",
                                             "valueText": "i",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -4085,7 +4211,9 @@
                                             "value": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "3"
+                                                "text": "3",
+                                                "value": 3,
+                                                "valueText": "3"
                                             }
                                         }
                                     }
@@ -4113,6 +4241,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "i",
+                                    "value": "i",
                                     "valueText": "i",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -4138,7 +4267,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             },
                             "secondSemicolonToken": {
@@ -4161,6 +4292,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "i",
+                                    "value": "i",
                                     "valueText": "i"
                                 },
                                 "operatorToken": {
@@ -4239,6 +4371,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "n",
+                                                "value": "n",
                                                 "valueText": "n",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -4271,6 +4404,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "Math",
+                                                        "value": "Math",
                                                         "valueText": "Math"
                                                     },
                                                     "dotToken": {
@@ -4282,6 +4416,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "pow",
+                                                        "value": "pow",
                                                         "valueText": "pow"
                                                     }
                                                 },
@@ -4297,7 +4432,9 @@
                                                         {
                                                             "kind": "NumericLiteral",
                                                             "width": 2,
-                                                            "text": "16"
+                                                            "text": "16",
+                                                            "value": 16,
+                                                            "valueText": "16"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -4316,6 +4453,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "i",
+                                                            "value": "i",
                                                             "valueText": "i"
                                                         }
                                                     ],
@@ -4398,6 +4536,7 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": "t",
+                                                                    "value": "t",
                                                                     "valueText": "t",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
@@ -4435,6 +4574,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 4,
                                                                                 "text": "Math",
+                                                                                "value": "Math",
                                                                                 "valueText": "Math"
                                                                             },
                                                                             "dotToken": {
@@ -4446,6 +4586,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 5,
                                                                                 "text": "floor",
+                                                                                "value": "floor",
                                                                                 "valueText": "floor"
                                                                             }
                                                                         },
@@ -4468,6 +4609,7 @@
                                                                                         "width": 1,
                                                                                         "fullWidth": 2,
                                                                                         "text": "n",
+                                                                                        "value": "n",
                                                                                         "valueText": "n",
                                                                                         "hasTrailingTrivia": true,
                                                                                         "trailingTrivia": [
@@ -4500,6 +4642,7 @@
                                                                                                 "kind": "IdentifierName",
                                                                                                 "width": 4,
                                                                                                 "text": "Math",
+                                                                                                "value": "Math",
                                                                                                 "valueText": "Math"
                                                                                             },
                                                                                             "dotToken": {
@@ -4511,6 +4654,7 @@
                                                                                                 "kind": "IdentifierName",
                                                                                                 "width": 3,
                                                                                                 "text": "pow",
+                                                                                                "value": "pow",
                                                                                                 "valueText": "pow"
                                                                                             }
                                                                                         },
@@ -4526,7 +4670,9 @@
                                                                                                 {
                                                                                                     "kind": "NumericLiteral",
                                                                                                     "width": 2,
-                                                                                                    "text": "16"
+                                                                                                    "text": "16",
+                                                                                                    "value": 16,
+                                                                                                    "valueText": "16"
                                                                                                 },
                                                                                                 {
                                                                                                     "kind": "CommaToken",
@@ -4545,6 +4691,7 @@
                                                                                                     "kind": "IdentifierName",
                                                                                                     "width": 1,
                                                                                                     "text": "i",
+                                                                                                    "value": "i",
                                                                                                     "valueText": "i"
                                                                                                 }
                                                                                             ],
@@ -4594,6 +4741,7 @@
                                                             "width": 1,
                                                             "fullWidth": 8,
                                                             "text": "n",
+                                                            "value": "n",
                                                             "valueText": "n",
                                                             "hasLeadingTrivia": true,
                                                             "hasTrailingTrivia": true,
@@ -4631,6 +4779,7 @@
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": "t",
+                                                                "value": "t",
                                                                 "valueText": "t",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
@@ -4663,6 +4812,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 4,
                                                                         "text": "Math",
+                                                                        "value": "Math",
                                                                         "valueText": "Math"
                                                                     },
                                                                     "dotToken": {
@@ -4674,6 +4824,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 3,
                                                                         "text": "pow",
+                                                                        "value": "pow",
                                                                         "valueText": "pow"
                                                                     }
                                                                 },
@@ -4689,7 +4840,9 @@
                                                                         {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 2,
-                                                                            "text": "16"
+                                                                            "text": "16",
+                                                                            "value": 16,
+                                                                            "valueText": "16"
                                                                         },
                                                                         {
                                                                             "kind": "CommaToken",
@@ -4708,6 +4861,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "i",
+                                                                            "value": "i",
                                                                             "valueText": "i"
                                                                         }
                                                                     ],
@@ -4781,6 +4935,7 @@
                                                             "width": 1,
                                                             "fullWidth": 2,
                                                             "text": "t",
+                                                            "value": "t",
                                                             "valueText": "t",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -4808,6 +4963,8 @@
                                                             "width": 2,
                                                             "fullWidth": 3,
                                                             "text": "10",
+                                                            "value": 10,
+                                                            "valueText": "10",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -4892,6 +5049,7 @@
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "t",
+                                                                        "value": "t",
                                                                         "valueText": "t",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
@@ -4919,6 +5077,8 @@
                                                                         "width": 2,
                                                                         "fullWidth": 3,
                                                                         "text": "10",
+                                                                        "value": 10,
+                                                                        "valueText": "10",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -4969,6 +5129,7 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "h",
+                                                                                    "value": "h",
                                                                                     "valueText": "h",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -4994,7 +5155,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 3,
-                                                                                    "text": "\"A\""
+                                                                                    "text": "\"A\"",
+                                                                                    "value": "A",
+                                                                                    "valueText": "A"
                                                                                 }
                                                                             },
                                                                             "semicolonToken": {
@@ -5072,6 +5235,7 @@
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "t",
+                                                                        "value": "t",
                                                                         "valueText": "t",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
@@ -5099,6 +5263,8 @@
                                                                         "width": 2,
                                                                         "fullWidth": 3,
                                                                         "text": "11",
+                                                                        "value": 11,
+                                                                        "valueText": "11",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -5149,6 +5315,7 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "h",
+                                                                                    "value": "h",
                                                                                     "valueText": "h",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -5174,7 +5341,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 3,
-                                                                                    "text": "\"B\""
+                                                                                    "text": "\"B\"",
+                                                                                    "value": "B",
+                                                                                    "valueText": "B"
                                                                                 }
                                                                             },
                                                                             "semicolonToken": {
@@ -5252,6 +5421,7 @@
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "t",
+                                                                        "value": "t",
                                                                         "valueText": "t",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
@@ -5279,6 +5449,8 @@
                                                                         "width": 2,
                                                                         "fullWidth": 3,
                                                                         "text": "12",
+                                                                        "value": 12,
+                                                                        "valueText": "12",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -5329,6 +5501,7 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "h",
+                                                                                    "value": "h",
                                                                                     "valueText": "h",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -5354,7 +5527,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 3,
-                                                                                    "text": "\"C\""
+                                                                                    "text": "\"C\"",
+                                                                                    "value": "C",
+                                                                                    "valueText": "C"
                                                                                 }
                                                                             },
                                                                             "semicolonToken": {
@@ -5432,6 +5607,7 @@
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "t",
+                                                                        "value": "t",
                                                                         "valueText": "t",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
@@ -5459,6 +5635,8 @@
                                                                         "width": 2,
                                                                         "fullWidth": 3,
                                                                         "text": "13",
+                                                                        "value": 13,
+                                                                        "valueText": "13",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -5509,6 +5687,7 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "h",
+                                                                                    "value": "h",
                                                                                     "valueText": "h",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -5534,7 +5713,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 3,
-                                                                                    "text": "\"D\""
+                                                                                    "text": "\"D\"",
+                                                                                    "value": "D",
+                                                                                    "valueText": "D"
                                                                                 }
                                                                             },
                                                                             "semicolonToken": {
@@ -5612,6 +5793,7 @@
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "t",
+                                                                        "value": "t",
                                                                         "valueText": "t",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
@@ -5639,6 +5821,8 @@
                                                                         "width": 2,
                                                                         "fullWidth": 3,
                                                                         "text": "14",
+                                                                        "value": 14,
+                                                                        "valueText": "14",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -5689,6 +5873,7 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "h",
+                                                                                    "value": "h",
                                                                                     "valueText": "h",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -5714,7 +5899,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 3,
-                                                                                    "text": "\"E\""
+                                                                                    "text": "\"E\"",
+                                                                                    "value": "E",
+                                                                                    "valueText": "E"
                                                                                 }
                                                                             },
                                                                             "semicolonToken": {
@@ -5792,6 +5979,7 @@
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "t",
+                                                                        "value": "t",
                                                                         "valueText": "t",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
@@ -5819,6 +6007,8 @@
                                                                         "width": 2,
                                                                         "fullWidth": 3,
                                                                         "text": "15",
+                                                                        "value": 15,
+                                                                        "valueText": "15",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -5869,6 +6059,7 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "h",
+                                                                                    "value": "h",
                                                                                     "valueText": "h",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -5894,7 +6085,9 @@
                                                                                 "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 3,
-                                                                                    "text": "\"F\""
+                                                                                    "text": "\"F\"",
+                                                                                    "value": "F",
+                                                                                    "valueText": "F"
                                                                                 }
                                                                             },
                                                                             "semicolonToken": {
@@ -5995,6 +6188,7 @@
                                                                             "width": 1,
                                                                             "fullWidth": 10,
                                                                             "text": "h",
+                                                                            "value": "h",
                                                                             "valueText": "h",
                                                                             "hasLeadingTrivia": true,
                                                                             "hasTrailingTrivia": true,
@@ -6031,6 +6225,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 6,
                                                                                 "text": "String",
+                                                                                "value": "String",
                                                                                 "valueText": "String"
                                                                             },
                                                                             "argumentList": {
@@ -6046,6 +6241,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 1,
                                                                                         "text": "t",
+                                                                                        "value": "t",
                                                                                         "valueText": "t"
                                                                                     }
                                                                                 ],
@@ -6164,6 +6360,7 @@
                                                                 "width": 1,
                                                                 "fullWidth": 8,
                                                                 "text": "h",
+                                                                "value": "h",
                                                                 "valueText": "h",
                                                                 "hasLeadingTrivia": true,
                                                                 "hasTrailingTrivia": true,
@@ -6196,7 +6393,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"0\""
+                                                                "text": "\"0\"",
+                                                                "value": "0",
+                                                                "valueText": "0"
                                                             }
                                                         },
                                                         "semicolonToken": {
@@ -6290,6 +6489,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "h",
+                                "value": "h",
                                 "valueText": "h"
                             },
                             "semicolonToken": {

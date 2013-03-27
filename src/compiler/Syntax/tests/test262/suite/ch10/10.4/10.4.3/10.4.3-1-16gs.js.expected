@@ -95,6 +95,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "f",
+                                "value": "f",
                                 "valueText": "f",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -140,6 +141,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "Function",
+                                        "value": "Function",
                                         "valueText": "Function"
                                     },
                                     "argumentList": {
@@ -154,7 +156,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 38,
-                                                "text": "\"\\\"use strict\\\";\\nreturn typeof this;\""
+                                                "text": "\"\\\"use strict\\\";\\nreturn typeof this;\"",
+                                                "value": "\"use strict\";\nreturn typeof this;",
+                                                "valueText": "\"use strict\";\nreturn typeof this;"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -214,6 +218,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "f",
+                            "value": "f",
                             "valueText": "f"
                         },
                         "argumentList": {
@@ -256,7 +261,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -316,7 +323,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 29,
-                                "text": "\"'this' had incorrect value!\""
+                                "text": "\"'this' had incorrect value!\"",
+                                "value": "'this' had incorrect value!",
+                                "valueText": "'this' had incorrect value!"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",

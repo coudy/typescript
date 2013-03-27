@@ -75,6 +75,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -120,6 +121,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "RegExp",
+                                        "value": "RegExp",
                                         "valueText": "RegExp"
                                     },
                                     "argumentList": {
@@ -134,7 +136,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 4,
-                                                "text": "\"00\""
+                                                "text": "\"00\"",
+                                                "value": "00",
+                                                "valueText": "00"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -180,6 +184,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number",
                                 "hasLeadingTrivia": true,
                                 "hasLeadingNewLine": true,
@@ -199,6 +204,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -211,6 +217,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "split",
+                            "value": "split",
                             "valueText": "split"
                         }
                     },
@@ -229,6 +236,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -240,6 +248,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -252,6 +261,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "split",
+                            "value": "split",
                             "valueText": "split"
                         }
                     }
@@ -308,6 +318,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "__split",
+                                "value": "__split",
                                 "valueText": "__split",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -342,7 +353,9 @@
                                         "expression": {
                                             "kind": "NumericLiteral",
                                             "width": 26,
-                                            "text": "6776767677.006771122677555"
+                                            "text": "6776767677.006771122677555",
+                                            "value": 6776767677.006771,
+                                            "valueText": "6776767677.006771"
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -353,6 +366,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "split",
+                                            "value": "split",
                                             "valueText": "split"
                                         }
                                     },
@@ -369,6 +383,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "__re",
+                                                "value": "__re",
                                                 "valueText": "__re"
                                             },
                                             {
@@ -391,6 +406,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "eval",
+                                                    "value": "eval",
                                                     "valueText": "eval"
                                                 },
                                                 "argumentList": {
@@ -405,7 +421,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 7,
-                                                            "text": "\"\\\"1\\\"\""
+                                                            "text": "\"\\\"1\\\"\"",
+                                                            "value": "\"1\"",
+                                                            "valueText": "\"1\""
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -512,6 +530,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -538,7 +557,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -583,6 +604,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -607,7 +629,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 183,
-                                                "text": "'#1: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); typeof __split === \"object\". Actual: '"
+                                                "text": "'#1: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); typeof __split === \"object\". Actual: '",
+                                                "value": "#1: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); typeof __split === \"object\". Actual: ",
+                                                "valueText": "#1: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); typeof __split === \"object\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -635,6 +659,7 @@
                                                     "width": 7,
                                                     "fullWidth": 8,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -761,6 +786,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -773,6 +799,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -799,6 +827,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "Array",
+                        "value": "Array",
                         "valueText": "Array"
                     }
                 },
@@ -847,6 +876,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -873,7 +903,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 185,
-                                                "text": "'#2: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.constructor === Array. Actual: '"
+                                                "text": "'#2: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.constructor === Array. Actual: '",
+                                                "value": "#2: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.constructor === Array. Actual: ",
+                                                "valueText": "#2: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.constructor === Array. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -888,6 +920,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -900,6 +933,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -1022,6 +1057,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -1034,6 +1070,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1060,7 +1097,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1105,6 +1144,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1129,7 +1169,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 176,
-                                                "text": "'#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.length === 1. Actual: '"
+                                                "text": "'#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.length === 1. Actual: '",
+                                                "value": "#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.length === 1. Actual: ",
+                                                "valueText": "#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split.length === 1. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1143,6 +1185,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -1155,6 +1198,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -1278,6 +1322,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -1288,7 +1333,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1320,7 +1367,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 13,
-                        "text": "\"6776767677.\""
+                        "text": "\"6776767677.\"",
+                        "value": "6776767677.",
+                        "valueText": "6776767677."
                     }
                 },
                 "closeParenToken": {
@@ -1365,6 +1414,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1389,7 +1439,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 184,
-                                                "text": "'#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split[0] === \"6776767677.\". Actual: '"
+                                                "text": "'#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split[0] === \"6776767677.\". Actual: '",
+                                                "value": "#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split[0] === \"6776767677.\". Actual: ",
+                                                "valueText": "#3: var __re =  new RegExp(\"00\"); Number.prototype.split=String.prototype.split; __split = 6776767677.006771122677555.split(__re, eval(\"\"1\"\")); __split[0] === \"6776767677.\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1403,6 +1455,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -1413,7 +1466,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "0"
+                                                    "text": "0",
+                                                    "value": 0,
+                                                    "valueText": "0"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",

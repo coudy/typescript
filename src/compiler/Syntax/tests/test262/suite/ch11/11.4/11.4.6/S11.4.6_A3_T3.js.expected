@@ -90,6 +90,8 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "\"1\"",
+                            "value": "1",
+                            "valueText": "1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -115,7 +117,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -160,6 +164,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -186,6 +191,8 @@
                                                 "width": 26,
                                                 "fullWidth": 27,
                                                 "text": "'#1: +\"1\" === 1. Actual: '",
+                                                "value": "#1: +\"1\" === 1. Actual: ",
+                                                "valueText": "#1: +\"1\" === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -226,7 +233,9 @@
                                                     "operand": {
                                                         "kind": "StringLiteral",
                                                         "width": 3,
-                                                        "text": "\"1\""
+                                                        "text": "\"1\"",
+                                                        "value": "1",
+                                                        "valueText": "1"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -324,6 +333,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -346,7 +356,9 @@
                                     "operand": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"x\""
+                                        "text": "\"x\"",
+                                        "value": "x",
+                                        "valueText": "x"
                                     }
                                 }
                             ],
@@ -381,7 +393,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -426,6 +440,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -452,6 +467,8 @@
                                                 "width": 37,
                                                 "fullWidth": 38,
                                                 "text": "'#2: +\"x\" === Not-a-Number. Actual: '",
+                                                "value": "#2: +\"x\" === Not-a-Number. Actual: ",
+                                                "valueText": "#2: +\"x\" === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -492,7 +509,9 @@
                                                     "operand": {
                                                         "kind": "StringLiteral",
                                                         "width": 3,
-                                                        "text": "\"x\""
+                                                        "text": "\"x\"",
+                                                        "value": "x",
+                                                        "valueText": "x"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -611,6 +630,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -625,7 +645,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 4,
-                                        "text": "\"-1\""
+                                        "text": "\"-1\"",
+                                        "value": "-1",
+                                        "valueText": "-1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -668,7 +690,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -714,6 +738,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -740,6 +765,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#3: +new String(\"-1\") === -1. Actual: '",
+                                                "value": "#3: +new String(\"-1\") === -1. Actual: ",
+                                                "valueText": "#3: +new String(\"-1\") === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -797,6 +824,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "String",
+                                                            "value": "String",
                                                             "valueText": "String"
                                                         },
                                                         "argumentList": {
@@ -811,7 +839,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 4,
-                                                                    "text": "\"-1\""
+                                                                    "text": "\"-1\"",
+                                                                    "value": "-1",
+                                                                    "valueText": "-1"
                                                                 }
                                                             ],
                                                             "closeParenToken": {

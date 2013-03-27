@@ -98,6 +98,7 @@
                                     "width": 1,
                                     "fullWidth": 4,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -130,7 +131,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             },
                             "semicolonToken": {
@@ -178,6 +181,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             },
@@ -204,6 +208,7 @@
                                 "width": 1,
                                 "fullWidth": 3,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
@@ -243,6 +248,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -264,7 +270,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 37,
-                                            "text": "'#1: x = 1; delete x; x is not exist'"
+                                            "text": "'#1: x = 1; delete x; x is not exist'",
+                                            "value": "#1: x = 1; delete x; x is not exist",
+                                            "valueText": "#1: x = 1; delete x; x is not exist"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -329,6 +337,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -401,6 +410,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "e",
+                                            "value": "e",
                                             "valueText": "e",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -428,6 +438,7 @@
                                             "width": 14,
                                             "fullWidth": 15,
                                             "text": "ReferenceError",
+                                            "value": "ReferenceError",
                                             "valueText": "ReferenceError",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -454,7 +465,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -499,6 +512,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -520,7 +534,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 37,
-                                                            "text": "'#1: x = 1; delete x; x is not exist'"
+                                                            "text": "'#1: x = 1; delete x; x is not exist'",
+                                                            "value": "#1: x = 1; delete x; x is not exist",
+                                                            "valueText": "#1: x = 1; delete x; x is not exist"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -629,6 +645,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -697,6 +714,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "dotToken": {
@@ -709,6 +727,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -735,7 +754,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -779,6 +800,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "dotToken": {
@@ -790,6 +812,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop"
                         }
                     }
@@ -840,6 +863,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "dotToken": {
@@ -852,6 +876,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -879,6 +904,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -924,6 +950,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -950,6 +977,8 @@
                                                 "width": 115,
                                                 "fullWidth": 116,
                                                 "text": "'#2: function MyFunction(){}; MyFunction.prop = 1; delete MyFunction.prop; MyFunction.prop === undefined. Actual: '",
+                                                "value": "#2: function MyFunction(){}; MyFunction.prop = 1; delete MyFunction.prop; MyFunction.prop === undefined. Actual: ",
+                                                "valueText": "#2: function MyFunction(){}; MyFunction.prop = 1; delete MyFunction.prop; MyFunction.prop === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -986,6 +1015,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "MyFunction",
+                                                        "value": "MyFunction",
                                                         "valueText": "MyFunction"
                                                     },
                                                     "dotToken": {
@@ -997,6 +1027,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "prop",
+                                                        "value": "prop",
                                                         "valueText": "prop"
                                                     }
                                                 },
@@ -1093,6 +1124,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -1177,6 +1209,7 @@
                                 "width": 11,
                                 "fullWidth": 12,
                                 "text": "MyObjectVar",
+                                "value": "MyObjectVar",
                                 "valueText": "MyObjectVar",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1222,6 +1255,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "MyFunction",
+                                        "value": "MyFunction",
                                         "valueText": "MyFunction"
                                     },
                                     "argumentList": {
@@ -1272,6 +1306,7 @@
                             "kind": "IdentifierName",
                             "width": 11,
                             "text": "MyObjectVar",
+                            "value": "MyObjectVar",
                             "valueText": "MyObjectVar"
                         },
                         "dotToken": {
@@ -1284,6 +1319,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1310,7 +1346,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -1354,6 +1392,7 @@
                             "kind": "IdentifierName",
                             "width": 11,
                             "text": "MyObjectVar",
+                            "value": "MyObjectVar",
                             "valueText": "MyObjectVar"
                         },
                         "dotToken": {
@@ -1365,6 +1404,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop"
                         }
                     }
@@ -1415,6 +1455,7 @@
                             "kind": "IdentifierName",
                             "width": 11,
                             "text": "MyObjectVar",
+                            "value": "MyObjectVar",
                             "valueText": "MyObjectVar"
                         },
                         "dotToken": {
@@ -1427,6 +1468,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1454,6 +1496,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1499,6 +1542,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1525,6 +1569,8 @@
                                                 "width": 153,
                                                 "fullWidth": 154,
                                                 "text": "'#3: function MyFunction(){}; var MyObjectVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectVar.prop; MyObjectVar.prop === undefined. Actual: '",
+                                                "value": "#3: function MyFunction(){}; var MyObjectVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectVar.prop; MyObjectVar.prop === undefined. Actual: ",
+                                                "valueText": "#3: function MyFunction(){}; var MyObjectVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectVar.prop; MyObjectVar.prop === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1561,6 +1607,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "MyObjectVar",
+                                                        "value": "MyObjectVar",
                                                         "valueText": "MyObjectVar"
                                                     },
                                                     "dotToken": {
@@ -1572,6 +1619,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "prop",
+                                                        "value": "prop",
                                                         "valueText": "prop"
                                                     }
                                                 },
@@ -1684,6 +1732,7 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "MyObjectVar",
+                            "value": "MyObjectVar",
                             "valueText": "MyObjectVar",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1710,7 +1759,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -1755,6 +1806,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1776,7 +1828,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 95,
-                                            "text": "'#4: function MyFunction(){}; var MyObjectVar = new MyFunction(); delete MyObjectVar === false'"
+                                            "text": "'#4: function MyFunction(){}; var MyObjectVar = new MyFunction(); delete MyObjectVar === false'",
+                                            "value": "#4: function MyFunction(){}; var MyObjectVar = new MyFunction(); delete MyObjectVar === false",
+                                            "valueText": "#4: function MyFunction(){}; var MyObjectVar = new MyFunction(); delete MyObjectVar === false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1856,6 +1910,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -1922,6 +1977,7 @@
                         "width": 14,
                         "fullWidth": 15,
                         "text": "MyObjectNotVar",
+                        "value": "MyObjectNotVar",
                         "valueText": "MyObjectNotVar",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1964,6 +2020,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "argumentList": {
@@ -2011,6 +2068,7 @@
                             "kind": "IdentifierName",
                             "width": 14,
                             "text": "MyObjectNotVar",
+                            "value": "MyObjectNotVar",
                             "valueText": "MyObjectNotVar"
                         },
                         "dotToken": {
@@ -2023,6 +2081,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2049,7 +2108,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -2093,6 +2154,7 @@
                             "kind": "IdentifierName",
                             "width": 14,
                             "text": "MyObjectNotVar",
+                            "value": "MyObjectNotVar",
                             "valueText": "MyObjectNotVar"
                         },
                         "dotToken": {
@@ -2104,6 +2166,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop"
                         }
                     }
@@ -2154,6 +2217,7 @@
                             "kind": "IdentifierName",
                             "width": 14,
                             "text": "MyObjectNotVar",
+                            "value": "MyObjectNotVar",
                             "valueText": "MyObjectNotVar"
                         },
                         "dotToken": {
@@ -2166,6 +2230,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2193,6 +2258,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -2238,6 +2304,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2264,6 +2331,8 @@
                                                 "width": 158,
                                                 "fullWidth": 159,
                                                 "text": "'#5: function MyFunction(){}; MyObjectNotVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectNotVar.prop; MyObjectNotVar.prop === undefined. Actual: '",
+                                                "value": "#5: function MyFunction(){}; MyObjectNotVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectNotVar.prop; MyObjectNotVar.prop === undefined. Actual: ",
+                                                "valueText": "#5: function MyFunction(){}; MyObjectNotVar = new MyFunction(); MyFunction.prop = 1; delete MyObjectNotVar.prop; MyObjectNotVar.prop === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2300,6 +2369,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 14,
                                                         "text": "MyObjectNotVar",
+                                                        "value": "MyObjectNotVar",
                                                         "valueText": "MyObjectNotVar"
                                                     },
                                                     "dotToken": {
@@ -2311,6 +2381,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "prop",
+                                                        "value": "prop",
                                                         "valueText": "prop"
                                                     }
                                                 },
@@ -2423,6 +2494,7 @@
                             "width": 14,
                             "fullWidth": 15,
                             "text": "MyObjectNotVar",
+                            "value": "MyObjectNotVar",
                             "valueText": "MyObjectNotVar",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2449,7 +2521,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -2494,6 +2568,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2515,7 +2590,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 100,
-                                            "text": "'#6: function MyFunction(){}; var MyObjectNotVar = new MyFunction(); delete MyObjectNotVar === true'"
+                                            "text": "'#6: function MyFunction(){}; var MyObjectNotVar = new MyFunction(); delete MyObjectNotVar === true'",
+                                            "value": "#6: function MyFunction(){}; var MyObjectNotVar = new MyFunction(); delete MyObjectNotVar === true",
+                                            "valueText": "#6: function MyFunction(){}; var MyObjectNotVar = new MyFunction(); delete MyObjectNotVar === true"
                                         }
                                     ],
                                     "closeParenToken": {

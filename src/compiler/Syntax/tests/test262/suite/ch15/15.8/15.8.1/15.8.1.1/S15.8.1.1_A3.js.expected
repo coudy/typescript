@@ -100,6 +100,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "Math",
+                                "value": "Math",
                                 "valueText": "Math"
                             },
                             "dotToken": {
@@ -112,6 +113,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "E",
+                                "value": "E",
                                 "valueText": "E",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -139,7 +141,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -184,6 +188,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -205,7 +210,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 91,
-                                            "text": "'#1: Value Property E of the Math Object hasn\\'t attribute DontDelete: \\'Math.E === true\\''"
+                                            "text": "'#1: Value Property E of the Math Object hasn\\'t attribute DontDelete: \\'Math.E === true\\''",
+                                            "value": "#1: Value Property E of the Math Object hasn't attribute DontDelete: 'Math.E === true'",
+                                            "valueText": "#1: Value Property E of the Math Object hasn't attribute DontDelete: 'Math.E === true'"
                                         }
                                     ],
                                     "closeParenToken": {

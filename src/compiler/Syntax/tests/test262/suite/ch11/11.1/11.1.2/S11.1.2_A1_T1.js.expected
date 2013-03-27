@@ -95,6 +95,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -122,6 +123,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -167,6 +169,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -193,6 +196,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#1: this.x === undefined. Actual: '",
+                                                "value": "#1: this.x === undefined. Actual: ",
+                                                "valueText": "#1: this.x === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -239,6 +244,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     }
                                                 },
@@ -335,6 +341,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -380,6 +387,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -448,6 +456,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "object",
+                            "value": "object",
                             "valueText": "object"
                         },
                         "dotToken": {
@@ -460,6 +469,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -487,6 +497,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -532,6 +543,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -558,6 +570,8 @@
                                                 "width": 68,
                                                 "fullWidth": 69,
                                                 "text": "'#2: var object = new Object(); object.prop === undefined. Actual: '",
+                                                "value": "#2: var object = new Object(); object.prop === undefined. Actual: ",
+                                                "valueText": "#2: var object = new Object(); object.prop === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -594,6 +608,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "object",
+                                                        "value": "object",
                                                         "valueText": "object"
                                                     },
                                                     "dotToken": {
@@ -605,6 +620,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "prop",
+                                                        "value": "prop",
                                                         "valueText": "prop"
                                                     }
                                                 },
@@ -696,6 +712,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         }
                     },
@@ -751,6 +768,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -766,6 +784,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "y",
+                                    "value": "y",
                                     "valueText": "y"
                                 }
                             ],
@@ -800,7 +819,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -845,6 +866,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -871,6 +893,8 @@
                                                 "width": 44,
                                                 "fullWidth": 45,
                                                 "text": "'#3: this.y++; y === Not-a-Number. Actual: '",
+                                                "value": "#3: this.y++; y === Not-a-Number. Actual: ",
+                                                "valueText": "#3: this.y++; y === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -904,6 +928,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "y",
+                                                    "value": "y",
                                                     "valueText": "y"
                                                 },
                                                 "closeParenToken": {

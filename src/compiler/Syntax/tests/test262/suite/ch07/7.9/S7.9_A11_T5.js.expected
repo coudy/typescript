@@ -83,6 +83,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -111,7 +112,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -157,7 +160,9 @@
                 "condition": {
                     "kind": "FalseKeyword",
                     "width": 5,
-                    "text": "false"
+                    "text": "false",
+                    "value": false,
+                    "valueText": "false"
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -183,6 +188,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -208,7 +214,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     },
                     "semicolonToken": {
@@ -254,6 +262,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -289,6 +298,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "1",
+                                    "value": 1,
+                                    "valueText": "1",
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLine": true,
                                     "trailingTrivia": [
@@ -337,6 +348,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -370,7 +382,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -416,6 +430,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -437,7 +452,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 58,
-                                            "text": "'#1: Check If Statement for automatic semicolon insertion'"
+                                            "text": "'#1: Check If Statement for automatic semicolon insertion'",
+                                            "value": "#1: Check If Statement for automatic semicolon insertion",
+                                            "valueText": "#1: Check If Statement for automatic semicolon insertion"
                                         }
                                     ],
                                     "closeParenToken": {

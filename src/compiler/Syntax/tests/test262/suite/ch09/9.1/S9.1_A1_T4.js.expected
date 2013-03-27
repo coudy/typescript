@@ -86,6 +86,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -130,6 +131,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -219,7 +221,9 @@
                                                                 "operand": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "2"
+                                                                    "text": "2",
+                                                                    "value": 2,
+                                                                    "valueText": "2"
                                                                 }
                                                             },
                                                             "semicolonToken": {
@@ -258,6 +262,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -339,7 +344,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 4,
-                                                                "text": "\"-2\""
+                                                                "text": "\"-2\"",
+                                                                "value": "-2",
+                                                                "valueText": "-2"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -411,6 +418,8 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "\"-1\"",
+                        "value": "-1",
+                        "valueText": "-1",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -436,6 +445,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "object",
+                        "value": "object",
                         "valueText": "object"
                     }
                 },
@@ -481,6 +491,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -502,7 +513,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 103,
-                                            "text": "'#1: var object = {valueOf: function() {return -2}, toString: function() {return \"-2\"}}; \"-1\" < object'"
+                                            "text": "'#1: var object = {valueOf: function() {return -2}, toString: function() {return \"-2\"}}; \"-1\" < object'",
+                                            "value": "#1: var object = {valueOf: function() {return -2}, toString: function() {return \"-2\"}}; \"-1\" < object",
+                                            "valueText": "#1: var object = {valueOf: function() {return -2}, toString: function() {return \"-2\"}}; \"-1\" < object"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -593,6 +606,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -637,6 +651,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -718,7 +733,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 4,
-                                                                "text": "\"-2\""
+                                                                "text": "\"-2\"",
+                                                                "value": "-2",
+                                                                "valueText": "-2"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -756,6 +773,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -845,7 +863,9 @@
                                                                 "operand": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "2"
+                                                                    "text": "2",
+                                                                    "value": 2,
+                                                                    "valueText": "2"
                                                                 }
                                                             },
                                                             "semicolonToken": {
@@ -918,6 +938,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "object",
+                        "value": "object",
                         "valueText": "object",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -943,7 +964,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"-1\""
+                        "text": "\"-1\"",
+                        "value": "-1",
+                        "valueText": "-1"
                     }
                 },
                 "closeParenToken": {
@@ -988,6 +1011,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1009,7 +1033,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 103,
-                                            "text": "'#2: var object = {valueOf: function() {return \"-2\"}, toString: function() {return -2}}; object < \"-1\"'"
+                                            "text": "'#2: var object = {valueOf: function() {return \"-2\"}, toString: function() {return -2}}; object < \"-1\"'",
+                                            "value": "#2: var object = {valueOf: function() {return \"-2\"}, toString: function() {return -2}}; object < \"-1\"",
+                                            "valueText": "#2: var object = {valueOf: function() {return \"-2\"}, toString: function() {return -2}}; object < \"-1\""
                                         }
                                     ],
                                     "closeParenToken": {

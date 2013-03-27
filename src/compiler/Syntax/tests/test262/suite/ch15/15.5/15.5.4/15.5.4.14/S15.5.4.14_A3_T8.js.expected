@@ -75,6 +75,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -120,6 +121,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -134,7 +136,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -144,7 +148,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "2"
+                                                "text": "2",
+                                                "value": 2,
+                                                "valueText": "2"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -154,7 +160,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "3"
+                                                "text": "3",
+                                                "value": 3,
+                                                "valueText": "3"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -164,7 +172,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "4"
+                                                "text": "4",
+                                                "value": 4,
+                                                "valueText": "4"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -174,7 +184,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "5"
+                                                "text": "5",
+                                                "value": 5,
+                                                "valueText": "5"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -217,6 +229,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -237,6 +250,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "split",
+                            "value": "split",
                             "valueText": "split",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -270,6 +284,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -281,6 +296,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -293,6 +309,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "split",
+                            "value": "split",
                             "valueText": "split"
                         }
                     }
@@ -349,6 +366,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "__split",
+                                "value": "__split",
                                 "valueText": "__split",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -384,6 +402,7 @@
                                             "kind": "IdentifierName",
                                             "width": 10,
                                             "text": "__instance",
+                                            "value": "__instance",
                                             "valueText": "__instance"
                                         },
                                         "dotToken": {
@@ -395,6 +414,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "split",
+                                            "value": "split",
                                             "valueText": "split"
                                         }
                                     },
@@ -492,6 +512,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -504,6 +525,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -530,6 +553,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "Array",
+                        "value": "Array",
                         "valueText": "Array"
                     }
                 },
@@ -578,6 +602,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -604,7 +629,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 157,
-                                                "text": "'#1: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.constructor === Array. Actual: '"
+                                                "text": "'#1: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.constructor === Array. Actual: '",
+                                                "value": "#1: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.constructor === Array. Actual: ",
+                                                "valueText": "#1: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.constructor === Array. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -619,6 +646,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -631,6 +659,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -753,6 +783,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -765,6 +796,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -791,7 +823,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -836,6 +870,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -860,7 +895,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 148,
-                                                "text": "'#2: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.length === 1. Actual: '"
+                                                "text": "'#2: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.length === 1. Actual: '",
+                                                "value": "#2: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.length === 1. Actual: ",
+                                                "valueText": "#2: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split.length === 1. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -874,6 +911,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -886,6 +924,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -1009,6 +1048,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -1019,7 +1059,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1051,7 +1093,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"1,2,3,4,5\""
+                        "text": "\"1,2,3,4,5\"",
+                        "value": "1,2,3,4,5",
+                        "valueText": "1,2,3,4,5"
                     }
                 },
                 "closeParenToken": {
@@ -1096,6 +1140,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1120,7 +1165,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 154,
-                                                "text": "'#3: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split[0] === \"1,2,3,4,5\". Actual: '"
+                                                "text": "'#3: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split[0] === \"1,2,3,4,5\". Actual: '",
+                                                "value": "#3: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split[0] === \"1,2,3,4,5\". Actual: ",
+                                                "valueText": "#3: var __instance = new Array(1,2,3,4,5); __instance.split = String.prototype.split; __split = __instance.split(); __split[0] === \"1,2,3,4,5\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1134,6 +1181,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -1144,7 +1192,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "0"
+                                                    "text": "0",
+                                                    "value": 0,
+                                                    "valueText": "0"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",

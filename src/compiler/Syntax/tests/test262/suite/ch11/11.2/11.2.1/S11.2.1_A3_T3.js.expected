@@ -86,7 +86,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 8,
-                                "text": "\"abc123\""
+                                "text": "\"abc123\"",
+                                "value": "abc123",
+                                "valueText": "abc123"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -97,6 +99,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "charAt",
+                                "value": "charAt",
                                 "valueText": "charAt"
                             }
                         },
@@ -112,7 +115,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "5"
+                                    "text": "5",
+                                    "value": 5,
+                                    "valueText": "5"
                                 }
                             ],
                             "closeParenToken": {
@@ -146,7 +151,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"3\""
+                        "text": "\"3\"",
+                        "value": "3",
+                        "valueText": "3"
                     }
                 },
                 "closeParenToken": {
@@ -191,6 +198,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -217,6 +225,8 @@
                                                 "width": 42,
                                                 "fullWidth": 43,
                                                 "text": "'#1: \"abc123\".charAt(5) === \"3\". Actual: '",
+                                                "value": "#1: \"abc123\".charAt(5) === \"3\". Actual: ",
+                                                "valueText": "#1: \"abc123\".charAt(5) === \"3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -255,7 +265,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 8,
-                                                            "text": "\"abc123\""
+                                                            "text": "\"abc123\"",
+                                                            "value": "abc123",
+                                                            "valueText": "abc123"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -266,6 +278,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "charAt",
+                                                            "value": "charAt",
                                                             "valueText": "charAt"
                                                         }
                                                     },
@@ -281,7 +294,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "5"
+                                                                "text": "5",
+                                                                "value": 5,
+                                                                "valueText": "5"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -388,7 +403,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 8,
-                                "text": "\"abc123\""
+                                "text": "\"abc123\"",
+                                "value": "abc123",
+                                "valueText": "abc123"
                             },
                             "openBracketToken": {
                                 "kind": "OpenBracketToken",
@@ -398,7 +415,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 8,
-                                "text": "\"charAt\""
+                                "text": "\"charAt\"",
+                                "value": "charAt",
+                                "valueText": "charAt"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -418,7 +437,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             ],
                             "closeParenToken": {
@@ -452,7 +473,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"a\""
+                        "text": "\"a\"",
+                        "value": "a",
+                        "valueText": "a"
                     }
                 },
                 "closeParenToken": {
@@ -497,6 +520,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -523,6 +547,8 @@
                                                 "width": 45,
                                                 "fullWidth": 46,
                                                 "text": "'#2: \"abc123\"[\"charAt\"](0) === \"a\". Actual: '",
+                                                "value": "#2: \"abc123\"[\"charAt\"](0) === \"a\". Actual: ",
+                                                "valueText": "#2: \"abc123\"[\"charAt\"](0) === \"a\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -561,7 +587,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 8,
-                                                            "text": "\"abc123\""
+                                                            "text": "\"abc123\"",
+                                                            "value": "abc123",
+                                                            "valueText": "abc123"
                                                         },
                                                         "openBracketToken": {
                                                             "kind": "OpenBracketToken",
@@ -571,7 +599,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 8,
-                                                            "text": "\"charAt\""
+                                                            "text": "\"charAt\"",
+                                                            "value": "charAt",
+                                                            "valueText": "charAt"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",
@@ -591,7 +621,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "0"
+                                                                "text": "0",
+                                                                "value": 0,
+                                                                "valueText": "0"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -695,7 +727,9 @@
                         "expression": {
                             "kind": "StringLiteral",
                             "width": 8,
-                            "text": "\"abc123\""
+                            "text": "\"abc123\"",
+                            "value": "abc123",
+                            "valueText": "abc123"
                         },
                         "dotToken": {
                             "kind": "DotToken",
@@ -707,6 +741,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -733,7 +768,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -778,6 +815,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -804,6 +842,8 @@
                                                 "width": 37,
                                                 "fullWidth": 38,
                                                 "text": "'#3: \"abc123\".length === 6. Actual: '",
+                                                "value": "#3: \"abc123\".length === 6. Actual: ",
+                                                "valueText": "#3: \"abc123\".length === 6. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -839,7 +879,9 @@
                                                     "expression": {
                                                         "kind": "StringLiteral",
                                                         "width": 8,
-                                                        "text": "\"abc123\""
+                                                        "text": "\"abc123\"",
+                                                        "value": "abc123",
+                                                        "valueText": "abc123"
                                                     },
                                                     "dotToken": {
                                                         "kind": "DotToken",
@@ -850,6 +892,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -947,7 +990,9 @@
                         "expression": {
                             "kind": "StringLiteral",
                             "width": 8,
-                            "text": "\"abc123\""
+                            "text": "\"abc123\"",
+                            "value": "abc123",
+                            "valueText": "abc123"
                         },
                         "openBracketToken": {
                             "kind": "OpenBracketToken",
@@ -957,7 +1002,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 8,
-                            "text": "\"length\""
+                            "text": "\"length\"",
+                            "value": "length",
+                            "valueText": "length"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -989,7 +1036,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -1034,6 +1083,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1060,6 +1110,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#4: \"abc123\"[\"length\"] === 6. Actual: '",
+                                                "value": "#4: \"abc123\"[\"length\"] === 6. Actual: ",
+                                                "valueText": "#4: \"abc123\"[\"length\"] === 6. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1095,7 +1147,9 @@
                                                     "expression": {
                                                         "kind": "StringLiteral",
                                                         "width": 8,
-                                                        "text": "\"abc123\""
+                                                        "text": "\"abc123\"",
+                                                        "value": "abc123",
+                                                        "valueText": "abc123"
                                                     },
                                                     "openBracketToken": {
                                                         "kind": "OpenBracketToken",
@@ -1105,7 +1159,9 @@
                                                     "argumentExpression": {
                                                         "kind": "StringLiteral",
                                                         "width": 8,
-                                                        "text": "\"length\""
+                                                        "text": "\"length\"",
+                                                        "value": "length",
+                                                        "valueText": "length"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1224,6 +1280,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "argumentList": {
@@ -1238,7 +1295,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 8,
-                                        "text": "\"abc123\""
+                                        "text": "\"abc123\"",
+                                        "value": "abc123",
+                                        "valueText": "abc123"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1258,6 +1317,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1284,7 +1344,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -1329,6 +1391,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1355,6 +1418,8 @@
                                                 "width": 49,
                                                 "fullWidth": 50,
                                                 "text": "'#5: new String(\"abc123\").length === 6. Actual: '",
+                                                "value": "#5: new String(\"abc123\").length === 6. Actual: ",
+                                                "valueText": "#5: new String(\"abc123\").length === 6. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1407,6 +1472,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "String",
+                                                            "value": "String",
                                                             "valueText": "String"
                                                         },
                                                         "argumentList": {
@@ -1421,7 +1487,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 8,
-                                                                    "text": "\"abc123\""
+                                                                    "text": "\"abc123\"",
+                                                                    "value": "abc123",
+                                                                    "valueText": "abc123"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -1440,6 +1508,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -1557,6 +1626,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "String",
+                                    "value": "String",
                                     "valueText": "String"
                                 },
                                 "argumentList": {
@@ -1571,7 +1641,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 8,
-                                            "text": "\"abc123\""
+                                            "text": "\"abc123\"",
+                                            "value": "abc123",
+                                            "valueText": "abc123"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1589,7 +1661,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 8,
-                                "text": "\"charAt\""
+                                "text": "\"charAt\"",
+                                "value": "charAt",
+                                "valueText": "charAt"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -1609,7 +1683,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             ],
                             "closeParenToken": {
@@ -1643,7 +1719,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"c\""
+                        "text": "\"c\"",
+                        "value": "c",
+                        "valueText": "c"
                     }
                 },
                 "closeParenToken": {
@@ -1688,6 +1766,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1714,6 +1793,8 @@
                                                 "width": 57,
                                                 "fullWidth": 58,
                                                 "text": "'#6: new String(\"abc123\")[\"charAt\"](2) === \"c\". Actual: '",
+                                                "value": "#6: new String(\"abc123\")[\"charAt\"](2) === \"c\". Actual: ",
+                                                "valueText": "#6: new String(\"abc123\")[\"charAt\"](2) === \"c\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1769,6 +1850,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "String",
+                                                                "value": "String",
                                                                 "valueText": "String"
                                                             },
                                                             "argumentList": {
@@ -1783,7 +1865,9 @@
                                                                     {
                                                                         "kind": "StringLiteral",
                                                                         "width": 8,
-                                                                        "text": "\"abc123\""
+                                                                        "text": "\"abc123\"",
+                                                                        "value": "abc123",
+                                                                        "valueText": "abc123"
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {
@@ -1801,7 +1885,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 8,
-                                                            "text": "\"charAt\""
+                                                            "text": "\"charAt\"",
+                                                            "value": "charAt",
+                                                            "valueText": "charAt"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",
@@ -1821,7 +1907,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "2"
+                                                                "text": "2",
+                                                                "value": 2,
+                                                                "valueText": "2"
                                                             }
                                                         ],
                                                         "closeParenToken": {

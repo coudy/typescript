@@ -92,6 +92,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -179,6 +180,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "JSON",
+                                            "value": "JSON",
                                             "valueText": "JSON"
                                         },
                                         "dotToken": {
@@ -190,6 +192,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "stringify",
+                                            "value": "stringify",
                                             "valueText": "stringify"
                                         }
                                     },
@@ -206,7 +209,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 2,
-                                                "text": "42"
+                                                "text": "42",
+                                                "value": 42,
+                                                "valueText": "42"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -249,6 +254,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "k",
+                                                                    "value": "k",
                                                                     "valueText": "k"
                                                                 }
                                                             },
@@ -272,6 +278,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "v",
+                                                                    "value": "v",
                                                                     "valueText": "v"
                                                                 }
                                                             }
@@ -336,6 +343,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "v",
+                                                                        "value": "v",
                                                                         "valueText": "v"
                                                                     },
                                                                     "operatorToken": {
@@ -348,6 +356,8 @@
                                                                         "width": 2,
                                                                         "fullWidth": 3,
                                                                         "text": "42",
+                                                                        "value": 42,
+                                                                        "valueText": "42",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -386,6 +396,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 5,
                                                                                 "text": "forty",
+                                                                                "value": "forty",
                                                                                 "valueText": "forty"
                                                                             },
                                                                             "colonToken": {
@@ -396,7 +407,9 @@
                                                                             "expression": {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 1,
-                                                                                "text": "2"
+                                                                                "text": "2",
+                                                                                "value": 2,
+                                                                                "valueText": "2"
                                                                             }
                                                                         }
                                                                     ],
@@ -423,6 +436,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "v",
+                                                                    "value": "v",
                                                                     "valueText": "v"
                                                                 }
                                                             },
@@ -472,7 +486,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 13,
-                                    "text": "'{\"forty\":2}'"
+                                    "text": "'{\"forty\":2}'",
+                                    "value": "{\"forty\":2}",
+                                    "valueText": "{\"forty\":2}"
                                 }
                             },
                             "semicolonToken": {
@@ -524,6 +540,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -539,6 +556,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

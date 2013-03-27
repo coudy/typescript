@@ -80,6 +80,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "FACTORY",
+                                "value": "FACTORY",
                                 "valueText": "FACTORY"
                             },
                             "callSignature": {
@@ -136,6 +137,7 @@
                                                         "width": 8,
                                                         "fullWidth": 10,
                                                         "text": "Function",
+                                                        "value": "Function",
                                                         "valueText": "Function",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -157,7 +159,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 26,
-                                                                "text": "\"this.feat=\\\"in da haus\\\"\""
+                                                                "text": "\"this.feat=\\\"in da haus\\\"\"",
+                                                                "value": "this.feat=\"in da haus\"",
+                                                                "valueText": "this.feat=\"in da haus\""
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -176,6 +180,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "call",
+                                                    "value": "call",
                                                     "valueText": "call"
                                                 }
                                             },
@@ -207,7 +212,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "0"
+                                                            "text": "0",
+                                                            "value": 0,
+                                                            "valueText": "0"
                                                         }
                                                     }
                                                 ],
@@ -339,7 +346,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "\"feat\""
+                            "text": "\"feat\"",
+                            "value": "feat",
+                            "valueText": "feat"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -371,7 +380,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 12,
-                        "text": "\"in da haus\""
+                        "text": "\"in da haus\"",
+                        "value": "in da haus",
+                        "valueText": "in da haus"
                     }
                 },
                 "closeParenToken": {
@@ -416,6 +427,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -437,7 +449,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 104,
-                                            "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'"
+                                            "text": "'#1: If thisArg is null or undefined, the called function is passed the global object as the this value'",
+                                            "value": "#1: If thisArg is null or undefined, the called function is passed the global object as the this value",
+                                            "valueText": "#1: If thisArg is null or undefined, the called function is passed the global object as the this value"
                                         }
                                     ],
                                     "closeParenToken": {

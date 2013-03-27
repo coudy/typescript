@@ -74,6 +74,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "p_zero",
+                                "value": "p_zero",
                                 "valueText": "p_zero"
                             },
                             "equalsValueClause": {
@@ -95,7 +96,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     }
                                 }
                             }
@@ -145,6 +148,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "n_zero",
+                                "value": "n_zero",
                                 "valueText": "n_zero"
                             },
                             "equalsValueClause": {
@@ -166,7 +170,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     }
                                 }
                             }
@@ -229,7 +235,9 @@
                         "left": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.0"
+                            "text": "1.0",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "operatorToken": {
                             "kind": "SlashToken",
@@ -241,6 +249,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "p_zero",
+                            "value": "p_zero",
                             "valueText": "p_zero",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -271,7 +280,9 @@
                         "left": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.0"
+                            "text": "1.0",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "operatorToken": {
                             "kind": "SlashToken",
@@ -282,6 +293,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "n_zero",
+                            "value": "n_zero",
                             "valueText": "n_zero"
                         }
                     }
@@ -320,6 +332,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -341,7 +354,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 61,
-                                            "text": "'#1: var p_zero=+0; var n_zero=-0; 1.0/p_zero !== 1.0/n_zero'"
+                                            "text": "'#1: var p_zero=+0; var n_zero=-0; 1.0/p_zero !== 1.0/n_zero'",
+                                            "value": "#1: var p_zero=+0; var n_zero=-0; 1.0/p_zero !== 1.0/n_zero",
+                                            "valueText": "#1: var p_zero=+0; var n_zero=-0; 1.0/p_zero !== 1.0/n_zero"
                                         }
                                     ],
                                     "closeParenToken": {

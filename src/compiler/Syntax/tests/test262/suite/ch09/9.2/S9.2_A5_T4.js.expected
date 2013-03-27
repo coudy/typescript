@@ -96,7 +96,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\" \""
+                                "text": "\" \"",
+                                "value": " ",
+                                "valueText": " "
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -129,7 +131,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -174,6 +178,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -200,6 +205,8 @@
                                                 "width": 32,
                                                 "fullWidth": 33,
                                                 "text": "'#1: !(\" \") === false. Actual: '",
+                                                "value": "#1: !(\" \") === false. Actual: ",
+                                                "valueText": "#1: !(\" \") === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -248,7 +255,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 3,
-                                                            "text": "\" \""
+                                                            "text": "\" \"",
+                                                            "value": " ",
+                                                            "valueText": " "
                                                         },
                                                         "closeParenToken": {
                                                             "kind": "CloseParenToken",
@@ -368,7 +377,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 17,
-                                "text": "\"Nonempty String\""
+                                "text": "\"Nonempty String\"",
+                                "value": "Nonempty String",
+                                "valueText": "Nonempty String"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -401,7 +412,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -446,6 +459,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -472,6 +486,8 @@
                                                 "width": 46,
                                                 "fullWidth": 47,
                                                 "text": "'#2: !(\"Nonempty String\") === false. Actual: '",
+                                                "value": "#2: !(\"Nonempty String\") === false. Actual: ",
+                                                "valueText": "#2: !(\"Nonempty String\") === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -520,7 +536,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 17,
-                                                            "text": "\"Nonempty String\""
+                                                            "text": "\"Nonempty String\"",
+                                                            "value": "Nonempty String",
+                                                            "valueText": "Nonempty String"
                                                         },
                                                         "closeParenToken": {
                                                             "kind": "CloseParenToken",

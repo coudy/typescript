@@ -75,6 +75,7 @@
                                 "width": 19,
                                 "fullWidth": 20,
                                 "text": "CATCH_ME_IF_YOU_CAN",
+                                "value": "CATCH_ME_IF_YOU_CAN",
                                 "valueText": "CATCH_ME_IF_YOU_CAN",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             }
                         }
@@ -164,6 +167,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "__func",
+                                "value": "__func",
                                 "valueText": "__func",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -226,6 +230,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "message",
+                                                        "value": "message",
                                                         "valueText": "message"
                                                     }
                                                 }
@@ -292,6 +297,7 @@
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
@@ -320,7 +326,9 @@
                                                                 "value": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "1"
+                                                                    "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1"
                                                                 }
                                                             }
                                                         }
@@ -377,6 +385,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "message",
+                                                        "value": "message",
                                                         "valueText": "message"
                                                     },
                                                     "closeParenToken": {
@@ -427,6 +436,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "semicolonToken": {
@@ -544,6 +554,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x"
                                         },
                                         "equalsValueClause": {
@@ -561,6 +572,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -576,6 +588,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 19,
                                                             "text": "CATCH_ME_IF_YOU_CAN",
+                                                            "value": "CATCH_ME_IF_YOU_CAN",
                                                             "valueText": "CATCH_ME_IF_YOU_CAN"
                                                         }
                                                     ],
@@ -616,6 +629,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -637,7 +651,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 66,
-                                            "text": "'#0: var x=__func(CATCH_ME_IF_YOU_CAN) lead to throwing exception'"
+                                            "text": "'#0: var x=__func(CATCH_ME_IF_YOU_CAN) lead to throwing exception'",
+                                            "value": "#0: var x=__func(CATCH_ME_IF_YOU_CAN) lead to throwing exception",
+                                            "valueText": "#0: var x=__func(CATCH_ME_IF_YOU_CAN) lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -694,6 +710,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -759,6 +776,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e"
                                     }
                                 },
@@ -804,6 +822,7 @@
                                                     "width": 6,
                                                     "fullWidth": 11,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -828,7 +847,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 47,
-                                                                "text": "'#1: Exception === true. Actual: exception ==='"
+                                                                "text": "'#1: Exception === true. Actual: exception ==='",
+                                                                "value": "#1: Exception === true. Actual: exception ===",
+                                                                "valueText": "#1: Exception === true. Actual: exception ==="
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -839,6 +860,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             }
                                                         }

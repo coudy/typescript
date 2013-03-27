@@ -82,6 +82,8 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "\"\\x00\"",
+                        "value": "\u0000",
+                        "valueText": "\u0000",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -106,7 +108,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"\\0\""
+                        "text": "\"\\0\"",
+                        "value": "\u0000",
+                        "valueText": "\u0000"
                     }
                 },
                 "closeParenToken": {
@@ -151,6 +155,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -172,7 +177,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "'#1: \"\\\\x00\" === \"\\\\0\"'"
+                                            "text": "'#1: \"\\\\x00\" === \"\\\\0\"'",
+                                            "value": "#1: \"\\x00\" === \"\\0\"",
+                                            "valueText": "#1: \"\\x00\" === \"\\0\""
                                         }
                                     ],
                                     "closeParenToken": {

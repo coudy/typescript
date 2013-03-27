@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "\"one\""
+                                                "text": "\"one\"",
+                                                "value": "one",
+                                                "valueText": "one"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -176,6 +180,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -195,6 +200,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "concat",
+                            "value": "concat",
                             "valueText": "concat"
                         }
                     },
@@ -210,7 +216,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 5,
-                                "text": "\"two\""
+                                "text": "\"two\"",
+                                "value": "two",
+                                "valueText": "two"
                             }
                         ],
                         "closeParenToken": {
@@ -289,6 +297,7 @@
                         "width": 10,
                         "fullWidth": 11,
                         "text": "__instance",
+                        "value": "__instance",
                         "valueText": "__instance",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -314,7 +323,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"one\""
+                        "text": "\"one\"",
+                        "value": "one",
+                        "valueText": "one"
                     }
                 },
                 "closeParenToken": {
@@ -359,6 +370,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -383,7 +395,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 152,
-                                                "text": "'#1: __instance = new String(\"one\"); __instance.concat(\"two\");  __instance = new String(\"one\"); __instance.concat(\"two\"); __instance == \"one\". Actual: '"
+                                                "text": "'#1: __instance = new String(\"one\"); __instance.concat(\"two\");  __instance = new String(\"one\"); __instance.concat(\"two\"); __instance == \"one\". Actual: '",
+                                                "value": "#1: __instance = new String(\"one\"); __instance.concat(\"two\");  __instance = new String(\"one\"); __instance.concat(\"two\"); __instance == \"one\". Actual: ",
+                                                "valueText": "#1: __instance = new String(\"one\"); __instance.concat(\"two\");  __instance = new String(\"one\"); __instance.concat(\"two\"); __instance == \"one\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -394,6 +408,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 10,
                                                 "text": "__instance",
+                                                "value": "__instance",
                                                 "valueText": "__instance"
                                             }
                                         }

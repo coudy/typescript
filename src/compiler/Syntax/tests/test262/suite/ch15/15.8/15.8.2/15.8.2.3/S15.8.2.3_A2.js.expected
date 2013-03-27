@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -110,7 +111,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 17,
-                                    "text": "1.000000000000001"
+                                    "text": "1.000000000000001",
+                                    "value": 1.000000000000001,
+                                    "valueText": "1.000000000000001"
                                 }
                             }
                         }
@@ -167,6 +170,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -188,6 +192,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -199,6 +204,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "asin",
+                                            "value": "asin",
                                             "valueText": "asin"
                                         }
                                     },
@@ -215,6 +221,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -277,6 +284,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -298,7 +306,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 64,
-                                            "text": "\"#1: 'var x = 1.000000000000001; isNaN(Math.asin(x)) === false'\""
+                                            "text": "\"#1: 'var x = 1.000000000000001; isNaN(Math.asin(x)) === false'\"",
+                                            "value": "#1: 'var x = 1.000000000000001; isNaN(Math.asin(x)) === false'",
+                                            "valueText": "#1: 'var x = 1.000000000000001; isNaN(Math.asin(x)) === false'"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -351,6 +361,7 @@
                         "width": 1,
                         "fullWidth": 14,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -393,7 +404,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "semicolonToken": {
@@ -447,6 +460,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -468,6 +482,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -479,6 +494,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "asin",
+                                            "value": "asin",
                                             "valueText": "asin"
                                         }
                                     },
@@ -495,6 +511,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -557,6 +574,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -578,7 +596,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 44,
-                                            "text": "\"#2: 'x = 2; isNaN(Math.asin(x)) === false'\""
+                                            "text": "\"#2: 'x = 2; isNaN(Math.asin(x)) === false'\"",
+                                            "value": "#2: 'x = 2; isNaN(Math.asin(x)) === false'",
+                                            "valueText": "#2: 'x = 2; isNaN(Math.asin(x)) === false'"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -631,6 +651,7 @@
                         "width": 1,
                         "fullWidth": 14,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -682,6 +703,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "Infinity",
+                            "value": "Infinity",
                             "valueText": "Infinity"
                         }
                     }
@@ -737,6 +759,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -758,6 +781,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -769,6 +793,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "asin",
+                                            "value": "asin",
                                             "valueText": "asin"
                                         }
                                     },
@@ -785,6 +810,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -847,6 +873,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -868,7 +895,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 52,
-                                            "text": "\"#3: 'x = +Infinity; isNaN(Math.asin(x)) === false'\""
+                                            "text": "\"#3: 'x = +Infinity; isNaN(Math.asin(x)) === false'\"",
+                                            "value": "#3: 'x = +Infinity; isNaN(Math.asin(x)) === false'",
+                                            "valueText": "#3: 'x = +Infinity; isNaN(Math.asin(x)) === false'"
                                         }
                                     ],
                                     "closeParenToken": {

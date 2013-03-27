@@ -22,6 +22,7 @@
                         "width": 10,
                         "fullWidth": 387,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -92,7 +93,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 11,
-                                "text": "/b{42,93}c/"
+                                "text": "/b{42,93}c/",
+                                "value": {},
+                                "valueText": "/b{42,93}c/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -103,6 +106,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -118,7 +122,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 23,
-                                    "text": "\"aaabbbbcccddeeeefffff\""
+                                    "text": "\"aaabbbbcccddeeeefffff\"",
+                                    "value": "aaabbbbcccddeeeefffff",
+                                    "valueText": "aaabbbbcccddeeeefffff"
                                 }
                             ],
                             "closeParenToken": {
@@ -186,6 +192,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__executed",
+                    "value": "__executed",
                     "valueText": "__executed"
                 },
                 "closeParenToken": {
@@ -230,6 +237,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -251,7 +259,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 57,
-                                            "text": "'#1: /b{42,93}c/.test(\"aaabbbbcccddeeeefffff\") === false'"
+                                            "text": "'#1: /b{42,93}c/.test(\"aaabbbbcccddeeeefffff\") === false'",
+                                            "value": "#1: /b{42,93}c/.test(\"aaabbbbcccddeeeefffff\") === false",
+                                            "valueText": "#1: /b{42,93}c/.test(\"aaabbbbcccddeeeefffff\") === false"
                                         }
                                     ],
                                     "closeParenToken": {

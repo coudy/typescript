@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "\"ABC\""
+                                                "text": "\"ABC\"",
+                                                "value": "ABC",
+                                                "valueText": "ABC"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -221,6 +225,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance"
                             },
                             "dotToken": {
@@ -232,6 +237,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "charAt",
+                                "value": "charAt",
                                 "valueText": "charAt"
                             }
                         },
@@ -247,7 +253,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "3"
+                                    "text": "3",
+                                    "value": 3,
+                                    "valueText": "3"
                                 }
                             ],
                             "closeParenToken": {
@@ -281,7 +289,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 2,
-                        "text": "\"\""
+                        "text": "\"\"",
+                        "value": "",
+                        "valueText": ""
                     }
                 },
                 "closeParenToken": {
@@ -326,6 +336,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -350,7 +361,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 99,
-                                                "text": "'#1: __instance = new String(\"ABC\"); __instance.charAt(3) === \"\". Actual: __instance.charAt(3) ==='"
+                                                "text": "'#1: __instance = new String(\"ABC\"); __instance.charAt(3) === \"\". Actual: __instance.charAt(3) ==='",
+                                                "value": "#1: __instance = new String(\"ABC\"); __instance.charAt(3) === \"\". Actual: __instance.charAt(3) ===",
+                                                "valueText": "#1: __instance = new String(\"ABC\"); __instance.charAt(3) === \"\". Actual: __instance.charAt(3) ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -367,6 +380,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "__instance",
+                                                        "value": "__instance",
                                                         "valueText": "__instance"
                                                     },
                                                     "dotToken": {
@@ -378,6 +392,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "charAt",
+                                                        "value": "charAt",
                                                         "valueText": "charAt"
                                                     }
                                                 },
@@ -393,7 +408,9 @@
                                                         {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "3"
+                                                            "text": "3",
+                                                            "value": 3,
+                                                            "valueText": "3"
                                                         }
                                                     ],
                                                     "closeParenToken": {

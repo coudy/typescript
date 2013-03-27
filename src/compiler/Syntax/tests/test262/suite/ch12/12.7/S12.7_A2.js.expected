@@ -99,6 +99,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -120,7 +121,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 98,
-                                            "text": "\"FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\\u000AFOR1; } while(0);}\""
+                                            "text": "\"FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\\u000AFOR1; } while(0);}\"",
+                                            "value": "FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\nFOR1; } while(0);}",
+                                            "valueText": "FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\nFOR1; } while(0);}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -180,6 +183,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "j",
+                                    "value": "j",
                                     "valueText": "j"
                                 },
                                 "operatorToken": {
@@ -190,7 +194,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             },
                             "closeParenToken": {
@@ -235,6 +241,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -256,7 +263,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 111,
-                                                        "text": "'#1: Since LineTerminator(U-000A) between continue and Identifier not allowed continue evaluates without label'"
+                                                        "text": "'#1: Since LineTerminator(U-000A) between continue and Identifier not allowed continue evaluates without label'",
+                                                        "value": "#1: Since LineTerminator(U-000A) between continue and Identifier not allowed continue evaluates without label",
+                                                        "valueText": "#1: Since LineTerminator(U-000A) between continue and Identifier not allowed continue evaluates without label"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -337,6 +346,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -373,6 +383,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -394,7 +405,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 149,
-                                                "text": "'#1.1: eval(\"FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\\\\u000AFOR1; } while(0);}\") does not lead to throwing exception'"
+                                                "text": "'#1.1: eval(\"FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\\\\u000AFOR1; } while(0);}\") does not lead to throwing exception'",
+                                                "value": "#1.1: eval(\"FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\\u000AFOR1; } while(0);}\") does not lead to throwing exception",
+                                                "valueText": "#1.1: eval(\"FOR1 : for(var i=1;i<2;i++){FOR1NESTED : for(var j=1;j<2;j++) { continue\\u000AFOR1; } while(0);}\") does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -516,6 +529,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -537,7 +551,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 98,
-                                            "text": "\"FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\\u000DFOR2; } while(0);}\""
+                                            "text": "\"FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\\u000DFOR2; } while(0);}\"",
+                                            "value": "FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\rFOR2; } while(0);}",
+                                            "valueText": "FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\rFOR2; } while(0);}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -597,6 +613,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "j",
+                                    "value": "j",
                                     "valueText": "j"
                                 },
                                 "operatorToken": {
@@ -607,7 +624,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             },
                             "closeParenToken": {
@@ -652,6 +671,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -673,7 +693,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 111,
-                                                        "text": "'#2: Since LineTerminator(U-000D) between continue and Identifier not allowed continue evaluates without label'"
+                                                        "text": "'#2: Since LineTerminator(U-000D) between continue and Identifier not allowed continue evaluates without label'",
+                                                        "value": "#2: Since LineTerminator(U-000D) between continue and Identifier not allowed continue evaluates without label",
+                                                        "valueText": "#2: Since LineTerminator(U-000D) between continue and Identifier not allowed continue evaluates without label"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -754,6 +776,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -790,6 +813,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -811,7 +835,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 149,
-                                                "text": "'#2.1: eval(\"FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\\\\u000DFOR2; } while(0);}\") does not lead to throwing exception'"
+                                                "text": "'#2.1: eval(\"FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\\\\u000DFOR2; } while(0);}\") does not lead to throwing exception'",
+                                                "value": "#2.1: eval(\"FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\\u000DFOR2; } while(0);}\") does not lead to throwing exception",
+                                                "valueText": "#2.1: eval(\"FOR2 : for(var i=1;i<2;i++){FOR2NESTED : for(var j=1;j<2;j++) { continue\\u000DFOR2; } while(0);}\") does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -933,6 +959,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -954,7 +981,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 98,
-                                            "text": "\"FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\\u2028FOR3; } while(0);}\""
+                                            "text": "\"FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\\u2028FOR3; } while(0);}\"",
+                                            "value": "FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\u2028FOR3; } while(0);}",
+                                            "valueText": "FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\u2028FOR3; } while(0);}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1014,6 +1043,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "j",
+                                    "value": "j",
                                     "valueText": "j"
                                 },
                                 "operatorToken": {
@@ -1024,7 +1054,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             },
                             "closeParenToken": {
@@ -1069,6 +1101,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -1090,7 +1123,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 111,
-                                                        "text": "'#3: Since LineTerminator(U-2028) between continue and Identifier not allowed continue evaluates without label'"
+                                                        "text": "'#3: Since LineTerminator(U-2028) between continue and Identifier not allowed continue evaluates without label'",
+                                                        "value": "#3: Since LineTerminator(U-2028) between continue and Identifier not allowed continue evaluates without label",
+                                                        "valueText": "#3: Since LineTerminator(U-2028) between continue and Identifier not allowed continue evaluates without label"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -1171,6 +1206,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -1207,6 +1243,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1228,7 +1265,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 149,
-                                                "text": "'#3.1: eval(\"FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\\\\u2028FOR3; } while(0);}\") does not lead to throwing exception'"
+                                                "text": "'#3.1: eval(\"FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\\\\u2028FOR3; } while(0);}\") does not lead to throwing exception'",
+                                                "value": "#3.1: eval(\"FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\\u2028FOR3; } while(0);}\") does not lead to throwing exception",
+                                                "valueText": "#3.1: eval(\"FOR3 : for(var i=1;i<2;i++){FOR3NESTED : for(var j=1;j<2;j++) { continue\\u2028FOR3; } while(0);}\") does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1350,6 +1389,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1371,7 +1411,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 98,
-                                            "text": "\"FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\\u2029FOR4; } while(0);}\""
+                                            "text": "\"FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\\u2029FOR4; } while(0);}\"",
+                                            "value": "FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\u2029FOR4; } while(0);}",
+                                            "valueText": "FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\u2029FOR4; } while(0);}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1431,6 +1473,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "j",
+                                    "value": "j",
                                     "valueText": "j"
                                 },
                                 "operatorToken": {
@@ -1441,7 +1484,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             },
                             "closeParenToken": {
@@ -1486,6 +1531,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -1507,7 +1553,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 111,
-                                                        "text": "'#4: Since LineTerminator(U-2029) between continue and Identifier not allowed continue evaluates without label'"
+                                                        "text": "'#4: Since LineTerminator(U-2029) between continue and Identifier not allowed continue evaluates without label'",
+                                                        "value": "#4: Since LineTerminator(U-2029) between continue and Identifier not allowed continue evaluates without label",
+                                                        "valueText": "#4: Since LineTerminator(U-2029) between continue and Identifier not allowed continue evaluates without label"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -1588,6 +1636,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -1624,6 +1673,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1645,7 +1695,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 150,
-                                                "text": "'#4.1: eval(\"FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\\\\u2029FOR4; } while(0);}\"); does not lead to throwing exception'"
+                                                "text": "'#4.1: eval(\"FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\\\\u2029FOR4; } while(0);}\"); does not lead to throwing exception'",
+                                                "value": "#4.1: eval(\"FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\\u2029FOR4; } while(0);}\"); does not lead to throwing exception",
+                                                "valueText": "#4.1: eval(\"FOR4 : for(var i=1;i<2;i++){FOR4NESTED : for(var j=1;j<2;j++) { continue\\u2029FOR4; } while(0);}\"); does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {

@@ -91,7 +91,9 @@
                             "operand": {
                                 "kind": "NumericLiteral",
                                 "width": 6,
-                                "text": "1e+308"
+                                "text": "1e+308",
+                                "value": 1e+308,
+                                "valueText": "1e+308"
                             }
                         },
                         "operatorToken": {
@@ -104,6 +106,8 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "3",
+                            "value": 3,
+                            "valueText": "3",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -138,6 +142,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "Infinity",
+                            "value": "Infinity",
                             "valueText": "Infinity"
                         }
                     }
@@ -176,6 +181,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -202,6 +208,8 @@
                                                 "width": 38,
                                                 "fullWidth": 39,
                                                 "text": "'#1: -1e+308*3 === Infinity. Actual: '",
+                                                "value": "#1: -1e+308*3 === Infinity. Actual: ",
+                                                "valueText": "#1: -1e+308*3 === Infinity. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -245,7 +253,9 @@
                                                         "operand": {
                                                             "kind": "NumericLiteral",
                                                             "width": 6,
-                                                            "text": "1e+308"
+                                                            "text": "1e+308",
+                                                            "value": 1e+308,
+                                                            "valueText": "1e+308"
                                                         }
                                                     },
                                                     "operatorToken": {
@@ -256,7 +266,9 @@
                                                     "right": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "3"
+                                                        "text": "3",
+                                                        "value": 3,
+                                                        "valueText": "3"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -372,7 +384,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     }
                                 },
                                 "operatorToken": {
@@ -398,6 +412,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "Math",
+                                                "value": "Math",
                                                 "valueText": "Math"
                                             },
                                             "dotToken": {
@@ -409,6 +424,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "pow",
+                                                "value": "pow",
                                                 "valueText": "pow"
                                             }
                                         },
@@ -424,7 +440,9 @@
                                                 {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "2"
+                                                    "text": "2",
+                                                    "value": 2,
+                                                    "valueText": "2"
                                                 },
                                                 {
                                                     "kind": "CommaToken",
@@ -434,7 +452,9 @@
                                                 {
                                                     "kind": "NumericLiteral",
                                                     "width": 2,
-                                                    "text": "53"
+                                                    "text": "53",
+                                                    "value": 53,
+                                                    "valueText": "53"
                                                 }
                                             ],
                                             "closeParenToken": {
@@ -474,6 +494,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -485,6 +506,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "pow",
+                                            "value": "pow",
                                             "valueText": "pow"
                                         }
                                     },
@@ -500,7 +522,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "2"
+                                                "text": "2",
+                                                "value": 2,
+                                                "valueText": "2"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -510,7 +534,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 3,
-                                                "text": "971"
+                                                "text": "971",
+                                                "value": 971,
+                                                "valueText": "971"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -566,6 +592,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "Infinity",
+                            "value": "Infinity",
                             "valueText": "Infinity"
                         }
                     }
@@ -604,6 +631,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -630,6 +658,8 @@
                                                 "width": 68,
                                                 "fullWidth": 69,
                                                 "text": "'#2: (-1*(Math.pow(2,53))*(Math.pow(2,971))) === Infinity. Actual: '",
+                                                "value": "#2: (-1*(Math.pow(2,53))*(Math.pow(2,971))) === Infinity. Actual: ",
+                                                "valueText": "#2: (-1*(Math.pow(2,53))*(Math.pow(2,971))) === Infinity. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -684,7 +714,9 @@
                                                                 "operand": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "1"
+                                                                    "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1"
                                                                 }
                                                             },
                                                             "operatorToken": {
@@ -710,6 +742,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 4,
                                                                             "text": "Math",
+                                                                            "value": "Math",
                                                                             "valueText": "Math"
                                                                         },
                                                                         "dotToken": {
@@ -721,6 +754,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 3,
                                                                             "text": "pow",
+                                                                            "value": "pow",
                                                                             "valueText": "pow"
                                                                         }
                                                                     },
@@ -736,7 +770,9 @@
                                                                             {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 1,
-                                                                                "text": "2"
+                                                                                "text": "2",
+                                                                                "value": 2,
+                                                                                "valueText": "2"
                                                                             },
                                                                             {
                                                                                 "kind": "CommaToken",
@@ -746,7 +782,9 @@
                                                                             {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 2,
-                                                                                "text": "53"
+                                                                                "text": "53",
+                                                                                "value": 53,
+                                                                                "valueText": "53"
                                                                             }
                                                                         ],
                                                                         "closeParenToken": {
@@ -786,6 +824,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 4,
                                                                         "text": "Math",
+                                                                        "value": "Math",
                                                                         "valueText": "Math"
                                                                     },
                                                                     "dotToken": {
@@ -797,6 +836,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 3,
                                                                         "text": "pow",
+                                                                        "value": "pow",
                                                                         "valueText": "pow"
                                                                     }
                                                                 },
@@ -812,7 +852,9 @@
                                                                         {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 1,
-                                                                            "text": "2"
+                                                                            "text": "2",
+                                                                            "value": 2,
+                                                                            "valueText": "2"
                                                                         },
                                                                         {
                                                                             "kind": "CommaToken",
@@ -822,7 +864,9 @@
                                                                         {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 3,
-                                                                            "text": "971"
+                                                                            "text": "971",
+                                                                            "value": 971,
+                                                                            "valueText": "971"
                                                                         }
                                                                     ],
                                                                     "closeParenToken": {

@@ -103,6 +103,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -131,6 +132,8 @@
                                                 "width": 43,
                                                 "fullWidth": 44,
                                                 "text": "'#1.1: /[^a]*/() throw TypeError. Actual: '",
+                                                "value": "#1.1: /[^a]*/() throw TypeError. Actual: ",
+                                                "valueText": "#1.1: /[^a]*/() throw TypeError. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -168,7 +171,9 @@
                                                     "expression": {
                                                         "kind": "RegularExpressionLiteral",
                                                         "width": 7,
-                                                        "text": "/[^a]*/"
+                                                        "text": "/[^a]*/",
+                                                        "value": {},
+                                                        "valueText": "/[^a]*/"
                                                     },
                                                     "argumentList": {
                                                         "kind": "ArgumentList",
@@ -256,6 +261,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -336,6 +342,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -362,6 +369,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "TypeError",
+                                                "value": "TypeError",
                                                 "valueText": "TypeError"
                                             }
                                         },
@@ -395,7 +403,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -440,6 +450,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -466,6 +477,8 @@
                                                                 "width": 43,
                                                                 "fullWidth": 44,
                                                                 "text": "'#1.2: /[^a]*/() throw TypeError. Actual: '",
+                                                                "value": "#1.2: /[^a]*/() throw TypeError. Actual: ",
+                                                                "valueText": "#1.2: /[^a]*/() throw TypeError. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -499,6 +512,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

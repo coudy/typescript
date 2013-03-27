@@ -76,6 +76,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "myObj",
+                                "value": "myObj",
                                 "valueText": "myObj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -117,6 +118,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 2,
                                                 "text": "p1",
+                                                "value": "p1",
                                                 "valueText": "p1"
                                             },
                                             "colonToken": {
@@ -135,7 +137,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "'a'"
+                                                "text": "'a'",
+                                                "value": "a",
+                                                "valueText": "a"
                                             }
                                         },
                                         {
@@ -164,6 +168,7 @@
                                                 "width": 2,
                                                 "fullWidth": 15,
                                                 "text": "p2",
+                                                "value": "p2",
                                                 "valueText": "p2",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -189,7 +194,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "'b'"
+                                                "text": "'b'",
+                                                "value": "b",
+                                                "valueText": "b"
                                             }
                                         },
                                         {
@@ -218,6 +225,7 @@
                                                 "width": 2,
                                                 "fullWidth": 15,
                                                 "text": "p3",
+                                                "value": "p3",
                                                 "valueText": "p3",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -243,7 +251,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "'c'"
+                                                "text": "'c'",
+                                                "value": "c",
+                                                "valueText": "c"
                                             }
                                         },
                                         {
@@ -268,6 +278,7 @@
                                                 "width": 5,
                                                 "fullWidth": 18,
                                                 "text": "value",
+                                                "value": "value",
                                                 "valueText": "value",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -293,7 +304,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 13,
-                                                "text": "'myObj_value'"
+                                                "text": "'myObj_value'",
+                                                "value": "myObj_value",
+                                                "valueText": "myObj_value"
                                             }
                                         },
                                         {
@@ -318,6 +331,7 @@
                                                 "width": 7,
                                                 "fullWidth": 21,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -402,7 +416,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 13,
-                                                                "text": "'obj_valueOf'"
+                                                                "text": "'obj_valueOf'",
+                                                                "value": "obj_valueOf",
+                                                                "valueText": "obj_valueOf"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -441,6 +457,7 @@
                                                 "width": 8,
                                                 "fullWidth": 22,
                                                 "text": "parseInt",
+                                                "value": "parseInt",
                                                 "valueText": "parseInt",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -525,7 +542,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 14,
-                                                                "text": "'obj_parseInt'"
+                                                                "text": "'obj_parseInt'",
+                                                                "value": "obj_parseInt",
+                                                                "valueText": "obj_parseInt"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -564,6 +583,7 @@
                                                 "width": 3,
                                                 "fullWidth": 17,
                                                 "text": "NaN",
+                                                "value": "NaN",
                                                 "valueText": "NaN",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -596,7 +616,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 9,
-                                                "text": "'obj_NaN'"
+                                                "text": "'obj_NaN'",
+                                                "value": "obj_NaN",
+                                                "valueText": "obj_NaN"
                                             }
                                         },
                                         {
@@ -621,6 +643,7 @@
                                                 "width": 8,
                                                 "fullWidth": 22,
                                                 "text": "Infinity",
+                                                "value": "Infinity",
                                                 "valueText": "Infinity",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -653,7 +676,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 14,
-                                                "text": "'obj_Infinity'"
+                                                "text": "'obj_Infinity'",
+                                                "value": "obj_Infinity",
+                                                "valueText": "obj_Infinity"
                                             }
                                         },
                                         {
@@ -678,6 +703,7 @@
                                                 "width": 4,
                                                 "fullWidth": 22,
                                                 "text": "eval",
+                                                "value": "eval",
                                                 "valueText": "eval",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -762,7 +788,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 10,
-                                                                "text": "'obj_eval'"
+                                                                "text": "'obj_eval'",
+                                                                "value": "obj_eval",
+                                                                "valueText": "obj_eval"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -801,6 +829,7 @@
                                                 "width": 10,
                                                 "fullWidth": 24,
                                                 "text": "parseFloat",
+                                                "value": "parseFloat",
                                                 "valueText": "parseFloat",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -885,7 +914,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 16,
-                                                                "text": "'obj_parseFloat'"
+                                                                "text": "'obj_parseFloat'",
+                                                                "value": "obj_parseFloat",
+                                                                "valueText": "obj_parseFloat"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -924,6 +955,7 @@
                                                 "width": 5,
                                                 "fullWidth": 24,
                                                 "text": "isNaN",
+                                                "value": "isNaN",
                                                 "valueText": "isNaN",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -1008,7 +1040,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 11,
-                                                                "text": "'obj_isNaN'"
+                                                                "text": "'obj_isNaN'",
+                                                                "value": "obj_isNaN",
+                                                                "valueText": "obj_isNaN"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -1047,6 +1081,7 @@
                                                 "width": 8,
                                                 "fullWidth": 24,
                                                 "text": "isFinite",
+                                                "value": "isFinite",
                                                 "valueText": "isFinite",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -1131,7 +1166,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 14,
-                                                                "text": "'obj_isFinite'"
+                                                                "text": "'obj_isFinite'",
+                                                                "value": "obj_isFinite",
+                                                                "valueText": "obj_isFinite"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -1170,6 +1207,7 @@
                                                 "width": 1,
                                                 "fullWidth": 14,
                                                 "text": "i",
+                                                "value": "i",
                                                 "valueText": "i",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -1187,7 +1225,9 @@
                                             "expression": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "7"
+                                                "text": "7",
+                                                "value": 7,
+                                                "valueText": "7"
                                             }
                                         },
                                         {
@@ -1292,6 +1332,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "myObj",
+                                "value": "myObj",
                                 "valueText": "myObj"
                             },
                             "semicolonToken": {
@@ -1342,6 +1383,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -1419,6 +1461,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "e",
+                                            "value": "e",
                                             "valueText": "e"
                                         },
                                         "dotToken": {
@@ -1430,6 +1473,7 @@
                                             "kind": "IdentifierName",
                                             "width": 2,
                                             "text": "p1",
+                                            "value": "p1",
                                             "valueText": "p1"
                                         }
                                     },
@@ -1441,7 +1485,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"a\""
+                                        "text": "\"a\"",
+                                        "value": "a",
+                                        "valueText": "a"
                                     }
                                 },
                                 "closeParenToken": {
@@ -1467,6 +1513,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "$ERROR",
+                                            "value": "$ERROR",
                                             "valueText": "$ERROR"
                                         },
                                         "argumentList": {
@@ -1484,7 +1531,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 34,
-                                                        "text": "'#1: e.p1===\"a\". Actual:  e.p1==='"
+                                                        "text": "'#1: e.p1===\"a\". Actual:  e.p1==='",
+                                                        "value": "#1: e.p1===\"a\". Actual:  e.p1===",
+                                                        "valueText": "#1: e.p1===\"a\". Actual:  e.p1==="
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -1506,6 +1555,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "e",
+                                                            "value": "e",
                                                             "valueText": "e"
                                                         },
                                                         "dotToken": {
@@ -1518,6 +1568,7 @@
                                                             "width": 2,
                                                             "fullWidth": 3,
                                                             "text": "p1",
+                                                            "value": "p1",
                                                             "valueText": "p1",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -1601,6 +1652,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "e",
+                                            "value": "e",
                                             "valueText": "e"
                                         },
                                         "dotToken": {
@@ -1612,6 +1664,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "value",
+                                            "value": "value",
                                             "valueText": "value"
                                         }
                                     },
@@ -1623,7 +1676,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 13,
-                                        "text": "'myObj_value'"
+                                        "text": "'myObj_value'",
+                                        "value": "myObj_value",
+                                        "valueText": "myObj_value"
                                     }
                                 },
                                 "closeParenToken": {
@@ -1649,6 +1704,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "$ERROR",
+                                            "value": "$ERROR",
                                             "valueText": "$ERROR"
                                         },
                                         "argumentList": {
@@ -1666,7 +1722,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 52,
-                                                        "text": "'#2: e.value===\\'myObj_value\\'. Actual:  e.value==='"
+                                                        "text": "'#2: e.value===\\'myObj_value\\'. Actual:  e.value==='",
+                                                        "value": "#2: e.value==='myObj_value'. Actual:  e.value===",
+                                                        "valueText": "#2: e.value==='myObj_value'. Actual:  e.value==="
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -1688,6 +1746,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "e",
+                                                            "value": "e",
                                                             "valueText": "e"
                                                         },
                                                         "dotToken": {
@@ -1700,6 +1759,7 @@
                                                             "width": 5,
                                                             "fullWidth": 6,
                                                             "text": "value",
+                                                            "value": "value",
                                                             "valueText": "value",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -1786,6 +1846,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e"
                                             },
                                             "dotToken": {
@@ -1797,6 +1858,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "eval",
+                                                "value": "eval",
                                                 "valueText": "eval"
                                             }
                                         },
@@ -1824,7 +1886,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 10,
-                                        "text": "'obj_eval'"
+                                        "text": "'obj_eval'",
+                                        "value": "obj_eval",
+                                        "valueText": "obj_eval"
                                     }
                                 },
                                 "closeParenToken": {
@@ -1850,6 +1914,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "$ERROR",
+                                            "value": "$ERROR",
                                             "valueText": "$ERROR"
                                         },
                                         "argumentList": {
@@ -1867,7 +1932,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 51,
-                                                        "text": "'#3: e.eval()===\\'obj_eval\\'. Actual:  e.eval()==='"
+                                                        "text": "'#3: e.eval()===\\'obj_eval\\'. Actual:  e.eval()==='",
+                                                        "value": "#3: e.eval()==='obj_eval'. Actual:  e.eval()===",
+                                                        "valueText": "#3: e.eval()==='obj_eval'. Actual:  e.eval()==="
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -1892,6 +1959,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             },
                                                             "dotToken": {
@@ -1903,6 +1971,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "eval",
+                                                                "value": "eval",
                                                                 "valueText": "eval"
                                                             }
                                                         },
@@ -1987,6 +2056,7 @@
                             "width": 5,
                             "fullWidth": 17,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -2015,6 +2085,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "i",
+                            "value": "i",
                             "valueText": "i"
                         }
                     },
@@ -2026,7 +2097,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "semicolonToken": {
@@ -2097,6 +2170,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "myObj",
+                                "value": "myObj",
                                 "valueText": "myObj"
                             },
                             "semicolonToken": {
@@ -2147,6 +2221,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -2211,6 +2286,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj"
                         },
                         "dotToken": {
@@ -2222,6 +2298,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "i",
+                            "value": "i",
                             "valueText": "i"
                         }
                     },
@@ -2233,7 +2310,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -2259,6 +2338,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -2273,7 +2353,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 39,
-                                    "text": "'#4: Handling of catch must be correct'"
+                                    "text": "'#4: Handling of catch must be correct'",
+                                    "value": "#4: Handling of catch must be correct",
+                                    "valueText": "#4: Handling of catch must be correct"
                                 }
                             ],
                             "closeParenToken": {
@@ -2313,6 +2395,7 @@
                             "width": 5,
                             "fullWidth": 17,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -2341,6 +2424,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "i",
+                            "value": "i",
                             "valueText": "i"
                         }
                     },
@@ -2352,7 +2436,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "semicolonToken": {
@@ -2423,6 +2509,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "myObj",
+                                "value": "myObj",
                                 "valueText": "myObj"
                             },
                             "semicolonToken": {
@@ -2473,6 +2560,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -2512,6 +2600,7 @@
                                             "width": 1,
                                             "fullWidth": 3,
                                             "text": "e",
+                                            "value": "e",
                                             "valueText": "e",
                                             "hasLeadingTrivia": true,
                                             "leadingTrivia": [
@@ -2530,6 +2619,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "i",
+                                            "value": "i",
                                             "valueText": "i"
                                         }
                                     },
@@ -2541,7 +2631,9 @@
                                     "right": {
                                         "kind": "NumericLiteral",
                                         "width": 2,
-                                        "text": "10"
+                                        "text": "10",
+                                        "value": 10,
+                                        "valueText": "10"
                                     }
                                 },
                                 "semicolonToken": {
@@ -2608,6 +2700,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj"
                         },
                         "dotToken": {
@@ -2619,6 +2712,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "i",
+                            "value": "i",
                             "valueText": "i"
                         }
                     },
@@ -2630,7 +2724,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "10"
+                        "text": "10",
+                        "value": 10,
+                        "valueText": "10"
                     }
                 },
                 "closeParenToken": {
@@ -2656,6 +2752,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR"
                         },
                         "argumentList": {
@@ -2670,7 +2767,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 39,
-                                    "text": "'#5: Handling of catch must be correct'"
+                                    "text": "'#5: Handling of catch must be correct'",
+                                    "value": "#5: Handling of catch must be correct",
+                                    "valueText": "#5: Handling of catch must be correct"
                                 }
                             ],
                             "closeParenToken": {

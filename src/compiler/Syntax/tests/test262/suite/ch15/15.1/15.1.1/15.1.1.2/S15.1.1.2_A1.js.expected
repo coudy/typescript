@@ -97,6 +97,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "Infinity",
+                                "value": "Infinity",
                                 "valueText": "Infinity"
                             },
                             "closeParenToken": {
@@ -130,7 +131,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"number\""
+                        "text": "\"number\"",
+                        "value": "number",
+                        "valueText": "number"
                     }
                 },
                 "closeParenToken": {
@@ -175,6 +178,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -201,6 +205,8 @@
                                                 "width": 45,
                                                 "fullWidth": 46,
                                                 "text": "'#1: typeof(Infinity) === \"number\". Actual: '",
+                                                "value": "#1: typeof(Infinity) === \"number\". Actual: ",
+                                                "valueText": "#1: typeof(Infinity) === \"number\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -250,6 +256,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "Infinity",
+                                                            "value": "Infinity",
                                                             "valueText": "Infinity"
                                                         },
                                                         "closeParenToken": {
@@ -358,6 +365,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "isFinite",
+                            "value": "isFinite",
                             "valueText": "isFinite"
                         },
                         "argumentList": {
@@ -373,6 +381,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "Infinity",
+                                    "value": "Infinity",
                                     "valueText": "Infinity"
                                 }
                             ],
@@ -407,7 +416,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -452,6 +463,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -478,6 +490,8 @@
                                                 "width": 41,
                                                 "fullWidth": 42,
                                                 "text": "'#2: Infinity === Not-a-Finite. Actual: '",
+                                                "value": "#2: Infinity === Not-a-Finite. Actual: ",
+                                                "valueText": "#2: Infinity === Not-a-Finite. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -511,6 +525,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "Infinity",
+                                                    "value": "Infinity",
                                                     "valueText": "Infinity"
                                                 },
                                                 "closeParenToken": {
@@ -612,6 +627,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -627,6 +643,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "Infinity",
+                                    "value": "Infinity",
                                     "valueText": "Infinity"
                                 }
                             ],
@@ -661,7 +678,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -706,6 +725,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -732,6 +752,8 @@
                                                 "width": 41,
                                                 "fullWidth": 42,
                                                 "text": "'#3: Infinity === Not-a-Number. Actual: '",
+                                                "value": "#3: Infinity === Not-a-Number. Actual: ",
+                                                "valueText": "#3: Infinity === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -765,6 +787,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "Infinity",
+                                                    "value": "Infinity",
                                                     "valueText": "Infinity"
                                                 },
                                                 "closeParenToken": {
@@ -868,6 +891,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "Infinity",
+                        "value": "Infinity",
                         "valueText": "Infinity",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -897,6 +921,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -908,6 +933,7 @@
                             "kind": "IdentifierName",
                             "width": 17,
                             "text": "POSITIVE_INFINITY",
+                            "value": "POSITIVE_INFINITY",
                             "valueText": "POSITIVE_INFINITY"
                         }
                     }
@@ -954,6 +980,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -980,6 +1007,8 @@
                                                 "width": 53,
                                                 "fullWidth": 54,
                                                 "text": "'#4: Infinity === Number.POSITIVE_INFINITY. Actual: '",
+                                                "value": "#4: Infinity === Number.POSITIVE_INFINITY. Actual: ",
+                                                "valueText": "#4: Infinity === Number.POSITIVE_INFINITY. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1013,6 +1042,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "Infinity",
+                                                    "value": "Infinity",
                                                     "valueText": "Infinity"
                                                 },
                                                 "closeParenToken": {

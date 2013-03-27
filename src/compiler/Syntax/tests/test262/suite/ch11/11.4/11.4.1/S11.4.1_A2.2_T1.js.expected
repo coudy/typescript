@@ -98,6 +98,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -124,7 +125,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -169,6 +172,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -190,7 +194,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "'#1: delete x === true'"
+                                            "text": "'#1: delete x === true'",
+                                            "value": "#1: delete x === true",
+                                            "valueText": "#1: delete x === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -307,6 +313,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -334,7 +341,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -379,6 +388,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -400,7 +410,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 28,
-                                            "text": "'#2: delete this.x === true'"
+                                            "text": "'#2: delete this.x === true'",
+                                            "value": "#2: delete this.x === true",
+                                            "valueText": "#2: delete this.x === true"
                                         }
                                     ],
                                     "closeParenToken": {

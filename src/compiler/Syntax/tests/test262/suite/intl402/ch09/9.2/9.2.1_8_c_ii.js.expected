@@ -19,6 +19,7 @@
                         "width": 8,
                         "fullWidth": 261,
                         "text": "$INCLUDE",
+                        "value": "$INCLUDE",
                         "valueText": "$INCLUDE",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -70,7 +71,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 13,
-                                "text": "\"testIntl.js\""
+                                "text": "\"testIntl.js\"",
+                                "value": "testIntl.js",
+                                "valueText": "testIntl.js"
                             }
                         ],
                         "closeParenToken": {
@@ -132,6 +135,7 @@
                                 "width": 17,
                                 "fullWidth": 18,
                                 "text": "notStringOrObject",
+                                "value": "notStringOrObject",
                                 "valueText": "notStringOrObject",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -170,6 +174,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "undefined",
+                                            "value": "undefined",
                                             "valueText": "undefined"
                                         },
                                         {
@@ -206,7 +211,9 @@
                                         {
                                             "kind": "TrueKeyword",
                                             "width": 4,
-                                            "text": "true"
+                                            "text": "true",
+                                            "value": true,
+                                            "valueText": "true"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -224,7 +231,9 @@
                                         {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -242,7 +251,9 @@
                                         {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "0"
+                                            "text": "0",
+                                            "value": 0,
+                                            "valueText": "0"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -260,7 +271,9 @@
                                         {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "5"
+                                            "text": "5",
+                                            "value": 5,
+                                            "valueText": "5"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -286,7 +299,9 @@
                                             "operand": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "5"
+                                                "text": "5",
+                                                "value": 5,
+                                                "valueText": "5"
                                             }
                                         },
                                         {
@@ -306,6 +321,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "NaN",
+                                            "value": "NaN",
                                             "valueText": "NaN"
                                         }
                                     ],
@@ -345,6 +361,7 @@
                         "width": 24,
                         "fullWidth": 25,
                         "text": "testWithIntlConstructors",
+                        "value": "testWithIntlConstructors",
                         "valueText": "testWithIntlConstructors",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -399,6 +416,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 11,
                                                     "text": "Constructor",
+                                                    "value": "Constructor",
                                                     "valueText": "Constructor"
                                                 }
                                             }
@@ -450,6 +468,7 @@
                                                         "width": 17,
                                                         "fullWidth": 21,
                                                         "text": "notStringOrObject",
+                                                        "value": "notStringOrObject",
                                                         "valueText": "notStringOrObject",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -468,6 +487,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "forEach",
+                                                        "value": "forEach",
                                                         "valueText": "forEach"
                                                     }
                                                 },
@@ -515,6 +535,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 5,
                                                                                 "text": "value",
+                                                                                "value": "value",
                                                                                 "valueText": "value"
                                                                             }
                                                                         }
@@ -587,6 +608,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 5,
                                                                                         "text": "error",
+                                                                                        "value": "error",
                                                                                         "valueText": "error"
                                                                                     }
                                                                                 }
@@ -684,6 +706,7 @@
                                                                                                     "width": 9,
                                                                                                     "fullWidth": 10,
                                                                                                     "text": "supported",
+                                                                                                    "value": "supported",
                                                                                                     "valueText": "supported",
                                                                                                     "hasTrailingTrivia": true,
                                                                                                     "trailingTrivia": [
@@ -719,6 +742,7 @@
                                                                                                                 "kind": "IdentifierName",
                                                                                                                 "width": 11,
                                                                                                                 "text": "Constructor",
+                                                                                                                "value": "Constructor",
                                                                                                                 "valueText": "Constructor"
                                                                                                             },
                                                                                                             "dotToken": {
@@ -730,6 +754,7 @@
                                                                                                                 "kind": "IdentifierName",
                                                                                                                 "width": 18,
                                                                                                                 "text": "supportedLocalesOf",
+                                                                                                                "value": "supportedLocalesOf",
                                                                                                                 "valueText": "supportedLocalesOf"
                                                                                                             }
                                                                                                         },
@@ -755,6 +780,7 @@
                                                                                                                             "kind": "IdentifierName",
                                                                                                                             "width": 5,
                                                                                                                             "text": "value",
+                                                                                                                            "value": "value",
                                                                                                                             "valueText": "value"
                                                                                                                         }
                                                                                                                     ],
@@ -838,6 +864,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 1,
                                                                                 "text": "e",
+                                                                                "value": "e",
                                                                                 "valueText": "e"
                                                                             },
                                                                             "closeParenToken": {
@@ -882,6 +909,7 @@
                                                                                                 "width": 5,
                                                                                                 "fullWidth": 18,
                                                                                                 "text": "error",
+                                                                                                "value": "error",
                                                                                                 "valueText": "error",
                                                                                                 "hasLeadingTrivia": true,
                                                                                                 "hasTrailingTrivia": true,
@@ -915,6 +943,7 @@
                                                                                                 "kind": "IdentifierName",
                                                                                                 "width": 1,
                                                                                                 "text": "e",
+                                                                                                "value": "e",
                                                                                                 "valueText": "e"
                                                                                             }
                                                                                         },
@@ -994,6 +1023,7 @@
                                                                                 "width": 5,
                                                                                 "fullWidth": 6,
                                                                                 "text": "error",
+                                                                                "value": "error",
                                                                                 "valueText": "error",
                                                                                 "hasTrailingTrivia": true,
                                                                                 "trailingTrivia": [
@@ -1020,6 +1050,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 9,
                                                                                 "text": "undefined",
+                                                                                "value": "undefined",
                                                                                 "valueText": "undefined"
                                                                             }
                                                                         },
@@ -1065,6 +1096,7 @@
                                                                                             "width": 6,
                                                                                             "fullWidth": 18,
                                                                                             "text": "$ERROR",
+                                                                                            "value": "$ERROR",
                                                                                             "valueText": "$ERROR",
                                                                                             "hasLeadingTrivia": true,
                                                                                             "leadingTrivia": [
@@ -1094,6 +1126,8 @@
                                                                                                             "width": 2,
                                                                                                             "fullWidth": 3,
                                                                                                             "text": "\"\"",
+                                                                                                            "value": "",
+                                                                                                            "valueText": "",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "trailingTrivia": [
                                                                                                                 {
@@ -1120,6 +1154,7 @@
                                                                                                             "width": 5,
                                                                                                             "fullWidth": 6,
                                                                                                             "text": "value",
+                                                                                                            "value": "value",
                                                                                                             "valueText": "value",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "trailingTrivia": [
@@ -1146,7 +1181,9 @@
                                                                                                     "right": {
                                                                                                         "kind": "StringLiteral",
                                                                                                         "width": 30,
-                                                                                                        "text": "\" as locale was not rejected.\""
+                                                                                                        "text": "\" as locale was not rejected.\"",
+                                                                                                        "value": " as locale was not rejected.",
+                                                                                                        "valueText": " as locale was not rejected."
                                                                                                     }
                                                                                                 }
                                                                                             ],
@@ -1241,6 +1278,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 5,
                                                                                             "text": "error",
+                                                                                            "value": "error",
                                                                                             "valueText": "error"
                                                                                         },
                                                                                         "dotToken": {
@@ -1253,6 +1291,7 @@
                                                                                             "width": 4,
                                                                                             "fullWidth": 5,
                                                                                             "text": "name",
+                                                                                            "value": "name",
                                                                                             "valueText": "name",
                                                                                             "hasTrailingTrivia": true,
                                                                                             "trailingTrivia": [
@@ -1279,7 +1318,9 @@
                                                                                     "right": {
                                                                                         "kind": "StringLiteral",
                                                                                         "width": 11,
-                                                                                        "text": "\"TypeError\""
+                                                                                        "text": "\"TypeError\"",
+                                                                                        "value": "TypeError",
+                                                                                        "valueText": "TypeError"
                                                                                     }
                                                                                 },
                                                                                 "closeParenToken": {
@@ -1324,6 +1365,7 @@
                                                                                                     "width": 6,
                                                                                                     "fullWidth": 18,
                                                                                                     "text": "$ERROR",
+                                                                                                    "value": "$ERROR",
                                                                                                     "valueText": "$ERROR",
                                                                                                     "hasLeadingTrivia": true,
                                                                                                     "leadingTrivia": [
@@ -1359,6 +1401,8 @@
                                                                                                                             "width": 2,
                                                                                                                             "fullWidth": 3,
                                                                                                                             "text": "\"\"",
+                                                                                                                            "value": "",
+                                                                                                                            "valueText": "",
                                                                                                                             "hasTrailingTrivia": true,
                                                                                                                             "trailingTrivia": [
                                                                                                                                 {
@@ -1385,6 +1429,7 @@
                                                                                                                             "width": 5,
                                                                                                                             "fullWidth": 6,
                                                                                                                             "text": "value",
+                                                                                                                            "value": "value",
                                                                                                                             "valueText": "value",
                                                                                                                             "hasTrailingTrivia": true,
                                                                                                                             "trailingTrivia": [
@@ -1413,6 +1458,8 @@
                                                                                                                         "width": 43,
                                                                                                                         "fullWidth": 44,
                                                                                                                         "text": "\" as locale was rejected with wrong error \"",
+                                                                                                                        "value": " as locale was rejected with wrong error ",
+                                                                                                                        "valueText": " as locale was rejected with wrong error ",
                                                                                                                         "hasTrailingTrivia": true,
                                                                                                                         "trailingTrivia": [
                                                                                                                             {
@@ -1442,6 +1489,7 @@
                                                                                                                         "kind": "IdentifierName",
                                                                                                                         "width": 5,
                                                                                                                         "text": "error",
+                                                                                                                        "value": "error",
                                                                                                                         "valueText": "error"
                                                                                                                     },
                                                                                                                     "dotToken": {
@@ -1454,6 +1502,7 @@
                                                                                                                         "width": 4,
                                                                                                                         "fullWidth": 5,
                                                                                                                         "text": "name",
+                                                                                                                        "value": "name",
                                                                                                                         "valueText": "name",
                                                                                                                         "hasTrailingTrivia": true,
                                                                                                                         "trailingTrivia": [
@@ -1481,7 +1530,9 @@
                                                                                                             "right": {
                                                                                                                 "kind": "StringLiteral",
                                                                                                                 "width": 3,
-                                                                                                                "text": "\".\""
+                                                                                                                "text": "\".\"",
+                                                                                                                "value": ".",
+                                                                                                                "valueText": "."
                                                                                                             }
                                                                                                         }
                                                                                                     ],
@@ -1607,7 +1658,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             },
                                             "semicolonToken": {
                                                 "kind": "SemicolonToken",

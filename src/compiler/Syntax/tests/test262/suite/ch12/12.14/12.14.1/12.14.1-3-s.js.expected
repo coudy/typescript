@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -146,6 +147,8 @@
                                 "width": 12,
                                 "fullWidth": 20,
                                 "text": "\"use strict\"",
+                                "value": "use strict",
+                                "valueText": "use strict",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
                                     {
@@ -221,6 +224,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "eval",
+                                                "value": "eval",
                                                 "valueText": "eval"
                                             },
                                             "argumentList": {
@@ -236,7 +240,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 311,
-                                                        "text": "\" try { \\\r\n             throw new Error(\\\"...\\\");\\\r\n             return false;\\\r\n         } catch (EVAL) {\\\r\n             try\\\r\n             {\\\r\n               throw new Error(\\\"...\\\");\\\r\n             }catch(eval)\\\r\n             {\\\r\n                 return EVAL instanceof Error;\\\r\n              }\\\r\n         }\""
+                                                        "text": "\" try { \\\r\n             throw new Error(\\\"...\\\");\\\r\n             return false;\\\r\n         } catch (EVAL) {\\\r\n             try\\\r\n             {\\\r\n               throw new Error(\\\"...\\\");\\\r\n             }catch(eval)\\\r\n             {\\\r\n                 return EVAL instanceof Error;\\\r\n              }\\\r\n         }\"",
+                                                        "value": " try { \r\n             throw new Error(\"...\");\r\n             return false;\r\n         } catch (EVAL) {\r\n             try\r\n             {\r\n               throw new Error(\"...\");\r\n             }catch(eval)\r\n             {\r\n                 return EVAL instanceof Error;\r\n              }\r\n         }",
+                                                        "valueText": " try { \r\n             throw new Error(\"...\");\r\n             return false;\r\n         } catch (EVAL) {\r\n             try\r\n             {\r\n               throw new Error(\"...\");\r\n             }catch(eval)\r\n             {\r\n                 return EVAL instanceof Error;\r\n              }\r\n         }"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -288,7 +294,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -345,6 +353,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "e",
+                                    "value": "e",
                                     "valueText": "e"
                                 },
                                 "closeParenToken": {
@@ -412,6 +421,7 @@
                                                     "width": 1,
                                                     "fullWidth": 2,
                                                     "text": "e",
+                                                    "value": "e",
                                                     "valueText": "e",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -438,6 +448,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 11,
                                                     "text": "SyntaxError",
+                                                    "value": "SyntaxError",
                                                     "valueText": "SyntaxError"
                                                 }
                                             },
@@ -515,6 +526,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -530,6 +542,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

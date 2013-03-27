@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 28,
-                                    "text": "\"'\\u000Dstr\\u000Ding\\u000D'\""
+                                    "text": "\"'\\u000Dstr\\u000Ding\\u000D'\"",
+                                    "value": "'\rstr\ring\r'",
+                                    "valueText": "'\rstr\ring\r'"
                                 }
                             ],
                             "closeParenToken": {
@@ -132,7 +135,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 26,
-                        "text": "\"\\u000Dstr\\u000Ding\\u000D\""
+                        "text": "\"\\u000Dstr\\u000Ding\\u000D\"",
+                        "value": "\rstr\ring\r",
+                        "valueText": "\rstr\ring\r"
                     }
                 },
                 "closeParenToken": {
@@ -177,6 +182,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -198,7 +204,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 79,
-                                            "text": "'#1: eval(\"\\'\\\\u000Dstr\\\\u000Ding\\\\u000D\\'\") === \"\\\\u000Dstr\\\\u000Ding\\\\u000D\"'"
+                                            "text": "'#1: eval(\"\\'\\\\u000Dstr\\\\u000Ding\\\\u000D\\'\") === \"\\\\u000Dstr\\\\u000Ding\\\\u000D\"'",
+                                            "value": "#1: eval(\"'\\u000Dstr\\u000Ding\\u000D'\") === \"\\u000Dstr\\u000Ding\\u000D\"",
+                                            "valueText": "#1: eval(\"'\\u000Dstr\\u000Ding\\u000D'\") === \"\\u000Dstr\\u000Ding\\u000D\""
                                         }
                                     ],
                                     "closeParenToken": {

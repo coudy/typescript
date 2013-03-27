@@ -75,6 +75,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -126,6 +127,7 @@
                                                 "width": 7,
                                                 "fullWidth": 11,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -206,6 +208,7 @@
                                                 "width": 8,
                                                 "fullWidth": 12,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -241,6 +244,8 @@
                                                     "width": 1,
                                                     "fullWidth": 2,
                                                     "text": "0",
+                                                    "value": 0,
+                                                    "valueText": "0",
                                                     "hasTrailingTrivia": true,
                                                     "hasTrailingNewLine": true,
                                                     "trailingTrivia": [
@@ -324,6 +329,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "__split",
+                                "value": "__split",
                                 "valueText": "__split",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -375,6 +381,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "String",
+                                                "value": "String",
                                                 "valueText": "String"
                                             },
                                             "argumentList": {
@@ -390,6 +397,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__obj",
+                                                        "value": "__obj",
                                                         "valueText": "__obj"
                                                     }
                                                 ],
@@ -409,6 +417,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "split",
+                                            "value": "split",
                                             "valueText": "split"
                                         }
                                     },
@@ -580,6 +589,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -606,7 +616,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -651,6 +663,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -675,7 +688,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 143,
-                                                "text": "'#1: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); typeof __split === \"object\". Actual: '"
+                                                "text": "'#1: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); typeof __split === \"object\". Actual: '",
+                                                "value": "#1: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); typeof __split === \"object\". Actual: ",
+                                                "valueText": "#1: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); typeof __split === \"object\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -703,6 +718,7 @@
                                                     "width": 7,
                                                     "fullWidth": 8,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -829,6 +845,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -841,6 +858,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -867,6 +886,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "Array",
+                        "value": "Array",
                         "valueText": "Array"
                     }
                 },
@@ -915,6 +935,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -941,7 +962,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 145,
-                                                "text": "'#2: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.constructor === Array. Actual: '"
+                                                "text": "'#2: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.constructor === Array. Actual: '",
+                                                "value": "#2: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.constructor === Array. Actual: ",
+                                                "valueText": "#2: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.constructor === Array. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -956,6 +979,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -968,6 +992,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -1090,6 +1116,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -1102,6 +1129,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1128,7 +1156,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1173,6 +1203,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1197,7 +1228,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 136,
-                                                "text": "'#3: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.length === 1. Actual: '"
+                                                "text": "'#3: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.length === 1. Actual: '",
+                                                "value": "#3: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.length === 1. Actual: ",
+                                                "valueText": "#3: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split.length === 1. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1211,6 +1244,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -1223,6 +1257,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -1346,6 +1381,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -1356,7 +1392,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1388,7 +1426,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -1433,6 +1473,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1457,7 +1498,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 142,
-                                                "text": "'#4: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split[0] !== \"undefined\". Actual: '"
+                                                "text": "'#4: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split[0] !== \"undefined\". Actual: '",
+                                                "value": "#4: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split[0] !== \"undefined\". Actual: ",
+                                                "valueText": "#4: __obj = {valueOf:function(){}, toString:void 0}; __split = new String(__obj).split(function(){}()); __split[0] !== \"undefined\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1471,6 +1514,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -1481,7 +1525,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "0"
+                                                    "text": "0",
+                                                    "value": 0,
+                                                    "valueText": "0"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",

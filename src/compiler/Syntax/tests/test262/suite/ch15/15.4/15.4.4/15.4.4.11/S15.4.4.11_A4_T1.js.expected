@@ -74,6 +74,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -146,6 +147,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -158,6 +160,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "sort",
+                            "value": "sort",
                             "valueText": "sort",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -191,6 +194,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "dotToken": {
@@ -202,6 +206,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -214,6 +219,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "sort",
+                            "value": "sort",
                             "valueText": "sort"
                         }
                     }
@@ -246,6 +252,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -256,7 +263,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -288,7 +297,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"x\""
+                        "text": "\"x\"",
+                        "value": "x",
+                        "valueText": "x"
                     }
                 },
                 "semicolonToken": {
@@ -319,6 +330,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -329,7 +341,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 10,
-                            "text": "4294967295"
+                            "text": "4294967295",
+                            "value": 4294967295,
+                            "valueText": "4294967295"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -361,7 +375,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"y\""
+                        "text": "\"y\"",
+                        "value": "y",
+                        "valueText": "y"
                     }
                 },
                 "semicolonToken": {
@@ -392,6 +408,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -404,6 +421,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -430,7 +448,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 10,
-                        "text": "4294967296"
+                        "text": "4294967296",
+                        "value": 4294967296,
+                        "valueText": "4294967296"
                     }
                 },
                 "semicolonToken": {
@@ -499,6 +519,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "dotToken": {
@@ -510,6 +531,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "sort",
+                                "value": "sort",
                                 "valueText": "sort"
                             }
                         },
@@ -554,6 +576,7 @@
                         "kind": "IdentifierName",
                         "width": 3,
                         "text": "obj",
+                        "value": "obj",
                         "valueText": "obj"
                     }
                 },
@@ -599,6 +622,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -625,6 +649,8 @@
                                                 "width": 143,
                                                 "fullWidth": 144,
                                                 "text": "'#1: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort() === obj. Actual: '",
+                                                "value": "#1: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort() === obj. Actual: ",
+                                                "valueText": "#1: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort() === obj. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -664,6 +690,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "obj",
+                                                            "value": "obj",
                                                             "valueText": "obj"
                                                         },
                                                         "dotToken": {
@@ -675,6 +702,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "sort",
+                                                            "value": "sort",
                                                             "valueText": "sort"
                                                         }
                                                     },
@@ -789,6 +817,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -801,6 +830,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -827,7 +857,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 10,
-                        "text": "4294967296"
+                        "text": "4294967296",
+                        "value": 4294967296,
+                        "valueText": "4294967296"
                     }
                 },
                 "closeParenToken": {
@@ -872,6 +904,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -898,6 +931,8 @@
                                                 "width": 162,
                                                 "fullWidth": 163,
                                                 "text": "'#2: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj.length === 4294967296. Actual: '",
+                                                "value": "#2: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj.length === 4294967296. Actual: ",
+                                                "valueText": "#2: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj.length === 4294967296. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -934,6 +969,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -945,6 +981,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "length",
+                                                        "value": "length",
                                                         "valueText": "length"
                                                     }
                                                 },
@@ -1043,6 +1080,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -1053,7 +1091,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1085,7 +1125,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"x\""
+                        "text": "\"x\"",
+                        "value": "x",
+                        "valueText": "x"
                     }
                 },
                 "closeParenToken": {
@@ -1130,6 +1172,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1151,7 +1194,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 140,
-                                            "text": "'#3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[0] == \"x\"'"
+                                            "text": "'#3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[0] == \"x\"'",
+                                            "value": "#3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[0] == \"x\"",
+                                            "valueText": "#3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[0] == \"x\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1241,6 +1286,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "openBracketToken": {
@@ -1251,7 +1297,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 10,
-                            "text": "4294967295"
+                            "text": "4294967295",
+                            "value": 4294967295,
+                            "valueText": "4294967295"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1283,7 +1331,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"y\""
+                        "text": "\"y\"",
+                        "value": "y",
+                        "valueText": "y"
                     }
                 },
                 "closeParenToken": {
@@ -1328,6 +1378,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1349,7 +1400,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 148,
-                                            "text": "'#4: var obj = {}; obj.sort = Array.prototype.sort; obj[] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[4294967295] == \"y\"'"
+                                            "text": "'#4: var obj = {}; obj.sort = Array.prototype.sort; obj[] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[4294967295] == \"y\"'",
+                                            "value": "#4: var obj = {}; obj.sort = Array.prototype.sort; obj[] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[4294967295] == \"y\"",
+                                            "valueText": "#4: var obj = {}; obj.sort = Array.prototype.sort; obj[] = \"x\"; obj[4294967295] = \"y\"; obj.length = 4294967296; obj.sort(); obj[4294967295] == \"y\""
                                         }
                                     ],
                                     "closeParenToken": {

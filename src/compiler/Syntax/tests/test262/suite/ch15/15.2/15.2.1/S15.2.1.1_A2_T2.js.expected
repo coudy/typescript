@@ -75,6 +75,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "num",
+                                "value": "num",
                                 "valueText": "num",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 3,
-                                    "text": "1.1"
+                                    "text": "1.1",
+                                    "value": 1.1,
+                                    "valueText": "1.1"
                                 }
                             }
                         }
@@ -179,6 +182,7 @@
                             "width": 3,
                             "fullWidth": 5,
                             "text": "num",
+                            "value": "num",
                             "valueText": "num",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -205,7 +209,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "'number'"
+                        "text": "'number'",
+                        "value": "number",
+                        "valueText": "number"
                     }
                 },
                 "closeParenToken": {
@@ -242,6 +248,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -263,7 +270,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 42,
-                                            "text": "'#1: num = 1.1 should be Number primitive'"
+                                            "text": "'#1: num = 1.1 should be Number primitive'",
+                                            "value": "#1: num = 1.1 should be Number primitive",
+                                            "valueText": "#1: num = 1.1 should be Number primitive"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -342,6 +351,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -374,6 +384,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -389,6 +400,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "num",
+                                                "value": "num",
                                                 "valueText": "num"
                                             }
                                         ],
@@ -480,6 +492,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -506,7 +519,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -551,6 +566,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -572,7 +588,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#2: Object(1.1) returns ToObject(1.1)'"
+                                            "text": "'#2: Object(1.1) returns ToObject(1.1)'",
+                                            "value": "#2: Object(1.1) returns ToObject(1.1)",
+                                            "valueText": "#2: Object(1.1) returns ToObject(1.1)"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -665,6 +683,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -677,6 +696,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -703,6 +724,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "Number",
+                        "value": "Number",
                         "valueText": "Number"
                     }
                 },
@@ -748,6 +770,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -769,7 +792,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#3: Object(1.1) returns ToObject(1.1)'"
+                                            "text": "'#3: Object(1.1) returns ToObject(1.1)'",
+                                            "value": "#3: Object(1.1) returns ToObject(1.1)",
+                                            "valueText": "#3: Object(1.1) returns ToObject(1.1)"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -868,6 +893,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -893,7 +919,9 @@
                             "right": {
                                 "kind": "NumericLiteral",
                                 "width": 3,
-                                "text": "1.1"
+                                "text": "1.1",
+                                "value": 1.1,
+                                "valueText": "1.1"
                             }
                         },
                         "closeParenToken": {
@@ -923,6 +951,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -948,7 +977,9 @@
                             "right": {
                                 "kind": "NumericLiteral",
                                 "width": 3,
-                                "text": "1.1"
+                                "text": "1.1",
+                                "value": 1.1,
+                                "valueText": "1.1"
                             }
                         },
                         "closeParenToken": {
@@ -1000,6 +1031,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1021,7 +1053,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 39,
-                                            "text": "'#4: Object(1.1) returns ToObject(1.1)'"
+                                            "text": "'#4: Object(1.1) returns ToObject(1.1)'",
+                                            "value": "#4: Object(1.1) returns ToObject(1.1)",
+                                            "valueText": "#4: Object(1.1) returns ToObject(1.1)"
                                         }
                                     ],
                                     "closeParenToken": {

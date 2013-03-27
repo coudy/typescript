@@ -74,6 +74,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "FooObj",
+                    "value": "FooObj",
                     "valueText": "FooObj"
                 },
                 "callSignature": {
@@ -145,6 +146,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "FooObj",
+                                "value": "FooObj",
                                 "valueText": "FooObj"
                             },
                             "dotToken": {
@@ -156,6 +158,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -168,6 +171,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop"
                         }
                     },
@@ -179,7 +183,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"some\""
+                        "text": "\"some\"",
+                        "value": "some",
+                        "valueText": "some"
                     }
                 },
                 "semicolonToken": {
@@ -242,6 +248,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "foo",
+                                "value": "foo",
                                 "valueText": "foo"
                             },
                             "equalsValueClause": {
@@ -280,6 +287,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "FooObj",
+                                        "value": "FooObj",
                                         "valueText": "FooObj"
                                     }
                                 }
@@ -358,6 +366,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "foo",
+                            "value": "foo",
                             "valueText": "foo"
                         },
                         "dotToken": {
@@ -370,6 +379,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -396,7 +406,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"some\""
+                        "text": "\"some\"",
+                        "value": "some",
+                        "valueText": "some"
                     }
                 },
                 "closeParenToken": {
@@ -433,6 +445,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -459,6 +472,8 @@
                                                 "width": 107,
                                                 "fullWidth": 108,
                                                 "text": "'#1: function FooObj(){}; FooObj.prototype.prop=\"some\"; var foo= new FooObj; foo.prop === \"some\". Actual: '",
+                                                "value": "#1: function FooObj(){}; FooObj.prototype.prop=\"some\"; var foo= new FooObj; foo.prop === \"some\". Actual: ",
+                                                "valueText": "#1: function FooObj(){}; FooObj.prototype.prop=\"some\"; var foo= new FooObj; foo.prop === \"some\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -495,6 +510,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "foo",
+                                                        "value": "foo",
                                                         "valueText": "foo"
                                                     },
                                                     "dotToken": {
@@ -506,6 +522,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "prop",
+                                                        "value": "prop",
                                                         "valueText": "prop"
                                                     }
                                                 },
@@ -570,6 +587,7 @@
                             "width": 3,
                             "fullWidth": 175,
                             "text": "foo",
+                            "value": "foo",
                             "valueText": "foo",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -622,6 +640,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop"
                         }
                     },
@@ -633,7 +652,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "semicolonToken": {
@@ -693,6 +714,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "foo__",
+                                "value": "foo__",
                                 "valueText": "foo__",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -738,6 +760,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "FooObj",
+                                        "value": "FooObj",
                                         "valueText": "FooObj"
                                     }
                                 }
@@ -791,6 +814,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "foo__",
+                            "value": "foo__",
                             "valueText": "foo__"
                         },
                         "dotToken": {
@@ -803,6 +827,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -829,7 +854,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"some\""
+                        "text": "\"some\"",
+                        "value": "some",
+                        "valueText": "some"
                     }
                 },
                 "closeParenToken": {
@@ -866,6 +893,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -892,6 +920,8 @@
                                                 "width": 148,
                                                 "fullWidth": 149,
                                                 "text": "'#2: function FooObj(){}; FooObj.prototype.prop=\"some\"; var foo= new FooObj; foo.prop=true; var foo__ = new FooObj; foo__.prop === \"some\". Actual: '",
+                                                "value": "#2: function FooObj(){}; FooObj.prototype.prop=\"some\"; var foo= new FooObj; foo.prop=true; var foo__ = new FooObj; foo__.prop === \"some\". Actual: ",
+                                                "valueText": "#2: function FooObj(){}; FooObj.prototype.prop=\"some\"; var foo= new FooObj; foo.prop=true; var foo__ = new FooObj; foo__.prop === \"some\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -928,6 +958,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "foo__",
+                                                        "value": "foo__",
                                                         "valueText": "foo__"
                                                     },
                                                     "dotToken": {
@@ -939,6 +970,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "prop",
+                                                        "value": "prop",
                                                         "valueText": "prop"
                                                     }
                                                 },

@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 334,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -78,7 +79,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 38,
-                                "text": "\"\\u2029var\\u2029x\\u2029=\\u20291\\u2029\""
+                                "text": "\"\\u2029var\\u2029x\\u2029=\\u20291\\u2029\"",
+                                "value": "\u2029var\u2029x\u2029=\u20291\u2029",
+                                "valueText": "\u2029var\u2029x\u2029=\u20291\u2029"
                             }
                         ],
                         "closeParenToken": {
@@ -132,6 +135,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -157,7 +161,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -202,6 +208,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -228,6 +235,8 @@
                                                 "width": 74,
                                                 "fullWidth": 75,
                                                 "text": "'#1: eval(\"\\\\u2029var\\\\u2029x\\\\u2029=\\\\u20291\\\\u2029\"); x === 1. Actual: '",
+                                                "value": "#1: eval(\"\\u2029var\\u2029x\\u2029=\\u20291\\u2029\"); x === 1. Actual: ",
+                                                "valueText": "#1: eval(\"\\u2029var\\u2029x\\u2029=\\u20291\\u2029\"); x === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -261,6 +270,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -321,6 +331,7 @@
                         "width": 4,
                         "fullWidth": 15,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -378,6 +389,8 @@
                                                                 "width": 8,
                                                                 "fullWidth": 9,
                                                                 "text": "\"\\u2029\"",
+                                                                "value": "\u2029",
+                                                                "valueText": "\u2029",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -404,6 +417,8 @@
                                                                 "width": 5,
                                                                 "fullWidth": 6,
                                                                 "text": "\"var\"",
+                                                                "value": "var",
+                                                                "valueText": "var",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -431,6 +446,8 @@
                                                             "width": 8,
                                                             "fullWidth": 9,
                                                             "text": "\"\\u2029\"",
+                                                            "value": "\u2029",
+                                                            "valueText": "\u2029",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -458,6 +475,8 @@
                                                         "width": 3,
                                                         "fullWidth": 4,
                                                         "text": "\"x\"",
+                                                        "value": "x",
+                                                        "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -485,6 +504,8 @@
                                                     "width": 8,
                                                     "fullWidth": 9,
                                                     "text": "\"\\u2029\"",
+                                                    "value": "\u2029",
+                                                    "valueText": "\u2029",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -512,6 +533,8 @@
                                                 "width": 3,
                                                 "fullWidth": 4,
                                                 "text": "\"=\"",
+                                                "value": "=",
+                                                "valueText": "=",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -539,6 +562,8 @@
                                             "width": 8,
                                             "fullWidth": 9,
                                             "text": "\"\\u2029\"",
+                                            "value": "\u2029",
+                                            "valueText": "\u2029",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -566,6 +591,8 @@
                                         "width": 3,
                                         "fullWidth": 4,
                                         "text": "\"1\"",
+                                        "value": "1",
+                                        "valueText": "1",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -591,7 +618,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "\"\\u2029\""
+                                    "text": "\"\\u2029\"",
+                                    "value": "\u2029",
+                                    "valueText": "\u2029"
                                 }
                             }
                         ],
@@ -646,6 +675,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -671,7 +701,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -716,6 +748,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -742,6 +775,8 @@
                                                 "width": 114,
                                                 "fullWidth": 115,
                                                 "text": "'#2: eval(\"\\\\u2029\" + \"var\" + \"\\\\u2029\" + \"x\" + \"\\\\u2029\" + \"=\" + \"\\\\u2029\" + \"1\" + \"\\\\u2029\"); x === 1. Actual: '",
+                                                "value": "#2: eval(\"\\u2029\" + \"var\" + \"\\u2029\" + \"x\" + \"\\u2029\" + \"=\" + \"\\u2029\" + \"1\" + \"\\u2029\"); x === 1. Actual: ",
+                                                "valueText": "#2: eval(\"\\u2029\" + \"var\" + \"\\u2029\" + \"x\" + \"\\u2029\" + \"=\" + \"\\u2029\" + \"1\" + \"\\u2029\"); x === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -775,6 +810,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {

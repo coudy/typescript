@@ -84,6 +84,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -109,7 +110,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "firstSemicolonToken": {
@@ -133,6 +136,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -158,7 +162,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 4,
-                        "text": "1000"
+                        "text": "1000",
+                        "value": 1000,
+                        "valueText": "1000"
                     }
                 },
                 "secondSemicolonToken": {
@@ -181,6 +187,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -235,6 +242,7 @@
                                     "width": 1,
                                     "fullWidth": 3,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -272,6 +280,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "i",
+                                        "value": "i",
                                         "valueText": "i"
                                     },
                                     "operatorToken": {
@@ -282,7 +291,9 @@
                                     "right": {
                                         "kind": "NumericLiteral",
                                         "width": 4,
-                                        "text": "10.0"
+                                        "text": "10.0",
+                                        "value": 10,
+                                        "valueText": "10"
                                     }
                                 }
                             },
@@ -343,6 +354,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -354,6 +366,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "round",
+                                            "value": "round",
                                             "valueText": "round"
                                         }
                                     },
@@ -370,6 +383,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -411,6 +425,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -422,6 +437,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "floor",
+                                            "value": "floor",
                                             "valueText": "floor"
                                         }
                                     },
@@ -442,6 +458,7 @@
                                                     "width": 1,
                                                     "fullWidth": 2,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -467,7 +484,9 @@
                                                 "right": {
                                                     "kind": "NumericLiteral",
                                                     "width": 3,
-                                                    "text": "0.5"
+                                                    "text": "0.5",
+                                                    "value": 0.5,
+                                                    "valueText": "0.5"
                                                 }
                                             }
                                         ],
@@ -531,6 +550,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -560,6 +580,8 @@
                                                                 "width": 11,
                                                                 "fullWidth": 12,
                                                                 "text": "\"#1: 'x = \"",
+                                                                "value": "#1: 'x = ",
+                                                                "valueText": "#1: 'x = ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -586,6 +608,7 @@
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
@@ -612,7 +635,9 @@
                                                         "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 42,
-                                                            "text": "\"; Math.round(x) !== Math.floor(x + 0.5)'\""
+                                                            "text": "\"; Math.round(x) !== Math.floor(x + 0.5)'\"",
+                                                            "value": "; Math.round(x) !== Math.floor(x + 0.5)'",
+                                                            "valueText": "; Math.round(x) !== Math.floor(x + 0.5)'"
                                                         }
                                                     }
                                                 ],
@@ -717,6 +742,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -750,7 +776,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "5"
+                            "text": "5",
+                            "value": 5,
+                            "valueText": "5"
                         }
                     }
                 },
@@ -776,6 +804,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -809,7 +838,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 4,
-                            "text": "1000"
+                            "text": "1000",
+                            "value": 1000,
+                            "valueText": "1000"
                         }
                     }
                 },
@@ -833,6 +864,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -911,6 +943,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "i",
+                                    "value": "i",
                                     "valueText": "i",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -944,7 +977,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "5"
+                                        "text": "5",
+                                        "value": 5,
+                                        "valueText": "5"
                                     }
                                 }
                             },
@@ -998,6 +1033,7 @@
                                                 "width": 1,
                                                 "fullWidth": 4,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -1038,7 +1074,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 17,
-                                                    "text": "0.500000000000001"
+                                                    "text": "0.500000000000001",
+                                                    "value": 0.500000000000001,
+                                                    "valueText": "0.500000000000001"
                                                 }
                                             }
                                         },
@@ -1136,6 +1174,7 @@
                                                     "width": 1,
                                                     "fullWidth": 4,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x",
                                                     "hasLeadingTrivia": true,
                                                     "hasTrailingTrivia": true,
@@ -1173,6 +1212,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "i",
+                                                        "value": "i",
                                                         "valueText": "i"
                                                     },
                                                     "operatorToken": {
@@ -1183,7 +1223,9 @@
                                                     "right": {
                                                         "kind": "NumericLiteral",
                                                         "width": 4,
-                                                        "text": "10.0"
+                                                        "text": "10.0",
+                                                        "value": 10,
+                                                        "valueText": "10"
                                                     }
                                                 }
                                             },
@@ -1278,6 +1320,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -1289,6 +1332,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "round",
+                                            "value": "round",
                                             "valueText": "round"
                                         }
                                     },
@@ -1305,6 +1349,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -1346,6 +1391,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -1357,6 +1403,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "floor",
+                                            "value": "floor",
                                             "valueText": "floor"
                                         }
                                     },
@@ -1377,6 +1424,7 @@
                                                     "width": 1,
                                                     "fullWidth": 2,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -1402,7 +1450,9 @@
                                                 "right": {
                                                     "kind": "NumericLiteral",
                                                     "width": 3,
-                                                    "text": "0.5"
+                                                    "text": "0.5",
+                                                    "value": 0.5,
+                                                    "valueText": "0.5"
                                                 }
                                             }
                                         ],
@@ -1466,6 +1516,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -1495,6 +1546,8 @@
                                                                 "width": 11,
                                                                 "fullWidth": 12,
                                                                 "text": "\"#2: 'x = \"",
+                                                                "value": "#2: 'x = ",
+                                                                "valueText": "#2: 'x = ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -1521,6 +1574,7 @@
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
@@ -1547,7 +1601,9 @@
                                                         "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 42,
-                                                            "text": "\"; Math.round(x) !== Math.floor(x + 0.5)'\""
+                                                            "text": "\"; Math.round(x) !== Math.floor(x + 0.5)'\"",
+                                                            "value": "; Math.round(x) !== Math.floor(x + 0.5)'",
+                                                            "valueText": "; Math.round(x) !== Math.floor(x + 0.5)'"
                                                         }
                                                     }
                                                 ],

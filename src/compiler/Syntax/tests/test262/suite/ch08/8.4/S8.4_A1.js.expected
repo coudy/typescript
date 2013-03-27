@@ -89,6 +89,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "str",
+                                "value": "str",
                                 "valueText": "str"
                             },
                             "equalsValueClause": {
@@ -102,7 +103,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "\"abcdfg\""
+                                    "text": "\"abcdfg\"",
+                                    "value": "abcdfg",
+                                    "valueText": "abcdfg"
                                 }
                             }
                         }
@@ -167,6 +170,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "str",
+                                "value": "str",
                                 "valueText": "str"
                             },
                             "closeParenToken": {
@@ -184,7 +188,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"string\""
+                        "text": "\"string\"",
+                        "value": "string",
+                        "valueText": "string"
                     }
                 },
                 "closeParenToken": {
@@ -221,6 +227,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -247,6 +254,8 @@
                                                 "width": 58,
                                                 "fullWidth": 59,
                                                 "text": "'#1: var str=\"abcdfg\"; typeof(str) === \"string\". Actual: '",
+                                                "value": "#1: var str=\"abcdfg\"; typeof(str) === \"string\". Actual: ",
+                                                "valueText": "#1: var str=\"abcdfg\"; typeof(str) === \"string\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -296,6 +305,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "str",
+                                                            "value": "str",
                                                             "valueText": "str"
                                                         },
                                                         "closeParenToken": {
@@ -421,6 +431,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "str2",
+                                "value": "str2",
                                 "valueText": "str2"
                             },
                             "equalsValueClause": {
@@ -434,7 +445,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "'qwerty'"
+                                    "text": "'qwerty'",
+                                    "value": "qwerty",
+                                    "valueText": "qwerty"
                                 }
                             }
                         }
@@ -499,6 +512,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "str2",
+                                "value": "str2",
                                 "valueText": "str2"
                             },
                             "closeParenToken": {
@@ -516,7 +530,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"string\""
+                        "text": "\"string\"",
+                        "value": "string",
+                        "valueText": "string"
                     }
                 },
                 "closeParenToken": {
@@ -553,6 +569,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -579,6 +596,8 @@
                                                 "width": 61,
                                                 "fullWidth": 62,
                                                 "text": "'#2: var str2=\\'qwerty\\'; typeof(str) === \"string\". Actual: '",
+                                                "value": "#2: var str2='qwerty'; typeof(str) === \"string\". Actual: ",
+                                                "valueText": "#2: var str2='qwerty'; typeof(str) === \"string\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -628,6 +647,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "str2",
+                                                            "value": "str2",
                                                             "valueText": "str2"
                                                         },
                                                         "closeParenToken": {
@@ -753,6 +773,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str"
                             },
                             "equalsValueClause": {
@@ -766,7 +787,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 44,
-                                    "text": "'\\u0042\\u0043\\u0044\\u0045\\u0046\\u0047\\u0048'"
+                                    "text": "'\\u0042\\u0043\\u0044\\u0045\\u0046\\u0047\\u0048'",
+                                    "value": "BCDEFGH",
+                                    "valueText": "BCDEFGH"
                                 }
                             }
                         }
@@ -831,6 +854,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str"
                             },
                             "closeParenToken": {
@@ -848,7 +872,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"string\""
+                        "text": "\"string\"",
+                        "value": "string",
+                        "valueText": "string"
                     }
                 },
                 "closeParenToken": {
@@ -885,6 +911,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -911,6 +938,8 @@
                                                 "width": 107,
                                                 "fullWidth": 108,
                                                 "text": "'#3: var __str=\\'\\\\u0042\\\\u0043\\\\u0044\\\\u0045\\\\u0046\\\\u0047\\\\u0048\\'; typeof(__str) === \"string\". Actual: '",
+                                                "value": "#3: var __str='\\u0042\\u0043\\u0044\\u0045\\u0046\\u0047\\u0048'; typeof(__str) === \"string\". Actual: ",
+                                                "valueText": "#3: var __str='\\u0042\\u0043\\u0044\\u0045\\u0046\\u0047\\u0048'; typeof(__str) === \"string\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -960,6 +989,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "__str",
+                                                            "value": "__str",
                                                             "valueText": "__str"
                                                         },
                                                         "closeParenToken": {
@@ -1085,6 +1115,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "str__",
+                                "value": "str__",
                                 "valueText": "str__"
                             },
                             "equalsValueClause": {
@@ -1098,7 +1129,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 44,
-                                    "text": "\"\\u0042\\u0043\\u0044\\u0045\\u0046\\u0047\\u0048\""
+                                    "text": "\"\\u0042\\u0043\\u0044\\u0045\\u0046\\u0047\\u0048\"",
+                                    "value": "BCDEFGH",
+                                    "valueText": "BCDEFGH"
                                 }
                             }
                         }
@@ -1163,6 +1196,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "str__",
+                                "value": "str__",
                                 "valueText": "str__"
                             },
                             "closeParenToken": {
@@ -1180,7 +1214,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"string\""
+                        "text": "\"string\"",
+                        "value": "string",
+                        "valueText": "string"
                     }
                 },
                 "closeParenToken": {
@@ -1217,6 +1253,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1243,6 +1280,8 @@
                                                 "width": 62,
                                                 "fullWidth": 63,
                                                 "text": "'#4: var str__=\"abcdfg\"; typeof(str__) === \"string\". Actual: '",
+                                                "value": "#4: var str__=\"abcdfg\"; typeof(str__) === \"string\". Actual: ",
+                                                "valueText": "#4: var str__=\"abcdfg\"; typeof(str__) === \"string\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1292,6 +1331,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "str__",
+                                                            "value": "str__",
                                                             "valueText": "str__"
                                                         },
                                                         "closeParenToken": {

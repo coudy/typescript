@@ -83,6 +83,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -132,6 +133,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -226,7 +228,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"x\""
+                                                                "text": "\"x\"",
+                                                                "value": "x",
+                                                                "valueText": "x"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -314,6 +318,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -363,6 +368,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -457,7 +463,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"y\""
+                                                                "text": "\"y\"",
+                                                                "value": "y",
+                                                                "valueText": "y"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -565,6 +573,7 @@
                                     "width": 1,
                                     "fullWidth": 5,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -598,6 +607,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "y",
+                                    "value": "y",
                                     "valueText": "y"
                                 }
                             },
@@ -629,6 +639,7 @@
                                     "width": 6,
                                     "fullWidth": 9,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -657,6 +668,8 @@
                                                 "width": 132,
                                                 "fullWidth": 133,
                                                 "text": "'#1.1: var x = { valueOf: function () { throw \"x\"; } }; var y = { valueOf: function () { throw \"y\"; } }; x >> y throw \"x\". Actual: '",
+                                                "value": "#1.1: var x = { valueOf: function () { throw \"x\"; } }; var y = { valueOf: function () { throw \"y\"; } }; x >> y throw \"x\". Actual: ",
+                                                "valueText": "#1.1: var x = { valueOf: function () { throw \"x\"; } }; var y = { valueOf: function () { throw \"y\"; } }; x >> y throw \"x\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -696,6 +709,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -722,6 +736,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -795,6 +810,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -864,6 +880,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -889,7 +906,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"y\""
+                                        "text": "\"y\"",
+                                        "value": "y",
+                                        "valueText": "y"
                                     }
                                 },
                                 "closeParenToken": {
@@ -934,6 +953,7 @@
                                                     "width": 6,
                                                     "fullWidth": 11,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -955,7 +975,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 88,
-                                                            "text": "'#1.2: ToNumber(first expression) is called first, and then ToNumber(second expression)'"
+                                                            "text": "'#1.2: ToNumber(first expression) is called first, and then ToNumber(second expression)'",
+                                                            "value": "#1.2: ToNumber(first expression) is called first, and then ToNumber(second expression)",
+                                                            "valueText": "#1.2: ToNumber(first expression) is called first, and then ToNumber(second expression)"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -1072,6 +1094,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "e",
+                                                        "value": "e",
                                                         "valueText": "e",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -1097,7 +1120,9 @@
                                                     "right": {
                                                         "kind": "StringLiteral",
                                                         "width": 3,
-                                                        "text": "\"x\""
+                                                        "text": "\"x\"",
+                                                        "value": "x",
+                                                        "valueText": "x"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -1142,6 +1167,7 @@
                                                                     "width": 6,
                                                                     "fullWidth": 13,
                                                                     "text": "$ERROR",
+                                                                    "value": "$ERROR",
                                                                     "valueText": "$ERROR",
                                                                     "hasLeadingTrivia": true,
                                                                     "leadingTrivia": [
@@ -1168,6 +1194,8 @@
                                                                                 "width": 132,
                                                                                 "fullWidth": 133,
                                                                                 "text": "'#1.3: var x = { valueOf: function () { throw \"x\"; } }; var y = { valueOf: function () { throw \"y\"; } }; x >> y throw \"x\". Actual: '",
+                                                                                "value": "#1.3: var x = { valueOf: function () { throw \"x\"; } }; var y = { valueOf: function () { throw \"y\"; } }; x >> y throw \"x\". Actual: ",
+                                                                                "valueText": "#1.3: var x = { valueOf: function () { throw \"x\"; } }; var y = { valueOf: function () { throw \"y\"; } }; x >> y throw \"x\". Actual: ",
                                                                                 "hasTrailingTrivia": true,
                                                                                 "trailingTrivia": [
                                                                                     {
@@ -1201,6 +1229,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 1,
                                                                                     "text": "e",
+                                                                                    "value": "e",
                                                                                     "valueText": "e"
                                                                                 },
                                                                                 "closeParenToken": {

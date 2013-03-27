@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -193,6 +194,7 @@
                                                     "width": 4,
                                                     "fullWidth": 8,
                                                     "text": "JSON",
+                                                    "value": "JSON",
                                                     "valueText": "JSON",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -211,6 +213,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "parse",
+                                                    "value": "parse",
                                                     "valueText": "parse"
                                                 }
                                             },
@@ -226,7 +229,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 52,
-                                                        "text": "'\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\"'"
+                                                        "text": "'\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\"'",
+                                                        "value": "\"\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\"",
+                                                        "valueText": "\"\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\""
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -315,6 +320,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "e",
+                                    "value": "e",
                                     "valueText": "e"
                                 },
                                 "closeParenToken": {
@@ -374,7 +380,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             },
                                             "semicolonToken": {
                                                 "kind": "SemicolonToken",
@@ -459,6 +467,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -474,6 +483,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

@@ -74,6 +74,7 @@
                                 "width": 11,
                                 "fullWidth": 12,
                                 "text": "TEST_STRING",
+                                "value": "TEST_STRING",
                                 "valueText": "TEST_STRING",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -143,6 +145,8 @@
                                                 "width": 99,
                                                 "fullWidth": 100,
                                                 "text": "\" !\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"",
+                                                "value": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+                                                "valueText": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -249,6 +253,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "k",
+                                "value": "k",
                                 "valueText": "k",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -277,7 +282,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         },
@@ -302,6 +309,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "i",
+                                "value": "i",
                                 "valueText": "i",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -330,7 +338,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 6,
-                                    "text": "0x0020"
+                                    "text": "0x0020",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -357,6 +367,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -382,7 +393,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 6,
-                        "text": "0x007d"
+                        "text": "0x007d",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "secondSemicolonToken": {
@@ -408,6 +421,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "i",
+                            "value": "i",
                             "valueText": "i"
                         },
                         "operatorToken": {
@@ -436,6 +450,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "k",
+                            "value": "k",
                             "valueText": "k"
                         },
                         "operatorToken": {
@@ -525,6 +540,7 @@
                                             "kind": "IdentifierName",
                                             "width": 11,
                                             "text": "TEST_STRING",
+                                            "value": "TEST_STRING",
                                             "valueText": "TEST_STRING"
                                         },
                                         "dotToken": {
@@ -536,6 +552,7 @@
                                             "kind": "IdentifierName",
                                             "width": 7,
                                             "text": "indexOf",
+                                            "value": "indexOf",
                                             "valueText": "indexOf"
                                         }
                                     },
@@ -580,6 +597,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 6,
                                                                     "text": "String",
+                                                                    "value": "String",
                                                                     "valueText": "String"
                                                                 },
                                                                 "dotToken": {
@@ -591,6 +609,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 12,
                                                                     "text": "fromCharCode",
+                                                                    "value": "fromCharCode",
                                                                     "valueText": "fromCharCode"
                                                                 }
                                                             },
@@ -607,6 +626,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "i",
+                                                                        "value": "i",
                                                                         "valueText": "i"
                                                                     }
                                                                 ],
@@ -640,6 +660,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 6,
                                                                     "text": "String",
+                                                                    "value": "String",
                                                                     "valueText": "String"
                                                                 },
                                                                 "dotToken": {
@@ -651,6 +672,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 12,
                                                                     "text": "fromCharCode",
+                                                                    "value": "fromCharCode",
                                                                     "valueText": "fromCharCode"
                                                                 }
                                                             },
@@ -670,6 +692,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "i",
+                                                                            "value": "i",
                                                                             "valueText": "i"
                                                                         },
                                                                         "operatorToken": {
@@ -680,7 +703,9 @@
                                                                         "right": {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 1,
-                                                                            "text": "1"
+                                                                            "text": "1",
+                                                                            "value": 1,
+                                                                            "valueText": "1"
                                                                         }
                                                                     }
                                                                 ],
@@ -723,6 +748,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "String",
+                                                                "value": "String",
                                                                 "valueText": "String"
                                                             },
                                                             "dotToken": {
@@ -734,6 +760,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 12,
                                                                 "text": "fromCharCode",
+                                                                "value": "fromCharCode",
                                                                 "valueText": "fromCharCode"
                                                             }
                                                         },
@@ -753,6 +780,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "i",
+                                                                        "value": "i",
                                                                         "valueText": "i"
                                                                     },
                                                                     "operatorToken": {
@@ -763,7 +791,9 @@
                                                                     "right": {
                                                                         "kind": "NumericLiteral",
                                                                         "width": 1,
-                                                                        "text": "2"
+                                                                        "text": "2",
+                                                                        "value": 2,
+                                                                        "valueText": "2"
                                                                     }
                                                                 }
                                                             ],
@@ -799,6 +829,8 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "0",
+                                                "value": 0,
+                                                "valueText": "0",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -824,6 +856,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "k",
+                                    "value": "k",
                                     "valueText": "k"
                                 }
                             },
@@ -869,6 +902,7 @@
                                                 "width": 6,
                                                 "fullWidth": 12,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -923,7 +957,9 @@
                                                                                                 "left": {
                                                                                                     "kind": "StringLiteral",
                                                                                                     "width": 3,
-                                                                                                    "text": "'#'"
+                                                                                                    "text": "'#'",
+                                                                                                    "value": "#",
+                                                                                                    "valueText": "#"
                                                                                                 },
                                                                                                 "operatorToken": {
                                                                                                     "kind": "PlusToken",
@@ -945,6 +981,7 @@
                                                                                                             "kind": "IdentifierName",
                                                                                                             "width": 1,
                                                                                                             "text": "i",
+                                                                                                            "value": "i",
                                                                                                             "valueText": "i"
                                                                                                         },
                                                                                                         "operatorToken": {
@@ -955,7 +992,9 @@
                                                                                                         "right": {
                                                                                                             "kind": "NumericLiteral",
                                                                                                             "width": 6,
-                                                                                                            "text": "0x0020"
+                                                                                                            "text": "0x0020",
+                                                                                                            "value": 0,
+                                                                                                            "valueText": "0"
                                                                                                         }
                                                                                                     },
                                                                                                     "closeParenToken": {
@@ -973,7 +1012,9 @@
                                                                                             "right": {
                                                                                                 "kind": "StringLiteral",
                                                                                                 "width": 46,
-                                                                                                "text": "': TEST_STRING.indexOf( (String.fromCharCode('"
+                                                                                                "text": "': TEST_STRING.indexOf( (String.fromCharCode('",
+                                                                                                "value": ": TEST_STRING.indexOf( (String.fromCharCode(",
+                                                                                                "valueText": ": TEST_STRING.indexOf( (String.fromCharCode("
                                                                                             }
                                                                                         },
                                                                                         "operatorToken": {
@@ -985,6 +1026,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 1,
                                                                                             "text": "i",
+                                                                                            "value": "i",
                                                                                             "valueText": "i"
                                                                                         }
                                                                                     },
@@ -996,7 +1038,9 @@
                                                                                     "right": {
                                                                                         "kind": "StringLiteral",
                                                                                         "width": 25,
-                                                                                        "text": "')+ String.fromCharCode('"
+                                                                                        "text": "')+ String.fromCharCode('",
+                                                                                        "value": ")+ String.fromCharCode(",
+                                                                                        "valueText": ")+ String.fromCharCode("
                                                                                     }
                                                                                 },
                                                                                 "operatorToken": {
@@ -1019,6 +1063,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 1,
                                                                                             "text": "i",
+                                                                                            "value": "i",
                                                                                             "valueText": "i"
                                                                                         },
                                                                                         "operatorToken": {
@@ -1029,7 +1074,9 @@
                                                                                         "right": {
                                                                                             "kind": "NumericLiteral",
                                                                                             "width": 1,
-                                                                                            "text": "1"
+                                                                                            "text": "1",
+                                                                                            "value": 1,
+                                                                                            "valueText": "1"
                                                                                         }
                                                                                     },
                                                                                     "closeParenToken": {
@@ -1047,7 +1094,9 @@
                                                                             "right": {
                                                                                 "kind": "StringLiteral",
                                                                                 "width": 26,
-                                                                                "text": "') + String.fromCharCode('"
+                                                                                "text": "') + String.fromCharCode('",
+                                                                                "value": ") + String.fromCharCode(",
+                                                                                "valueText": ") + String.fromCharCode("
                                                                             }
                                                                         },
                                                                         "operatorToken": {
@@ -1070,6 +1119,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 1,
                                                                                     "text": "i",
+                                                                                    "value": "i",
                                                                                     "valueText": "i"
                                                                                 },
                                                                                 "operatorToken": {
@@ -1080,7 +1130,9 @@
                                                                                 "right": {
                                                                                     "kind": "NumericLiteral",
                                                                                     "width": 1,
-                                                                                    "text": "2"
+                                                                                    "text": "2",
+                                                                                    "value": 2,
+                                                                                    "valueText": "2"
                                                                                 }
                                                                             },
                                                                             "closeParenToken": {
@@ -1098,7 +1150,9 @@
                                                                     "right": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 12,
-                                                                        "text": "')), 0 )==='"
+                                                                        "text": "')), 0 )==='",
+                                                                        "value": ")), 0 )===",
+                                                                        "valueText": ")), 0 )==="
                                                                     }
                                                                 },
                                                                 "operatorToken": {
@@ -1110,6 +1164,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "k",
+                                                                    "value": "k",
                                                                     "valueText": "k"
                                                                 }
                                                             },
@@ -1121,7 +1176,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 12,
-                                                                "text": "'. Actual: '"
+                                                                "text": "'. Actual: '",
+                                                                "value": ". Actual: ",
+                                                                "valueText": ". Actual: "
                                                             }
                                                         },
                                                         "operatorToken": {
@@ -1139,6 +1196,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 11,
                                                                     "text": "TEST_STRING",
+                                                                    "value": "TEST_STRING",
                                                                     "valueText": "TEST_STRING"
                                                                 },
                                                                 "dotToken": {
@@ -1150,6 +1208,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 7,
                                                                     "text": "indexOf",
+                                                                    "value": "indexOf",
                                                                     "valueText": "indexOf"
                                                                 }
                                                             },
@@ -1194,6 +1253,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 6,
                                                                                             "text": "String",
+                                                                                            "value": "String",
                                                                                             "valueText": "String"
                                                                                         },
                                                                                         "dotToken": {
@@ -1205,6 +1265,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 12,
                                                                                             "text": "fromCharCode",
+                                                                                            "value": "fromCharCode",
                                                                                             "valueText": "fromCharCode"
                                                                                         }
                                                                                     },
@@ -1221,6 +1282,7 @@
                                                                                                 "kind": "IdentifierName",
                                                                                                 "width": 1,
                                                                                                 "text": "i",
+                                                                                                "value": "i",
                                                                                                 "valueText": "i"
                                                                                             }
                                                                                         ],
@@ -1254,6 +1316,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 6,
                                                                                             "text": "String",
+                                                                                            "value": "String",
                                                                                             "valueText": "String"
                                                                                         },
                                                                                         "dotToken": {
@@ -1265,6 +1328,7 @@
                                                                                             "kind": "IdentifierName",
                                                                                             "width": 12,
                                                                                             "text": "fromCharCode",
+                                                                                            "value": "fromCharCode",
                                                                                             "valueText": "fromCharCode"
                                                                                         }
                                                                                     },
@@ -1284,6 +1348,7 @@
                                                                                                     "kind": "IdentifierName",
                                                                                                     "width": 1,
                                                                                                     "text": "i",
+                                                                                                    "value": "i",
                                                                                                     "valueText": "i"
                                                                                                 },
                                                                                                 "operatorToken": {
@@ -1294,7 +1359,9 @@
                                                                                                 "right": {
                                                                                                     "kind": "NumericLiteral",
                                                                                                     "width": 1,
-                                                                                                    "text": "1"
+                                                                                                    "text": "1",
+                                                                                                    "value": 1,
+                                                                                                    "valueText": "1"
                                                                                                 }
                                                                                             }
                                                                                         ],
@@ -1337,6 +1404,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 6,
                                                                                         "text": "String",
+                                                                                        "value": "String",
                                                                                         "valueText": "String"
                                                                                     },
                                                                                     "dotToken": {
@@ -1348,6 +1416,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 12,
                                                                                         "text": "fromCharCode",
+                                                                                        "value": "fromCharCode",
                                                                                         "valueText": "fromCharCode"
                                                                                     }
                                                                                 },
@@ -1367,6 +1436,7 @@
                                                                                                 "kind": "IdentifierName",
                                                                                                 "width": 1,
                                                                                                 "text": "i",
+                                                                                                "value": "i",
                                                                                                 "valueText": "i"
                                                                                             },
                                                                                             "operatorToken": {
@@ -1377,7 +1447,9 @@
                                                                                             "right": {
                                                                                                 "kind": "NumericLiteral",
                                                                                                 "width": 1,
-                                                                                                "text": "2"
+                                                                                                "text": "2",
+                                                                                                "value": 2,
+                                                                                                "valueText": "2"
                                                                                             }
                                                                                         }
                                                                                     ],
@@ -1413,6 +1485,8 @@
                                                                         "width": 1,
                                                                         "fullWidth": 2,
                                                                         "text": "0",
+                                                                        "value": 0,
+                                                                        "valueText": "0",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {

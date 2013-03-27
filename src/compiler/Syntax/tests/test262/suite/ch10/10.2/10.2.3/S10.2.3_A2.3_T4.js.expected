@@ -74,6 +74,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -122,7 +123,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 13,
-                                                        "text": "'//CHECK#1\\n'"
+                                                        "text": "'//CHECK#1\\n'",
+                                                        "value": "//CHECK#1\n",
+                                                        "valueText": "//CHECK#1\n"
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -141,7 +144,9 @@
                                                     "right": {
                                                         "kind": "StringLiteral",
                                                         "width": 25,
-                                                        "text": "'for (var x in this) {\\n'"
+                                                        "text": "'for (var x in this) {\\n'",
+                                                        "value": "for (var x in this) {\n",
+                                                        "valueText": "for (var x in this) {\n"
                                                     }
                                                 },
                                                 "operatorToken": {
@@ -161,7 +166,9 @@
                                                 "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 29,
-                                                    "text": "'  if ( x === \\'Math\\' ) {\\n'"
+                                                    "text": "'  if ( x === \\'Math\\' ) {\\n'",
+                                                    "value": "  if ( x === 'Math' ) {\n",
+                                                    "valueText": "  if ( x === 'Math' ) {\n"
                                                 }
                                             },
                                             "operatorToken": {
@@ -181,7 +188,9 @@
                                             "right": {
                                                 "kind": "StringLiteral",
                                                 "width": 55,
-                                                "text": "'    $ERROR(\"#1: \\'Math\\' have attribute DontEnum\");\\n'"
+                                                "text": "'    $ERROR(\"#1: \\'Math\\' have attribute DontEnum\");\\n'",
+                                                "value": "    $ERROR(\"#1: 'Math' have attribute DontEnum\");\n",
+                                                "valueText": "    $ERROR(\"#1: 'Math' have attribute DontEnum\");\n"
                                             }
                                         },
                                         "operatorToken": {
@@ -201,7 +210,9 @@
                                         "right": {
                                             "kind": "StringLiteral",
                                             "width": 7,
-                                            "text": "'  }\\n'"
+                                            "text": "'  }\\n'",
+                                            "value": "  }\n",
+                                            "valueText": "  }\n"
                                         }
                                     },
                                     "operatorToken": {
@@ -221,7 +232,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "'}\\n'"
+                                        "text": "'}\\n'",
+                                        "value": "}\n",
+                                        "valueText": "}\n"
                                     }
                                 }
                             }
@@ -254,6 +267,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -277,6 +291,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr"
                             }
                         ],

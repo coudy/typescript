@@ -74,6 +74,7 @@
                                 "width": 11,
                                 "fullWidth": 12,
                                 "text": "__condition",
+                                "value": "__condition",
                                 "valueText": "__condition",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -102,7 +103,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         },
@@ -126,6 +129,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "__odds",
+                                "value": "__odds",
                                 "valueText": "__odds"
                             },
                             "equalsValueClause": {
@@ -139,7 +143,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -171,6 +177,7 @@
                         "width": 11,
                         "fullWidth": 13,
                         "text": "__evaluated",
+                        "value": "__evaluated",
                         "valueText": "__evaluated",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -208,6 +215,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -222,7 +230,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 112,
-                                    "text": "\"do { __condition++; if (((''+__condition/2).split('.')).length>1) continue; __odds++;} while(__condition < 10)\""
+                                    "text": "\"do { __condition++; if (((''+__condition/2).split('.')).length>1) continue; __odds++;} while(__condition < 10)\"",
+                                    "value": "do { __condition++; if (((''+__condition/2).split('.')).length>1) continue; __odds++;} while(__condition < 10)",
+                                    "valueText": "do { __condition++; if (((''+__condition/2).split('.')).length>1) continue; __odds++;} while(__condition < 10)"
                                 }
                             ],
                             "closeParenToken": {
@@ -302,6 +312,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "__odds",
+                        "value": "__odds",
                         "valueText": "__odds",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -327,7 +338,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "closeParenToken": {
@@ -372,6 +385,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -396,7 +410,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 39,
-                                                "text": "'#1: __odds === 5. Actual:  __odds ==='"
+                                                "text": "'#1: __odds === 5. Actual:  __odds ==='",
+                                                "value": "#1: __odds === 5. Actual:  __odds ===",
+                                                "valueText": "#1: __odds === 5. Actual:  __odds ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -416,6 +432,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "__odds",
+                                                "value": "__odds",
                                                 "valueText": "__odds",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -536,6 +553,7 @@
                         "width": 11,
                         "fullWidth": 12,
                         "text": "__evaluated",
+                        "value": "__evaluated",
                         "valueText": "__evaluated",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -561,7 +579,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "4"
+                        "text": "4",
+                        "value": 4,
+                        "valueText": "4"
                     }
                 },
                 "closeParenToken": {
@@ -606,6 +626,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -630,7 +651,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 49,
-                                                "text": "'#2: __evaluated === 4. Actual:  __evaluated ==='"
+                                                "text": "'#2: __evaluated === 4. Actual:  __evaluated ==='",
+                                                "value": "#2: __evaluated === 4. Actual:  __evaluated ===",
+                                                "valueText": "#2: __evaluated === 4. Actual:  __evaluated ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -650,6 +673,7 @@
                                                 "width": 11,
                                                 "fullWidth": 13,
                                                 "text": "__evaluated",
+                                                "value": "__evaluated",
                                                 "valueText": "__evaluated",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [

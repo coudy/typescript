@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -116,6 +117,7 @@
                                     "width": 7,
                                     "fullWidth": 11,
                                     "text": "was_del",
+                                    "value": "was_del",
                                     "valueText": "was_del",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -133,7 +135,9 @@
                                 "right": {
                                     "kind": "FalseKeyword",
                                     "width": 5,
-                                    "text": "false"
+                                    "text": "false",
+                                    "value": false,
+                                    "valueText": "false"
                                 }
                             },
                             "semicolonToken": {
@@ -186,6 +190,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "i",
+                                    "value": "i",
                                     "valueText": "i"
                                 },
                                 "operatorToken": {
@@ -196,7 +201,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             },
                             "firstSemicolonToken": {
@@ -220,6 +227,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "i",
+                                    "value": "i",
                                     "valueText": "i",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -249,6 +257,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "arguments",
+                                        "value": "arguments",
                                         "valueText": "arguments"
                                     },
                                     "dotToken": {
@@ -260,6 +269,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "length",
+                                        "value": "length",
                                         "valueText": "length"
                                     }
                                 }
@@ -284,6 +294,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "i",
+                                    "value": "i",
                                     "valueText": "i"
                                 },
                                 "operatorToken": {
@@ -317,6 +328,7 @@
                                         "width": 7,
                                         "fullWidth": 14,
                                         "text": "was_del",
+                                        "value": "was_del",
                                         "valueText": "was_del",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -347,6 +359,7 @@
                                             "width": 7,
                                             "fullWidth": 8,
                                             "text": "was_del",
+                                            "value": "was_del",
                                             "valueText": "was_del",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -392,6 +405,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 9,
                                                     "text": "arguments",
+                                                    "value": "arguments",
                                                     "valueText": "arguments"
                                                 },
                                                 "openBracketToken": {
@@ -403,6 +417,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "i",
+                                                    "value": "i",
                                                     "valueText": "i"
                                                 },
                                                 "closeBracketToken": {
@@ -457,6 +472,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "was_del",
+                                "value": "was_del",
                                 "valueText": "was_del"
                             },
                             "semicolonToken": {
@@ -552,6 +568,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -566,7 +583,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 3,
-                                    "text": "\"A\""
+                                    "text": "\"A\"",
+                                    "value": "A",
+                                    "valueText": "A"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -576,7 +595,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 3,
-                                    "text": "\"B\""
+                                    "text": "\"B\"",
+                                    "value": "B",
+                                    "valueText": "B"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -586,7 +607,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -596,7 +619,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             ],
                             "closeParenToken": {
@@ -649,6 +674,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -670,7 +696,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 96,
-                                            "text": "'#1: Since arguments property has attribute { DontDelete } elements of arguments can be deleted'"
+                                            "text": "'#1: Since arguments property has attribute { DontDelete } elements of arguments can be deleted'",
+                                            "value": "#1: Since arguments property has attribute { DontDelete } elements of arguments can be deleted",
+                                            "valueText": "#1: Since arguments property has attribute { DontDelete } elements of arguments can be deleted"
                                         }
                                     ],
                                     "closeParenToken": {

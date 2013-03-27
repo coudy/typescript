@@ -22,6 +22,7 @@
                         "width": 10,
                         "fullWidth": 650,
                         "text": "__replaced",
+                        "value": "__replaced",
                         "valueText": "__replaced",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -91,7 +92,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 58,
-                                "text": "\"To sign up click |here|https:www.xxxx.org/subscribe.htm|\""
+                                "text": "\"To sign up click |here|https:www.xxxx.org/subscribe.htm|\"",
+                                "value": "To sign up click |here|https:www.xxxx.org/subscribe.htm|",
+                                "valueText": "To sign up click |here|https:www.xxxx.org/subscribe.htm|"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -102,6 +105,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "replace",
+                                "value": "replace",
                                 "valueText": "replace"
                             }
                         },
@@ -118,7 +122,9 @@
                                 {
                                     "kind": "RegularExpressionLiteral",
                                     "width": 64,
-                                    "text": "/(\\|)([\\w\\x81-\\xff ]*)(\\|)([\\/a-z][\\w:\\/\\.]*\\.[a-z]{3,4})(\\|)/ig"
+                                    "text": "/(\\|)([\\w\\x81-\\xff ]*)(\\|)([\\/a-z][\\w:\\/\\.]*\\.[a-z]{3,4})(\\|)/ig",
+                                    "value": {},
+                                    "valueText": "/(\\|)([\\w\\x81-\\xff ]*)(\\|)([\\/a-z][\\w:\\/\\.]*\\.[a-z]{3,4})(\\|)/gi"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -136,7 +142,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 21,
-                                    "text": "'<a href=\"$4\">$2</a>'"
+                                    "text": "'<a href=\"$4\">$2</a>'",
+                                    "value": "<a href=\"$4\">$2</a>",
+                                    "valueText": "<a href=\"$4\">$2</a>"
                                 }
                             ],
                             "closeParenToken": {
@@ -173,6 +181,7 @@
                         "width": 10,
                         "fullWidth": 12,
                         "text": "__expected",
+                        "value": "__expected",
                         "valueText": "__expected",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -206,7 +215,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 70,
-                        "text": "'To sign up click <a href=\"https:www.xxxx.org/subscribe.htm\">here</a>'"
+                        "text": "'To sign up click <a href=\"https:www.xxxx.org/subscribe.htm\">here</a>'",
+                        "value": "To sign up click <a href=\"https:www.xxxx.org/subscribe.htm\">here</a>",
+                        "valueText": "To sign up click <a href=\"https:www.xxxx.org/subscribe.htm\">here</a>"
                     }
                 },
                 "semicolonToken": {
@@ -270,6 +281,7 @@
                         "width": 10,
                         "fullWidth": 11,
                         "text": "__replaced",
+                        "value": "__replaced",
                         "valueText": "__replaced",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -296,6 +308,7 @@
                         "kind": "IdentifierName",
                         "width": 10,
                         "text": "__expected",
+                        "value": "__expected",
                         "valueText": "__expected"
                     }
                 },
@@ -341,6 +354,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -373,6 +387,8 @@
                                                         "width": 204,
                                                         "fullWidth": 205,
                                                         "text": "'#1: __replaced = \"To sign up click |here|https:www.xxxx.org/subscribe.htm|\".replace(/(\\\\|)([\\\\w\\\\x81-\\\\xff ]*)(\\\\|)([\\\\/a-z][\\\\w:\\\\/\\\\.]*\\\\.[a-z]{3,4})(\\\\|)/ig, \\'<a href=\"$4\">$2</a>\\'); __replaced === '",
+                                                        "value": "#1: __replaced = \"To sign up click |here|https:www.xxxx.org/subscribe.htm|\".replace(/(\\|)([\\w\\x81-\\xff ]*)(\\|)([\\/a-z][\\w:\\/\\.]*\\.[a-z]{3,4})(\\|)/ig, '<a href=\"$4\">$2</a>'); __replaced === ",
+                                                        "valueText": "#1: __replaced = \"To sign up click |here|https:www.xxxx.org/subscribe.htm|\".replace(/(\\|)([\\w\\x81-\\xff ]*)(\\|)([\\/a-z][\\w:\\/\\.]*\\.[a-z]{3,4})(\\|)/ig, '<a href=\"$4\">$2</a>'); __replaced === ",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -399,6 +415,7 @@
                                                         "width": 10,
                                                         "fullWidth": 11,
                                                         "text": "__expected",
+                                                        "value": "__expected",
                                                         "valueText": "__expected",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -427,6 +444,8 @@
                                                     "width": 12,
                                                     "fullWidth": 13,
                                                     "text": "'. Actual: '",
+                                                    "value": ". Actual: ",
+                                                    "valueText": ". Actual: ",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -453,6 +472,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 10,
                                                 "text": "__replaced",
+                                                "value": "__replaced",
                                                 "valueText": "__replaced"
                                             }
                                         }

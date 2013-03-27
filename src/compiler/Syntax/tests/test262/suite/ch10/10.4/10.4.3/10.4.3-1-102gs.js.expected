@@ -91,6 +91,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,7 +120,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "3"
+                                    "text": "3",
+                                    "value": 3,
+                                    "valueText": "3"
                                 }
                             }
                         }
@@ -197,7 +200,9 @@
                                     "expression": {
                                         "kind": "StringLiteral",
                                         "width": 4,
-                                        "text": "\"ab\""
+                                        "text": "\"ab\"",
+                                        "value": "ab",
+                                        "valueText": "ab"
                                     },
                                     "dotToken": {
                                         "kind": "DotToken",
@@ -208,6 +213,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "replace",
+                                        "value": "replace",
                                         "valueText": "replace"
                                     }
                                 },
@@ -224,7 +230,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 3,
-                                            "text": "\"b\""
+                                            "text": "\"b\"",
+                                            "value": "b",
+                                            "valueText": "b"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -327,6 +335,8 @@
                                                                     "width": 12,
                                                                     "fullWidth": 44,
                                                                     "text": "\"use strict\"",
+                                                                    "value": "use strict",
+                                                                    "valueText": "use strict",
                                                                     "hasLeadingTrivia": true,
                                                                     "leadingTrivia": [
                                                                         {
@@ -453,6 +463,7 @@
                                                                                         "width": 1,
                                                                                         "fullWidth": 38,
                                                                                         "text": "x",
+                                                                                        "value": "x",
                                                                                         "valueText": "x",
                                                                                         "hasLeadingTrivia": true,
                                                                                         "hasTrailingTrivia": true,
@@ -530,7 +541,9 @@
                                                                                 "expression": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 3,
-                                                                                    "text": "\"a\""
+                                                                                    "text": "\"a\"",
+                                                                                    "value": "a",
+                                                                                    "valueText": "a"
                                                                                 },
                                                                                 "semicolonToken": {
                                                                                     "kind": "SemicolonToken",
@@ -631,7 +644,9 @@
                             "right": {
                                 "kind": "StringLiteral",
                                 "width": 4,
-                                "text": "\"aa\""
+                                "text": "\"aa\"",
+                                "value": "aa",
+                                "valueText": "aa"
                             }
                         },
                         "closeParenToken": {
@@ -676,6 +691,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "operatorToken": {
@@ -687,6 +703,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "undefined",
+                                "value": "undefined",
                                 "valueText": "undefined"
                             }
                         },
@@ -754,7 +771,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 29,
-                                "text": "\"'this' had incorrect value!\""
+                                "text": "\"'this' had incorrect value!\"",
+                                "value": "'this' had incorrect value!",
+                                "valueText": "'this' had incorrect value!"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",

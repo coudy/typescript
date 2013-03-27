@@ -82,6 +82,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "Finite",
+                                "value": "Finite",
                                 "valueText": "Finite",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -110,7 +111,9 @@
                                 "value": {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             }
                         }
@@ -175,6 +178,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Finite",
+                                "value": "Finite",
                                 "valueText": "Finite"
                             },
                             "closeParenToken": {
@@ -208,7 +212,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"boolean\""
+                        "text": "\"boolean\"",
+                        "value": "boolean",
+                        "valueText": "boolean"
                     }
                 },
                 "closeParenToken": {
@@ -253,6 +259,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -279,6 +286,8 @@
                                                 "width": 56,
                                                 "fullWidth": 57,
                                                 "text": "'#1: Finite = true; typeof(NaN) === \"boolean\". Actual: '",
+                                                "value": "#1: Finite = true; typeof(NaN) === \"boolean\". Actual: ",
+                                                "valueText": "#1: Finite = true; typeof(NaN) === \"boolean\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -328,6 +337,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "NaN",
+                                                            "value": "NaN",
                                                             "valueText": "NaN"
                                                         },
                                                         "closeParenToken": {

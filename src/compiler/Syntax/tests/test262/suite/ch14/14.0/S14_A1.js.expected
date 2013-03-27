@@ -74,6 +74,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "THERE",
+                                "value": "THERE",
                                 "valueText": "THERE",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -102,7 +103,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"I'm there\""
+                                    "text": "\"I'm there\"",
+                                    "value": "I'm there",
+                                    "valueText": "I'm there"
                                 }
                             }
                         }
@@ -152,6 +155,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "HERE",
+                                "value": "HERE",
                                 "valueText": "HERE",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -180,7 +184,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 10,
-                                    "text": "\"I'm here\""
+                                    "text": "\"I'm here\"",
+                                    "value": "I'm here",
+                                    "valueText": "I'm here"
                                 }
                             }
                         }
@@ -263,6 +269,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "__func",
+                        "value": "__func",
                         "valueText": "__func",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -289,6 +296,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -334,6 +342,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -358,7 +367,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 47,
-                                                "text": "'#1: __func === undefined. Actual:  __func ==='"
+                                                "text": "'#1: __func === undefined. Actual:  __func ==='",
+                                                "value": "#1: __func === undefined. Actual:  __func ===",
+                                                "valueText": "#1: __func === undefined. Actual:  __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -378,6 +389,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "__func",
+                                                "value": "__func",
                                                 "valueText": "__func",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -477,7 +489,9 @@
                 "condition": {
                     "kind": "TrueKeyword",
                     "width": 4,
-                    "text": "true"
+                    "text": "true",
+                    "value": true,
+                    "valueText": "true"
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -538,6 +552,7 @@
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "__func",
+                                            "value": "__func",
                                             "valueText": "__func",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -619,6 +634,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "HERE",
+                                                                "value": "HERE",
                                                                 "valueText": "HERE"
                                                             },
                                                             "semicolonToken": {
@@ -739,6 +755,7 @@
                                                 "width": 6,
                                                 "fullWidth": 7,
                                                 "text": "__func",
+                                                "value": "__func",
                                                 "valueText": "__func",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -828,6 +845,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 5,
                                                                     "text": "THERE",
+                                                                    "value": "THERE",
                                                                     "valueText": "THERE"
                                                                 },
                                                                 "semicolonToken": {
@@ -946,6 +964,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -989,6 +1008,7 @@
                         "kind": "IdentifierName",
                         "width": 4,
                         "text": "HERE",
+                        "value": "HERE",
                         "valueText": "HERE"
                     }
                 },
@@ -1034,6 +1054,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1058,7 +1079,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 46,
-                                                "text": "'#2: __func() === HERE. Actual:  __func() ==='"
+                                                "text": "'#2: __func() === HERE. Actual:  __func() ==='",
+                                                "value": "#2: __func() === HERE. Actual:  __func() ===",
+                                                "valueText": "#2: __func() === HERE. Actual:  __func() ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1080,6 +1103,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {

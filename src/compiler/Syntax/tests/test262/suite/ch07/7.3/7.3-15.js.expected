@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -174,6 +175,7 @@
                                             "width": 4,
                                             "fullWidth": 5,
                                             "text": "prop",
+                                            "value": "prop",
                                             "valueText": "prop",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -202,7 +204,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 10,
-                                                "text": "\"a\\uFFFFa\""
+                                                "text": "\"a\\uFFFFa\"",
+                                                "value": "a\uffffa",
+                                                "valueText": "a\uffffa"
                                             }
                                         }
                                     }
@@ -262,6 +266,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "prop",
+                                                "value": "prop",
                                                 "valueText": "prop"
                                             },
                                             "dotToken": {
@@ -274,6 +279,7 @@
                                                 "width": 6,
                                                 "fullWidth": 7,
                                                 "text": "length",
+                                                "value": "length",
                                                 "valueText": "length",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -302,6 +308,8 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "3",
+                                            "value": 3,
+                                            "valueText": "3",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -332,6 +340,7 @@
                                             "width": 4,
                                             "fullWidth": 5,
                                             "text": "prop",
+                                            "value": "prop",
                                             "valueText": "prop",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -359,6 +368,8 @@
                                             "width": 4,
                                             "fullWidth": 5,
                                             "text": "\"aa\"",
+                                            "value": "aa",
+                                            "valueText": "aa",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -392,6 +403,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "prop",
+                                            "value": "prop",
                                             "valueText": "prop"
                                         },
                                         "openBracketToken": {
@@ -402,7 +414,9 @@
                                         "argumentExpression": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         },
                                         "closeBracketToken": {
                                             "kind": "CloseBracketToken",
@@ -434,7 +448,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 8,
-                                        "text": "\"\\uFFFF\""
+                                        "text": "\"\\uFFFF\"",
+                                        "value": "\uffff",
+                                        "valueText": "\uffff"
                                     }
                                 }
                             },
@@ -487,6 +503,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -502,6 +519,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

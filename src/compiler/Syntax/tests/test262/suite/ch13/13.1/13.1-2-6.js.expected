@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -150,6 +151,7 @@
                                     "width": 4,
                                     "fullWidth": 8,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -171,7 +173,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 30,
-                                            "text": "\"(function foo(arguments){});\""
+                                            "text": "\"(function foo(arguments){});\"",
+                                            "value": "(function foo(arguments){});",
+                                            "valueText": "(function foo(arguments){});"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -222,7 +226,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -273,6 +279,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -288,6 +295,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

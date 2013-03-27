@@ -76,6 +76,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -117,6 +118,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -179,7 +181,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 9,
-                                                                "text": "\"intostr\""
+                                                                "text": "\"intostr\"",
+                                                                "value": "intostr",
+                                                                "valueText": "intostr"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -251,6 +255,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -292,6 +297,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "str__",
+                                                "value": "str__",
                                                 "valueText": "str__"
                                             },
                                             "colonToken": {
@@ -302,7 +308,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 16,
-                                                "text": "\"ABB\\u0041BABAB\""
+                                                "text": "\"ABB\\u0041BABAB\"",
+                                                "value": "ABBABABAB",
+                                                "valueText": "ABBABABAB"
                                             }
                                         }
                                     ],
@@ -374,6 +382,7 @@
                     "kind": "IdentifierName",
                     "width": 5,
                     "text": "__str",
+                    "value": "__str",
                     "valueText": "__str"
                 },
                 "closeParenToken": {
@@ -424,6 +433,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "str__",
+                                "value": "str__",
                                 "valueText": "str__"
                             },
                             "closeParenToken": {
@@ -526,6 +536,7 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": "x",
+                                                                    "value": "x",
                                                                     "valueText": "x",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
@@ -558,6 +569,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 6,
                                                                             "text": "search",
+                                                                            "value": "search",
                                                                             "valueText": "search"
                                                                         },
                                                                         "argumentList": {
@@ -573,6 +585,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 5,
                                                                                     "text": "__obj",
+                                                                                    "value": "__obj",
                                                                                     "valueText": "__obj"
                                                                                 }
                                                                             ],
@@ -613,6 +626,7 @@
                                                             "width": 5,
                                                             "fullWidth": 11,
                                                             "text": "$FAIL",
+                                                            "value": "$FAIL",
                                                             "valueText": "$FAIL",
                                                             "hasLeadingTrivia": true,
                                                             "leadingTrivia": [
@@ -634,7 +648,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 54,
-                                                                    "text": "'#1: var x = search(__obj) lead to throwing exception'"
+                                                                    "text": "'#1: var x = search(__obj) lead to throwing exception'",
+                                                                    "value": "#1: var x = search(__obj) lead to throwing exception",
+                                                                    "valueText": "#1: var x = search(__obj) lead to throwing exception"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -706,6 +722,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e"
                                             },
                                             "closeParenToken": {
@@ -774,6 +791,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             },
                                                             "operatorToken": {
@@ -784,7 +802,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 9,
-                                                                "text": "\"intostr\""
+                                                                "text": "\"intostr\"",
+                                                                "value": "intostr",
+                                                                "valueText": "intostr"
                                                             }
                                                         },
                                                         "closeParenToken": {
@@ -829,6 +849,7 @@
                                                                             "width": 6,
                                                                             "fullWidth": 14,
                                                                             "text": "$ERROR",
+                                                                            "value": "$ERROR",
                                                                             "valueText": "$ERROR",
                                                                             "hasLeadingTrivia": true,
                                                                             "leadingTrivia": [
@@ -853,7 +874,9 @@
                                                                                     "left": {
                                                                                         "kind": "StringLiteral",
                                                                                         "width": 41,
-                                                                                        "text": "'#1.1: Exception === \"intostr\". Actual: '"
+                                                                                        "text": "'#1.1: Exception === \"intostr\". Actual: '",
+                                                                                        "value": "#1.1: Exception === \"intostr\". Actual: ",
+                                                                                        "valueText": "#1.1: Exception === \"intostr\". Actual: "
                                                                                     },
                                                                                     "operatorToken": {
                                                                                         "kind": "PlusToken",
@@ -864,6 +887,7 @@
                                                                                         "kind": "IdentifierName",
                                                                                         "width": 1,
                                                                                         "text": "e",
+                                                                                        "value": "e",
                                                                                         "valueText": "e"
                                                                                     }
                                                                                 }

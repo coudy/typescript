@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -134,6 +136,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "NaN",
+                                                "value": "NaN",
                                                 "valueText": "NaN"
                                             }
                                         ],
@@ -177,6 +180,7 @@
                             "width": 10,
                             "fullWidth": 12,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -201,6 +205,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "substring",
+                            "value": "substring",
                             "valueText": "substring",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -234,6 +239,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -245,6 +251,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -257,6 +264,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "substring",
+                            "value": "substring",
                             "valueText": "substring"
                         }
                     }
@@ -335,6 +343,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance"
                             },
                             "dotToken": {
@@ -346,6 +355,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "substring",
+                                "value": "substring",
                                 "valueText": "substring"
                             }
                         },
@@ -362,6 +372,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "Infinity",
+                                    "value": "Infinity",
                                     "valueText": "Infinity"
                                 },
                                 {
@@ -381,6 +392,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "NaN",
+                                    "value": "NaN",
                                     "valueText": "NaN"
                                 }
                             ],
@@ -415,7 +427,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"NaN\""
+                        "text": "\"NaN\"",
+                        "value": "NaN",
+                        "valueText": "NaN"
                     }
                 },
                 "closeParenToken": {
@@ -460,6 +474,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -484,7 +499,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 143,
-                                                "text": "'#1: __instance = new Number(NaN); __instance.substring = String.prototype.substring;  __instance.substring(Infinity, NaN) === \"NaN\". Actual: '"
+                                                "text": "'#1: __instance = new Number(NaN); __instance.substring = String.prototype.substring;  __instance.substring(Infinity, NaN) === \"NaN\". Actual: '",
+                                                "value": "#1: __instance = new Number(NaN); __instance.substring = String.prototype.substring;  __instance.substring(Infinity, NaN) === \"NaN\". Actual: ",
+                                                "valueText": "#1: __instance = new Number(NaN); __instance.substring = String.prototype.substring;  __instance.substring(Infinity, NaN) === \"NaN\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -501,6 +518,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "__instance",
+                                                        "value": "__instance",
                                                         "valueText": "__instance"
                                                     },
                                                     "dotToken": {
@@ -512,6 +530,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "substring",
+                                                        "value": "substring",
                                                         "valueText": "substring"
                                                     }
                                                 },
@@ -528,6 +547,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "Infinity",
+                                                            "value": "Infinity",
                                                             "valueText": "Infinity"
                                                         },
                                                         {
@@ -547,6 +567,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "NaN",
+                                                            "value": "NaN",
                                                             "valueText": "NaN"
                                                         }
                                                     ],

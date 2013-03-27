@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -118,7 +119,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 17,
-                                        "text": "0.000000000000001"
+                                        "text": "0.000000000000001",
+                                        "value": 1e-15,
+                                        "valueText": "1e-15"
                                     }
                                 }
                             }
@@ -176,6 +179,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -197,6 +201,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -208,6 +213,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "sqrt",
+                                            "value": "sqrt",
                                             "valueText": "sqrt"
                                         }
                                     },
@@ -224,6 +230,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -286,6 +293,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -307,7 +315,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 63,
-                                            "text": "\"#1: 'var x=-0.000000000000001; isNaN(Math.sqrt(x)) === false'\""
+                                            "text": "\"#1: 'var x=-0.000000000000001; isNaN(Math.sqrt(x)) === false'\"",
+                                            "value": "#1: 'var x=-0.000000000000001; isNaN(Math.sqrt(x)) === false'",
+                                            "valueText": "#1: 'var x=-0.000000000000001; isNaN(Math.sqrt(x)) === false'"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -395,6 +405,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -431,7 +442,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     }
                                 }
                             }
@@ -489,6 +502,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -510,6 +524,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -521,6 +536,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "sqrt",
+                                            "value": "sqrt",
                                             "valueText": "sqrt"
                                         }
                                     },
@@ -537,6 +553,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -599,6 +616,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -620,7 +638,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 47,
-                                            "text": "\"#2: 'var x=-1; isNaN(Math.sqrt(x)) === false'\""
+                                            "text": "\"#2: 'var x=-1; isNaN(Math.sqrt(x)) === false'\"",
+                                            "value": "#2: 'var x=-1; isNaN(Math.sqrt(x)) === false'",
+                                            "valueText": "#2: 'var x=-1; isNaN(Math.sqrt(x)) === false'"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -708,6 +728,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -745,6 +766,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "Infinity",
+                                        "value": "Infinity",
                                         "valueText": "Infinity"
                                     }
                                 }
@@ -803,6 +825,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -824,6 +847,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -835,6 +859,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "sqrt",
+                                            "value": "sqrt",
                                             "valueText": "sqrt"
                                         }
                                     },
@@ -851,6 +876,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -913,6 +939,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -934,7 +961,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 54,
-                                            "text": "\"#3: 'var x=-Infinity; isNaN(Math.sqrt(x)) === false'\""
+                                            "text": "\"#3: 'var x=-Infinity; isNaN(Math.sqrt(x)) === false'\"",
+                                            "value": "#3: 'var x=-Infinity; isNaN(Math.sqrt(x)) === false'",
+                                            "valueText": "#3: 'var x=-Infinity; isNaN(Math.sqrt(x)) === false'"
                                         }
                                     ],
                                     "closeParenToken": {

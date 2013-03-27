@@ -71,7 +71,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 5,
-                                "text": "/foo/"
+                                "text": "/foo/",
+                                "value": {},
+                                "valueText": "/foo/"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -88,6 +90,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "test",
+                            "value": "test",
                             "valueText": "test"
                         }
                     },
@@ -103,7 +106,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 7,
-                                "text": "'xfoox'"
+                                "text": "'xfoox'",
+                                "value": "xfoox",
+                                "valueText": "xfoox"
                             }
                         ],
                         "closeParenToken": {
@@ -157,6 +162,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "match",
+                                "value": "match",
                                 "valueText": "match",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -211,6 +217,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "RegExp",
+                                                    "value": "RegExp",
                                                     "valueText": "RegExp"
                                                 },
                                                 "argumentList": {
@@ -225,7 +232,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 12,
-                                                            "text": "'(.|\\r|\\n)*'"
+                                                            "text": "'(.|\\r|\\n)*'",
+                                                            "value": "(.|\r|\n)*",
+                                                            "valueText": "(.|\r|\n)*"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -235,7 +244,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 2,
-                                                            "text": "''"
+                                                            "text": "''",
+                                                            "value": "",
+                                                            "valueText": ""
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -254,6 +265,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "exec",
+                                                "value": "exec",
                                                 "valueText": "exec"
                                             }
                                         },
@@ -281,7 +293,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -337,6 +351,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "match",
+                        "value": "match",
                         "valueText": "match",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -362,7 +377,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "'xfoox'"
+                        "text": "'xfoox'",
+                        "value": "xfoox",
+                        "valueText": "xfoox"
                     }
                 },
                 "closeParenToken": {
@@ -407,6 +424,7 @@
                                     "width": 5,
                                     "fullWidth": 7,
                                     "text": "$FAIL",
+                                    "value": "$FAIL",
                                     "valueText": "$FAIL",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -428,7 +446,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 40,
-                                            "text": "'#1: regExp.exec() leaks match globally'"
+                                            "text": "'#1: regExp.exec() leaks match globally'",
+                                            "value": "#1: regExp.exec() leaks match globally",
+                                            "valueText": "#1: regExp.exec() leaks match globally"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -499,6 +519,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "match",
+                        "value": "match",
                         "valueText": "match",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -524,7 +545,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "'undefined'"
+                        "text": "'undefined'",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -569,6 +592,7 @@
                                     "width": 5,
                                     "fullWidth": 7,
                                     "text": "$FAIL",
+                                    "value": "$FAIL",
                                     "valueText": "$FAIL",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -590,7 +614,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 63,
-                                            "text": "'#2: regExp.exec() must coerce absent first arg to \"undefined\"'"
+                                            "text": "'#2: regExp.exec() must coerce absent first arg to \"undefined\"'",
+                                            "value": "#2: regExp.exec() must coerce absent first arg to \"undefined\"",
+                                            "valueText": "#2: regExp.exec() must coerce absent first arg to \"undefined\""
                                         }
                                     ],
                                     "closeParenToken": {

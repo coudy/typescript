@@ -82,6 +82,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "MyFunction",
+                                "value": "MyFunction",
                                 "valueText": "MyFunction",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,6 +128,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "Function",
+                                        "value": "Function",
                                         "valueText": "Function"
                                     },
                                     "argumentList": {
@@ -141,7 +143,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 18,
-                                                "text": "\"this.THIS = this\""
+                                                "text": "\"this.THIS = this\"",
+                                                "value": "this.THIS = this",
+                                                "valueText": "this.THIS = this"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -199,6 +203,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "MyObject",
+                                "value": "MyObject",
                                 "valueText": "MyObject",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -244,6 +249,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "MyFunction",
+                                        "value": "MyFunction",
                                         "valueText": "MyFunction"
                                     },
                                     "argumentList": {
@@ -318,6 +324,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "MyObject",
+                                    "value": "MyObject",
                                     "valueText": "MyObject"
                                 },
                                 "dotToken": {
@@ -329,6 +336,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "THIS",
+                                    "value": "THIS",
                                     "valueText": "THIS"
                                 }
                             },
@@ -341,6 +349,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -384,7 +393,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 17,
-                        "text": "\"[object Object]\""
+                        "text": "\"[object Object]\"",
+                        "value": "[object Object]",
+                        "valueText": "[object Object]"
                     }
                 },
                 "closeParenToken": {
@@ -429,6 +440,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -455,6 +467,8 @@
                                                 "width": 146,
                                                 "fullWidth": 147,
                                                 "text": "'#1: var MyFunction = new Function(\"this.THIS = this\"); var MyObject = new MyFunction(); MyObject.THIS.toString() === \"[object Object]\". Actual: '",
+                                                "value": "#1: var MyFunction = new Function(\"this.THIS = this\"); var MyObject = new MyFunction(); MyObject.THIS.toString() === \"[object Object]\". Actual: ",
+                                                "valueText": "#1: var MyFunction = new Function(\"this.THIS = this\"); var MyObject = new MyFunction(); MyObject.THIS.toString() === \"[object Object]\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -497,6 +511,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 8,
                                                                 "text": "MyObject",
+                                                                "value": "MyObject",
                                                                 "valueText": "MyObject"
                                                             },
                                                             "dotToken": {
@@ -508,6 +523,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "THIS",
+                                                                "value": "THIS",
                                                                 "valueText": "THIS"
                                                             }
                                                         },
@@ -520,6 +536,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -597,6 +614,7 @@
                         "width": 10,
                         "fullWidth": 22,
                         "text": "MyFunction",
+                        "value": "MyFunction",
                         "valueText": "MyFunction",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -656,6 +674,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "Function",
+                            "value": "Function",
                             "valueText": "Function"
                         },
                         "argumentList": {
@@ -670,7 +689,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 28,
-                                    "text": "\"this.THIS = eval(\\'this\\')\""
+                                    "text": "\"this.THIS = eval(\\'this\\')\"",
+                                    "value": "this.THIS = eval('this')",
+                                    "valueText": "this.THIS = eval('this')"
                                 }
                             ],
                             "closeParenToken": {
@@ -707,6 +728,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "MyObject",
+                        "value": "MyObject",
                         "valueText": "MyObject",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -749,6 +771,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "argumentList": {
@@ -820,6 +843,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "MyObject",
+                                    "value": "MyObject",
                                     "valueText": "MyObject"
                                 },
                                 "dotToken": {
@@ -831,6 +855,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "THIS",
+                                    "value": "THIS",
                                     "valueText": "THIS"
                                 }
                             },
@@ -843,6 +868,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -886,7 +912,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 17,
-                        "text": "\"[object Object]\""
+                        "text": "\"[object Object]\"",
+                        "value": "[object Object]",
+                        "valueText": "[object Object]"
                     }
                 },
                 "closeParenToken": {
@@ -931,6 +959,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -957,6 +986,8 @@
                                                 "width": 156,
                                                 "fullWidth": 157,
                                                 "text": "'#2: var MyFunction = new Function(\"this.THIS = eval(\\'this\\')\"); var MyObject = new MyFunction(); MyObject.THIS.toString() === \"[object Object]\". Actual: '",
+                                                "value": "#2: var MyFunction = new Function(\"this.THIS = eval('this')\"); var MyObject = new MyFunction(); MyObject.THIS.toString() === \"[object Object]\". Actual: ",
+                                                "valueText": "#2: var MyFunction = new Function(\"this.THIS = eval('this')\"); var MyObject = new MyFunction(); MyObject.THIS.toString() === \"[object Object]\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -999,6 +1030,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 8,
                                                                 "text": "MyObject",
+                                                                "value": "MyObject",
                                                                 "valueText": "MyObject"
                                                             },
                                                             "dotToken": {
@@ -1010,6 +1042,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "THIS",
+                                                                "value": "THIS",
                                                                 "valueText": "THIS"
                                                             }
                                                         },
@@ -1022,6 +1055,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },

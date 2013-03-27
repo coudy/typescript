@@ -95,6 +95,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -123,7 +124,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             }
                         }
@@ -174,6 +177,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "o",
+                                "value": "o",
                                 "valueText": "o",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -236,6 +240,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "foo",
+                                                "value": "foo",
                                                 "valueText": "foo"
                                             },
                                             "openParenToken": {
@@ -250,6 +255,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "stuff",
+                                                    "value": "stuff",
                                                     "valueText": "stuff"
                                                 }
                                             },
@@ -289,7 +295,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 12,
-                                                            "text": "\"use strict\""
+                                                            "text": "\"use strict\"",
+                                                            "value": "use strict",
+                                                            "valueText": "use strict"
                                                         },
                                                         "semicolonToken": {
                                                             "kind": "SemicolonToken",
@@ -317,6 +325,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x"
                                                             },
                                                             "operatorToken": {
@@ -399,6 +408,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "o",
+                            "value": "o",
                             "valueText": "o"
                         },
                         "dotToken": {
@@ -411,6 +421,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "foo",
+                            "value": "foo",
                             "valueText": "foo",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -437,7 +448,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "semicolonToken": {
@@ -483,6 +496,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     },
                     "operatorToken": {
@@ -494,6 +508,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "o",
+                        "value": "o",
                         "valueText": "o"
                     }
                 },
@@ -554,7 +569,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 29,
-                                "text": "\"'this' had incorrect value!\""
+                                "text": "\"'this' had incorrect value!\"",
+                                "value": "'this' had incorrect value!",
+                                "valueText": "'this' had incorrect value!"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",

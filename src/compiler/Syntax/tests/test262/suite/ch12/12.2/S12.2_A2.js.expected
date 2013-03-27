@@ -102,6 +102,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__variable",
+                            "value": "__variable",
                             "valueText": "__variable"
                         },
                         "closeParenToken": {
@@ -153,6 +154,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -174,7 +176,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 32,
-                                            "text": "'#1: delete(__variable)===false'"
+                                            "text": "'#1: delete(__variable)===false'",
+                                            "value": "#1: delete(__variable)===false",
+                                            "valueText": "#1: delete(__variable)===false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -310,7 +314,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 12,
-                                "text": "\"__variable\""
+                                "text": "\"__variable\"",
+                                "value": "__variable",
+                                "valueText": "__variable"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -367,6 +373,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -388,7 +395,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 40,
-                                            "text": "'#2: delete(this[\"__variable\"])===false'"
+                                            "text": "'#2: delete(this[\"__variable\"])===false'",
+                                            "value": "#2: delete(this[\"__variable\"])===false",
+                                            "valueText": "#2: delete(this[\"__variable\"])===false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -487,6 +496,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "__variable",
+                                "value": "__variable",
                                 "valueText": "__variable"
                             }
                         }
@@ -536,6 +546,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__variable",
+                                "value": "__variable",
                                 "valueText": "__variable",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -564,7 +575,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"defined\""
+                                    "text": "\"defined\"",
+                                    "value": "defined",
+                                    "valueText": "defined"
                                 }
                             }
                         }
@@ -654,6 +667,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "__variable",
+                                "value": "__variable",
                                 "valueText": "__variable"
                             },
                             "closeParenToken": {
@@ -716,7 +730,9 @@
                                 "argumentExpression": {
                                     "kind": "StringLiteral",
                                     "width": 12,
-                                    "text": "\"__variable\""
+                                    "text": "\"__variable\"",
+                                    "value": "__variable",
+                                    "valueText": "__variable"
                                 },
                                 "closeBracketToken": {
                                     "kind": "CloseBracketToken",
@@ -774,6 +790,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -797,6 +814,8 @@
                                             "width": 63,
                                             "fullWidth": 64,
                                             "text": "'#3: (delete(__variable) | delete(this[\"__variable\"]))===false'",
+                                            "value": "#3: (delete(__variable) | delete(this[\"__variable\"]))===false",
+                                            "valueText": "#3: (delete(__variable) | delete(this[\"__variable\"]))===false",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -926,6 +945,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__variable",
+                                "value": "__variable",
                                 "valueText": "__variable",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -951,7 +971,9 @@
                             "right": {
                                 "kind": "StringLiteral",
                                 "width": 9,
-                                "text": "\"defined\""
+                                "text": "\"defined\"",
+                                "value": "defined",
+                                "valueText": "defined"
                             }
                         },
                         "closeParenToken": {
@@ -992,7 +1014,9 @@
                                 "argumentExpression": {
                                     "kind": "StringLiteral",
                                     "width": 12,
-                                    "text": "\"__variable\""
+                                    "text": "\"__variable\"",
+                                    "value": "__variable",
+                                    "valueText": "__variable"
                                 },
                                 "closeBracketToken": {
                                     "kind": "CloseBracketToken",
@@ -1016,7 +1040,9 @@
                             "right": {
                                 "kind": "StringLiteral",
                                 "width": 9,
-                                "text": "\"defined\""
+                                "text": "\"defined\"",
+                                "value": "defined",
+                                "valueText": "defined"
                             }
                         },
                         "closeParenToken": {
@@ -1068,6 +1094,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1089,7 +1116,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 66,
-                                            "text": "'#4: __variable === \"defined\" and this[\"__variable\"] ===\"defined\"'"
+                                            "text": "'#4: __variable === \"defined\" and this[\"__variable\"] ===\"defined\"'",
+                                            "value": "#4: __variable === \"defined\" and this[\"__variable\"] ===\"defined\"",
+                                            "valueText": "#4: __variable === \"defined\" and this[\"__variable\"] ===\"defined\""
                                         }
                                     ],
                                     "closeParenToken": {

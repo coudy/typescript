@@ -98,6 +98,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -124,6 +125,8 @@
                                                 "width": 112,
                                                 "fullWidth": 113,
                                                 "text": "'#1.1: new RegExp(\"\\\\u0042\", {toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: '",
+                                                "value": "#1.1: new RegExp(\"\\u0042\", {toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
+                                                "valueText": "#1.1: new RegExp(\"\\u0042\", {toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -173,6 +176,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "RegExp",
+                                                        "value": "RegExp",
                                                         "valueText": "RegExp"
                                                     },
                                                     "argumentList": {
@@ -187,7 +191,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 8,
-                                                                "text": "\"\\u0042\""
+                                                                "text": "\"\\u0042\"",
+                                                                "value": "B",
+                                                                "valueText": "B"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -218,6 +224,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         },
                                                                         "colonToken": {
@@ -244,7 +251,9 @@
                                                                             "expression": {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 1,
-                                                                                "text": "0"
+                                                                                "text": "0",
+                                                                                "value": 0,
+                                                                                "valueText": "0"
                                                                             }
                                                                         }
                                                                     },
@@ -268,6 +277,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 7,
                                                                             "text": "valueOf",
+                                                                            "value": "valueOf",
                                                                             "valueText": "valueOf"
                                                                         },
                                                                         "colonToken": {
@@ -330,7 +340,9 @@
                                                                                         "expression": {
                                                                                             "kind": "StringLiteral",
                                                                                             "width": 9,
-                                                                                            "text": "\"invalof\""
+                                                                                            "text": "\"invalof\"",
+                                                                                            "value": "invalof",
+                                                                                            "valueText": "invalof"
                                                                                         },
                                                                                         "semicolonToken": {
                                                                                             "kind": "SemicolonToken",
@@ -432,6 +444,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -501,6 +514,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -528,6 +542,8 @@
                                         "width": 9,
                                         "fullWidth": 10,
                                         "text": "\"invalof\"",
+                                        "value": "invalof",
+                                        "valueText": "invalof",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -579,6 +595,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -605,6 +622,8 @@
                                                                 "width": 112,
                                                                 "fullWidth": 113,
                                                                 "text": "'#1.2: new RegExp(\"\\\\u0042\", {toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: '",
+                                                                "value": "#1.2: new RegExp(\"\\u0042\", {toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
+                                                                "valueText": "#1.2: new RegExp(\"\\u0042\", {toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -638,6 +657,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

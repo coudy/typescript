@@ -123,6 +123,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "f",
+                                            "value": "f",
                                             "valueText": "f",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -155,6 +156,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "Function",
+                                                    "value": "Function",
                                                     "valueText": "Function"
                                                 },
                                                 "argumentList": {
@@ -169,7 +171,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 6,
-                                                            "text": "\"arg1\""
+                                                            "text": "\"arg1\"",
+                                                            "value": "arg1",
+                                                            "valueText": "arg1"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -187,7 +191,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 6,
-                                                            "text": "\"arg2\""
+                                                            "text": "\"arg2\"",
+                                                            "value": "arg2",
+                                                            "valueText": "arg2"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -205,7 +211,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 6,
-                                                            "text": "\"arg3\""
+                                                            "text": "\"arg3\"",
+                                                            "value": "arg3",
+                                                            "valueText": "arg3"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -223,7 +231,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 24,
-                                                            "text": "\"return arg1+arg2+arg3;\""
+                                                            "text": "\"return arg1+arg2+arg3;\"",
+                                                            "value": "return arg1+arg2+arg3;",
+                                                            "valueText": "return arg1+arg2+arg3;"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -292,6 +302,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -336,6 +347,7 @@
                                         "width": 5,
                                         "fullWidth": 7,
                                         "text": "$FAIL",
+                                        "value": "$FAIL",
                                         "valueText": "$FAIL",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -357,7 +369,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 17,
-                                                "text": "'#1: test failed'"
+                                                "text": "'#1: test failed'",
+                                                "value": "#1: test failed",
+                                                "valueText": "#1: test failed"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -462,6 +476,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "f",
+                                "value": "f",
                                 "valueText": "f",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -488,6 +503,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "Function",
+                                "value": "Function",
                                 "valueText": "Function"
                             }
                         },
@@ -532,6 +548,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -553,7 +570,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 104,
-                                            "text": "'#2: It is permissible but not necessary to have one argument for each formal parameter to be specified'"
+                                            "text": "'#2: It is permissible but not necessary to have one argument for each formal parameter to be specified'",
+                                            "value": "#2: It is permissible but not necessary to have one argument for each formal parameter to be specified",
+                                            "valueText": "#2: It is permissible but not necessary to have one argument for each formal parameter to be specified"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -643,6 +662,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "f",
+                            "value": "f",
                             "valueText": "f"
                         },
                         "argumentList": {
@@ -657,7 +677,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -667,7 +689,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -677,7 +701,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "3"
+                                    "text": "3",
+                                    "value": 3,
+                                    "valueText": "3"
                                 }
                             ],
                             "closeParenToken": {
@@ -711,7 +737,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -756,6 +784,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -777,7 +806,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 104,
-                                            "text": "'#3: It is permissible but not necessary to have one argument for each formal parameter to be specified'"
+                                            "text": "'#3: It is permissible but not necessary to have one argument for each formal parameter to be specified'",
+                                            "value": "#3: It is permissible but not necessary to have one argument for each formal parameter to be specified",
+                                            "valueText": "#3: It is permissible but not necessary to have one argument for each formal parameter to be specified"
                                         }
                                     ],
                                     "closeParenToken": {

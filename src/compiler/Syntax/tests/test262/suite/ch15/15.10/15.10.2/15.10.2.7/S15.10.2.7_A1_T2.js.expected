@@ -22,6 +22,7 @@
                         "width": 10,
                         "fullWidth": 375,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -92,7 +93,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 9,
-                                "text": "/\\d{2,4}/"
+                                "text": "/\\d{2,4}/",
+                                "value": {},
+                                "valueText": "/\\d{2,4}/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -103,6 +106,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -118,7 +122,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 13,
-                                    "text": "\"the 7 movie\""
+                                    "text": "\"the 7 movie\"",
+                                    "value": "the 7 movie",
+                                    "valueText": "the 7 movie"
                                 }
                             ],
                             "closeParenToken": {
@@ -186,6 +192,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__executed",
+                    "value": "__executed",
                     "valueText": "__executed"
                 },
                 "closeParenToken": {
@@ -230,6 +237,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -251,7 +259,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 46,
-                                            "text": "'#1: /\\\\d{2,4}/.test(\"the 7 movie\") === false'"
+                                            "text": "'#1: /\\\\d{2,4}/.test(\"the 7 movie\") === false'",
+                                            "value": "#1: /\\d{2,4}/.test(\"the 7 movie\") === false",
+                                            "valueText": "#1: /\\d{2,4}/.test(\"the 7 movie\") === false"
                                         }
                                     ],
                                     "closeParenToken": {

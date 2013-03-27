@@ -103,6 +103,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -131,6 +132,8 @@
                                                 "width": 103,
                                                 "fullWidth": 104,
                                                 "text": "'#1.1: /[a-z]/.test({toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: '",
+                                                "value": "#1.1: /[a-z]/.test({toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
+                                                "valueText": "#1.1: /[a-z]/.test({toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -172,7 +175,9 @@
                                                         "expression": {
                                                             "kind": "RegularExpressionLiteral",
                                                             "width": 7,
-                                                            "text": "/[a-z]/"
+                                                            "text": "/[a-z]/",
+                                                            "value": {},
+                                                            "valueText": "/[a-z]/"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -183,6 +188,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "test",
+                                                            "value": "test",
                                                             "valueText": "test"
                                                         }
                                                     },
@@ -211,6 +217,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 8,
                                                                             "text": "toString",
+                                                                            "value": "toString",
                                                                             "valueText": "toString"
                                                                         },
                                                                         "colonToken": {
@@ -237,7 +244,9 @@
                                                                             "expression": {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 1,
-                                                                                "text": "0"
+                                                                                "text": "0",
+                                                                                "value": 0,
+                                                                                "valueText": "0"
                                                                             }
                                                                         }
                                                                     },
@@ -261,6 +270,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 7,
                                                                             "text": "valueOf",
+                                                                            "value": "valueOf",
                                                                             "valueText": "valueOf"
                                                                         },
                                                                         "colonToken": {
@@ -323,7 +333,9 @@
                                                                                         "expression": {
                                                                                             "kind": "StringLiteral",
                                                                                             "width": 9,
-                                                                                            "text": "\"invalof\""
+                                                                                            "text": "\"invalof\"",
+                                                                                            "value": "invalof",
+                                                                                            "valueText": "invalof"
                                                                                         },
                                                                                         "semicolonToken": {
                                                                                             "kind": "SemicolonToken",
@@ -425,6 +437,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -494,6 +507,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -519,7 +533,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 9,
-                                        "text": "\"invalof\""
+                                        "text": "\"invalof\"",
+                                        "value": "invalof",
+                                        "valueText": "invalof"
                                     }
                                 },
                                 "closeParenToken": {
@@ -564,6 +580,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -590,6 +607,8 @@
                                                                 "width": 103,
                                                                 "fullWidth": 104,
                                                                 "text": "'#1.2: /[a-z]/.test({toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: '",
+                                                                "value": "#1.2: /[a-z]/.test({toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
+                                                                "valueText": "#1.2: /[a-z]/.test({toString:void 0, valueOf:function(){throw \"invalof\";}}) throw \"invalof\". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -623,6 +642,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

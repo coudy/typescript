@@ -95,6 +95,7 @@
                                 "width": 12,
                                 "fullWidth": 13,
                                 "text": "__10_4_2_1_2",
+                                "value": "__10_4_2_1_2",
                                 "valueText": "__10_4_2_1_2",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -123,7 +124,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"str\""
+                                    "text": "\"str\"",
+                                    "value": "str",
+                                    "valueText": "str"
                                 }
                             }
                         }
@@ -165,6 +168,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -294,6 +298,7 @@
                                                         "width": 5,
                                                         "fullWidth": 6,
                                                         "text": "_eval",
+                                                        "value": "_eval",
                                                         "valueText": "_eval",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -323,6 +328,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "eval",
+                                                            "value": "eval",
                                                             "valueText": "eval"
                                                         }
                                                     }
@@ -380,6 +386,7 @@
                                                         "width": 12,
                                                         "fullWidth": 13,
                                                         "text": "__10_4_2_1_2",
+                                                        "value": "__10_4_2_1_2",
                                                         "valueText": "__10_4_2_1_2",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -408,7 +415,9 @@
                                                         "value": {
                                                             "kind": "StringLiteral",
                                                             "width": 6,
-                                                            "text": "\"str1\""
+                                                            "text": "\"str1\"",
+                                                            "value": "str1",
+                                                            "valueText": "str1"
                                                         }
                                                     }
                                                 }
@@ -457,6 +466,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "foo",
+                                            "value": "foo",
                                             "valueText": "foo"
                                         },
                                         "callSignature": {
@@ -540,6 +550,7 @@
                                                                     "width": 12,
                                                                     "fullWidth": 13,
                                                                     "text": "__10_4_2_1_2",
+                                                                    "value": "__10_4_2_1_2",
                                                                     "valueText": "__10_4_2_1_2",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
@@ -568,7 +579,9 @@
                                                                     "value": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 6,
-                                                                        "text": "\"str2\""
+                                                                        "text": "\"str2\"",
+                                                                        "value": "str2",
+                                                                        "valueText": "str2"
                                                                     }
                                                                 }
                                                             }
@@ -623,6 +636,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 5,
                                                                     "text": "_eval",
+                                                                    "value": "_eval",
                                                                     "valueText": "_eval"
                                                                 },
                                                                 "argumentList": {
@@ -637,7 +651,9 @@
                                                                         {
                                                                             "kind": "StringLiteral",
                                                                             "width": 26,
-                                                                            "text": "\"\\'str\\' === __10_4_2_1_2\""
+                                                                            "text": "\"\\'str\\' === __10_4_2_1_2\"",
+                                                                            "value": "'str' === __10_4_2_1_2",
+                                                                            "valueText": "'str' === __10_4_2_1_2"
                                                                         }
                                                                     ],
                                                                     "closeParenToken": {
@@ -673,6 +689,8 @@
                                                                 "width": 4,
                                                                 "fullWidth": 5,
                                                                 "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -716,6 +734,7 @@
                                                                     "width": 4,
                                                                     "fullWidth": 24,
                                                                     "text": "eval",
+                                                                    "value": "eval",
                                                                     "valueText": "eval",
                                                                     "hasLeadingTrivia": true,
                                                                     "leadingTrivia": [
@@ -737,7 +756,9 @@
                                                                         {
                                                                             "kind": "StringLiteral",
                                                                             "width": 27,
-                                                                            "text": "\"\\'str2\\' === __10_4_2_1_2\""
+                                                                            "text": "\"\\'str2\\' === __10_4_2_1_2\"",
+                                                                            "value": "'str2' === __10_4_2_1_2",
+                                                                            "valueText": "'str2' === __10_4_2_1_2"
                                                                         }
                                                                     ],
                                                                     "closeParenToken": {
@@ -771,7 +792,9 @@
                                                             "right": {
                                                                 "kind": "TrueKeyword",
                                                                 "width": 4,
-                                                                "text": "true"
+                                                                "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true"
                                                             }
                                                         }
                                                     },
@@ -841,7 +864,9 @@
                                                                 "expression": {
                                                                     "kind": "TrueKeyword",
                                                                     "width": 4,
-                                                                    "text": "true"
+                                                                    "text": "true",
+                                                                    "value": true,
+                                                                    "valueText": "true"
                                                                 },
                                                                 "semicolonToken": {
                                                                     "kind": "SemicolonToken",
@@ -940,7 +965,9 @@
                                                                     "expression": {
                                                                         "kind": "FalseKeyword",
                                                                         "width": 5,
-                                                                        "text": "false"
+                                                                        "text": "false",
+                                                                        "value": false,
+                                                                        "valueText": "false"
                                                                     },
                                                                     "semicolonToken": {
                                                                         "kind": "SemicolonToken",
@@ -1036,6 +1063,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "foo",
+                                                "value": "foo",
                                                 "valueText": "foo"
                                             },
                                             "argumentList": {
@@ -1168,6 +1196,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 14,
                                                         "text": "__10_4_2_1_1_2",
+                                                        "value": "__10_4_2_1_1_2",
                                                         "valueText": "__10_4_2_1_1_2"
                                                     }
                                                 }
@@ -1246,6 +1275,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -1261,6 +1291,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

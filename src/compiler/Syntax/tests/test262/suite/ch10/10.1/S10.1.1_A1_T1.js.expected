@@ -74,6 +74,7 @@
                     "kind": "IdentifierName",
                     "width": 2,
                     "text": "f1",
+                    "value": "f1",
                     "valueText": "f1"
                 },
                 "callSignature": {
@@ -139,7 +140,9 @@
                             "expression": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "1"
+                                "text": "1",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -209,6 +212,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "f1",
+                                "value": "f1",
                                 "valueText": "f1"
                             },
                             "closeParenToken": {
@@ -226,7 +230,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 10,
-                        "text": "\"function\""
+                        "text": "\"function\"",
+                        "value": "function",
+                        "valueText": "function"
                     }
                 },
                 "closeParenToken": {
@@ -254,6 +260,7 @@
                             "width": 6,
                             "fullWidth": 8,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -275,7 +282,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 29,
-                                    "text": "'#1: typeof(f1)!==\"function\"'"
+                                    "text": "'#1: typeof(f1)!==\"function\"'",
+                                    "value": "#1: typeof(f1)!==\"function\"",
+                                    "valueText": "#1: typeof(f1)!==\"function\""
                                 }
                             ],
                             "closeParenToken": {

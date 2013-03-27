@@ -25,6 +25,7 @@
                                 "width": 5,
                                 "fullWidth": 457,
                                 "text": "Error",
+                                "value": "Error",
                                 "valueText": "Error",
                                 "hasLeadingTrivia": true,
                                 "hasLeadingComment": true,
@@ -89,6 +90,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -101,6 +103,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "toString",
+                            "value": "toString",
                             "valueText": "toString"
                         }
                     },
@@ -119,6 +122,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Object",
+                                "value": "Object",
                                 "valueText": "Object"
                             },
                             "dotToken": {
@@ -130,6 +134,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -142,6 +147,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "toString",
+                            "value": "toString",
                             "valueText": "toString"
                         }
                     }
@@ -189,6 +195,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "err1",
+                                "value": "err1",
                                 "valueText": "err1"
                             },
                             "equalsValueClause": {
@@ -219,6 +226,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Error",
+                                        "value": "Error",
                                         "valueText": "Error"
                                     },
                                     "argumentList": {
@@ -282,6 +290,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "err1",
+                                "value": "err1",
                                 "valueText": "err1"
                             },
                             "dotToken": {
@@ -293,6 +302,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -326,7 +336,9 @@
                             "left": {
                                 "kind": "StringLiteral",
                                 "width": 10,
-                                "text": "'[object '"
+                                "text": "'[object '",
+                                "value": "[object ",
+                                "valueText": "[object "
                             },
                             "operatorToken": {
                                 "kind": "PlusToken",
@@ -346,6 +358,8 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "'Error'",
+                                "value": "Error",
+                                "valueText": "Error",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -363,7 +377,9 @@
                         "right": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "']'"
+                            "text": "']'",
+                            "value": "]",
+                            "valueText": "]"
                         }
                     }
                 },
@@ -401,6 +417,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -425,7 +442,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 52,
-                                                "text": "'#1: err1.toString()===\\'[object Error]\\'. Actual: '"
+                                                "text": "'#1: err1.toString()===\\'[object Error]\\'. Actual: '",
+                                                "value": "#1: err1.toString()==='[object Error]'. Actual: ",
+                                                "valueText": "#1: err1.toString()==='[object Error]'. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -442,6 +461,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "err1",
+                                                        "value": "err1",
                                                         "valueText": "err1"
                                                     },
                                                     "dotToken": {
@@ -453,6 +473,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "toString",
+                                                        "value": "toString",
                                                         "valueText": "toString"
                                                     }
                                                 },

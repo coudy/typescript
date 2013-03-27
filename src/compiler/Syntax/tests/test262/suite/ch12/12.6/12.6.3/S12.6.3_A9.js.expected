@@ -19,6 +19,7 @@
                         "width": 7,
                         "fullWidth": 319,
                         "text": "supreme",
+                        "value": "supreme",
                         "valueText": "supreme",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -66,7 +67,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "semicolonToken": {
@@ -179,6 +182,7 @@
                                             "width": 11,
                                             "fullWidth": 12,
                                             "text": "__evaluated",
+                                            "value": "__evaluated",
                                             "valueText": "__evaluated",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -211,6 +215,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "eval",
+                                                    "value": "eval",
                                                     "valueText": "eval"
                                                 },
                                                 "argumentList": {
@@ -225,7 +230,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 63,
-                                                            "text": "\"for(var count=0;;) {if (count===supreme)break;else count++; }\""
+                                                            "text": "\"for(var count=0;;) {if (count===supreme)break;else count++; }\"",
+                                                            "value": "for(var count=0;;) {if (count===supreme)break;else count++; }",
+                                                            "valueText": "for(var count=0;;) {if (count===supreme)break;else count++; }"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -290,6 +297,7 @@
                                     "width": 11,
                                     "fullWidth": 12,
                                     "text": "__evaluated",
+                                    "value": "__evaluated",
                                     "valueText": "__evaluated",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -315,7 +323,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "4"
+                                    "text": "4",
+                                    "value": 4,
+                                    "valueText": "4"
                                 }
                             },
                             "closeParenToken": {
@@ -360,6 +370,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -384,7 +395,9 @@
                                                         "left": {
                                                             "kind": "StringLiteral",
                                                             "width": 49,
-                                                            "text": "'#1: __evaluated === 4. Actual:  __evaluated ==='"
+                                                            "text": "'#1: __evaluated === 4. Actual:  __evaluated ==='",
+                                                            "value": "#1: __evaluated === 4. Actual:  __evaluated ===",
+                                                            "valueText": "#1: __evaluated === 4. Actual:  __evaluated ==="
                                                         },
                                                         "operatorToken": {
                                                             "kind": "PlusToken",
@@ -404,6 +417,7 @@
                                                             "width": 11,
                                                             "fullWidth": 13,
                                                             "text": "__evaluated",
+                                                            "value": "__evaluated",
                                                             "valueText": "__evaluated",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -501,6 +515,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -545,6 +560,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -566,7 +582,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 131,
-                                                "text": "'#1: var __evaluated =  eval(\"for(var count=0;;) {if (count===supreme)break;else count++; }\"); does not lead to throwing exception'"
+                                                "text": "'#1: var __evaluated =  eval(\"for(var count=0;;) {if (count===supreme)break;else count++; }\"); does not lead to throwing exception'",
+                                                "value": "#1: var __evaluated =  eval(\"for(var count=0;;) {if (count===supreme)break;else count++; }\"); does not lead to throwing exception",
+                                                "valueText": "#1: var __evaluated =  eval(\"for(var count=0;;) {if (count===supreme)break;else count++; }\"); does not lead to throwing exception"
                                             }
                                         ],
                                         "closeParenToken": {

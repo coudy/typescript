@@ -67,6 +67,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "truncate",
+                    "value": "truncate",
                     "valueText": "truncate"
                 },
                 "callSignature": {
@@ -88,6 +89,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             }
@@ -161,6 +163,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -186,7 +189,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             },
                             "closeParenToken": {
@@ -253,6 +258,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "Math",
+                                                    "value": "Math",
                                                     "valueText": "Math"
                                                 },
                                                 "dotToken": {
@@ -264,6 +270,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "floor",
+                                                    "value": "floor",
                                                     "valueText": "floor"
                                                 }
                                             },
@@ -280,6 +287,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     }
                                                 ],
@@ -394,6 +402,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "Math",
+                                                        "value": "Math",
                                                         "valueText": "Math"
                                                     },
                                                     "dotToken": {
@@ -405,6 +414,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "ceil",
+                                                        "value": "ceil",
                                                         "valueText": "ceil"
                                                     }
                                                 },
@@ -421,6 +431,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         }
                                                     ],
@@ -499,6 +510,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -541,7 +553,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.3"
+                        "text": "1.3",
+                        "value": 1.3,
+                        "valueText": "1.3"
                     }
                 },
                 "semicolonToken": {
@@ -574,6 +588,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -599,7 +614,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.1"
+                        "text": "1.1",
+                        "value": 1.1,
+                        "valueText": "1.1"
                     }
                 },
                 "semicolonToken": {
@@ -649,6 +666,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -676,6 +694,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -702,7 +721,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 19,
-                        "text": "0.19999999999999996"
+                        "text": "0.19999999999999996",
+                        "value": 0.19999999999999996,
+                        "valueText": "0.19999999999999996"
                     }
                 },
                 "closeParenToken": {
@@ -747,6 +768,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -773,6 +795,8 @@
                                                 "width": 63,
                                                 "fullWidth": 64,
                                                 "text": "'#1: x = 1.3; y = 1.1; x % y === 0.19999999999999996. Actual: '",
+                                                "value": "#1: x = 1.3; y = 1.1; x % y === 0.19999999999999996. Actual: ",
+                                                "valueText": "#1: x = 1.3; y = 1.1; x % y === 0.19999999999999996. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -810,6 +834,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -836,6 +861,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -897,6 +923,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -947,7 +974,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.3"
+                            "text": "1.3",
+                            "value": 1.3,
+                            "valueText": "1.3"
                         }
                     }
                 },
@@ -981,6 +1010,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1006,7 +1036,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.1"
+                        "text": "1.1",
+                        "value": 1.1,
+                        "valueText": "1.1"
                     }
                 },
                 "semicolonToken": {
@@ -1060,6 +1092,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1087,6 +1120,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1121,7 +1155,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 19,
-                            "text": "0.19999999999999996"
+                            "text": "0.19999999999999996",
+                            "value": 0.19999999999999996,
+                            "valueText": "0.19999999999999996"
                         }
                     }
                 },
@@ -1167,6 +1203,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1193,6 +1230,8 @@
                                                 "width": 65,
                                                 "fullWidth": 66,
                                                 "text": "'#2: x = -1.3; y = 1.1; x % y === -0.19999999999999996. Actual: '",
+                                                "value": "#2: x = -1.3; y = 1.1; x % y === -0.19999999999999996. Actual: ",
+                                                "valueText": "#2: x = -1.3; y = 1.1; x % y === -0.19999999999999996. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1230,6 +1269,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -1256,6 +1296,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -1317,6 +1358,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1359,7 +1401,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.3"
+                        "text": "1.3",
+                        "value": 1.3,
+                        "valueText": "1.3"
                     }
                 },
                 "semicolonToken": {
@@ -1392,6 +1436,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1425,7 +1470,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.1"
+                            "text": "1.1",
+                            "value": 1.1,
+                            "valueText": "1.1"
                         }
                     }
                 },
@@ -1476,6 +1523,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1503,6 +1551,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1529,7 +1578,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 19,
-                        "text": "0.19999999999999996"
+                        "text": "0.19999999999999996",
+                        "value": 0.19999999999999996,
+                        "valueText": "0.19999999999999996"
                     }
                 },
                 "closeParenToken": {
@@ -1574,6 +1625,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1600,6 +1652,8 @@
                                                 "width": 64,
                                                 "fullWidth": 65,
                                                 "text": "'#3: x = 1.3; y = -1.1; x % y === 0.19999999999999996. Actual: '",
+                                                "value": "#3: x = 1.3; y = -1.1; x % y === 0.19999999999999996. Actual: ",
+                                                "valueText": "#3: x = 1.3; y = -1.1; x % y === 0.19999999999999996. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1637,6 +1691,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -1663,6 +1718,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -1724,6 +1780,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1774,7 +1831,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.3"
+                            "text": "1.3",
+                            "value": 1.3,
+                            "valueText": "1.3"
                         }
                     }
                 },
@@ -1808,6 +1867,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1841,7 +1901,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.1"
+                            "text": "1.1",
+                            "value": 1.1,
+                            "valueText": "1.1"
                         }
                     }
                 },
@@ -1892,6 +1954,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1919,6 +1982,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1953,7 +2017,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 19,
-                            "text": "0.19999999999999996"
+                            "text": "0.19999999999999996",
+                            "value": 0.19999999999999996,
+                            "valueText": "0.19999999999999996"
                         }
                     }
                 },
@@ -1999,6 +2065,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2025,6 +2092,8 @@
                                                 "width": 66,
                                                 "fullWidth": 67,
                                                 "text": "'#4: x = -1.3; y = -1.1; x % y === -0.19999999999999996. Actual: '",
+                                                "value": "#4: x = -1.3; y = -1.1; x % y === -0.19999999999999996. Actual: ",
+                                                "valueText": "#4: x = -1.3; y = -1.1; x % y === -0.19999999999999996. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2062,6 +2131,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -2088,6 +2158,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -2149,6 +2220,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -2191,7 +2263,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.3"
+                        "text": "1.3",
+                        "value": 1.3,
+                        "valueText": "1.3"
                     }
                 },
                 "semicolonToken": {
@@ -2224,6 +2298,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -2249,7 +2324,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.1"
+                        "text": "1.1",
+                        "value": 1.1,
+                        "valueText": "1.1"
                     }
                 },
                 "semicolonToken": {
@@ -2301,6 +2378,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2328,6 +2406,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2360,6 +2439,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2394,6 +2474,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "truncate",
+                                    "value": "truncate",
                                     "valueText": "truncate"
                                 },
                                 "argumentList": {
@@ -2415,6 +2496,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -2441,6 +2523,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "y",
+                                                "value": "y",
                                                 "valueText": "y"
                                             }
                                         }
@@ -2477,6 +2560,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y"
                             }
                         }
@@ -2524,6 +2608,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2550,6 +2635,8 @@
                                                 "width": 67,
                                                 "fullWidth": 68,
                                                 "text": "'#5: x = 1.3; y = 1.1; x % y === x - truncate(x / y) * y. Actual: '",
+                                                "value": "#5: x = 1.3; y = 1.1; x % y === x - truncate(x / y) * y. Actual: ",
+                                                "valueText": "#5: x = 1.3; y = 1.1; x % y === x - truncate(x / y) * y. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2587,6 +2674,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -2613,6 +2701,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -2674,6 +2763,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -2724,7 +2814,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.3"
+                            "text": "1.3",
+                            "value": 1.3,
+                            "valueText": "1.3"
                         }
                     }
                 },
@@ -2758,6 +2850,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -2783,7 +2876,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.1"
+                        "text": "1.1",
+                        "value": 1.1,
+                        "valueText": "1.1"
                     }
                 },
                 "semicolonToken": {
@@ -2839,6 +2934,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2866,6 +2962,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2898,6 +2995,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2932,6 +3030,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "truncate",
+                                    "value": "truncate",
                                     "valueText": "truncate"
                                 },
                                 "argumentList": {
@@ -2953,6 +3052,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -2979,6 +3079,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "y",
+                                                "value": "y",
                                                 "valueText": "y"
                                             }
                                         }
@@ -3015,6 +3116,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y"
                             }
                         }
@@ -3062,6 +3164,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3088,6 +3191,8 @@
                                                 "width": 68,
                                                 "fullWidth": 69,
                                                 "text": "'#6: x = -1.3; y = 1.1; x % y === x - truncate(x / y) * y. Actual: '",
+                                                "value": "#6: x = -1.3; y = 1.1; x % y === x - truncate(x / y) * y. Actual: ",
+                                                "valueText": "#6: x = -1.3; y = 1.1; x % y === x - truncate(x / y) * y. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -3125,6 +3230,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -3151,6 +3257,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -3212,6 +3319,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -3254,7 +3362,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "1.3"
+                        "text": "1.3",
+                        "value": 1.3,
+                        "valueText": "1.3"
                     }
                 },
                 "semicolonToken": {
@@ -3287,6 +3397,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -3320,7 +3431,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.1"
+                            "text": "1.1",
+                            "value": 1.1,
+                            "valueText": "1.1"
                         }
                     }
                 },
@@ -3373,6 +3486,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -3400,6 +3514,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -3432,6 +3547,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -3466,6 +3582,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "truncate",
+                                    "value": "truncate",
                                     "valueText": "truncate"
                                 },
                                 "argumentList": {
@@ -3487,6 +3604,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -3513,6 +3631,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "y",
+                                                "value": "y",
                                                 "valueText": "y"
                                             }
                                         }
@@ -3549,6 +3668,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y"
                             }
                         }
@@ -3596,6 +3716,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3622,6 +3743,8 @@
                                                 "width": 68,
                                                 "fullWidth": 69,
                                                 "text": "'#7: x = 1.3; y = -1.1; x % y === x - truncate(x / y) * y. Actual: '",
+                                                "value": "#7: x = 1.3; y = -1.1; x % y === x - truncate(x / y) * y. Actual: ",
+                                                "valueText": "#7: x = 1.3; y = -1.1; x % y === x - truncate(x / y) * y. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -3659,6 +3782,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -3685,6 +3809,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },
@@ -3746,6 +3871,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -3796,7 +3922,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.3"
+                            "text": "1.3",
+                            "value": 1.3,
+                            "valueText": "1.3"
                         }
                     }
                 },
@@ -3830,6 +3958,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -3863,7 +3992,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1.1"
+                            "text": "1.1",
+                            "value": 1.1,
+                            "valueText": "1.1"
                         }
                     }
                 },
@@ -3916,6 +4047,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -3943,6 +4075,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -3975,6 +4108,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -4009,6 +4143,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "truncate",
+                                    "value": "truncate",
                                     "valueText": "truncate"
                                 },
                                 "argumentList": {
@@ -4030,6 +4165,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -4056,6 +4192,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "y",
+                                                "value": "y",
                                                 "valueText": "y"
                                             }
                                         }
@@ -4092,6 +4229,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y"
                             }
                         }
@@ -4139,6 +4277,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -4165,6 +4304,8 @@
                                                 "width": 69,
                                                 "fullWidth": 70,
                                                 "text": "'#8: x = -1.3; y = -1.1; x % y === x - truncate(x / y) * y. Actual: '",
+                                                "value": "#8: x = -1.3; y = -1.1; x % y === x - truncate(x / y) * y. Actual: ",
+                                                "valueText": "#8: x = -1.3; y = -1.1; x % y === x - truncate(x / y) * y. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -4202,6 +4343,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -4228,6 +4370,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     }
                                                 },

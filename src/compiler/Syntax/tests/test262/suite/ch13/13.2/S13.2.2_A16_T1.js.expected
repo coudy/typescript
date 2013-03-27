@@ -106,6 +106,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -132,7 +133,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -177,6 +180,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -201,7 +205,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 62,
-                                                "text": "'#1: typeof __func === \"undefined\". Actual: typeof __func ==='"
+                                                "text": "'#1: typeof __func === \"undefined\". Actual: typeof __func ==='",
+                                                "value": "#1: typeof __func === \"undefined\". Actual: typeof __func ===",
+                                                "valueText": "#1: typeof __func === \"undefined\". Actual: typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -228,6 +234,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 }
                                             }
@@ -326,6 +333,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -387,6 +395,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "__func",
+                                            "value": "__func",
                                             "valueText": "__func"
                                         },
                                         "callSignature": {
@@ -440,6 +449,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "prop",
+                                                                "value": "prop",
                                                                 "valueText": "prop"
                                                             }
                                                         },
@@ -451,7 +461,9 @@
                                                         "right": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "1"
+                                                            "text": "1",
+                                                            "value": 1,
+                                                            "valueText": "1"
                                                         }
                                                     },
                                                     "semicolonToken": {
@@ -544,6 +556,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -556,6 +569,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -582,7 +596,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -627,6 +643,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -651,7 +668,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 46,
-                                                "text": "'#2: __obj.prop === 1. Actual: __obj.prop ==='"
+                                                "text": "'#2: __obj.prop === 1. Actual: __obj.prop ==='",
+                                                "value": "#2: __obj.prop === 1. Actual: __obj.prop ===",
+                                                "valueText": "#2: __obj.prop === 1. Actual: __obj.prop ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -665,6 +684,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__obj",
+                                                    "value": "__obj",
                                                     "valueText": "__obj"
                                                 },
                                                 "dotToken": {
@@ -676,6 +696,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "prop",
+                                                    "value": "prop",
                                                     "valueText": "prop"
                                                 }
                                             }
@@ -806,6 +827,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -832,7 +854,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -877,6 +901,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -901,7 +926,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 62,
-                                                "text": "'#5: typeof __func === \"undefined\". Actual: typeof __func ==='"
+                                                "text": "'#5: typeof __func === \"undefined\". Actual: typeof __func ==='",
+                                                "value": "#5: typeof __func === \"undefined\". Actual: typeof __func ===",
+                                                "valueText": "#5: typeof __func === \"undefined\". Actual: typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -928,6 +955,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 }
                                             }

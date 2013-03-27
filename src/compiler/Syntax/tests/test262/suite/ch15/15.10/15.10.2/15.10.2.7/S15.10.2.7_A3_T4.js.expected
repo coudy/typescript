@@ -22,6 +22,7 @@
                         "width": 10,
                         "fullWidth": 384,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -92,7 +93,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 12,
-                                "text": "/\\s+java\\s+/"
+                                "text": "/\\s+java\\s+/",
+                                "value": {},
+                                "valueText": "/\\s+java\\s+/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -103,6 +106,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -118,7 +122,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 16,
-                                    "text": "\"java\\n\\nobject\""
+                                    "text": "\"java\\n\\nobject\"",
+                                    "value": "java\n\nobject",
+                                    "valueText": "java\n\nobject"
                                 }
                             ],
                             "closeParenToken": {
@@ -186,6 +192,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__executed",
+                    "value": "__executed",
                     "valueText": "__executed"
                 },
                 "closeParenToken": {
@@ -230,6 +237,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -251,7 +259,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 55,
-                                            "text": "'#1: /\\\\s+java\\\\s+/.test(\"java\\\\n\\\\nobject\") === false'"
+                                            "text": "'#1: /\\\\s+java\\\\s+/.test(\"java\\\\n\\\\nobject\") === false'",
+                                            "value": "#1: /\\s+java\\s+/.test(\"java\\n\\nobject\") === false",
+                                            "valueText": "#1: /\\s+java\\s+/.test(\"java\\n\\nobject\") === false"
                                         }
                                     ],
                                     "closeParenToken": {

@@ -98,6 +98,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "callSignature": {
@@ -147,7 +148,9 @@
                                     "expression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     },
                                     "semicolonToken": {
                                         "kind": "SemicolonToken",
@@ -213,6 +216,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -234,7 +238,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 60,
-                                            "text": "'#1: Function expession inside the if expression is allowed'"
+                                            "text": "'#1: Function expession inside the if expression is allowed'",
+                                            "value": "#1: Function expession inside the if expression is allowed",
+                                            "valueText": "#1: Function expession inside the if expression is allowed"
                                         }
                                     ],
                                     "closeParenToken": {

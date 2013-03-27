@@ -83,6 +83,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -128,6 +129,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -158,7 +160,9 @@
                                                 "expression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "0"
+                                                    "text": "0",
+                                                    "value": 0,
+                                                    "valueText": "0"
                                                 }
                                             }
                                         ],
@@ -234,6 +238,7 @@
                         "width": 3,
                         "fullWidth": 4,
                         "text": "obj",
+                        "value": "obj",
                         "valueText": "obj",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -260,6 +265,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -305,6 +311,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -326,7 +333,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 67,
-                                            "text": "'#0: new Object(undefined) return the newly created native object.'"
+                                            "text": "'#0: new Object(undefined) return the newly created native object.'",
+                                            "value": "#0: new Object(undefined) return the newly created native object.",
+                                            "valueText": "#0: new Object(undefined) return the newly created native object."
                                         }
                                     ],
                                     "closeParenToken": {
@@ -419,6 +428,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -431,6 +441,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -457,6 +469,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "Object",
+                        "value": "Object",
                         "valueText": "Object"
                     }
                 },
@@ -502,6 +515,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -523,7 +537,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 65,
-                                            "text": "'#1: new Object(undefined) create a new native ECMAScript object'"
+                                            "text": "'#1: new Object(undefined) create a new native ECMAScript object'",
+                                            "value": "#1: new Object(undefined) create a new native ECMAScript object",
+                                            "valueText": "#1: new Object(undefined) create a new native ECMAScript object"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -632,6 +648,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "dotToken": {
@@ -643,6 +660,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "prototype",
+                                        "value": "prototype",
                                         "valueText": "prototype"
                                     }
                                 },
@@ -655,6 +673,7 @@
                                     "kind": "IdentifierName",
                                     "width": 13,
                                     "text": "isPrototypeOf",
+                                    "value": "isPrototypeOf",
                                     "valueText": "isPrototypeOf"
                                 }
                             },
@@ -671,6 +690,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "obj",
+                                        "value": "obj",
                                         "valueText": "obj"
                                     }
                                 ],
@@ -730,6 +750,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -751,7 +772,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 136,
-                                            "text": "'#2: when new Object(undefined) calls the [[Prototype]] property of the newly constructed object is set to the Object prototype object.'"
+                                            "text": "'#2: when new Object(undefined) calls the [[Prototype]] property of the newly constructed object is set to the Object prototype object.'",
+                                            "value": "#2: when new Object(undefined) calls the [[Prototype]] property of the newly constructed object is set to the Object prototype object.",
+                                            "valueText": "#2: when new Object(undefined) calls the [[Prototype]] property of the newly constructed object is set to the Object prototype object."
                                         }
                                     ],
                                     "closeParenToken": {
@@ -839,6 +862,7 @@
                                 "width": 16,
                                 "fullWidth": 17,
                                 "text": "to_string_result",
+                                "value": "to_string_result",
                                 "valueText": "to_string_result",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -873,7 +897,9 @@
                                         "left": {
                                             "kind": "StringLiteral",
                                             "width": 10,
-                                            "text": "'[object '"
+                                            "text": "'[object '",
+                                            "value": "[object ",
+                                            "valueText": "[object "
                                         },
                                         "operatorToken": {
                                             "kind": "PlusToken",
@@ -893,6 +919,8 @@
                                             "width": 8,
                                             "fullWidth": 9,
                                             "text": "'Object'",
+                                            "value": "Object",
+                                            "valueText": "Object",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -910,7 +938,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "']'"
+                                        "text": "']'",
+                                        "value": "]",
+                                        "valueText": "]"
                                     }
                                 }
                             }
@@ -966,6 +996,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "dotToken": {
@@ -977,6 +1008,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -1021,6 +1053,7 @@
                         "kind": "IdentifierName",
                         "width": 16,
                         "text": "to_string_result",
+                        "value": "to_string_result",
                         "valueText": "to_string_result"
                     }
                 },
@@ -1066,6 +1099,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1087,7 +1121,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 113,
-                                            "text": "'#3: when new Object(undefined) calls the [[Class]] property of the newly constructed object is set to \"Object\".'"
+                                            "text": "'#3: when new Object(undefined) calls the [[Class]] property of the newly constructed object is set to \"Object\".'",
+                                            "value": "#3: when new Object(undefined) calls the [[Class]] property of the newly constructed object is set to \"Object\".",
+                                            "valueText": "#3: when new Object(undefined) calls the [[Class]] property of the newly constructed object is set to \"Object\"."
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1186,6 +1222,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "obj",
+                                        "value": "obj",
                                         "valueText": "obj"
                                     },
                                     "dotToken": {
@@ -1197,6 +1234,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "valueOf",
+                                        "value": "valueOf",
                                         "valueText": "valueOf"
                                     }
                                 },
@@ -1225,6 +1263,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -1275,6 +1314,7 @@
                                 "kind": "IdentifierName",
                                 "width": 16,
                                 "text": "to_string_result",
+                                "value": "to_string_result",
                                 "valueText": "to_string_result"
                             },
                             "dotToken": {
@@ -1286,6 +1326,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -1348,6 +1389,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1369,7 +1411,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 94,
-                                            "text": "'#4: when new Object(undefined) calls the newly constructed object has no [[Value]] property.'"
+                                            "text": "'#4: when new Object(undefined) calls the newly constructed object has no [[Value]] property.'",
+                                            "value": "#4: when new Object(undefined) calls the newly constructed object has no [[Value]] property.",
+                                            "valueText": "#4: when new Object(undefined) calls the newly constructed object has no [[Value]] property."
                                         }
                                     ],
                                     "closeParenToken": {

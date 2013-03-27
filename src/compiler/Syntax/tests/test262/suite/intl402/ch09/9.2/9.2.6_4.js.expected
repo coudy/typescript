@@ -19,6 +19,7 @@
                         "width": 8,
                         "fullWidth": 284,
                         "text": "$INCLUDE",
+                        "value": "$INCLUDE",
                         "valueText": "$INCLUDE",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -70,7 +71,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 13,
-                                "text": "\"testIntl.js\""
+                                "text": "\"testIntl.js\"",
+                                "value": "testIntl.js",
+                                "valueText": "testIntl.js"
                             }
                         ],
                         "closeParenToken": {
@@ -106,6 +109,7 @@
                         "width": 24,
                         "fullWidth": 25,
                         "text": "testWithIntlConstructors",
+                        "value": "testWithIntlConstructors",
                         "valueText": "testWithIntlConstructors",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -160,6 +164,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 11,
                                                     "text": "Constructor",
+                                                    "value": "Constructor",
                                                     "valueText": "Constructor"
                                                 }
                                             }
@@ -240,7 +245,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 8,
-                                                                "text": "\"lookup\""
+                                                                "text": "\"lookup\"",
+                                                                "value": "lookup",
+                                                                "valueText": "lookup"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -258,7 +265,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 10,
-                                                                "text": "\"best fit\""
+                                                                "text": "\"best fit\"",
+                                                                "value": "best fit",
+                                                                "valueText": "best fit"
                                                             }
                                                         ],
                                                         "closeBracketToken": {
@@ -276,6 +285,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "forEach",
+                                                        "value": "forEach",
                                                         "valueText": "forEach"
                                                     }
                                                 },
@@ -323,6 +333,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 7,
                                                                                 "text": "matcher",
+                                                                                "value": "matcher",
                                                                                 "valueText": "matcher"
                                                                             }
                                                                         }
@@ -396,6 +407,7 @@
                                                                                         "width": 9,
                                                                                         "fullWidth": 10,
                                                                                         "text": "supported",
+                                                                                        "value": "supported",
                                                                                         "valueText": "supported",
                                                                                         "hasTrailingTrivia": true,
                                                                                         "trailingTrivia": [
@@ -431,6 +443,7 @@
                                                                                                     "kind": "IdentifierName",
                                                                                                     "width": 11,
                                                                                                     "text": "Constructor",
+                                                                                                    "value": "Constructor",
                                                                                                     "valueText": "Constructor"
                                                                                                 },
                                                                                                 "dotToken": {
@@ -442,6 +455,7 @@
                                                                                                     "kind": "IdentifierName",
                                                                                                     "width": 18,
                                                                                                     "text": "supportedLocalesOf",
+                                                                                                    "value": "supportedLocalesOf",
                                                                                                     "valueText": "supportedLocalesOf"
                                                                                                 }
                                                                                             },
@@ -498,6 +512,7 @@
                                                                                                                     "kind": "IdentifierName",
                                                                                                                     "width": 13,
                                                                                                                     "text": "localeMatcher",
+                                                                                                                    "value": "localeMatcher",
                                                                                                                     "valueText": "localeMatcher"
                                                                                                                 },
                                                                                                                 "colonToken": {
@@ -517,6 +532,7 @@
                                                                                                                     "kind": "IdentifierName",
                                                                                                                     "width": 7,
                                                                                                                     "text": "matcher",
+                                                                                                                    "value": "matcher",
                                                                                                                     "valueText": "matcher"
                                                                                                                 }
                                                                                                             }
@@ -592,6 +608,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 9,
                                                                                     "text": "supported",
+                                                                                    "value": "supported",
                                                                                     "valueText": "supported"
                                                                                 },
                                                                                 "dotToken": {
@@ -604,6 +621,7 @@
                                                                                     "width": 6,
                                                                                     "fullWidth": 7,
                                                                                     "text": "length",
+                                                                                    "value": "length",
                                                                                     "valueText": "length",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
@@ -630,7 +648,9 @@
                                                                             "right": {
                                                                                 "kind": "NumericLiteral",
                                                                                 "width": 1,
-                                                                                "text": "0"
+                                                                                "text": "0",
+                                                                                "value": 0,
+                                                                                "valueText": "0"
                                                                             }
                                                                         },
                                                                         "closeParenToken": {
@@ -675,6 +695,7 @@
                                                                                             "width": 6,
                                                                                             "fullWidth": 18,
                                                                                             "text": "$ERROR",
+                                                                                            "value": "$ERROR",
                                                                                             "valueText": "$ERROR",
                                                                                             "hasLeadingTrivia": true,
                                                                                             "leadingTrivia": [
@@ -704,6 +725,8 @@
                                                                                                             "width": 32,
                                                                                                             "fullWidth": 33,
                                                                                                             "text": "\"SupportedLocales with matcher \"",
+                                                                                                            "value": "SupportedLocales with matcher ",
+                                                                                                            "valueText": "SupportedLocales with matcher ",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "trailingTrivia": [
                                                                                                                 {
@@ -730,6 +753,7 @@
                                                                                                             "width": 7,
                                                                                                             "fullWidth": 8,
                                                                                                             "text": "matcher",
+                                                                                                            "value": "matcher",
                                                                                                             "valueText": "matcher",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "trailingTrivia": [
@@ -756,7 +780,9 @@
                                                                                                     "right": {
                                                                                                         "kind": "StringLiteral",
                                                                                                         "width": 47,
-                                                                                                        "text": "\" returned a non-empty list for an empty list.\""
+                                                                                                        "text": "\" returned a non-empty list for an empty list.\"",
+                                                                                                        "value": " returned a non-empty list for an empty list.",
+                                                                                                        "valueText": " returned a non-empty list for an empty list."
                                                                                                     }
                                                                                                 }
                                                                                             ],
@@ -876,7 +902,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             },
                                             "semicolonToken": {
                                                 "kind": "SemicolonToken",

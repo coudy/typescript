@@ -38,6 +38,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "a",
+                                "value": "a",
                                 "valueText": "a",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -66,7 +67,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 7,
-                                    "text": "\"Hello\""
+                                    "text": "\"Hello\"",
+                                    "value": "Hello",
+                                    "valueText": "Hello"
                                 }
                             }
                         }
@@ -119,6 +122,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "b",
+                                "value": "b",
                                 "valueText": "b",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -156,6 +160,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "a",
+                                            "value": "a",
                                             "valueText": "a"
                                         },
                                         "dotToken": {
@@ -167,6 +172,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "match",
+                                            "value": "match",
                                             "valueText": "match"
                                         }
                                     },
@@ -183,7 +189,9 @@
                                             {
                                                 "kind": "RegularExpressionLiteral",
                                                 "width": 15,
-                                                "text": "/\\/ver=([^/]+)/"
+                                                "text": "/\\/ver=([^/]+)/",
+                                                "value": {},
+                                                "valueText": "/\\/ver=([^/]+)/"
                                             }
                                         ],
                                         "closeParenToken": {

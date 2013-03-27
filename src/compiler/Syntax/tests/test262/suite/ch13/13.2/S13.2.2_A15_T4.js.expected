@@ -21,6 +21,7 @@
                         "width": 9,
                         "fullWidth": 503,
                         "text": "__FACTORY",
+                        "value": "__FACTORY",
                         "valueText": "__FACTORY",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -157,6 +158,7 @@
                                                 "width": 4,
                                                 "fullWidth": 5,
                                                 "text": "prop",
+                                                "value": "prop",
                                                 "valueText": "prop",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -183,7 +185,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         }
                                     },
                                     "semicolonToken": {
@@ -212,6 +216,7 @@
                                             "width": 3,
                                             "fullWidth": 8,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj",
                                             "hasLeadingTrivia": true,
                                             "hasTrailingTrivia": true,
@@ -286,6 +291,7 @@
                                                 "width": 3,
                                                 "fullWidth": 7,
                                                 "text": "obj",
+                                                "value": "obj",
                                                 "valueText": "obj",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -305,6 +311,7 @@
                                                 "width": 4,
                                                 "fullWidth": 5,
                                                 "text": "prop",
+                                                "value": "prop",
                                                 "valueText": "prop",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -331,7 +338,9 @@
                                         "right": {
                                             "kind": "StringLiteral",
                                             "width": 3,
-                                            "text": "\"A\""
+                                            "text": "\"A\"",
+                                            "value": "A",
+                                            "valueText": "A"
                                         }
                                     },
                                     "semicolonToken": {
@@ -363,6 +372,7 @@
                                                 "width": 3,
                                                 "fullWidth": 7,
                                                 "text": "obj",
+                                                "value": "obj",
                                                 "valueText": "obj",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -382,6 +392,7 @@
                                                 "width": 4,
                                                 "fullWidth": 5,
                                                 "text": "slot",
+                                                "value": "slot",
                                                 "valueText": "slot",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -453,6 +464,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "obj",
+                                        "value": "obj",
                                         "valueText": "obj"
                                     },
                                     "semicolonToken": {
@@ -505,6 +517,7 @@
                         "width": 5,
                         "fullWidth": 7,
                         "text": "__obj",
+                        "value": "__obj",
                         "valueText": "__obj",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -555,6 +568,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "__FACTORY",
+                            "value": "__FACTORY",
                             "valueText": "__FACTORY"
                         },
                         "argumentList": {
@@ -645,6 +659,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -657,6 +672,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -683,7 +699,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"A\""
+                        "text": "\"A\"",
+                        "value": "A",
+                        "valueText": "A"
                     }
                 },
                 "closeParenToken": {
@@ -728,6 +746,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -752,7 +771,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 44,
-                                                "text": "'#1: obj.prop === \"A\". Actual: obj.prop ==='"
+                                                "text": "'#1: obj.prop === \"A\". Actual: obj.prop ==='",
+                                                "value": "#1: obj.prop === \"A\". Actual: obj.prop ===",
+                                                "valueText": "#1: obj.prop === \"A\". Actual: obj.prop ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -766,6 +787,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 3,
                                                     "text": "obj",
+                                                    "value": "obj",
                                                     "valueText": "obj"
                                                 },
                                                 "dotToken": {
@@ -777,6 +799,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "prop",
+                                                    "value": "prop",
                                                     "valueText": "prop"
                                                 }
                                             }
@@ -893,6 +916,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -905,6 +929,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -931,7 +956,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"A\""
+                        "text": "\"A\"",
+                        "value": "A",
+                        "valueText": "A"
                     }
                 },
                 "closeParenToken": {
@@ -976,6 +1003,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1000,7 +1028,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 48,
-                                                "text": "'#2: __obj.prop === \"A\". Actual: __obj.prop ==='"
+                                                "text": "'#2: __obj.prop === \"A\". Actual: __obj.prop ==='",
+                                                "value": "#2: __obj.prop === \"A\". Actual: __obj.prop ===",
+                                                "valueText": "#2: __obj.prop === \"A\". Actual: __obj.prop ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1014,6 +1044,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 3,
                                                     "text": "obj",
+                                                    "value": "obj",
                                                     "valueText": "obj"
                                                 },
                                                 "dotToken": {
@@ -1025,6 +1056,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "prop",
+                                                    "value": "prop",
                                                     "valueText": "prop"
                                                 }
                                             }
@@ -1144,6 +1176,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "dotToken": {
@@ -1155,6 +1188,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "slot",
+                                "value": "slot",
                                 "valueText": "slot"
                             }
                         },
@@ -1168,6 +1202,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "prop",
+                            "value": "prop",
                             "valueText": "prop",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1186,7 +1221,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1231,6 +1268,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1255,7 +1293,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 55,
-                                                "text": "'#3: __obj.slot.prop ===1. Actual: __obj.slot.prop ==='"
+                                                "text": "'#3: __obj.slot.prop ===1. Actual: __obj.slot.prop ==='",
+                                                "value": "#3: __obj.slot.prop ===1. Actual: __obj.slot.prop ===",
+                                                "valueText": "#3: __obj.slot.prop ===1. Actual: __obj.slot.prop ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1272,6 +1312,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "obj",
+                                                        "value": "obj",
                                                         "valueText": "obj"
                                                     },
                                                     "dotToken": {
@@ -1283,6 +1324,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "slot",
+                                                        "value": "slot",
                                                         "valueText": "slot"
                                                     }
                                                 },
@@ -1295,6 +1337,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "prop",
+                                                    "value": "prop",
                                                     "valueText": "prop"
                                                 }
                                             }

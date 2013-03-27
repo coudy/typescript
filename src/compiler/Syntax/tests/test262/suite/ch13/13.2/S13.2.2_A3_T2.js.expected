@@ -74,6 +74,7 @@
                                 "width": 9,
                                 "fullWidth": 10,
                                 "text": "__FACTORY",
+                                "value": "__FACTORY",
                                 "valueText": "__FACTORY",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -174,6 +175,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "__FACTORY",
+                            "value": "__FACTORY",
                             "valueText": "__FACTORY"
                         },
                         "dotToken": {
@@ -185,6 +187,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "prototype",
+                            "value": "prototype",
                             "valueText": "prototype"
                         }
                     },
@@ -196,7 +199,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -286,6 +291,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "__FACTORY",
+                                "value": "__FACTORY",
                                 "valueText": "__FACTORY"
                             },
                             "dotToken": {
@@ -298,6 +304,7 @@
                                 "width": 9,
                                 "fullWidth": 10,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -325,7 +332,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "'number'"
+                        "text": "'number'",
+                        "value": "number",
+                        "valueText": "number"
                     }
                 },
                 "closeParenToken": {
@@ -370,6 +379,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -394,7 +404,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 87,
-                                                "text": "'#1: typeof __FACTORY.prototype === \\'number\\'. Actual: typeof __FACTORY.prototype ==='"
+                                                "text": "'#1: typeof __FACTORY.prototype === \\'number\\'. Actual: typeof __FACTORY.prototype ==='",
+                                                "value": "#1: typeof __FACTORY.prototype === 'number'. Actual: typeof __FACTORY.prototype ===",
+                                                "valueText": "#1: typeof __FACTORY.prototype === 'number'. Actual: typeof __FACTORY.prototype ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -432,6 +444,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "__FACTORY",
+                                                            "value": "__FACTORY",
                                                             "valueText": "__FACTORY"
                                                         },
                                                         "dotToken": {
@@ -443,6 +456,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "prototype",
+                                                            "value": "prototype",
                                                             "valueText": "prototype"
                                                         }
                                                     }
@@ -548,6 +562,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__device",
+                                "value": "__device",
                                 "valueText": "__device",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -593,6 +608,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "__FACTORY",
+                                        "value": "__FACTORY",
                                         "valueText": "__FACTORY"
                                     },
                                     "argumentList": {
@@ -705,6 +721,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "dotToken": {
@@ -716,6 +733,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "prototype",
+                                        "value": "prototype",
                                         "valueText": "prototype"
                                     }
                                 },
@@ -728,6 +746,7 @@
                                     "kind": "IdentifierName",
                                     "width": 13,
                                     "text": "isPrototypeOf",
+                                    "value": "isPrototypeOf",
                                     "valueText": "isPrototypeOf"
                                 }
                             },
@@ -744,6 +763,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "__device",
+                                        "value": "__device",
                                         "valueText": "__device"
                                     }
                                 ],
@@ -803,6 +823,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -824,7 +845,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 55,
-                                            "text": "'#2: Object.prototype.isPrototypeOf(__device) === true'"
+                                            "text": "'#2: Object.prototype.isPrototypeOf(__device) === true'",
+                                            "value": "#2: Object.prototype.isPrototypeOf(__device) === true",
+                                            "valueText": "#2: Object.prototype.isPrototypeOf(__device) === true"
                                         }
                                     ],
                                     "closeParenToken": {

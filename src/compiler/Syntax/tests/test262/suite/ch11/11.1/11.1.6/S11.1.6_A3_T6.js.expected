@@ -105,6 +105,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "closeParenToken": {
@@ -138,7 +139,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -183,6 +186,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -204,7 +208,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 25,
-                                            "text": "'#1: delete (x) === true'"
+                                            "text": "'#1: delete (x) === true'",
+                                            "value": "#1: delete (x) === true",
+                                            "valueText": "#1: delete (x) === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -315,6 +321,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "closeParenToken": {
@@ -348,7 +355,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -393,6 +402,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -419,6 +429,8 @@
                                                 "width": 42,
                                                 "fullWidth": 43,
                                                 "text": "'#2: typeof (x) === \"undefined\". Actual: '",
+                                                "value": "#2: typeof (x) === \"undefined\". Actual: ",
+                                                "valueText": "#2: typeof (x) === \"undefined\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -476,6 +488,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "closeParenToken": {

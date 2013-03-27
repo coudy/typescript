@@ -82,6 +82,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "result",
+                                "value": "result",
                                 "valueText": "result",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -110,7 +111,9 @@
                                 "value": {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             }
                         }
@@ -164,6 +167,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "alpha",
+                        "value": "alpha",
                         "valueText": "alpha",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -189,7 +193,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 6,
-                        "text": "0x0041"
+                        "text": "0x0041",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "firstSemicolonToken": {
@@ -213,6 +219,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "alpha",
+                        "value": "alpha",
                         "valueText": "alpha",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -238,7 +245,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 6,
-                        "text": "0x005A"
+                        "text": "0x005A",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "secondSemicolonToken": {
@@ -261,6 +270,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "alpha",
+                        "value": "alpha",
                         "valueText": "alpha"
                     },
                     "operatorToken": {
@@ -311,6 +321,7 @@
                                     "width": 3,
                                     "fullWidth": 6,
                                     "text": "str",
+                                    "value": "str",
                                     "valueText": "str",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -350,6 +361,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "String",
+                                            "value": "String",
                                             "valueText": "String"
                                         },
                                         "dotToken": {
@@ -361,6 +373,7 @@
                                             "kind": "IdentifierName",
                                             "width": 12,
                                             "text": "fromCharCode",
+                                            "value": "fromCharCode",
                                             "valueText": "fromCharCode"
                                         }
                                     },
@@ -381,6 +394,7 @@
                                                     "width": 5,
                                                     "fullWidth": 6,
                                                     "text": "alpha",
+                                                    "value": "alpha",
                                                     "valueText": "alpha",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -406,7 +420,9 @@
                                                 "right": {
                                                     "kind": "NumericLiteral",
                                                     "width": 2,
-                                                    "text": "32"
+                                                    "text": "32",
+                                                    "value": 32,
+                                                    "valueText": "32"
                                                 }
                                             }
                                         ],
@@ -444,6 +460,7 @@
                                     "width": 3,
                                     "fullWidth": 6,
                                     "text": "arr",
+                                    "value": "arr",
                                     "valueText": "arr",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -507,6 +524,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "RegExp",
+                                                    "value": "RegExp",
                                                     "valueText": "RegExp"
                                                 },
                                                 "argumentList": {
@@ -526,6 +544,8 @@
                                                                 "width": 5,
                                                                 "fullWidth": 6,
                                                                 "text": "\"\\\\c\"",
+                                                                "value": "\\c",
+                                                                "valueText": "\\c",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -557,6 +577,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 6,
                                                                         "text": "String",
+                                                                        "value": "String",
                                                                         "valueText": "String"
                                                                     },
                                                                     "dotToken": {
@@ -568,6 +589,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 12,
                                                                         "text": "fromCharCode",
+                                                                        "value": "fromCharCode",
                                                                         "valueText": "fromCharCode"
                                                                     }
                                                                 },
@@ -584,6 +606,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 5,
                                                                             "text": "alpha",
+                                                                            "value": "alpha",
                                                                             "valueText": "alpha"
                                                                         }
                                                                     ],
@@ -618,6 +641,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "exec",
+                                            "value": "exec",
                                             "valueText": "exec"
                                         }
                                     },
@@ -634,6 +658,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "str",
+                                                "value": "str",
                                                 "valueText": "str"
                                             }
                                         ],
@@ -711,6 +736,7 @@
                                             "width": 3,
                                             "fullWidth": 4,
                                             "text": "arr",
+                                            "value": "arr",
                                             "valueText": "arr",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -784,6 +810,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "arr",
+                                                "value": "arr",
                                                 "valueText": "arr"
                                             },
                                             "openBracketToken": {
@@ -794,7 +821,9 @@
                                             "argumentExpression": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "0"
+                                                "text": "0",
+                                                "value": 0,
+                                                "valueText": "0"
                                             },
                                             "closeBracketToken": {
                                                 "kind": "CloseBracketToken",
@@ -827,6 +856,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "str",
+                                            "value": "str",
                                             "valueText": "str"
                                         }
                                     },
@@ -879,6 +909,7 @@
                                                 "width": 6,
                                                 "fullWidth": 11,
                                                 "text": "result",
+                                                "value": "result",
                                                 "valueText": "result",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -911,7 +942,9 @@
                                             "right": {
                                                 "kind": "FalseKeyword",
                                                 "width": 5,
-                                                "text": "false"
+                                                "text": "false",
+                                                "value": false,
+                                                "valueText": "false"
                                             }
                                         },
                                         "semicolonToken": {
@@ -1007,6 +1040,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "result",
+                        "value": "result",
                         "valueText": "result",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1032,7 +1066,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -1077,6 +1113,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1098,7 +1135,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 32,
-                                            "text": "'#1: CharacterEscape :: c A - Z'"
+                                            "text": "'#1: CharacterEscape :: c A - Z'",
+                                            "value": "#1: CharacterEscape :: c A - Z",
+                                            "valueText": "#1: CharacterEscape :: c A - Z"
                                         }
                                     ],
                                     "closeParenToken": {

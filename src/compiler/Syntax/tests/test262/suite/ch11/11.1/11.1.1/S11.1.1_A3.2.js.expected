@@ -76,6 +76,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -140,6 +141,7 @@
                                         "width": 4,
                                         "fullWidth": 5,
                                         "text": "THIS",
+                                        "value": "THIS",
                                         "valueText": "THIS",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -253,6 +255,7 @@
                                             "kind": "IdentifierName",
                                             "width": 10,
                                             "text": "MyFunction",
+                                            "value": "MyFunction",
                                             "valueText": "MyFunction"
                                         },
                                         "argumentList": {
@@ -286,6 +289,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "THIS",
+                                    "value": "THIS",
                                     "valueText": "THIS"
                                 }
                             },
@@ -298,6 +302,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -341,7 +346,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 17,
-                        "text": "\"[object Object]\""
+                        "text": "\"[object Object]\"",
+                        "value": "[object Object]",
+                        "valueText": "[object Object]"
                     }
                 },
                 "closeParenToken": {
@@ -386,6 +393,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -412,6 +420,8 @@
                                                 "width": 113,
                                                 "fullWidth": 114,
                                                 "text": "'#1: function MyFunction() {this.THIS = this} (new MyFunction()).THIS.toString() !== \"[object Object]\". Actual: '",
+                                                "value": "#1: function MyFunction() {this.THIS = this} (new MyFunction()).THIS.toString() !== \"[object Object]\". Actual: ",
+                                                "valueText": "#1: function MyFunction() {this.THIS = this} (new MyFunction()).THIS.toString() !== \"[object Object]\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -478,6 +488,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 10,
                                                                         "text": "MyFunction",
+                                                                        "value": "MyFunction",
                                                                         "valueText": "MyFunction"
                                                                     },
                                                                     "argumentList": {
@@ -511,6 +522,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "THIS",
+                                                                "value": "THIS",
                                                                 "valueText": "THIS"
                                                             }
                                                         },
@@ -523,6 +535,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -628,6 +641,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -692,6 +706,7 @@
                                         "width": 4,
                                         "fullWidth": 5,
                                         "text": "THIS",
+                                        "value": "THIS",
                                         "valueText": "THIS",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -722,6 +737,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "eval",
+                                        "value": "eval",
                                         "valueText": "eval"
                                     },
                                     "argumentList": {
@@ -736,7 +752,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 6,
-                                                "text": "\"this\""
+                                                "text": "\"this\"",
+                                                "value": "this",
+                                                "valueText": "this"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -831,6 +849,7 @@
                                             "kind": "IdentifierName",
                                             "width": 10,
                                             "text": "MyFunction",
+                                            "value": "MyFunction",
                                             "valueText": "MyFunction"
                                         },
                                         "argumentList": {
@@ -864,6 +883,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "THIS",
+                                    "value": "THIS",
                                     "valueText": "THIS"
                                 }
                             },
@@ -876,6 +896,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -919,7 +940,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 17,
-                        "text": "\"[object Object]\""
+                        "text": "\"[object Object]\"",
+                        "value": "[object Object]",
+                        "valueText": "[object Object]"
                     }
                 },
                 "closeParenToken": {
@@ -964,6 +987,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -990,6 +1014,8 @@
                                                 "width": 121,
                                                 "fullWidth": 122,
                                                 "text": "'#2: function MyFunction() {this.THIS = eval(\"this\")} (new MyFunction()).THIS.toString() !== \"[object Object]\". Actual: '",
+                                                "value": "#2: function MyFunction() {this.THIS = eval(\"this\")} (new MyFunction()).THIS.toString() !== \"[object Object]\". Actual: ",
+                                                "valueText": "#2: function MyFunction() {this.THIS = eval(\"this\")} (new MyFunction()).THIS.toString() !== \"[object Object]\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1056,6 +1082,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 10,
                                                                         "text": "MyFunction",
+                                                                        "value": "MyFunction",
                                                                         "valueText": "MyFunction"
                                                                     },
                                                                     "argumentList": {
@@ -1089,6 +1116,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "THIS",
+                                                                "value": "THIS",
                                                                 "valueText": "THIS"
                                                             }
                                                         },
@@ -1101,6 +1129,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },

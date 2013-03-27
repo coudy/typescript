@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 28,
-                                    "text": "\"'\\u0020str\\u0020ing\\u0020'\""
+                                    "text": "\"'\\u0020str\\u0020ing\\u0020'\"",
+                                    "value": "' str ing '",
+                                    "valueText": "' str ing '"
                                 }
                             ],
                             "closeParenToken": {
@@ -132,7 +135,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 26,
-                        "text": "\"\\u0020str\\u0020ing\\u0020\""
+                        "text": "\"\\u0020str\\u0020ing\\u0020\"",
+                        "value": " str ing ",
+                        "valueText": " str ing "
                     }
                 },
                 "closeParenToken": {
@@ -177,6 +182,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -198,7 +204,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 79,
-                                            "text": "'#1: eval(\"\\'\\\\u0020str\\\\u0020ing\\\\u0020\\'\") === \"\\\\u0020str\\\\u0020ing\\\\u0020\"'"
+                                            "text": "'#1: eval(\"\\'\\\\u0020str\\\\u0020ing\\\\u0020\\'\") === \"\\\\u0020str\\\\u0020ing\\\\u0020\"'",
+                                            "value": "#1: eval(\"'\\u0020str\\u0020ing\\u0020'\") === \"\\u0020str\\u0020ing\\u0020\"",
+                                            "valueText": "#1: eval(\"'\\u0020str\\u0020ing\\u0020'\") === \"\\u0020str\\u0020ing\\u0020\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -288,6 +296,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -302,7 +311,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 13,
-                                    "text": "\"' str ing '\""
+                                    "text": "\"' str ing '\"",
+                                    "value": "' str ing '",
+                                    "valueText": "' str ing '"
                                 }
                             ],
                             "closeParenToken": {
@@ -336,7 +347,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\" str ing \""
+                        "text": "\" str ing \"",
+                        "value": " str ing ",
+                        "valueText": " str ing "
                     }
                 },
                 "closeParenToken": {
@@ -381,6 +394,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -402,7 +416,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 43,
-                                            "text": "'#2: eval(\"\\' str ing \\'\") === \" str ing \"'"
+                                            "text": "'#2: eval(\"\\' str ing \\'\") === \" str ing \"'",
+                                            "value": "#2: eval(\"' str ing '\") === \" str ing \"",
+                                            "valueText": "#2: eval(\"' str ing '\") === \" str ing \""
                                         }
                                     ],
                                     "closeParenToken": {

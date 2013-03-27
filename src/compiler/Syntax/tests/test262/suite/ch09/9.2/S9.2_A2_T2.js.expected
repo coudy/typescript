@@ -129,7 +129,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -174,6 +176,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -200,6 +203,8 @@
                                                 "width": 32,
                                                 "fullWidth": 33,
                                                 "text": "'#1: !(null) === true. Actual: '",
+                                                "value": "#1: !(null) === true. Actual: ",
+                                                "valueText": "#1: !(null) === true. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {

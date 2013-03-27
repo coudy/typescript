@@ -75,6 +75,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__string",
+                                "value": "__string",
                                 "valueText": "__string",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 18,
-                                    "text": "\"Boston, MA 02134\""
+                                    "text": "\"Boston, MA 02134\"",
+                                    "value": "Boston, MA 02134",
+                                    "valueText": "Boston, MA 02134"
                                 }
                             }
                         }
@@ -160,6 +163,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "__matches",
+                                "value": "__matches",
                                 "valueText": "__matches"
                             },
                             "equalsValueClause": {
@@ -182,7 +186,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 7,
-                                            "text": "\"02134\""
+                                            "text": "\"02134\"",
+                                            "value": "02134",
+                                            "valueText": "02134"
                                         }
                                     ],
                                     "closeBracketToken": {
@@ -250,6 +256,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -279,7 +286,9 @@
                                 "value": {
                                     "kind": "RegularExpressionLiteral",
                                     "width": 29,
-                                    "text": "/([\\d]{5})([-\\ ]?[\\d]{4})?$/g"
+                                    "text": "/([\\d]{5})([-\\ ]?[\\d]{4})?$/g",
+                                    "value": {},
+                                    "valueText": "/([\\d]{5})([-\\ ]?[\\d]{4})?$/g"
                                 }
                             }
                         }
@@ -314,6 +323,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -334,6 +344,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "lastIndex",
+                            "value": "lastIndex",
                             "valueText": "lastIndex",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -364,6 +375,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "__string",
+                            "value": "__string",
                             "valueText": "__string"
                         },
                         "dotToken": {
@@ -375,6 +387,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -456,6 +469,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__string",
+                                    "value": "__string",
                                     "valueText": "__string"
                                 },
                                 "dotToken": {
@@ -467,6 +481,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "match",
+                                    "value": "match",
                                     "valueText": "match"
                                 }
                             },
@@ -483,6 +498,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "__re",
+                                        "value": "__re",
                                         "valueText": "__re"
                                     }
                                 ],
@@ -502,6 +518,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     },
@@ -525,6 +542,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "__matches",
+                            "value": "__matches",
                             "valueText": "__matches"
                         },
                         "dotToken": {
@@ -536,6 +554,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -582,6 +601,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -606,7 +626,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 63,
-                                                "text": "'#1: __string.match(__re).length=== __matches.length. Actual: '"
+                                                "text": "'#1: __string.match(__re).length=== __matches.length. Actual: '",
+                                                "value": "#1: __string.match(__re).length=== __matches.length. Actual: ",
+                                                "valueText": "#1: __string.match(__re).length=== __matches.length. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -626,6 +648,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "__string",
+                                                            "value": "__string",
                                                             "valueText": "__string"
                                                         },
                                                         "dotToken": {
@@ -637,6 +660,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "match",
+                                                            "value": "match",
                                                             "valueText": "match"
                                                         }
                                                     },
@@ -653,6 +677,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "__re",
+                                                                "value": "__re",
                                                                 "valueText": "__re"
                                                             }
                                                         ],
@@ -672,6 +697,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length"
                                                 }
                                             }
@@ -794,6 +820,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__string",
+                                    "value": "__string",
                                     "valueText": "__string"
                                 },
                                 "dotToken": {
@@ -805,6 +832,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "match",
+                                    "value": "match",
                                     "valueText": "match"
                                 }
                             },
@@ -821,6 +849,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "__re",
+                                        "value": "__re",
                                         "valueText": "__re"
                                     }
                                 ],
@@ -839,7 +868,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -859,6 +890,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "__matches",
+                            "value": "__matches",
                             "valueText": "__matches"
                         },
                         "openBracketToken": {
@@ -869,7 +901,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -920,6 +954,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -944,7 +979,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 54,
-                                                "text": "'#3: __string.match(__re)[0]===__matches[0]. Actual: '"
+                                                "text": "'#3: __string.match(__re)[0]===__matches[0]. Actual: '",
+                                                "value": "#3: __string.match(__re)[0]===__matches[0]. Actual: ",
+                                                "valueText": "#3: __string.match(__re)[0]===__matches[0]. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -964,6 +1001,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "__string",
+                                                            "value": "__string",
                                                             "valueText": "__string"
                                                         },
                                                         "dotToken": {
@@ -975,6 +1013,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "match",
+                                                            "value": "match",
                                                             "valueText": "match"
                                                         }
                                                     },
@@ -991,6 +1030,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "__re",
+                                                                "value": "__re",
                                                                 "valueText": "__re"
                                                             }
                                                         ],
@@ -1009,7 +1049,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "0"
+                                                    "text": "0",
+                                                    "value": 0,
+                                                    "valueText": "0"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",

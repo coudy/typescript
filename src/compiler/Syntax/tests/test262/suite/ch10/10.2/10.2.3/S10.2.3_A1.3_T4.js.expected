@@ -74,6 +74,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,7 +120,9 @@
                                                 "left": {
                                                     "kind": "StringLiteral",
                                                     "width": 14,
-                                                    "text": "'//CHECK#27\\n'"
+                                                    "text": "'//CHECK#27\\n'",
+                                                    "value": "//CHECK#27\n",
+                                                    "valueText": "//CHECK#27\n"
                                                 },
                                                 "operatorToken": {
                                                     "kind": "PlusToken",
@@ -138,7 +141,9 @@
                                                 "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 26,
-                                                    "text": "'if ( Math === null ) {\\n'"
+                                                    "text": "'if ( Math === null ) {\\n'",
+                                                    "value": "if ( Math === null ) {\n",
+                                                    "valueText": "if ( Math === null ) {\n"
                                                 }
                                             },
                                             "operatorToken": {
@@ -158,7 +163,9 @@
                                             "right": {
                                                 "kind": "StringLiteral",
                                                 "width": 35,
-                                                "text": "'  $ERROR(\"#27: Math === null\");\\n'"
+                                                "text": "'  $ERROR(\"#27: Math === null\");\\n'",
+                                                "value": "  $ERROR(\"#27: Math === null\");\n",
+                                                "valueText": "  $ERROR(\"#27: Math === null\");\n"
                                             }
                                         },
                                         "operatorToken": {
@@ -178,7 +185,9 @@
                                         "right": {
                                             "kind": "StringLiteral",
                                             "width": 5,
-                                            "text": "'}\\n'"
+                                            "text": "'}\\n'",
+                                            "value": "}\n",
+                                            "valueText": "}\n"
                                         }
                                     },
                                     "operatorToken": {
@@ -198,7 +207,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "';\\n'"
+                                        "text": "';\\n'",
+                                        "value": ";\n",
+                                        "valueText": ";\n"
                                     }
                                 }
                             }
@@ -231,6 +242,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -254,6 +266,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "evalStr",
+                                "value": "evalStr",
                                 "valueText": "evalStr"
                             }
                         ],

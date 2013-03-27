@@ -99,6 +99,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "i",
+                                "value": "i",
                                 "valueText": "i",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,7 +128,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             }
                         }
@@ -154,6 +157,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -179,7 +183,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "36"
+                        "text": "36",
+                        "value": 36,
+                        "valueText": "36"
                     }
                 },
                 "secondSemicolonToken": {
@@ -202,6 +208,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -279,6 +286,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "isNaN",
+                                        "value": "isNaN",
                                         "valueText": "isNaN"
                                     },
                                     "argumentList": {
@@ -297,6 +305,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "parseInt",
+                                                    "value": "parseInt",
                                                     "valueText": "parseInt"
                                                 },
                                                 "argumentList": {
@@ -311,7 +320,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 9,
-                                                            "text": "\"$string\""
+                                                            "text": "\"$string\"",
+                                                            "value": "$string",
+                                                            "valueText": "$string"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -330,6 +341,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "i",
+                                                            "value": "i",
                                                             "valueText": "i"
                                                         }
                                                     ],
@@ -372,7 +384,9 @@
                                 "right": {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             },
                             "closeParenToken": {
@@ -417,6 +431,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -449,6 +464,8 @@
                                                                     "width": 3,
                                                                     "fullWidth": 4,
                                                                     "text": "'#'",
+                                                                    "value": "#",
+                                                                    "valueText": "#",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -475,6 +492,7 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": "i",
+                                                                    "value": "i",
                                                                     "valueText": "i",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
@@ -503,6 +521,8 @@
                                                                 "width": 53,
                                                                 "fullWidth": 54,
                                                                 "text": "': parseInt(\"$string\", i) === Not-a-Number. Actual: '",
+                                                                "value": ": parseInt(\"$string\", i) === Not-a-Number. Actual: ",
+                                                                "valueText": ": parseInt(\"$string\", i) === Not-a-Number. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -540,6 +560,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 8,
                                                                     "text": "parseInt",
+                                                                    "value": "parseInt",
                                                                     "valueText": "parseInt"
                                                                 },
                                                                 "argumentList": {
@@ -554,7 +575,9 @@
                                                                         {
                                                                             "kind": "StringLiteral",
                                                                             "width": 9,
-                                                                            "text": "\"$string\""
+                                                                            "text": "\"$string\"",
+                                                                            "value": "$string",
+                                                                            "valueText": "$string"
                                                                         },
                                                                         {
                                                                             "kind": "CommaToken",
@@ -573,6 +596,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 1,
                                                                             "text": "i",
+                                                                            "value": "i",
                                                                             "valueText": "i"
                                                                         }
                                                                     ],

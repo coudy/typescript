@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -174,6 +175,7 @@
                                             "width": 3,
                                             "fullWidth": 4,
                                             "text": "foo",
+                                            "value": "foo",
                                             "valueText": "foo",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -219,6 +221,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "Function",
+                                                    "value": "Function",
                                                     "valueText": "Function"
                                                 },
                                                 "argumentList": {
@@ -233,7 +236,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 103,
-                                                            "text": "\"'use strict'; for (var tempIndex in this) {if (tempIndex===\\\"caller\\\") {return false;}}; return true;\""
+                                                            "text": "\"'use strict'; for (var tempIndex in this) {if (tempIndex===\\\"caller\\\") {return false;}}; return true;\"",
+                                                            "value": "'use strict'; for (var tempIndex in this) {if (tempIndex===\"caller\") {return false;}}; return true;",
+                                                            "valueText": "'use strict'; for (var tempIndex in this) {if (tempIndex===\"caller\") {return false;}}; return true;"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -292,6 +297,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "foo",
+                                    "value": "foo",
                                     "valueText": "foo"
                                 },
                                 "argumentList": {
@@ -359,6 +365,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -374,6 +381,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

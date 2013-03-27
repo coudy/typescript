@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -146,6 +147,8 @@
                                 "width": 12,
                                 "fullWidth": 14,
                                 "text": "'use strict'",
+                                "value": "use strict",
+                                "valueText": "use strict",
                                 "hasLeadingTrivia": true,
                                 "leadingTrivia": [
                                     {
@@ -213,6 +216,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "o",
+                                            "value": "o",
                                             "valueText": "o",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -265,6 +269,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "eval",
+                                                            "value": "eval",
                                                             "valueText": "eval"
                                                         },
                                                         "colonToken": {
@@ -283,7 +288,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 2,
-                                                            "text": "42"
+                                                            "text": "42",
+                                                            "value": 42,
+                                                            "valueText": "42"
                                                         }
                                                     }
                                                 ],
@@ -339,7 +346,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",
@@ -390,6 +399,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -405,6 +415,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

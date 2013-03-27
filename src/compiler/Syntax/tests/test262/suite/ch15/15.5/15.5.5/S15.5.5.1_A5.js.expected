@@ -75,6 +75,7 @@
                                 "width": 15,
                                 "fullWidth": 16,
                                 "text": "__str__instance",
+                                "value": "__str__instance",
                                 "valueText": "__str__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -120,6 +121,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -134,7 +136,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 23,
-                                                "text": "\"ABC\\u0041\\u0042\\u0043\""
+                                                "text": "\"ABC\\u0041\\u0042\\u0043\"",
+                                                "value": "ABCABC",
+                                                "valueText": "ABCABC"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -219,6 +223,7 @@
                             "kind": "IdentifierName",
                             "width": 15,
                             "text": "__str__instance",
+                            "value": "__str__instance",
                             "valueText": "__str__instance"
                         },
                         "dotToken": {
@@ -231,6 +236,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -257,7 +263,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -302,6 +310,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -326,7 +335,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 132,
-                                                "text": "'#1: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.length === 6. Actual: __str__instance.length ==='"
+                                                "text": "'#1: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.length === 6. Actual: __str__instance.length ==='",
+                                                "value": "#1: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.length === 6. Actual: __str__instance.length ===",
+                                                "valueText": "#1: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.length === 6. Actual: __str__instance.length ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -340,6 +351,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 15,
                                                     "text": "__str__instance",
+                                                    "value": "__str__instance",
                                                     "valueText": "__str__instance"
                                                 },
                                                 "dotToken": {
@@ -352,6 +364,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -423,6 +436,7 @@
                             "width": 15,
                             "fullWidth": 98,
                             "text": "__str__instance",
+                            "value": "__str__instance",
                             "valueText": "__str__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -460,6 +474,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "valueOf",
+                            "value": "valueOf",
                             "valueText": "valueOf",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -541,7 +556,9 @@
                                     "expression": {
                                         "kind": "StringLiteral",
                                         "width": 4,
-                                        "text": "\"ed\""
+                                        "text": "\"ed\"",
+                                        "value": "ed",
+                                        "valueText": "ed"
                                     },
                                     "semicolonToken": {
                                         "kind": "SemicolonToken",
@@ -588,6 +605,7 @@
                             "kind": "IdentifierName",
                             "width": 15,
                             "text": "__str__instance",
+                            "value": "__str__instance",
                             "valueText": "__str__instance"
                         },
                         "dotToken": {
@@ -600,6 +618,7 @@
                             "width": 8,
                             "fullWidth": 9,
                             "text": "toString",
+                            "value": "toString",
                             "valueText": "toString",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -681,7 +700,9 @@
                                     "expression": {
                                         "kind": "StringLiteral",
                                         "width": 4,
-                                        "text": "\"ed\""
+                                        "text": "\"ed\"",
+                                        "value": "ed",
+                                        "valueText": "ed"
                                     },
                                     "semicolonToken": {
                                         "kind": "SemicolonToken",
@@ -767,6 +788,7 @@
                         "width": 15,
                         "fullWidth": 16,
                         "text": "__str__instance",
+                        "value": "__str__instance",
                         "valueText": "__str__instance",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -784,7 +806,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"ed\""
+                        "text": "\"ed\"",
+                        "value": "ed",
+                        "valueText": "ed"
                     }
                 },
                 "closeParenToken": {
@@ -829,6 +853,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -853,7 +878,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 221,
-                                                "text": "'#2: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance ==\"ed\". Actual: __str__instance =='"
+                                                "text": "'#2: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance ==\"ed\". Actual: __str__instance =='",
+                                                "value": "#2: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance ==\"ed\". Actual: __str__instance ==",
+                                                "valueText": "#2: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance ==\"ed\". Actual: __str__instance =="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -865,6 +892,7 @@
                                                 "width": 15,
                                                 "fullWidth": 16,
                                                 "text": "__str__instance",
+                                                "value": "__str__instance",
                                                 "valueText": "__str__instance",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -991,6 +1019,7 @@
                             "kind": "IdentifierName",
                             "width": 15,
                             "text": "__str__instance",
+                            "value": "__str__instance",
                             "valueText": "__str__instance"
                         },
                         "dotToken": {
@@ -1003,6 +1032,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1029,7 +1059,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -1074,6 +1106,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1098,7 +1131,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 235,
-                                                "text": "'#3: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance.length === 6. Actual: __str__instance.length ==='"
+                                                "text": "'#3: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance.length === 6. Actual: __str__instance.length ==='",
+                                                "value": "#3: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance.length === 6. Actual: __str__instance.length ===",
+                                                "valueText": "#3: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.valueOf = function(){return \"ed\"}; __str__instance.toString = function(){return \"ed\"}; __str__instance.length === 6. Actual: __str__instance.length ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1112,6 +1147,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 15,
                                                     "text": "__str__instance",
+                                                    "value": "__str__instance",
                                                     "valueText": "__str__instance"
                                                 },
                                                 "dotToken": {
@@ -1124,6 +1160,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [

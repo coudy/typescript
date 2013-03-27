@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 13,
-                                    "text": "\"1234.5678e9\""
+                                    "text": "\"1234.5678e9\"",
+                                    "value": "1234.5678e9",
+                                    "valueText": "1234.5678e9"
                                 }
                             ],
                             "closeParenToken": {
@@ -150,6 +153,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -164,7 +168,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 6,
-                                                "text": "\"1234\""
+                                                "text": "\"1234\"",
+                                                "value": "1234",
+                                                "valueText": "1234"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -197,6 +203,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "Number",
+                                                "value": "Number",
                                                 "valueText": "Number"
                                             },
                                             "argumentList": {
@@ -211,7 +218,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 6,
-                                                        "text": "\"5678\""
+                                                        "text": "\"5678\"",
+                                                        "value": "5678",
+                                                        "valueText": "5678"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -229,7 +238,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 4,
-                                            "text": "1e-4"
+                                            "text": "1e-4",
+                                            "value": 0.0001,
+                                            "valueText": "0.0001"
                                         }
                                     },
                                     "closeParenToken": {
@@ -253,7 +264,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "1e9"
+                            "text": "1e9",
+                            "value": 1000000000,
+                            "valueText": "1000000000"
                         }
                     }
                 },
@@ -299,6 +312,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -320,7 +334,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 74,
-                                            "text": "'#1: Number(\"1234.5678e9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e9'"
+                                            "text": "'#1: Number(\"1234.5678e9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e9'",
+                                            "value": "#1: Number(\"1234.5678e9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e9",
+                                            "valueText": "#1: Number(\"1234.5678e9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e9"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -422,7 +438,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 14,
-                                "text": "\"1234.5678e-9\""
+                                "text": "\"1234.5678e-9\"",
+                                "value": "1234.5678e-9",
+                                "valueText": "1234.5678e-9"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -473,6 +491,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -487,7 +506,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 6,
-                                                "text": "\"1234\""
+                                                "text": "\"1234\"",
+                                                "value": "1234",
+                                                "valueText": "1234"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -520,6 +541,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "Number",
+                                                "value": "Number",
                                                 "valueText": "Number"
                                             },
                                             "argumentList": {
@@ -534,7 +556,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 6,
-                                                        "text": "\"5678\""
+                                                        "text": "\"5678\"",
+                                                        "value": "5678",
+                                                        "valueText": "5678"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -552,7 +576,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 4,
-                                            "text": "1e-4"
+                                            "text": "1e-4",
+                                            "value": 0.0001,
+                                            "valueText": "0.0001"
                                         }
                                     },
                                     "closeParenToken": {
@@ -576,7 +602,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 4,
-                            "text": "1e-9"
+                            "text": "1e-9",
+                            "value": 1e-9,
+                            "valueText": "1e-9"
                         }
                     }
                 },
@@ -622,6 +650,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -643,7 +672,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 71,
-                                            "text": "'#2: +(\"1234.5678e-9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e-9'"
+                                            "text": "'#2: +(\"1234.5678e-9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e-9'",
+                                            "value": "#2: +(\"1234.5678e-9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e-9",
+                                            "valueText": "#2: +(\"1234.5678e-9\") === (Number(\"1234\")+(Number(\"5678\")*1e-4))*1e-9"
                                         }
                                     ],
                                     "closeParenToken": {

@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -178,7 +179,9 @@
                                         "expression": {
                                             "kind": "StringLiteral",
                                             "width": 11,
-                                            "text": "\"\\u2028abc\""
+                                            "text": "\"\\u2028abc\"",
+                                            "value": "\u2028abc",
+                                            "valueText": "\u2028abc"
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -189,6 +192,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "trim",
+                                            "value": "trim",
                                             "valueText": "trim"
                                         }
                                     },
@@ -232,7 +236,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"abc\""
+                                    "text": "\"abc\"",
+                                    "value": "abc",
+                                    "valueText": "abc"
                                 }
                             },
                             "closeParenToken": {
@@ -292,7 +298,9 @@
                                         "expression": {
                                             "kind": "TrueKeyword",
                                             "width": 4,
-                                            "text": "true"
+                                            "text": "true",
+                                            "value": true,
+                                            "valueText": "true"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -367,6 +375,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -382,6 +391,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

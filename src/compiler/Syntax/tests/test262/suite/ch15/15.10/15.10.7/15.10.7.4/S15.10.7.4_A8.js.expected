@@ -20,6 +20,7 @@
                         "width": 4,
                         "fullWidth": 362,
                         "text": "__re",
+                        "value": "__re",
                         "valueText": "__re",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -99,6 +100,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "RegExp",
+                            "value": "RegExp",
                             "valueText": "RegExp"
                         },
                         "argumentList": {
@@ -113,7 +115,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 17,
-                                    "text": "\"[\\u0041-\\u0049]\""
+                                    "text": "\"[\\u0041-\\u0049]\"",
+                                    "value": "[A-I]",
+                                    "valueText": "[A-I]"
                                 }
                             ],
                             "closeParenToken": {
@@ -190,6 +194,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re"
                             },
                             "dotToken": {
@@ -201,6 +206,7 @@
                                 "kind": "IdentifierName",
                                 "width": 14,
                                 "text": "hasOwnProperty",
+                                "value": "hasOwnProperty",
                                 "valueText": "hasOwnProperty"
                             }
                         },
@@ -216,7 +222,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "'multiline'"
+                                    "text": "'multiline'",
+                                    "value": "multiline",
+                                    "valueText": "multiline"
                                 }
                             ],
                             "closeParenToken": {
@@ -250,7 +258,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -295,6 +305,7 @@
                                     "width": 5,
                                     "fullWidth": 7,
                                     "text": "$FAIL",
+                                    "value": "$FAIL",
                                     "valueText": "$FAIL",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -316,7 +327,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 89,
-                                            "text": "'#0: __re = new RegExp(\"[\\\\u0041-\\\\u0049]\"); __re.hasOwnProperty(\\'multiline\\') === true'"
+                                            "text": "'#0: __re = new RegExp(\"[\\\\u0041-\\\\u0049]\"); __re.hasOwnProperty(\\'multiline\\') === true'",
+                                            "value": "#0: __re = new RegExp(\"[\\u0041-\\u0049]\"); __re.hasOwnProperty('multiline') === true",
+                                            "valueText": "#0: __re = new RegExp(\"[\\u0041-\\u0049]\"); __re.hasOwnProperty('multiline') === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -413,6 +426,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re"
                             },
                             "dotToken": {
@@ -424,6 +438,7 @@
                                 "kind": "IdentifierName",
                                 "width": 20,
                                 "text": "propertyIsEnumerable",
+                                "value": "propertyIsEnumerable",
                                 "valueText": "propertyIsEnumerable"
                             }
                         },
@@ -439,7 +454,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "'multiline'"
+                                    "text": "'multiline'",
+                                    "value": "multiline",
+                                    "valueText": "multiline"
                                 }
                             ],
                             "closeParenToken": {
@@ -473,7 +490,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -518,6 +537,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -539,7 +559,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 96,
-                                            "text": "'#1: __re = new RegExp(\"[\\\\u0041-\\\\u0049]\"); __re.propertyIsEnumerable(\\'multiline\\') === false'"
+                                            "text": "'#1: __re = new RegExp(\"[\\\\u0041-\\\\u0049]\"); __re.propertyIsEnumerable(\\'multiline\\') === false'",
+                                            "value": "#1: __re = new RegExp(\"[\\u0041-\\u0049]\"); __re.propertyIsEnumerable('multiline') === false",
+                                            "valueText": "#1: __re = new RegExp(\"[\\u0041-\\u0049]\"); __re.propertyIsEnumerable('multiline') === false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -593,6 +615,7 @@
                         "width": 5,
                         "fullWidth": 18,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -641,6 +664,8 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "0",
+                        "value": 0,
+                        "valueText": "0",
                         "hasTrailingTrivia": true,
                         "hasTrailingNewLine": true,
                         "trailingTrivia": [
@@ -684,6 +709,7 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": "p",
+                    "value": "p",
                     "valueText": "p",
                     "hasTrailingTrivia": true,
                     "trailingTrivia": [
@@ -710,6 +736,7 @@
                     "kind": "IdentifierName",
                     "width": 4,
                     "text": "__re",
+                    "value": "__re",
                     "valueText": "__re"
                 },
                 "closeParenToken": {
@@ -772,6 +799,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "p",
+                                    "value": "p",
                                     "valueText": "p"
                                 },
                                 "operatorToken": {
@@ -782,7 +810,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"multiline\""
+                                    "text": "\"multiline\"",
+                                    "value": "multiline",
+                                    "valueText": "multiline"
                                 }
                             },
                             "closeParenToken": {
@@ -809,6 +839,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "count",
+                                        "value": "count",
                                         "valueText": "count"
                                     },
                                     "operatorToken": {
@@ -891,6 +922,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "count",
+                        "value": "count",
                         "valueText": "count",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -916,7 +948,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -961,6 +995,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -987,6 +1022,8 @@
                                                 "width": 127,
                                                 "fullWidth": 128,
                                                 "text": "'#2: count = 0; __re = new RegExp(\"[\\\\u0041-\\\\u0049]\"); for (p in __re){ if (p===\"multiline\") count++; } count === 0. Actual: '",
+                                                "value": "#2: count = 0; __re = new RegExp(\"[\\u0041-\\u0049]\"); for (p in __re){ if (p===\"multiline\") count++; } count === 0. Actual: ",
+                                                "valueText": "#2: count = 0; __re = new RegExp(\"[\\u0041-\\u0049]\"); for (p in __re){ if (p===\"multiline\") count++; } count === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1020,6 +1057,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "count",
+                                                    "value": "count",
                                                     "valueText": "count"
                                                 },
                                                 "closeParenToken": {

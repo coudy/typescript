@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 352,
                         "text": "__re",
+                        "value": "__re",
                         "valueText": "__re",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -98,6 +99,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "RegExp",
+                            "value": "RegExp",
                             "valueText": "RegExp"
                         },
                         "argumentList": {
@@ -129,6 +131,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -143,7 +146,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 8,
-                                                "text": "\"abc{1}\""
+                                                "text": "\"abc{1}\"",
+                                                "value": "abc{1}",
+                                                "valueText": "abc{1}"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -182,6 +187,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -244,7 +250,9 @@
                                                             "expression": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 2,
-                                                                "text": "\"\""
+                                                                "text": "\"\"",
+                                                                "value": "",
+                                                                "valueText": ""
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -340,6 +348,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -352,6 +361,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "ignoreCase",
+                            "value": "ignoreCase",
                             "valueText": "ignoreCase",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -378,7 +388,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -423,6 +435,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -449,6 +462,8 @@
                                                 "width": 113,
                                                 "fullWidth": 114,
                                                 "text": "'#1: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.ignoreCase === false. Actual: '",
+                                                "value": "#1: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.ignoreCase === false. Actual: ",
+                                                "valueText": "#1: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.ignoreCase === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -485,6 +500,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -496,6 +512,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "ignoreCase",
+                                                        "value": "ignoreCase",
                                                         "valueText": "ignoreCase"
                                                     }
                                                 },
@@ -594,6 +611,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -606,6 +624,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "multiline",
+                            "value": "multiline",
                             "valueText": "multiline",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -632,7 +651,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -677,6 +698,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -703,6 +725,8 @@
                                                 "width": 112,
                                                 "fullWidth": 113,
                                                 "text": "'#2: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.multiline === false. Actual: '",
+                                                "value": "#2: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.multiline === false. Actual: ",
+                                                "valueText": "#2: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.multiline === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -739,6 +763,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -750,6 +775,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "multiline",
+                                                        "value": "multiline",
                                                         "valueText": "multiline"
                                                     }
                                                 },
@@ -848,6 +874,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -860,6 +887,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "global",
+                            "value": "global",
                             "valueText": "global",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -886,7 +914,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -931,6 +961,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -957,6 +988,8 @@
                                                 "width": 109,
                                                 "fullWidth": 110,
                                                 "text": "'#3: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.global === false. Actual: '",
+                                                "value": "#3: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.global === false. Actual: ",
+                                                "valueText": "#3: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.global === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -993,6 +1026,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -1004,6 +1038,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "global",
+                                                        "value": "global",
                                                         "valueText": "global"
                                                     }
                                                 },
@@ -1102,6 +1137,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -1114,6 +1150,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "lastIndex",
+                            "value": "lastIndex",
                             "valueText": "lastIndex",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1140,7 +1177,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -1185,6 +1224,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1211,6 +1251,8 @@
                                                 "width": 108,
                                                 "fullWidth": 109,
                                                 "text": "'#4: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.lastIndex === 0. Actual: '",
+                                                "value": "#4: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.lastIndex === 0. Actual: ",
+                                                "valueText": "#4: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; __re.lastIndex === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1247,6 +1289,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -1258,6 +1301,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "lastIndex",
+                                                        "value": "lastIndex",
                                                         "valueText": "lastIndex"
                                                     }
                                                 },
@@ -1372,6 +1416,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re"
                             },
                             "dotToken": {
@@ -1384,6 +1429,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "source",
+                                "value": "source",
                                 "valueText": "source",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1411,7 +1457,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -1456,6 +1504,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1477,7 +1526,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 112,
-                                            "text": "'#5: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; typeof __re.source !== \"undefined\"'"
+                                            "text": "'#5: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; typeof __re.source !== \"undefined\"'",
+                                            "value": "#5: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; typeof __re.source !== \"undefined\"",
+                                            "valueText": "#5: __re = new RegExp(new Object(\"abc{1}\"), {toString:function(){return \"\"; typeof __re.source !== \"undefined\""
                                         }
                                     ],
                                     "closeParenToken": {

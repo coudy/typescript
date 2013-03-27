@@ -76,6 +76,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -191,6 +192,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "argumentList": {
@@ -278,6 +280,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -304,6 +307,8 @@
                                                 "width": 73,
                                                 "fullWidth": 74,
                                                 "text": "'#1: function MyFunction() {return this} MyFunction() === this. Actual: '",
+                                                "value": "#1: function MyFunction() {return this} MyFunction() === this. Actual: ",
+                                                "valueText": "#1: function MyFunction() {return this} MyFunction() === this. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -340,6 +345,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "MyFunction",
+                                                        "value": "MyFunction",
                                                         "valueText": "MyFunction"
                                                     },
                                                     "argumentList": {
@@ -444,6 +450,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -507,6 +514,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval"
                                 },
                                 "argumentList": {
@@ -521,7 +529,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 6,
-                                            "text": "\"this\""
+                                            "text": "\"this\"",
+                                            "value": "this",
+                                            "valueText": "this"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -585,6 +595,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction"
                         },
                         "argumentList": {
@@ -672,6 +683,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -698,6 +710,8 @@
                                                 "width": 81,
                                                 "fullWidth": 82,
                                                 "text": "'#2: function MyFunction() {return eval(\"this\")} MyFunction() === this. Actual: '",
+                                                "value": "#2: function MyFunction() {return eval(\"this\")} MyFunction() === this. Actual: ",
+                                                "valueText": "#2: function MyFunction() {return eval(\"this\")} MyFunction() === this. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -734,6 +748,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "MyFunction",
+                                                        "value": "MyFunction",
                                                         "valueText": "MyFunction"
                                                     },
                                                     "argumentList": {

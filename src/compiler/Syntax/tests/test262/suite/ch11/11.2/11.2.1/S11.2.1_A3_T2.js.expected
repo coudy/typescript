@@ -86,7 +86,9 @@
                             "expression": {
                                 "kind": "NumericLiteral",
                                 "width": 2,
-                                "text": "1."
+                                "text": "1.",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -97,6 +99,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -140,7 +143,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"1\""
+                        "text": "\"1\"",
+                        "value": "1",
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -185,6 +190,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -211,6 +217,8 @@
                                                 "width": 37,
                                                 "fullWidth": 38,
                                                 "text": "'#1: 1..toString() === \"1\". Actual: '",
+                                                "value": "#1: 1..toString() === \"1\". Actual: ",
+                                                "valueText": "#1: 1..toString() === \"1\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -249,7 +257,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 2,
-                                                            "text": "1."
+                                                            "text": "1.",
+                                                            "value": 1,
+                                                            "valueText": "1"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -260,6 +270,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -376,7 +387,9 @@
                             "expression": {
                                 "kind": "NumericLiteral",
                                 "width": 3,
-                                "text": "1.1"
+                                "text": "1.1",
+                                "value": 1.1,
+                                "valueText": "1.1"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -387,6 +400,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "toFixed",
+                                "value": "toFixed",
                                 "valueText": "toFixed"
                             }
                         },
@@ -402,7 +416,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "5"
+                                    "text": "5",
+                                    "value": 5,
+                                    "valueText": "5"
                                 }
                             ],
                             "closeParenToken": {
@@ -436,7 +452,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"1.10000\""
+                        "text": "\"1.10000\"",
+                        "value": "1.10000",
+                        "valueText": "1.10000"
                     }
                 },
                 "closeParenToken": {
@@ -481,6 +499,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -507,6 +526,8 @@
                                                 "width": 44,
                                                 "fullWidth": 45,
                                                 "text": "'#2: 1.1.toFixed(5) === \"1.10000\". Actual: '",
+                                                "value": "#2: 1.1.toFixed(5) === \"1.10000\". Actual: ",
+                                                "valueText": "#2: 1.1.toFixed(5) === \"1.10000\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -545,7 +566,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 3,
-                                                            "text": "1.1"
+                                                            "text": "1.1",
+                                                            "value": 1.1,
+                                                            "valueText": "1.1"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -556,6 +579,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "toFixed",
+                                                            "value": "toFixed",
                                                             "valueText": "toFixed"
                                                         }
                                                     },
@@ -571,7 +595,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "5"
+                                                                "text": "5",
+                                                                "value": 5,
+                                                                "valueText": "5"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -678,7 +704,9 @@
                             "expression": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "1"
+                                "text": "1",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "openBracketToken": {
                                 "kind": "OpenBracketToken",
@@ -688,7 +716,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 10,
-                                "text": "\"toString\""
+                                "text": "\"toString\"",
+                                "value": "toString",
+                                "valueText": "toString"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -736,7 +766,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"1\""
+                        "text": "\"1\"",
+                        "value": "1",
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -781,6 +813,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -807,6 +840,8 @@
                                                 "width": 39,
                                                 "fullWidth": 40,
                                                 "text": "'#3: 1[\"toString\"]() === \"1\". Actual: '",
+                                                "value": "#3: 1[\"toString\"]() === \"1\". Actual: ",
+                                                "valueText": "#3: 1[\"toString\"]() === \"1\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -845,7 +880,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "1"
+                                                            "text": "1",
+                                                            "value": 1,
+                                                            "valueText": "1"
                                                         },
                                                         "openBracketToken": {
                                                             "kind": "OpenBracketToken",
@@ -855,7 +892,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 10,
-                                                            "text": "\"toString\""
+                                                            "text": "\"toString\"",
+                                                            "value": "toString",
+                                                            "valueText": "toString"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",
@@ -976,7 +1015,9 @@
                             "expression": {
                                 "kind": "NumericLiteral",
                                 "width": 2,
-                                "text": "1."
+                                "text": "1.",
+                                "value": 1,
+                                "valueText": "1"
                             },
                             "openBracketToken": {
                                 "kind": "OpenBracketToken",
@@ -986,7 +1027,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 9,
-                                "text": "\"toFixed\""
+                                "text": "\"toFixed\"",
+                                "value": "toFixed",
+                                "valueText": "toFixed"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -1006,7 +1049,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "5"
+                                    "text": "5",
+                                    "value": 5,
+                                    "valueText": "5"
                                 }
                             ],
                             "closeParenToken": {
@@ -1040,7 +1085,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"1.00000\""
+                        "text": "\"1.00000\"",
+                        "value": "1.00000",
+                        "valueText": "1.00000"
                     }
                 },
                 "closeParenToken": {
@@ -1085,6 +1132,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1111,6 +1159,8 @@
                                                 "width": 46,
                                                 "fullWidth": 47,
                                                 "text": "'#4: 1.[\"toFixed\"](5) === \"1.00000\". Actual: '",
+                                                "value": "#4: 1.[\"toFixed\"](5) === \"1.00000\". Actual: ",
+                                                "valueText": "#4: 1.[\"toFixed\"](5) === \"1.00000\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1149,7 +1199,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 2,
-                                                            "text": "1."
+                                                            "text": "1.",
+                                                            "value": 1,
+                                                            "valueText": "1"
                                                         },
                                                         "openBracketToken": {
                                                             "kind": "OpenBracketToken",
@@ -1159,7 +1211,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 9,
-                                                            "text": "\"toFixed\""
+                                                            "text": "\"toFixed\"",
+                                                            "value": "toFixed",
+                                                            "valueText": "toFixed"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",
@@ -1179,7 +1233,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "5"
+                                                                "text": "5",
+                                                                "value": 5,
+                                                                "valueText": "5"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -1303,6 +1359,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 },
                                 "argumentList": {
@@ -1317,7 +1374,9 @@
                                         {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1336,6 +1395,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -1379,7 +1439,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"1\""
+                        "text": "\"1\"",
+                        "value": "1",
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1424,6 +1486,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1450,6 +1513,8 @@
                                                 "width": 48,
                                                 "fullWidth": 49,
                                                 "text": "'#5: new Number(1).toString() === \"1\". Actual: '",
+                                                "value": "#5: new Number(1).toString() === \"1\". Actual: ",
+                                                "valueText": "#5: new Number(1).toString() === \"1\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1505,6 +1570,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "Number",
+                                                                "value": "Number",
                                                                 "valueText": "Number"
                                                             },
                                                             "argumentList": {
@@ -1519,7 +1585,9 @@
                                                                     {
                                                                         "kind": "NumericLiteral",
                                                                         "width": 1,
-                                                                        "text": "1"
+                                                                        "text": "1",
+                                                                        "value": 1,
+                                                                        "valueText": "1"
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {
@@ -1538,6 +1606,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -1671,6 +1740,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 },
                                 "argumentList": {
@@ -1685,7 +1755,9 @@
                                         {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1703,7 +1775,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 9,
-                                "text": "\"toFixed\""
+                                "text": "\"toFixed\"",
+                                "value": "toFixed",
+                                "valueText": "toFixed"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -1723,7 +1797,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "5"
+                                    "text": "5",
+                                    "value": 5,
+                                    "valueText": "5"
                                 }
                             ],
                             "closeParenToken": {
@@ -1757,7 +1833,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"1.00000\""
+                        "text": "\"1.00000\"",
+                        "value": "1.00000",
+                        "valueText": "1.00000"
                     }
                 },
                 "closeParenToken": {
@@ -1802,6 +1880,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1828,6 +1907,8 @@
                                                 "width": 57,
                                                 "fullWidth": 58,
                                                 "text": "'#6: new Number(1)[\"toFixed\"](5) === \"1.00000\". Actual: '",
+                                                "value": "#6: new Number(1)[\"toFixed\"](5) === \"1.00000\". Actual: ",
+                                                "valueText": "#6: new Number(1)[\"toFixed\"](5) === \"1.00000\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1883,6 +1964,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "Number",
+                                                                "value": "Number",
                                                                 "valueText": "Number"
                                                             },
                                                             "argumentList": {
@@ -1897,7 +1979,9 @@
                                                                     {
                                                                         "kind": "NumericLiteral",
                                                                         "width": 1,
-                                                                        "text": "1"
+                                                                        "text": "1",
+                                                                        "value": 1,
+                                                                        "valueText": "1"
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {
@@ -1915,7 +1999,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 9,
-                                                            "text": "\"toFixed\""
+                                                            "text": "\"toFixed\"",
+                                                            "value": "toFixed",
+                                                            "valueText": "toFixed"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",
@@ -1935,7 +2021,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "5"
+                                                                "text": "5",
+                                                                "value": 5,
+                                                                "valueText": "5"
                                                             }
                                                         ],
                                                         "closeParenToken": {

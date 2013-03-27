@@ -87,7 +87,9 @@
                         "expression": {
                             "kind": "RegularExpressionLiteral",
                             "width": 5,
-                            "text": "/a\\1/"
+                            "text": "/a\\1/",
+                            "value": {},
+                            "valueText": "/a\\1/"
                         },
                         "dotToken": {
                             "kind": "DotToken",
@@ -99,6 +101,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "source",
+                            "value": "source",
                             "valueText": "source",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -125,7 +128,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"a\\\\1\""
+                        "text": "\"a\\\\1\"",
+                        "value": "a\\1",
+                        "valueText": "a\\1"
                     }
                 },
                 "closeParenToken": {
@@ -170,6 +175,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -191,7 +197,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 12,
-                                            "text": "'#1: /a\\\\1/'"
+                                            "text": "'#1: /a\\\\1/'",
+                                            "value": "#1: /a\\1/",
+                                            "valueText": "#1: /a\\1/"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -287,7 +295,9 @@
                         "expression": {
                             "kind": "RegularExpressionLiteral",
                             "width": 5,
-                            "text": "/a\\a/"
+                            "text": "/a\\a/",
+                            "value": {},
+                            "valueText": "/a\\a/"
                         },
                         "dotToken": {
                             "kind": "DotToken",
@@ -299,6 +309,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "source",
+                            "value": "source",
                             "valueText": "source",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -325,7 +336,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"a\\\\a\""
+                        "text": "\"a\\\\a\"",
+                        "value": "a\\a",
+                        "valueText": "a\\a"
                     }
                 },
                 "closeParenToken": {
@@ -370,6 +383,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -391,7 +405,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 12,
-                                            "text": "'#2: /a\\\\a/'"
+                                            "text": "'#2: /a\\\\a/'",
+                                            "value": "#2: /a\\a/",
+                                            "valueText": "#2: /a\\a/"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -483,7 +499,9 @@
                         "expression": {
                             "kind": "RegularExpressionLiteral",
                             "width": 5,
-                            "text": "/,\\;/"
+                            "text": "/,\\;/",
+                            "value": {},
+                            "valueText": "/,\\;/"
                         },
                         "dotToken": {
                             "kind": "DotToken",
@@ -495,6 +513,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "source",
+                            "value": "source",
                             "valueText": "source",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -521,7 +540,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\",\\\\;\""
+                        "text": "\",\\\\;\"",
+                        "value": ",\\;",
+                        "valueText": ",\\;"
                     }
                 },
                 "closeParenToken": {
@@ -566,6 +587,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -587,7 +609,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 12,
-                                            "text": "'#3: /,\\\\;/'"
+                                            "text": "'#3: /,\\\\;/'",
+                                            "value": "#3: /,\\;/",
+                                            "valueText": "#3: /,\\;/"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -679,7 +703,9 @@
                         "expression": {
                             "kind": "RegularExpressionLiteral",
                             "width": 5,
-                            "text": "/ \\ /"
+                            "text": "/ \\ /",
+                            "value": {},
+                            "valueText": "/ \\ /"
                         },
                         "dotToken": {
                             "kind": "DotToken",
@@ -691,6 +717,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "source",
+                            "value": "source",
                             "valueText": "source",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -717,7 +744,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\" \\\\ \""
+                        "text": "\" \\\\ \"",
+                        "value": " \\ ",
+                        "valueText": " \\ "
                     }
                 },
                 "closeParenToken": {
@@ -762,6 +791,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -783,7 +813,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 12,
-                                            "text": "'#4: / \\\\ /'"
+                                            "text": "'#4: / \\\\ /'",
+                                            "value": "#4: / \\ /",
+                                            "valueText": "#4: / \\ /"
                                         }
                                     ],
                                     "closeParenToken": {

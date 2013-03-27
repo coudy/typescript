@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -215,6 +216,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "f",
+                                                        "value": "f",
                                                         "valueText": "f",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -247,6 +249,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 8,
                                                                 "text": "Function",
+                                                                "value": "Function",
                                                                 "valueText": "Function"
                                                             },
                                                             "argumentList": {
@@ -261,7 +264,9 @@
                                                                     {
                                                                         "kind": "StringLiteral",
                                                                         "width": 141,
-                                                                        "text": "\"\\\r\n                      \\'use strict\\';  \\\r\n                      var o = {}; \\\r\n                      with (o) {};\\\r\n                    \""
+                                                                        "text": "\"\\\r\n                      \\'use strict\\';  \\\r\n                      var o = {}; \\\r\n                      with (o) {};\\\r\n                    \"",
+                                                                        "value": "\r\n                      'use strict';  \r\n                      var o = {}; \r\n                      with (o) {};\r\n                    ",
+                                                                        "valueText": "\r\n                      'use strict';  \r\n                      var o = {}; \r\n                      with (o) {};\r\n                    "
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {
@@ -316,7 +321,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -388,6 +395,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "e",
+                                    "value": "e",
                                     "valueText": "e"
                                 },
                                 "closeParenToken": {
@@ -460,6 +468,7 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": "e",
+                                                        "value": "e",
                                                         "valueText": "e",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -486,6 +495,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "SyntaxError",
+                                                        "value": "SyntaxError",
                                                         "valueText": "SyntaxError"
                                                     }
                                                 },
@@ -578,6 +588,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -593,6 +604,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

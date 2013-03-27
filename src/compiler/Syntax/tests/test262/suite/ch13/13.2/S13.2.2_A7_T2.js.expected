@@ -19,6 +19,7 @@
                         "width": 6,
                         "fullWidth": 641,
                         "text": "__FRST",
+                        "value": "__FRST",
                         "valueText": "__FRST",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -66,7 +67,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"one\""
+                        "text": "\"one\"",
+                        "value": "one",
+                        "valueText": "one"
                     }
                 },
                 "semicolonToken": {
@@ -94,6 +97,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "__SCND",
+                        "value": "__SCND",
                         "valueText": "__SCND"
                     },
                     "operatorToken": {
@@ -104,7 +108,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"two\""
+                        "text": "\"two\"",
+                        "value": "two",
+                        "valueText": "two"
                     }
                 },
                 "semicolonToken": {
@@ -133,6 +139,7 @@
                         "width": 6,
                         "fullWidth": 8,
                         "text": "__func",
+                        "value": "__func",
                         "valueText": "__func",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -190,6 +197,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "arg1",
+                                            "value": "arg1",
                                             "valueText": "arg1"
                                         }
                                     },
@@ -213,6 +221,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "arg2",
+                                            "value": "arg2",
                                             "valueText": "arg2"
                                         }
                                     }
@@ -273,6 +282,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "first",
+                                                "value": "first",
                                                 "valueText": "first"
                                             }
                                         },
@@ -285,6 +295,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "arg1",
+                                            "value": "arg1",
                                             "valueText": "arg1"
                                         }
                                     },
@@ -338,6 +349,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__obj",
+                                                    "value": "__obj",
                                                     "valueText": "__obj"
                                                 },
                                                 "equalsValueClause": {
@@ -364,6 +376,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 6,
                                                                     "text": "second",
+                                                                    "value": "second",
                                                                     "valueText": "second"
                                                                 },
                                                                 "colonToken": {
@@ -375,6 +388,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 4,
                                                                     "text": "arg2",
+                                                                    "value": "arg2",
                                                                     "valueText": "arg2"
                                                                 }
                                                             }
@@ -431,6 +445,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "__obj",
+                                        "value": "__obj",
                                         "valueText": "__obj"
                                     },
                                     "semicolonToken": {
@@ -496,6 +511,7 @@
                         "width": 7,
                         "fullWidth": 9,
                         "text": "__obj__",
+                        "value": "__obj__",
                         "valueText": "__obj__",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -546,6 +562,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func"
                         },
                         "argumentList": {
@@ -561,6 +578,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "__FRST",
+                                    "value": "__FRST",
                                     "valueText": "__FRST"
                                 },
                                 {
@@ -580,6 +598,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "__SCND",
+                                    "value": "__SCND",
                                     "valueText": "__SCND"
                                 }
                             ],
@@ -662,6 +681,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__obj__",
+                            "value": "__obj__",
                             "valueText": "__obj__"
                         },
                         "dotToken": {
@@ -674,6 +694,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "first",
+                            "value": "first",
                             "valueText": "first",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -701,6 +722,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -746,6 +768,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -770,7 +793,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 59,
-                                                "text": "'#1: __obj__.first === undefined. Actual: __obj__.first==='"
+                                                "text": "'#1: __obj__.first === undefined. Actual: __obj__.first==='",
+                                                "value": "#1: __obj__.first === undefined. Actual: __obj__.first===",
+                                                "valueText": "#1: __obj__.first === undefined. Actual: __obj__.first==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -784,6 +809,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__obj__",
+                                                    "value": "__obj__",
                                                     "valueText": "__obj__"
                                                 },
                                                 "dotToken": {
@@ -795,6 +821,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "first",
+                                                    "value": "first",
                                                     "valueText": "first"
                                                 }
                                             }
@@ -911,6 +938,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__obj__",
+                            "value": "__obj__",
                             "valueText": "__obj__"
                         },
                         "dotToken": {
@@ -923,6 +951,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "second",
+                            "value": "second",
                             "valueText": "second",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -950,6 +979,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "__SCND",
+                        "value": "__SCND",
                         "valueText": "__SCND"
                     }
                 },
@@ -995,6 +1025,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1019,7 +1050,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 59,
-                                                "text": "'#2: __obj__.second === __SCND. Actual: __obj__.second ==='"
+                                                "text": "'#2: __obj__.second === __SCND. Actual: __obj__.second ==='",
+                                                "value": "#2: __obj__.second === __SCND. Actual: __obj__.second ===",
+                                                "valueText": "#2: __obj__.second === __SCND. Actual: __obj__.second ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1033,6 +1066,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__obj__",
+                                                    "value": "__obj__",
                                                     "valueText": "__obj__"
                                                 },
                                                 "dotToken": {
@@ -1044,6 +1078,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "second",
+                                                    "value": "second",
                                                     "valueText": "second"
                                                 }
                                             }

@@ -22,6 +22,7 @@
                         "width": 10,
                         "fullWidth": 538,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -92,7 +93,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 20,
-                                "text": "/(\\.(?!com|org)|\\/)/"
+                                "text": "/(\\.(?!com|org)|\\/)/",
+                                "value": {},
+                                "valueText": "/(\\.(?!com|org)|\\/)/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -103,6 +106,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -118,7 +122,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "\"ah.com\""
+                                    "text": "\"ah.com\"",
+                                    "value": "ah.com",
+                                    "valueText": "ah.com"
                                 }
                             ],
                             "closeParenToken": {
@@ -186,6 +192,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__executed",
+                    "value": "__executed",
                     "valueText": "__executed"
                 },
                 "closeParenToken": {
@@ -230,6 +237,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -251,7 +259,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 53,
-                                            "text": "'#1: /(\\\\.(?!com|org)|\\\\/)/.test(\"ah.com\") === false'"
+                                            "text": "'#1: /(\\\\.(?!com|org)|\\\\/)/.test(\"ah.com\") === false'",
+                                            "value": "#1: /(\\.(?!com|org)|\\/)/.test(\"ah.com\") === false",
+                                            "valueText": "#1: /(\\.(?!com|org)|\\/)/.test(\"ah.com\") === false"
                                         }
                                     ],
                                     "closeParenToken": {

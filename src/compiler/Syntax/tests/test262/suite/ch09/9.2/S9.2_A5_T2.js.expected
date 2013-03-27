@@ -96,7 +96,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 2,
-                                "text": "\"\""
+                                "text": "\"\"",
+                                "value": "",
+                                "valueText": ""
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -129,7 +131,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -174,6 +178,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -200,6 +205,8 @@
                                                 "width": 30,
                                                 "fullWidth": 31,
                                                 "text": "'#1: !(\"\") === true. Actual: '",
+                                                "value": "#1: !(\"\") === true. Actual: ",
+                                                "valueText": "#1: !(\"\") === true. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -248,7 +255,9 @@
                                                         "expression": {
                                                             "kind": "StringLiteral",
                                                             "width": 2,
-                                                            "text": "\"\""
+                                                            "text": "\"\"",
+                                                            "value": "",
+                                                            "valueText": ""
                                                         },
                                                         "closeParenToken": {
                                                             "kind": "CloseParenToken",

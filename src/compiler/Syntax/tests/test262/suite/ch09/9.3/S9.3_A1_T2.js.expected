@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -115,6 +116,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "undefined",
+                                            "value": "undefined",
                                             "valueText": "undefined"
                                         },
                                         "closeParenToken": {
@@ -156,7 +158,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -201,6 +205,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -227,6 +232,8 @@
                                                 "width": 45,
                                                 "fullWidth": 46,
                                                 "text": "'#1: +(undefined) === Not-a-Number. Actual: '",
+                                                "value": "#1: +(undefined) === Not-a-Number. Actual: ",
+                                                "valueText": "#1: +(undefined) === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -276,6 +283,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "undefined",
+                                                            "value": "undefined",
                                                             "valueText": "undefined"
                                                         },
                                                         "closeParenToken": {
@@ -380,6 +388,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -426,7 +435,9 @@
                                             "expression": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "0"
+                                                "text": "0",
+                                                "value": 0,
+                                                "valueText": "0"
                                             }
                                         },
                                         "closeParenToken": {
@@ -468,7 +479,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -513,6 +526,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -539,6 +553,8 @@
                                                 "width": 42,
                                                 "fullWidth": 43,
                                                 "text": "'#2: +(void 0) === Not-a-Number. Actual: '",
+                                                "value": "#2: +(void 0) === Not-a-Number. Actual: ",
+                                                "valueText": "#2: +(void 0) === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -603,7 +619,9 @@
                                                             "expression": {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "0"
+                                                                "text": "0",
+                                                                "value": 0,
+                                                                "valueText": "0"
                                                             }
                                                         },
                                                         "closeParenToken": {
@@ -708,6 +726,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -742,6 +761,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "eval",
+                                                "value": "eval",
                                                 "valueText": "eval"
                                             },
                                             "argumentList": {
@@ -756,7 +776,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 7,
-                                                        "text": "\"var x\""
+                                                        "text": "\"var x\"",
+                                                        "value": "var x",
+                                                        "valueText": "var x"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -805,7 +827,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -850,6 +874,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -876,6 +901,8 @@
                                                 "width": 49,
                                                 "fullWidth": 50,
                                                 "text": "'#3: +(eval(\"var x\")) === Not-a-Number. Actual: '",
+                                                "value": "#3: +(eval(\"var x\")) === Not-a-Number. Actual: ",
+                                                "valueText": "#3: +(eval(\"var x\")) === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -928,6 +955,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "eval",
+                                                                "value": "eval",
                                                                 "valueText": "eval"
                                                             },
                                                             "argumentList": {
@@ -942,7 +970,9 @@
                                                                     {
                                                                         "kind": "StringLiteral",
                                                                         "width": 7,
-                                                                        "text": "\"var x\""
+                                                                        "text": "\"var x\"",
+                                                                        "value": "var x",
+                                                                        "valueText": "var x"
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {

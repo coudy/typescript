@@ -75,6 +75,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 38,
-                                    "text": "'She sells seashells by the seashore.'"
+                                    "text": "'She sells seashells by the seashore.'",
+                                    "value": "She sells seashells by the seashore.",
+                                    "valueText": "She sells seashells by the seashore."
                                 }
                             }
                         }
@@ -156,6 +159,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -185,7 +189,9 @@
                                 "value": {
                                     "kind": "RegularExpressionLiteral",
                                     "width": 5,
-                                    "text": "/sh/g"
+                                    "text": "/sh/g",
+                                    "value": {},
+                                    "valueText": "/sh/g"
                                 }
                             }
                         }
@@ -265,6 +271,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str"
                             },
                             "dotToken": {
@@ -276,6 +283,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "replace",
+                                "value": "replace",
                                 "valueText": "replace"
                             }
                         },
@@ -292,6 +300,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "__re",
+                                    "value": "__re",
                                     "valueText": "__re"
                                 },
                                 {
@@ -302,7 +311,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "'sch'"
+                                    "text": "'sch'",
+                                    "value": "sch",
+                                    "valueText": "sch"
                                 }
                             ],
                             "closeParenToken": {
@@ -320,7 +331,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 40,
-                        "text": "'She sells seaschells by the seaschore.'"
+                        "text": "'She sells seaschells by the seaschore.'",
+                        "value": "She sells seaschells by the seaschore.",
+                        "valueText": "She sells seaschells by the seaschore."
                     }
                 },
                 "closeParenToken": {
@@ -365,6 +378,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -389,7 +403,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 160,
-                                                "text": "'#1: var __str = \\'She sells seashells by the seashore.\\'; var __re = /sh/g; __str.replace(__re,\\'sch\\')===\\'She sells seaschells by the seaschore.\\'. Actual: '"
+                                                "text": "'#1: var __str = \\'She sells seashells by the seashore.\\'; var __re = /sh/g; __str.replace(__re,\\'sch\\')===\\'She sells seaschells by the seaschore.\\'. Actual: '",
+                                                "value": "#1: var __str = 'She sells seashells by the seashore.'; var __re = /sh/g; __str.replace(__re,'sch')==='She sells seaschells by the seaschore.'. Actual: ",
+                                                "valueText": "#1: var __str = 'She sells seashells by the seashore.'; var __re = /sh/g; __str.replace(__re,'sch')==='She sells seaschells by the seaschore.'. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -406,6 +422,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__str",
+                                                        "value": "__str",
                                                         "valueText": "__str"
                                                     },
                                                     "dotToken": {
@@ -417,6 +434,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "replace",
+                                                        "value": "replace",
                                                         "valueText": "replace"
                                                     }
                                                 },
@@ -433,6 +451,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "__re",
+                                                            "value": "__re",
                                                             "valueText": "__re"
                                                         },
                                                         {
@@ -443,7 +462,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 5,
-                                                            "text": "'sch'"
+                                                            "text": "'sch'",
+                                                            "value": "sch",
+                                                            "valueText": "sch"
                                                         }
                                                     ],
                                                     "closeParenToken": {

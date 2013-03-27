@@ -19,6 +19,7 @@
                         "width": 10,
                         "fullWidth": 408,
                         "text": "__instance",
+                        "value": "__instance",
                         "valueText": "__instance",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -98,6 +99,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "argumentList": {
@@ -112,7 +114,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 7,
-                                    "text": "\"[a-b]\""
+                                    "text": "\"[a-b]\"",
+                                    "value": "[a-b]",
+                                    "valueText": "[a-b]"
                                 }
                             ],
                             "closeParenToken": {
@@ -152,6 +156,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -172,6 +177,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "test",
+                            "value": "test",
                             "valueText": "test",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -205,6 +211,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "RegExp",
+                                "value": "RegExp",
                                 "valueText": "RegExp"
                             },
                             "dotToken": {
@@ -216,6 +223,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -228,6 +236,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "test",
+                            "value": "test",
                             "valueText": "test"
                         }
                     }
@@ -282,6 +291,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__instance",
+                    "value": "__instance",
                     "valueText": "__instance"
                 },
                 "closeParenToken": {
@@ -359,6 +369,7 @@
                                                 "width": 6,
                                                 "fullWidth": 12,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -385,6 +396,8 @@
                                                             "width": 123,
                                                             "fullWidth": 124,
                                                             "text": "'#1.1: __instance = new String(\"[a-b]\"); __instance.test = RegExp.prototype.test; test(\"message to investigate\"). Actual: '",
+                                                            "value": "#1.1: __instance = new String(\"[a-b]\"); __instance.test = RegExp.prototype.test; test(\"message to investigate\"). Actual: ",
+                                                            "valueText": "#1.1: __instance = new String(\"[a-b]\"); __instance.test = RegExp.prototype.test; test(\"message to investigate\"). Actual: ",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -421,6 +434,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 4,
                                                                     "text": "test",
+                                                                    "value": "test",
                                                                     "valueText": "test"
                                                                 },
                                                                 "argumentList": {
@@ -435,7 +449,9 @@
                                                                         {
                                                                             "kind": "StringLiteral",
                                                                             "width": 24,
-                                                                            "text": "\"message to investigate\""
+                                                                            "text": "\"message to investigate\"",
+                                                                            "value": "message to investigate",
+                                                                            "valueText": "message to investigate"
                                                                         }
                                                                     ],
                                                                     "closeParenToken": {
@@ -522,6 +538,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "e",
+                                    "value": "e",
                                     "valueText": "e"
                                 },
                                 "closeParenToken": {
@@ -602,6 +619,7 @@
                                                             "width": 1,
                                                             "fullWidth": 2,
                                                             "text": "e",
+                                                            "value": "e",
                                                             "valueText": "e",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -628,6 +646,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "TypeError",
+                                                            "value": "TypeError",
                                                             "valueText": "TypeError"
                                                         }
                                                     },
@@ -661,7 +680,9 @@
                                                 "right": {
                                                     "kind": "TrueKeyword",
                                                     "width": 4,
-                                                    "text": "true"
+                                                    "text": "true",
+                                                    "value": true,
+                                                    "valueText": "true"
                                                 }
                                             },
                                             "closeParenToken": {
@@ -706,6 +727,7 @@
                                                                 "width": 6,
                                                                 "fullWidth": 14,
                                                                 "text": "$ERROR",
+                                                                "value": "$ERROR",
                                                                 "valueText": "$ERROR",
                                                                 "hasLeadingTrivia": true,
                                                                 "leadingTrivia": [
@@ -732,6 +754,8 @@
                                                                             "width": 123,
                                                                             "fullWidth": 124,
                                                                             "text": "'#1.2: __instance = new String(\"[a-b]\"); __instance.test = RegExp.prototype.test; test(\"message to investigate\"). Actual: '",
+                                                                            "value": "#1.2: __instance = new String(\"[a-b]\"); __instance.test = RegExp.prototype.test; test(\"message to investigate\"). Actual: ",
+                                                                            "valueText": "#1.2: __instance = new String(\"[a-b]\"); __instance.test = RegExp.prototype.test; test(\"message to investigate\"). Actual: ",
                                                                             "hasTrailingTrivia": true,
                                                                             "trailingTrivia": [
                                                                                 {
@@ -765,6 +789,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 1,
                                                                                 "text": "e",
+                                                                                "value": "e",
                                                                                 "valueText": "e"
                                                                             },
                                                                             "closeParenToken": {

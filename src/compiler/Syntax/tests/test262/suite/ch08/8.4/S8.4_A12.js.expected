@@ -91,6 +91,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "str",
+                                "value": "str",
                                 "valueText": "str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,7 +120,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 13,
-                                    "text": "\"rock'n'roll\""
+                                    "text": "\"rock'n'roll\"",
+                                    "value": "rock'n'roll",
+                                    "valueText": "rock'n'roll"
                                 }
                             }
                         }
@@ -174,6 +177,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "str",
+                            "value": "str",
                             "valueText": "str"
                         },
                         "dotToken": {
@@ -186,6 +190,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -212,6 +218,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "String",
+                        "value": "String",
                         "valueText": "String"
                     }
                 },
@@ -252,6 +259,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -280,6 +288,8 @@
                                                 "width": 69,
                                                 "fullWidth": 70,
                                                 "text": "'#1: var str = \"rock\\'n\\'roll\"; str.constructor === String. Actual: '",
+                                                "value": "#1: var str = \"rock'n'roll\"; str.constructor === String. Actual: ",
+                                                "valueText": "#1: var str = \"rock'n'roll\"; str.constructor === String. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -318,6 +328,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "str",
+                                                        "value": "str",
                                                         "valueText": "str"
                                                     },
                                                     "dotToken": {
@@ -328,7 +339,9 @@
                                                     "name": {
                                                         "kind": "IdentifierName",
                                                         "width": 11,
-                                                        "text": "constructor"
+                                                        "text": "constructor",
+                                                        "value": "constructor",
+                                                        "valueText": "constructor"
                                                     }
                                                 },
                                                 "closeParenToken": {

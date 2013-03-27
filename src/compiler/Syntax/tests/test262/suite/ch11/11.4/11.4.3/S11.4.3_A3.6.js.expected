@@ -123,7 +123,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -168,6 +170,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -194,6 +197,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#1: typeof this === \"object\". Actual: '",
+                                                "value": "#1: typeof this === \"object\". Actual: ",
+                                                "valueText": "#1: typeof this === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -369,6 +374,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Object",
+                                "value": "Object",
                                 "valueText": "Object"
                             },
                             "argumentList": {
@@ -412,7 +418,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -457,6 +465,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -483,6 +492,8 @@
                                                 "width": 48,
                                                 "fullWidth": 49,
                                                 "text": "'#2: typeof new Object() === \"object\". Actual: '",
+                                                "value": "#2: typeof new Object() === \"object\". Actual: ",
+                                                "valueText": "#2: typeof new Object() === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -548,6 +559,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "Object",
+                                                            "value": "Object",
                                                             "valueText": "Object"
                                                         },
                                                         "argumentList": {
@@ -691,6 +703,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "argumentList": {
@@ -705,7 +718,9 @@
                                     {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -715,7 +730,9 @@
                                     {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "2"
+                                        "text": "2",
+                                        "value": 2,
+                                        "valueText": "2"
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -725,7 +742,9 @@
                                     {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "3"
+                                        "text": "3",
+                                        "value": 3,
+                                        "valueText": "3"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -760,7 +779,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -805,6 +826,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -831,6 +853,8 @@
                                                 "width": 52,
                                                 "fullWidth": 53,
                                                 "text": "'#3: typeof new Array(1,2,3) === \"object\". Actual: '",
+                                                "value": "#3: typeof new Array(1,2,3) === \"object\". Actual: ",
+                                                "valueText": "#3: typeof new Array(1,2,3) === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -896,6 +920,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "Array",
+                                                            "value": "Array",
                                                             "valueText": "Array"
                                                         },
                                                         "argumentList": {
@@ -910,7 +935,9 @@
                                                                 {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "1"
+                                                                    "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1"
                                                                 },
                                                                 {
                                                                     "kind": "CommaToken",
@@ -920,7 +947,9 @@
                                                                 {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "2"
+                                                                    "text": "2",
+                                                                    "value": 2,
+                                                                    "valueText": "2"
                                                                 },
                                                                 {
                                                                     "kind": "CommaToken",
@@ -930,7 +959,9 @@
                                                                 {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "3"
+                                                                    "text": "3",
+                                                                    "value": 3,
+                                                                    "valueText": "3"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -1052,6 +1083,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array"
                             },
                             "argumentList": {
@@ -1066,7 +1098,9 @@
                                     {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -1076,7 +1110,9 @@
                                     {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "2"
+                                        "text": "2",
+                                        "value": 2,
+                                        "valueText": "2"
                                     },
                                     {
                                         "kind": "CommaToken",
@@ -1086,7 +1122,9 @@
                                     {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "3"
+                                        "text": "3",
+                                        "value": 3,
+                                        "valueText": "3"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1121,7 +1159,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -1166,6 +1206,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1192,6 +1233,8 @@
                                                 "width": 48,
                                                 "fullWidth": 49,
                                                 "text": "'#4: typeof Array(1,2,3) === \"object\". Actual: '",
+                                                "value": "#4: typeof Array(1,2,3) === \"object\". Actual: ",
+                                                "valueText": "#4: typeof Array(1,2,3) === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1244,6 +1287,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "Array",
+                                                            "value": "Array",
                                                             "valueText": "Array"
                                                         },
                                                         "argumentList": {
@@ -1258,7 +1302,9 @@
                                                                 {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "1"
+                                                                    "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1"
                                                                 },
                                                                 {
                                                                     "kind": "CommaToken",
@@ -1268,7 +1314,9 @@
                                                                 {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "2"
+                                                                    "text": "2",
+                                                                    "value": 2,
+                                                                    "valueText": "2"
                                                                 },
                                                                 {
                                                                     "kind": "CommaToken",
@@ -1278,7 +1326,9 @@
                                                                 {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "3"
+                                                                    "text": "3",
+                                                                    "value": 3,
+                                                                    "valueText": "3"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -1413,6 +1463,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "argumentList": {
@@ -1427,7 +1478,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"x\""
+                                        "text": "\"x\"",
+                                        "value": "x",
+                                        "valueText": "x"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1462,7 +1515,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -1507,6 +1562,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1533,6 +1589,8 @@
                                                 "width": 51,
                                                 "fullWidth": 52,
                                                 "text": "'#5: typeof new String(\"x\") === \"object\". Actual: '",
+                                                "value": "#5: typeof new String(\"x\") === \"object\". Actual: ",
+                                                "valueText": "#5: typeof new String(\"x\") === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1598,6 +1656,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "String",
+                                                            "value": "String",
                                                             "valueText": "String"
                                                         },
                                                         "argumentList": {
@@ -1612,7 +1671,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 3,
-                                                                    "text": "\"x\""
+                                                                    "text": "\"x\"",
+                                                                    "value": "x",
+                                                                    "valueText": "x"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -1747,6 +1808,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "Boolean",
+                                "value": "Boolean",
                                 "valueText": "Boolean"
                             },
                             "argumentList": {
@@ -1761,7 +1823,9 @@
                                     {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -1796,7 +1860,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -1841,6 +1907,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1867,6 +1934,8 @@
                                                 "width": 53,
                                                 "fullWidth": 54,
                                                 "text": "'#6: typeof new Boolean(true) === \"object\". Actual: '",
+                                                "value": "#6: typeof new Boolean(true) === \"object\". Actual: ",
+                                                "valueText": "#6: typeof new Boolean(true) === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1932,6 +2001,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "Boolean",
+                                                            "value": "Boolean",
                                                             "valueText": "Boolean"
                                                         },
                                                         "argumentList": {
@@ -1946,7 +2016,9 @@
                                                                 {
                                                                     "kind": "TrueKeyword",
                                                                     "width": 4,
-                                                                    "text": "true"
+                                                                    "text": "true",
+                                                                    "value": true,
+                                                                    "valueText": "true"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -2081,6 +2153,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -2095,7 +2168,9 @@
                                     {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -2130,7 +2205,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -2175,6 +2252,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2201,6 +2279,8 @@
                                                 "width": 49,
                                                 "fullWidth": 50,
                                                 "text": "'#7: typeof new Number(1) === \"object\". Actual: '",
+                                                "value": "#7: typeof new Number(1) === \"object\". Actual: ",
+                                                "valueText": "#7: typeof new Number(1) === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2266,6 +2346,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "Number",
+                                                            "value": "Number",
                                                             "valueText": "Number"
                                                         },
                                                         "argumentList": {
@@ -2280,7 +2361,9 @@
                                                                 {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "1"
+                                                                    "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -2424,6 +2507,7 @@
                             "width": 4,
                             "fullWidth": 5,
                             "text": "Math",
+                            "value": "Math",
                             "valueText": "Math",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -2450,7 +2534,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -2495,6 +2581,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2521,6 +2608,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#8: typeof Math === \"object\". Actual: '",
+                                                "value": "#8: typeof Math === \"object\". Actual: ",
+                                                "valueText": "#8: typeof Math === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2570,6 +2659,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "Math",
+                                                        "value": "Math",
                                                         "valueText": "Math"
                                                     }
                                                 },
@@ -2697,6 +2787,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "Date",
+                                "value": "Date",
                                 "valueText": "Date"
                             },
                             "argumentList": {
@@ -2740,7 +2831,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -2785,6 +2878,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2811,6 +2905,8 @@
                                                 "width": 46,
                                                 "fullWidth": 47,
                                                 "text": "'#9: typeof new Date() === \"object\". Actual: '",
+                                                "value": "#9: typeof new Date() === \"object\". Actual: ",
+                                                "valueText": "#9: typeof new Date() === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2876,6 +2972,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "Date",
+                                                            "value": "Date",
                                                             "valueText": "Date"
                                                         },
                                                         "argumentList": {
@@ -3019,6 +3116,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "Error",
+                                "value": "Error",
                                 "valueText": "Error"
                             },
                             "argumentList": {
@@ -3062,7 +3160,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -3107,6 +3207,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3133,6 +3234,8 @@
                                                 "width": 48,
                                                 "fullWidth": 49,
                                                 "text": "'#10: typeof new Error() === \"object\". Actual: '",
+                                                "value": "#10: typeof new Error() === \"object\". Actual: ",
+                                                "valueText": "#10: typeof new Error() === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -3198,6 +3301,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "Error",
+                                                            "value": "Error",
                                                             "valueText": "Error"
                                                         },
                                                         "argumentList": {
@@ -3341,6 +3445,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "RegExp",
+                                "value": "RegExp",
                                 "valueText": "RegExp"
                             },
                             "argumentList": {
@@ -3384,7 +3489,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -3429,6 +3536,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3455,6 +3563,8 @@
                                                 "width": 49,
                                                 "fullWidth": 50,
                                                 "text": "'#11: typeof new RegExp() === \"object\". Actual: '",
+                                                "value": "#11: typeof new RegExp() === \"object\". Actual: ",
+                                                "valueText": "#11: typeof new RegExp() === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -3520,6 +3630,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "RegExp",
+                                                            "value": "RegExp",
                                                             "valueText": "RegExp"
                                                         },
                                                         "argumentList": {
@@ -3650,6 +3761,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "RegExp",
+                                "value": "RegExp",
                                 "valueText": "RegExp"
                             },
                             "argumentList": {
@@ -3693,7 +3805,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -3738,6 +3852,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3764,6 +3879,8 @@
                                                 "width": 45,
                                                 "fullWidth": 46,
                                                 "text": "'#12: typeof RegExp() === \"object\". Actual: '",
+                                                "value": "#12: typeof RegExp() === \"object\". Actual: ",
+                                                "valueText": "#12: typeof RegExp() === \"object\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -3816,6 +3933,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "RegExp",
+                                                            "value": "RegExp",
                                                             "valueText": "RegExp"
                                                         },
                                                         "argumentList": {

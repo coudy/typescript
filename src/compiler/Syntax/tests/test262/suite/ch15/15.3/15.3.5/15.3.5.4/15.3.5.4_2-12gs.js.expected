@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 611,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -94,7 +95,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 32,
-                                "text": "\"\\\"use strict\\\";\\ngNonStrict();\""
+                                "text": "\"\\\"use strict\\\";\\ngNonStrict();\"",
+                                "value": "\"use strict\";\ngNonStrict();",
+                                "valueText": "\"use strict\";\ngNonStrict();"
                             }
                         ],
                         "closeParenToken": {
@@ -152,6 +155,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "gNonStrict",
+                    "value": "gNonStrict",
                     "valueText": "gNonStrict"
                 },
                 "callSignature": {
@@ -229,6 +233,7 @@
                                     "kind": "IdentifierName",
                                     "width": 10,
                                     "text": "gNonStrict",
+                                    "value": "gNonStrict",
                                     "valueText": "gNonStrict"
                                 },
                                 "dotToken": {
@@ -240,6 +245,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "caller",
+                                    "value": "caller",
                                     "valueText": "caller"
                                 }
                             },

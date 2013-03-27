@@ -75,6 +75,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "body",
+                                "value": "body",
                                 "valueText": "body",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"return a;\""
+                                    "text": "\"return a;\"",
+                                    "value": "return a;",
+                                    "valueText": "return a;"
                                 }
                             }
                         }
@@ -160,6 +163,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "p",
+                                "value": "p",
                                 "valueText": "p"
                             },
                             "equalsValueClause": {
@@ -177,6 +181,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -191,7 +196,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\"a\""
+                                                "text": "\"a\"",
+                                                "value": "a",
+                                                "valueText": "a"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -307,6 +314,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "f",
+                                            "value": "f",
                                             "valueText": "f",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -352,6 +360,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "Function",
+                                                    "value": "Function",
                                                     "valueText": "Function"
                                                 },
                                                 "argumentList": {
@@ -367,6 +376,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "p",
+                                                            "value": "p",
                                                             "valueText": "p"
                                                         },
                                                         {
@@ -386,6 +396,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "body",
+                                                            "value": "body",
                                                             "valueText": "body"
                                                         }
                                                     ],
@@ -455,6 +466,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -499,6 +511,7 @@
                                         "width": 5,
                                         "fullWidth": 7,
                                         "text": "$FAIL",
+                                        "value": "$FAIL",
                                         "valueText": "$FAIL",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -523,7 +536,9 @@
                                                 "left": {
                                                     "kind": "StringLiteral",
                                                     "width": 29,
-                                                    "text": "'#1: test failed with error '"
+                                                    "text": "'#1: test failed with error '",
+                                                    "value": "#1: test failed with error ",
+                                                    "valueText": "#1: test failed with error "
                                                 },
                                                 "operatorToken": {
                                                     "kind": "PlusToken",
@@ -534,6 +549,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "e",
+                                                    "value": "e",
                                                     "valueText": "e"
                                                 }
                                             }
@@ -629,6 +645,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "f",
+                            "value": "f",
                             "valueText": "f"
                         },
                         "dotToken": {
@@ -641,6 +658,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -667,6 +686,7 @@
                         "kind": "IdentifierName",
                         "width": 8,
                         "text": "Function",
+                        "value": "Function",
                         "valueText": "Function"
                     }
                 },
@@ -712,6 +732,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -733,7 +754,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 145,
-                                            "text": "'#2: When the Function constructor is called with one argument then body be that argument and creates a new Function object as specified in 13.2'"
+                                            "text": "'#2: When the Function constructor is called with one argument then body be that argument and creates a new Function object as specified in 13.2'",
+                                            "value": "#2: When the Function constructor is called with one argument then body be that argument and creates a new Function object as specified in 13.2",
+                                            "valueText": "#2: When the Function constructor is called with one argument then body be that argument and creates a new Function object as specified in 13.2"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -823,6 +846,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "f",
+                            "value": "f",
                             "valueText": "f"
                         },
                         "argumentList": {
@@ -837,7 +861,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             ],
                             "closeParenToken": {
@@ -855,7 +881,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -900,6 +928,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -921,7 +950,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 123,
-                                            "text": "'#3: When the Function constructor is called with one argument then body be that argument the following steps are taken...'"
+                                            "text": "'#3: When the Function constructor is called with one argument then body be that argument the following steps are taken...'",
+                                            "value": "#3: When the Function constructor is called with one argument then body be that argument the following steps are taken...",
+                                            "valueText": "#3: When the Function constructor is called with one argument then body be that argument the following steps are taken..."
                                         }
                                     ],
                                     "closeParenToken": {

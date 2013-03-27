@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -143,7 +147,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "2"
+                                                "text": "2",
+                                                "value": 2,
+                                                "valueText": "2"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -153,7 +159,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "3"
+                                                "text": "3",
+                                                "value": 3,
+                                                "valueText": "3"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -163,7 +171,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "4"
+                                                "text": "4",
+                                                "value": 4,
+                                                "valueText": "4"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -173,7 +183,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "5"
+                                                "text": "5",
+                                                "value": 5,
+                                                "valueText": "5"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -219,6 +231,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance"
                         },
                         "dotToken": {
@@ -231,6 +244,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "substring",
+                            "value": "substring",
                             "valueText": "substring",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -264,6 +278,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -275,6 +290,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -287,6 +303,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "substring",
+                            "value": "substring",
                             "valueText": "substring"
                         }
                     }
@@ -365,6 +382,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance"
                             },
                             "dotToken": {
@@ -376,6 +394,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "substring",
+                                "value": "substring",
                                 "valueText": "substring"
                             }
                         },
@@ -391,7 +410,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "9"
+                                    "text": "9",
+                                    "value": 9,
+                                    "valueText": "9"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -410,6 +431,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "Infinity",
+                                        "value": "Infinity",
                                         "valueText": "Infinity"
                                     }
                                 }
@@ -445,7 +467,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"1,2,3,4,5\""
+                        "text": "\"1,2,3,4,5\"",
+                        "value": "1,2,3,4,5",
+                        "valueText": "1,2,3,4,5"
                     }
                 },
                 "closeParenToken": {
@@ -490,6 +514,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -514,7 +539,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 151,
-                                                "text": "'#1: __instance = new Array(1,2,3,4,5); __instance.substring = String.prototype.substring; __instance.substring(9,-Infinity) === \"1,2,3,4,5\". Actual: '"
+                                                "text": "'#1: __instance = new Array(1,2,3,4,5); __instance.substring = String.prototype.substring; __instance.substring(9,-Infinity) === \"1,2,3,4,5\". Actual: '",
+                                                "value": "#1: __instance = new Array(1,2,3,4,5); __instance.substring = String.prototype.substring; __instance.substring(9,-Infinity) === \"1,2,3,4,5\". Actual: ",
+                                                "valueText": "#1: __instance = new Array(1,2,3,4,5); __instance.substring = String.prototype.substring; __instance.substring(9,-Infinity) === \"1,2,3,4,5\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -531,6 +558,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "__instance",
+                                                        "value": "__instance",
                                                         "valueText": "__instance"
                                                     },
                                                     "dotToken": {
@@ -542,6 +570,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "substring",
+                                                        "value": "substring",
                                                         "valueText": "substring"
                                                     }
                                                 },
@@ -557,7 +586,9 @@
                                                         {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "9"
+                                                            "text": "9",
+                                                            "value": 9,
+                                                            "valueText": "9"
                                                         },
                                                         {
                                                             "kind": "CommaToken",
@@ -576,6 +607,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 8,
                                                                 "text": "Infinity",
+                                                                "value": "Infinity",
                                                                 "valueText": "Infinity"
                                                             }
                                                         }

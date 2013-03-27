@@ -71,6 +71,7 @@
                             "width": 2,
                             "fullWidth": 3,
                             "text": "p1",
+                            "value": "p1",
                             "valueText": "p1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -97,7 +98,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -145,6 +148,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "myObj",
+                                "value": "myObj",
                                 "valueText": "myObj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -196,6 +200,7 @@
                                                 "width": 2,
                                                 "fullWidth": 4,
                                                 "text": "p1",
+                                                "value": "p1",
                                                 "valueText": "p1",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -221,7 +226,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "'a'"
+                                                "text": "'a'",
+                                                "value": "a",
+                                                "valueText": "a"
                                             }
                                         },
                                         {
@@ -250,6 +257,7 @@
                                                 "width": 3,
                                                 "fullWidth": 5,
                                                 "text": "del",
+                                                "value": "del",
                                                 "valueText": "del",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -269,6 +277,8 @@
                                                 "width": 5,
                                                 "fullWidth": 6,
                                                 "text": "false",
+                                                "value": false,
+                                                "valueText": "false",
                                                 "hasTrailingTrivia": true,
                                                 "hasTrailingNewLine": true,
                                                 "trailingTrivia": [
@@ -315,6 +325,7 @@
                         "kind": "IdentifierName",
                         "width": 4,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval"
                     },
                     "argumentList": {
@@ -329,7 +340,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 30,
-                                "text": "\"with(myObj){del = delete p1}\""
+                                "text": "\"with(myObj){del = delete p1}\"",
+                                "value": "with(myObj){del = delete p1}",
+                                "valueText": "with(myObj){del = delete p1}"
                             }
                         ],
                         "closeParenToken": {
@@ -403,6 +416,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj"
                         },
                         "dotToken": {
@@ -415,6 +429,7 @@
                             "width": 2,
                             "fullWidth": 3,
                             "text": "p1",
+                            "value": "p1",
                             "valueText": "p1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -441,7 +456,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "'a'"
+                        "text": "'a'",
+                        "value": "a",
+                        "valueText": "a"
                     }
                 },
                 "closeParenToken": {
@@ -478,6 +495,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -499,7 +517,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 22,
-                                            "text": "'#1: myObj.p1 !== \"a\"'"
+                                            "text": "'#1: myObj.p1 !== \"a\"'",
+                                            "value": "#1: myObj.p1 !== \"a\"",
+                                            "valueText": "#1: myObj.p1 !== \"a\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -606,6 +626,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj"
                         },
                         "dotToken": {
@@ -618,6 +639,7 @@
                             "width": 2,
                             "fullWidth": 3,
                             "text": "p1",
+                            "value": "p1",
                             "valueText": "p1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -645,6 +667,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -682,6 +705,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -706,7 +730,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 51,
-                                                "text": "'#2: myObj.p1 === undefined. Actual:  myObj.p1 ==='"
+                                                "text": "'#2: myObj.p1 === undefined. Actual:  myObj.p1 ==='",
+                                                "value": "#2: myObj.p1 === undefined. Actual:  myObj.p1 ===",
+                                                "valueText": "#2: myObj.p1 === undefined. Actual:  myObj.p1 ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -728,6 +754,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "myObj",
+                                                    "value": "myObj",
                                                     "valueText": "myObj"
                                                 },
                                                 "dotToken": {
@@ -740,6 +767,7 @@
                                                     "width": 2,
                                                     "fullWidth": 4,
                                                     "text": "p1",
+                                                    "value": "p1",
                                                     "valueText": "p1",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -856,6 +884,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj"
                         },
                         "dotToken": {
@@ -868,6 +897,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "del",
+                            "value": "del",
                             "valueText": "del",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -894,7 +924,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -931,6 +963,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -955,7 +988,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 48,
-                                                "text": "'#3: myObj.del === true. Actual:  myObj.del ==='"
+                                                "text": "'#3: myObj.del === true. Actual:  myObj.del ==='",
+                                                "value": "#3: myObj.del === true. Actual:  myObj.del ===",
+                                                "valueText": "#3: myObj.del === true. Actual:  myObj.del ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -977,6 +1012,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "myObj",
+                                                    "value": "myObj",
                                                     "valueText": "myObj"
                                                 },
                                                 "dotToken": {
@@ -989,6 +1025,7 @@
                                                     "width": 3,
                                                     "fullWidth": 5,
                                                     "text": "del",
+                                                    "value": "del",
                                                     "valueText": "del",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -1105,6 +1142,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "myObj",
+                            "value": "myObj",
                             "valueText": "myObj"
                         },
                         "dotToken": {
@@ -1117,6 +1155,7 @@
                             "width": 2,
                             "fullWidth": 3,
                             "text": "p1",
+                            "value": "p1",
                             "valueText": "p1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1143,7 +1182,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1180,6 +1221,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1201,7 +1243,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 20,
-                                            "text": "'#4: myObj.p1 !== 1'"
+                                            "text": "'#4: myObj.p1 !== 1'",
+                                            "value": "#4: myObj.p1 !== 1",
+                                            "valueText": "#4: myObj.p1 !== 1"
                                         }
                                     ],
                                     "closeParenToken": {

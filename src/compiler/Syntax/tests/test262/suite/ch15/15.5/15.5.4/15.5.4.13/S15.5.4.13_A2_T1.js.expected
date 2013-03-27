@@ -74,6 +74,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__string",
+                                "value": "__string",
                                 "valueText": "__string",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 25,
-                                                "text": "\"this is a string object\""
+                                                "text": "\"this is a string object\"",
+                                                "value": "this is a string object",
+                                                "valueText": "this is a string object"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -237,6 +241,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__string",
+                                    "value": "__string",
                                     "valueText": "__string"
                                 },
                                 "dotToken": {
@@ -248,6 +253,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "slice",
+                                    "value": "slice",
                                     "valueText": "slice"
                                 }
                             },
@@ -292,7 +298,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"string\""
+                        "text": "\"string\"",
+                        "value": "string",
+                        "valueText": "string"
                     }
                 },
                 "closeParenToken": {
@@ -337,6 +345,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -361,7 +370,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 102,
-                                                "text": "'#1: __string = new String(\"this is a string object\"); typeof __string.slice() === \"string\". Actual: '"
+                                                "text": "'#1: __string = new String(\"this is a string object\"); typeof __string.slice() === \"string\". Actual: '",
+                                                "value": "#1: __string = new String(\"this is a string object\"); typeof __string.slice() === \"string\". Actual: ",
+                                                "valueText": "#1: __string = new String(\"this is a string object\"); typeof __string.slice() === \"string\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -394,6 +405,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "__string",
+                                                            "value": "__string",
                                                             "valueText": "__string"
                                                         },
                                                         "dotToken": {
@@ -405,6 +417,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "slice",
+                                                            "value": "slice",
                                                             "valueText": "slice"
                                                         }
                                                     },

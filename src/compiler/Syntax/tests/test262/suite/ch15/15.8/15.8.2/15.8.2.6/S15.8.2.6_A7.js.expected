@@ -83,6 +83,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -101,7 +102,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 4,
-                            "text": "1000"
+                            "text": "1000",
+                            "value": 1000,
+                            "valueText": "1000"
                         }
                     }
                 },
@@ -125,6 +128,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -135,7 +139,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 4,
-                        "text": "1000"
+                        "text": "1000",
+                        "value": 1000,
+                        "valueText": "1000"
                     }
                 },
                 "secondSemicolonToken": {
@@ -158,6 +164,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -212,6 +219,7 @@
                                     "width": 1,
                                     "fullWidth": 3,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -249,6 +257,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "i",
+                                        "value": "i",
                                         "valueText": "i"
                                     },
                                     "operatorToken": {
@@ -259,7 +268,9 @@
                                     "right": {
                                         "kind": "NumericLiteral",
                                         "width": 4,
-                                        "text": "10.0"
+                                        "text": "10.0",
+                                        "value": 10,
+                                        "valueText": "10"
                                     }
                                 }
                             },
@@ -319,6 +330,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "Math",
+                                            "value": "Math",
                                             "valueText": "Math"
                                         },
                                         "dotToken": {
@@ -330,6 +342,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "ceil",
+                                            "value": "ceil",
                                             "valueText": "ceil"
                                         }
                                     },
@@ -346,6 +359,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "x",
+                                                "value": "x",
                                                 "valueText": "x"
                                             }
                                         ],
@@ -395,6 +409,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "Math",
+                                                "value": "Math",
                                                 "valueText": "Math"
                                             },
                                             "dotToken": {
@@ -406,6 +421,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "floor",
+                                                "value": "floor",
                                                 "valueText": "floor"
                                             }
                                         },
@@ -430,6 +446,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     }
                                                 }
@@ -493,6 +510,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -522,6 +540,8 @@
                                                                 "width": 11,
                                                                 "fullWidth": 12,
                                                                 "text": "\"#1: 'x = \"",
+                                                                "value": "#1: 'x = ",
+                                                                "valueText": "#1: 'x = ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -548,6 +568,7 @@
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": "x",
+                                                                "value": "x",
                                                                 "valueText": "x",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
@@ -574,7 +595,9 @@
                                                         "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 37,
-                                                            "text": "\"; Math.ceil(x) !== -Math.floor(-x)'\""
+                                                            "text": "\"; Math.ceil(x) !== -Math.floor(-x)'\"",
+                                                            "value": "; Math.ceil(x) !== -Math.floor(-x)'",
+                                                            "valueText": "; Math.ceil(x) !== -Math.floor(-x)'"
                                                         }
                                                     }
                                                 ],

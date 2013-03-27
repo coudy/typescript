@@ -98,7 +98,9 @@
                             "expression": {
                                 "kind": "FalseKeyword",
                                 "width": 5,
-                                "text": "false"
+                                "text": "false",
+                                "value": false,
+                                "valueText": "false"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -139,7 +141,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     }
                 },
@@ -185,6 +189,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -211,6 +216,8 @@
                                                 "width": 32,
                                                 "fullWidth": 33,
                                                 "text": "'#1.1: +(false) === 0. Actual: '",
+                                                "value": "#1.1: +(false) === 0. Actual: ",
+                                                "valueText": "#1.1: +(false) === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -259,7 +266,9 @@
                                                         "expression": {
                                                             "kind": "FalseKeyword",
                                                             "width": 5,
-                                                            "text": "false"
+                                                            "text": "false",
+                                                            "value": false,
+                                                            "valueText": "false"
                                                         },
                                                         "closeParenToken": {
                                                             "kind": "CloseParenToken",
@@ -389,7 +398,9 @@
                                         "left": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         },
                                         "operatorToken": {
                                             "kind": "SlashToken",
@@ -415,7 +426,9 @@
                                                 "expression": {
                                                     "kind": "FalseKeyword",
                                                     "width": 5,
-                                                    "text": "false"
+                                                    "text": "false",
+                                                    "value": false,
+                                                    "valueText": "false"
                                                 },
                                                 "closeParenToken": {
                                                     "kind": "CloseParenToken",
@@ -453,6 +466,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "Number",
+                                            "value": "Number",
                                             "valueText": "Number"
                                         },
                                         "dotToken": {
@@ -464,6 +478,7 @@
                                             "kind": "IdentifierName",
                                             "width": 17,
                                             "text": "POSITIVE_INFINITY",
+                                            "value": "POSITIVE_INFINITY",
                                             "valueText": "POSITIVE_INFINITY"
                                         }
                                     }
@@ -510,6 +525,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -531,7 +547,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 35,
-                                                            "text": "'#1.2: +(false) === +0. Actual: -0'"
+                                                            "text": "'#1.2: +(false) === +0. Actual: -0'",
+                                                            "value": "#1.2: +(false) === +0. Actual: -0",
+                                                            "valueText": "#1.2: +(false) === +0. Actual: -0"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -658,7 +676,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -691,7 +711,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -736,6 +758,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -762,6 +785,8 @@
                                                 "width": 29,
                                                 "fullWidth": 30,
                                                 "text": "'#2: +(true) === 1. Actual: '",
+                                                "value": "#2: +(true) === 1. Actual: ",
+                                                "valueText": "#2: +(true) === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -810,7 +835,9 @@
                                                         "expression": {
                                                             "kind": "TrueKeyword",
                                                             "width": 4,
-                                                            "text": "true"
+                                                            "text": "true",
+                                                            "value": true,
+                                                            "valueText": "true"
                                                         },
                                                         "closeParenToken": {
                                                             "kind": "CloseParenToken",

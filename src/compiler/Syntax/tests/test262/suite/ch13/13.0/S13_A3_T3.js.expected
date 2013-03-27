@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -87,6 +88,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "arg",
+                                    "value": "arg",
                                     "valueText": "arg"
                                 }
                             }
@@ -152,6 +154,7 @@
                                     "width": 3,
                                     "fullWidth": 4,
                                     "text": "arg",
+                                    "value": "arg",
                                     "valueText": "arg",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
@@ -177,7 +180,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             },
                             "closeParenToken": {
@@ -238,6 +243,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         },
                                         "semicolonToken": {
@@ -344,6 +350,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "__func",
+                                                        "value": "__func",
                                                         "valueText": "__func"
                                                     },
                                                     "argumentList": {
@@ -362,6 +369,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 3,
                                                                     "text": "arg",
+                                                                    "value": "arg",
                                                                     "valueText": "arg"
                                                                 },
                                                                 "operatorToken": {
@@ -372,7 +380,9 @@
                                                                 "right": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "1"
+                                                                    "text": "1",
+                                                                    "value": 1,
+                                                                    "valueText": "1"
                                                                 }
                                                             }
                                                         ],
@@ -392,6 +402,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 3,
                                                     "text": "arg",
+                                                    "value": "arg",
                                                     "valueText": "arg"
                                                 }
                                             },
@@ -498,6 +509,7 @@
                                 "width": 9,
                                 "fullWidth": 10,
                                 "text": "fact_of_3",
+                                "value": "fact_of_3",
                                 "valueText": "fact_of_3",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -530,6 +542,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "__func",
+                                        "value": "__func",
                                         "valueText": "__func"
                                     },
                                     "argumentList": {
@@ -544,7 +557,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "3"
+                                                "text": "3",
+                                                "value": 3,
+                                                "valueText": "3"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -627,6 +642,7 @@
                         "width": 9,
                         "fullWidth": 10,
                         "text": "fact_of_3",
+                        "value": "fact_of_3",
                         "valueText": "fact_of_3",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -652,7 +668,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -697,6 +715,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -721,7 +740,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 44,
-                                                "text": "\"#1: fact_of_3 === 6. Actual: fact_of_3 ===\""
+                                                "text": "\"#1: fact_of_3 === 6. Actual: fact_of_3 ===\"",
+                                                "value": "#1: fact_of_3 === 6. Actual: fact_of_3 ===",
+                                                "valueText": "#1: fact_of_3 === 6. Actual: fact_of_3 ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -732,6 +753,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "fact_of_3",
+                                                "value": "fact_of_3",
                                                 "valueText": "fact_of_3"
                                             }
                                         }

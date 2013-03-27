@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "dynaString",
+                    "value": "dynaString",
                     "valueText": "dynaString"
                 },
                 "callSignature": {
@@ -87,6 +88,7 @@
                                     "kind": "IdentifierName",
                                     "width": 2,
                                     "text": "s1",
+                                    "value": "s1",
                                     "valueText": "s1"
                                 }
                             },
@@ -110,6 +112,7 @@
                                     "kind": "IdentifierName",
                                     "width": 2,
                                     "text": "s2",
+                                    "value": "s2",
                                     "valueText": "s2"
                                 }
                             }
@@ -172,6 +175,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -187,6 +191,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 2,
                                                 "text": "s1",
+                                                "value": "s1",
                                                 "valueText": "s1"
                                             }
                                         ],
@@ -209,6 +214,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -224,6 +230,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 2,
                                                 "text": "s2",
+                                                "value": "s2",
                                                 "valueText": "s2"
                                             }
                                         ],
@@ -315,6 +322,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -333,6 +341,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "dynaString",
+                                        "value": "dynaString",
                                         "valueText": "dynaString"
                                     },
                                     "argumentList": {
@@ -347,7 +356,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 32,
-                                                "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000B\""
+                                                "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000B\"",
+                                                "value": "\t\f  \u000b",
+                                                "valueText": "\t\f  \u000b"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -365,7 +376,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 122,
-                                                "text": "\"\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\""
+                                                "text": "\"\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\"",
+                                                "value": "\n\r\u2028\u2029 ᠎           \u202f 　",
+                                                "valueText": "\n\r\u2028\u2029 ᠎           \u202f 　"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -411,6 +424,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -425,7 +439,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 2,
-                                    "text": "\"\""
+                                    "text": "\"\"",
+                                    "value": "",
+                                    "valueText": ""
                                 }
                             ],
                             "closeParenToken": {
@@ -478,6 +494,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -499,7 +516,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 209,
-                                            "text": "'#1: Number(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\"+\"\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") === Number(\"\")'"
+                                            "text": "'#1: Number(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\"+\"\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") === Number(\"\")'",
+                                            "value": "#1: Number(\"\\u0009\\u000C\\u0020\\u00A0\\u000B\"+\"\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") === Number(\"\")",
+                                            "valueText": "#1: Number(\"\\u0009\\u000C\\u0020\\u00A0\\u000B\"+\"\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") === Number(\"\")"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -605,6 +624,7 @@
                                     "kind": "IdentifierName",
                                     "width": 10,
                                     "text": "dynaString",
+                                    "value": "dynaString",
                                     "valueText": "dynaString"
                                 },
                                 "argumentList": {
@@ -619,7 +639,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 61,
-                                            "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029\\u000B12345\""
+                                            "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029\\u000B12345\"",
+                                            "value": "\t\f  \n\r\u2028\u2029\u000b12345",
+                                            "valueText": "\t\f  \n\r\u2028\u2029\u000b12345"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -637,7 +659,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 157,
-                                            "text": "\"67890\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\""
+                                            "text": "\"67890\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\"",
+                                            "value": "67890\t\f  \u000b\n\r\u2028\u2029 ᠎           \u202f 　",
+                                            "valueText": "67890\t\f  \u000b\n\r\u2028\u2029 ᠎           \u202f 　"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -682,6 +706,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -696,7 +721,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 12,
-                                    "text": "\"1234567890\""
+                                    "text": "\"1234567890\"",
+                                    "value": "1234567890",
+                                    "valueText": "1234567890"
                                 }
                             ],
                             "closeParenToken": {
@@ -749,6 +776,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -770,7 +798,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 287,
-                                            "text": "'#2: +(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u000B12345\"+\"67890\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") === Number(\"1234567890\")'"
+                                            "text": "'#2: +(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u000B12345\"+\"67890\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") === Number(\"1234567890\")'",
+                                            "value": "#2: +(\"\\u0009\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029\\u000B12345\"+\"67890\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") === Number(\"1234567890\")",
+                                            "valueText": "#2: +(\"\\u0009\\u000C\\u0020\\u00A0\\u000A\\u000D\\u2028\\u2029\\u000B12345\"+\"67890\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") === Number(\"1234567890\")"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -876,6 +906,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 },
                                 "argumentList": {
@@ -894,6 +925,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 10,
                                                 "text": "dynaString",
+                                                "value": "dynaString",
                                                 "valueText": "dynaString"
                                             },
                                             "argumentList": {
@@ -908,7 +940,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 60,
-                                                        "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029Infi\""
+                                                        "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029Infi\"",
+                                                        "value": "\t\f  \u000b\n\r\u2028\u2029Infi",
+                                                        "valueText": "\t\f  \u000b\n\r\u2028\u2029Infi"
                                                     },
                                                     {
                                                         "kind": "CommaToken",
@@ -926,7 +960,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 156,
-                                                        "text": "\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\""
+                                                        "text": "\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\"",
+                                                        "value": "nity\t\f  \u000b\n\r\u2028\u2029 ᠎           \u202f 　",
+                                                        "valueText": "nity\t\f  \u000b\n\r\u2028\u2029 ᠎           \u202f 　"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -972,6 +1008,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 },
                                 "argumentList": {
@@ -986,7 +1023,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 10,
-                                            "text": "\"Infinity\""
+                                            "text": "\"Infinity\"",
+                                            "value": "Infinity",
+                                            "valueText": "Infinity"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1046,6 +1085,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1067,7 +1107,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 287,
-                                            "text": "'#3: Number(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029Infi\"+\"nity\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") == Number(\"Infinity\")'"
+                                            "text": "'#3: Number(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029Infi\"+\"nity\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") == Number(\"Infinity\")'",
+                                            "value": "#3: Number(\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029Infi\"+\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") == Number(\"Infinity\")",
+                                            "valueText": "#3: Number(\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029Infi\"+\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") == Number(\"Infinity\")"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1173,6 +1215,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 },
                                 "argumentList": {
@@ -1191,6 +1234,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 10,
                                                 "text": "dynaString",
+                                                "value": "dynaString",
                                                 "valueText": "dynaString"
                                             },
                                             "argumentList": {
@@ -1205,7 +1249,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 61,
-                                                        "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029-Infi\""
+                                                        "text": "\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029-Infi\"",
+                                                        "value": "\t\f  \u000b\n\r\u2028\u2029-Infi",
+                                                        "valueText": "\t\f  \u000b\n\r\u2028\u2029-Infi"
                                                     },
                                                     {
                                                         "kind": "CommaToken",
@@ -1223,7 +1269,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 156,
-                                                        "text": "\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\""
+                                                        "text": "\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\"",
+                                                        "value": "nity\t\f  \u000b\n\r\u2028\u2029 ᠎           \u202f 　",
+                                                        "valueText": "nity\t\f  \u000b\n\r\u2028\u2029 ᠎           \u202f 　"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -1269,6 +1317,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 },
                                 "argumentList": {
@@ -1291,7 +1340,9 @@
                                             "operand": {
                                                 "kind": "StringLiteral",
                                                 "width": 10,
-                                                "text": "\"Infinity\""
+                                                "text": "\"Infinity\"",
+                                                "value": "Infinity",
+                                                "valueText": "Infinity"
                                             }
                                         }
                                     ],
@@ -1352,6 +1403,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1373,7 +1425,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 289,
-                                            "text": "'#4: Number(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029-Infi\"+\"nity\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") == Number(\"-Infinity\")'"
+                                            "text": "'#4: Number(\"\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029-Infi\"+\"nity\\\\u0009\\\\u000C\\\\u0020\\\\u00A0\\\\u000B\\\\u000A\\\\u000D\\\\u2028\\\\u2029\\\\u1680\\\\u180E\\\\u2000\\\\u2001\\\\u2002\\\\u2003\\\\u2004\\\\u2005\\\\u2006\\\\u2007\\\\u2008\\\\u2009\\\\u200A\\\\u202F\\\\u205F\\\\u3000\") == Number(\"-Infinity\")'",
+                                            "value": "#4: Number(\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029-Infi\"+\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") == Number(\"-Infinity\")",
+                                            "valueText": "#4: Number(\"\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029-Infi\"+\"nity\\u0009\\u000C\\u0020\\u00A0\\u000B\\u000A\\u000D\\u2028\\u2029\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u202F\\u205F\\u3000\") == Number(\"-Infinity\")"
                                         }
                                     ],
                                     "closeParenToken": {

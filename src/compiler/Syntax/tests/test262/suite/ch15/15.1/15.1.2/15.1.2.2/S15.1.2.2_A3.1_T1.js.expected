@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "parseInt",
+                            "value": "parseInt",
                             "valueText": "parseInt"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 4,
-                                    "text": "\"11\""
+                                    "text": "\"11\"",
+                                    "value": "11",
+                                    "valueText": "11"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -116,7 +119,9 @@
                                 {
                                     "kind": "FalseKeyword",
                                     "width": 5,
-                                    "text": "false"
+                                    "text": "false",
+                                    "value": false,
+                                    "valueText": "false"
                                 }
                             ],
                             "closeParenToken": {
@@ -154,6 +159,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "parseInt",
+                            "value": "parseInt",
                             "valueText": "parseInt"
                         },
                         "argumentList": {
@@ -168,7 +174,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 4,
-                                    "text": "\"11\""
+                                    "text": "\"11\"",
+                                    "value": "11",
+                                    "valueText": "11"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -186,7 +194,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 2,
-                                    "text": "10"
+                                    "text": "10",
+                                    "value": 10,
+                                    "valueText": "10"
                                 }
                             ],
                             "closeParenToken": {
@@ -239,6 +249,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -265,6 +276,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#1: parseInt(\"11\", false) === parseInt(\"11\", 10). Actual: '",
+                                                "value": "#1: parseInt(\"11\", false) === parseInt(\"11\", 10). Actual: ",
+                                                "valueText": "#1: parseInt(\"11\", false) === parseInt(\"11\", 10). Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -301,6 +314,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "parseInt",
+                                                        "value": "parseInt",
                                                         "valueText": "parseInt"
                                                     },
                                                     "argumentList": {
@@ -315,7 +329,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 4,
-                                                                "text": "\"11\""
+                                                                "text": "\"11\"",
+                                                                "value": "11",
+                                                                "valueText": "11"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -333,7 +349,9 @@
                                                             {
                                                                 "kind": "FalseKeyword",
                                                                 "width": 5,
-                                                                "text": "false"
+                                                                "text": "false",
+                                                                "value": false,
+                                                                "valueText": "false"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -438,6 +456,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
+                            "value": "isNaN",
                             "valueText": "isNaN"
                         },
                         "argumentList": {
@@ -456,6 +475,7 @@
                                         "kind": "IdentifierName",
                                         "width": 8,
                                         "text": "parseInt",
+                                        "value": "parseInt",
                                         "valueText": "parseInt"
                                     },
                                     "argumentList": {
@@ -470,7 +490,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 4,
-                                                "text": "\"11\""
+                                                "text": "\"11\"",
+                                                "value": "11",
+                                                "valueText": "11"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -488,7 +510,9 @@
                                             {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -530,7 +554,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -575,6 +601,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -601,6 +628,8 @@
                                                 "width": 53,
                                                 "fullWidth": 54,
                                                 "text": "'#2: parseInt(\"11\", true) === Not-a-Number. Actual: '",
+                                                "value": "#2: parseInt(\"11\", true) === Not-a-Number. Actual: ",
+                                                "valueText": "#2: parseInt(\"11\", true) === Not-a-Number. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -637,6 +666,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "parseInt",
+                                                        "value": "parseInt",
                                                         "valueText": "parseInt"
                                                     },
                                                     "argumentList": {
@@ -651,7 +681,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 4,
-                                                                "text": "\"11\""
+                                                                "text": "\"11\"",
+                                                                "value": "11",
+                                                                "valueText": "11"
                                                             },
                                                             {
                                                                 "kind": "CommaToken",
@@ -669,7 +701,9 @@
                                                             {
                                                                 "kind": "TrueKeyword",
                                                                 "width": 4,
-                                                                "text": "true"
+                                                                "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true"
                                                             }
                                                         ],
                                                         "closeParenToken": {

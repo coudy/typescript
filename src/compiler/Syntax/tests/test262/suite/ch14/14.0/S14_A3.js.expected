@@ -107,6 +107,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__func",
+                            "value": "__func",
                             "valueText": "__func",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -133,7 +134,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 10,
-                        "text": "\"function\""
+                        "text": "\"function\"",
+                        "value": "function",
+                        "valueText": "function"
                     }
                 },
                 "closeParenToken": {
@@ -178,6 +181,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -202,7 +206,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 62,
-                                                "text": "'#1: typeof __func === \"function\". Actual:  typeof __func ==='"
+                                                "text": "'#1: typeof __func === \"function\". Actual:  typeof __func ==='",
+                                                "value": "#1: typeof __func === \"function\". Actual:  typeof __func ===",
+                                                "valueText": "#1: typeof __func === \"function\". Actual:  typeof __func ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -238,6 +244,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -375,6 +382,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "__gunc",
+                            "value": "__gunc",
                             "valueText": "__gunc",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -401,7 +409,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -446,6 +456,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -470,7 +481,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 63,
-                                                "text": "'#2: typeof __gunc === \"undefined\". Actual:  typeof __gunc ==='"
+                                                "text": "'#2: typeof __gunc === \"undefined\". Actual:  typeof __gunc ==='",
+                                                "value": "#2: typeof __gunc === \"undefined\". Actual:  typeof __gunc ===",
+                                                "valueText": "#2: typeof __gunc === \"undefined\". Actual:  typeof __gunc ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -506,6 +519,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "__gunc",
+                                                    "value": "__gunc",
                                                     "valueText": "__gunc",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -604,6 +618,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -673,6 +688,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "__gunc",
+                                "value": "__gunc",
                                 "valueText": "__gunc"
                             },
                             "callSignature": {
@@ -724,7 +740,9 @@
                                         "expression": {
                                             "kind": "TrueKeyword",
                                             "width": 4,
-                                            "text": "true"
+                                            "text": "true",
+                                            "value": true,
+                                            "valueText": "true"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",

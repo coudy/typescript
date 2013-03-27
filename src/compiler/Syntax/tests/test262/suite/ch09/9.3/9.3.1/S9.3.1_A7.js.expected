@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"1234.5678\""
+                                    "text": "\"1234.5678\"",
+                                    "value": "1234.5678",
+                                    "valueText": "1234.5678"
                                 }
                             ],
                             "closeParenToken": {
@@ -139,6 +142,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -153,7 +157,9 @@
                                     {
                                         "kind": "StringLiteral",
                                         "width": 6,
-                                        "text": "\"1234\""
+                                        "text": "\"1234\"",
+                                        "value": "1234",
+                                        "valueText": "1234"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -198,7 +204,9 @@
                                         "expression": {
                                             "kind": "StringLiteral",
                                             "width": 6,
-                                            "text": "\"5678\""
+                                            "text": "\"5678\"",
+                                            "value": "5678",
+                                            "valueText": "5678"
                                         },
                                         "closeParenToken": {
                                             "kind": "CloseParenToken",
@@ -215,7 +223,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 4,
-                                    "text": "1e-4"
+                                    "text": "1e-4",
+                                    "value": 0.0001,
+                                    "valueText": "0.0001"
                                 }
                             },
                             "closeParenToken": {
@@ -268,6 +278,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -289,7 +300,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 61,
-                                            "text": "'#1: Number(\"1234.5678\") === Number(\"1234\")+(+(\"5678\")*1e-4)'"
+                                            "text": "'#1: Number(\"1234.5678\") === Number(\"1234\")+(+(\"5678\")*1e-4)'",
+                                            "value": "#1: Number(\"1234.5678\") === Number(\"1234\")+(+(\"5678\")*1e-4)",
+                                            "valueText": "#1: Number(\"1234.5678\") === Number(\"1234\")+(+(\"5678\")*1e-4)"
                                         }
                                     ],
                                     "closeParenToken": {

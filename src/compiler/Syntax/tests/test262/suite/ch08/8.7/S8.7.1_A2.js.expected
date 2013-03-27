@@ -74,6 +74,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -102,7 +103,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             }
                         }
@@ -182,6 +185,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y"
                     }
                 },
@@ -219,6 +223,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -245,6 +250,8 @@
                                                 "width": 43,
                                                 "fullWidth": 44,
                                                 "text": "'#1: y = 1; (delete y) === false. Actual: '",
+                                                "value": "#1: y = 1; (delete y) === false. Actual: ",
+                                                "valueText": "#1: y = 1; (delete y) === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -302,6 +309,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "y",
+                                                            "value": "y",
                                                             "valueText": "y"
                                                         }
                                                     },
@@ -437,6 +445,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -462,7 +471,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -507,6 +518,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -533,6 +545,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#2: y = 1; delete y; y === 1. Actual: '",
+                                                "value": "#2: y = 1; delete y; y === 1. Actual: ",
+                                                "valueText": "#2: y = 1; delete y; y === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -566,6 +580,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "y",
+                                                    "value": "y",
                                                     "valueText": "y"
                                                 },
                                                 "closeParenToken": {

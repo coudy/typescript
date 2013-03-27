@@ -75,6 +75,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 18,
-                                    "text": "9007199254740994.0"
+                                    "text": "9007199254740994.0",
+                                    "value": 9007199254740994,
+                                    "valueText": "9007199254740994"
                                 }
                             }
                         }
@@ -165,6 +168,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -200,6 +204,8 @@
                                         "width": 3,
                                         "fullWidth": 4,
                                         "text": "1.0",
+                                        "value": 1,
+                                        "valueText": "1",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -228,7 +234,9 @@
                                         "left": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         },
                                         "operatorToken": {
                                             "kind": "SlashToken",
@@ -238,7 +246,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 7,
-                                            "text": "65536.0"
+                                            "text": "65536.0",
+                                            "value": 65536,
+                                            "valueText": "65536"
                                         }
                                     }
                                 }
@@ -290,6 +300,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "z",
+                                "value": "z",
                                 "valueText": "z",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -323,6 +334,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -349,6 +361,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "y",
+                                        "value": "y",
                                         "valueText": "y"
                                     }
                                 }
@@ -400,6 +413,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "d",
+                                "value": "d",
                                 "valueText": "d",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -433,6 +447,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "z",
+                                        "value": "z",
                                         "valueText": "z",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -459,6 +474,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x"
                                     }
                                 }
@@ -518,6 +534,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "d",
+                        "value": "d",
                         "valueText": "d",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -543,7 +560,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -580,6 +599,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -606,6 +626,8 @@
                                                 "width": 106,
                                                 "fullWidth": 107,
                                                 "text": "'#1: var x = 9007199254740994.0; var y = 1.0 - 1/65536.0; var z = x + y; var d = z - x; d === 0. Actual: '",
+                                                "value": "#1: var x = 9007199254740994.0; var y = 1.0 - 1/65536.0; var z = x + y; var d = z - x; d === 0. Actual: ",
+                                                "valueText": "#1: var x = 9007199254740994.0; var y = 1.0 - 1/65536.0; var z = x + y; var d = z - x; d === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -639,6 +661,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "d",
+                                                    "value": "d",
                                                     "valueText": "d"
                                                 },
                                                 "closeParenToken": {

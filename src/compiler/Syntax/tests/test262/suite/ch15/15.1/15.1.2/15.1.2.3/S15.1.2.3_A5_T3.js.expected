@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -98,7 +99,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\"+.1\""
+                                    "text": "\"+.1\"",
+                                    "value": "+.1",
+                                    "valueText": "+.1"
                                 }
                             ],
                             "closeParenToken": {
@@ -132,7 +135,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "0.1"
+                        "text": "0.1",
+                        "value": 0.1,
+                        "valueText": "0.1"
                     }
                 },
                 "closeParenToken": {
@@ -177,6 +182,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -203,6 +209,8 @@
                                                 "width": 41,
                                                 "fullWidth": 42,
                                                 "text": "'#1: parseFloat(\"+.1\") === 0.1. Actual: '",
+                                                "value": "#1: parseFloat(\"+.1\") === 0.1. Actual: ",
+                                                "valueText": "#1: parseFloat(\"+.1\") === 0.1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -239,6 +247,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -253,7 +262,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 5,
-                                                                "text": "\"+.1\""
+                                                                "text": "\"+.1\"",
+                                                                "value": "+.1",
+                                                                "valueText": "+.1"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -358,6 +369,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -372,7 +384,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 5,
-                                    "text": "\".01\""
+                                    "text": "\".01\"",
+                                    "value": ".01",
+                                    "valueText": ".01"
                                 }
                             ],
                             "closeParenToken": {
@@ -406,7 +420,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 4,
-                        "text": "0.01"
+                        "text": "0.01",
+                        "value": 0.01,
+                        "valueText": "0.01"
                     }
                 },
                 "closeParenToken": {
@@ -451,6 +467,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -477,6 +494,8 @@
                                                 "width": 42,
                                                 "fullWidth": 43,
                                                 "text": "'#2: parseFloat(\".01\") === 0.01. Actual: '",
+                                                "value": "#2: parseFloat(\".01\") === 0.01. Actual: ",
+                                                "valueText": "#2: parseFloat(\".01\") === 0.01. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -513,6 +532,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -527,7 +547,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 5,
-                                                                "text": "\".01\""
+                                                                "text": "\".01\"",
+                                                                "value": ".01",
+                                                                "valueText": ".01"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -632,6 +654,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -646,7 +669,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"+.22e-1\""
+                                    "text": "\"+.22e-1\"",
+                                    "value": "+.22e-1",
+                                    "valueText": "+.22e-1"
                                 }
                             ],
                             "closeParenToken": {
@@ -680,7 +705,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 5,
-                        "text": "0.022"
+                        "text": "0.022",
+                        "value": 0.022,
+                        "valueText": "0.022"
                     }
                 },
                 "closeParenToken": {
@@ -725,6 +752,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -751,6 +779,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#3: parseFloat(\"+.22e-1\") === 0.022. Actual: '",
+                                                "value": "#3: parseFloat(\"+.22e-1\") === 0.022. Actual: ",
+                                                "valueText": "#3: parseFloat(\"+.22e-1\") === 0.022. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -787,6 +817,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -801,7 +832,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 9,
-                                                                "text": "\"+.22e-1\""
+                                                                "text": "\"+.22e-1\"",
+                                                                "value": "+.22e-1",
+                                                                "valueText": "+.22e-1"
                                                             }
                                                         ],
                                                         "closeParenToken": {

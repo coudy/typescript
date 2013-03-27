@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,6 +128,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -141,7 +143,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "0"
+                                                "text": "0",
+                                                "value": 0,
+                                                "valueText": "0"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -151,7 +155,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -161,7 +167,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "2"
+                                                "text": "2",
+                                                "value": 2,
+                                                "valueText": "2"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -171,7 +179,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "3"
+                                                "text": "3",
+                                                "value": 3,
+                                                "valueText": "3"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -234,6 +244,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -245,6 +256,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -260,7 +272,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 2,
-                                    "text": "\"\""
+                                    "text": "\"\"",
+                                    "value": "",
+                                    "valueText": ""
                                 }
                             ],
                             "closeParenToken": {
@@ -294,7 +308,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"0123\""
+                        "text": "\"0123\"",
+                        "value": "0123",
+                        "valueText": "0123"
                     }
                 },
                 "closeParenToken": {
@@ -339,6 +355,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -365,6 +382,8 @@
                                                 "width": 61,
                                                 "fullWidth": 62,
                                                 "text": "'#0: x = new Array(0,1,2,3); x.join(\"\") === \"0123\". Actual: '",
+                                                "value": "#0: x = new Array(0,1,2,3); x.join(\"\") === \"0123\". Actual: ",
+                                                "valueText": "#0: x = new Array(0,1,2,3); x.join(\"\") === \"0123\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -404,6 +423,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -415,6 +435,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -430,7 +451,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 2,
-                                                                "text": "\"\""
+                                                                "text": "\"\"",
+                                                                "value": "",
+                                                                "valueText": ""
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -498,6 +521,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -557,6 +581,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "Array",
+                            "value": "Array",
                             "valueText": "Array"
                         },
                         "argumentList": {
@@ -571,7 +596,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -581,7 +608,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -591,7 +620,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -601,7 +632,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "3"
+                                    "text": "3",
+                                    "value": 3,
+                                    "valueText": "3"
                                 }
                             ],
                             "closeParenToken": {
@@ -661,6 +694,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -672,6 +706,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -687,7 +722,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 4,
-                                    "text": "\"\\\\\""
+                                    "text": "\"\\\\\"",
+                                    "value": "\\",
+                                    "valueText": "\\"
                                 }
                             ],
                             "closeParenToken": {
@@ -721,7 +758,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 12,
-                        "text": "\"0\\\\1\\\\2\\\\3\""
+                        "text": "\"0\\\\1\\\\2\\\\3\"",
+                        "value": "0\\1\\2\\3",
+                        "valueText": "0\\1\\2\\3"
                     }
                 },
                 "closeParenToken": {
@@ -766,6 +805,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -792,6 +832,8 @@
                                                 "width": 69,
                                                 "fullWidth": 70,
                                                 "text": "'#1: x = new Array(0,1,2,3); x.join(\"\\\\\") === \"0\\\\1\\\\2\\\\3\". Actual: '",
+                                                "value": "#1: x = new Array(0,1,2,3); x.join(\"\\\") === \"0\\1\\2\\3\". Actual: ",
+                                                "valueText": "#1: x = new Array(0,1,2,3); x.join(\"\\\") === \"0\\1\\2\\3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -831,6 +873,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -842,6 +885,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -857,7 +901,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 4,
-                                                                "text": "\"\\\\\""
+                                                                "text": "\"\\\\\"",
+                                                                "value": "\\",
+                                                                "valueText": "\\"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -965,6 +1011,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -976,6 +1023,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -991,7 +1039,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 3,
-                                    "text": "\"&\""
+                                    "text": "\"&\"",
+                                    "value": "&",
+                                    "valueText": "&"
                                 }
                             ],
                             "closeParenToken": {
@@ -1025,7 +1075,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"0&1&2&3\""
+                        "text": "\"0&1&2&3\"",
+                        "value": "0&1&2&3",
+                        "valueText": "0&1&2&3"
                     }
                 },
                 "closeParenToken": {
@@ -1070,6 +1122,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1096,6 +1149,8 @@
                                                 "width": 65,
                                                 "fullWidth": 66,
                                                 "text": "'#2: x = new Array(0,1,2,3); x.join(\"&\") === \"0&1&2&3\". Actual: '",
+                                                "value": "#2: x = new Array(0,1,2,3); x.join(\"&\") === \"0&1&2&3\". Actual: ",
+                                                "valueText": "#2: x = new Array(0,1,2,3); x.join(\"&\") === \"0&1&2&3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1135,6 +1190,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -1146,6 +1202,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -1161,7 +1218,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 3,
-                                                                "text": "\"&\""
+                                                                "text": "\"&\"",
+                                                                "value": "&",
+                                                                "valueText": "&"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -1269,6 +1328,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -1280,6 +1340,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -1295,7 +1356,9 @@
                                 {
                                     "kind": "TrueKeyword",
                                     "width": 4,
-                                    "text": "true"
+                                    "text": "true",
+                                    "value": true,
+                                    "valueText": "true"
                                 }
                             ],
                             "closeParenToken": {
@@ -1329,7 +1392,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 18,
-                        "text": "\"0true1true2true3\""
+                        "text": "\"0true1true2true3\"",
+                        "value": "0true1true2true3",
+                        "valueText": "0true1true2true3"
                     }
                 },
                 "closeParenToken": {
@@ -1374,6 +1439,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1400,6 +1466,8 @@
                                                 "width": 75,
                                                 "fullWidth": 76,
                                                 "text": "'#3: x = new Array(0,1,2,3); x.join(true) === \"0true1true2true3\". Actual: '",
+                                                "value": "#3: x = new Array(0,1,2,3); x.join(true) === \"0true1true2true3\". Actual: ",
+                                                "valueText": "#3: x = new Array(0,1,2,3); x.join(true) === \"0true1true2true3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1439,6 +1507,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -1450,6 +1519,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -1465,7 +1535,9 @@
                                                             {
                                                                 "kind": "TrueKeyword",
                                                                 "width": 4,
-                                                                "text": "true"
+                                                                "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -1573,6 +1645,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -1584,6 +1657,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -1600,6 +1674,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "Infinity",
+                                    "value": "Infinity",
                                     "valueText": "Infinity"
                                 }
                             ],
@@ -1634,7 +1709,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 30,
-                        "text": "\"0Infinity1Infinity2Infinity3\""
+                        "text": "\"0Infinity1Infinity2Infinity3\"",
+                        "value": "0Infinity1Infinity2Infinity3",
+                        "valueText": "0Infinity1Infinity2Infinity3"
                     }
                 },
                 "closeParenToken": {
@@ -1679,6 +1756,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1705,6 +1783,8 @@
                                                 "width": 91,
                                                 "fullWidth": 92,
                                                 "text": "'#4: x = new Array(0,1,2,3); x.join(Infinity) === \"0Infinity1Infinity2Infinity3\". Actual: '",
+                                                "value": "#4: x = new Array(0,1,2,3); x.join(Infinity) === \"0Infinity1Infinity2Infinity3\". Actual: ",
+                                                "valueText": "#4: x = new Array(0,1,2,3); x.join(Infinity) === \"0Infinity1Infinity2Infinity3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1744,6 +1824,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -1755,6 +1836,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -1771,6 +1853,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 8,
                                                                 "text": "Infinity",
+                                                                "value": "Infinity",
                                                                 "valueText": "Infinity"
                                                             }
                                                         ],
@@ -1879,6 +1962,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -1890,6 +1974,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -1939,7 +2024,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 18,
-                        "text": "\"0null1null2null3\""
+                        "text": "\"0null1null2null3\"",
+                        "value": "0null1null2null3",
+                        "valueText": "0null1null2null3"
                     }
                 },
                 "closeParenToken": {
@@ -1984,6 +2071,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2010,6 +2098,8 @@
                                                 "width": 75,
                                                 "fullWidth": 76,
                                                 "text": "'#3: 5 = new Array(0,1,2,3); x.join(null) === \"0null1null2null3\". Actual: '",
+                                                "value": "#3: 5 = new Array(0,1,2,3); x.join(null) === \"0null1null2null3\". Actual: ",
+                                                "valueText": "#3: 5 = new Array(0,1,2,3); x.join(null) === \"0null1null2null3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2049,6 +2139,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -2060,6 +2151,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -2183,6 +2275,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -2194,6 +2287,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -2210,6 +2304,7 @@
                                     "kind": "IdentifierName",
                                     "width": 9,
                                     "text": "undefined",
+                                    "value": "undefined",
                                     "valueText": "undefined"
                                 }
                             ],
@@ -2244,7 +2339,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"0,1,2,3\""
+                        "text": "\"0,1,2,3\"",
+                        "value": "0,1,2,3",
+                        "valueText": "0,1,2,3"
                     }
                 },
                 "closeParenToken": {
@@ -2289,6 +2386,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2315,6 +2413,8 @@
                                                 "width": 71,
                                                 "fullWidth": 72,
                                                 "text": "'#6: x = new Array(0,1,2,3); x.join(undefined) === \"0,1,2,3\". Actual: '",
+                                                "value": "#6: x = new Array(0,1,2,3); x.join(undefined) === \"0,1,2,3\". Actual: ",
+                                                "valueText": "#6: x = new Array(0,1,2,3); x.join(undefined) === \"0,1,2,3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2354,6 +2454,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -2365,6 +2466,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -2381,6 +2483,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 9,
                                                                 "text": "undefined",
+                                                                "value": "undefined",
                                                                 "valueText": "undefined"
                                                             }
                                                         ],
@@ -2489,6 +2592,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -2500,6 +2604,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -2516,6 +2621,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "NaN",
+                                    "value": "NaN",
                                     "valueText": "NaN"
                                 }
                             ],
@@ -2550,7 +2656,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 15,
-                        "text": "\"0NaN1NaN2NaN3\""
+                        "text": "\"0NaN1NaN2NaN3\"",
+                        "value": "0NaN1NaN2NaN3",
+                        "valueText": "0NaN1NaN2NaN3"
                     }
                 },
                 "closeParenToken": {
@@ -2595,6 +2703,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2621,6 +2730,8 @@
                                                 "width": 73,
                                                 "fullWidth": 74,
                                                 "text": "'#7: x = new Array(0,1,2,3); x.join(\"NaN\") === \"0NaN1NaN2NaN3\". Actual: '",
+                                                "value": "#7: x = new Array(0,1,2,3); x.join(\"NaN\") === \"0NaN1NaN2NaN3\". Actual: ",
+                                                "valueText": "#7: x = new Array(0,1,2,3); x.join(\"NaN\") === \"0NaN1NaN2NaN3\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2660,6 +2771,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -2671,6 +2783,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -2686,7 +2799,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 5,
-                                                                "text": "\"NaN\""
+                                                                "text": "\"NaN\"",
+                                                                "value": "NaN",
+                                                                "valueText": "NaN"
                                                             }
                                                         ],
                                                         "closeParenToken": {

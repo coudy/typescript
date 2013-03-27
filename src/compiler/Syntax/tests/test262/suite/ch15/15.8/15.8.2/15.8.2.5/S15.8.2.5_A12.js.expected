@@ -20,6 +20,7 @@
                         "width": 8,
                         "fullWidth": 383,
                         "text": "$INCLUDE",
+                        "value": "$INCLUDE",
                         "valueText": "$INCLUDE",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -71,7 +72,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 19,
-                                "text": "\"math_precision.js\""
+                                "text": "\"math_precision.js\"",
+                                "value": "math_precision.js",
+                                "valueText": "math_precision.js"
                             }
                         ],
                         "closeParenToken": {
@@ -106,6 +109,7 @@
                         "kind": "IdentifierName",
                         "width": 8,
                         "text": "$INCLUDE",
+                        "value": "$INCLUDE",
                         "valueText": "$INCLUDE"
                     },
                     "argumentList": {
@@ -120,7 +124,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 17,
-                                "text": "\"math_isequal.js\""
+                                "text": "\"math_isequal.js\"",
+                                "value": "math_isequal.js",
+                                "valueText": "math_isequal.js"
                             }
                         ],
                         "closeParenToken": {
@@ -160,6 +166,7 @@
                         "width": 1,
                         "fullWidth": 15,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -214,7 +221,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     }
                 },
@@ -244,6 +253,7 @@
                         "width": 1,
                         "fullWidth": 29,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -299,6 +309,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "Array",
+                            "value": "Array",
                             "valueText": "Array"
                         },
                         "argumentList": {
@@ -346,6 +357,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -356,7 +368,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -396,7 +410,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 17,
-                            "text": "0.000000000000001"
+                            "text": "0.000000000000001",
+                            "value": 1e-15,
+                            "valueText": "1e-15"
                         }
                     }
                 },
@@ -428,6 +444,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -438,7 +455,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "2"
+                            "text": "2",
+                            "value": 2,
+                            "valueText": "2"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -479,6 +498,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "Infinity",
+                            "value": "Infinity",
                             "valueText": "Infinity"
                         }
                     }
@@ -511,6 +531,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -521,7 +542,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -561,7 +584,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -595,6 +620,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "ynum",
+                        "value": "ynum",
                         "valueText": "ynum",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -620,7 +646,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "3"
+                        "text": "3",
+                        "value": 3,
+                        "valueText": "3"
                     }
                 },
                 "semicolonToken": {
@@ -676,6 +704,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -701,7 +730,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "firstSemicolonToken": {
@@ -725,6 +756,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -751,6 +783,7 @@
                         "kind": "IdentifierName",
                         "width": 4,
                         "text": "ynum",
+                        "value": "ynum",
                         "valueText": "ynum"
                     }
                 },
@@ -774,6 +807,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "i",
+                        "value": "i",
                         "valueText": "i"
                     },
                     "operatorToken": {
@@ -861,6 +895,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "isEqual",
+                                        "value": "isEqual",
                                         "valueText": "isEqual"
                                     },
                                     "argumentList": {
@@ -883,6 +918,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "Math",
+                                                        "value": "Math",
                                                         "valueText": "Math"
                                                     },
                                                     "dotToken": {
@@ -894,6 +930,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "atan2",
+                                                        "value": "atan2",
                                                         "valueText": "atan2"
                                                     }
                                                 },
@@ -913,6 +950,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "y",
+                                                                "value": "y",
                                                                 "valueText": "y"
                                                             },
                                                             "openBracketToken": {
@@ -924,6 +962,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "i",
+                                                                "value": "i",
                                                                 "valueText": "i"
                                                             },
                                                             "closeBracketToken": {
@@ -941,6 +980,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         }
                                                     ],
@@ -991,6 +1031,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 4,
                                                                 "text": "Math",
+                                                                "value": "Math",
                                                                 "valueText": "Math"
                                                             },
                                                             "dotToken": {
@@ -1002,6 +1043,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 2,
                                                                 "text": "PI",
+                                                                "value": "PI",
                                                                 "valueText": "PI"
                                                             }
                                                         },
@@ -1020,7 +1062,9 @@
                                                 "right": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "2"
+                                                    "text": "2",
+                                                    "value": 2,
+                                                    "valueText": "2"
                                                 }
                                             }
                                         ],
@@ -1057,6 +1101,7 @@
                                         "width": 5,
                                         "fullWidth": 7,
                                         "text": "$FAIL",
+                                        "value": "$FAIL",
                                         "valueText": "$FAIL",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -1095,6 +1140,8 @@
                                                                     "width": 26,
                                                                     "fullWidth": 27,
                                                                     "text": "\"#1: Math.abs(Math.atan2(\"",
+                                                                    "value": "#1: Math.abs(Math.atan2(",
+                                                                    "valueText": "#1: Math.abs(Math.atan2(",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -1123,6 +1170,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "y",
+                                                                        "value": "y",
                                                                         "valueText": "y"
                                                                     },
                                                                     "openBracketToken": {
@@ -1134,6 +1182,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 1,
                                                                         "text": "i",
+                                                                        "value": "i",
                                                                         "valueText": "i"
                                                                     },
                                                                     "closeBracketToken": {
@@ -1169,6 +1218,8 @@
                                                                 "width": 4,
                                                                 "fullWidth": 5,
                                                                 "text": "\", \"",
+                                                                "value": ", ",
+                                                                "valueText": ", ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -1196,6 +1247,7 @@
                                                             "width": 1,
                                                             "fullWidth": 2,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -1224,6 +1276,8 @@
                                                         "width": 24,
                                                         "fullWidth": 25,
                                                         "text": "\") + ((Math.PI)/2)) >= \"",
+                                                        "value": ") + ((Math.PI)/2)) >= ",
+                                                        "valueText": ") + ((Math.PI)/2)) >= ",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -1250,6 +1304,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "prec",
+                                                    "value": "prec",
                                                     "valueText": "prec"
                                                 }
                                             }

@@ -85,6 +85,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -107,7 +108,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 3,
-                                        "text": "1.1"
+                                        "text": "1.1",
+                                        "value": 1.1,
+                                        "valueText": "1.1"
                                     }
                                 }
                             ],
@@ -146,6 +149,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -160,7 +164,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 6,
-                                    "text": "\"-1.1\""
+                                    "text": "\"-1.1\"",
+                                    "value": "-1.1",
+                                    "valueText": "-1.1"
                                 }
                             ],
                             "closeParenToken": {
@@ -213,6 +219,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -239,6 +246,8 @@
                                                 "width": 55,
                                                 "fullWidth": 56,
                                                 "text": "'#1: parseFloat(-1.1) === parseFloat(\"-1.1\"). Actual: '",
+                                                "value": "#1: parseFloat(-1.1) === parseFloat(\"-1.1\"). Actual: ",
+                                                "valueText": "#1: parseFloat(-1.1) === parseFloat(\"-1.1\"). Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -275,6 +284,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -297,7 +307,9 @@
                                                                 "operand": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 3,
-                                                                    "text": "1.1"
+                                                                    "text": "1.1",
+                                                                    "value": 1.1,
+                                                                    "valueText": "1.1"
                                                                 }
                                                             }
                                                         ],
@@ -403,6 +415,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -418,6 +431,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "Infinity",
+                                    "value": "Infinity",
                                     "valueText": "Infinity"
                                 }
                             ],
@@ -456,6 +470,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -470,7 +485,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 10,
-                                    "text": "\"Infinity\""
+                                    "text": "\"Infinity\"",
+                                    "value": "Infinity",
+                                    "valueText": "Infinity"
                                 }
                             ],
                             "closeParenToken": {
@@ -523,6 +540,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -549,6 +567,8 @@
                                                 "width": 63,
                                                 "fullWidth": 64,
                                                 "text": "'#2: parseFloat(Infinity) === parseFloat(\"Infinity\"). Actual: '",
+                                                "value": "#2: parseFloat(Infinity) === parseFloat(\"Infinity\"). Actual: ",
+                                                "valueText": "#2: parseFloat(Infinity) === parseFloat(\"Infinity\"). Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -585,6 +605,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -600,6 +621,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 8,
                                                                 "text": "Infinity",
+                                                                "value": "Infinity",
                                                                 "valueText": "Infinity"
                                                             }
                                                         ],
@@ -705,6 +727,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         },
                         "argumentList": {
@@ -723,6 +746,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "parseFloat",
+                                        "value": "parseFloat",
                                         "valueText": "parseFloat"
                                     },
                                     "argumentList": {
@@ -738,6 +762,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "NaN",
+                                                "value": "NaN",
                                                 "valueText": "NaN"
                                             }
                                         ],
@@ -780,7 +805,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"NaN\""
+                        "text": "\"NaN\"",
+                        "value": "NaN",
+                        "valueText": "NaN"
                     }
                 },
                 "closeParenToken": {
@@ -825,6 +852,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -851,6 +879,8 @@
                                                 "width": 49,
                                                 "fullWidth": 50,
                                                 "text": "'#3: String(parseFloat(NaN)) === \"NaN\". Actual: '",
+                                                "value": "#3: String(parseFloat(NaN)) === \"NaN\". Actual: ",
+                                                "valueText": "#3: String(parseFloat(NaN)) === \"NaN\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -887,6 +917,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "String",
+                                                        "value": "String",
                                                         "valueText": "String"
                                                     },
                                                     "argumentList": {
@@ -905,6 +936,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 10,
                                                                     "text": "parseFloat",
+                                                                    "value": "parseFloat",
                                                                     "valueText": "parseFloat"
                                                                 },
                                                                 "argumentList": {
@@ -920,6 +952,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 3,
                                                                             "text": "NaN",
+                                                                            "value": "NaN",
                                                                             "valueText": "NaN"
                                                                         }
                                                                     ],
@@ -1033,6 +1066,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -1047,7 +1081,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 6,
-                                    "text": ".01e+2"
+                                    "text": ".01e+2",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             ],
                             "closeParenToken": {
@@ -1085,6 +1121,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -1099,7 +1136,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 8,
-                                    "text": "\".01e+2\""
+                                    "text": "\".01e+2\"",
+                                    "value": ".01e+2",
+                                    "valueText": ".01e+2"
                                 }
                             ],
                             "closeParenToken": {
@@ -1152,6 +1191,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1178,6 +1218,8 @@
                                                 "width": 59,
                                                 "fullWidth": 60,
                                                 "text": "'#4: parseFloat(.01e+2) === parseFloat(\".01e+2\"). Actual: '",
+                                                "value": "#4: parseFloat(.01e+2) === parseFloat(\".01e+2\"). Actual: ",
+                                                "valueText": "#4: parseFloat(.01e+2) === parseFloat(\".01e+2\"). Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1214,6 +1256,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -1228,7 +1271,9 @@
                                                             {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 6,
-                                                                "text": ".01e+2"
+                                                                "text": ".01e+2",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -1334,6 +1379,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "parseFloat",
+                            "value": "parseFloat",
                             "valueText": "parseFloat"
                         },
                         "argumentList": {
@@ -1356,7 +1402,9 @@
                                     "operand": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "0"
+                                        "text": "0",
+                                        "value": 0,
+                                        "valueText": "0"
                                     }
                                 }
                             ],
@@ -1391,7 +1439,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -1436,6 +1486,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1462,6 +1513,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#5: parseFloat(-0) === 0. Actual: '",
+                                                "value": "#5: parseFloat(-0) === 0. Actual: ",
+                                                "valueText": "#5: parseFloat(-0) === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1498,6 +1551,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "parseFloat",
+                                                        "value": "parseFloat",
                                                         "valueText": "parseFloat"
                                                     },
                                                     "argumentList": {
@@ -1520,7 +1574,9 @@
                                                                 "operand": {
                                                                     "kind": "NumericLiteral",
                                                                     "width": 1,
-                                                                    "text": "0"
+                                                                    "text": "0",
+                                                                    "value": 0,
+                                                                    "valueText": "0"
                                                                 }
                                                             }
                                                         ],
@@ -1654,6 +1710,8 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "1",
+                                            "value": 1,
+                                            "valueText": "1",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -1682,6 +1740,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 10,
                                                 "text": "parseFloat",
+                                                "value": "parseFloat",
                                                 "valueText": "parseFloat"
                                             },
                                             "argumentList": {
@@ -1704,7 +1763,9 @@
                                                         "operand": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "0"
+                                                            "text": "0",
+                                                            "value": 0,
+                                                            "valueText": "0"
                                                         }
                                                     }
                                                 ],
@@ -1744,6 +1805,7 @@
                                             "kind": "IdentifierName",
                                             "width": 6,
                                             "text": "Number",
+                                            "value": "Number",
                                             "valueText": "Number"
                                         },
                                         "dotToken": {
@@ -1755,6 +1817,7 @@
                                             "kind": "IdentifierName",
                                             "width": 17,
                                             "text": "POSITIVE_INFINITY",
+                                            "value": "POSITIVE_INFINITY",
                                             "valueText": "POSITIVE_INFINITY"
                                         }
                                     }
@@ -1801,6 +1864,7 @@
                                                     "width": 6,
                                                     "fullWidth": 10,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -1827,6 +1891,8 @@
                                                                 "width": 37,
                                                                 "fullWidth": 38,
                                                                 "text": "'#5: parseFloat(-0) === +0. Actual: '",
+                                                                "value": "#5: parseFloat(-0) === +0. Actual: ",
+                                                                "valueText": "#5: parseFloat(-0) === +0. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -1863,6 +1929,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 10,
                                                                         "text": "parseFloat",
+                                                                        "value": "parseFloat",
                                                                         "valueText": "parseFloat"
                                                                     },
                                                                     "argumentList": {
@@ -1885,7 +1952,9 @@
                                                                                 "operand": {
                                                                                     "kind": "NumericLiteral",
                                                                                     "width": 1,
-                                                                                    "text": "0"
+                                                                                    "text": "0",
+                                                                                    "value": 0,
+                                                                                    "valueText": "0"
                                                                                 }
                                                                             }
                                                                         ],

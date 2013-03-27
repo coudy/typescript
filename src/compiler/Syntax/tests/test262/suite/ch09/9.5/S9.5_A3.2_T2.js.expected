@@ -90,6 +90,8 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "1.2345",
+                            "value": 1.2345,
+                            "valueText": "1.2345",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -123,7 +125,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -169,6 +173,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -190,7 +195,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 21,
-                                            "text": "'#1: ~1.2345 === ~1)'"
+                                            "text": "'#1: ~1.2345 === ~1)'",
+                                            "value": "#1: ~1.2345 === ~1)",
+                                            "valueText": "#1: ~1.2345 === ~1)"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -294,6 +301,8 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "5.4321",
+                                "value": 5.4321,
+                                "valueText": "5.4321",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -336,7 +345,9 @@
                             "operand": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "5"
+                                "text": "5",
+                                "value": 5,
+                                "valueText": "5"
                             }
                         }
                     }
@@ -383,6 +394,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -404,7 +416,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "'#2: ~-5.4321 === ~-5)'"
+                                            "text": "'#2: ~-5.4321 === ~-5)'",
+                                            "value": "#2: ~-5.4321 === ~-5)",
+                                            "valueText": "#2: ~-5.4321 === ~-5)"
                                         }
                                     ],
                                     "closeParenToken": {

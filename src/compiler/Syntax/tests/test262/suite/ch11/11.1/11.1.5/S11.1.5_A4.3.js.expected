@@ -82,6 +82,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -124,6 +125,7 @@
                                                 "width": 9,
                                                 "fullWidth": 10,
                                                 "text": "undefined",
+                                                "value": "undefined",
                                                 "valueText": "undefined",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -149,7 +151,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         }
                                     ],
@@ -209,6 +213,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "object",
+                            "value": "object",
                             "valueText": "object"
                         },
                         "dotToken": {
@@ -221,6 +226,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "undefined",
+                            "value": "undefined",
                             "valueText": "undefined",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -247,7 +253,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -292,6 +300,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -313,7 +322,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 64,
-                                            "text": "'#1: var object = {undefined : true}; object.undefined === true'"
+                                            "text": "'#1: var object = {undefined : true}; object.undefined === true'",
+                                            "value": "#1: var object = {undefined : true}; object.undefined === true",
+                                            "valueText": "#1: var object = {undefined : true}; object.undefined === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -401,6 +412,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -443,6 +455,7 @@
                                                 "width": 9,
                                                 "fullWidth": 10,
                                                 "text": "undefined",
+                                                "value": "undefined",
                                                 "valueText": "undefined",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -468,7 +481,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         }
                                     ],
@@ -528,6 +543,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "object",
+                            "value": "object",
                             "valueText": "object"
                         },
                         "openBracketToken": {
@@ -538,7 +554,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 11,
-                            "text": "\"undefined\""
+                            "text": "\"undefined\"",
+                            "value": "undefined",
+                            "valueText": "undefined"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -570,7 +588,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -615,6 +635,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -636,7 +657,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 67,
-                                            "text": "'#2: var object = {undefined : true}; object[\"undefined\"] === true'"
+                                            "text": "'#2: var object = {undefined : true}; object[\"undefined\"] === true'",
+                                            "value": "#2: var object = {undefined : true}; object[\"undefined\"] === true",
+                                            "valueText": "#2: var object = {undefined : true}; object[\"undefined\"] === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -724,6 +747,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -766,6 +790,8 @@
                                                 "width": 6,
                                                 "fullWidth": 7,
                                                 "text": "\"true\"",
+                                                "value": "true",
+                                                "valueText": "true",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -790,7 +816,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         }
                                     ],
@@ -850,6 +878,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "object",
+                            "value": "object",
                             "valueText": "object"
                         },
                         "openBracketToken": {
@@ -860,7 +889,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "\"true\""
+                            "text": "\"true\"",
+                            "value": "true",
+                            "valueText": "true"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -892,7 +923,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -937,6 +970,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -958,7 +992,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 59,
-                                            "text": "'#3: var object = {\"true\" : true}; object[\"true\"] === true'"
+                                            "text": "'#3: var object = {\"true\" : true}; object[\"true\"] === true'",
+                                            "value": "#3: var object = {\"true\" : true}; object[\"true\"] === true",
+                                            "valueText": "#3: var object = {\"true\" : true}; object[\"true\"] === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1046,6 +1082,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "object",
+                                "value": "object",
                                 "valueText": "object",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1088,6 +1125,8 @@
                                                 "width": 6,
                                                 "fullWidth": 7,
                                                 "text": "\"null\"",
+                                                "value": "null",
+                                                "valueText": "null",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1112,7 +1151,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         }
                                     ],
@@ -1172,6 +1213,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "object",
+                            "value": "object",
                             "valueText": "object"
                         },
                         "openBracketToken": {
@@ -1182,7 +1224,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "\"null\""
+                            "text": "\"null\"",
+                            "value": "null",
+                            "valueText": "null"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1214,7 +1258,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -1259,6 +1305,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1280,7 +1327,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 59,
-                                            "text": "'#4: var object = {\"null\" : true}; object[\"null\"] === true'"
+                                            "text": "'#4: var object = {\"null\" : true}; object[\"null\"] === true'",
+                                            "value": "#4: var object = {\"null\" : true}; object[\"null\"] === true",
+                                            "valueText": "#4: var object = {\"null\" : true}; object[\"null\"] === true"
                                         }
                                     ],
                                     "closeParenToken": {

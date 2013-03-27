@@ -67,6 +67,7 @@
                     "kind": "IdentifierName",
                     "width": 9,
                     "text": "__FACTORY",
+                    "value": "__FACTORY",
                     "valueText": "__FACTORY"
                 },
                 "callSignature": {
@@ -141,6 +142,7 @@
                                 "width": 9,
                                 "fullWidth": 10,
                                 "text": "__FACTORY",
+                                "value": "__FACTORY",
                                 "valueText": "__FACTORY",
                                 "hasLeadingTrivia": true,
                                 "hasLeadingNewLine": true,
@@ -160,6 +162,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -172,6 +175,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "toString",
+                            "value": "toString",
                             "valueText": "toString"
                         }
                     },
@@ -238,7 +242,9 @@
                                     "expression": {
                                         "kind": "StringLiteral",
                                         "width": 7,
-                                        "text": "\"tostr\""
+                                        "text": "\"tostr\"",
+                                        "value": "tostr",
+                                        "valueText": "tostr"
                                     },
                                     "semicolonToken": {
                                         "kind": "SemicolonToken",
@@ -307,6 +313,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -352,6 +359,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "__FACTORY",
+                                        "value": "__FACTORY",
                                         "valueText": "__FACTORY"
                                     }
                                 }
@@ -411,6 +419,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -456,6 +465,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -471,6 +481,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "__obj",
+                                                "value": "__obj",
                                                 "valueText": "__obj"
                                             }
                                         ],
@@ -570,6 +581,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "__str",
+                            "value": "__str",
                             "valueText": "__str",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -596,7 +608,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -641,6 +655,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -665,7 +680,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 84,
-                                                "text": "'#1: __str = new String(__obj); typeof __str === \"object\". Actual: typeof __str ==='"
+                                                "text": "'#1: __str = new String(__obj); typeof __str === \"object\". Actual: typeof __str ==='",
+                                                "value": "#1: __str = new String(__obj); typeof __str === \"object\". Actual: typeof __str ===",
+                                                "valueText": "#1: __str = new String(__obj); typeof __str === \"object\". Actual: typeof __str ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -693,6 +710,7 @@
                                                     "width": 5,
                                                     "fullWidth": 6,
                                                     "text": "__str",
+                                                    "value": "__str",
                                                     "valueText": "__str",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -823,6 +841,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__str",
+                            "value": "__str",
                             "valueText": "__str"
                         },
                         "dotToken": {
@@ -835,6 +854,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -861,6 +882,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "String",
+                        "value": "String",
                         "valueText": "String"
                     }
                 },
@@ -909,6 +931,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -935,7 +958,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 94,
-                                                "text": "'#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ==='"
+                                                "text": "'#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ==='",
+                                                "value": "#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ===",
+                                                "valueText": "#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -950,6 +975,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__str",
+                                                    "value": "__str",
                                                     "valueText": "__str"
                                                 },
                                                 "dotToken": {
@@ -962,6 +988,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -1086,6 +1114,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "__str",
+                        "value": "__str",
                         "valueText": "__str",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1111,7 +1140,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"tostr\""
+                        "text": "\"tostr\"",
+                        "value": "tostr",
+                        "valueText": "tostr"
                     }
                 },
                 "closeParenToken": {
@@ -1156,6 +1187,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1180,7 +1212,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 66,
-                                                "text": "'#2: __str = new String(__obj); __str ==\"tostr\". Actual: __str =='"
+                                                "text": "'#2: __str = new String(__obj); __str ==\"tostr\". Actual: __str =='",
+                                                "value": "#2: __str = new String(__obj); __str ==\"tostr\". Actual: __str ==",
+                                                "valueText": "#2: __str = new String(__obj); __str ==\"tostr\". Actual: __str =="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1192,6 +1226,7 @@
                                                 "width": 5,
                                                 "fullWidth": 6,
                                                 "text": "__str",
+                                                "value": "__str",
                                                 "valueText": "__str",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [

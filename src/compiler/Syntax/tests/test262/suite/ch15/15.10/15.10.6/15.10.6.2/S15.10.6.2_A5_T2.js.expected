@@ -22,6 +22,7 @@
                         "width": 4,
                         "fullWidth": 473,
                         "text": "__re",
+                        "value": "__re",
                         "valueText": "__re",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -84,7 +85,9 @@
                     "right": {
                         "kind": "RegularExpressionLiteral",
                         "width": 15,
-                        "text": "/(?:ab|cd)\\d?/g"
+                        "text": "/(?:ab|cd)\\d?/g",
+                        "value": {},
+                        "valueText": "/(?:ab|cd)\\d?/g"
                     }
                 },
                 "semicolonToken": {
@@ -115,6 +118,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -126,6 +130,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "lastIndex",
+                            "value": "lastIndex",
                             "valueText": "lastIndex"
                         }
                     },
@@ -137,7 +142,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "100"
+                        "text": "100",
+                        "value": 100,
+                        "valueText": "100"
                     }
                 },
                 "semicolonToken": {
@@ -166,6 +173,7 @@
                         "width": 10,
                         "fullWidth": 11,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -198,6 +206,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re"
                             },
                             "dotToken": {
@@ -209,6 +218,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "exec",
+                                "value": "exec",
                                 "valueText": "exec"
                             }
                         },
@@ -224,7 +234,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 9,
-                                    "text": "\"aacd22 \""
+                                    "text": "\"aacd22 \"",
+                                    "value": "aacd22 ",
+                                    "valueText": "aacd22 "
                                 }
                             ],
                             "closeParenToken": {
@@ -292,6 +304,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__executed",
+                    "value": "__executed",
                     "valueText": "__executed"
                 },
                 "closeParenToken": {
@@ -336,6 +349,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -357,7 +371,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 105,
-                                            "text": "'#1: __re = /(?:ab|cd)\\\\d?/g; __re.lastIndex=100; __executed = __re.exec(\"aacd22 \"); __executed === true'"
+                                            "text": "'#1: __re = /(?:ab|cd)\\\\d?/g; __re.lastIndex=100; __executed = __re.exec(\"aacd22 \"); __executed === true'",
+                                            "value": "#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec(\"aacd22 \"); __executed === true",
+                                            "valueText": "#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec(\"aacd22 \"); __executed === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -447,6 +463,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "__re",
+                            "value": "__re",
                             "valueText": "__re"
                         },
                         "dotToken": {
@@ -459,6 +476,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "lastIndex",
+                            "value": "lastIndex",
                             "valueText": "lastIndex",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -485,7 +503,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -530,6 +550,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -556,6 +577,8 @@
                                                 "width": 116,
                                                 "fullWidth": 117,
                                                 "text": "'#2: __re = /(?:ab|cd)\\\\d?/g; __re.lastIndex=100; __executed = __re.exec(\"aacd22 \"); __re.lastIndex === 0. Actual: '",
+                                                "value": "#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec(\"aacd22 \"); __re.lastIndex === 0. Actual: ",
+                                                "valueText": "#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec(\"aacd22 \"); __re.lastIndex === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -592,6 +615,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "__re",
+                                                        "value": "__re",
                                                         "valueText": "__re"
                                                     },
                                                     "dotToken": {
@@ -603,6 +627,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "lastIndex",
+                                                        "value": "lastIndex",
                                                         "valueText": "lastIndex"
                                                     }
                                                 },

@@ -367,6 +367,7 @@ module TypeScript {
                 var classElementFullStart = this.childFullStart(node, node.classElements);
 
                 var inFunctionOverloadChain = false;
+                // var functionOverloadChainName = null;
                 var inConstructorOverloadChain = false;
 
                 for (var i = 0, n = node.classElements.childCount(); i < n; i++) {
@@ -392,6 +393,8 @@ module TypeScript {
                         var memberFunctionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
 
                         inFunctionOverloadChain = memberFunctionDeclaration.block === null;
+                        // functionOverloadChainName = memberFunctionDeclaration.propertyName.valueText();
+
                         if (lastElement && inFunctionOverloadChain) {
                             this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
                                 DiagnosticCode.Function_implementation_expected);

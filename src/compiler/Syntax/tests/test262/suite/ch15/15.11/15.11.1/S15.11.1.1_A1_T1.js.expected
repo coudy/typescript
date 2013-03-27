@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "otherScope",
+                    "value": "otherScope",
                     "valueText": "otherScope"
                 },
                 "callSignature": {
@@ -87,6 +88,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "msg",
+                                    "value": "msg",
                                     "valueText": "msg"
                                 }
                             }
@@ -155,6 +157,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "Error",
+                                    "value": "Error",
                                     "valueText": "Error"
                                 },
                                 "argumentList": {
@@ -170,6 +173,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "msg",
+                                            "value": "msg",
                                             "valueText": "msg"
                                         }
                                     ],
@@ -265,6 +269,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "err1",
+                                "value": "err1",
                                 "valueText": "err1"
                             },
                             "equalsValueClause": {
@@ -282,6 +287,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Error",
+                                        "value": "Error",
                                         "valueText": "Error"
                                     },
                                     "argumentList": {
@@ -296,7 +302,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 6,
-                                                "text": "'msg1'"
+                                                "text": "'msg1'",
+                                                "value": "msg1",
+                                                "valueText": "msg1"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -348,6 +356,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "err1",
+                            "value": "err1",
                             "valueText": "err1"
                         },
                         "dotToken": {
@@ -359,6 +368,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "message",
+                            "value": "message",
                             "valueText": "message"
                         }
                     },
@@ -370,7 +380,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"msg1\""
+                        "text": "\"msg1\"",
+                        "value": "msg1",
+                        "valueText": "msg1"
                     }
                 },
                 "closeParenToken": {
@@ -407,6 +419,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -431,7 +444,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 63,
-                                                "text": "'#1: var err1=Error(\\'msg1\\'); err1.message===\"msg1\". Actual: '"
+                                                "text": "'#1: var err1=Error(\\'msg1\\'); err1.message===\"msg1\". Actual: '",
+                                                "value": "#1: var err1=Error('msg1'); err1.message===\"msg1\". Actual: ",
+                                                "valueText": "#1: var err1=Error('msg1'); err1.message===\"msg1\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -445,6 +460,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "err1",
+                                                    "value": "err1",
                                                     "valueText": "err1"
                                                 },
                                                 "dotToken": {
@@ -456,6 +472,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "message",
+                                                    "value": "message",
                                                     "valueText": "message"
                                                 }
                                             }
@@ -569,6 +586,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "err2",
+                                "value": "err2",
                                 "valueText": "err2"
                             },
                             "equalsValueClause": {
@@ -586,6 +604,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "otherScope",
+                                        "value": "otherScope",
                                         "valueText": "otherScope"
                                     },
                                     "argumentList": {
@@ -600,7 +619,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 6,
-                                                "text": "'msg2'"
+                                                "text": "'msg2'",
+                                                "value": "msg2",
+                                                "valueText": "msg2"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -652,6 +673,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "err2",
+                            "value": "err2",
                             "valueText": "err2"
                         },
                         "dotToken": {
@@ -663,6 +685,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "message",
+                            "value": "message",
                             "valueText": "message"
                         }
                     },
@@ -674,7 +697,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"msg2\""
+                        "text": "\"msg2\"",
+                        "value": "msg2",
+                        "valueText": "msg2"
                     }
                 },
                 "closeParenToken": {
@@ -711,6 +736,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -735,7 +761,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 113,
-                                                "text": "'#2: function otherScope(msg){return Error(msg);} var err2=otherScope(\\'msg2\\'); err2.message===\"msg2\". Actual: '"
+                                                "text": "'#2: function otherScope(msg){return Error(msg);} var err2=otherScope(\\'msg2\\'); err2.message===\"msg2\". Actual: '",
+                                                "value": "#2: function otherScope(msg){return Error(msg);} var err2=otherScope('msg2'); err2.message===\"msg2\". Actual: ",
+                                                "valueText": "#2: function otherScope(msg){return Error(msg);} var err2=otherScope('msg2'); err2.message===\"msg2\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -749,6 +777,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "err2",
+                                                    "value": "err2",
                                                     "valueText": "err2"
                                                 },
                                                 "dotToken": {
@@ -760,6 +789,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "message",
+                                                    "value": "message",
                                                     "valueText": "message"
                                                 }
                                             }
@@ -873,6 +903,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "err3",
+                                "value": "err3",
                                 "valueText": "err3"
                             },
                             "equalsValueClause": {
@@ -890,6 +921,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "otherScope",
+                                        "value": "otherScope",
                                         "valueText": "otherScope"
                                     },
                                     "argumentList": {
@@ -950,6 +982,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "err3",
+                            "value": "err3",
                             "valueText": "err3"
                         },
                         "dotToken": {
@@ -961,6 +994,7 @@
                             "kind": "IdentifierName",
                             "width": 14,
                             "text": "hasOwnProperty",
+                            "value": "hasOwnProperty",
                             "valueText": "hasOwnProperty"
                         }
                     },
@@ -976,7 +1010,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 9,
-                                "text": "'message'"
+                                "text": "'message'",
+                                "value": "message",
+                                "valueText": "message"
                             }
                         ],
                         "closeParenToken": {
@@ -1020,6 +1056,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1044,7 +1081,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 114,
-                                                "text": "'#3: function otherScope(msg){return Error(msg);} var err3=otherScope(); err3.hasOwnProperty(\"message\"). Actual: '"
+                                                "text": "'#3: function otherScope(msg){return Error(msg);} var err3=otherScope(); err3.hasOwnProperty(\"message\"). Actual: '",
+                                                "value": "#3: function otherScope(msg){return Error(msg);} var err3=otherScope(); err3.hasOwnProperty(\"message\"). Actual: ",
+                                                "valueText": "#3: function otherScope(msg){return Error(msg);} var err3=otherScope(); err3.hasOwnProperty(\"message\"). Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1058,6 +1097,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "err3",
+                                                    "value": "err3",
                                                     "valueText": "err3"
                                                 },
                                                 "dotToken": {
@@ -1069,6 +1109,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "message",
+                                                    "value": "message",
                                                     "valueText": "message"
                                                 }
                                             }
@@ -1182,6 +1223,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "err4",
+                                "value": "err4",
                                 "valueText": "err4"
                             },
                             "equalsValueClause": {
@@ -1199,6 +1241,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "eval",
+                                        "value": "eval",
                                         "valueText": "eval"
                                     },
                                     "argumentList": {
@@ -1213,7 +1256,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 15,
-                                                "text": "\"Error('msg4')\""
+                                                "text": "\"Error('msg4')\"",
+                                                "value": "Error('msg4')",
+                                                "valueText": "Error('msg4')"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1265,6 +1310,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "err4",
+                            "value": "err4",
                             "valueText": "err4"
                         },
                         "dotToken": {
@@ -1276,6 +1322,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "message",
+                            "value": "message",
                             "valueText": "message"
                         }
                     },
@@ -1287,7 +1334,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"msg4\""
+                        "text": "\"msg4\"",
+                        "value": "msg4",
+                        "valueText": "msg4"
                     }
                 },
                 "closeParenToken": {
@@ -1324,6 +1373,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1348,7 +1398,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 71,
-                                                "text": "'#4: var err4=eval(\"Error(\\'msg4\\')\"); err4.message===\"msg4\". Actual: '"
+                                                "text": "'#4: var err4=eval(\"Error(\\'msg4\\')\"); err4.message===\"msg4\". Actual: '",
+                                                "value": "#4: var err4=eval(\"Error('msg4')\"); err4.message===\"msg4\". Actual: ",
+                                                "valueText": "#4: var err4=eval(\"Error('msg4')\"); err4.message===\"msg4\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1362,6 +1414,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 4,
                                                     "text": "err4",
+                                                    "value": "err4",
                                                     "valueText": "err4"
                                                 },
                                                 "dotToken": {
@@ -1373,6 +1426,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "message",
+                                                    "value": "message",
                                                     "valueText": "message"
                                                 }
                                             }

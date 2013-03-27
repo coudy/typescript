@@ -20,6 +20,7 @@
                         "width": 5,
                         "fullWidth": 436,
                         "text": "__str",
+                        "value": "__str",
                         "valueText": "__str",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -67,7 +68,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 2,
-                        "text": "\"\""
+                        "text": "\"\"",
+                        "value": "",
+                        "valueText": ""
                     }
                 },
                 "semicolonToken": {
@@ -94,6 +97,7 @@
                     "width": 5,
                     "fullWidth": 95,
                     "text": "outer",
+                    "value": "outer",
                     "valueText": "outer",
                     "hasLeadingTrivia": true,
                     "hasLeadingComment": true,
@@ -147,6 +151,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "index",
+                            "value": "index",
                             "valueText": "index"
                         },
                         "operatorToken": {
@@ -157,7 +162,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     },
                     "firstSemicolonToken": {
@@ -172,6 +179,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "index",
+                            "value": "index",
                             "valueText": "index"
                         },
                         "operatorToken": {
@@ -182,7 +190,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "4"
+                            "text": "4",
+                            "value": 4,
+                            "valueText": "4"
                         }
                     },
                     "secondSemicolonToken": {
@@ -197,6 +207,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "index",
+                            "value": "index",
                             "valueText": "index"
                         },
                         "operatorToken": {
@@ -207,7 +218,9 @@
                         "right": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     },
                     "closeParenToken": {
@@ -243,6 +256,7 @@
                                     "width": 6,
                                     "fullWidth": 10,
                                     "text": "nested",
+                                    "value": "nested",
                                     "valueText": "nested",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -278,6 +292,7 @@
                                             "kind": "IdentifierName",
                                             "width": 7,
                                             "text": "index_n",
+                                            "value": "index_n",
                                             "valueText": "index_n"
                                         },
                                         "operatorToken": {
@@ -288,7 +303,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "0"
+                                            "text": "0",
+                                            "value": 0,
+                                            "valueText": "0"
                                         }
                                     },
                                     "firstSemicolonToken": {
@@ -303,6 +320,7 @@
                                             "kind": "IdentifierName",
                                             "width": 7,
                                             "text": "index_n",
+                                            "value": "index_n",
                                             "valueText": "index_n"
                                         },
                                         "operatorToken": {
@@ -314,6 +332,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "index",
+                                            "value": "index",
                                             "valueText": "index"
                                         }
                                     },
@@ -329,6 +348,7 @@
                                             "kind": "IdentifierName",
                                             "width": 7,
                                             "text": "index_n",
+                                            "value": "index_n",
                                             "valueText": "index_n"
                                         },
                                         "operatorToken": {
@@ -394,6 +414,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "index",
+                                                            "value": "index",
                                                             "valueText": "index"
                                                         },
                                                         "operatorToken": {
@@ -406,6 +427,7 @@
                                                             "width": 7,
                                                             "fullWidth": 8,
                                                             "text": "index_n",
+                                                            "value": "index_n",
                                                             "valueText": "index_n",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -432,7 +454,9 @@
                                                     "right": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "4"
+                                                        "text": "4",
+                                                        "value": 4,
+                                                        "valueText": "4"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -460,6 +484,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "nonexist",
+                                                        "value": "nonexist",
                                                         "valueText": "nonexist"
                                                     },
                                                     "semicolonToken": {
@@ -489,6 +514,7 @@
                                                         "width": 5,
                                                         "fullWidth": 13,
                                                         "text": "__str",
+                                                        "value": "__str",
                                                         "valueText": "__str",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -512,7 +538,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 2,
-                                                                "text": "\"\""
+                                                                "text": "\"\"",
+                                                                "value": "",
+                                                                "valueText": ""
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -523,6 +551,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 5,
                                                                 "text": "index",
+                                                                "value": "index",
                                                                 "valueText": "index"
                                                             }
                                                         },
@@ -535,6 +564,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 7,
                                                             "text": "index_n",
+                                                            "value": "index_n",
                                                             "valueText": "index_n"
                                                         }
                                                     }

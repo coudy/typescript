@@ -2234,7 +2234,6 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 
     if (isVariableWidth) {
         result += "        private _textOrWidth: any;\r\n";
-        result += "        private _value: any = null;\r\n";
     }
 
     if (trailing) {
@@ -2386,12 +2385,24 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     }
 
     if (isFixedWidth) {
-        result += "        public value(): any { return null; }\r\n";
-        //result += "        public value(): any { return this._keywordKind === SyntaxKind.TrueKeyword  ? true  :\r\n";
-        //result += "                                     this._keywordKind === SyntaxKind.FalseKeyword ? false : null; }\r\n";
+        result += "        public value(): any { return value(this); }\r\n";
+        result += "        public valueText(): string { return valueText(this); }\r\n";
     }
     else {
-        result += "        public value(): any { return this._value || (this._value = value(this)); }\r\n";
+        result += "        public value(): any {\r\n" +
+                  "            if ((<any>this)._value === undefined) {\r\n" +
+                  "                (<any>this)._value = value(this);\r\n" +
+                  "            }\r\n" +
+                  "\r\n" +
+                  "            return (<any>this)._value;\r\n" +
+                  "        }\r\n\r\n";
+        result += "        public valueText(): string {\r\n" +
+                  "            if ((<any>this)._valueText === undefined) {\r\n" +
+                  "                (<any>this)._valueText = valueText(this);\r\n" +
+                  "            }\r\n" +
+                  "\r\n" +
+                  "            return (<any>this)._valueText;\r\n" +
+                  "        }\r\n\r\n";
     }
 
     result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";

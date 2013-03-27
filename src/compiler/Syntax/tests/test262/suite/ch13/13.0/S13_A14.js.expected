@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 287,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -70,7 +71,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 46,
-                                "text": "\"function __func\\u0041(__arg){return __arg;};\""
+                                "text": "\"function __func\\u0041(__arg){return __arg;};\"",
+                                "value": "function __funcA(__arg){return __arg;};",
+                                "valueText": "function __funcA(__arg){return __arg;};"
                             }
                         ],
                         "closeParenToken": {
@@ -165,6 +168,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "__funcA",
+                            "value": "__funcA",
                             "valueText": "__funcA",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -191,7 +195,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 10,
-                        "text": "\"function\""
+                        "text": "\"function\"",
+                        "value": "function",
+                        "valueText": "function"
                     }
                 },
                 "closeParenToken": {
@@ -236,6 +242,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -257,7 +264,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 50,
-                                            "text": "'#1: unicode symbols in function name are allowed'"
+                                            "text": "'#1: unicode symbols in function name are allowed'",
+                                            "value": "#1: unicode symbols in function name are allowed",
+                                            "valueText": "#1: unicode symbols in function name are allowed"
                                         }
                                     ],
                                     "closeParenToken": {

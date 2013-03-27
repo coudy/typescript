@@ -25,6 +25,7 @@
                                 "width": 5,
                                 "fullWidth": 469,
                                 "text": "Array",
+                                "value": "Array",
                                 "valueText": "Array",
                                 "hasLeadingTrivia": true,
                                 "hasLeadingComment": true,
@@ -81,6 +82,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -94,6 +96,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "myproperty",
+                            "value": "myproperty",
                             "valueText": "myproperty",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -120,7 +123,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -167,6 +172,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -199,6 +205,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -271,6 +278,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "dotToken": {
@@ -283,6 +291,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "myproperty",
+                            "value": "myproperty",
                             "valueText": "myproperty",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -309,7 +318,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -354,6 +365,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -380,6 +392,8 @@
                                                 "width": 83,
                                                 "fullWidth": 84,
                                                 "text": "'#1: Array.prototype.myproperty = 1; var x = Array(); x.myproperty === 1. Actual: '",
+                                                "value": "#1: Array.prototype.myproperty = 1; var x = Array(); x.myproperty === 1. Actual: ",
+                                                "valueText": "#1: Array.prototype.myproperty = 1; var x = Array(); x.myproperty === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -416,6 +430,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     },
                                                     "dotToken": {
@@ -427,6 +442,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "myproperty",
+                                                        "value": "myproperty",
                                                         "valueText": "myproperty"
                                                     }
                                                 },
@@ -528,6 +544,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -539,6 +556,7 @@
                                 "kind": "IdentifierName",
                                 "width": 14,
                                 "text": "hasOwnProperty",
+                                "value": "hasOwnProperty",
                                 "valueText": "hasOwnProperty"
                             }
                         },
@@ -554,7 +572,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 12,
-                                    "text": "'myproperty'"
+                                    "text": "'myproperty'",
+                                    "value": "myproperty",
+                                    "valueText": "myproperty"
                                 }
                             ],
                             "closeParenToken": {
@@ -588,7 +608,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -633,6 +655,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -659,6 +682,8 @@
                                                 "width": 107,
                                                 "fullWidth": 108,
                                                 "text": "'#2: Array.prototype.myproperty = 1; var x = Array(); x.hasOwnProperty(\\'myproperty\\') === false. Actual: '",
+                                                "value": "#2: Array.prototype.myproperty = 1; var x = Array(); x.hasOwnProperty('myproperty') === false. Actual: ",
+                                                "valueText": "#2: Array.prototype.myproperty = 1; var x = Array(); x.hasOwnProperty('myproperty') === false. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -698,6 +723,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -709,6 +735,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 14,
                                                             "text": "hasOwnProperty",
+                                                            "value": "hasOwnProperty",
                                                             "valueText": "hasOwnProperty"
                                                         }
                                                     },
@@ -724,7 +751,9 @@
                                                             {
                                                                 "kind": "StringLiteral",
                                                                 "width": 12,
-                                                                "text": "'myproperty'"
+                                                                "text": "'myproperty'",
+                                                                "value": "myproperty",
+                                                                "valueText": "myproperty"
                                                             }
                                                         ],
                                                         "closeParenToken": {

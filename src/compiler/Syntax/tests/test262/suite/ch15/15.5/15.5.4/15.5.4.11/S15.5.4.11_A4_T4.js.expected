@@ -75,6 +75,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -103,7 +104,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 13,
-                                    "text": "\"aBc12 dEf34\""
+                                    "text": "\"aBc12 dEf34\"",
+                                    "value": "aBc12 dEf34",
+                                    "valueText": "aBc12 dEf34"
                                 }
                             }
                         }
@@ -156,6 +159,7 @@
                                 "width": 9,
                                 "fullWidth": 10,
                                 "text": "__pattern",
+                                "value": "__pattern",
                                 "valueText": "__pattern",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -185,7 +189,9 @@
                                 "value": {
                                     "kind": "RegularExpressionLiteral",
                                     "width": 20,
-                                    "text": "/([a-z]+)([0-9]+)/ig"
+                                    "text": "/([a-z]+)([0-9]+)/ig",
+                                    "value": {},
+                                    "valueText": "/([a-z]+)([0-9]+)/gi"
                                 }
                             }
                         }
@@ -265,6 +271,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str"
                             },
                             "dotToken": {
@@ -276,6 +283,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "replace",
+                                "value": "replace",
                                 "valueText": "replace"
                             }
                         },
@@ -292,6 +300,7 @@
                                     "kind": "IdentifierName",
                                     "width": 9,
                                     "text": "__pattern",
+                                    "value": "__pattern",
                                     "valueText": "__pattern"
                                 },
                                 {
@@ -311,6 +320,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__replFN",
+                                    "value": "__replFN",
                                     "valueText": "__replFN"
                                 }
                             ],
@@ -329,7 +339,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 13,
-                        "text": "'12aBc 34dEf'"
+                        "text": "'12aBc 34dEf'",
+                        "value": "12aBc 34dEf",
+                        "valueText": "12aBc 34dEf"
                     }
                 },
                 "closeParenToken": {
@@ -374,6 +386,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -398,7 +411,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 192,
-                                                "text": "'#1: var __str = \"aBc12 dEf34\"; var __pattern = /([a-z]+)([0-9]+)/ig; function __replFN() {return arguments[2] + arguments[1];}; __str.replace(__pattern, __replFN)===\\'12aBc 34dEf\\'. Actual: '"
+                                                "text": "'#1: var __str = \"aBc12 dEf34\"; var __pattern = /([a-z]+)([0-9]+)/ig; function __replFN() {return arguments[2] + arguments[1];}; __str.replace(__pattern, __replFN)===\\'12aBc 34dEf\\'. Actual: '",
+                                                "value": "#1: var __str = \"aBc12 dEf34\"; var __pattern = /([a-z]+)([0-9]+)/ig; function __replFN() {return arguments[2] + arguments[1];}; __str.replace(__pattern, __replFN)==='12aBc 34dEf'. Actual: ",
+                                                "valueText": "#1: var __str = \"aBc12 dEf34\"; var __pattern = /([a-z]+)([0-9]+)/ig; function __replFN() {return arguments[2] + arguments[1];}; __str.replace(__pattern, __replFN)==='12aBc 34dEf'. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -415,6 +430,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__str",
+                                                        "value": "__str",
                                                         "valueText": "__str"
                                                     },
                                                     "dotToken": {
@@ -426,6 +442,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "replace",
+                                                        "value": "replace",
                                                         "valueText": "replace"
                                                     }
                                                 },
@@ -442,6 +459,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "__pattern",
+                                                            "value": "__pattern",
                                                             "valueText": "__pattern"
                                                         },
                                                         {
@@ -461,6 +479,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "__replFN",
+                                                            "value": "__replFN",
                                                             "valueText": "__replFN"
                                                         }
                                                     ],
@@ -562,6 +581,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "__replFN",
+                    "value": "__replFN",
                     "valueText": "__replFN"
                 },
                 "callSignature": {
@@ -642,6 +662,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "arguments",
+                                        "value": "arguments",
                                         "valueText": "arguments"
                                     },
                                     "openBracketToken": {
@@ -652,7 +673,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "2"
+                                        "text": "2",
+                                        "value": 2,
+                                        "valueText": "2"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -688,6 +711,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "arguments",
+                                        "value": "arguments",
                                         "valueText": "arguments"
                                     },
                                     "openBracketToken": {
@@ -698,7 +722,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 1,
-                                        "text": "1"
+                                        "text": "1",
+                                        "value": 1,
+                                        "valueText": "1"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",

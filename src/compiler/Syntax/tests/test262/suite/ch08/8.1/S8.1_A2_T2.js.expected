@@ -74,6 +74,7 @@
                     "kind": "IdentifierName",
                     "width": 5,
                     "text": "test1",
+                    "value": "test1",
                     "valueText": "test1"
                 },
                 "callSignature": {
@@ -95,6 +96,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             }
@@ -159,6 +161,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "semicolonToken": {
@@ -248,6 +251,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "test1",
+                                    "value": "test1",
                                     "valueText": "test1"
                                 },
                                 "argumentList": {
@@ -306,7 +310,9 @@
                                 "expression": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         },
@@ -359,6 +365,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -385,6 +392,8 @@
                                                 "width": 62,
                                                 "fullWidth": 63,
                                                 "text": "'#1: function test1(x){return x} test1() === void 0. Actual: '",
+                                                "value": "#1: function test1(x){return x} test1() === void 0. Actual: ",
+                                                "valueText": "#1: function test1(x){return x} test1() === void 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -421,6 +430,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "test1",
+                                                        "value": "test1",
                                                         "valueText": "test1"
                                                     },
                                                     "argumentList": {
@@ -524,6 +534,7 @@
                     "kind": "IdentifierName",
                     "width": 5,
                     "text": "test2",
+                    "value": "test2",
                     "valueText": "test2"
                 },
                 "callSignature": {
@@ -646,6 +657,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "test2",
+                                    "value": "test2",
                                     "valueText": "test2"
                                 },
                                 "argumentList": {
@@ -704,7 +716,9 @@
                                 "expression": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         },
@@ -757,6 +771,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -783,6 +798,8 @@
                                                 "width": 53,
                                                 "fullWidth": 54,
                                                 "text": "'#2: function test2(){} test2() === void 0. Actual: '",
+                                                "value": "#2: function test2(){} test2() === void 0. Actual: ",
+                                                "valueText": "#2: function test2(){} test2() === void 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -819,6 +836,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "test2",
+                                                        "value": "test2",
                                                         "valueText": "test2"
                                                     },
                                                     "argumentList": {

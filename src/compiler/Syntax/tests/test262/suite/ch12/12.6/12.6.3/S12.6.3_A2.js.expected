@@ -182,7 +182,9 @@
                                                     "expression": {
                                                         "kind": "StringLiteral",
                                                         "width": 16,
-                                                        "text": "\"NoInExpression\""
+                                                        "text": "\"NoInExpression\"",
+                                                        "value": "NoInExpression",
+                                                        "valueText": "NoInExpression"
                                                     },
                                                     "semicolonToken": {
                                                         "kind": "SemicolonToken",
@@ -299,7 +301,9 @@
                                                     "expression": {
                                                         "kind": "StringLiteral",
                                                         "width": 17,
-                                                        "text": "\"FirstExpression\""
+                                                        "text": "\"FirstExpression\"",
+                                                        "value": "FirstExpression",
+                                                        "valueText": "FirstExpression"
                                                     },
                                                     "semicolonToken": {
                                                         "kind": "SemicolonToken",
@@ -416,7 +420,9 @@
                                                     "expression": {
                                                         "kind": "StringLiteral",
                                                         "width": 18,
-                                                        "text": "\"SecondExpression\""
+                                                        "text": "\"SecondExpression\"",
+                                                        "value": "SecondExpression",
+                                                        "valueText": "SecondExpression"
                                                     },
                                                     "semicolonToken": {
                                                         "kind": "SemicolonToken",
@@ -521,6 +527,7 @@
                                                         "width": 6,
                                                         "fullWidth": 7,
                                                         "text": "in_for",
+                                                        "value": "in_for",
                                                         "valueText": "in_for",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -549,7 +556,9 @@
                                                         "value": {
                                                             "kind": "StringLiteral",
                                                             "width": 9,
-                                                            "text": "\"reached\""
+                                                            "text": "\"reached\"",
+                                                            "value": "reached",
+                                                            "valueText": "reached"
                                                         }
                                                     }
                                                 }
@@ -605,6 +614,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -626,7 +636,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 72,
-                                            "text": "'#1: (function(){throw \"NoInExpression\";})() lead to throwing exception'"
+                                            "text": "'#1: (function(){throw \"NoInExpression\";})() lead to throwing exception'",
+                                            "value": "#1: (function(){throw \"NoInExpression\";})() lead to throwing exception",
+                                            "valueText": "#1: (function(){throw \"NoInExpression\";})() lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -691,6 +703,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -760,6 +773,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -785,7 +799,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 16,
-                                        "text": "\"NoInExpression\""
+                                        "text": "\"NoInExpression\"",
+                                        "value": "NoInExpression",
+                                        "valueText": "NoInExpression"
                                     }
                                 },
                                 "closeParenToken": {
@@ -830,6 +846,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -851,7 +868,9 @@
                                                         {
                                                             "kind": "StringLiteral",
                                                             "width": 111,
-                                                            "text": "'#1: When for (ExpressionNoIn ; Expression ; Expression) Statement is evaluated ExpressionNoIn evaluates first'"
+                                                            "text": "'#1: When for (ExpressionNoIn ; Expression ; Expression) Statement is evaluated ExpressionNoIn evaluates first'",
+                                                            "value": "#1: When for (ExpressionNoIn ; Expression ; Expression) Statement is evaluated ExpressionNoIn evaluates first",
+                                                            "valueText": "#1: When for (ExpressionNoIn ; Expression ; Expression) Statement is evaluated ExpressionNoIn evaluates first"
                                                         }
                                                     ],
                                                     "closeParenToken": {
@@ -988,6 +1007,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "in_for",
+                        "value": "in_for",
                         "valueText": "in_for",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -1014,6 +1034,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1059,6 +1080,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1083,7 +1105,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 47,
-                                                "text": "'#2: in_for === undefined. Actual:  in_for ==='"
+                                                "text": "'#2: in_for === undefined. Actual:  in_for ==='",
+                                                "value": "#2: in_for === undefined. Actual:  in_for ===",
+                                                "valueText": "#2: in_for === undefined. Actual:  in_for ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1103,6 +1127,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "in_for",
+                                                "value": "in_for",
                                                 "valueText": "in_for",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [

@@ -105,6 +105,7 @@
                                         "width": 4,
                                         "fullWidth": 7,
                                         "text": "eval",
+                                        "value": "eval",
                                         "valueText": "eval",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -126,7 +127,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 12,
-                                                "text": "\"/\\\\\\u000A/\""
+                                                "text": "\"/\\\\\\u000A/\"",
+                                                "value": "/\\\n/",
+                                                "valueText": "/\\\n/"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -145,6 +148,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "source",
+                                    "value": "source",
                                     "valueText": "source"
                                 }
                             },
@@ -178,6 +182,7 @@
                                     "width": 6,
                                     "fullWidth": 9,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -204,6 +209,8 @@
                                                 "width": 93,
                                                 "fullWidth": 94,
                                                 "text": "'#1.1: RegularExpressionFirstChar :: BackslashSequence :: \\\\Line Feed is incorrect. Actual: '",
+                                                "value": "#1.1: RegularExpressionFirstChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ",
+                                                "valueText": "#1.1: RegularExpressionFirstChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -243,6 +250,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "eval",
+                                                            "value": "eval",
                                                             "valueText": "eval"
                                                         },
                                                         "argumentList": {
@@ -257,7 +265,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 12,
-                                                                    "text": "\"/\\\\\\u000A/\""
+                                                                    "text": "\"/\\\\\\u000A/\"",
+                                                                    "value": "/\\\n/",
+                                                                    "valueText": "/\\\n/"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -276,6 +286,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "source",
+                                                        "value": "source",
                                                         "valueText": "source"
                                                     }
                                                 },
@@ -354,6 +365,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -434,6 +446,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -460,6 +473,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 11,
                                                 "text": "SyntaxError",
+                                                "value": "SyntaxError",
                                                 "valueText": "SyntaxError"
                                             }
                                         },
@@ -493,7 +507,9 @@
                                     "right": {
                                         "kind": "TrueKeyword",
                                         "width": 4,
-                                        "text": "true"
+                                        "text": "true",
+                                        "value": true,
+                                        "valueText": "true"
                                     }
                                 },
                                 "closeParenToken": {
@@ -538,6 +554,7 @@
                                                     "width": 6,
                                                     "fullWidth": 11,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -564,6 +581,8 @@
                                                                 "width": 93,
                                                                 "fullWidth": 94,
                                                                 "text": "'#1.2: RegularExpressionFirstChar :: BackslashSequence :: \\\\Line Feed is incorrect. Actual: '",
+                                                                "value": "#1.2: RegularExpressionFirstChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ",
+                                                                "valueText": "#1.2: RegularExpressionFirstChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -597,6 +616,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 1,
                                                                     "text": "e",
+                                                                    "value": "e",
                                                                     "valueText": "e"
                                                                 },
                                                                 "closeParenToken": {

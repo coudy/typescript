@@ -67,6 +67,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -142,6 +143,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -170,7 +172,9 @@
                                             "value": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         }
                                     }
@@ -218,6 +222,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "semicolonToken": {
@@ -322,6 +327,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -340,6 +346,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             },
@@ -369,6 +376,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -390,7 +398,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 38,
-                                            "text": "'#0: \"x=x\" lead to throwing exception'"
+                                            "text": "'#0: \"x=x\" lead to throwing exception'",
+                                            "value": "#0: \"x=x\" lead to throwing exception",
+                                            "valueText": "#0: \"x=x\" lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -455,6 +465,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -524,6 +535,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -550,6 +562,7 @@
                                         "kind": "IdentifierName",
                                         "width": 12,
                                         "text": "Test262Error",
+                                        "value": "Test262Error",
                                         "valueText": "Test262Error"
                                     }
                                 },
@@ -586,6 +599,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e"
                                     },
                                     "semicolonToken": {
@@ -728,6 +742,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "__x",
+                                            "value": "__x",
                                             "valueText": "__x"
                                         },
                                         "equalsValueClause": {
@@ -745,6 +760,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "__func",
+                                                    "value": "__func",
                                                     "valueText": "__func"
                                                 },
                                                 "argumentList": {
@@ -814,6 +830,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -850,6 +867,7 @@
                                         "width": 6,
                                         "fullWidth": 10,
                                         "text": "$ERROR",
+                                        "value": "$ERROR",
                                         "valueText": "$ERROR",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -874,7 +892,9 @@
                                                 "left": {
                                                     "kind": "StringLiteral",
                                                     "width": 81,
-                                                    "text": "'#1: var __x=__func() does not lead to throwing exception. Actual: exception is '"
+                                                    "text": "'#1: var __x=__func() does not lead to throwing exception. Actual: exception is '",
+                                                    "value": "#1: var __x=__func() does not lead to throwing exception. Actual: exception is ",
+                                                    "valueText": "#1: var __x=__func() does not lead to throwing exception. Actual: exception is "
                                                 },
                                                 "operatorToken": {
                                                     "kind": "PlusToken",
@@ -885,6 +905,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "e",
+                                                    "value": "e",
                                                     "valueText": "e"
                                                 }
                                             }
@@ -1011,6 +1032,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "__x",
+                            "value": "__x",
                             "valueText": "__x"
                         },
                         "closeParenToken": {
@@ -1062,6 +1084,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1086,7 +1109,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 35,
-                                                "text": "'#2: __x === true. Actual: __x ==='"
+                                                "text": "'#2: __x === true. Actual: __x ==='",
+                                                "value": "#2: __x === true. Actual: __x ===",
+                                                "valueText": "#2: __x === true. Actual: __x ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1097,6 +1122,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "__x",
+                                                "value": "__x",
                                                 "valueText": "__x"
                                             }
                                         }
@@ -1226,6 +1252,7 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1244,6 +1271,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             },
@@ -1273,6 +1301,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1294,7 +1323,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 38,
-                                            "text": "'#3: \"x=x\" lead to throwing exception'"
+                                            "text": "'#3: \"x=x\" lead to throwing exception'",
+                                            "value": "#3: \"x=x\" lead to throwing exception",
+                                            "valueText": "#3: \"x=x\" lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1359,6 +1390,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -1428,6 +1460,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -1454,6 +1487,7 @@
                                         "kind": "IdentifierName",
                                         "width": 12,
                                         "text": "Test262Error",
+                                        "value": "Test262Error",
                                         "valueText": "Test262Error"
                                     }
                                 },
@@ -1490,6 +1524,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "e",
+                                        "value": "e",
                                         "valueText": "e"
                                     },
                                     "semicolonToken": {

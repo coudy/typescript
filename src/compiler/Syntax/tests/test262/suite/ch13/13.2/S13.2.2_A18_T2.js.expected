@@ -70,6 +70,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "callee",
+                            "value": "callee",
                             "valueText": "callee",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -96,7 +97,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -142,6 +145,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "b",
+                                "value": "b",
                                 "valueText": "b"
                             }
                         }
@@ -173,6 +177,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "__obj",
+                        "value": "__obj",
                         "valueText": "__obj",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -204,6 +209,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "callee",
+                                    "value": "callee",
                                     "valueText": "callee"
                                 },
                                 "colonToken": {
@@ -214,7 +220,9 @@
                                 "expression": {
                                     "kind": "StringLiteral",
                                     "width": 3,
-                                    "text": "\"a\""
+                                    "text": "\"a\"",
+                                    "value": "a",
+                                    "valueText": "a"
                                 }
                             }
                         ],
@@ -269,6 +277,7 @@
                     "kind": "IdentifierName",
                     "width": 1,
                     "text": "f",
+                    "value": "f",
                     "valueText": "f"
                 },
                 "callSignature": {
@@ -340,6 +349,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "arguments",
+                                "value": "arguments",
                                 "valueText": "arguments"
                             },
                             "closeParenToken": {
@@ -376,6 +386,7 @@
                                                 "width": 6,
                                                 "fullWidth": 14,
                                                 "text": "callee",
+                                                "value": "callee",
                                                 "valueText": "callee",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -393,7 +404,9 @@
                                             "right": {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             }
                                         },
                                         "semicolonToken": {
@@ -422,6 +435,7 @@
                                                 "width": 1,
                                                 "fullWidth": 9,
                                                 "text": "b",
+                                                "value": "b",
                                                 "valueText": "b",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -439,7 +453,9 @@
                                             "right": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         },
                                         "semicolonToken": {
@@ -484,6 +500,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "arguments",
+                                            "value": "arguments",
                                             "valueText": "arguments"
                                         },
                                         "semicolonToken": {
@@ -562,6 +579,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "result",
+                        "value": "result",
                         "valueText": "result",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -584,6 +602,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "f",
+                            "value": "f",
                             "valueText": "f"
                         },
                         "argumentList": {
@@ -599,6 +618,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "__obj",
+                                    "value": "__obj",
                                     "valueText": "__obj"
                                 }
                             ],
@@ -679,6 +699,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "callee",
+                        "value": "callee",
                         "valueText": "callee",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -704,7 +725,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -749,6 +772,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -773,7 +797,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 38,
-                                                "text": "'#1: callee === 0. Actual: callee ==='"
+                                                "text": "'#1: callee === 0. Actual: callee ==='",
+                                                "value": "#1: callee === 0. Actual: callee ===",
+                                                "valueText": "#1: callee === 0. Actual: callee ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -784,6 +810,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 6,
                                                 "text": "callee",
+                                                "value": "callee",
                                                 "valueText": "callee"
                                             }
                                         }
@@ -899,6 +926,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -911,6 +939,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "callee",
+                            "value": "callee",
                             "valueText": "callee",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -937,7 +966,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"a\""
+                        "text": "\"a\"",
+                        "value": "a",
+                        "valueText": "a"
                     }
                 },
                 "closeParenToken": {
@@ -982,6 +1013,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1006,7 +1038,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 52,
-                                                "text": "'#2: __obj.callee === \"a\". Actual: __obj.callee ==='"
+                                                "text": "'#2: __obj.callee === \"a\". Actual: __obj.callee ==='",
+                                                "value": "#2: __obj.callee === \"a\". Actual: __obj.callee ===",
+                                                "valueText": "#2: __obj.callee === \"a\". Actual: __obj.callee ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1020,6 +1054,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__obj",
+                                                    "value": "__obj",
                                                     "valueText": "__obj"
                                                 },
                                                 "dotToken": {
@@ -1031,6 +1066,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "callee",
+                                                    "value": "callee",
                                                     "valueText": "callee"
                                                 }
                                             }
@@ -1147,6 +1183,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "result",
+                            "value": "result",
                             "valueText": "result"
                         },
                         "dotToken": {
@@ -1159,6 +1196,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "callee",
+                            "value": "callee",
                             "valueText": "callee",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1185,7 +1223,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1230,6 +1270,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1254,7 +1295,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 52,
-                                                "text": "'#3: result.callee === 1. Actual: result.callee ==='"
+                                                "text": "'#3: result.callee === 1. Actual: result.callee ==='",
+                                                "value": "#3: result.callee === 1. Actual: result.callee ===",
+                                                "valueText": "#3: result.callee === 1. Actual: result.callee ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1268,6 +1311,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "result",
+                                                    "value": "result",
                                                     "valueText": "result"
                                                 },
                                                 "dotToken": {
@@ -1279,6 +1323,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "callee",
+                                                    "value": "callee",
                                                     "valueText": "callee"
                                                 }
                                             }
@@ -1418,6 +1463,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "b",
+                                "value": "b",
                                 "valueText": "b"
                             }
                         },
@@ -1470,6 +1516,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1494,7 +1541,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 41,
-                                                "text": "'#4: this.b === true. Actual: this.b ==='"
+                                                "text": "'#4: this.b === true. Actual: this.b ==='",
+                                                "value": "#4: this.b === true. Actual: this.b ===",
+                                                "valueText": "#4: this.b === true. Actual: this.b ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1518,6 +1567,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "b",
+                                                    "value": "b",
                                                     "valueText": "b"
                                                 }
                                             }

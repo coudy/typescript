@@ -99,6 +99,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -120,7 +121,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 26,
-                                            "text": "\"function __func(){/ ABC}\""
+                                            "text": "\"function __func(){/ ABC}\"",
+                                            "value": "function __func(){/ ABC}",
+                                            "valueText": "function __func(){/ ABC}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -156,6 +159,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -177,7 +181,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 65,
-                                            "text": "'#1: eval(\"function __func(){/ ABC}\") lead to throwing exception'"
+                                            "text": "'#1: eval(\"function __func(){/ ABC}\") lead to throwing exception'",
+                                            "value": "#1: eval(\"function __func(){/ ABC}\") lead to throwing exception",
+                                            "valueText": "#1: eval(\"function __func(){/ ABC}\") lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -234,6 +240,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -304,6 +311,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -330,6 +338,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 11,
                                                 "text": "SyntaxError",
+                                                "value": "SyntaxError",
                                                 "valueText": "SyntaxError"
                                             }
                                         },
@@ -374,6 +383,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -398,7 +408,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 105,
-                                                                "text": "'#1.1: eval(\"function __func(){/ ABC}\") lead to throwing exception of SyntaxError. Actual: exception is '"
+                                                                "text": "'#1.1: eval(\"function __func(){/ ABC}\") lead to throwing exception of SyntaxError. Actual: exception is '",
+                                                                "value": "#1.1: eval(\"function __func(){/ ABC}\") lead to throwing exception of SyntaxError. Actual: exception is ",
+                                                                "valueText": "#1.1: eval(\"function __func(){/ ABC}\") lead to throwing exception of SyntaxError. Actual: exception is "
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -409,6 +421,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             }
                                                         }
@@ -556,6 +569,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -577,7 +591,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "\"function __func(){&1}\""
+                                            "text": "\"function __func(){&1}\"",
+                                            "value": "function __func(){&1}",
+                                            "valueText": "function __func(){&1}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -613,6 +629,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -634,7 +651,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 62,
-                                            "text": "'#3: eval(\"function __func(){&1}\") lead to throwing exception'"
+                                            "text": "'#3: eval(\"function __func(){&1}\") lead to throwing exception'",
+                                            "value": "#3: eval(\"function __func(){&1}\") lead to throwing exception",
+                                            "valueText": "#3: eval(\"function __func(){&1}\") lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -691,6 +710,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -761,6 +781,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -787,6 +808,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 11,
                                                 "text": "SyntaxError",
+                                                "value": "SyntaxError",
                                                 "valueText": "SyntaxError"
                                             }
                                         },
@@ -831,6 +853,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -855,7 +878,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 102,
-                                                                "text": "'#3.1: eval(\"function __func(){&1}\") lead to throwing exception of SyntaxError. Actual: exception is '"
+                                                                "text": "'#3.1: eval(\"function __func(){&1}\") lead to throwing exception of SyntaxError. Actual: exception is '",
+                                                                "value": "#3.1: eval(\"function __func(){&1}\") lead to throwing exception of SyntaxError. Actual: exception is ",
+                                                                "valueText": "#3.1: eval(\"function __func(){&1}\") lead to throwing exception of SyntaxError. Actual: exception is "
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -866,6 +891,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             }
                                                         }
@@ -1013,6 +1039,7 @@
                                     "width": 4,
                                     "fullWidth": 5,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1034,7 +1061,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 26,
-                                            "text": "\"function __func(){# ABC}\""
+                                            "text": "\"function __func(){# ABC}\"",
+                                            "value": "function __func(){# ABC}",
+                                            "valueText": "function __func(){# ABC}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1070,6 +1099,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1091,7 +1121,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 65,
-                                            "text": "'#4: eval(\"function __func(){# ABC}\") lead to throwing exception'"
+                                            "text": "'#4: eval(\"function __func(){# ABC}\") lead to throwing exception'",
+                                            "value": "#4: eval(\"function __func(){# ABC}\") lead to throwing exception",
+                                            "valueText": "#4: eval(\"function __func(){# ABC}\") lead to throwing exception"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1148,6 +1180,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "e",
+                        "value": "e",
                         "valueText": "e"
                     },
                     "closeParenToken": {
@@ -1218,6 +1251,7 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "e",
+                                                "value": "e",
                                                 "valueText": "e",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
@@ -1244,6 +1278,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 11,
                                                 "text": "SyntaxError",
+                                                "value": "SyntaxError",
                                                 "valueText": "SyntaxError"
                                             }
                                         },
@@ -1288,6 +1323,7 @@
                                                     "width": 6,
                                                     "fullWidth": 8,
                                                     "text": "$ERROR",
+                                                    "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
@@ -1312,7 +1348,9 @@
                                                             "left": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 105,
-                                                                "text": "'#4.1: eval(\"function __func(){# ABC}\") lead to throwing exception of SyntaxError. Actual: exception is '"
+                                                                "text": "'#4.1: eval(\"function __func(){# ABC}\") lead to throwing exception of SyntaxError. Actual: exception is '",
+                                                                "value": "#4.1: eval(\"function __func(){# ABC}\") lead to throwing exception of SyntaxError. Actual: exception is ",
+                                                                "valueText": "#4.1: eval(\"function __func(){# ABC}\") lead to throwing exception of SyntaxError. Actual: exception is "
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -1323,6 +1361,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 1,
                                                                 "text": "e",
+                                                                "value": "e",
                                                                 "valueText": "e"
                                                             }
                                                         }

@@ -74,6 +74,7 @@
                                 "width": 15,
                                 "fullWidth": 16,
                                 "text": "__str__instance",
+                                "value": "__str__instance",
                                 "valueText": "__str__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 23,
-                                                "text": "\"ABC\\u0041\\u0042\\u0043\""
+                                                "text": "\"ABC\\u0041\\u0042\\u0043\"",
+                                                "value": "ABCABC",
+                                                "valueText": "ABCABC"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -218,6 +222,7 @@
                             "kind": "IdentifierName",
                             "width": 15,
                             "text": "__str__instance",
+                            "value": "__str__instance",
                             "valueText": "__str__instance"
                         },
                         "dotToken": {
@@ -230,6 +235,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -256,7 +262,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -301,6 +309,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -325,7 +334,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 197,
-                                                "text": "'#1: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.length === 6, where __str__instance is new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"). Actual: __str__instance.length ==='"
+                                                "text": "'#1: var __str__instance = new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"); __str__instance.length === 6, where __str__instance is new String(\"ABC\\\\u0041\\\\u0042\\\\u0043\"). Actual: __str__instance.length ==='",
+                                                "value": "#1: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.length === 6, where __str__instance is new String(\"ABC\\u0041\\u0042\\u0043\"). Actual: __str__instance.length ===",
+                                                "valueText": "#1: var __str__instance = new String(\"ABC\\u0041\\u0042\\u0043\"); __str__instance.length === 6, where __str__instance is new String(\"ABC\\u0041\\u0042\\u0043\"). Actual: __str__instance.length ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -339,6 +350,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 15,
                                                     "text": "__str__instance",
+                                                    "value": "__str__instance",
                                                     "valueText": "__str__instance"
                                                 },
                                                 "dotToken": {
@@ -351,6 +363,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -417,6 +430,7 @@
                         "width": 15,
                         "fullWidth": 99,
                         "text": "__str__instance",
+                        "value": "__str__instance",
                         "valueText": "__str__instance",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -484,6 +498,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "String",
+                            "value": "String",
                             "valueText": "String"
                         }
                     }
@@ -559,6 +574,7 @@
                             "kind": "IdentifierName",
                             "width": 15,
                             "text": "__str__instance",
+                            "value": "__str__instance",
                             "valueText": "__str__instance"
                         },
                         "dotToken": {
@@ -571,6 +587,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -597,7 +614,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -642,6 +661,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -666,7 +686,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 137,
-                                                "text": "'#2: __str__instance = new String; __str__instance.length === 0, where __str__instance is new String. Actual: __str__instance.length ==='"
+                                                "text": "'#2: __str__instance = new String; __str__instance.length === 0, where __str__instance is new String. Actual: __str__instance.length ==='",
+                                                "value": "#2: __str__instance = new String; __str__instance.length === 0, where __str__instance is new String. Actual: __str__instance.length ===",
+                                                "valueText": "#2: __str__instance = new String; __str__instance.length === 0, where __str__instance is new String. Actual: __str__instance.length ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -680,6 +702,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 15,
                                                     "text": "__str__instance",
+                                                    "value": "__str__instance",
                                                     "valueText": "__str__instance"
                                                 },
                                                 "dotToken": {
@@ -692,6 +715,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [

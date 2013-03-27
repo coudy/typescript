@@ -22,6 +22,7 @@
                         "width": 10,
                         "fullWidth": 433,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -92,7 +93,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 4,
-                                "text": "/s$/"
+                                "text": "/s$/",
+                                "value": {},
+                                "valueText": "/s$/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -103,6 +106,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -118,7 +122,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 22,
-                                    "text": "\"pairs\\nmakes\\tdouble\""
+                                    "text": "\"pairs\\nmakes\\tdouble\"",
+                                    "value": "pairs\nmakes\tdouble",
+                                    "valueText": "pairs\nmakes\tdouble"
                                 }
                             ],
                             "closeParenToken": {
@@ -186,6 +192,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__executed",
+                    "value": "__executed",
                     "valueText": "__executed"
                 },
                 "closeParenToken": {
@@ -230,6 +237,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -251,7 +259,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 51,
-                                            "text": "'#1: /s$/.test(\"pairs\\\\nmakes\\\\tdouble\") === false'"
+                                            "text": "'#1: /s$/.test(\"pairs\\\\nmakes\\\\tdouble\") === false'",
+                                            "value": "#1: /s$/.test(\"pairs\\nmakes\\tdouble\") === false",
+                                            "valueText": "#1: /s$/.test(\"pairs\\nmakes\\tdouble\") === false"
                                         }
                                     ],
                                     "closeParenToken": {

@@ -87,6 +87,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -98,6 +99,7 @@
                                 "kind": "IdentifierName",
                                 "width": 12,
                                 "text": "fromCharCode",
+                                "value": "fromCharCode",
                                 "valueText": "fromCharCode"
                             }
                         },
@@ -113,7 +115,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 6,
-                                    "text": "0x0027"
+                                    "text": "0x0027",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             ],
                             "closeParenToken": {
@@ -147,7 +151,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"\\'\""
+                        "text": "\"\\'\"",
+                        "value": "'",
+                        "valueText": "'"
                     }
                 },
                 "closeParenToken": {
@@ -192,6 +198,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -213,7 +220,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 44,
-                                            "text": "'#1: String.fromCharCode(0x0027) === \"\\\\\\'\"'"
+                                            "text": "'#1: String.fromCharCode(0x0027) === \"\\\\\\'\"'",
+                                            "value": "#1: String.fromCharCode(0x0027) === \"\\'\"",
+                                            "valueText": "#1: String.fromCharCode(0x0027) === \"\\'\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -306,6 +315,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -317,6 +327,7 @@
                                 "kind": "IdentifierName",
                                 "width": 12,
                                 "text": "fromCharCode",
+                                "value": "fromCharCode",
                                 "valueText": "fromCharCode"
                             }
                         },
@@ -332,7 +343,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 6,
-                                    "text": "0x0022"
+                                    "text": "0x0022",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             ],
                             "closeParenToken": {
@@ -366,7 +379,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "'\\\"'"
+                        "text": "'\\\"'",
+                        "value": "\"",
+                        "valueText": "\""
                     }
                 },
                 "closeParenToken": {
@@ -411,6 +426,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -432,7 +448,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 46,
-                                            "text": "'#2: String.fromCharCode(0x0027) === \\'\\\\\\\"\\''"
+                                            "text": "'#2: String.fromCharCode(0x0027) === \\'\\\\\\\"\\''",
+                                            "value": "#2: String.fromCharCode(0x0027) === '\\\"'",
+                                            "valueText": "#2: String.fromCharCode(0x0027) === '\\\"'"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -525,6 +543,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -536,6 +555,7 @@
                                 "kind": "IdentifierName",
                                 "width": 12,
                                 "text": "fromCharCode",
+                                "value": "fromCharCode",
                                 "valueText": "fromCharCode"
                             }
                         },
@@ -551,7 +571,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 6,
-                                    "text": "0x005C"
+                                    "text": "0x005C",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             ],
                             "closeParenToken": {
@@ -585,7 +607,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"\\\\\""
+                        "text": "\"\\\\\"",
+                        "value": "\\",
+                        "valueText": "\\"
                     }
                 },
                 "closeParenToken": {
@@ -630,6 +654,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -651,7 +676,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 43,
-                                            "text": "'#3: String.fromCharCode(0x005C) === \"\\\\\\\"'"
+                                            "text": "'#3: String.fromCharCode(0x005C) === \"\\\\\\\"'",
+                                            "value": "#3: String.fromCharCode(0x005C) === \"\\\"",
+                                            "valueText": "#3: String.fromCharCode(0x005C) === \"\\\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -739,6 +766,8 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "\"\\'\"",
+                        "value": "'",
+                        "valueText": "'",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -763,7 +792,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"'\""
+                        "text": "\"'\"",
+                        "value": "'",
+                        "valueText": "'"
                     }
                 },
                 "closeParenToken": {
@@ -808,6 +839,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -829,7 +861,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 21,
-                                            "text": "'#4: \"\\'\" === \"\\\\\\'\"'"
+                                            "text": "'#4: \"\\'\" === \"\\\\\\'\"'",
+                                            "value": "#4: \"'\" === \"\\'\"",
+                                            "valueText": "#4: \"'\" === \"\\'\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -917,6 +951,8 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "'\\\"'",
+                        "value": "\"",
+                        "valueText": "\"",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -941,7 +977,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "'\"'"
+                        "text": "'\"'",
+                        "value": "\"",
+                        "valueText": "\""
                     }
                 },
                 "closeParenToken": {
@@ -986,6 +1024,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1007,7 +1046,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 25,
-                                            "text": "'#5: \\'\\\"\\' === \\'\\\\\\\"\\''"
+                                            "text": "'#5: \\'\\\"\\' === \\'\\\\\\\"\\''",
+                                            "value": "#5: '\"' === '\\\"'",
+                                            "valueText": "#5: '\"' === '\\\"'"
                                         }
                                     ],
                                     "closeParenToken": {

@@ -22,6 +22,7 @@
                         "width": 10,
                         "fullWidth": 560,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -92,7 +93,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 26,
-                                "text": "/Java(?!Script)([A-Z]\\w*)/"
+                                "text": "/Java(?!Script)([A-Z]\\w*)/",
+                                "value": {},
+                                "valueText": "/Java(?!Script)([A-Z]\\w*)/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -103,6 +106,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -118,7 +122,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 24,
-                                    "text": "\"using of Java language\""
+                                    "text": "\"using of Java language\"",
+                                    "value": "using of Java language",
+                                    "valueText": "using of Java language"
                                 }
                             ],
                             "closeParenToken": {
@@ -186,6 +192,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "__executed",
+                    "value": "__executed",
                     "valueText": "__executed"
                 },
                 "closeParenToken": {
@@ -230,6 +237,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -251,7 +259,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 74,
-                                            "text": "'#1: /Java(?!Script)([A-Z]\\\\w*)/.test(\"using of Java language\") === false'"
+                                            "text": "'#1: /Java(?!Script)([A-Z]\\\\w*)/.test(\"using of Java language\") === false'",
+                                            "value": "#1: /Java(?!Script)([A-Z]\\w*)/.test(\"using of Java language\") === false",
+                                            "valueText": "#1: /Java(?!Script)([A-Z]\\w*)/.test(\"using of Java language\") === false"
                                         }
                                     ],
                                     "closeParenToken": {

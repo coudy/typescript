@@ -101,6 +101,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "undefined",
+                            "value": "undefined",
                             "valueText": "undefined"
                         },
                         "closeParenToken": {
@@ -134,6 +135,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -179,6 +181,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -205,6 +208,8 @@
                                                 "width": 41,
                                                 "fullWidth": 42,
                                                 "text": "'#1: (undefined) === undefined. Actual: '",
+                                                "value": "#1: (undefined) === undefined. Actual: ",
+                                                "valueText": "#1: (undefined) === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -246,6 +251,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "undefined",
+                                                        "value": "undefined",
                                                         "valueText": "undefined"
                                                     },
                                                     "closeParenToken": {
@@ -369,7 +375,9 @@
                             "expression": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
-                                "text": "0"
+                                "text": "0",
+                                "value": 0,
+                                "valueText": "0"
                             }
                         },
                         "closeParenToken": {
@@ -418,7 +426,9 @@
                         "expression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     }
                 },
@@ -464,6 +474,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -490,6 +501,8 @@
                                                 "width": 35,
                                                 "fullWidth": 36,
                                                 "text": "'#2: (void 0) === void 0. Actual: '",
+                                                "value": "#2: (void 0) === void 0. Actual: ",
+                                                "valueText": "#2: (void 0) === void 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -546,7 +559,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "0"
+                                                            "text": "0",
+                                                            "value": 0,
+                                                            "valueText": "0"
                                                         }
                                                     },
                                                     "closeParenToken": {
@@ -731,6 +746,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -757,6 +773,8 @@
                                                 "width": 31,
                                                 "fullWidth": 32,
                                                 "text": "'#2: (null) === null. Actual: '",
+                                                "value": "#2: (null) === null. Actual: ",
+                                                "valueText": "#2: (null) === null. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {

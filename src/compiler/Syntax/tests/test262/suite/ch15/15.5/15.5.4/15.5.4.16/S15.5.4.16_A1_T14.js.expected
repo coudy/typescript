@@ -74,6 +74,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__reg",
+                                "value": "__reg",
                                 "valueText": "__reg",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "RegExp",
+                                        "value": "RegExp",
                                         "valueText": "RegExp"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 5,
-                                                "text": "\"ABC\""
+                                                "text": "\"ABC\"",
+                                                "value": "ABC",
+                                                "valueText": "ABC"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -175,6 +179,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__reg",
+                            "value": "__reg",
                             "valueText": "__reg"
                         },
                         "dotToken": {
@@ -187,6 +192,7 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "toLowerCase",
+                            "value": "toLowerCase",
                             "valueText": "toLowerCase",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -220,6 +226,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -231,6 +238,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -243,6 +251,7 @@
                             "kind": "IdentifierName",
                             "width": 11,
                             "text": "toLowerCase",
+                            "value": "toLowerCase",
                             "valueText": "toLowerCase"
                         }
                     }
@@ -321,6 +330,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__reg",
+                                "value": "__reg",
                                 "valueText": "__reg"
                             },
                             "dotToken": {
@@ -332,6 +342,7 @@
                                 "kind": "IdentifierName",
                                 "width": 11,
                                 "text": "toLowerCase",
+                                "value": "toLowerCase",
                                 "valueText": "toLowerCase"
                             }
                         },
@@ -375,7 +386,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"/abc/\""
+                        "text": "\"/abc/\"",
+                        "value": "/abc/",
+                        "valueText": "/abc/"
                     }
                 },
                 "closeParenToken": {
@@ -420,6 +433,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -444,7 +458,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 128,
-                                                "text": "'#1: var __reg = new RegExp(\"ABC\"); __reg.toLowerCase = String.prototype.toLowerCase; __reg.toLowerCase() === \"/abc/\". Actual: '"
+                                                "text": "'#1: var __reg = new RegExp(\"ABC\"); __reg.toLowerCase = String.prototype.toLowerCase; __reg.toLowerCase() === \"/abc/\". Actual: '",
+                                                "value": "#1: var __reg = new RegExp(\"ABC\"); __reg.toLowerCase = String.prototype.toLowerCase; __reg.toLowerCase() === \"/abc/\". Actual: ",
+                                                "valueText": "#1: var __reg = new RegExp(\"ABC\"); __reg.toLowerCase = String.prototype.toLowerCase; __reg.toLowerCase() === \"/abc/\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -461,6 +477,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__reg",
+                                                        "value": "__reg",
                                                         "valueText": "__reg"
                                                     },
                                                     "dotToken": {
@@ -472,6 +489,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "toLowerCase",
+                                                        "value": "toLowerCase",
                                                         "valueText": "toLowerCase"
                                                     }
                                                 },

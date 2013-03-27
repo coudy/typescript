@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "__func",
+                    "value": "__func",
                     "valueText": "__func"
                 },
                 "callSignature": {
@@ -122,6 +123,7 @@
                                             "width": 9,
                                             "fullWidth": 13,
                                             "text": "arguments",
+                                            "value": "arguments",
                                             "valueText": "arguments",
                                             "hasLeadingTrivia": true,
                                             "leadingTrivia": [
@@ -139,7 +141,9 @@
                                         "argumentExpression": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "0"
+                                            "text": "0",
+                                            "value": 0,
+                                            "valueText": "0"
                                         },
                                         "closeBracketToken": {
                                             "kind": "CloseBracketToken",
@@ -155,7 +159,9 @@
                                     "argumentExpression": {
                                         "kind": "StringLiteral",
                                         "width": 3,
-                                        "text": "\"E\""
+                                        "text": "\"E\"",
+                                        "value": "E",
+                                        "valueText": "E"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -171,7 +177,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 4,
-                                    "text": "2.74"
+                                    "text": "2.74",
+                                    "value": 2.74,
+                                    "valueText": "2.74"
                                 }
                             },
                             "semicolonToken": {
@@ -242,6 +250,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "equalsValueClause": {
@@ -297,6 +306,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "__func",
+                        "value": "__func",
                         "valueText": "__func",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -320,6 +330,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             }
                         ],
@@ -401,6 +412,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -413,6 +425,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "E",
+                            "value": "E",
                             "valueText": "E",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -439,7 +452,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 4,
-                        "text": "2.74"
+                        "text": "2.74",
+                        "value": 2.74,
+                        "valueText": "2.74"
                     }
                 },
                 "closeParenToken": {
@@ -484,6 +499,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -508,7 +524,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 43,
-                                                "text": "'#1: __obj.E === 2.74. Actual: __obj.E ==='"
+                                                "text": "'#1: __obj.E === 2.74. Actual: __obj.E ==='",
+                                                "value": "#1: __obj.E === 2.74. Actual: __obj.E ===",
+                                                "valueText": "#1: __obj.E === 2.74. Actual: __obj.E ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -522,6 +540,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__obj",
+                                                    "value": "__obj",
                                                     "valueText": "__obj"
                                                 },
                                                 "dotToken": {
@@ -533,6 +552,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "E",
+                                                    "value": "E",
                                                     "valueText": "E"
                                                 }
                                             }

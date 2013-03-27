@@ -1,15 +1,15 @@
-///<reference path='References.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     export function realizeToken(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.tokenKind,
-            token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
+            token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia());
     }
 
     export function convertToIdentifierName(token: ISyntaxToken): ISyntaxToken {
         Debug.assert(SyntaxFacts.isAnyKeyword(token.tokenKind));
         return new RealizedToken(SyntaxKind.IdentifierName,
-            token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
+            token.leadingTrivia(), token.text(), token.text(), token.text(), token.trailingTrivia());
     }
 
     export function tokenToJSON(token: ISyntaxToken) {
@@ -24,8 +24,10 @@ module TypeScript.Syntax {
 
         result.text = token.text();
 
-        if (token.value() !== null) {
-            result.valueText = token.value();
+        var value = token.value();
+        if (value !== null) {
+            result.value = value;
+            result.valueText = token.valueText();
         }
 
         if (token.hasLeadingTrivia()) {
@@ -74,35 +76,154 @@ module TypeScript.Syntax {
     }
 
     export function value(token: ISyntaxToken): any {
-        if (token.tokenKind === SyntaxKind.IdentifierName) {
-            var text = token.text();
-            for (var i = 0; i < text.length; i++) {
-                // TODO: handle unicode and escapes.
-                if (!Scanner1.isIdentifierPartCharacter[text.charCodeAt(i)]) {
-                    return null;
+        return value1(token.tokenKind, token.text());
+    }
+
+    function hexValue(text: string, start: number, length: number): number {
+        var intChar = 0
+        for (var i = 0; i < length; i++) {
+            var ch2 = text.charCodeAt(start + i);
+            if (!CharacterInfo.isHexDigit(ch2)) {
+                break;
+            }
+
+            intChar = (intChar << 4) + CharacterInfo.hexValue(ch2);
+        }
+
+        return intChar;
+    }
+
+    var characterArray: number[] = [];
+    function convertEscapes(text: string): string {
+        characterArray.length = 0;
+
+        for (var i = 0, n = text.length; i < n; i++) {
+            var ch = text.charCodeAt(i);
+
+            if (ch === CharacterCodes.backslash) {
+                i++;
+                if (i < n) {
+                    ch = text.charCodeAt(i);
+                    switch (ch) {
+                        case CharacterCodes._0:
+                            characterArray.push(CharacterCodes.nullCharacter);
+                            continue;
+
+                        case CharacterCodes.b:
+                            characterArray.push(CharacterCodes.backspace);
+                            continue;
+
+                        case CharacterCodes.f:
+                            characterArray.push(CharacterCodes.formFeed);
+                            continue;
+
+                        case CharacterCodes.n:
+                            characterArray.push(CharacterCodes.lineFeed);
+                            continue;
+
+                        case CharacterCodes.r:
+                            characterArray.push(CharacterCodes.carriageReturn);
+                            continue;
+
+                        case CharacterCodes.t:
+                            characterArray.push(CharacterCodes.tab);
+                            continue;
+
+                        case CharacterCodes.v:
+                            characterArray.push(CharacterCodes.verticalTab);
+                            continue;
+
+                        case CharacterCodes.x:
+                            characterArray.push(hexValue(text, /*start:*/ i + 1, /*length:*/ 2));
+                            i += 2;
+                            continue;
+
+                        case CharacterCodes.u:
+                            characterArray.push(hexValue(text, /*start:*/ i + 1, /*length:*/ 4));
+                            i += 4;
+                            continue;
+
+                        default:
+                            // Any other character is ok as well.  As per rule:
+                            // EscapeSequence :: CharacterEscapeSequence
+                            // CharacterEscapeSequence :: NonEscapeCharacter
+                            // NonEscapeCharacter :: SourceCharacter but notEscapeCharacter or LineTerminator
+                            //
+                            // Intentional fall through
+                        }
                 }
             }
 
-            return text;
+            characterArray.push(ch);
         }
-        else if (token.tokenKind === SyntaxKind.NumericLiteral) {
-            // TODO: implement this.
+
+        return String.fromCharCode.apply(null, characterArray);
+    }
+
+    function massageEscapes(text: string): string {
+        return text.indexOf("\\") >= 0 ? convertEscapes(text) : text;
+    }
+
+    function value1(kind: SyntaxKind, text: string): any {
+        if (kind === SyntaxKind.IdentifierName) {
+            return massageEscapes(text);
+        }
+
+        switch (kind) {
+            case SyntaxKind.TrueKeyword:
+                return true;
+            case SyntaxKind.FalseKeyword:
+                return false;
+            case SyntaxKind.NullKeyword:
+                return null;
+        }
+
+        
+        if (SyntaxFacts.isAnyKeyword(kind) || SyntaxFacts.isAnyPunctuation(kind)) {
             return null;
         }
-        else if (token.tokenKind === SyntaxKind.StringLiteral) {
-            // TODO: implement this.
-            return null;
+
+        if (kind === SyntaxKind.NumericLiteral) {
+            return parseFloat(text);
         }
-        else if (token.tokenKind === SyntaxKind.RegularExpressionLiteral) {
-            // TODO: implement this.
-            return null;
+        else if (kind === SyntaxKind.StringLiteral) {
+            if (text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0)) {
+                // Properly terminated.  Remove the quotes, and massage any escape characters we see.
+                return massageEscapes(text.substr(1, text.length - 2));
+            }
+            else {
+                // Not property terminated.  Remove the first quote and massage any escape characters we see.
+                return massageEscapes(text.substr(1));
+
+            }
         }
-        else if (token.tokenKind === SyntaxKind.EndOfFileToken || token.tokenKind === SyntaxKind.ErrorToken) {
+        else if (kind === SyntaxKind.RegularExpressionLiteral) {
+            try {
+                var lastSlash = text.lastIndexOf("/");
+                var body = text.substring(1, lastSlash);
+                var flags = text.substring(lastSlash + 1);
+                return new RegExp(body, flags);
+            }
+            catch (e) {
+                return null;
+            }
+        }
+        else if (kind === SyntaxKind.EndOfFileToken || kind === SyntaxKind.ErrorToken) {
             return null;
         }
         else {
             throw Errors.invalidOperation();
         }
+    }
+
+    function valueText1(kind: SyntaxKind, text: string): string {
+        var value = value1(kind, text);
+        return value === null ? "" : value.toString();
+    }
+
+    export function valueText(token: ISyntaxToken): string {
+        var value = token.value();
+        return value === null ? "" : value.toString();
     }
 
     class EmptyToken implements ISyntaxToken {
@@ -150,6 +271,7 @@ module TypeScript.Syntax {
         public text() { return ""; }
         public fullText(): string { return ""; }
         public value() { return null; }
+        public valueText() { return ""; }
 
         public hasLeadingTrivia() { return false; }
         public hasLeadingComment() { return false; }
@@ -187,23 +309,26 @@ module TypeScript.Syntax {
         private _leadingTrivia: ISyntaxTriviaList;
         private _text: string;
         private _value: any;
+        private _valueText: string;
         private _trailingTrivia: ISyntaxTriviaList;
 
         constructor(tokenKind: SyntaxKind,
                     leadingTrivia: ISyntaxTriviaList,
                     text: string,
                     value: any,
+                    valueText: string,
                     trailingTrivia: ISyntaxTriviaList) {
             this.tokenKind = tokenKind;
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._value = value;
+            this._valueText = valueText;
             this._trailingTrivia = trailingTrivia;
         }
 
         public clone(): ISyntaxToken {
             return new RealizedToken(this.tokenKind, /*this.tokenKeywordKind,*/ this._leadingTrivia,
-                this._text, this._value, this._trailingTrivia);
+                this._text, this._value, this._valueText, this._trailingTrivia);
         }
 
         public kind(): SyntaxKind { return this.tokenKind; }
@@ -239,6 +364,7 @@ module TypeScript.Syntax {
         public fullText(): string { return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText(); }
 
         public value(): any { return this._value; }
+        public valueText(): string { return this._valueText; }
 
         public hasLeadingTrivia(): bool { return this._leadingTrivia.count() > 0; }
         public hasLeadingComment(): bool { return this._leadingTrivia.hasComment(); }
@@ -269,28 +395,24 @@ module TypeScript.Syntax {
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
-                this.tokenKind, /*this.tokenKeywordKind,*/
-                leadingTrivia, this._text, this._value,
-                this._trailingTrivia);
+                this.tokenKind, leadingTrivia, this._text, this._value, this._valueText, this._trailingTrivia);
         }
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
-                this.tokenKind, /*this.tokenKeywordKind,*/
-                this._leadingTrivia, this._text, this._value,
-                trailingTrivia);
+                this.tokenKind,  this._leadingTrivia, this._text, this._value, this._valueText, trailingTrivia);
         }
     }
 
     export function token(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
         var text = (info !== null && info.text !== undefined) ? info.text : SyntaxFacts.getText(kind);
-        var value = (info !== null && info.value !== undefined) ? info.value : null;
 
         return new RealizedToken(
             kind,
             Syntax.triviaList(info === null ? null : info.leadingTrivia),
             text,
-            value,
+            value1(kind, text),
+            valueText1(kind, text),
             Syntax.triviaList(info === null ? null : info.trailingTrivia));
     }
     

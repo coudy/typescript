@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -173,7 +174,9 @@
                                         "expression": {
                                             "kind": "StringLiteral",
                                             "width": 14,
-                                            "text": "\"\\uFEFF\\uFEFF\""
+                                            "text": "\"\\uFEFF\\uFEFF\"",
+                                            "value": "\ufeff\ufeff",
+                                            "valueText": "\ufeff\ufeff"
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -184,6 +187,7 @@
                                             "kind": "IdentifierName",
                                             "width": 4,
                                             "text": "trim",
+                                            "value": "trim",
                                             "valueText": "trim"
                                         }
                                     },
@@ -227,7 +231,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 2,
-                                    "text": "\"\""
+                                    "text": "\"\"",
+                                    "value": "",
+                                    "valueText": ""
                                 }
                             },
                             "semicolonToken": {
@@ -279,6 +285,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -294,6 +301,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

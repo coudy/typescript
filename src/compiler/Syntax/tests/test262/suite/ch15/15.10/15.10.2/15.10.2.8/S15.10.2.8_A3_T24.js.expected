@@ -20,6 +20,7 @@
                         "width": 8,
                         "fullWidth": 669,
                         "text": "__string",
+                        "value": "__string",
                         "valueText": "__string",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -82,7 +83,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 34,
-                        "text": "\"zxcasd;fl\\\\\\  ^AAaaAAaaaf;lrlrzs\""
+                        "text": "\"zxcasd;fl\\\\\\  ^AAaaAAaaaf;lrlrzs\"",
+                        "value": "zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs",
+                        "valueText": "zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs"
                     }
                 },
                 "semicolonToken": {
@@ -113,6 +116,7 @@
                         "width": 10,
                         "fullWidth": 12,
                         "text": "__executed",
+                        "value": "__executed",
                         "valueText": "__executed",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -154,7 +158,9 @@
                             "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 11,
-                                "text": "/(A)?(A.*)/"
+                                "text": "/(A)?(A.*)/",
+                                "value": {},
+                                "valueText": "/(A)?(A.*)/"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -165,6 +171,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "exec",
+                                "value": "exec",
                                 "valueText": "exec"
                             }
                         },
@@ -181,6 +188,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__string",
+                                    "value": "__string",
                                     "valueText": "__string"
                                 }
                             ],
@@ -218,6 +226,7 @@
                         "width": 10,
                         "fullWidth": 12,
                         "text": "__expected",
+                        "value": "__expected",
                         "valueText": "__expected",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -260,7 +269,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 19,
-                                "text": "\"AAaaAAaaaf;lrlrzs\""
+                                "text": "\"AAaaAAaaaf;lrlrzs\"",
+                                "value": "AAaaAAaaaf;lrlrzs",
+                                "valueText": "AAaaAAaaaf;lrlrzs"
                             },
                             {
                                 "kind": "CommaToken",
@@ -270,7 +281,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"A\""
+                                "text": "\"A\"",
+                                "value": "A",
+                                "valueText": "A"
                             },
                             {
                                 "kind": "CommaToken",
@@ -280,7 +293,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 18,
-                                "text": "\"AaaAAaaaf;lrlrzs\""
+                                "text": "\"AaaAAaaaf;lrlrzs\"",
+                                "value": "AaaAAaaaf;lrlrzs",
+                                "valueText": "AaaAAaaaf;lrlrzs"
                             }
                         ],
                         "closeBracketToken": {
@@ -318,6 +333,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -330,6 +346,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "index",
+                            "value": "index",
                             "valueText": "index",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -356,7 +373,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 2,
-                        "text": "13"
+                        "text": "13",
+                        "value": 13,
+                        "valueText": "13"
                     }
                 },
                 "semicolonToken": {
@@ -387,6 +406,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -399,6 +419,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "input",
+                            "value": "input",
                             "valueText": "input",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -426,6 +447,7 @@
                         "kind": "IdentifierName",
                         "width": 8,
                         "text": "__string",
+                        "value": "__string",
                         "valueText": "__string"
                     }
                 },
@@ -492,6 +514,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__executed",
+                            "value": "__executed",
                             "valueText": "__executed"
                         },
                         "dotToken": {
@@ -504,6 +527,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -534,6 +558,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -545,6 +570,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -591,6 +617,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -623,6 +650,8 @@
                                                         "width": 116,
                                                         "fullWidth": 117,
                                                         "text": "'#1: __string = \"zxcasd;fl\\\\\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.length === '",
+                                                        "value": "#1: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.length === ",
+                                                        "valueText": "#1: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.length === ",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -651,6 +680,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 10,
                                                             "text": "__expected",
+                                                            "value": "__expected",
                                                             "valueText": "__expected"
                                                         },
                                                         "dotToken": {
@@ -663,6 +693,7 @@
                                                             "width": 6,
                                                             "fullWidth": 7,
                                                             "text": "length",
+                                                            "value": "length",
                                                             "valueText": "length",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -692,6 +723,8 @@
                                                     "width": 12,
                                                     "fullWidth": 13,
                                                     "text": "'. Actual: '",
+                                                    "value": ". Actual: ",
+                                                    "valueText": ". Actual: ",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -721,6 +754,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 10,
                                                     "text": "__executed",
+                                                    "value": "__executed",
                                                     "valueText": "__executed"
                                                 },
                                                 "dotToken": {
@@ -732,6 +766,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length"
                                                 }
                                             }
@@ -824,6 +859,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__executed",
+                            "value": "__executed",
                             "valueText": "__executed"
                         },
                         "dotToken": {
@@ -836,6 +872,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "index",
+                            "value": "index",
                             "valueText": "index",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -866,6 +903,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -877,6 +915,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "index",
+                            "value": "index",
                             "valueText": "index"
                         }
                     }
@@ -923,6 +962,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -955,6 +995,8 @@
                                                         "width": 115,
                                                         "fullWidth": 116,
                                                         "text": "'#2: __string = \"zxcasd;fl\\\\\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.index === '",
+                                                        "value": "#2: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.index === ",
+                                                        "valueText": "#2: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.index === ",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -983,6 +1025,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 10,
                                                             "text": "__expected",
+                                                            "value": "__expected",
                                                             "valueText": "__expected"
                                                         },
                                                         "dotToken": {
@@ -995,6 +1038,7 @@
                                                             "width": 5,
                                                             "fullWidth": 6,
                                                             "text": "index",
+                                                            "value": "index",
                                                             "valueText": "index",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -1024,6 +1068,8 @@
                                                     "width": 12,
                                                     "fullWidth": 13,
                                                     "text": "'. Actual: '",
+                                                    "value": ". Actual: ",
+                                                    "valueText": ". Actual: ",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -1053,6 +1099,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 10,
                                                     "text": "__executed",
+                                                    "value": "__executed",
                                                     "valueText": "__executed"
                                                 },
                                                 "dotToken": {
@@ -1064,6 +1111,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "index",
+                                                    "value": "index",
                                                     "valueText": "index"
                                                 }
                                             }
@@ -1156,6 +1204,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__executed",
+                            "value": "__executed",
                             "valueText": "__executed"
                         },
                         "dotToken": {
@@ -1168,6 +1217,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "input",
+                            "value": "input",
                             "valueText": "input",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1198,6 +1248,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -1209,6 +1260,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "input",
+                            "value": "input",
                             "valueText": "input"
                         }
                     }
@@ -1255,6 +1307,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1287,6 +1340,8 @@
                                                         "width": 115,
                                                         "fullWidth": 116,
                                                         "text": "'#3: __string = \"zxcasd;fl\\\\\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.input === '",
+                                                        "value": "#3: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.input === ",
+                                                        "valueText": "#3: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed.input === ",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -1315,6 +1370,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 10,
                                                             "text": "__expected",
+                                                            "value": "__expected",
                                                             "valueText": "__expected"
                                                         },
                                                         "dotToken": {
@@ -1327,6 +1383,7 @@
                                                             "width": 5,
                                                             "fullWidth": 6,
                                                             "text": "input",
+                                                            "value": "input",
                                                             "valueText": "input",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -1356,6 +1413,8 @@
                                                     "width": 12,
                                                     "fullWidth": 13,
                                                     "text": "'. Actual: '",
+                                                    "value": ". Actual: ",
+                                                    "valueText": ". Actual: ",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -1385,6 +1444,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 10,
                                                     "text": "__executed",
+                                                    "value": "__executed",
                                                     "valueText": "__executed"
                                                 },
                                                 "dotToken": {
@@ -1396,6 +1456,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "input",
+                                                    "value": "input",
                                                     "valueText": "input"
                                                 }
                                             }
@@ -1495,6 +1556,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "index",
+                                "value": "index",
                                 "valueText": "index"
                             },
                             "equalsValueClause": {
@@ -1508,7 +1570,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -1534,6 +1598,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "index",
+                        "value": "index",
                         "valueText": "index"
                     },
                     "operatorToken": {
@@ -1548,6 +1613,7 @@
                             "kind": "IdentifierName",
                             "width": 10,
                             "text": "__expected",
+                            "value": "__expected",
                             "valueText": "__expected"
                         },
                         "dotToken": {
@@ -1559,6 +1625,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -1583,6 +1650,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "index",
+                        "value": "index",
                         "valueText": "index"
                     },
                     "operatorToken": {
@@ -1660,6 +1728,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__executed",
+                                        "value": "__executed",
                                         "valueText": "__executed"
                                     },
                                     "openBracketToken": {
@@ -1671,6 +1740,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "index",
+                                        "value": "index",
                                         "valueText": "index"
                                     },
                                     "closeBracketToken": {
@@ -1707,6 +1777,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__expected",
+                                        "value": "__expected",
                                         "valueText": "__expected"
                                     },
                                     "openBracketToken": {
@@ -1718,6 +1789,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "index",
+                                        "value": "index",
                                         "valueText": "index"
                                     },
                                     "closeBracketToken": {
@@ -1769,6 +1841,7 @@
                                                 "width": 6,
                                                 "fullWidth": 8,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -1807,6 +1880,8 @@
                                                                             "width": 105,
                                                                             "fullWidth": 106,
                                                                             "text": "'#4: __string = \"zxcasd;fl\\\\\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed['",
+                                                                            "value": "#4: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed[",
+                                                                            "valueText": "#4: __string = \"zxcasd;fl\\  ^AAaaAAaaaf;lrlrzs\"; __executed = /(A)?(A.*)/.exec(__string); __executed[",
                                                                             "hasTrailingTrivia": true,
                                                                             "trailingTrivia": [
                                                                                 {
@@ -1833,6 +1908,7 @@
                                                                             "width": 5,
                                                                             "fullWidth": 6,
                                                                             "text": "index",
+                                                                            "value": "index",
                                                                             "valueText": "index",
                                                                             "hasTrailingTrivia": true,
                                                                             "trailingTrivia": [
@@ -1861,6 +1937,8 @@
                                                                         "width": 8,
                                                                         "fullWidth": 9,
                                                                         "text": "'] === '",
+                                                                        "value": "] === ",
+                                                                        "valueText": "] === ",
                                                                         "hasTrailingTrivia": true,
                                                                         "trailingTrivia": [
                                                                             {
@@ -1890,6 +1968,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 10,
                                                                         "text": "__expected",
+                                                                        "value": "__expected",
                                                                         "valueText": "__expected"
                                                                     },
                                                                     "openBracketToken": {
@@ -1901,6 +1980,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 5,
                                                                         "text": "index",
+                                                                        "value": "index",
                                                                         "valueText": "index"
                                                                     },
                                                                     "closeBracketToken": {
@@ -1936,6 +2016,8 @@
                                                                 "width": 12,
                                                                 "fullWidth": 13,
                                                                 "text": "'. Actual: '",
+                                                                "value": ". Actual: ",
+                                                                "valueText": ". Actual: ",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -1965,6 +2047,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 10,
                                                                 "text": "__executed",
+                                                                "value": "__executed",
                                                                 "valueText": "__executed"
                                                             },
                                                             "openBracketToken": {
@@ -1976,6 +2059,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 5,
                                                                 "text": "index",
+                                                                "value": "index",
                                                                 "valueText": "index"
                                                             },
                                                             "closeBracketToken": {

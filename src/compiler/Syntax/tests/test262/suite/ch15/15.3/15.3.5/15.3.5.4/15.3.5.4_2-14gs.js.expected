@@ -98,6 +98,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "my_eval",
+                                "value": "my_eval",
                                 "valueText": "my_eval",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,6 +128,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval"
                                 }
                             }
@@ -158,6 +160,7 @@
                         "kind": "IdentifierName",
                         "width": 7,
                         "text": "my_eval",
+                        "value": "my_eval",
                         "valueText": "my_eval"
                     },
                     "argumentList": {
@@ -172,7 +175,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 32,
-                                "text": "\"\\\"use strict\\\";\\ngNonStrict();\""
+                                "text": "\"\\\"use strict\\\";\\ngNonStrict();\"",
+                                "value": "\"use strict\";\ngNonStrict();",
+                                "valueText": "\"use strict\";\ngNonStrict();"
                             }
                         ],
                         "closeParenToken": {
@@ -230,6 +235,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "gNonStrict",
+                    "value": "gNonStrict",
                     "valueText": "gNonStrict"
                 },
                 "callSignature": {
@@ -307,6 +313,7 @@
                                     "kind": "IdentifierName",
                                     "width": 10,
                                     "text": "gNonStrict",
+                                    "value": "gNonStrict",
                                     "valueText": "gNonStrict"
                                 },
                                 "dotToken": {
@@ -318,6 +325,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "caller",
+                                    "value": "caller",
                                     "valueText": "caller"
                                 }
                             },

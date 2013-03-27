@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 1,
                     "text": "f",
+                    "value": "f",
                     "valueText": "f"
                 },
                 "callSignature": {
@@ -140,6 +141,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "i",
+                                            "value": "i",
                                             "valueText": "i"
                                         }
                                     }
@@ -195,6 +197,7 @@
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "j",
+                                            "value": "j",
                                             "valueText": "j"
                                         }
                                     }
@@ -226,6 +229,7 @@
                                     "width": 4,
                                     "fullWidth": 7,
                                     "text": "str1",
+                                    "value": "str1",
                                     "valueText": "str1",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -258,7 +262,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 2,
-                                    "text": "''"
+                                    "text": "''",
+                                    "value": "",
+                                    "valueText": ""
                                 }
                             },
                             "semicolonToken": {
@@ -287,6 +293,7 @@
                                     "width": 4,
                                     "fullWidth": 7,
                                     "text": "str2",
+                                    "value": "str2",
                                     "valueText": "str2",
                                     "hasLeadingTrivia": true,
                                     "hasTrailingTrivia": true,
@@ -319,7 +326,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 2,
-                                    "text": "''"
+                                    "text": "''",
+                                    "value": "",
+                                    "valueText": ""
                                 }
                             },
                             "semicolonToken": {
@@ -369,6 +378,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "x",
+                                        "value": "x",
                                         "valueText": "x",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -395,7 +405,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             },
                             "semicolonToken": {
@@ -445,6 +457,7 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "y",
+                                        "value": "y",
                                         "valueText": "y",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -471,7 +484,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             },
                             "semicolonToken": {
@@ -524,6 +539,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "i",
+                                "value": "i",
                                 "valueText": "i",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -585,6 +601,7 @@
                                                 "width": 4,
                                                 "fullWidth": 8,
                                                 "text": "str1",
+                                                "value": "str1",
                                                 "valueText": "str1",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -603,6 +620,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "i",
+                                                "value": "i",
                                                 "valueText": "i"
                                             }
                                         },
@@ -656,6 +674,7 @@
                                     "width": 4,
                                     "fullWidth": 9,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval",
                                     "hasLeadingTrivia": true,
                                     "hasLeadingNewLine": true,
@@ -686,7 +705,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 30,
-                                            "text": "'for(j in this){\\nstr2+=j;\\n}'"
+                                            "text": "'for(j in this){\\nstr2+=j;\\n}'",
+                                            "value": "for(j in this){\nstr2+=j;\n}",
+                                            "valueText": "for(j in this){\nstr2+=j;\n}"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -755,6 +776,7 @@
                                         "width": 4,
                                         "fullWidth": 5,
                                         "text": "str1",
+                                        "value": "str1",
                                         "valueText": "str1",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -781,6 +803,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "str2",
+                                        "value": "str2",
                                         "valueText": "str2"
                                     }
                                 },
@@ -863,6 +886,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "f",
+                            "value": "f",
                             "valueText": "f"
                         },
                         "argumentList": {
@@ -916,6 +940,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -937,7 +962,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 84,
-                                            "text": "\"#1: scope chain must contain same objects in the same order as the calling context\""
+                                            "text": "\"#1: scope chain must contain same objects in the same order as the calling context\"",
+                                            "value": "#1: scope chain must contain same objects in the same order as the calling context",
+                                            "valueText": "#1: scope chain must contain same objects in the same order as the calling context"
                                         }
                                     ],
                                     "closeParenToken": {

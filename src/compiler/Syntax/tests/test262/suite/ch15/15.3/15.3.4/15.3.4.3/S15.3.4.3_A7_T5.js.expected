@@ -66,6 +66,7 @@
                     "kind": "IdentifierName",
                     "width": 7,
                     "text": "FACTORY",
+                    "value": "FACTORY",
                     "valueText": "FACTORY"
                 },
                 "callSignature": {
@@ -122,6 +123,7 @@
                                             "width": 8,
                                             "fullWidth": 10,
                                             "text": "Function",
+                                            "value": "Function",
                                             "valueText": "Function",
                                             "hasLeadingTrivia": true,
                                             "leadingTrivia": [
@@ -143,7 +145,9 @@
                                                 {
                                                     "kind": "StringLiteral",
                                                     "width": 10,
-                                                    "text": "\"a1,a2,a3\""
+                                                    "text": "\"a1,a2,a3\"",
+                                                    "value": "a1,a2,a3",
+                                                    "valueText": "a1,a2,a3"
                                                 },
                                                 {
                                                     "kind": "CommaToken",
@@ -153,7 +157,9 @@
                                                 {
                                                     "kind": "StringLiteral",
                                                     "width": 24,
-                                                    "text": "\"this.shifted=a1+a2+a3;\""
+                                                    "text": "\"this.shifted=a1+a2+a3;\"",
+                                                    "value": "this.shifted=a1+a2+a3;",
+                                                    "valueText": "this.shifted=a1+a2+a3;"
                                                 }
                                             ],
                                             "closeParenToken": {
@@ -172,6 +178,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "apply",
+                                        "value": "apply",
                                         "valueText": "apply"
                                     }
                                 },
@@ -198,6 +205,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "arguments",
+                                            "value": "arguments",
                                             "valueText": "arguments"
                                         }
                                     ],
@@ -251,6 +259,7 @@
                         "width": 3,
                         "fullWidth": 4,
                         "text": "obj",
+                        "value": "obj",
                         "valueText": "obj",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -286,6 +295,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "FACTORY",
+                            "value": "FACTORY",
                             "valueText": "FACTORY"
                         },
                         "argumentList": {
@@ -300,7 +310,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 2,
-                                    "text": "\"\""
+                                    "text": "\"\"",
+                                    "value": "",
+                                    "valueText": ""
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -310,7 +322,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 },
                                 {
                                     "kind": "CommaToken",
@@ -320,7 +334,9 @@
                                 {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "2"
+                                    "text": "2",
+                                    "value": 2,
+                                    "valueText": "2"
                                 }
                             ],
                             "closeParenToken": {
@@ -403,7 +419,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 9,
-                            "text": "\"shifted\""
+                            "text": "\"shifted\"",
+                            "value": "shifted",
+                            "valueText": "shifted"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -435,7 +453,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 4,
-                        "text": "\"12\""
+                        "text": "\"12\"",
+                        "value": "12",
+                        "valueText": "12"
                     }
                 },
                 "closeParenToken": {
@@ -480,6 +500,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -501,7 +522,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 90,
-                                            "text": "'#1: If argArray is either an array or an arguments object, the function is passed the...'"
+                                            "text": "'#1: If argArray is either an array or an arguments object, the function is passed the...'",
+                                            "value": "#1: If argArray is either an array or an arguments object, the function is passed the...",
+                                            "valueText": "#1: If argArray is either an array or an arguments object, the function is passed the..."
                                         }
                                     ],
                                     "closeParenToken": {
@@ -607,6 +630,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj"
                             },
                             "dotToken": {
@@ -619,6 +643,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "shifted",
+                                "value": "shifted",
                                 "valueText": "shifted",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -646,7 +671,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 11,
-                        "text": "\"undefined\""
+                        "text": "\"undefined\"",
+                        "value": "undefined",
+                        "valueText": "undefined"
                     }
                 },
                 "closeParenToken": {
@@ -691,6 +718,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -712,7 +740,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 90,
-                                            "text": "'#2: If argArray is either an array or an arguments object, the function is passed the...'"
+                                            "text": "'#2: If argArray is either an array or an arguments object, the function is passed the...'",
+                                            "value": "#2: If argArray is either an array or an arguments object, the function is passed the...",
+                                            "valueText": "#2: If argArray is either an array or an arguments object, the function is passed the..."
                                         }
                                     ],
                                     "closeParenToken": {

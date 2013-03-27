@@ -78,6 +78,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -125,6 +126,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -208,7 +210,9 @@
                                                                         {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 1,
-                                                                            "text": "1"
+                                                                            "text": "1",
+                                                                            "value": 1,
+                                                                            "valueText": "1"
                                                                         },
                                                                         {
                                                                             "kind": "CommaToken",
@@ -218,7 +222,9 @@
                                                                         {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 1,
-                                                                            "text": "2"
+                                                                            "text": "2",
+                                                                            "value": 2,
+                                                                            "valueText": "2"
                                                                         },
                                                                         {
                                                                             "kind": "CommaToken",
@@ -228,7 +234,9 @@
                                                                         {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 1,
-                                                                            "text": "3"
+                                                                            "text": "3",
+                                                                            "value": 3,
+                                                                            "valueText": "3"
                                                                         }
                                                                     ],
                                                                     "closeBracketToken": {
@@ -364,6 +372,7 @@
                             "width": 5,
                             "fullWidth": 6,
                             "text": "__str",
+                            "value": "__str",
                             "valueText": "__str",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -390,7 +399,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"object\""
+                        "text": "\"object\"",
+                        "value": "object",
+                        "valueText": "object"
                     }
                 },
                 "closeParenToken": {
@@ -435,6 +446,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -459,7 +471,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 107,
-                                                "text": "'#1: __str = new String(function(){return [1,2,3]}()); typeof __str === \"object\". Actual: typeof __str ==='"
+                                                "text": "'#1: __str = new String(function(){return [1,2,3]}()); typeof __str === \"object\". Actual: typeof __str ==='",
+                                                "value": "#1: __str = new String(function(){return [1,2,3]}()); typeof __str === \"object\". Actual: typeof __str ===",
+                                                "valueText": "#1: __str = new String(function(){return [1,2,3]}()); typeof __str === \"object\". Actual: typeof __str ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -487,6 +501,7 @@
                                                     "width": 5,
                                                     "fullWidth": 6,
                                                     "text": "__str",
+                                                    "value": "__str",
                                                     "valueText": "__str",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -617,6 +632,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__str",
+                            "value": "__str",
                             "valueText": "__str"
                         },
                         "dotToken": {
@@ -629,6 +645,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -655,6 +673,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "String",
+                        "value": "String",
                         "valueText": "String"
                     }
                 },
@@ -703,6 +722,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -729,7 +749,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 117,
-                                                "text": "'#1.5: __str = new String(function(){return [1,2,3]}()); __str.constructor === String. Actual: __str.constructor ==='"
+                                                "text": "'#1.5: __str = new String(function(){return [1,2,3]}()); __str.constructor === String. Actual: __str.constructor ==='",
+                                                "value": "#1.5: __str = new String(function(){return [1,2,3]}()); __str.constructor === String. Actual: __str.constructor ===",
+                                                "valueText": "#1.5: __str = new String(function(){return [1,2,3]}()); __str.constructor === String. Actual: __str.constructor ==="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -744,6 +766,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__str",
+                                                    "value": "__str",
                                                     "valueText": "__str"
                                                 },
                                                 "dotToken": {
@@ -756,6 +779,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -880,6 +905,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "__str",
+                        "value": "__str",
                         "valueText": "__str",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -897,7 +923,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"1,2,3\""
+                        "text": "\"1,2,3\"",
+                        "value": "1,2,3",
+                        "valueText": "1,2,3"
                     }
                 },
                 "closeParenToken": {
@@ -942,6 +970,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -966,7 +995,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 89,
-                                                "text": "'#2: __str = new String(function(){return [1,2,3]}()); __str ==\"1,2,3\". Actual: __str =='"
+                                                "text": "'#2: __str = new String(function(){return [1,2,3]}()); __str ==\"1,2,3\". Actual: __str =='",
+                                                "value": "#2: __str = new String(function(){return [1,2,3]}()); __str ==\"1,2,3\". Actual: __str ==",
+                                                "valueText": "#2: __str = new String(function(){return [1,2,3]}()); __str ==\"1,2,3\". Actual: __str =="
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -978,6 +1009,7 @@
                                                 "width": 5,
                                                 "fullWidth": 6,
                                                 "text": "__str",
+                                                "value": "__str",
                                                 "valueText": "__str",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [

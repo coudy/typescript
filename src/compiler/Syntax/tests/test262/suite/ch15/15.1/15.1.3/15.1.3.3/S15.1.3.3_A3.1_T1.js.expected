@@ -19,6 +19,7 @@
                         "width": 11,
                         "fullWidth": 325,
                         "text": "uriReserved",
+                        "value": "uriReserved",
                         "valueText": "uriReserved",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -90,7 +91,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\";\""
+                                "text": "\";\"",
+                                "value": ";",
+                                "valueText": ";"
                             },
                             {
                                 "kind": "CommaToken",
@@ -108,7 +111,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"/\""
+                                "text": "\"/\"",
+                                "value": "/",
+                                "valueText": "/"
                             },
                             {
                                 "kind": "CommaToken",
@@ -126,7 +131,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"?\""
+                                "text": "\"?\"",
+                                "value": "?",
+                                "valueText": "?"
                             },
                             {
                                 "kind": "CommaToken",
@@ -144,7 +151,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\":\""
+                                "text": "\":\"",
+                                "value": ":",
+                                "valueText": ":"
                             },
                             {
                                 "kind": "CommaToken",
@@ -162,7 +171,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"@\""
+                                "text": "\"@\"",
+                                "value": "@",
+                                "valueText": "@"
                             },
                             {
                                 "kind": "CommaToken",
@@ -180,7 +191,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"&\""
+                                "text": "\"&\"",
+                                "value": "&",
+                                "valueText": "&"
                             },
                             {
                                 "kind": "CommaToken",
@@ -198,7 +211,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"=\""
+                                "text": "\"=\"",
+                                "value": "=",
+                                "valueText": "="
                             },
                             {
                                 "kind": "CommaToken",
@@ -216,7 +231,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"+\""
+                                "text": "\"+\"",
+                                "value": "+",
+                                "valueText": "+"
                             },
                             {
                                 "kind": "CommaToken",
@@ -234,7 +251,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\"$\""
+                                "text": "\"$\"",
+                                "value": "$",
+                                "valueText": "$"
                             },
                             {
                                 "kind": "CommaToken",
@@ -252,7 +271,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 3,
-                                "text": "\",\""
+                                "text": "\",\"",
+                                "value": ",",
+                                "valueText": ","
                             }
                         ],
                         "closeBracketToken": {
@@ -306,6 +327,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "indexC",
+                        "value": "indexC",
                         "valueText": "indexC",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -331,7 +353,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "firstSemicolonToken": {
@@ -355,6 +379,7 @@
                         "width": 6,
                         "fullWidth": 7,
                         "text": "indexC",
+                        "value": "indexC",
                         "valueText": "indexC",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -384,6 +409,7 @@
                             "kind": "IdentifierName",
                             "width": 11,
                             "text": "uriReserved",
+                            "value": "uriReserved",
                             "valueText": "uriReserved"
                         },
                         "dotToken": {
@@ -395,6 +421,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -419,6 +446,7 @@
                         "kind": "IdentifierName",
                         "width": 6,
                         "text": "indexC",
+                        "value": "indexC",
                         "valueText": "indexC"
                     },
                     "operatorToken": {
@@ -494,6 +522,7 @@
                                             "width": 3,
                                             "fullWidth": 4,
                                             "text": "str",
+                                            "value": "str",
                                             "valueText": "str",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -526,6 +555,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 11,
                                                     "text": "uriReserved",
+                                                    "value": "uriReserved",
                                                     "valueText": "uriReserved"
                                                 },
                                                 "openBracketToken": {
@@ -537,6 +567,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "indexC",
+                                                    "value": "indexC",
                                                     "valueText": "indexC"
                                                 },
                                                 "closeBracketToken": {
@@ -606,6 +637,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "encodeURI",
+                                        "value": "encodeURI",
                                         "valueText": "encodeURI"
                                     },
                                     "argumentList": {
@@ -621,6 +653,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "str",
+                                                "value": "str",
                                                 "valueText": "str"
                                             }
                                         ],
@@ -656,6 +689,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "str",
+                                    "value": "str",
                                     "valueText": "str"
                                 }
                             },
@@ -701,6 +735,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -733,6 +768,8 @@
                                                                     "width": 3,
                                                                     "fullWidth": 4,
                                                                     "text": "'#'",
+                                                                    "value": "#",
+                                                                    "valueText": "#",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -770,6 +807,7 @@
                                                                             "width": 6,
                                                                             "fullWidth": 7,
                                                                             "text": "indexC",
+                                                                            "value": "indexC",
                                                                             "valueText": "indexC",
                                                                             "hasTrailingTrivia": true,
                                                                             "trailingTrivia": [
@@ -795,7 +833,9 @@
                                                                         "right": {
                                                                             "kind": "NumericLiteral",
                                                                             "width": 1,
-                                                                            "text": "1"
+                                                                            "text": "1",
+                                                                            "value": 1,
+                                                                            "valueText": "1"
                                                                         }
                                                                     },
                                                                     "closeParenToken": {
@@ -831,6 +871,8 @@
                                                                 "width": 30,
                                                                 "fullWidth": 31,
                                                                 "text": "': unescapedURISet containing'",
+                                                                "value": ": unescapedURISet containing",
+                                                                "valueText": ": unescapedURISet containing",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -857,6 +899,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "str",
+                                                            "value": "str",
                                                             "valueText": "str"
                                                         }
                                                     }

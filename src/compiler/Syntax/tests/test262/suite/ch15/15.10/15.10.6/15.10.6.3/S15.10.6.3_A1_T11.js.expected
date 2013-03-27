@@ -75,6 +75,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__string",
+                                "value": "__string",
                                 "valueText": "__string",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -120,6 +121,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     },
                                     "argumentList": {
@@ -134,7 +136,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 5,
-                                                "text": "1.012"
+                                                "text": "1.012",
+                                                "value": 1.012,
+                                                "valueText": "1.012"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -176,6 +180,7 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "__re",
+                        "value": "__re",
                         "valueText": "__re",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -201,7 +206,9 @@
                     "right": {
                         "kind": "RegularExpressionLiteral",
                         "width": 6,
-                        "text": "/2|12/"
+                        "text": "/2|12/",
+                        "value": {},
+                        "valueText": "/2|12/"
                     }
                 },
                 "semicolonToken": {
@@ -270,6 +277,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "__re",
+                                "value": "__re",
                                 "valueText": "__re"
                             },
                             "dotToken": {
@@ -281,6 +289,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "test",
+                                "value": "test",
                                 "valueText": "test"
                             }
                         },
@@ -297,6 +306,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__string",
+                                    "value": "__string",
                                     "valueText": "__string"
                                 }
                             ],
@@ -349,6 +359,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "__re",
+                                        "value": "__re",
                                         "valueText": "__re"
                                     },
                                     "dotToken": {
@@ -360,6 +371,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "exec",
+                                        "value": "exec",
                                         "valueText": "exec"
                                     }
                                 },
@@ -376,6 +388,7 @@
                                             "kind": "IdentifierName",
                                             "width": 8,
                                             "text": "__string",
+                                            "value": "__string",
                                             "valueText": "__string"
                                         }
                                     ],
@@ -462,6 +475,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -483,7 +497,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 109,
-                                            "text": "'#0: var __string = new Number(1.012); __re = /2|12/; __re.test(__string) === (__re.exec(__string) !== null)'"
+                                            "text": "'#0: var __string = new Number(1.012); __re = /2|12/; __re.test(__string) === (__re.exec(__string) !== null)'",
+                                            "value": "#0: var __string = new Number(1.012); __re = /2|12/; __re.test(__string) === (__re.exec(__string) !== null)",
+                                            "valueText": "#0: var __string = new Number(1.012); __re = /2|12/; __re.test(__string) === (__re.exec(__string) !== null)"
                                         }
                                     ],
                                     "closeParenToken": {

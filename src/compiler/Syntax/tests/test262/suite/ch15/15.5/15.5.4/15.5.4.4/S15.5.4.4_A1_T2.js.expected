@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "Boolean",
+                                        "value": "Boolean",
                                         "valueText": "Boolean"
                                     }
                                 }
@@ -155,6 +157,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -175,6 +178,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "charAt",
+                            "value": "charAt",
                             "valueText": "charAt",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -208,6 +212,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -219,6 +224,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -231,6 +237,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "charAt",
+                            "value": "charAt",
                             "valueText": "charAt"
                         }
                     }
@@ -315,6 +322,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__instance",
+                                        "value": "__instance",
                                         "valueText": "__instance"
                                     },
                                     "dotToken": {
@@ -326,6 +334,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "charAt",
+                                        "value": "charAt",
                                         "valueText": "charAt"
                                     }
                                 },
@@ -341,7 +350,9 @@
                                         {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -366,6 +377,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__instance",
+                                        "value": "__instance",
                                         "valueText": "__instance"
                                     },
                                     "dotToken": {
@@ -377,6 +389,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "charAt",
+                                        "value": "charAt",
                                         "valueText": "charAt"
                                     }
                                 },
@@ -392,7 +405,9 @@
                                         {
                                             "kind": "TrueKeyword",
                                             "width": 4,
-                                            "text": "true"
+                                            "text": "true",
+                                            "value": true,
+                                            "valueText": "true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -418,6 +433,7 @@
                                     "kind": "IdentifierName",
                                     "width": 10,
                                     "text": "__instance",
+                                    "value": "__instance",
                                     "valueText": "__instance"
                                 },
                                 "dotToken": {
@@ -429,6 +445,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "charAt",
+                                    "value": "charAt",
                                     "valueText": "charAt"
                                 }
                             },
@@ -447,7 +464,9 @@
                                         "left": {
                                             "kind": "TrueKeyword",
                                             "width": 4,
-                                            "text": "true"
+                                            "text": "true",
+                                            "value": true,
+                                            "valueText": "true"
                                         },
                                         "operatorToken": {
                                             "kind": "PlusToken",
@@ -457,7 +476,9 @@
                                         "right": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "1"
+                                            "text": "1",
+                                            "value": 1,
+                                            "valueText": "1"
                                         }
                                     }
                                 ],
@@ -493,7 +514,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"fal\""
+                        "text": "\"fal\"",
+                        "value": "fal",
+                        "valueText": "fal"
                     }
                 },
                 "closeParenToken": {
@@ -538,6 +561,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -568,7 +592,9 @@
                                                     "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 243,
-                                                        "text": "'#1: __instance = new Boolean; __instance.charAt = String.prototype.charAt;  __instance = new Boolean; __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true)+__instance.charAt(true+1) === \"fal\". Actual: '"
+                                                        "text": "'#1: __instance = new Boolean; __instance.charAt = String.prototype.charAt;  __instance = new Boolean; __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true)+__instance.charAt(true+1) === \"fal\". Actual: '",
+                                                        "value": "#1: __instance = new Boolean; __instance.charAt = String.prototype.charAt;  __instance = new Boolean; __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true)+__instance.charAt(true+1) === \"fal\". Actual: ",
+                                                        "valueText": "#1: __instance = new Boolean; __instance.charAt = String.prototype.charAt;  __instance = new Boolean; __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true)+__instance.charAt(true+1) === \"fal\". Actual: "
                                                     },
                                                     "operatorToken": {
                                                         "kind": "PlusToken",
@@ -585,6 +611,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 10,
                                                                 "text": "__instance",
+                                                                "value": "__instance",
                                                                 "valueText": "__instance"
                                                             },
                                                             "dotToken": {
@@ -596,6 +623,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 6,
                                                                 "text": "charAt",
+                                                                "value": "charAt",
                                                                 "valueText": "charAt"
                                                             }
                                                         },
@@ -611,7 +639,9 @@
                                                                 {
                                                                     "kind": "FalseKeyword",
                                                                     "width": 5,
-                                                                    "text": "false"
+                                                                    "text": "false",
+                                                                    "value": false,
+                                                                    "valueText": "false"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -637,6 +667,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 10,
                                                             "text": "__instance",
+                                                            "value": "__instance",
                                                             "valueText": "__instance"
                                                         },
                                                         "dotToken": {
@@ -648,6 +679,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "charAt",
+                                                            "value": "charAt",
                                                             "valueText": "charAt"
                                                         }
                                                     },
@@ -663,7 +695,9 @@
                                                             {
                                                                 "kind": "TrueKeyword",
                                                                 "width": 4,
-                                                                "text": "true"
+                                                                "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -689,6 +723,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "__instance",
+                                                        "value": "__instance",
                                                         "valueText": "__instance"
                                                     },
                                                     "dotToken": {
@@ -700,6 +735,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "charAt",
+                                                        "value": "charAt",
                                                         "valueText": "charAt"
                                                     }
                                                 },
@@ -718,7 +754,9 @@
                                                             "left": {
                                                                 "kind": "TrueKeyword",
                                                                 "width": 4,
-                                                                "text": "true"
+                                                                "text": "true",
+                                                                "value": true,
+                                                                "valueText": "true"
                                                             },
                                                             "operatorToken": {
                                                                 "kind": "PlusToken",
@@ -728,7 +766,9 @@
                                                             "right": {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             }
                                                         }
                                                     ],

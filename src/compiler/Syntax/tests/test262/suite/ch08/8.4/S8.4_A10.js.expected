@@ -90,6 +90,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__str",
+                                "value": "__str",
                                 "valueText": "__str",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -118,7 +119,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 23,
-                                    "text": "\"\\u0041A\\u0042B\\u0043C\""
+                                    "text": "\"\\u0041A\\u0042B\\u0043C\"",
+                                    "value": "AABBCC",
+                                    "valueText": "AABBCC"
                                 }
                             }
                         }
@@ -168,6 +171,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "__str",
+                        "value": "__str",
                         "valueText": "__str",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -193,7 +197,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "'AABBCC'"
+                        "text": "'AABBCC'",
+                        "value": "AABBCC",
+                        "valueText": "AABBCC"
                     }
                 },
                 "closeParenToken": {
@@ -230,6 +236,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -256,6 +263,8 @@
                                                 "width": 76,
                                                 "fullWidth": 77,
                                                 "text": "'#1: var __str = \"\\\\u0041A\\\\u0042B\\\\u0043C\"; __str === \\'AABBCC\\'. Actual: '",
+                                                "value": "#1: var __str = \"\\u0041A\\u0042B\\u0043C\"; __str === 'AABBCC'. Actual: ",
+                                                "valueText": "#1: var __str = \"\\u0041A\\u0042B\\u0043C\"; __str === 'AABBCC'. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -289,6 +298,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "__str",
+                                                    "value": "__str",
                                                     "valueText": "__str"
                                                 },
                                                 "closeParenToken": {
@@ -417,6 +427,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "__str__",
+                                "value": "__str__",
                                 "valueText": "__str__",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -448,7 +459,9 @@
                                     "left": {
                                         "kind": "StringLiteral",
                                         "width": 20,
-                                        "text": "\"\\u0041\\u0042\\u0043\""
+                                        "text": "\"\\u0041\\u0042\\u0043\"",
+                                        "value": "ABC",
+                                        "valueText": "ABC"
                                     },
                                     "operatorToken": {
                                         "kind": "PlusToken",
@@ -458,7 +471,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "'ABC'"
+                                        "text": "'ABC'",
+                                        "value": "ABC",
+                                        "valueText": "ABC"
                                     }
                                 }
                             }
@@ -509,6 +524,7 @@
                         "width": 7,
                         "fullWidth": 8,
                         "text": "__str__",
+                        "value": "__str__",
                         "valueText": "__str__",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -534,7 +550,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "'ABCABC'"
+                        "text": "'ABCABC'",
+                        "value": "ABCABC",
+                        "valueText": "ABCABC"
                     }
                 },
                 "closeParenToken": {
@@ -571,6 +589,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -597,6 +616,8 @@
                                                 "width": 85,
                                                 "fullWidth": 86,
                                                 "text": "'#2: var __str__ = \"\\\\u0041\\\\u0042\\\\u0043\"+\\'ABC\\'; __str__ === \\'ABCABC\\'. Actual: '",
+                                                "value": "#2: var __str__ = \"\\u0041\\u0042\\u0043\"+'ABC'; __str__ === 'ABCABC'. Actual: ",
+                                                "valueText": "#2: var __str__ = \"\\u0041\\u0042\\u0043\"+'ABC'; __str__ === 'ABCABC'. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -630,6 +651,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__str__",
+                                                    "value": "__str__",
                                                     "valueText": "__str__"
                                                 },
                                                 "closeParenToken": {
@@ -758,6 +780,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "str__",
+                                "value": "str__",
                                 "valueText": "str__",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -789,7 +812,9 @@
                                     "left": {
                                         "kind": "StringLiteral",
                                         "width": 5,
-                                        "text": "\"ABC\""
+                                        "text": "\"ABC\"",
+                                        "value": "ABC",
+                                        "valueText": "ABC"
                                     },
                                     "operatorToken": {
                                         "kind": "PlusToken",
@@ -799,7 +824,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 20,
-                                        "text": "'\\u0041\\u0042\\u0043'"
+                                        "text": "'\\u0041\\u0042\\u0043'",
+                                        "value": "ABC",
+                                        "valueText": "ABC"
                                     }
                                 }
                             }
@@ -850,6 +877,7 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "str__",
+                        "value": "str__",
                         "valueText": "str__",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -875,7 +903,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"ABCABC\""
+                        "text": "\"ABCABC\"",
+                        "value": "ABCABC",
+                        "valueText": "ABCABC"
                     }
                 },
                 "closeParenToken": {
@@ -912,6 +942,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -938,6 +969,8 @@
                                                 "width": 79,
                                                 "fullWidth": 80,
                                                 "text": "'#2: var str__ = \"ABC\"+\\'\\\\u0041\\\\u0042\\\\u0043\\'; str__ === \"ABCABC\". Actual: '",
+                                                "value": "#2: var str__ = \"ABC\"+'\\u0041\\u0042\\u0043'; str__ === \"ABCABC\". Actual: ",
+                                                "valueText": "#2: var str__ = \"ABC\"+'\\u0041\\u0042\\u0043'; str__ === \"ABCABC\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -971,6 +1004,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 5,
                                                     "text": "str__",
+                                                    "value": "str__",
                                                     "valueText": "str__"
                                                 },
                                                 "closeParenToken": {

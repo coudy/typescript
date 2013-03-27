@@ -19,6 +19,7 @@
                         "width": 1,
                         "fullWidth": 405,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -130,6 +131,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -140,7 +142,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"0\""
+                            "text": "\"0\"",
+                            "value": "0",
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -172,7 +176,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -221,6 +227,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -231,7 +238,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -263,7 +272,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -308,6 +319,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -334,6 +346,8 @@
                                                 "width": 46,
                                                 "fullWidth": 47,
                                                 "text": "'#1: x = []; x[\"0\"] = 0; x[0] === 0. Actual: '",
+                                                "value": "#1: x = []; x[\"0\"] = 0; x[0] === 0. Actual: ",
+                                                "valueText": "#1: x = []; x[\"0\"] = 0; x[0] === 0. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -370,6 +384,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     },
                                                     "openBracketToken": {
@@ -380,7 +395,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "0"
+                                                        "text": "0",
+                                                        "value": 0,
+                                                        "valueText": "0"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -454,6 +471,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -537,6 +555,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -547,7 +566,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"1\""
+                            "text": "\"1\"",
+                            "value": "1",
+                            "valueText": "1"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -579,7 +600,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -628,6 +651,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -638,7 +662,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -670,7 +696,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -715,6 +743,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -741,6 +770,8 @@
                                                 "width": 46,
                                                 "fullWidth": 47,
                                                 "text": "'#2: y = []; y[\"1\"] = 1; y[1] === 1. Actual: '",
+                                                "value": "#2: y = []; y[\"1\"] = 1; y[1] === 1. Actual: ",
+                                                "valueText": "#2: y = []; y[\"1\"] = 1; y[1] === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -777,6 +808,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     },
                                                     "openBracketToken": {
@@ -787,7 +819,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "1"
+                                                        "text": "1",
+                                                        "value": 1,
+                                                        "valueText": "1"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",

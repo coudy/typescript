@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -179,6 +180,7 @@
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "result",
+                                            "value": "result",
                                             "valueText": "result",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -207,7 +209,9 @@
                                             "value": {
                                                 "kind": "FalseKeyword",
                                                 "width": 5,
-                                                "text": "false"
+                                                "text": "false",
+                                                "value": false,
+                                                "valueText": "false"
                                             }
                                         }
                                     }
@@ -256,6 +260,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "callbackfn",
+                                "value": "callbackfn",
                                 "valueText": "callbackfn"
                             },
                             "callSignature": {
@@ -277,6 +282,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "val",
+                                                "value": "val",
                                                 "valueText": "val"
                                             }
                                         },
@@ -300,6 +306,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "idx",
+                                                "value": "idx",
                                                 "valueText": "idx"
                                             }
                                         },
@@ -323,6 +330,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "obj",
+                                                "value": "obj",
                                                 "valueText": "obj"
                                             }
                                         }
@@ -371,6 +379,7 @@
                                                 "width": 6,
                                                 "fullWidth": 19,
                                                 "text": "result",
+                                                "value": "result",
                                                 "valueText": "result",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
@@ -416,6 +425,8 @@
                                                         "width": 7,
                                                         "fullWidth": 8,
                                                         "text": "'hello'",
+                                                        "value": "hello",
+                                                        "valueText": "hello",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -457,6 +468,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 7,
                                                                 "text": "valueOf",
+                                                                "value": "valueOf",
                                                                 "valueText": "valueOf"
                                                             }
                                                         },
@@ -564,6 +576,7 @@
                                             "width": 3,
                                             "fullWidth": 4,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -612,7 +625,9 @@
                                                         "propertyName": {
                                                             "kind": "NumericLiteral",
                                                             "width": 1,
-                                                            "text": "0"
+                                                            "text": "0",
+                                                            "value": 0,
+                                                            "valueText": "0"
                                                         },
                                                         "colonToken": {
                                                             "kind": "ColonToken",
@@ -630,7 +645,9 @@
                                                         "expression": {
                                                             "kind": "NumericLiteral",
                                                             "width": 2,
-                                                            "text": "11"
+                                                            "text": "11",
+                                                            "value": 11,
+                                                            "valueText": "11"
                                                         }
                                                     },
                                                     {
@@ -653,6 +670,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "length",
+                                                            "value": "length",
                                                             "valueText": "length"
                                                         },
                                                         "colonToken": {
@@ -673,6 +691,8 @@
                                                             "width": 1,
                                                             "fullWidth": 2,
                                                             "text": "2",
+                                                            "value": 2,
+                                                            "valueText": "2",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -728,6 +748,7 @@
                                                 "width": 5,
                                                 "fullWidth": 15,
                                                 "text": "Array",
+                                                "value": "Array",
                                                 "valueText": "Array",
                                                 "hasLeadingTrivia": true,
                                                 "hasLeadingNewLine": true,
@@ -751,6 +772,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 9,
                                                 "text": "prototype",
+                                                "value": "prototype",
                                                 "valueText": "prototype"
                                             }
                                         },
@@ -763,6 +785,7 @@
                                             "kind": "IdentifierName",
                                             "width": 7,
                                             "text": "forEach",
+                                            "value": "forEach",
                                             "valueText": "forEach"
                                         }
                                     },
@@ -775,6 +798,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "call",
+                                        "value": "call",
                                         "valueText": "call"
                                     }
                                 },
@@ -791,6 +815,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "obj",
+                                            "value": "obj",
                                             "valueText": "obj"
                                         },
                                         {
@@ -810,6 +835,7 @@
                                             "kind": "IdentifierName",
                                             "width": 10,
                                             "text": "callbackfn",
+                                            "value": "callbackfn",
                                             "valueText": "callbackfn"
                                         },
                                         {
@@ -828,7 +854,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 7,
-                                            "text": "\"hello\""
+                                            "text": "\"hello\"",
+                                            "value": "hello",
+                                            "valueText": "hello"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -880,6 +908,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "result",
+                                "value": "result",
                                 "valueText": "result"
                             },
                             "semicolonToken": {
@@ -931,6 +960,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -946,6 +976,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

@@ -76,6 +76,7 @@
                                 "width": 5,
                                 "fullWidth": 6,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -117,6 +118,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "toString",
+                                                "value": "toString",
                                                 "valueText": "toString"
                                             },
                                             "colonToken": {
@@ -218,6 +220,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 7,
                                                 "text": "valueOf",
+                                                "value": "valueOf",
                                                 "valueText": "valueOf"
                                             },
                                             "colonToken": {
@@ -280,7 +283,9 @@
                                                             "expression": {
                                                                 "kind": "NumericLiteral",
                                                                 "width": 1,
-                                                                "text": "1"
+                                                                "text": "1",
+                                                                "value": 1,
+                                                                "valueText": "1"
                                                             },
                                                             "semicolonToken": {
                                                                 "kind": "SemicolonToken",
@@ -336,6 +341,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -348,6 +354,7 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "toLowerCase",
+                            "value": "toLowerCase",
                             "valueText": "toLowerCase",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -381,6 +388,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -392,6 +400,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -404,6 +413,7 @@
                             "kind": "IdentifierName",
                             "width": 11,
                             "text": "toLowerCase",
+                            "value": "toLowerCase",
                             "valueText": "toLowerCase"
                         }
                     }
@@ -482,6 +492,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "dotToken": {
@@ -493,6 +504,7 @@
                                 "kind": "IdentifierName",
                                 "width": 11,
                                 "text": "toLowerCase",
+                                "value": "toLowerCase",
                                 "valueText": "toLowerCase"
                             }
                         },
@@ -528,7 +540,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 3,
-                        "text": "\"1\""
+                        "text": "\"1\"",
+                        "value": "1",
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -573,6 +587,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -597,7 +612,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 169,
-                                                "text": "'#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"1\". Actual: '"
+                                                "text": "'#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"1\". Actual: '",
+                                                "value": "#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"1\". Actual: ",
+                                                "valueText": "#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ===\"1\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -614,6 +631,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__obj",
+                                                        "value": "__obj",
                                                         "valueText": "__obj"
                                                     },
                                                     "dotToken": {
@@ -625,6 +643,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "toLowerCase",
+                                                        "value": "toLowerCase",
                                                         "valueText": "toLowerCase"
                                                     }
                                                 },
@@ -771,6 +790,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "__obj",
+                                    "value": "__obj",
                                     "valueText": "__obj"
                                 },
                                 "dotToken": {
@@ -782,6 +802,7 @@
                                     "kind": "IdentifierName",
                                     "width": 11,
                                     "text": "toLowerCase",
+                                    "value": "toLowerCase",
                                     "valueText": "toLowerCase"
                                 }
                             },
@@ -811,6 +832,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -837,7 +859,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -882,6 +906,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -906,7 +931,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 175,
-                                                "text": "'#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase().length === 1. Actual: '"
+                                                "text": "'#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase().length === 1. Actual: '",
+                                                "value": "#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase().length === 1. Actual: ",
+                                                "valueText": "#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase().length === 1. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -926,6 +953,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "__obj",
+                                                            "value": "__obj",
                                                             "valueText": "__obj"
                                                         },
                                                         "dotToken": {
@@ -937,6 +965,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 11,
                                                             "text": "toLowerCase",
+                                                            "value": "toLowerCase",
                                                             "valueText": "toLowerCase"
                                                         }
                                                     },
@@ -966,6 +995,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [

@@ -98,6 +98,8 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "1",
+                            "value": 1,
+                            "valueText": "1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -123,7 +125,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -168,6 +172,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -189,7 +194,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "'#1: delete 1 === true'"
+                                            "text": "'#1: delete 1 === true'",
+                                            "value": "#1: delete 1 === true",
+                                            "valueText": "#1: delete 1 === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -308,6 +315,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Object",
+                                "value": "Object",
                                 "valueText": "Object"
                             },
                             "argumentList": {
@@ -351,7 +359,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -396,6 +406,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -417,7 +428,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 34,
-                                            "text": "'#2: delete new Object() === true'"
+                                            "text": "'#2: delete new Object() === true'",
+                                            "value": "#2: delete new Object() === true",
+                                            "valueText": "#2: delete new Object() === true"
                                         }
                                     ],
                                     "closeParenToken": {

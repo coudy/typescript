@@ -106,6 +106,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "obj",
+                                "value": "obj",
                                 "valueText": "obj",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -151,6 +152,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object"
                                     },
                                     "argumentList": {
@@ -238,6 +240,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "objRef",
+                                "value": "objRef",
                                 "valueText": "objRef",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -267,6 +270,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "obj",
+                                    "value": "obj",
                                     "valueText": "obj"
                                 }
                             }
@@ -302,6 +306,7 @@
                             "width": 6,
                             "fullWidth": 50,
                             "text": "objRef",
+                            "value": "objRef",
                             "valueText": "objRef",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -327,6 +332,7 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "oneProperty",
+                            "value": "oneProperty",
                             "valueText": "oneProperty",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -361,7 +367,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -393,6 +401,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "obj",
+                            "value": "obj",
                             "valueText": "obj"
                         },
                         "dotToken": {
@@ -405,6 +414,7 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "oneProperty",
+                            "value": "oneProperty",
                             "valueText": "oneProperty",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -431,7 +441,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "semicolonToken": {
@@ -494,6 +506,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "objRef",
+                            "value": "objRef",
                             "valueText": "objRef"
                         },
                         "dotToken": {
@@ -506,6 +519,7 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "oneProperty",
+                            "value": "oneProperty",
                             "valueText": "oneProperty",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -532,7 +546,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -569,6 +585,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -595,6 +612,8 @@
                                                 "width": 134,
                                                 "fullWidth": 135,
                                                 "text": "'#1: var obj = new Object(); var objRef = obj; objRef.oneProperty = -1; obj.oneProperty = true; objRef.oneProperty === true. Actual: '",
+                                                "value": "#1: var obj = new Object(); var objRef = obj; objRef.oneProperty = -1; obj.oneProperty = true; objRef.oneProperty === true. Actual: ",
+                                                "valueText": "#1: var obj = new Object(); var objRef = obj; objRef.oneProperty = -1; obj.oneProperty = true; objRef.oneProperty === true. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -631,6 +650,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 6,
                                                         "text": "objRef",
+                                                        "value": "objRef",
                                                         "valueText": "objRef"
                                                     },
                                                     "dotToken": {
@@ -642,6 +662,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 11,
                                                         "text": "oneProperty",
+                                                        "value": "oneProperty",
                                                         "valueText": "oneProperty"
                                                     }
                                                 },

@@ -166,7 +166,9 @@
                                                 "expression": {
                                                     "kind": "StringLiteral",
                                                     "width": 6,
-                                                    "text": "\"lego\""
+                                                    "text": "\"lego\"",
+                                                    "value": "lego",
+                                                    "valueText": "lego"
                                                 },
                                                 "semicolonToken": {
                                                     "kind": "SemicolonToken",
@@ -207,6 +209,7 @@
                                 "kind": "IdentifierName",
                                 "width": 10,
                                 "text": "charCodeAt",
+                                "value": "charCodeAt",
                                 "valueText": "charCodeAt"
                             }
                         },
@@ -256,7 +259,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 4,
-                        "text": "0x6C"
+                        "text": "0x6C",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -304,6 +309,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -330,7 +336,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 69,
-                                                "text": "'#1: function(){return \"lego\"}().charCodeAt(null) === 0x6C. Actual: '"
+                                                "text": "'#1: function(){return \"lego\"}().charCodeAt(null) === 0x6C. Actual: '",
+                                                "value": "#1: function(){return \"lego\"}().charCodeAt(null) === 0x6C. Actual: ",
+                                                "valueText": "#1: function(){return \"lego\"}().charCodeAt(null) === 0x6C. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -407,7 +415,9 @@
                                                                         "expression": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 6,
-                                                                            "text": "\"lego\""
+                                                                            "text": "\"lego\"",
+                                                                            "value": "lego",
+                                                                            "valueText": "lego"
                                                                         },
                                                                         "semicolonToken": {
                                                                             "kind": "SemicolonToken",
@@ -448,6 +458,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 10,
                                                         "text": "charCodeAt",
+                                                        "value": "charCodeAt",
                                                         "valueText": "charCodeAt"
                                                     }
                                                 },

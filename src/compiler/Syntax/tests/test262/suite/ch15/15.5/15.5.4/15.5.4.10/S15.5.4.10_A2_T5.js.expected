@@ -74,6 +74,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "__matches",
+                                "value": "__matches",
                                 "valueText": "__matches"
                             },
                             "equalsValueClause": {
@@ -96,7 +97,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 4,
-                                            "text": "\"ab\""
+                                            "text": "\"ab\"",
+                                            "value": "ab",
+                                            "valueText": "ab"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -114,7 +117,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 4,
-                                            "text": "\"cd\""
+                                            "text": "\"cd\"",
+                                            "value": "cd",
+                                            "valueText": "cd"
                                         }
                                     ],
                                     "closeBracketToken": {
@@ -179,6 +184,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__string",
+                                "value": "__string",
                                 "valueText": "__string",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -207,7 +213,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 17,
-                                    "text": "\"123456abcde7890\""
+                                    "text": "\"123456abcde7890\"",
+                                    "value": "123456abcde7890",
+                                    "valueText": "123456abcde7890"
                                 }
                             }
                         }
@@ -294,6 +302,7 @@
                                     "kind": "IdentifierName",
                                     "width": 8,
                                     "text": "__string",
+                                    "value": "__string",
                                     "valueText": "__string"
                                 },
                                 "dotToken": {
@@ -305,6 +314,7 @@
                                     "kind": "IdentifierName",
                                     "width": 5,
                                     "text": "match",
+                                    "value": "match",
                                     "valueText": "match"
                                 }
                             },
@@ -321,7 +331,9 @@
                                     {
                                         "kind": "RegularExpressionLiteral",
                                         "width": 8,
-                                        "text": "/\\D{2}/g"
+                                        "text": "/\\D{2}/g",
+                                        "value": {},
+                                        "valueText": "/\\D{2}/g"
                                     }
                                 ],
                                 "closeParenToken": {
@@ -340,6 +352,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     },
@@ -359,7 +372,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -407,6 +422,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -433,7 +449,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 83,
-                                                "text": "'#1: __string = \"123456abcde7890\"; __string.match(/\\\\D{2}/g).length=== 2. Actual: '"
+                                                "text": "'#1: __string = \"123456abcde7890\"; __string.match(/\\\\D{2}/g).length=== 2. Actual: '",
+                                                "value": "#1: __string = \"123456abcde7890\"; __string.match(/\\D{2}/g).length=== 2. Actual: ",
+                                                "valueText": "#1: __string = \"123456abcde7890\"; __string.match(/\\D{2}/g).length=== 2. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -455,6 +473,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "__string",
+                                                            "value": "__string",
                                                             "valueText": "__string"
                                                         },
                                                         "dotToken": {
@@ -466,6 +485,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 5,
                                                             "text": "match",
+                                                            "value": "match",
                                                             "valueText": "match"
                                                         }
                                                     },
@@ -482,7 +502,9 @@
                                                             {
                                                                 "kind": "RegularExpressionLiteral",
                                                                 "width": 8,
-                                                                "text": "/\\D{2}/g"
+                                                                "text": "/\\D{2}/g",
+                                                                "value": {},
+                                                                "valueText": "/\\D{2}/g"
                                                             }
                                                         ],
                                                         "closeParenToken": {
@@ -501,6 +523,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length"
                                                 }
                                             }
@@ -625,6 +648,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "mi",
+                                "value": "mi",
                                 "valueText": "mi"
                             },
                             "equalsValueClause": {
@@ -638,7 +662,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -664,6 +690,7 @@
                         "kind": "IdentifierName",
                         "width": 2,
                         "text": "mi",
+                        "value": "mi",
                         "valueText": "mi"
                     },
                     "operatorToken": {
@@ -678,6 +705,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "__matches",
+                            "value": "__matches",
                             "valueText": "__matches"
                         },
                         "dotToken": {
@@ -689,6 +717,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length"
                         }
                     }
@@ -713,6 +742,7 @@
                         "kind": "IdentifierName",
                         "width": 2,
                         "text": "mi",
+                        "value": "mi",
                         "valueText": "mi"
                     },
                     "operatorToken": {
@@ -801,6 +831,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 8,
                                                 "text": "__string",
+                                                "value": "__string",
                                                 "valueText": "__string"
                                             },
                                             "dotToken": {
@@ -812,6 +843,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 5,
                                                 "text": "match",
+                                                "value": "match",
                                                 "valueText": "match"
                                             }
                                         },
@@ -828,7 +860,9 @@
                                                 {
                                                     "kind": "RegularExpressionLiteral",
                                                     "width": 8,
-                                                    "text": "/\\D{2}/g"
+                                                    "text": "/\\D{2}/g",
+                                                    "value": {},
+                                                    "valueText": "/\\D{2}/g"
                                                 }
                                             ],
                                             "closeParenToken": {
@@ -847,6 +881,7 @@
                                         "kind": "IdentifierName",
                                         "width": 2,
                                         "text": "mi",
+                                        "value": "mi",
                                         "valueText": "mi"
                                     },
                                     "closeBracketToken": {
@@ -867,6 +902,7 @@
                                         "kind": "IdentifierName",
                                         "width": 9,
                                         "text": "__matches",
+                                        "value": "__matches",
                                         "valueText": "__matches"
                                     },
                                     "openBracketToken": {
@@ -878,6 +914,7 @@
                                         "kind": "IdentifierName",
                                         "width": 2,
                                         "text": "mi",
+                                        "value": "mi",
                                         "valueText": "mi"
                                     },
                                     "closeBracketToken": {
@@ -932,6 +969,7 @@
                                                 "width": 6,
                                                 "fullWidth": 10,
                                                 "text": "$ERROR",
+                                                "value": "$ERROR",
                                                 "valueText": "$ERROR",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -976,7 +1014,9 @@
                                                                                 "left": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 5,
-                                                                                    "text": "'#2.'"
+                                                                                    "text": "'#2.'",
+                                                                                    "value": "#2.",
+                                                                                    "valueText": "#2."
                                                                                 },
                                                                                 "operatorToken": {
                                                                                     "kind": "PlusToken",
@@ -987,6 +1027,7 @@
                                                                                     "kind": "IdentifierName",
                                                                                     "width": 2,
                                                                                     "text": "mi",
+                                                                                    "value": "mi",
                                                                                     "valueText": "mi"
                                                                                 }
                                                                             },
@@ -998,7 +1039,9 @@
                                                                             "right": {
                                                                                 "kind": "StringLiteral",
                                                                                 "width": 84,
-                                                                                "text": "': __matches=[\"ab\", \"cd\"]; __string = \"123456abcde7890\"; __string.match(/\\\\D{2}/g)['"
+                                                                                "text": "': __matches=[\"ab\", \"cd\"]; __string = \"123456abcde7890\"; __string.match(/\\\\D{2}/g)['",
+                                                                                "value": ": __matches=[\"ab\", \"cd\"]; __string = \"123456abcde7890\"; __string.match(/\\D{2}/g)[",
+                                                                                "valueText": ": __matches=[\"ab\", \"cd\"]; __string = \"123456abcde7890\"; __string.match(/\\D{2}/g)["
                                                                             }
                                                                         },
                                                                         "operatorToken": {
@@ -1010,6 +1053,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 2,
                                                                             "text": "mi",
+                                                                            "value": "mi",
                                                                             "valueText": "mi"
                                                                         }
                                                                     },
@@ -1021,7 +1065,9 @@
                                                                     "right": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 16,
-                                                                        "text": "']===__matches['"
+                                                                        "text": "']===__matches['",
+                                                                        "value": "]===__matches[",
+                                                                        "valueText": "]===__matches["
                                                                     }
                                                                 },
                                                                 "operatorToken": {
@@ -1033,6 +1079,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 2,
                                                                     "text": "mi",
+                                                                    "value": "mi",
                                                                     "valueText": "mi"
                                                                 }
                                                             },
@@ -1044,7 +1091,9 @@
                                                             "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 13,
-                                                                "text": "']. Actual: '"
+                                                                "text": "']. Actual: '",
+                                                                "value": "]. Actual: ",
+                                                                "valueText": "]. Actual: "
                                                             }
                                                         },
                                                         "operatorToken": {
@@ -1067,6 +1116,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 8,
                                                                         "text": "__string",
+                                                                        "value": "__string",
                                                                         "valueText": "__string"
                                                                     },
                                                                     "dotToken": {
@@ -1078,6 +1128,7 @@
                                                                         "kind": "IdentifierName",
                                                                         "width": 5,
                                                                         "text": "match",
+                                                                        "value": "match",
                                                                         "valueText": "match"
                                                                     }
                                                                 },
@@ -1094,7 +1145,9 @@
                                                                         {
                                                                             "kind": "RegularExpressionLiteral",
                                                                             "width": 8,
-                                                                            "text": "/\\D{2}/g"
+                                                                            "text": "/\\D{2}/g",
+                                                                            "value": {},
+                                                                            "valueText": "/\\D{2}/g"
                                                                         }
                                                                     ],
                                                                     "closeParenToken": {
@@ -1113,6 +1166,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 2,
                                                                 "text": "mi",
+                                                                "value": "mi",
                                                                 "valueText": "mi"
                                                             },
                                                             "closeBracketToken": {

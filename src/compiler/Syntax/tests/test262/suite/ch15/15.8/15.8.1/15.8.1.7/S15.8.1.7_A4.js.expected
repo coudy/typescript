@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -114,6 +115,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Math",
+                                        "value": "Math",
                                         "valueText": "Math"
                                     },
                                     "dotToken": {
@@ -125,6 +127,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "SQRT1_2",
+                                        "value": "SQRT1_2",
                                         "valueText": "SQRT1_2"
                                     }
                                 }
@@ -160,6 +163,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "Math",
+                            "value": "Math",
                             "valueText": "Math"
                         },
                         "dotToken": {
@@ -172,6 +176,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "SQRT1_2",
+                            "value": "SQRT1_2",
                             "valueText": "SQRT1_2",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -198,7 +203,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -247,6 +254,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "Math",
+                            "value": "Math",
                             "valueText": "Math"
                         },
                         "dotToken": {
@@ -259,6 +267,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "SQRT1_2",
+                            "value": "SQRT1_2",
                             "valueText": "SQRT1_2",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -286,6 +295,7 @@
                         "kind": "IdentifierName",
                         "width": 1,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x"
                     }
                 },
@@ -331,6 +341,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -352,7 +363,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 93,
-                                            "text": "'#1: Math.SQRT1_2 hasn\\'t ReadOnly: \\'x = Math.SQRT1_2;Math.SQRT1_2 = 1;Math.SQRT1_2 === x\\''"
+                                            "text": "'#1: Math.SQRT1_2 hasn\\'t ReadOnly: \\'x = Math.SQRT1_2;Math.SQRT1_2 = 1;Math.SQRT1_2 === x\\''",
+                                            "value": "#1: Math.SQRT1_2 hasn't ReadOnly: 'x = Math.SQRT1_2;Math.SQRT1_2 = 1;Math.SQRT1_2 === x'",
+                                            "valueText": "#1: Math.SQRT1_2 hasn't ReadOnly: 'x = Math.SQRT1_2;Math.SQRT1_2 = 1;Math.SQRT1_2 === x'"
                                         }
                                     ],
                                     "closeParenToken": {

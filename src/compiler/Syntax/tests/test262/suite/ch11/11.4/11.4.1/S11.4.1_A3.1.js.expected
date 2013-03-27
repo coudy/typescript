@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -110,7 +111,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             }
                         }
@@ -176,6 +179,7 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -202,7 +206,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -247,6 +253,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -268,7 +275,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 35,
-                                            "text": "'#1: var x = 1; delete x === false'"
+                                            "text": "'#1: var x = 1; delete x === false'",
+                                            "value": "#1: var x = 1; delete x === false",
+                                            "valueText": "#1: var x = 1; delete x === false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -356,6 +365,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -384,7 +394,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             }
                         }
@@ -463,6 +475,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "y",
+                                "value": "y",
                                 "valueText": "y",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -490,7 +503,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -535,6 +550,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -556,7 +572,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 40,
-                                            "text": "'#2: var y = 1; delete this.y === false'"
+                                            "text": "'#2: var y = 1; delete this.y === false'",
+                                            "value": "#2: var y = 1; delete this.y === false",
+                                            "valueText": "#2: var y = 1; delete this.y === false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -636,6 +654,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -736,6 +755,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "MyFunction",
+                            "value": "MyFunction",
                             "valueText": "MyFunction",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -762,7 +782,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -807,6 +829,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -828,7 +851,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 58,
-                                            "text": "'#3: function MyFunction(){}; delete MyFunction === false'"
+                                            "text": "'#3: function MyFunction(){}; delete MyFunction === false'",
+                                            "value": "#3: function MyFunction(){}; delete MyFunction === false",
+                                            "valueText": "#3: function MyFunction(){}; delete MyFunction === false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -908,6 +933,7 @@
                     "kind": "IdentifierName",
                     "width": 10,
                     "text": "MyFunction",
+                    "value": "MyFunction",
                     "valueText": "MyFunction"
                 },
                 "callSignature": {
@@ -992,6 +1018,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "MyObject",
+                                "value": "MyObject",
                                 "valueText": "MyObject",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1037,6 +1064,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "MyFunction",
+                                        "value": "MyFunction",
                                         "valueText": "MyFunction"
                                     },
                                     "argumentList": {
@@ -1119,6 +1147,7 @@
                             "width": 8,
                             "fullWidth": 9,
                             "text": "MyObject",
+                            "value": "MyObject",
                             "valueText": "MyObject",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1145,7 +1174,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -1190,6 +1221,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1211,7 +1243,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 89,
-                                            "text": "'#4: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false'"
+                                            "text": "'#4: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false'",
+                                            "value": "#4: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false",
+                                            "valueText": "#4: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1315,6 +1349,7 @@
                             "width": 8,
                             "fullWidth": 9,
                             "text": "MyObject",
+                            "value": "MyObject",
                             "valueText": "MyObject",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1341,7 +1376,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -1386,6 +1423,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1407,7 +1445,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 89,
-                                            "text": "'#5: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false'"
+                                            "text": "'#5: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false'",
+                                            "value": "#5: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false",
+                                            "valueText": "#5: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false"
                                         }
                                     ],
                                     "closeParenToken": {

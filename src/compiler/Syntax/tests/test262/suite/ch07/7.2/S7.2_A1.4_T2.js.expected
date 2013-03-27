@@ -19,6 +19,7 @@
                         "width": 4,
                         "fullWidth": 305,
                         "text": "eval",
+                        "value": "eval",
                         "valueText": "eval",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -78,7 +79,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 28,
-                                "text": "\"\\u0020var x\\u0020= 1\\u0020\""
+                                "text": "\"\\u0020var x\\u0020= 1\\u0020\"",
+                                "value": " var x = 1 ",
+                                "valueText": " var x = 1 "
                             }
                         ],
                         "closeParenToken": {
@@ -132,6 +135,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -157,7 +161,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -202,6 +208,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -228,6 +235,8 @@
                                                 "width": 62,
                                                 "fullWidth": 63,
                                                 "text": "'#1: eval(\"\\\\u0020var x\\\\u0020= 1\\\\u0020\"); x === 1. Actual: '",
+                                                "value": "#1: eval(\"\\u0020var x\\u0020= 1\\u0020\"); x === 1. Actual: ",
+                                                "valueText": "#1: eval(\"\\u0020var x\\u0020= 1\\u0020\"); x === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -261,6 +270,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {
@@ -360,6 +370,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -390,6 +401,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "1",
+                                    "value": 1,
+                                    "valueText": "1",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -446,6 +459,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -471,7 +485,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -516,6 +532,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -542,6 +559,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#2:  var x = 1 ; x === 1. Actual: '",
+                                                "value": "#2:  var x = 1 ; x === 1. Actual: ",
+                                                "valueText": "#2:  var x = 1 ; x === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -575,6 +594,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "x",
+                                                    "value": "x",
                                                     "valueText": "x"
                                                 },
                                                 "closeParenToken": {

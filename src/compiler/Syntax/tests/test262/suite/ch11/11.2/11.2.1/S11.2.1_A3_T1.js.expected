@@ -86,7 +86,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "dotToken": {
                                 "kind": "DotToken",
@@ -97,6 +99,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -140,7 +143,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"true\""
+                        "text": "\"true\"",
+                        "value": "true",
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -185,6 +190,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -211,6 +217,8 @@
                                                 "width": 42,
                                                 "fullWidth": 43,
                                                 "text": "'#1: true.toString() === \"true\". Actual: '",
+                                                "value": "#1: true.toString() === \"true\". Actual: ",
+                                                "valueText": "#1: true.toString() === \"true\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -249,7 +257,9 @@
                                                         "expression": {
                                                             "kind": "TrueKeyword",
                                                             "width": 4,
-                                                            "text": "true"
+                                                            "text": "true",
+                                                            "value": true,
+                                                            "valueText": "true"
                                                         },
                                                         "dotToken": {
                                                             "kind": "DotToken",
@@ -260,6 +270,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -376,7 +387,9 @@
                             "expression": {
                                 "kind": "FalseKeyword",
                                 "width": 5,
-                                "text": "false"
+                                "text": "false",
+                                "value": false,
+                                "valueText": "false"
                             },
                             "openBracketToken": {
                                 "kind": "OpenBracketToken",
@@ -386,7 +399,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 10,
-                                "text": "\"toString\""
+                                "text": "\"toString\"",
+                                "value": "toString",
+                                "valueText": "toString"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -434,7 +449,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"false\""
+                        "text": "\"false\"",
+                        "value": "false",
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -479,6 +496,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -505,6 +523,8 @@
                                                 "width": 47,
                                                 "fullWidth": 48,
                                                 "text": "'#2: false[\"toString\"]() === \"false\". Actual: '",
+                                                "value": "#2: false[\"toString\"]() === \"false\". Actual: ",
+                                                "valueText": "#2: false[\"toString\"]() === \"false\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -543,7 +563,9 @@
                                                         "expression": {
                                                             "kind": "FalseKeyword",
                                                             "width": 5,
-                                                            "text": "false"
+                                                            "text": "false",
+                                                            "value": false,
+                                                            "valueText": "false"
                                                         },
                                                         "openBracketToken": {
                                                             "kind": "OpenBracketToken",
@@ -553,7 +575,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 10,
-                                                            "text": "\"toString\""
+                                                            "text": "\"toString\"",
+                                                            "value": "toString",
+                                                            "valueText": "toString"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",
@@ -691,6 +715,7 @@
                                     "kind": "IdentifierName",
                                     "width": 7,
                                     "text": "Boolean",
+                                    "value": "Boolean",
                                     "valueText": "Boolean"
                                 },
                                 "argumentList": {
@@ -705,7 +730,9 @@
                                         {
                                             "kind": "TrueKeyword",
                                             "width": 4,
-                                            "text": "true"
+                                            "text": "true",
+                                            "value": true,
+                                            "valueText": "true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -724,6 +751,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "toString",
+                                "value": "toString",
                                 "valueText": "toString"
                             }
                         },
@@ -767,7 +795,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"true\""
+                        "text": "\"true\"",
+                        "value": "true",
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -812,6 +842,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -838,6 +869,8 @@
                                                 "width": 55,
                                                 "fullWidth": 56,
                                                 "text": "'#3: new Boolean(true).toString() === \"true\". Actual: '",
+                                                "value": "#3: new Boolean(true).toString() === \"true\". Actual: ",
+                                                "valueText": "#3: new Boolean(true).toString() === \"true\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -893,6 +926,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 7,
                                                                 "text": "Boolean",
+                                                                "value": "Boolean",
                                                                 "valueText": "Boolean"
                                                             },
                                                             "argumentList": {
@@ -907,7 +941,9 @@
                                                                     {
                                                                         "kind": "TrueKeyword",
                                                                         "width": 4,
-                                                                        "text": "true"
+                                                                        "text": "true",
+                                                                        "value": true,
+                                                                        "valueText": "true"
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {
@@ -926,6 +962,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "toString",
+                                                            "value": "toString",
                                                             "valueText": "toString"
                                                         }
                                                     },
@@ -1059,6 +1096,7 @@
                                     "kind": "IdentifierName",
                                     "width": 7,
                                     "text": "Boolean",
+                                    "value": "Boolean",
                                     "valueText": "Boolean"
                                 },
                                 "argumentList": {
@@ -1073,7 +1111,9 @@
                                         {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1091,7 +1131,9 @@
                             "argumentExpression": {
                                 "kind": "StringLiteral",
                                 "width": 10,
-                                "text": "\"toString\""
+                                "text": "\"toString\"",
+                                "value": "toString",
+                                "valueText": "toString"
                             },
                             "closeBracketToken": {
                                 "kind": "CloseBracketToken",
@@ -1139,7 +1181,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"false\""
+                        "text": "\"false\"",
+                        "value": "false",
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -1184,6 +1228,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1210,6 +1255,8 @@
                                                 "width": 60,
                                                 "fullWidth": 61,
                                                 "text": "'#4: new Boolean(false)[\"toString\"]() === \"false\". Actual: '",
+                                                "value": "#4: new Boolean(false)[\"toString\"]() === \"false\". Actual: ",
+                                                "valueText": "#4: new Boolean(false)[\"toString\"]() === \"false\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1265,6 +1312,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 7,
                                                                 "text": "Boolean",
+                                                                "value": "Boolean",
                                                                 "valueText": "Boolean"
                                                             },
                                                             "argumentList": {
@@ -1279,7 +1327,9 @@
                                                                     {
                                                                         "kind": "FalseKeyword",
                                                                         "width": 5,
-                                                                        "text": "false"
+                                                                        "text": "false",
+                                                                        "value": false,
+                                                                        "valueText": "false"
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {
@@ -1297,7 +1347,9 @@
                                                         "argumentExpression": {
                                                             "kind": "StringLiteral",
                                                             "width": 10,
-                                                            "text": "\"toString\""
+                                                            "text": "\"toString\"",
+                                                            "value": "toString",
+                                                            "valueText": "toString"
                                                         },
                                                         "closeBracketToken": {
                                                             "kind": "CloseBracketToken",

@@ -19,6 +19,7 @@
                         "width": 1,
                         "fullWidth": 405,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -130,6 +131,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -141,6 +143,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN"
                         },
                         "closeBracketToken": {
@@ -173,7 +176,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -222,6 +227,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -232,7 +238,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -265,6 +273,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -310,6 +319,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -336,6 +346,8 @@
                                                 "width": 54,
                                                 "fullWidth": 55,
                                                 "text": "'#1: x = []; x[NaN] = 1; x[0] === undefined. Actual: '",
+                                                "value": "#1: x = []; x[NaN] = 1; x[0] === undefined. Actual: ",
+                                                "valueText": "#1: x = []; x[NaN] = 1; x[0] === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -372,6 +384,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     },
                                                     "openBracketToken": {
@@ -382,7 +395,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "0"
+                                                        "text": "0",
+                                                        "value": 0,
+                                                        "valueText": "0"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -493,6 +508,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -503,7 +519,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 5,
-                            "text": "\"NaN\""
+                            "text": "\"NaN\"",
+                            "value": "NaN",
+                            "valueText": "NaN"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -535,7 +553,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -580,6 +600,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -606,6 +627,8 @@
                                                 "width": 50,
                                                 "fullWidth": 51,
                                                 "text": "'#2: x = []; x[NaN] = 1; x[\"NaN\"] === 1. Actual: '",
+                                                "value": "#2: x = []; x[NaN] = 1; x[\"NaN\"] === 1. Actual: ",
+                                                "valueText": "#2: x = []; x[NaN] = 1; x[\"NaN\"] === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -642,6 +665,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
+                                                        "value": "x",
                                                         "valueText": "x"
                                                     },
                                                     "openBracketToken": {
@@ -652,7 +676,9 @@
                                                     "argumentExpression": {
                                                         "kind": "StringLiteral",
                                                         "width": 5,
-                                                        "text": "\"NaN\""
+                                                        "text": "\"NaN\"",
+                                                        "value": "NaN",
+                                                        "valueText": "NaN"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -726,6 +752,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -809,6 +836,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -823,6 +851,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "dotToken": {
@@ -834,6 +863,7 @@
                                 "kind": "IdentifierName",
                                 "width": 17,
                                 "text": "POSITIVE_INFINITY",
+                                "value": "POSITIVE_INFINITY",
                                 "valueText": "POSITIVE_INFINITY"
                             }
                         },
@@ -867,7 +897,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -916,6 +948,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -926,7 +959,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -959,6 +994,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1004,6 +1040,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1030,6 +1067,8 @@
                                                 "width": 75,
                                                 "fullWidth": 76,
                                                 "text": "'#3: y = []; y[Number.POSITIVE_INFINITY] = 1; y[0] === undefined. Actual: '",
+                                                "value": "#3: y = []; y[Number.POSITIVE_INFINITY] = 1; y[0] === undefined. Actual: ",
+                                                "valueText": "#3: y = []; y[Number.POSITIVE_INFINITY] = 1; y[0] === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1066,6 +1105,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     },
                                                     "openBracketToken": {
@@ -1076,7 +1116,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "0"
+                                                        "text": "0",
+                                                        "value": 0,
+                                                        "valueText": "0"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1183,6 +1225,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "y",
+                            "value": "y",
                             "valueText": "y"
                         },
                         "openBracketToken": {
@@ -1193,7 +1236,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 10,
-                            "text": "\"Infinity\""
+                            "text": "\"Infinity\"",
+                            "value": "Infinity",
+                            "valueText": "Infinity"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1225,7 +1270,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1270,6 +1317,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1296,6 +1344,8 @@
                                                 "width": 76,
                                                 "fullWidth": 77,
                                                 "text": "'#4: y = []; y[Number.POSITIVE_INFINITY] = 1; y[\"Infinity\"] === 1. Actual: '",
+                                                "value": "#4: y = []; y[Number.POSITIVE_INFINITY] = 1; y[\"Infinity\"] === 1. Actual: ",
+                                                "valueText": "#4: y = []; y[Number.POSITIVE_INFINITY] = 1; y[\"Infinity\"] === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1332,6 +1382,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "y",
+                                                        "value": "y",
                                                         "valueText": "y"
                                                     },
                                                     "openBracketToken": {
@@ -1342,7 +1393,9 @@
                                                     "argumentExpression": {
                                                         "kind": "StringLiteral",
                                                         "width": 10,
-                                                        "text": "\"Infinity\""
+                                                        "text": "\"Infinity\"",
+                                                        "value": "Infinity",
+                                                        "valueText": "Infinity"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1416,6 +1469,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "z",
+                        "value": "z",
                         "valueText": "z",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -1499,6 +1553,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "z",
+                            "value": "z",
                             "valueText": "z"
                         },
                         "openBracketToken": {
@@ -1513,6 +1568,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "dotToken": {
@@ -1524,6 +1580,7 @@
                                 "kind": "IdentifierName",
                                 "width": 17,
                                 "text": "NEGATIVE_INFINITY",
+                                "value": "NEGATIVE_INFINITY",
                                 "valueText": "NEGATIVE_INFINITY"
                             }
                         },
@@ -1557,7 +1614,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -1606,6 +1665,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "z",
+                            "value": "z",
                             "valueText": "z"
                         },
                         "openBracketToken": {
@@ -1616,7 +1676,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1649,6 +1711,7 @@
                         "kind": "IdentifierName",
                         "width": 9,
                         "text": "undefined",
+                        "value": "undefined",
                         "valueText": "undefined"
                     }
                 },
@@ -1694,6 +1757,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1720,6 +1784,8 @@
                                                 "width": 75,
                                                 "fullWidth": 76,
                                                 "text": "'#5: z = []; z[Number.NEGATIVE_INFINITY] = 1; z[0] === undefined. Actual: '",
+                                                "value": "#5: z = []; z[Number.NEGATIVE_INFINITY] = 1; z[0] === undefined. Actual: ",
+                                                "valueText": "#5: z = []; z[Number.NEGATIVE_INFINITY] = 1; z[0] === undefined. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1756,6 +1822,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "z",
+                                                        "value": "z",
                                                         "valueText": "z"
                                                     },
                                                     "openBracketToken": {
@@ -1766,7 +1833,9 @@
                                                     "argumentExpression": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "0"
+                                                        "text": "0",
+                                                        "value": 0,
+                                                        "valueText": "0"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
@@ -1873,6 +1942,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "z",
+                            "value": "z",
                             "valueText": "z"
                         },
                         "openBracketToken": {
@@ -1883,7 +1953,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 11,
-                            "text": "\"-Infinity\""
+                            "text": "\"-Infinity\"",
+                            "value": "-Infinity",
+                            "valueText": "-Infinity"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1915,7 +1987,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1960,6 +2034,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1986,6 +2061,8 @@
                                                 "width": 77,
                                                 "fullWidth": 78,
                                                 "text": "'#6: z = []; z[Number.NEGATIVE_INFINITY] = 1; z[\"-Infinity\"] === 1. Actual: '",
+                                                "value": "#6: z = []; z[Number.NEGATIVE_INFINITY] = 1; z[\"-Infinity\"] === 1. Actual: ",
+                                                "valueText": "#6: z = []; z[Number.NEGATIVE_INFINITY] = 1; z[\"-Infinity\"] === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2022,6 +2099,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "z",
+                                                        "value": "z",
                                                         "valueText": "z"
                                                     },
                                                     "openBracketToken": {
@@ -2032,7 +2110,9 @@
                                                     "argumentExpression": {
                                                         "kind": "StringLiteral",
                                                         "width": 11,
-                                                        "text": "\"-Infinity\""
+                                                        "text": "\"-Infinity\"",
+                                                        "value": "-Infinity",
+                                                        "valueText": "-Infinity"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",

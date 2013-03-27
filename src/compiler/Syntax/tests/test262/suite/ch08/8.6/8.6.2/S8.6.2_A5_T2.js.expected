@@ -70,6 +70,7 @@
                             "kind": "IdentifierName",
                             "width": 8,
                             "text": "position",
+                            "value": "position",
                             "valueText": "position"
                         }
                     },
@@ -81,7 +82,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -128,6 +131,7 @@
                                 "width": 4,
                                 "fullWidth": 5,
                                 "text": "seat",
+                                "value": "seat",
                                 "valueText": "seat",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -202,6 +206,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "seat",
+                            "value": "seat",
                             "valueText": "seat"
                         },
                         "openBracketToken": {
@@ -212,7 +217,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "'move'"
+                            "text": "'move'",
+                            "value": "move",
+                            "valueText": "move"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -274,6 +281,7 @@
                                             "kind": "IdentifierName",
                                             "width": 8,
                                             "text": "position",
+                                            "value": "position",
                                             "valueText": "position"
                                         },
                                         "operatorToken": {
@@ -326,6 +334,7 @@
                             "width": 4,
                             "fullWidth": 93,
                             "text": "seat",
+                            "value": "seat",
                             "valueText": "seat",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -358,6 +367,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "move",
+                            "value": "move",
                             "valueText": "move"
                         }
                     },
@@ -421,6 +431,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "position",
+                        "value": "position",
                         "valueText": "position",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -438,7 +449,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -483,6 +496,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -509,6 +523,8 @@
                                                 "width": 110,
                                                 "fullWidth": 111,
                                                 "text": "'#1: this.position=0; seat = {}; seat[\\'move\\']=function(){position++}; seat.move(); position === 1. Actual: '",
+                                                "value": "#1: this.position=0; seat = {}; seat['move']=function(){position++}; seat.move(); position === 1. Actual: ",
+                                                "valueText": "#1: this.position=0; seat = {}; seat['move']=function(){position++}; seat.move(); position === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -542,6 +558,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "position",
+                                                    "value": "position",
                                                     "valueText": "position"
                                                 },
                                                 "closeParenToken": {
@@ -605,6 +622,7 @@
                             "width": 4,
                             "fullWidth": 176,
                             "text": "seat",
+                            "value": "seat",
                             "valueText": "seat",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
@@ -656,7 +674,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 6,
-                            "text": "'move'"
+                            "text": "'move'",
+                            "value": "move",
+                            "valueText": "move"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -724,6 +744,7 @@
                         "width": 8,
                         "fullWidth": 9,
                         "text": "position",
+                        "value": "position",
                         "valueText": "position",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -741,7 +762,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "2"
+                        "text": "2",
+                        "value": 2,
+                        "valueText": "2"
                     }
                 },
                 "closeParenToken": {
@@ -786,6 +809,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -812,6 +836,8 @@
                                                 "width": 128,
                                                 "fullWidth": 129,
                                                 "text": "'#2: this.position=0; seat = {}; seat[\\'move\\']=function(){position++}; seat.move(); seat[\\'move\\'](); position === 2. Actual: '",
+                                                "value": "#2: this.position=0; seat = {}; seat['move']=function(){position++}; seat.move(); seat['move'](); position === 2. Actual: ",
+                                                "valueText": "#2: this.position=0; seat = {}; seat['move']=function(){position++}; seat.move(); seat['move'](); position === 2. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -845,6 +871,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 8,
                                                     "text": "position",
+                                                    "value": "position",
                                                     "valueText": "position"
                                                 },
                                                 "closeParenToken": {

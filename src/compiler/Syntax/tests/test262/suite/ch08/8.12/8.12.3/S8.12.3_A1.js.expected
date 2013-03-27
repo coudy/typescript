@@ -74,6 +74,7 @@
                     "kind": "IdentifierName",
                     "width": 6,
                     "text": "FooObj",
+                    "value": "FooObj",
                     "valueText": "FooObj"
                 },
                 "callSignature": {
@@ -144,6 +145,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "FooObj",
+                                "value": "FooObj",
                                 "valueText": "FooObj"
                             },
                             "dotToken": {
@@ -155,6 +157,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -167,6 +170,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "propFoo",
+                            "value": "propFoo",
                             "valueText": "propFoo"
                         }
                     },
@@ -178,7 +182,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"some\""
+                        "text": "\"some\"",
+                        "value": "some",
+                        "valueText": "some"
                     }
                 },
                 "semicolonToken": {
@@ -241,6 +247,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "__obj",
+                                "value": "__obj",
                                 "valueText": "__obj"
                             },
                             "equalsValueClause": {
@@ -279,6 +286,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "FooObj",
+                                        "value": "FooObj",
                                         "valueText": "FooObj"
                                     }
                                 }
@@ -357,6 +365,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "dotToken": {
@@ -369,6 +378,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "propFoo",
+                            "value": "propFoo",
                             "valueText": "propFoo",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -395,7 +405,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"some\""
+                        "text": "\"some\"",
+                        "value": "some",
+                        "valueText": "some"
                     }
                 },
                 "closeParenToken": {
@@ -432,6 +444,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -458,6 +471,8 @@
                                                 "width": 117,
                                                 "fullWidth": 118,
                                                 "text": "'#1: function FooObj(){}; FooObj.prototype.propFoo=\"some\"; var __obj= new FooObj; __obj.propFoo === \"some\". Actual: '",
+                                                "value": "#1: function FooObj(){}; FooObj.prototype.propFoo=\"some\"; var __obj= new FooObj; __obj.propFoo === \"some\". Actual: ",
+                                                "valueText": "#1: function FooObj(){}; FooObj.prototype.propFoo=\"some\"; var __obj= new FooObj; __obj.propFoo === \"some\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -494,6 +509,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__obj",
+                                                        "value": "__obj",
                                                         "valueText": "__obj"
                                                     },
                                                     "dotToken": {
@@ -505,6 +521,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 7,
                                                         "text": "propFoo",
+                                                        "value": "propFoo",
                                                         "valueText": "propFoo"
                                                     }
                                                 },
@@ -627,6 +644,7 @@
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "__obj",
+                            "value": "__obj",
                             "valueText": "__obj"
                         },
                         "openBracketToken": {
@@ -637,7 +655,9 @@
                         "argumentExpression": {
                             "kind": "StringLiteral",
                             "width": 9,
-                            "text": "'propFoo'"
+                            "text": "'propFoo'",
+                            "value": "propFoo",
+                            "valueText": "propFoo"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -669,7 +689,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"some\""
+                        "text": "\"some\"",
+                        "value": "some",
+                        "valueText": "some"
                     }
                 },
                 "closeParenToken": {
@@ -706,6 +728,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -732,6 +755,8 @@
                                                 "width": 122,
                                                 "fullWidth": 123,
                                                 "text": "'#1: function FooObj(){}; FooObj.prototype.propFoo=\"some\"; var __obj= new FooObj; __obj[\\'propFoo\\'] === \"some\". Actual: '",
+                                                "value": "#1: function FooObj(){}; FooObj.prototype.propFoo=\"some\"; var __obj= new FooObj; __obj['propFoo'] === \"some\". Actual: ",
+                                                "valueText": "#1: function FooObj(){}; FooObj.prototype.propFoo=\"some\"; var __obj= new FooObj; __obj['propFoo'] === \"some\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -768,6 +793,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 5,
                                                         "text": "__obj",
+                                                        "value": "__obj",
                                                         "valueText": "__obj"
                                                     },
                                                     "openBracketToken": {
@@ -778,7 +804,9 @@
                                                     "argumentExpression": {
                                                         "kind": "StringLiteral",
                                                         "width": 9,
-                                                        "text": "'propFoo'"
+                                                        "text": "'propFoo'",
+                                                        "value": "propFoo",
+                                                        "valueText": "propFoo"
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",

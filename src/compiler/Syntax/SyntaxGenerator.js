@@ -297,48 +297,58 @@ var TypeScript;
         DiagnosticCode.Enum_element_must_have_initializer = 35;
         DiagnosticCode._map[36] = "_super__invocation_cannot_have_type_arguments";
         DiagnosticCode._super__invocation_cannot_have_type_arguments = 36;
-        DiagnosticCode._map[37] = "Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier";
-        DiagnosticCode.Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier = 37;
-        DiagnosticCode._map[38] = "Statements_are_not_allowed_in_declaration_files";
-        DiagnosticCode.Statements_are_not_allowed_in_declaration_files = 38;
-        DiagnosticCode._map[39] = "Implementations_are_not_allowed_in_declaration_files";
-        DiagnosticCode.Implementations_are_not_allowed_in_declaration_files = 39;
-        DiagnosticCode._map[40] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 40;
-        DiagnosticCode._map[41] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 41;
-        DiagnosticCode._map[42] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 42;
-        DiagnosticCode._map[43] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 43;
-        DiagnosticCode._map[44] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 44;
-        DiagnosticCode._map[45] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 45;
-        DiagnosticCode._map[46] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 46;
-        DiagnosticCode._map[47] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 47;
-        DiagnosticCode._map[48] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 48;
-        DiagnosticCode._map[49] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 49;
-        DiagnosticCode._map[50] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 50;
-        DiagnosticCode._map[51] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 51;
-        DiagnosticCode._map[52] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 52;
-        DiagnosticCode._map[53] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 53;
-        DiagnosticCode._map[54] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 54;
-        DiagnosticCode._map[55] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 55;
-        DiagnosticCode._map[56] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 56;
-        DiagnosticCode._map[57] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 57;
+        DiagnosticCode._map[37] = "Non_ambient_modules_cannot_use_quoted_names";
+        DiagnosticCode.Non_ambient_modules_cannot_use_quoted_names = 37;
+        DiagnosticCode._map[38] = "Statements_are_not_allowed_in_ambient_contexts";
+        DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts = 38;
+        DiagnosticCode._map[39] = "Implementations_are_not_allowed_in_ambient_contexts";
+        DiagnosticCode.Implementations_are_not_allowed_in_ambient_contexts = 39;
+        DiagnosticCode._map[40] = "_declare__modifier_not_allowed_for_code_already_in_an_ambient_context";
+        DiagnosticCode._declare__modifier_not_allowed_for_code_already_in_an_ambient_context = 40;
+        DiagnosticCode._map[41] = "Initializers_are_not_allowed_in_ambient_contexts";
+        DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts = 41;
+        DiagnosticCode._map[42] = "Overload_and_ambient_signatures_cannot_specify_parameter_properties";
+        DiagnosticCode.Overload_and_ambient_signatures_cannot_specify_parameter_properties = 42;
+        DiagnosticCode._map[43] = "Function_implementation_expected";
+        DiagnosticCode.Function_implementation_expected = 43;
+        DiagnosticCode._map[44] = "Constructor_implementation_expected";
+        DiagnosticCode.Constructor_implementation_expected = 44;
+        DiagnosticCode._map[45] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 45;
+        DiagnosticCode._map[46] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 46;
+        DiagnosticCode._map[47] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 47;
+        DiagnosticCode._map[48] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 48;
+        DiagnosticCode._map[49] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 49;
+        DiagnosticCode._map[50] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 50;
+        DiagnosticCode._map[51] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 51;
+        DiagnosticCode._map[52] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 52;
+        DiagnosticCode._map[53] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 53;
+        DiagnosticCode._map[54] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 54;
+        DiagnosticCode._map[55] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 55;
+        DiagnosticCode._map[56] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 56;
+        DiagnosticCode._map[57] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 57;
+        DiagnosticCode._map[58] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 58;
+        DiagnosticCode._map[59] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 59;
+        DiagnosticCode._map[60] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 60;
+        DiagnosticCode._map[61] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 61;
+        DiagnosticCode._map[62] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 62;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -530,20 +540,45 @@ var TypeScript;
             message: "'super' invocation cannot have type arguments.",
             code: 1034
         },
-        Modules_in_implementation_files_with_quoted_names_must_have_the__declare__modifier: {
+        Non_ambient_modules_cannot_use_quoted_names: {
             category: 1 /* Error */ ,
-            message: "Modules in implementation files with quoted names must have the 'declare' modifier.",
+            message: "Non ambient modules cannot use quoted names.",
             code: 1035
         },
-        Statements_are_not_allowed_in_declaration_files: {
+        Statements_are_not_allowed_in_ambient_contexts: {
             category: 1 /* Error */ ,
-            message: "Statements are not allowed in declaration files.",
+            message: "Statements are not allowed in ambient contexts.",
             code: 1036
         },
-        Implementations_are_not_allowed_in_declaration_files: {
+        Implementations_are_not_allowed_in_ambient_contexts: {
             category: 1 /* Error */ ,
-            message: "Implementations are not allowed in declaration files.",
+            message: "Implementations are not allowed in ambient contexts.",
             code: 1037
+        },
+        _declare__modifier_not_allowed_for_code_already_in_an_ambient_context: {
+            category: 1 /* Error */ ,
+            message: "'declare' modifier not allowed for code already in an ambient context.",
+            code: 1038
+        },
+        Initializers_are_not_allowed_in_ambient_contexts: {
+            category: 1 /* Error */ ,
+            message: "Initializers are not allowed in ambient contexts.",
+            code: 1039
+        },
+        Overload_and_ambient_signatures_cannot_specify_parameter_properties: {
+            category: 1 /* Error */ ,
+            message: "Overload and ambient signatures cannot specify parameter properties.",
+            code: 1040
+        },
+        Function_implementation_expected: {
+            category: 1 /* Error */ ,
+            message: "Function implementation expected.",
+            code: 1041
+        },
+        Constructor_implementation_expected: {
+            category: 1 /* Error */ ,
+            message: "Constructor implementation expected.",
+            code: 1042
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
@@ -5366,7 +5401,6 @@ function generateToken(isFixedWidth, leading, trailing) {
     }
     if (isVariableWidth) {
         result += "        private _textOrWidth: any;\r\n";
-        result += "        private _value: any = null;\r\n";
     }
     if (trailing) {
         result += "        private _trailingTriviaInfo: number;\r\n";
@@ -5468,9 +5502,11 @@ function generateToken(isFixedWidth, leading, trailing) {
         result += "        public fullText(): string { return this.text(); }\r\n\r\n";
     }
     if (isFixedWidth) {
-        result += "        public value(): any { return null; }\r\n";
+        result += "        public value(): any { return value(this); }\r\n";
+        result += "        public valueText(): string { return valueText(this); }\r\n";
     } else {
-        result += "        public value(): any { return this._value || (this._value = value(this)); }\r\n";
+        result += "        public value(): any {\r\n" + "            if ((<any>this)._value === undefined) {\r\n" + "                (<any>this)._value = value(this);\r\n" + "            }\r\n" + "\r\n" + "            return (<any>this)._value;\r\n" + "        }\r\n\r\n";
+        result += "        public valueText(): string {\r\n" + "            if ((<any>this)._valueText === undefined) {\r\n" + "                (<any>this)._valueText = valueText(this);\r\n" + "            }\r\n" + "\r\n" + "            return (<any>this)._valueText;\r\n" + "        }\r\n\r\n";
     }
     result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";
     result += "        public hasLeadingComment(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";

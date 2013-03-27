@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "_",
+                                "value": "_",
                                 "valueText": "_",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -110,7 +111,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "1"
+                                    "text": "1",
+                                    "value": 1,
+                                    "valueText": "1"
                                 }
                             }
                         }
@@ -160,6 +163,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "_",
+                        "value": "_",
                         "valueText": "_",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -185,7 +189,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -230,6 +236,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -256,6 +263,8 @@
                                                 "width": 34,
                                                 "fullWidth": 35,
                                                 "text": "'#1: var _ = 1; _ === 1. Actual: '",
+                                                "value": "#1: var _ = 1; _ === 1. Actual: ",
+                                                "valueText": "#1: var _ = 1; _ === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -289,6 +298,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 1,
                                                     "text": "_",
+                                                    "value": "_",
                                                     "valueText": "_"
                                                 },
                                                 "closeParenToken": {

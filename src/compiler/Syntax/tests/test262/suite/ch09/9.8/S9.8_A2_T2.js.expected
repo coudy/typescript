@@ -111,6 +111,8 @@
                             "width": 2,
                             "fullWidth": 3,
                             "text": "\"\"",
+                            "value": "",
+                            "valueText": "",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -136,7 +138,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"null\""
+                        "text": "\"null\"",
+                        "value": "null",
+                        "valueText": "null"
                     }
                 },
                 "closeParenToken": {
@@ -181,6 +185,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -207,6 +212,8 @@
                                                 "width": 36,
                                                 "fullWidth": 37,
                                                 "text": "'#1: null + \"\" === \"null\". Actual: '",
+                                                "value": "#1: null + \"\" === \"null\". Actual: ",
+                                                "valueText": "#1: null + \"\" === \"null\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -268,7 +275,9 @@
                                                     "right": {
                                                         "kind": "StringLiteral",
                                                         "width": 2,
-                                                        "text": "\"\""
+                                                        "text": "\"\"",
+                                                        "value": "",
+                                                        "valueText": ""
                                                     }
                                                 },
                                                 "closeParenToken": {

@@ -94,7 +94,9 @@
                         "expression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
@@ -128,6 +130,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -149,7 +152,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 42,
-                                    "text": "'#1: 1 in expression is evaluated to true'"
+                                    "text": "'#1: 1 in expression is evaluated to true'",
+                                    "value": "#1: 1 in expression is evaluated to true",
+                                    "valueText": "#1: 1 in expression is evaluated to true"
                                 }
                             ],
                             "closeParenToken": {
@@ -249,7 +254,9 @@
                         "expression": {
                             "kind": "TrueKeyword",
                             "width": 4,
-                            "text": "true"
+                            "text": "true",
+                            "value": true,
+                            "valueText": "true"
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
@@ -283,6 +290,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -304,7 +312,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 45,
-                                    "text": "'#2: true in expression is evaluated to true'"
+                                    "text": "'#2: true in expression is evaluated to true'",
+                                    "value": "#2: true in expression is evaluated to true",
+                                    "valueText": "#2: true in expression is evaluated to true"
                                 }
                             ],
                             "closeParenToken": {
@@ -404,7 +414,9 @@
                         "expression": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"1\""
+                            "text": "\"1\"",
+                            "value": "1",
+                            "valueText": "1"
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
@@ -438,6 +450,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -459,7 +472,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 44,
-                                    "text": "'#3: \"1\" in expression is evaluated to true'"
+                                    "text": "'#3: \"1\" in expression is evaluated to true'",
+                                    "value": "#3: \"1\" in expression is evaluated to true",
+                                    "valueText": "#3: \"1\" in expression is evaluated to true"
                                 }
                             ],
                             "closeParenToken": {
@@ -559,7 +574,9 @@
                         "expression": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "\"A\""
+                            "text": "\"A\"",
+                            "value": "A",
+                            "valueText": "A"
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
@@ -593,6 +610,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -614,7 +632,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 44,
-                                    "text": "'#4: \"A\" in expression is evaluated to true'"
+                                    "text": "'#4: \"A\" in expression is evaluated to true'",
+                                    "value": "#4: \"A\" in expression is evaluated to true",
+                                    "valueText": "#4: \"A\" in expression is evaluated to true"
                                 }
                             ],
                             "closeParenToken": {

@@ -82,6 +82,7 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,6 +128,7 @@
                                         "kind": "IdentifierName",
                                         "width": 5,
                                         "text": "Array",
+                                        "value": "Array",
                                         "valueText": "Array"
                                     },
                                     "argumentList": {
@@ -198,6 +200,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -209,6 +212,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -252,7 +256,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 2,
-                        "text": "\"\""
+                        "text": "\"\"",
+                        "value": "",
+                        "valueText": ""
                     }
                 },
                 "closeParenToken": {
@@ -297,6 +303,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -323,6 +330,8 @@
                                                 "width": 48,
                                                 "fullWidth": 49,
                                                 "text": "'#1: x = new Array(); x.join() === \"\". Actual: '",
+                                                "value": "#1: x = new Array(); x.join() === \"\". Actual: ",
+                                                "valueText": "#1: x = new Array(); x.join() === \"\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -362,6 +371,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -373,6 +383,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },
@@ -454,6 +465,7 @@
                         "width": 1,
                         "fullWidth": 13,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -537,6 +549,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "openBracketToken": {
@@ -547,7 +560,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -579,7 +594,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "semicolonToken": {
@@ -610,6 +627,7 @@
                             "kind": "IdentifierName",
                             "width": 1,
                             "text": "x",
+                            "value": "x",
                             "valueText": "x"
                         },
                         "dotToken": {
@@ -622,6 +640,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -648,7 +667,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "semicolonToken": {
@@ -700,6 +721,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "dotToken": {
@@ -711,6 +733,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "join",
+                                "value": "join",
                                 "valueText": "join"
                             }
                         },
@@ -754,7 +777,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 2,
-                        "text": "\"\""
+                        "text": "\"\"",
+                        "value": "",
+                        "valueText": ""
                     }
                 },
                 "closeParenToken": {
@@ -799,6 +824,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -825,6 +851,8 @@
                                                 "width": 63,
                                                 "fullWidth": 64,
                                                 "text": "'#2: x = []; x[0] = 1; x.length = 0; x.join() === \"\". Actual: '",
+                                                "value": "#2: x = []; x[0] = 1; x.length = 0; x.join() === \"\". Actual: ",
+                                                "valueText": "#2: x = []; x[0] = 1; x.length = 0; x.join() === \"\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -864,6 +892,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "dotToken": {
@@ -875,6 +904,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 4,
                                                             "text": "join",
+                                                            "value": "join",
                                                             "valueText": "join"
                                                         }
                                                     },

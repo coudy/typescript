@@ -84,6 +84,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -96,6 +97,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -122,7 +124,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -167,6 +171,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -188,7 +193,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 18,
-                                            "text": "'#1: NaN !== true'"
+                                            "text": "'#1: NaN !== true'",
+                                            "value": "#1: NaN !== true",
+                                            "valueText": "#1: NaN !== true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -278,6 +285,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -290,6 +298,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -316,7 +325,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -361,6 +372,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -382,7 +394,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 15,
-                                            "text": "'#2: NaN !== 1'"
+                                            "text": "'#2: NaN !== 1'",
+                                            "value": "#2: NaN !== 1",
+                                            "valueText": "#2: NaN !== 1"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -472,6 +486,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -484,6 +499,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -514,6 +530,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -525,6 +542,7 @@
                             "kind": "IdentifierName",
                             "width": 3,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN"
                         }
                     }
@@ -571,6 +589,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -592,7 +611,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 17,
-                                            "text": "'#3: NaN !== NaN'"
+                                            "text": "'#3: NaN !== NaN'",
+                                            "value": "#3: NaN !== NaN",
+                                            "valueText": "#3: NaN !== NaN"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -682,6 +703,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -694,6 +716,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -724,6 +747,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -735,6 +759,7 @@
                             "kind": "IdentifierName",
                             "width": 17,
                             "text": "POSITIVE_INFINITY",
+                            "value": "POSITIVE_INFINITY",
                             "valueText": "POSITIVE_INFINITY"
                         }
                     }
@@ -781,6 +806,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -802,7 +828,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "'#4: NaN !== +Infinity'"
+                                            "text": "'#4: NaN !== +Infinity'",
+                                            "value": "#4: NaN !== +Infinity",
+                                            "valueText": "#4: NaN !== +Infinity"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -892,6 +920,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -904,6 +933,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -934,6 +964,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -945,6 +976,7 @@
                             "kind": "IdentifierName",
                             "width": 17,
                             "text": "NEGATIVE_INFINITY",
+                            "value": "NEGATIVE_INFINITY",
                             "valueText": "NEGATIVE_INFINITY"
                         }
                     }
@@ -991,6 +1023,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1012,7 +1045,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 23,
-                                            "text": "'#5: NaN !== -Infinity'"
+                                            "text": "'#5: NaN !== -Infinity'",
+                                            "value": "#5: NaN !== -Infinity",
+                                            "valueText": "#5: NaN !== -Infinity"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1102,6 +1137,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -1114,6 +1150,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1144,6 +1181,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -1155,6 +1193,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "MAX_VALUE",
+                            "value": "MAX_VALUE",
                             "valueText": "MAX_VALUE"
                         }
                     }
@@ -1201,6 +1240,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1222,7 +1262,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 30,
-                                            "text": "'#6: NaN !== Number.MAX_VALUE'"
+                                            "text": "'#6: NaN !== Number.MAX_VALUE'",
+                                            "value": "#6: NaN !== Number.MAX_VALUE",
+                                            "valueText": "#6: NaN !== Number.MAX_VALUE"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1312,6 +1354,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -1324,6 +1367,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1354,6 +1398,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -1365,6 +1410,7 @@
                             "kind": "IdentifierName",
                             "width": 9,
                             "text": "MIN_VALUE",
+                            "value": "MIN_VALUE",
                             "valueText": "MIN_VALUE"
                         }
                     }
@@ -1411,6 +1457,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1432,7 +1479,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 30,
-                                            "text": "'#7: NaN !== Number.MIN_VALUE'"
+                                            "text": "'#7: NaN !== Number.MIN_VALUE'",
+                                            "value": "#7: NaN !== Number.MIN_VALUE",
+                                            "valueText": "#7: NaN !== Number.MIN_VALUE"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1522,6 +1571,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -1534,6 +1584,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1560,7 +1611,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"string\""
+                        "text": "\"string\"",
+                        "value": "string",
+                        "valueText": "string"
                     }
                 },
                 "closeParenToken": {
@@ -1605,6 +1658,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1626,7 +1680,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 22,
-                                            "text": "'#8: NaN !== \"string\"'"
+                                            "text": "'#8: NaN !== \"string\"'",
+                                            "value": "#8: NaN !== \"string\"",
+                                            "valueText": "#8: NaN !== \"string\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1716,6 +1772,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Number",
+                            "value": "Number",
                             "valueText": "Number"
                         },
                         "dotToken": {
@@ -1728,6 +1785,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1771,6 +1829,7 @@
                             "kind": "IdentifierName",
                             "width": 6,
                             "text": "Object",
+                            "value": "Object",
                             "valueText": "Object"
                         },
                         "argumentList": {
@@ -1832,6 +1891,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1853,7 +1913,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 26,
-                                            "text": "'#9: NaN !== new Object()'"
+                                            "text": "'#9: NaN !== new Object()'",
+                                            "value": "#9: NaN !== new Object()",
+                                            "valueText": "#9: NaN !== new Object()"
                                         }
                                     ],
                                     "closeParenToken": {

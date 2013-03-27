@@ -92,6 +92,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -200,6 +201,7 @@
                                                 "width": 4,
                                                 "fullWidth": 16,
                                                 "text": "eval",
+                                                "value": "eval",
                                                 "valueText": "eval",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
@@ -221,7 +223,9 @@
                                                     {
                                                         "kind": "StringLiteral",
                                                         "width": 36,
-                                                        "text": "\"'use strict'; function eval() { };\""
+                                                        "text": "\"'use strict'; function eval() { };\"",
+                                                        "value": "'use strict'; function eval() { };",
+                                                        "valueText": "'use strict'; function eval() { };"
                                                     }
                                                 ],
                                                 "closeParenToken": {
@@ -272,7 +276,9 @@
                                         "expression": {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -336,6 +342,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "e",
+                                    "value": "e",
                                     "valueText": "e"
                                 },
                                 "closeParenToken": {
@@ -400,6 +407,7 @@
                                                     "width": 1,
                                                     "fullWidth": 2,
                                                     "text": "e",
+                                                    "value": "e",
                                                     "valueText": "e",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -426,6 +434,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 11,
                                                     "text": "SyntaxError",
+                                                    "value": "SyntaxError",
                                                     "valueText": "SyntaxError"
                                                 }
                                             },
@@ -503,6 +512,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -518,6 +528,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

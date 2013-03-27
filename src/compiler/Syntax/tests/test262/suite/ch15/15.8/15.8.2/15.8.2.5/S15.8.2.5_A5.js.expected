@@ -19,6 +19,7 @@
                         "width": 1,
                         "fullWidth": 335,
                         "text": "y",
+                        "value": "y",
                         "valueText": "y",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -97,7 +98,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     }
                 },
@@ -127,6 +130,7 @@
                         "width": 1,
                         "fullWidth": 2,
                         "text": "x",
+                        "value": "x",
                         "valueText": "x",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -160,7 +164,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     }
                 },
@@ -213,6 +219,7 @@
                                 "kind": "IdentifierName",
                                 "width": 4,
                                 "text": "Math",
+                                "value": "Math",
                                 "valueText": "Math"
                             },
                             "dotToken": {
@@ -224,6 +231,7 @@
                                 "kind": "IdentifierName",
                                 "width": 5,
                                 "text": "atan2",
+                                "value": "atan2",
                                 "valueText": "atan2"
                             }
                         },
@@ -240,6 +248,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "y",
+                                    "value": "y",
                                     "valueText": "y"
                                 },
                                 {
@@ -251,6 +260,7 @@
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "x",
+                                    "value": "x",
                                     "valueText": "x"
                                 }
                             ],
@@ -293,7 +303,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     }
                 },
@@ -322,6 +334,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "$ERROR",
+                            "value": "$ERROR",
                             "valueText": "$ERROR",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
@@ -357,6 +370,8 @@
                                                     "width": 17,
                                                     "fullWidth": 18,
                                                     "text": "\"#1: Math.atan2(\"",
+                                                    "value": "#1: Math.atan2(",
+                                                    "valueText": "#1: Math.atan2(",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -383,6 +398,7 @@
                                                     "width": 1,
                                                     "fullWidth": 2,
                                                     "text": "y",
+                                                    "value": "y",
                                                     "valueText": "y",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -411,6 +427,8 @@
                                                 "width": 4,
                                                 "fullWidth": 5,
                                                 "text": "\", \"",
+                                                "value": ", ",
+                                                "valueText": ", ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -438,6 +456,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "x",
+                                            "value": "x",
                                             "valueText": "x",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -464,7 +483,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 10,
-                                        "text": "\") !== +0\""
+                                        "text": "\") !== +0\"",
+                                        "value": ") !== +0",
+                                        "valueText": ") !== +0"
                                     }
                                 }
                             ],

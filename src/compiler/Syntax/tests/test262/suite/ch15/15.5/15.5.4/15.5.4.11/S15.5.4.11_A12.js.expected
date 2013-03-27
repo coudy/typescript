@@ -75,6 +75,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "global",
+                                "value": "global",
                                 "valueText": "global",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -138,7 +139,9 @@
                         "expression": {
                             "kind": "StringLiteral",
                             "width": 3,
-                            "text": "'x'"
+                            "text": "'x'",
+                            "value": "x",
+                            "valueText": "x"
                         },
                         "dotToken": {
                             "kind": "DotToken",
@@ -149,6 +152,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "replace",
+                            "value": "replace",
                             "valueText": "replace"
                         }
                     },
@@ -165,7 +169,9 @@
                             {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 3,
-                                "text": "/x/"
+                                "text": "/x/",
+                                "value": {},
+                                "valueText": "/x/"
                             },
                             {
                                 "kind": "CommaToken",
@@ -241,6 +247,8 @@
                                                 "width": 12,
                                                 "fullWidth": 14,
                                                 "text": "\"use strict\"",
+                                                "value": "use strict",
+                                                "valueText": "use strict",
                                                 "hasLeadingTrivia": true,
                                                 "leadingTrivia": [
                                                     {
@@ -332,6 +340,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 6,
                                                     "text": "global",
+                                                    "value": "global",
                                                     "valueText": "global"
                                                 }
                                             },
@@ -380,6 +389,7 @@
                                                                 "width": 5,
                                                                 "fullWidth": 9,
                                                                 "text": "$FAIL",
+                                                                "value": "$FAIL",
                                                                 "valueText": "$FAIL",
                                                                 "hasLeadingTrivia": true,
                                                                 "leadingTrivia": [
@@ -402,7 +412,9 @@
                                                                     {
                                                                         "kind": "StringLiteral",
                                                                         "width": 33,
-                                                                        "text": "'#1: String replace leaks global'"
+                                                                        "text": "'#1: String replace leaks global'",
+                                                                        "value": "#1: String replace leaks global",
+                                                                        "valueText": "#1: String replace leaks global"
                                                                     }
                                                                 ],
                                                                 "closeParenToken": {
@@ -514,6 +526,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 9,
                                                     "text": "undefined",
+                                                    "value": "undefined",
                                                     "valueText": "undefined"
                                                 }
                                             },
@@ -562,6 +575,7 @@
                                                                 "width": 5,
                                                                 "fullWidth": 9,
                                                                 "text": "$FAIL",
+                                                                "value": "$FAIL",
                                                                 "valueText": "$FAIL",
                                                                 "hasLeadingTrivia": true,
                                                                 "leadingTrivia": [
@@ -594,6 +608,8 @@
                                                                                 "width": 59,
                                                                                 "fullWidth": 60,
                                                                                 "text": "'#2: replaceValue should be called with this===undefined. '",
+                                                                                "value": "#2: replaceValue should be called with this===undefined. ",
+                                                                                "valueText": "#2: replaceValue should be called with this===undefined. ",
                                                                                 "hasTrailingTrivia": true,
                                                                                 "trailingTrivia": [
                                                                                     {
@@ -621,6 +637,8 @@
                                                                                 "width": 10,
                                                                                 "fullWidth": 21,
                                                                                 "text": "'Actual: '",
+                                                                                "value": "Actual: ",
+                                                                                "valueText": "Actual: ",
                                                                                 "hasLeadingTrivia": true,
                                                                                 "hasTrailingTrivia": true,
                                                                                 "leadingTrivia": [
@@ -730,7 +748,9 @@
                                             "expression": {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "'y'"
+                                                "text": "'y'",
+                                                "value": "y",
+                                                "valueText": "y"
                                             },
                                             "semicolonToken": {
                                                 "kind": "SemicolonToken",

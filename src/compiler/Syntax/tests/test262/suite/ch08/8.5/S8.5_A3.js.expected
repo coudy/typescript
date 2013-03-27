@@ -73,6 +73,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "equalsValueClause": {
@@ -87,6 +88,7 @@
                                     "kind": "IdentifierName",
                                     "width": 3,
                                     "text": "NaN",
+                                    "value": "NaN",
                                     "valueText": "NaN"
                                 }
                             }
@@ -177,6 +179,7 @@
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
+                                "value": "x",
                                 "valueText": "x"
                             },
                             "closeParenToken": {
@@ -210,7 +213,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"number\""
+                        "text": "\"number\"",
+                        "value": "number",
+                        "valueText": "number"
                     }
                 },
                 "closeParenToken": {
@@ -247,6 +252,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -273,6 +279,8 @@
                                                 "width": 49,
                                                 "fullWidth": 50,
                                                 "text": "'#1: var x=NaN; typeof(x) === \"number\". Actual: '",
+                                                "value": "#1: var x=NaN; typeof(x) === \"number\". Actual: ",
+                                                "valueText": "#1: var x=NaN; typeof(x) === \"number\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -322,6 +330,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 1,
                                                             "text": "x",
+                                                            "value": "x",
                                                             "valueText": "x"
                                                         },
                                                         "closeParenToken": {
@@ -463,6 +472,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "NaN",
+                                "value": "NaN",
                                 "valueText": "NaN"
                             },
                             "closeParenToken": {
@@ -496,7 +506,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 8,
-                        "text": "\"number\""
+                        "text": "\"number\"",
+                        "value": "number",
+                        "valueText": "number"
                     }
                 },
                 "closeParenToken": {
@@ -533,6 +545,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -559,6 +572,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#2: typeof(NaN) === \"number\". Actual: '",
+                                                "value": "#2: typeof(NaN) === \"number\". Actual: ",
+                                                "valueText": "#2: typeof(NaN) === \"number\". Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -608,6 +623,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 3,
                                                             "text": "NaN",
+                                                            "value": "NaN",
                                                             "valueText": "NaN"
                                                         },
                                                         "closeParenToken": {

@@ -75,6 +75,7 @@
                                 "width": 8,
                                 "fullWidth": 9,
                                 "text": "__string",
+                                "value": "__string",
                                 "valueText": "__string",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -120,6 +121,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
+                                        "value": "String",
                                         "valueText": "String"
                                     },
                                     "argumentList": {
@@ -134,7 +136,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 25,
-                                                "text": "\"one two three four five\""
+                                                "text": "\"one two three four five\"",
+                                                "value": "one two three four five",
+                                                "valueText": "one two three four five"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -200,6 +204,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "__split",
+                                "value": "__split",
                                 "valueText": "__split",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -235,6 +240,7 @@
                                             "kind": "IdentifierName",
                                             "width": 8,
                                             "text": "__string",
+                                            "value": "__string",
                                             "valueText": "__string"
                                         },
                                         "dotToken": {
@@ -246,6 +252,7 @@
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "split",
+                                            "value": "split",
                                             "valueText": "split"
                                         }
                                     },
@@ -261,7 +268,9 @@
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 3,
-                                                "text": "\" \""
+                                                "text": "\" \"",
+                                                "value": " ",
+                                                "valueText": " "
                                             }
                                         ],
                                         "closeParenToken": {
@@ -349,6 +358,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -361,6 +371,8 @@
                             "width": 11,
                             "fullWidth": 12,
                             "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -387,6 +399,7 @@
                         "kind": "IdentifierName",
                         "width": 5,
                         "text": "Array",
+                        "value": "Array",
                         "valueText": "Array"
                     }
                 },
@@ -435,6 +448,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -461,7 +475,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 130,
-                                                "text": "'#1: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.constructor === Array. Actual: '"
+                                                "text": "'#1: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.constructor === Array. Actual: '",
+                                                "value": "#1: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.constructor === Array. Actual: ",
+                                                "valueText": "#1: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.constructor === Array. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -476,6 +492,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -488,6 +505,8 @@
                                                     "width": 11,
                                                     "fullWidth": 12,
                                                     "text": "constructor",
+                                                    "value": "constructor",
+                                                    "valueText": "constructor",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
                                                         {
@@ -610,6 +629,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "dotToken": {
@@ -622,6 +642,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "length",
+                            "value": "length",
                             "valueText": "length",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -648,7 +669,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "closeParenToken": {
@@ -693,6 +716,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -717,7 +741,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 121,
-                                                "text": "'#2: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.length === 5. Actual: '"
+                                                "text": "'#2: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.length === 5. Actual: '",
+                                                "value": "#2: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.length === 5. Actual: ",
+                                                "valueText": "#2: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split.length === 5. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -731,6 +757,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "dotToken": {
@@ -743,6 +770,7 @@
                                                     "width": 6,
                                                     "fullWidth": 7,
                                                     "text": "length",
+                                                    "value": "length",
                                                     "valueText": "length",
                                                     "hasTrailingTrivia": true,
                                                     "trailingTrivia": [
@@ -866,6 +894,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -876,7 +905,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -908,7 +939,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"one\""
+                        "text": "\"one\"",
+                        "value": "one",
+                        "valueText": "one"
                     }
                 },
                 "closeParenToken": {
@@ -953,6 +986,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -977,7 +1011,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 121,
-                                                "text": "'#3: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[0] === \"one\". Actual: '"
+                                                "text": "'#3: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[0] === \"one\". Actual: '",
+                                                "value": "#3: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[0] === \"one\". Actual: ",
+                                                "valueText": "#3: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[0] === \"one\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -991,6 +1027,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -1001,7 +1038,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "0"
+                                                    "text": "0",
+                                                    "value": 0,
+                                                    "valueText": "0"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",
@@ -1130,6 +1169,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -1140,7 +1180,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1172,7 +1214,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 5,
-                        "text": "\"two\""
+                        "text": "\"two\"",
+                        "value": "two",
+                        "valueText": "two"
                     }
                 },
                 "closeParenToken": {
@@ -1217,6 +1261,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1241,7 +1286,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 121,
-                                                "text": "'#4: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[1] === \"two\". Actual: '"
+                                                "text": "'#4: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[1] === \"two\". Actual: '",
+                                                "value": "#4: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[1] === \"two\". Actual: ",
+                                                "valueText": "#4: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[1] === \"two\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1255,6 +1302,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -1265,7 +1313,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "1"
+                                                    "text": "1",
+                                                    "value": 1,
+                                                    "valueText": "1"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",
@@ -1394,6 +1444,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -1404,7 +1455,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "2"
+                            "text": "2",
+                            "value": 2,
+                            "valueText": "2"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1436,7 +1489,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 7,
-                        "text": "\"three\""
+                        "text": "\"three\"",
+                        "value": "three",
+                        "valueText": "three"
                     }
                 },
                 "closeParenToken": {
@@ -1481,6 +1536,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1505,7 +1561,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 123,
-                                                "text": "'#5: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[2] === \"three\". Actual: '"
+                                                "text": "'#5: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[2] === \"three\". Actual: '",
+                                                "value": "#5: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[2] === \"three\". Actual: ",
+                                                "valueText": "#5: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[2] === \"three\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1519,6 +1577,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -1529,7 +1588,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "2"
+                                                    "text": "2",
+                                                    "value": 2,
+                                                    "valueText": "2"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",
@@ -1658,6 +1719,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -1668,7 +1730,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "3"
+                            "text": "3",
+                            "value": 3,
+                            "valueText": "3"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1700,7 +1764,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"four\""
+                        "text": "\"four\"",
+                        "value": "four",
+                        "valueText": "four"
                     }
                 },
                 "closeParenToken": {
@@ -1745,6 +1811,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1769,7 +1836,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 122,
-                                                "text": "'#6: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[3] === \"four\". Actual: '"
+                                                "text": "'#6: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[3] === \"four\". Actual: '",
+                                                "value": "#6: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[3] === \"four\". Actual: ",
+                                                "valueText": "#6: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[3] === \"four\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1783,6 +1852,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -1793,7 +1863,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "3"
+                                                    "text": "3",
+                                                    "value": 3,
+                                                    "valueText": "3"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",
@@ -1922,6 +1994,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "__split",
+                            "value": "__split",
                             "valueText": "__split"
                         },
                         "openBracketToken": {
@@ -1932,7 +2005,9 @@
                         "argumentExpression": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "4"
+                            "text": "4",
+                            "value": 4,
+                            "valueText": "4"
                         },
                         "closeBracketToken": {
                             "kind": "CloseBracketToken",
@@ -1964,7 +2039,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 6,
-                        "text": "\"five\""
+                        "text": "\"five\"",
+                        "value": "five",
+                        "valueText": "five"
                     }
                 },
                 "closeParenToken": {
@@ -2009,6 +2086,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2033,7 +2111,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 122,
-                                                "text": "'#7: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[4] === \"five\". Actual: '"
+                                                "text": "'#7: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[4] === \"five\". Actual: '",
+                                                "value": "#7: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[4] === \"five\". Actual: ",
+                                                "valueText": "#7: var __string = new String(\"one two three four five\"); __split = __string.split(\" \"); __split[4] === \"five\". Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -2047,6 +2127,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 7,
                                                     "text": "__split",
+                                                    "value": "__split",
                                                     "valueText": "__split"
                                                 },
                                                 "openBracketToken": {
@@ -2057,7 +2138,9 @@
                                                 "argumentExpression": {
                                                     "kind": "NumericLiteral",
                                                     "width": 1,
-                                                    "text": "4"
+                                                    "text": "4",
+                                                    "value": 4,
+                                                    "valueText": "4"
                                                 },
                                                 "closeBracketToken": {
                                                     "kind": "CloseBracketToken",

@@ -82,6 +82,7 @@
                                 "width": 6,
                                 "fullWidth": 7,
                                 "text": "NUMBER",
+                                "value": "NUMBER",
                                 "valueText": "NUMBER",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -110,7 +111,9 @@
                                 "value": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "0"
+                                    "text": "0",
+                                    "value": 0,
+                                    "valueText": "0"
                                 }
                             }
                         }
@@ -177,6 +180,7 @@
                                         "width": 6,
                                         "fullWidth": 7,
                                         "text": "NUMBER",
+                                        "value": "NUMBER",
                                         "valueText": "NUMBER",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -203,6 +207,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "Number",
+                                        "value": "Number",
                                         "valueText": "Number"
                                     }
                                 },
@@ -222,7 +227,9 @@
                                 "right": {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"MAX_VALUE\""
+                                    "text": "\"MAX_VALUE\"",
+                                    "value": "MAX_VALUE",
+                                    "valueText": "MAX_VALUE"
                                 }
                             },
                             "closeParenToken": {
@@ -257,6 +264,7 @@
                             "width": 6,
                             "fullWidth": 7,
                             "text": "NUMBER",
+                            "value": "NUMBER",
                             "valueText": "NUMBER",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -283,7 +291,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -328,6 +338,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -349,7 +360,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 71,
-                                            "text": "'#1: var NUMBER = 0; (NUMBER = Number, \"MAX_VALUE\") in NUMBER === true'"
+                                            "text": "'#1: var NUMBER = 0; (NUMBER = Number, \"MAX_VALUE\") in NUMBER === true'",
+                                            "value": "#1: var NUMBER = 0; (NUMBER = Number, \"MAX_VALUE\") in NUMBER === true",
+                                            "valueText": "#1: var NUMBER = 0; (NUMBER = Number, \"MAX_VALUE\") in NUMBER === true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -437,6 +450,7 @@
                                 "width": 9,
                                 "fullWidth": 10,
                                 "text": "max_value",
+                                "value": "max_value",
                                 "valueText": "max_value",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -465,7 +479,9 @@
                                 "value": {
                                     "kind": "StringLiteral",
                                     "width": 11,
-                                    "text": "\"MAX_VALUE\""
+                                    "text": "\"MAX_VALUE\"",
+                                    "value": "MAX_VALUE",
+                                    "valueText": "MAX_VALUE"
                                 }
                             }
                         }
@@ -522,6 +538,7 @@
                             "width": 9,
                             "fullWidth": 10,
                             "text": "max_value",
+                            "value": "max_value",
                             "valueText": "max_value",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -563,6 +580,7 @@
                                         "width": 9,
                                         "fullWidth": 10,
                                         "text": "max_value",
+                                        "value": "max_value",
                                         "valueText": "max_value",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
@@ -588,7 +606,9 @@
                                     "right": {
                                         "kind": "StringLiteral",
                                         "width": 6,
-                                        "text": "\"none\""
+                                        "text": "\"none\"",
+                                        "value": "none",
+                                        "valueText": "none"
                                     }
                                 },
                                 "operatorToken": {
@@ -608,6 +628,7 @@
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "text": "Number",
+                                    "value": "Number",
                                     "valueText": "Number"
                                 }
                             },
@@ -642,7 +663,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -687,6 +710,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -708,7 +732,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 85,
-                                            "text": "'#2: var max_value = \"MAX_VALUE\"; max_value in (max_value = \"none\", Number) === true'"
+                                            "text": "'#2: var max_value = \"MAX_VALUE\"; max_value in (max_value = \"none\", Number) === true'",
+                                            "value": "#2: var max_value = \"MAX_VALUE\"; max_value in (max_value = \"none\", Number) === true",
+                                            "valueText": "#2: var max_value = \"MAX_VALUE\"; max_value in (max_value = \"none\", Number) === true"
                                         }
                                     ],
                                     "closeParenToken": {

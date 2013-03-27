@@ -104,7 +104,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -137,7 +139,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"boolean\""
+                        "text": "\"boolean\"",
+                        "value": "boolean",
+                        "valueText": "boolean"
                     }
                 },
                 "closeParenToken": {
@@ -182,6 +186,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -203,7 +208,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 32,
-                                            "text": "'#1: typeof(true) === \"boolean\"'"
+                                            "text": "'#1: typeof(true) === \"boolean\"'",
+                                            "value": "#1: typeof(true) === \"boolean\"",
+                                            "valueText": "#1: typeof(true) === \"boolean\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -329,7 +336,9 @@
                             "expression": {
                                 "kind": "TrueKeyword",
                                 "width": 4,
-                                "text": "true"
+                                "text": "true",
+                                "value": true,
+                                "valueText": "true"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -362,7 +371,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"boolean\""
+                        "text": "\"boolean\"",
+                        "value": "boolean",
+                        "valueText": "boolean"
                     }
                 },
                 "closeParenToken": {
@@ -407,6 +418,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -428,7 +440,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 31,
-                                            "text": "'#2: typeof(true) == \"boolean\"'"
+                                            "text": "'#2: typeof(true) == \"boolean\"'",
+                                            "value": "#2: typeof(true) == \"boolean\"",
+                                            "valueText": "#2: typeof(true) == \"boolean\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -554,7 +568,9 @@
                             "expression": {
                                 "kind": "FalseKeyword",
                                 "width": 5,
-                                "text": "false"
+                                "text": "false",
+                                "value": false,
+                                "valueText": "false"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -587,7 +603,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"boolean\""
+                        "text": "\"boolean\"",
+                        "value": "boolean",
+                        "valueText": "boolean"
                     }
                 },
                 "closeParenToken": {
@@ -632,6 +650,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -653,7 +672,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 33,
-                                            "text": "'#3: typeof(false) === \"boolean\"'"
+                                            "text": "'#3: typeof(false) === \"boolean\"'",
+                                            "value": "#3: typeof(false) === \"boolean\"",
+                                            "valueText": "#3: typeof(false) === \"boolean\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -779,7 +800,9 @@
                             "expression": {
                                 "kind": "FalseKeyword",
                                 "width": 5,
-                                "text": "false"
+                                "text": "false",
+                                "value": false,
+                                "valueText": "false"
                             },
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
@@ -812,7 +835,9 @@
                     "right": {
                         "kind": "StringLiteral",
                         "width": 9,
-                        "text": "\"boolean\""
+                        "text": "\"boolean\"",
+                        "value": "boolean",
+                        "valueText": "boolean"
                     }
                 },
                 "closeParenToken": {
@@ -857,6 +882,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -878,7 +904,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 32,
-                                            "text": "'#4: typeof(false) == \"boolean\"'"
+                                            "text": "'#4: typeof(false) == \"boolean\"'",
+                                            "value": "#4: typeof(false) == \"boolean\"",
+                                            "valueText": "#4: typeof(false) == \"boolean\""
                                         }
                                     ],
                                     "closeParenToken": {
@@ -990,6 +1018,8 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "true",
+                        "value": true,
+                        "valueText": "true",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -1014,7 +1044,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -1059,6 +1091,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1080,7 +1113,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 20,
-                                            "text": "'#5: true !== false'"
+                                            "text": "'#5: true !== false'",
+                                            "value": "#5: true !== false",
+                                            "valueText": "#5: true !== false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1192,6 +1227,8 @@
                         "width": 4,
                         "fullWidth": 5,
                         "text": "true",
+                        "value": true,
+                        "valueText": "true",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -1216,7 +1253,9 @@
                     "right": {
                         "kind": "FalseKeyword",
                         "width": 5,
-                        "text": "false"
+                        "text": "false",
+                        "value": false,
+                        "valueText": "false"
                     }
                 },
                 "closeParenToken": {
@@ -1261,6 +1300,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1282,7 +1322,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 19,
-                                            "text": "'#6: true != false'"
+                                            "text": "'#6: true != false'",
+                                            "value": "#6: true != false",
+                                            "valueText": "#6: true != false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1394,6 +1436,8 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "false",
+                        "value": false,
+                        "valueText": "false",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -1418,7 +1462,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -1463,6 +1509,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1484,7 +1531,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 20,
-                                            "text": "'#7: false !== true'"
+                                            "text": "'#7: false !== true'",
+                                            "value": "#7: false !== true",
+                                            "valueText": "#7: false !== true"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1596,6 +1645,8 @@
                         "width": 5,
                         "fullWidth": 6,
                         "text": "false",
+                        "value": false,
+                        "valueText": "false",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -1620,7 +1671,9 @@
                     "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
-                        "text": "true"
+                        "text": "true",
+                        "value": true,
+                        "valueText": "true"
                     }
                 },
                 "closeParenToken": {
@@ -1665,6 +1718,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1686,7 +1740,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 19,
-                                            "text": "'#8: false != true'"
+                                            "text": "'#8: false != true'",
+                                            "value": "#8: false != true",
+                                            "valueText": "#8: false != true"
                                         }
                                     ],
                                     "closeParenToken": {

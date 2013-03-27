@@ -82,6 +82,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d1",
+                                "value": "d1",
                                 "valueText": "d1",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -127,6 +128,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -141,7 +143,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 7,
-                                                "text": "6.54321"
+                                                "text": "6.54321",
+                                                "value": 6.54321,
+                                                "valueText": "6.54321"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -204,6 +208,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d1",
+                                "value": "d1",
                                 "valueText": "d1"
                             },
                             "dotToken": {
@@ -215,6 +220,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -258,7 +264,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -303,6 +311,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -324,7 +333,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 53,
-                                            "text": "'#1: var d1 = new Date(6.54321); d1.valueOf() === 6;'"
+                                            "text": "'#1: var d1 = new Date(6.54321); d1.valueOf() === 6;'",
+                                            "value": "#1: var d1 = new Date(6.54321); d1.valueOf() === 6;",
+                                            "valueText": "#1: var d1 = new Date(6.54321); d1.valueOf() === 6;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -412,6 +423,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d2",
+                                "value": "d2",
                                 "valueText": "d2",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -457,6 +469,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -479,7 +492,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 7,
-                                                    "text": "6.54321"
+                                                    "text": "6.54321",
+                                                    "value": 6.54321,
+                                                    "valueText": "6.54321"
                                                 }
                                             }
                                         ],
@@ -543,6 +558,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d2",
+                                "value": "d2",
                                 "valueText": "d2"
                             },
                             "dotToken": {
@@ -554,6 +570,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -605,7 +622,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "6"
+                            "text": "6",
+                            "value": 6,
+                            "valueText": "6"
                         }
                     }
                 },
@@ -651,6 +670,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -672,7 +692,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 55,
-                                            "text": "'#2: var d2 = new Date(-6.54321); d2.valueOf() === -6;'"
+                                            "text": "'#2: var d2 = new Date(-6.54321); d2.valueOf() === -6;'",
+                                            "value": "#2: var d2 = new Date(-6.54321); d2.valueOf() === -6;",
+                                            "valueText": "#2: var d2 = new Date(-6.54321); d2.valueOf() === -6;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -760,6 +782,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d3",
+                                "value": "d3",
                                 "valueText": "d3",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -805,6 +828,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -819,7 +843,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 9,
-                                                "text": "6.54321e2"
+                                                "text": "6.54321e2",
+                                                "value": 654.321,
+                                                "valueText": "654.321"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -882,6 +908,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d3",
+                                "value": "d3",
                                 "valueText": "d3"
                             },
                             "dotToken": {
@@ -893,6 +920,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -936,7 +964,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 3,
-                        "text": "654"
+                        "text": "654",
+                        "value": 654,
+                        "valueText": "654"
                     }
                 },
                 "closeParenToken": {
@@ -981,6 +1011,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1002,7 +1033,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 57,
-                                            "text": "'#3: var d3 = new Date(6.54321e2); d3.valueOf() === 654;'"
+                                            "text": "'#3: var d3 = new Date(6.54321e2); d3.valueOf() === 654;'",
+                                            "value": "#3: var d3 = new Date(6.54321e2); d3.valueOf() === 654;",
+                                            "valueText": "#3: var d3 = new Date(6.54321e2); d3.valueOf() === 654;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1090,6 +1123,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d4",
+                                "value": "d4",
                                 "valueText": "d4",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1135,6 +1169,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -1157,7 +1192,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 9,
-                                                    "text": "6.54321e2"
+                                                    "text": "6.54321e2",
+                                                    "value": 654.321,
+                                                    "valueText": "654.321"
                                                 }
                                             }
                                         ],
@@ -1221,6 +1258,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d4",
+                                "value": "d4",
                                 "valueText": "d4"
                             },
                             "dotToken": {
@@ -1232,6 +1270,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -1283,7 +1322,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 3,
-                            "text": "654"
+                            "text": "654",
+                            "value": 654,
+                            "valueText": "654"
                         }
                     }
                 },
@@ -1329,6 +1370,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1350,7 +1392,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 59,
-                                            "text": "'#4: var d4 = new Date(-6.54321e2); d4.valueOf() === -654;'"
+                                            "text": "'#4: var d4 = new Date(-6.54321e2); d4.valueOf() === -654;'",
+                                            "value": "#4: var d4 = new Date(-6.54321e2); d4.valueOf() === -654;",
+                                            "valueText": "#4: var d4 = new Date(-6.54321e2); d4.valueOf() === -654;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1438,6 +1482,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d5",
+                                "value": "d5",
                                 "valueText": "d5",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1483,6 +1528,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -1497,7 +1543,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 10,
-                                                "text": "0.654321e1"
+                                                "text": "0.654321e1",
+                                                "value": 6.54321,
+                                                "valueText": "6.54321"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -1560,6 +1608,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d5",
+                                "value": "d5",
                                 "valueText": "d5"
                             },
                             "dotToken": {
@@ -1571,6 +1620,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -1614,7 +1664,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "6"
+                        "text": "6",
+                        "value": 6,
+                        "valueText": "6"
                     }
                 },
                 "closeParenToken": {
@@ -1659,6 +1711,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1680,7 +1733,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 56,
-                                            "text": "'#5: var d5 = new Date(0.654321e1); d5.valueOf() === 6;'"
+                                            "text": "'#5: var d5 = new Date(0.654321e1); d5.valueOf() === 6;'",
+                                            "value": "#5: var d5 = new Date(0.654321e1); d5.valueOf() === 6;",
+                                            "valueText": "#5: var d5 = new Date(0.654321e1); d5.valueOf() === 6;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1768,6 +1823,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d6",
+                                "value": "d6",
                                 "valueText": "d6",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -1813,6 +1869,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -1835,7 +1892,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 10,
-                                                    "text": "0.654321e1"
+                                                    "text": "0.654321e1",
+                                                    "value": 6.54321,
+                                                    "valueText": "6.54321"
                                                 }
                                             }
                                         ],
@@ -1899,6 +1958,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d6",
+                                "value": "d6",
                                 "valueText": "d6"
                             },
                             "dotToken": {
@@ -1910,6 +1970,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -1961,7 +2022,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "6"
+                            "text": "6",
+                            "value": 6,
+                            "valueText": "6"
                         }
                     }
                 },
@@ -2007,6 +2070,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2028,7 +2092,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 58,
-                                            "text": "'#6: var d6 = new Date(-0.654321e1); d6.valueOf() === -6;'"
+                                            "text": "'#6: var d6 = new Date(-0.654321e1); d6.valueOf() === -6;'",
+                                            "value": "#6: var d6 = new Date(-0.654321e1); d6.valueOf() === -6;",
+                                            "valueText": "#6: var d6 = new Date(-0.654321e1); d6.valueOf() === -6;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -2116,6 +2182,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d7",
+                                "value": "d7",
                                 "valueText": "d7",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2161,6 +2228,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -2175,7 +2243,9 @@
                                             {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -2238,6 +2308,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d7",
+                                "value": "d7",
                                 "valueText": "d7"
                             },
                             "dotToken": {
@@ -2249,6 +2320,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -2292,7 +2364,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -2337,6 +2411,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2358,7 +2433,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 50,
-                                            "text": "'#7: var d7 = new Date(true); d7.valueOf() === 1;'"
+                                            "text": "'#7: var d7 = new Date(true); d7.valueOf() === 1;'",
+                                            "value": "#7: var d7 = new Date(true); d7.valueOf() === 1;",
+                                            "valueText": "#7: var d7 = new Date(true); d7.valueOf() === 1;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -2446,6 +2523,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d8",
+                                "value": "d8",
                                 "valueText": "d8",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2491,6 +2569,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -2505,7 +2584,9 @@
                                             {
                                                 "kind": "FalseKeyword",
                                                 "width": 5,
-                                                "text": "false"
+                                                "text": "false",
+                                                "value": false,
+                                                "valueText": "false"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -2568,6 +2649,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d8",
+                                "value": "d8",
                                 "valueText": "d8"
                             },
                             "dotToken": {
@@ -2579,6 +2661,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -2622,7 +2705,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -2667,6 +2752,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -2688,7 +2774,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 51,
-                                            "text": "'#8: var d8 = new Date(false); d8.valueOf() === 0;'"
+                                            "text": "'#8: var d8 = new Date(false); d8.valueOf() === 0;'",
+                                            "value": "#8: var d8 = new Date(false); d8.valueOf() === 0;",
+                                            "valueText": "#8: var d8 = new Date(false); d8.valueOf() === 0;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -2776,6 +2864,7 @@
                                 "width": 2,
                                 "fullWidth": 3,
                                 "text": "d9",
+                                "value": "d9",
                                 "valueText": "d9",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -2821,6 +2910,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -2835,7 +2925,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 7,
-                                                "text": "1.23e15"
+                                                "text": "1.23e15",
+                                                "value": 1230000000000000,
+                                                "valueText": "1230000000000000"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -2898,6 +2990,7 @@
                                 "kind": "IdentifierName",
                                 "width": 2,
                                 "text": "d9",
+                                "value": "d9",
                                 "valueText": "d9"
                             },
                             "dotToken": {
@@ -2909,6 +3002,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -2952,7 +3046,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 7,
-                        "text": "1.23e15"
+                        "text": "1.23e15",
+                        "value": 1230000000000000,
+                        "valueText": "1230000000000000"
                     }
                 },
                 "closeParenToken": {
@@ -2997,6 +3093,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3018,7 +3115,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 59,
-                                            "text": "'#9: var d9 = new Date(1.23e15); d9.valueOf() === 1.23e15;'"
+                                            "text": "'#9: var d9 = new Date(1.23e15); d9.valueOf() === 1.23e15;'",
+                                            "value": "#9: var d9 = new Date(1.23e15); d9.valueOf() === 1.23e15;",
+                                            "valueText": "#9: var d9 = new Date(1.23e15); d9.valueOf() === 1.23e15;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -3106,6 +3205,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "d10",
+                                "value": "d10",
                                 "valueText": "d10",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -3151,6 +3251,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -3173,7 +3274,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 7,
-                                                    "text": "1.23e15"
+                                                    "text": "1.23e15",
+                                                    "value": 1230000000000000,
+                                                    "valueText": "1230000000000000"
                                                 }
                                             }
                                         ],
@@ -3237,6 +3340,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "d10",
+                                "value": "d10",
                                 "valueText": "d10"
                             },
                             "dotToken": {
@@ -3248,6 +3352,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -3299,7 +3404,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 7,
-                            "text": "1.23e15"
+                            "text": "1.23e15",
+                            "value": 1230000000000000,
+                            "valueText": "1230000000000000"
                         }
                     }
                 },
@@ -3345,6 +3452,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3366,7 +3474,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 64,
-                                            "text": "'#10: var d10 = new Date(-1.23e15); d10.valueOf() === -1.23e15;'"
+                                            "text": "'#10: var d10 = new Date(-1.23e15); d10.valueOf() === -1.23e15;'",
+                                            "value": "#10: var d10 = new Date(-1.23e15); d10.valueOf() === -1.23e15;",
+                                            "valueText": "#10: var d10 = new Date(-1.23e15); d10.valueOf() === -1.23e15;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -3454,6 +3564,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "d11",
+                                "value": "d11",
                                 "valueText": "d11",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -3499,6 +3610,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -3513,7 +3625,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 8,
-                                                "text": "1.23e-15"
+                                                "text": "1.23e-15",
+                                                "value": 1.23e-15,
+                                                "valueText": "1.23e-15"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -3576,6 +3690,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "d11",
+                                "value": "d11",
                                 "valueText": "d11"
                             },
                             "dotToken": {
@@ -3587,6 +3702,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -3630,7 +3746,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "0"
+                        "text": "0",
+                        "value": 0,
+                        "valueText": "0"
                     }
                 },
                 "closeParenToken": {
@@ -3675,6 +3793,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -3696,7 +3815,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 57,
-                                            "text": "'#11: var d11 = new Date(1.23e-15); d11.valueOf() === 0;'"
+                                            "text": "'#11: var d11 = new Date(1.23e-15); d11.valueOf() === 0;'",
+                                            "value": "#11: var d11 = new Date(1.23e-15); d11.valueOf() === 0;",
+                                            "valueText": "#11: var d11 = new Date(1.23e-15); d11.valueOf() === 0;"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -3784,6 +3905,7 @@
                                 "width": 3,
                                 "fullWidth": 4,
                                 "text": "d12",
+                                "value": "d12",
                                 "valueText": "d12",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -3829,6 +3951,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -3851,7 +3974,9 @@
                                                 "operand": {
                                                     "kind": "NumericLiteral",
                                                     "width": 8,
-                                                    "text": "1.23e-15"
+                                                    "text": "1.23e-15",
+                                                    "value": 1.23e-15,
+                                                    "valueText": "1.23e-15"
                                                 }
                                             }
                                         ],
@@ -3915,6 +4040,7 @@
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "d12",
+                                "value": "d12",
                                 "valueText": "d12"
                             },
                             "dotToken": {
@@ -3926,6 +4052,7 @@
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "text": "valueOf",
+                                "value": "valueOf",
                                 "valueText": "valueOf"
                             }
                         },
@@ -3977,7 +4104,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "0"
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0"
                         }
                     }
                 },
@@ -4023,6 +4152,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -4044,7 +4174,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 59,
-                                            "text": "'#12: var d12 = new Date(-1.23e-15); d12.valueOf() === -0;'"
+                                            "text": "'#12: var d12 = new Date(-1.23e-15); d12.valueOf() === -0;'",
+                                            "value": "#12: var d12 = new Date(-1.23e-15); d12.valueOf() === -0;",
+                                            "valueText": "#12: var d12 = new Date(-1.23e-15); d12.valueOf() === -0;"
                                         }
                                     ],
                                     "closeParenToken": {

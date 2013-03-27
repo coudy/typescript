@@ -92,6 +92,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -180,6 +181,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         }
                                     }
@@ -247,6 +249,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "fun",
+                                            "value": "fun",
                                             "valueText": "fun"
                                         },
                                         "callSignature": {
@@ -305,6 +308,7 @@
                                                             "width": 3,
                                                             "fullWidth": 16,
                                                             "text": "arg",
+                                                            "value": "arg",
                                                             "valueText": "arg",
                                                             "hasLeadingTrivia": true,
                                                             "hasTrailingTrivia": true,
@@ -338,6 +342,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "arguments",
+                                                            "value": "arguments",
                                                             "valueText": "arguments"
                                                         }
                                                     },
@@ -384,7 +389,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "0"
+                                                "text": "0",
+                                                "value": 0,
+                                                "valueText": "0"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -402,7 +409,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "1"
+                                                "text": "1",
+                                                "value": 1,
+                                                "valueText": "1"
                                             },
                                             {
                                                 "kind": "CommaToken",
@@ -420,7 +429,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "2"
+                                                "text": "2",
+                                                "value": 2,
+                                                "valueText": "2"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -484,6 +495,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "get_func1",
+                                "value": "get_func1",
                                 "valueText": "get_func1"
                             },
                             "callSignature": {
@@ -557,7 +569,9 @@
                                         "expression": {
                                             "kind": "NumericLiteral",
                                             "width": 2,
-                                            "text": "10"
+                                            "text": "10",
+                                            "value": 10,
+                                            "valueText": "10"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -614,6 +628,7 @@
                                         "width": 6,
                                         "fullWidth": 16,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object",
                                         "hasLeadingTrivia": true,
                                         "hasLeadingNewLine": true,
@@ -637,6 +652,7 @@
                                         "kind": "IdentifierName",
                                         "width": 14,
                                         "text": "defineProperty",
+                                        "value": "defineProperty",
                                         "valueText": "defineProperty"
                                     }
                                 },
@@ -654,6 +670,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         },
                                         {
@@ -672,7 +689,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 3,
-                                            "text": "\"0\""
+                                            "text": "\"0\"",
+                                            "value": "0",
+                                            "valueText": "0"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -715,6 +734,8 @@
                                                         "width": 3,
                                                         "fullWidth": 15,
                                                         "text": "get",
+                                                        "value": "get",
+                                                        "valueText": "get",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
                                                             {
@@ -740,6 +761,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 9,
                                                         "text": "get_func1",
+                                                        "value": "get_func1",
                                                         "valueText": "get_func1"
                                                     }
                                                 },
@@ -765,6 +787,7 @@
                                                         "width": 10,
                                                         "fullWidth": 22,
                                                         "text": "enumerable",
+                                                        "value": "enumerable",
                                                         "valueText": "enumerable",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -790,7 +813,9 @@
                                                     "expression": {
                                                         "kind": "TrueKeyword",
                                                         "width": 4,
-                                                        "text": "true"
+                                                        "text": "true",
+                                                        "value": true,
+                                                        "valueText": "true"
                                                     }
                                                 },
                                                 {
@@ -815,6 +840,7 @@
                                                         "width": 12,
                                                         "fullWidth": 24,
                                                         "text": "configurable",
+                                                        "value": "configurable",
                                                         "valueText": "configurable",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
@@ -842,6 +868,8 @@
                                                         "width": 4,
                                                         "fullWidth": 6,
                                                         "text": "true",
+                                                        "value": true,
+                                                        "valueText": "true",
                                                         "hasTrailingTrivia": true,
                                                         "hasTrailingNewLine": true,
                                                         "trailingTrivia": [
@@ -923,6 +951,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "get_func2",
+                                "value": "get_func2",
                                 "valueText": "get_func2"
                             },
                             "callSignature": {
@@ -996,7 +1025,9 @@
                                         "expression": {
                                             "kind": "NumericLiteral",
                                             "width": 2,
-                                            "text": "20"
+                                            "text": "20",
+                                            "value": 20,
+                                            "valueText": "20"
                                         },
                                         "semicolonToken": {
                                             "kind": "SemicolonToken",
@@ -1053,6 +1084,7 @@
                                         "width": 6,
                                         "fullWidth": 16,
                                         "text": "Object",
+                                        "value": "Object",
                                         "valueText": "Object",
                                         "hasLeadingTrivia": true,
                                         "hasLeadingNewLine": true,
@@ -1076,6 +1108,7 @@
                                         "kind": "IdentifierName",
                                         "width": 16,
                                         "text": "defineProperties",
+                                        "value": "defineProperties",
                                         "valueText": "defineProperties"
                                     }
                                 },
@@ -1093,6 +1126,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         },
                                         {
@@ -1136,6 +1170,8 @@
                                                         "width": 3,
                                                         "fullWidth": 15,
                                                         "text": "\"0\"",
+                                                        "value": "0",
+                                                        "valueText": "0",
                                                         "hasLeadingTrivia": true,
                                                         "leadingTrivia": [
                                                             {
@@ -1185,6 +1221,8 @@
                                                                     "width": 3,
                                                                     "fullWidth": 19,
                                                                     "text": "get",
+                                                                    "value": "get",
+                                                                    "valueText": "get",
                                                                     "hasLeadingTrivia": true,
                                                                     "leadingTrivia": [
                                                                         {
@@ -1210,6 +1248,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 9,
                                                                     "text": "get_func2",
+                                                                    "value": "get_func2",
                                                                     "valueText": "get_func2"
                                                                 }
                                                             },
@@ -1235,6 +1274,7 @@
                                                                     "width": 10,
                                                                     "fullWidth": 26,
                                                                     "text": "enumerable",
+                                                                    "value": "enumerable",
                                                                     "valueText": "enumerable",
                                                                     "hasLeadingTrivia": true,
                                                                     "leadingTrivia": [
@@ -1260,7 +1300,9 @@
                                                                 "expression": {
                                                                     "kind": "FalseKeyword",
                                                                     "width": 5,
-                                                                    "text": "false"
+                                                                    "text": "false",
+                                                                    "value": false,
+                                                                    "valueText": "false"
                                                                 }
                                                             },
                                                             {
@@ -1285,6 +1327,7 @@
                                                                     "width": 12,
                                                                     "fullWidth": 28,
                                                                     "text": "configurable",
+                                                                    "value": "configurable",
                                                                     "valueText": "configurable",
                                                                     "hasLeadingTrivia": true,
                                                                     "leadingTrivia": [
@@ -1312,6 +1355,8 @@
                                                                     "width": 5,
                                                                     "fullWidth": 7,
                                                                     "text": "false",
+                                                                    "value": false,
+                                                                    "valueText": "false",
                                                                     "hasTrailingTrivia": true,
                                                                     "hasTrailingNewLine": true,
                                                                     "trailingTrivia": [
@@ -1419,6 +1464,7 @@
                                     "kind": "IdentifierName",
                                     "width": 36,
                                     "text": "accessorPropertyAttributesAreCorrect",
+                                    "value": "accessorPropertyAttributesAreCorrect",
                                     "valueText": "accessorPropertyAttributesAreCorrect"
                                 },
                                 "argumentList": {
@@ -1434,6 +1480,7 @@
                                             "kind": "IdentifierName",
                                             "width": 3,
                                             "text": "arg",
+                                            "value": "arg",
                                             "valueText": "arg"
                                         },
                                         {
@@ -1452,7 +1499,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 3,
-                                            "text": "\"0\""
+                                            "text": "\"0\"",
+                                            "value": "0",
+                                            "valueText": "0"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -1471,6 +1520,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "get_func2",
+                                            "value": "get_func2",
                                             "valueText": "get_func2"
                                         },
                                         {
@@ -1490,6 +1540,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "undefined",
+                                            "value": "undefined",
                                             "valueText": "undefined"
                                         },
                                         {
@@ -1509,6 +1560,7 @@
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "undefined",
+                                            "value": "undefined",
                                             "valueText": "undefined"
                                         },
                                         {
@@ -1527,7 +1579,9 @@
                                         {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         },
                                         {
                                             "kind": "CommaToken",
@@ -1545,7 +1599,9 @@
                                         {
                                             "kind": "FalseKeyword",
                                             "width": 5,
-                                            "text": "false"
+                                            "text": "false",
+                                            "value": false,
+                                            "valueText": "false"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -1604,6 +1660,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -1619,6 +1676,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

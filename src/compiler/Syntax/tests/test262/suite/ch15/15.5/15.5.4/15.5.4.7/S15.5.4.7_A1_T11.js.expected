@@ -74,6 +74,7 @@
                                 "width": 10,
                                 "fullWidth": 11,
                                 "text": "__instance",
+                                "value": "__instance",
                                 "valueText": "__instance",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -119,6 +120,7 @@
                                         "kind": "IdentifierName",
                                         "width": 4,
                                         "text": "Date",
+                                        "value": "Date",
                                         "valueText": "Date"
                                     },
                                     "argumentList": {
@@ -133,7 +135,9 @@
                                             {
                                                 "kind": "NumericLiteral",
                                                 "width": 1,
-                                                "text": "0"
+                                                "text": "0",
+                                                "value": 0,
+                                                "valueText": "0"
                                             }
                                         ],
                                         "closeParenToken": {
@@ -176,6 +180,7 @@
                             "width": 10,
                             "fullWidth": 11,
                             "text": "__instance",
+                            "value": "__instance",
                             "valueText": "__instance",
                             "hasLeadingTrivia": true,
                             "hasLeadingNewLine": true,
@@ -196,6 +201,7 @@
                             "width": 7,
                             "fullWidth": 8,
                             "text": "indexOf",
+                            "value": "indexOf",
                             "valueText": "indexOf",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -229,6 +235,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "String",
+                                "value": "String",
                                 "valueText": "String"
                             },
                             "dotToken": {
@@ -240,6 +247,7 @@
                                 "kind": "IdentifierName",
                                 "width": 9,
                                 "text": "prototype",
+                                "value": "prototype",
                                 "valueText": "prototype"
                             }
                         },
@@ -252,6 +260,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "indexOf",
+                            "value": "indexOf",
                             "valueText": "indexOf"
                         }
                     }
@@ -344,6 +353,7 @@
                                             "kind": "IdentifierName",
                                             "width": 10,
                                             "text": "__instance",
+                                            "value": "__instance",
                                             "valueText": "__instance"
                                         },
                                         "dotToken": {
@@ -355,6 +365,7 @@
                                             "kind": "IdentifierName",
                                             "width": 17,
                                             "text": "getTimezoneOffset",
+                                            "value": "getTimezoneOffset",
                                             "valueText": "getTimezoneOffset"
                                         }
                                     },
@@ -384,6 +395,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "0",
+                                    "value": 0,
+                                    "valueText": "0",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -416,6 +429,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__instance",
+                                        "value": "__instance",
                                         "valueText": "__instance"
                                     },
                                     "dotToken": {
@@ -427,6 +441,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "indexOf",
+                                        "value": "indexOf",
                                         "valueText": "indexOf"
                                     }
                                 },
@@ -442,7 +457,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 4,
-                                            "text": "'31'"
+                                            "text": "'31'",
+                                            "value": "31",
+                                            "valueText": "31"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -483,6 +500,7 @@
                                         "kind": "IdentifierName",
                                         "width": 10,
                                         "text": "__instance",
+                                        "value": "__instance",
                                         "valueText": "__instance"
                                     },
                                     "dotToken": {
@@ -494,6 +512,7 @@
                                         "kind": "IdentifierName",
                                         "width": 7,
                                         "text": "indexOf",
+                                        "value": "indexOf",
                                         "valueText": "indexOf"
                                     }
                                 },
@@ -509,7 +528,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 4,
-                                            "text": "'01'"
+                                            "text": "'01'",
+                                            "value": "01",
+                                            "valueText": "01"
                                         }
                                     ],
                                     "closeParenToken": {
@@ -550,7 +571,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "8"
+                        "text": "8",
+                        "value": 8,
+                        "valueText": "8"
                     }
                 },
                 "closeParenToken": {
@@ -595,6 +618,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -619,7 +643,9 @@
                                             "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 188,
-                                                "text": "'#1: __instance = new Date(0); __instance.indexOf = String.prototype.indexOf;  (__instance.getTimezoneOffset()>0 ? __instance.indexOf(\\'31\\') : __instance.indexOf(\\'01\\')) === 8. Actual: '"
+                                                "text": "'#1: __instance = new Date(0); __instance.indexOf = String.prototype.indexOf;  (__instance.getTimezoneOffset()>0 ? __instance.indexOf(\\'31\\') : __instance.indexOf(\\'01\\')) === 8. Actual: '",
+                                                "value": "#1: __instance = new Date(0); __instance.indexOf = String.prototype.indexOf;  (__instance.getTimezoneOffset()>0 ? __instance.indexOf('31') : __instance.indexOf('01')) === 8. Actual: ",
+                                                "valueText": "#1: __instance = new Date(0); __instance.indexOf = String.prototype.indexOf;  (__instance.getTimezoneOffset()>0 ? __instance.indexOf('31') : __instance.indexOf('01')) === 8. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -650,6 +676,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 10,
                                                                     "text": "__instance",
+                                                                    "value": "__instance",
                                                                     "valueText": "__instance"
                                                                 },
                                                                 "dotToken": {
@@ -661,6 +688,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 17,
                                                                     "text": "getTimezoneOffset",
+                                                                    "value": "getTimezoneOffset",
                                                                     "valueText": "getTimezoneOffset"
                                                                 }
                                                             },
@@ -690,6 +718,8 @@
                                                             "width": 1,
                                                             "fullWidth": 2,
                                                             "text": "0",
+                                                            "value": 0,
+                                                            "valueText": "0",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -722,6 +752,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 10,
                                                                 "text": "__instance",
+                                                                "value": "__instance",
                                                                 "valueText": "__instance"
                                                             },
                                                             "dotToken": {
@@ -733,6 +764,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 7,
                                                                 "text": "indexOf",
+                                                                "value": "indexOf",
                                                                 "valueText": "indexOf"
                                                             }
                                                         },
@@ -748,7 +780,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 4,
-                                                                    "text": "'31'"
+                                                                    "text": "'31'",
+                                                                    "value": "31",
+                                                                    "valueText": "31"
                                                                 }
                                                             ],
                                                             "closeParenToken": {
@@ -789,6 +823,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 10,
                                                                 "text": "__instance",
+                                                                "value": "__instance",
                                                                 "valueText": "__instance"
                                                             },
                                                             "dotToken": {
@@ -800,6 +835,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 7,
                                                                 "text": "indexOf",
+                                                                "value": "indexOf",
                                                                 "valueText": "indexOf"
                                                             }
                                                         },
@@ -815,7 +851,9 @@
                                                                 {
                                                                     "kind": "StringLiteral",
                                                                     "width": 4,
-                                                                    "text": "'01'"
+                                                                    "text": "'01'",
+                                                                    "value": "01",
+                                                                    "valueText": "01"
                                                                 }
                                                             ],
                                                             "closeParenToken": {

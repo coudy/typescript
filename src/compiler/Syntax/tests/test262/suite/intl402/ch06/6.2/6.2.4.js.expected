@@ -19,6 +19,7 @@
                         "width": 8,
                         "fullWidth": 321,
                         "text": "$INCLUDE",
+                        "value": "$INCLUDE",
                         "valueText": "$INCLUDE",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
@@ -70,7 +71,9 @@
                             {
                                 "kind": "StringLiteral",
                                 "width": 13,
-                                "text": "\"testIntl.js\""
+                                "text": "\"testIntl.js\"",
+                                "value": "testIntl.js",
+                                "valueText": "testIntl.js"
                             }
                         ],
                         "closeParenToken": {
@@ -106,6 +109,7 @@
                         "width": 24,
                         "fullWidth": 25,
                         "text": "testWithIntlConstructors",
+                        "value": "testWithIntlConstructors",
                         "valueText": "testWithIntlConstructors",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -160,6 +164,7 @@
                                                     "kind": "IdentifierName",
                                                     "width": 11,
                                                     "text": "Constructor",
+                                                    "value": "Constructor",
                                                     "valueText": "Constructor"
                                                 }
                                             }
@@ -233,6 +238,7 @@
                                                             "width": 13,
                                                             "fullWidth": 14,
                                                             "text": "defaultLocale",
+                                                            "value": "defaultLocale",
                                                             "valueText": "defaultLocale",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -287,6 +293,7 @@
                                                                                 "kind": "IdentifierName",
                                                                                 "width": 11,
                                                                                 "text": "Constructor",
+                                                                                "value": "Constructor",
                                                                                 "valueText": "Constructor"
                                                                             },
                                                                             "argumentList": {
@@ -314,6 +321,7 @@
                                                                             "kind": "IdentifierName",
                                                                             "width": 15,
                                                                             "text": "resolvedOptions",
+                                                                            "value": "resolvedOptions",
                                                                             "valueText": "resolvedOptions"
                                                                         }
                                                                     },
@@ -342,6 +350,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 6,
                                                                     "text": "locale",
+                                                                    "value": "locale",
                                                                     "valueText": "locale"
                                                                 }
                                                             }
@@ -407,6 +416,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 43,
                                                         "text": "isCanonicalizedStructurallyValidLanguageTag",
+                                                        "value": "isCanonicalizedStructurallyValidLanguageTag",
                                                         "valueText": "isCanonicalizedStructurallyValidLanguageTag"
                                                     },
                                                     "argumentList": {
@@ -422,6 +432,7 @@
                                                                 "kind": "IdentifierName",
                                                                 "width": 13,
                                                                 "text": "defaultLocale",
+                                                                "value": "defaultLocale",
                                                                 "valueText": "defaultLocale"
                                                             }
                                                         ],
@@ -475,6 +486,7 @@
                                                                 "width": 6,
                                                                 "fullWidth": 14,
                                                                 "text": "$ERROR",
+                                                                "value": "$ERROR",
                                                                 "valueText": "$ERROR",
                                                                 "hasLeadingTrivia": true,
                                                                 "leadingTrivia": [
@@ -504,6 +516,8 @@
                                                                                 "width": 19,
                                                                                 "fullWidth": 20,
                                                                                 "text": "\"Default locale \\\"\"",
+                                                                                "value": "Default locale \"",
+                                                                                "valueText": "Default locale \"",
                                                                                 "hasTrailingTrivia": true,
                                                                                 "trailingTrivia": [
                                                                                     {
@@ -530,6 +544,7 @@
                                                                                 "width": 13,
                                                                                 "fullWidth": 14,
                                                                                 "text": "defaultLocale",
+                                                                                "value": "defaultLocale",
                                                                                 "valueText": "defaultLocale",
                                                                                 "hasTrailingTrivia": true,
                                                                                 "trailingTrivia": [
@@ -556,7 +571,9 @@
                                                                         "right": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 62,
-                                                                            "text": "\"\\\" is not canonicalized and structurally valid language tag.\""
+                                                                            "text": "\"\\\" is not canonicalized and structurally valid language tag.\"",
+                                                                            "value": "\" is not canonicalized and structurally valid language tag.",
+                                                                            "valueText": "\" is not canonicalized and structurally valid language tag."
                                                                         }
                                                                     }
                                                                 ],
@@ -632,7 +649,9 @@
                                             "expression": {
                                                 "kind": "TrueKeyword",
                                                 "width": 4,
-                                                "text": "true"
+                                                "text": "true",
+                                                "value": true,
+                                                "valueText": "true"
                                             },
                                             "semicolonToken": {
                                                 "kind": "SemicolonToken",

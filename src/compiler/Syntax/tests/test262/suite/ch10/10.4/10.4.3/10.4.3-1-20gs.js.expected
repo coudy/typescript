@@ -95,6 +95,7 @@
                                 "width": 7,
                                 "fullWidth": 8,
                                 "text": "my_eval",
+                                "value": "my_eval",
                                 "valueText": "my_eval",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
@@ -124,6 +125,7 @@
                                     "kind": "IdentifierName",
                                     "width": 4,
                                     "text": "eval",
+                                    "value": "eval",
                                     "valueText": "eval"
                                 }
                             }
@@ -176,6 +178,7 @@
                             "kind": "IdentifierName",
                             "width": 7,
                             "text": "my_eval",
+                            "value": "my_eval",
                             "valueText": "my_eval"
                         },
                         "argumentList": {
@@ -190,7 +193,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 23,
-                                    "text": "\"\\\"use strict\\\";\\nthis\""
+                                    "text": "\"\\\"use strict\\\";\\nthis\"",
+                                    "value": "\"use strict\";\nthis",
+                                    "valueText": "\"use strict\";\nthis"
                                 }
                             ],
                             "closeParenToken": {
@@ -228,6 +233,7 @@
                             "kind": "IdentifierName",
                             "width": 14,
                             "text": "fnGlobalObject",
+                            "value": "fnGlobalObject",
                             "valueText": "fnGlobalObject"
                         },
                         "argumentList": {
@@ -312,7 +318,9 @@
                             "expression": {
                                 "kind": "StringLiteral",
                                 "width": 29,
-                                "text": "\"'this' had incorrect value!\""
+                                "text": "\"'this' had incorrect value!\"",
+                                "value": "'this' had incorrect value!",
+                                "valueText": "'this' had incorrect value!"
                             },
                             "semicolonToken": {
                                 "kind": "SemicolonToken",

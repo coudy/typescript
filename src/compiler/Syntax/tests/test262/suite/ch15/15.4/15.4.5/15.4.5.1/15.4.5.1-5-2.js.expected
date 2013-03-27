@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -178,6 +179,7 @@
                                             "width": 1,
                                             "fullWidth": 2,
                                             "text": "a",
+                                            "value": "a",
                                             "valueText": "a",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -207,7 +209,9 @@
                                                     {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "0"
+                                                        "text": "0",
+                                                        "value": 0,
+                                                        "valueText": "0"
                                                     },
                                                     {
                                                         "kind": "CommaToken",
@@ -217,7 +221,9 @@
                                                     {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "1"
+                                                        "text": "1",
+                                                        "value": 1,
+                                                        "valueText": "1"
                                                     },
                                                     {
                                                         "kind": "CommaToken",
@@ -227,7 +233,9 @@
                                                     {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "2"
+                                                        "text": "2",
+                                                        "value": 2,
+                                                        "valueText": "2"
                                                     }
                                                 ],
                                                 "closeBracketToken": {
@@ -269,6 +277,7 @@
                                         "width": 1,
                                         "fullWidth": 3,
                                         "text": "a",
+                                        "value": "a",
                                         "valueText": "a",
                                         "hasLeadingTrivia": true,
                                         "leadingTrivia": [
@@ -286,7 +295,9 @@
                                     "argumentExpression": {
                                         "kind": "NumericLiteral",
                                         "width": 10,
-                                        "text": "4294967295"
+                                        "text": "4294967295",
+                                        "value": 4294967295,
+                                        "valueText": "4294967295"
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
@@ -320,6 +331,8 @@
                                     "width": 22,
                                     "fullWidth": 23,
                                     "text": "\"not an array element\"",
+                                    "value": "not an array element",
+                                    "valueText": "not an array element",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -377,6 +390,7 @@
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "a",
+                                        "value": "a",
                                         "valueText": "a"
                                     },
                                     "dotToken": {
@@ -388,6 +402,7 @@
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "length",
+                                        "value": "length",
                                         "valueText": "length"
                                     }
                                 },
@@ -399,7 +414,9 @@
                                 "right": {
                                     "kind": "NumericLiteral",
                                     "width": 1,
-                                    "text": "3"
+                                    "text": "3",
+                                    "value": 3,
+                                    "valueText": "3"
                                 }
                             },
                             "semicolonToken": {
@@ -451,6 +468,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -466,6 +484,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],

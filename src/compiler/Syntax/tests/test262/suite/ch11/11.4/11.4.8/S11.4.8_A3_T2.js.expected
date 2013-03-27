@@ -90,6 +90,8 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "0.1",
+                            "value": 0.1,
+                            "valueText": "0.1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -123,7 +125,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -169,6 +173,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -195,6 +200,8 @@
                                                 "width": 27,
                                                 "fullWidth": 28,
                                                 "text": "'#1: ~0.1 === -1. Actual: '",
+                                                "value": "#1: ~0.1 === -1. Actual: ",
+                                                "valueText": "#1: ~0.1 === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -235,7 +242,9 @@
                                                     "operand": {
                                                         "kind": "NumericLiteral",
                                                         "width": 3,
-                                                        "text": "0.1"
+                                                        "text": "0.1",
+                                                        "value": 0.1,
+                                                        "valueText": "0.1"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -354,6 +363,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -376,7 +386,9 @@
                                         "operand": {
                                             "kind": "NumericLiteral",
                                             "width": 3,
-                                            "text": "0.1"
+                                            "text": "0.1",
+                                            "value": 0.1,
+                                            "valueText": "0.1"
                                         }
                                     }
                                 ],
@@ -420,7 +432,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -466,6 +480,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -492,6 +507,8 @@
                                                 "width": 40,
                                                 "fullWidth": 41,
                                                 "text": "'#2: ~new Number(-0.1) === -1. Actual: '",
+                                                "value": "#2: ~new Number(-0.1) === -1. Actual: ",
+                                                "valueText": "#2: ~new Number(-0.1) === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -549,6 +566,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "Number",
+                                                            "value": "Number",
                                                             "valueText": "Number"
                                                         },
                                                         "argumentList": {
@@ -571,7 +589,9 @@
                                                                     "operand": {
                                                                         "kind": "NumericLiteral",
                                                                         "width": 3,
-                                                                        "text": "0.1"
+                                                                        "text": "0.1",
+                                                                        "value": 0.1,
+                                                                        "valueText": "0.1"
                                                                     }
                                                                 }
                                                             ],
@@ -684,6 +704,7 @@
                             "width": 3,
                             "fullWidth": 4,
                             "text": "NaN",
+                            "value": "NaN",
                             "valueText": "NaN",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -718,7 +739,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -764,6 +787,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -790,6 +814,8 @@
                                                 "width": 27,
                                                 "fullWidth": 28,
                                                 "text": "'#3: ~NaN === -1. Actual: '",
+                                                "value": "#3: ~NaN === -1. Actual: ",
+                                                "valueText": "#3: ~NaN === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -831,6 +857,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 3,
                                                         "text": "NaN",
+                                                        "value": "NaN",
                                                         "valueText": "NaN"
                                                     }
                                                 },
@@ -950,6 +977,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -965,6 +993,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "NaN",
+                                        "value": "NaN",
                                         "valueText": "NaN"
                                     }
                                 ],
@@ -1008,7 +1037,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -1054,6 +1085,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1080,6 +1112,8 @@
                                                 "width": 39,
                                                 "fullWidth": 40,
                                                 "text": "'#4: ~new Number(NaN) === -1. Actual: '",
+                                                "value": "#4: ~new Number(NaN) === -1. Actual: ",
+                                                "valueText": "#4: ~new Number(NaN) === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1137,6 +1171,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "Number",
+                                                            "value": "Number",
                                                             "valueText": "Number"
                                                         },
                                                         "argumentList": {
@@ -1152,6 +1187,7 @@
                                                                     "kind": "IdentifierName",
                                                                     "width": 3,
                                                                     "text": "NaN",
+                                                                    "value": "NaN",
                                                                     "valueText": "NaN"
                                                                 }
                                                             ],
@@ -1264,6 +1300,8 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "1",
+                            "value": 1,
+                            "valueText": "1",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -1297,7 +1335,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "2"
+                            "text": "2",
+                            "value": 2,
+                            "valueText": "2"
                         }
                     }
                 },
@@ -1343,6 +1383,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1369,6 +1410,8 @@
                                                 "width": 25,
                                                 "fullWidth": 26,
                                                 "text": "'#5: ~1 === -2. Actual: '",
+                                                "value": "#5: ~1 === -2. Actual: ",
+                                                "valueText": "#5: ~1 === -2. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1409,7 +1452,9 @@
                                                     "operand": {
                                                         "kind": "NumericLiteral",
                                                         "width": 1,
-                                                        "text": "1"
+                                                        "text": "1",
+                                                        "value": 1,
+                                                        "valueText": "1"
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -1528,6 +1573,7 @@
                                 "kind": "IdentifierName",
                                 "width": 6,
                                 "text": "Number",
+                                "value": "Number",
                                 "valueText": "Number"
                             },
                             "argumentList": {
@@ -1550,7 +1596,9 @@
                                         "operand": {
                                             "kind": "NumericLiteral",
                                             "width": 1,
-                                            "text": "2"
+                                            "text": "2",
+                                            "value": 2,
+                                            "valueText": "2"
                                         }
                                     }
                                 ],
@@ -1586,7 +1634,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "1"
+                        "text": "1",
+                        "value": 1,
+                        "valueText": "1"
                     }
                 },
                 "closeParenToken": {
@@ -1631,6 +1681,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1657,6 +1708,8 @@
                                                 "width": 37,
                                                 "fullWidth": 38,
                                                 "text": "'#6: ~new Number(-2) === 1. Actual: '",
+                                                "value": "#6: ~new Number(-2) === 1. Actual: ",
+                                                "valueText": "#6: ~new Number(-2) === 1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1714,6 +1767,7 @@
                                                             "kind": "IdentifierName",
                                                             "width": 6,
                                                             "text": "Number",
+                                                            "value": "Number",
                                                             "valueText": "Number"
                                                         },
                                                         "argumentList": {
@@ -1736,7 +1790,9 @@
                                                                     "operand": {
                                                                         "kind": "NumericLiteral",
                                                                         "width": 1,
-                                                                        "text": "2"
+                                                                        "text": "2",
+                                                                        "value": 2,
+                                                                        "valueText": "2"
                                                                     }
                                                                 }
                                                             ],
@@ -1849,6 +1905,7 @@
                             "width": 8,
                             "fullWidth": 9,
                             "text": "Infinity",
+                            "value": "Infinity",
                             "valueText": "Infinity",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
@@ -1883,7 +1940,9 @@
                         "operand": {
                             "kind": "NumericLiteral",
                             "width": 1,
-                            "text": "1"
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1"
                         }
                     }
                 },
@@ -1929,6 +1988,7 @@
                                     "width": 6,
                                     "fullWidth": 8,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -1955,6 +2015,8 @@
                                                 "width": 32,
                                                 "fullWidth": 33,
                                                 "text": "'#7: ~Infinity === -1. Actual: '",
+                                                "value": "#7: ~Infinity === -1. Actual: ",
+                                                "valueText": "#7: ~Infinity === -1. Actual: ",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -1996,6 +2058,7 @@
                                                         "kind": "IdentifierName",
                                                         "width": 8,
                                                         "text": "Infinity",
+                                                        "value": "Infinity",
                                                         "valueText": "Infinity"
                                                     }
                                                 },

@@ -75,6 +75,7 @@
                                 "kind": "IdentifierName",
                                 "width": 11,
                                 "text": "__condition",
+                                "value": "__condition",
                                 "valueText": "__condition"
                             },
                             "equalsValueClause": {
@@ -90,6 +91,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "0",
+                                    "value": 0,
+                                    "valueText": "0",
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLine": true,
                                     "trailingTrivia": [
@@ -120,6 +123,7 @@
                         "width": 11,
                         "fullWidth": 13,
                         "text": "__evaluated",
+                        "value": "__evaluated",
                         "valueText": "__evaluated",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
@@ -157,6 +161,7 @@
                             "kind": "IdentifierName",
                             "width": 4,
                             "text": "eval",
+                            "value": "eval",
                             "valueText": "eval"
                         },
                         "argumentList": {
@@ -171,7 +176,9 @@
                                 {
                                     "kind": "StringLiteral",
                                     "width": 51,
-                                    "text": "\"do eval(\\\"__condition++\\\"); while (__condition<5)\""
+                                    "text": "\"do eval(\\\"__condition++\\\"); while (__condition<5)\"",
+                                    "value": "do eval(\"__condition++\"); while (__condition<5)",
+                                    "valueText": "do eval(\"__condition++\"); while (__condition<5)"
                                 }
                             ],
                             "closeParenToken": {
@@ -251,6 +258,7 @@
                         "width": 11,
                         "fullWidth": 12,
                         "text": "__condition",
+                        "value": "__condition",
                         "valueText": "__condition",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -276,7 +284,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "5"
+                        "text": "5",
+                        "value": 5,
+                        "valueText": "5"
                     }
                 },
                 "closeParenToken": {
@@ -321,6 +331,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -342,7 +353,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 69,
-                                            "text": "'#1: The \"do-while\" statement is evaluted according to the Standard '"
+                                            "text": "'#1: The \"do-while\" statement is evaluted according to the Standard '",
+                                            "value": "#1: The \"do-while\" statement is evaluted according to the Standard ",
+                                            "valueText": "#1: The \"do-while\" statement is evaluted according to the Standard "
                                         }
                                     ],
                                     "closeParenToken": {
@@ -454,6 +467,7 @@
                         "width": 11,
                         "fullWidth": 12,
                         "text": "__evaluated",
+                        "value": "__evaluated",
                         "valueText": "__evaluated",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
@@ -479,7 +493,9 @@
                     "right": {
                         "kind": "NumericLiteral",
                         "width": 1,
-                        "text": "4"
+                        "text": "4",
+                        "value": 4,
+                        "valueText": "4"
                     }
                 },
                 "closeParenToken": {
@@ -524,6 +540,7 @@
                                     "width": 6,
                                     "fullWidth": 7,
                                     "text": "$ERROR",
+                                    "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
                                     "leadingTrivia": [
@@ -545,7 +562,9 @@
                                         {
                                             "kind": "StringLiteral",
                                             "width": 57,
-                                            "text": "'#2: The \"do-while\" statement returns (normal, V, empty)'"
+                                            "text": "'#2: The \"do-while\" statement returns (normal, V, empty)'",
+                                            "value": "#2: The \"do-while\" statement returns (normal, V, empty)",
+                                            "valueText": "#2: The \"do-while\" statement returns (normal, V, empty)"
                                         }
                                     ],
                                     "closeParenToken": {

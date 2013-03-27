@@ -91,6 +91,7 @@
                     "kind": "IdentifierName",
                     "width": 8,
                     "text": "testcase",
+                    "value": "testcase",
                     "valueText": "testcase"
                 },
                 "callSignature": {
@@ -174,6 +175,7 @@
                                             "width": 18,
                                             "fullWidth": 19,
                                             "text": "lineTerminatorsStr",
+                                            "value": "lineTerminatorsStr",
                                             "valueText": "lineTerminatorsStr",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -202,7 +204,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 26,
-                                                "text": "\"\\u000A\\u000D\\u2028\\u2029\""
+                                                "text": "\"\\u000A\\u000D\\u2028\\u2029\"",
+                                                "value": "\n\r\u2028\u2029",
+                                                "valueText": "\n\r\u2028\u2029"
                                             }
                                         }
                                     }
@@ -259,6 +263,7 @@
                                             "width": 14,
                                             "fullWidth": 15,
                                             "text": "whiteSpacesStr",
+                                            "value": "whiteSpacesStr",
                                             "valueText": "whiteSpacesStr",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -287,7 +292,9 @@
                                             "value": {
                                                 "kind": "StringLiteral",
                                                 "width": 158,
-                                                "text": "\"\\u0009\\u000A\\u000B\\u000C\\u000D\\u0020\\u00A0\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000\\uFEFF\""
+                                                "text": "\"\\u0009\\u000A\\u000B\\u000C\\u000D\\u0020\\u00A0\\u1680\\u180E\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000\\uFEFF\"",
+                                                "value": "\t\n\u000b\f\r   ᠎           \u2028\u2029\u202f 　\ufeff",
+                                                "valueText": "\t\n\u000b\f\r   ᠎           \u2028\u2029\u202f 　\ufeff"
                                             }
                                         }
                                     }
@@ -344,6 +351,7 @@
                                             "width": 3,
                                             "fullWidth": 4,
                                             "text": "str",
+                                            "value": "str",
                                             "valueText": "str",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
@@ -383,6 +391,8 @@
                                                             "width": 4,
                                                             "fullWidth": 5,
                                                             "text": "\"ab\"",
+                                                            "value": "ab",
+                                                            "valueText": "ab",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -409,6 +419,7 @@
                                                             "width": 14,
                                                             "fullWidth": 15,
                                                             "text": "whiteSpacesStr",
+                                                            "value": "whiteSpacesStr",
                                                             "valueText": "whiteSpacesStr",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
@@ -437,6 +448,7 @@
                                                         "width": 18,
                                                         "fullWidth": 19,
                                                         "text": "lineTerminatorsStr",
+                                                        "value": "lineTerminatorsStr",
                                                         "valueText": "lineTerminatorsStr",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
@@ -463,7 +475,9 @@
                                                 "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 4,
-                                                    "text": "\"cd\""
+                                                    "text": "\"cd\"",
+                                                    "value": "cd",
+                                                    "valueText": "cd"
                                                 }
                                             }
                                         }
@@ -534,6 +548,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 3,
                                                 "text": "str",
+                                                "value": "str",
                                                 "valueText": "str"
                                             },
                                             "dotToken": {
@@ -545,6 +560,7 @@
                                                 "kind": "IdentifierName",
                                                 "width": 4,
                                                 "text": "trim",
+                                                "value": "trim",
                                                 "valueText": "trim"
                                             }
                                         },
@@ -589,6 +605,7 @@
                                         "kind": "IdentifierName",
                                         "width": 3,
                                         "text": "str",
+                                        "value": "str",
                                         "valueText": "str"
                                     }
                                 },
@@ -647,6 +664,7 @@
                         "kind": "IdentifierName",
                         "width": 11,
                         "text": "runTestCase",
+                        "value": "runTestCase",
                         "valueText": "runTestCase"
                     },
                     "argumentList": {
@@ -662,6 +680,7 @@
                                 "kind": "IdentifierName",
                                 "width": 8,
                                 "text": "testcase",
+                                "value": "testcase",
                                 "valueText": "testcase"
                             }
                         ],
