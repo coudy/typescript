@@ -2173,6 +2173,10 @@ module TypeScript {
         constructor(public name: AST, public typeArguments: ASTList) {
             super(NodeType.GenericType);
         }
+
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.emitJavascript(this.name, TokenID.Identifier, false);
+        }
     }
 
     export class TypeReference extends AST {

@@ -52,6 +52,8 @@ module TypeScript {
 
         public docComments: string = null;
 
+        public isPrinting = false;
+
         // public surface area
         public getSymbolID() { return this.pullSymbolID; }
 
@@ -98,6 +100,7 @@ module TypeScript {
         public getIsSynthesized() { return this.isSynthesized; }
 
         public setIsSpecialized() { this.isSpecialized = true; this.isBeingSpecialized = false; }
+        public getIsSpecialized() { return this.isSpecialized; }
         public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }        
 
@@ -1617,7 +1620,7 @@ module TypeScript {
             return name + typarString;
         }
 
-        private isNamedTypeSymbol() {
+        public isNamedTypeSymbol() {
             var kind = this.getKind();
             if (kind == PullElementKind.Primitive || // primitives
                 kind == PullElementKind.Class || // class
@@ -2004,11 +2007,20 @@ module TypeScript {
         public isGeneric() { return true; }
 
         public getName() {
+
             var name = super.getName();
+
+            if (this.isPrinting) {
+                return name;
+            }
+
+            this.isPrinting = true;         
 
             if (this.constraintLink) {
                 name += " extends " + this.constraintLink.end.toString();
             }
+
+            this.isPrinting = false;
         
             return name;
         }

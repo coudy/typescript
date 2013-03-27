@@ -769,6 +769,10 @@ module TypeScript {
                         context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class or interface types", enclosingDecl);
                     }
 
+                    if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
+                        parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
+                    }
+
                     classDeclSymbol.addExtendedType(parentType);
                 }
             }
@@ -777,6 +781,11 @@ module TypeScript {
                 var implementedType: PullTypeSymbol = null;
                 for (i = 0; i < classDeclAST.implementsList.members.length; i++) {
                     implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
+
+                    if (implementedType.isGeneric() && implementedType.isResolved() && !implementedType.getIsSpecialized()) {
+                        implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
+                    }
+
                     classDeclSymbol.addImplementedType(implementedType);
 
                     if ((implementedType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
@@ -870,6 +879,10 @@ module TypeScript {
                     if ((parentType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
                         context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, "An interface may only extend other class or interface types", enclosingDecl);
                     }
+
+                    if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
+                        parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
+                    }                   
                                        
                     interfaceDeclSymbol.addExtendedType(parentType);
                 }
@@ -1203,7 +1216,7 @@ module TypeScript {
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
 
-                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
+                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);              
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
 
@@ -1310,6 +1323,10 @@ module TypeScript {
                     hadError = true;
                 }
                 else {
+
+                    if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized()) {
+                        typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
+                    }              
 
                     // PULLREVIEW: If the type annotation is a container type, use the module instance type
                     if (typeExprSymbol.isContainer()) {
