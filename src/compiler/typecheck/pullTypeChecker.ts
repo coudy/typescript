@@ -165,9 +165,11 @@ module TypeScript {
                 case NodeType.AsgAnd:                
                     return this.typeCheckBinaryArithmeticOperation(ast, typeCheckContext);
 
-                case NodeType.Not:
                 case NodeType.Pos:
                 case NodeType.Neg:
+                case NodeType.Not:
+                    return this.semanticInfoChain.numberTypeSymbol;
+
                 case NodeType.IncPost:
                 case NodeType.IncPre:
                 case NodeType.DecPost:
