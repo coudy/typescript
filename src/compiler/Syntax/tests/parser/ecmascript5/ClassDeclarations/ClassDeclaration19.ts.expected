@@ -4,24 +4,14 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
-    "diagnostics": [
-        {
-            "_position": 25,
-            "_width": 3,
-            "_diagnosticCode": "Function_overload_name_must_be__0_",
-            "_arguments": [
-                "foo"
-            ]
-        }
-    ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 37,
+        "fullWidth": 41,
         "isIncrementallyReusable": false,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 37,
+                "fullWidth": 41,
                 "modifiers": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -68,12 +58,12 @@
                 "classElements": [
                     {
                         "kind": "MemberFunctionDeclaration",
-                        "fullWidth": 11,
+                        "fullWidth": 12,
                         "modifiers": [],
                         "propertyName": {
                             "kind": "IdentifierName",
                             "width": 3,
-                            "fullWidth": 6,
+                            "fullWidth": 7,
                             "text": "foo",
                             "value": "foo",
                             "valueText": "foo",
@@ -81,7 +71,7 @@
                             "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "text": "   "
+                                    "text": "    "
                                 }
                             ]
                         },
@@ -121,20 +111,20 @@
                     },
                     {
                         "kind": "MemberFunctionDeclaration",
-                        "fullWidth": 14,
+                        "fullWidth": 17,
                         "modifiers": [],
                         "propertyName": {
-                            "kind": "IdentifierName",
-                            "width": 3,
-                            "fullWidth": 6,
-                            "text": "bar",
-                            "value": "bar",
-                            "valueText": "bar",
+                            "kind": "StringLiteral",
+                            "width": 5,
+                            "fullWidth": 9,
+                            "text": "\"foo\"",
+                            "value": "foo",
+                            "valueText": "foo",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "text": "   "
+                                    "text": "    "
                                 }
                             ]
                         },
@@ -216,9 +206,9 @@
         "lineStarts": [
             0,
             11,
-            22,
-            36
+            23,
+            40
         ],
-        "length": 37
+        "length": 41
     }
 }

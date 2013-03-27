@@ -49,6 +49,7 @@ module TypeScript {
         Overload_and_ambient_signatures_cannot_specify_parameter_properties: DiagnosticInfo;
         Function_implementation_expected: DiagnosticInfo;
         Constructor_implementation_expected: DiagnosticInfo;
+        Function_overload_name_must_be__0_: DiagnosticInfo;
 
 
 

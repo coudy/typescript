@@ -367,17 +367,27 @@ module TypeScript {
                 var classElementFullStart = this.childFullStart(node, node.classElements);
 
                 var inFunctionOverloadChain = false;
-                // var functionOverloadChainName = null;
                 var inConstructorOverloadChain = false;
+
+                var functionOverloadChainName: string = null;
+                var memberFunctionDeclaration: MemberFunctionDeclarationSyntax = null;
 
                 for (var i = 0, n = node.classElements.childCount(); i < n; i++) {
                     var classElement = <IClassElementSyntax>node.classElements.childAt(i);
-                    var lastElement = i === (n - 1)
+                    var lastElement = i === (n - 1);
 
                     if (inFunctionOverloadChain) {
                         if (classElement.kind() !== SyntaxKind.MemberFunctionDeclaration) {
                             this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
                                 DiagnosticCode.Function_implementation_expected);
+                            return true;
+                        }
+
+                        memberFunctionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
+                        if (memberFunctionDeclaration.propertyName.valueText() !== functionOverloadChainName) {
+                            var propertyNameFullStart = classElementFullStart + Syntax.childOffset(classElement, memberFunctionDeclaration.propertyName);
+                            this.pushDiagnostic1(propertyNameFullStart, memberFunctionDeclaration.propertyName,
+                                DiagnosticCode.Function_overload_name_must_be__0_, [functionOverloadChainName]);
                             return true;
                         }
                     }
@@ -390,10 +400,10 @@ module TypeScript {
                     }
 
                     if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
-                        var memberFunctionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
+                        memberFunctionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
 
                         inFunctionOverloadChain = memberFunctionDeclaration.block === null;
-                        // functionOverloadChainName = memberFunctionDeclaration.propertyName.valueText();
+                        functionOverloadChainName = memberFunctionDeclaration.propertyName.valueText();
 
                         if (lastElement && inFunctionOverloadChain) {
                             this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),

@@ -49,6 +49,7 @@ module TypeScript {
         Overload_and_ambient_signatures_cannot_specify_parameter_properties,
         Function_implementation_expected,
         Constructor_implementation_expected,
+        Function_overload_name_must_be__0_,
 
 
 

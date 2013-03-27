@@ -7,21 +7,21 @@
     "diagnostics": [
         {
             "_position": 25,
-            "_width": 3,
+            "_width": 1,
             "_diagnosticCode": "Function_overload_name_must_be__0_",
             "_arguments": [
-                "foo"
+                "0"
             ]
         }
     ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 37,
+        "fullWidth": 35,
         "isIncrementallyReusable": false,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 37,
+                "fullWidth": 35,
                 "modifiers": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -68,20 +68,20 @@
                 "classElements": [
                     {
                         "kind": "MemberFunctionDeclaration",
-                        "fullWidth": 11,
+                        "fullWidth": 10,
                         "modifiers": [],
                         "propertyName": {
-                            "kind": "IdentifierName",
-                            "width": 3,
-                            "fullWidth": 6,
-                            "text": "foo",
-                            "value": "foo",
-                            "valueText": "foo",
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "fullWidth": 5,
+                            "text": "0",
+                            "value": 0,
+                            "valueText": "0",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "text": "   "
+                                    "text": "    "
                                 }
                             ]
                         },
@@ -121,20 +121,20 @@
                     },
                     {
                         "kind": "MemberFunctionDeclaration",
-                        "fullWidth": 14,
+                        "fullWidth": 13,
                         "modifiers": [],
                         "propertyName": {
-                            "kind": "IdentifierName",
-                            "width": 3,
-                            "fullWidth": 6,
-                            "text": "bar",
-                            "value": "bar",
-                            "valueText": "bar",
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "fullWidth": 5,
+                            "text": "1",
+                            "value": 1,
+                            "valueText": "1",
                             "hasLeadingTrivia": true,
                             "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "text": "   "
+                                    "text": "    "
                                 }
                             ]
                         },
@@ -216,9 +216,9 @@
         "lineStarts": [
             0,
             11,
-            22,
-            36
+            21,
+            34
         ],
-        "length": 37
+        "length": 35
     }
 }
