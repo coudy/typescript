@@ -115,11 +115,6 @@ module TypeScript {
             return false;
         }
 
-        private valueText(token: ISyntaxToken): string {
-            // TODO: handle unicode escapes here.
-            return token.text();
-        }
-
         private identifierFromToken(token: ISyntaxToken, isOptional: bool): Identifier {
             this.assertElementAtPosition(token);
 
@@ -129,7 +124,7 @@ module TypeScript {
                 result.flags |= ASTFlags.Error;
             }
             else {
-                result = new Identifier(this.valueText(token), this.hasEscapeSequence(token));
+                result = new Identifier(token.valueText(), this.hasEscapeSequence(token));
             }
 
             if (isOptional) {
@@ -536,11 +531,11 @@ module TypeScript {
 
                 if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
                     var variableDeclaration = <MemberVariableDeclarationSyntax>classElement;
-                    knownMemberNames[this.valueText(variableDeclaration.variableDeclarator.identifier)] = true;
+                    knownMemberNames[variableDeclaration.variableDeclarator.identifier.valueText()] = true;
                 }
                 else if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
                     var functionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
-                    knownMemberNames[this.valueText(functionDeclaration.propertyName)] = true;
+                    knownMemberNames[functionDeclaration.propertyName.valueText()] = true;
                 }
             }
 
@@ -2301,7 +2296,7 @@ module TypeScript {
             this.setSpan(result, start, this.position);
 
             if (node.identifier !== null) {
-                result.target = this.valueText(node.identifier);
+                result.target = node.identifier.valueText();
             }
 
             return result;
@@ -2319,7 +2314,7 @@ module TypeScript {
             this.setSpan(result, start, this.position);
 
             if (node.identifier !== null) {
-                result.target = this.valueText(node.identifier);
+                result.target = node.identifier.valueText();
             }
 
             return result;
@@ -2495,7 +2490,7 @@ module TypeScript {
 
             funcDecl.fncFlags |= FncFlags.GetAccessor;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
-            funcDecl.hint = "get" + node.propertyName.text();
+            funcDecl.hint = "get" + node.propertyName.valueText();
             funcDecl.returnTypeAnnotation = returnType;
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
@@ -2534,7 +2529,7 @@ module TypeScript {
 
             funcDecl.fncFlags |= FncFlags.SetAccessor;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
-            funcDecl.hint = "set" + node.propertyName.text();
+            funcDecl.hint = "set" + node.propertyName.valueText();
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
             this.setSpan(result, start, this.position);
