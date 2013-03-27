@@ -41412,6 +41412,7 @@ var TypeScript;
             this.addUpdateVersion = -1;
             this.removeUpdateVersion = -1;
             this.docComments = null;
+            this.isPrinting = false;
             this.name = name;
             this.declKind = declKind;
         }
@@ -41469,6 +41470,9 @@ var TypeScript;
         PullSymbol.prototype.setIsSpecialized = function () {
             this.isSpecialized = true;
             this.isBeingSpecialized = false;
+        };
+        PullSymbol.prototype.getIsSpecialized = function () {
+            return this.isSpecialized;
         };
         PullSymbol.prototype.currentlyBeingSpecialized = function () {
             return this.isBeingSpecialized;
@@ -43045,9 +43049,14 @@ var TypeScript;
         };
         PullTypeParameterSymbol.prototype.getName = function () {
             var name = _super.prototype.getName.call(this);
+            if (this.isPrinting) {
+                return name;
+            }
+            this.isPrinting = true;
             if (this.constraintLink) {
                 name += " extends " + this.constraintLink.end.toString();
             }
+            this.isPrinting = false;
             return name;
         };
         return PullTypeParameterSymbol;
@@ -44389,6 +44398,9 @@ var TypeScript;
                     if ((parentType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class or interface types", enclosingDecl);
                     }
+                    if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
+                        parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
+                    }
                     classDeclSymbol.addExtendedType(parentType);
                 }
             }
@@ -44396,6 +44408,9 @@ var TypeScript;
                 var implementedType = null;
                 for(i = 0; i < classDeclAST.implementsList.members.length; i++) {
                     implementedType = this.resolveTypeReference(new TypeScript.TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
+                    if (implementedType.isGeneric() && implementedType.isResolved() && !implementedType.getIsSpecialized()) {
+                        implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
+                    }
                     classDeclSymbol.addImplementedType(implementedType);
                     if ((implementedType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, "A class may only implement other class or interface types", enclosingDecl);
@@ -44464,6 +44479,9 @@ var TypeScript;
                     parentType = this.resolveTypeReference(new TypeScript.TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
                     if ((parentType.getKind() & (32 /* Interface */  | 16 /* Class */ )) == 0) {
                         context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, "An interface may only extend other class or interface types", enclosingDecl);
+                    }
+                    if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
+                        parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                     }
                     interfaceDeclSymbol.addExtendedType(parentType);
                 }
@@ -44745,6 +44763,9 @@ var TypeScript;
                     }
                     hadError = true;
                 } else {
+                    if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && typeExprSymbol.isResolved() && !typeExprSymbol.getIsSpecialized()) {
+                        typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
+                    }
                     if (typeExprSymbol.isContainer()) {
                         var instanceSymbol = (typeExprSymbol).getInstanceSymbol();
                         if (!instanceSymbol) {
@@ -54872,6 +54893,9 @@ var TypeScript;
             this.name = name;
             this.typeArguments = typeArguments;
         }
+        GenericType.prototype.emit = function (emitter, tokenId, startLine) {
+            emitter.emitJavascript(this.name, 106 /* Identifier */ , false);
+        };
         return GenericType;
     })(AST);
     TypeScript.GenericType = GenericType;    
