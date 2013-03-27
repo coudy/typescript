@@ -1,6 +1,6 @@
 ///<reference path='..\node\node.d.ts' />
 
-declare module "express" {
+module "express" {
     export function createServer(): ExpressServer;
     export function static(path: string): any;
     import http = module("http");
