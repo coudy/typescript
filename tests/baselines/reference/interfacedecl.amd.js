@@ -31,7 +31,7 @@ interface a {
 }
 interface b extends a {
 }
-interface c extends b,  {
+interface c extends a, b {
 }
 interface d extends a {
 }

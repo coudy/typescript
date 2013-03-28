@@ -146,6 +146,9 @@ module TypeScript {
         }
 
         public symbolIsRedeclaration(sym: PullSymbol): bool {
+            if (!this.reBindingAfterChange) {
+                return false;
+            }
             var symID = sym.getSymbolID();
             return (symID > this.startingSymbolForRebind) ||
                     ((sym.getRebindingID() == this.bindingPhase) && (symID != this.startingSymbolForRebind));
@@ -1906,7 +1909,8 @@ module TypeScript {
 
             var linkKind = SymbolLinkKind.ConstructorMethod;
 
-            if (constructorSymbol && 
+            if (constructorSymbol &&
+                this.symbolIsRedeclaration(constructorSymbol) &&
                 (constructorSymbol.getKind() != PullElementKind.ConstructorMethod ||
                     !isSignature && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature))) {
                 constructorDeclaration.addDiagnostic(new PullDiagnostic(constructorAST.minChar, constructorAST.getLength(), this.semanticInfo.getPath(),

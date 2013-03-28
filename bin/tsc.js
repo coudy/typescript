@@ -43898,8 +43898,8 @@ var TypeScript;
                     if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                         parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                     }
+                    interfaceDeclSymbol.addExtendedType(parentType);
                 }
-                interfaceDeclSymbol.addExtendedType(parentType);
             }
             if (interfaceDeclAST.implementsList) {
                 context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath, "An interface may not implement other types", enclosingDecl);
@@ -48717,6 +48717,9 @@ var TypeScript;
             }
         };
         PullSymbolBinder.prototype.symbolIsRedeclaration = function (sym) {
+            if (!this.reBindingAfterChange) {
+                return false;
+            }
             var symID = sym.getSymbolID();
             return (symID > this.startingSymbolForRebind) || ((sym.getRebindingID() == this.bindingPhase) && (symID != this.startingSymbolForRebind));
         };
@@ -49888,7 +49891,7 @@ var TypeScript;
             var constructorSymbol = parent.getConstructorMethod();
             var constructorTypeSymbol = null;
             var linkKind = 7 /* ConstructorMethod */ ;
-            if (constructorSymbol && (constructorSymbol.getKind() != 65536 /* ConstructorMethod */  || !isSignature && !constructorSymbol.allDeclsHaveFlag(4096 /* Signature */ ))) {
+            if (constructorSymbol && this.symbolIsRedeclaration(constructorSymbol) && (constructorSymbol.getKind() != 65536 /* ConstructorMethod */  || !isSignature && !constructorSymbol.allDeclsHaveFlag(4096 /* Signature */ ))) {
                 constructorDeclaration.addDiagnostic(new TypeScript.PullDiagnostic(constructorAST.minChar, constructorAST.getLength(), this.semanticInfo.getPath(), "Duplicate constructor definition"));
                 constructorSymbol = null;
             }

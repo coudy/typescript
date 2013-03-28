@@ -886,9 +886,9 @@ module TypeScript {
                     if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                         parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                     }
-                }
 
-                interfaceDeclSymbol.addExtendedType(parentType);
+                    interfaceDeclSymbol.addExtendedType(parentType);
+                }                
             }
 
             if (interfaceDeclAST.implementsList) {
