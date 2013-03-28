@@ -759,7 +759,7 @@ module FourSlash {
         public verifyIndentationLevelAtCurrentPosition(numberOfTabs: number) {
             this.verifyIndentationLevelAtPosition(this.currentCaretPosition, numberOfTabs);
         }
-
+
         public verifyTypesAgainstFullCheckAtPositions(positions: number[]) {
             // Create a from-scratch LS to check against
             var referenceLanguageServiceShimHost = new Harness.TypeScriptLS();
@@ -776,38 +776,70 @@ module FourSlash {
             referenceLanguageServiceShim.refresh(true);
             
             for (i = 0; i < positions.length; i++) {
-                var nameOf = (type) => type ? type.fullSymbolName : '(none)';
+                var nameOf = (type: Services.DefinitionInfo) => type ? type.name : '(none)';
 
-                var referenceType = referenceLanguageService.getTypeAtPosition(this.activeFile.fileName, positions[i]);
-                var pullType = this.languageService.getTypeAtPosition(this.activeFile.fileName, positions[i]);
-                var refName = nameOf(referenceType);
-                var pullName = nameOf(pullType);
-                if (refName !== pullName) {
-                    var textAtPosition = this.activeFile.content.substr(i, 10);
-                    throw new Error('verifyTypeAgainstFullCheck at position ' + positions[i] + ' ("' + i + '"...) failed - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '"');
+                var pullName: string, refName: string;
+                var anyFailed = false;
+
+                var errMsg = '';
+
+                try {
+                    var pullType = this.languageService.getDefinitionAtPosition(this.activeFile.fileName, positions[i]);
+                    pullName = nameOf(pullType);
+                } catch (err1) {
+                    errMsg = 'Failed to get pull type check. Exception: ' + err1 + '\r\n';
+                    if (err1.stack) errMsg = errMsg + err1.stack;
+                    pullName = '(failed)';
+                    anyFailed = true;
+                }
+
+                try {
+                    var referenceType = referenceLanguageService.getDefinitionAtPosition(this.activeFile.fileName, positions[i]);
+                    refName = nameOf(referenceType);
+                } catch (err2) {
+                    errMsg = 'Failed to get full type check. Exception: ' + err2 + '\r\n';
+                    if (err2.stack) errMsg = errMsg + err2.stack;
+                    refName = '(failed)';
+                    anyFailed = true;
+                }
+
+                var failure = anyFailed || (refName !== pullName);
+                if (failure) {
+                    snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
+                    content = snapshot.getText(0, snapshot.getLength());
+                    var textAtPosition = content.substr(positions[i], 10);
+                    var positionDescription = 'Position ' + positions[i] + ' ("' + textAtPosition + '"...)';
+
+                    if (anyFailed) {
+                        throw new Error('Exception thrown in language service for ' + positionDescription + '\r\n' + errMsg);
+                    } else if (refName !== pullName) {
+                        snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
+                        content = snapshot.getText(0, snapshot.getLength());
+                        var textAtPosition = content.substr(positions[i], 10);
+                        throw new Error('Pull/Full disagreement failed at ' + positionDescription + ' - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '".');
+                    }
                 }
             }
         }
 
-
-        public verifyNavigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
-            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
-
-            if (!items || items.length === 0) {
-                throw new Error('verifyNavigationItemsListContains failed - found 0 navigation items, expected at least one.');
-            }
-
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                if (item && item.name === name && item.kind === kind && item.fileName === fileName) {
-                    return;
-                }
-            }
-
-            var missingItem = { name: name, kind: kind, fileName: fileName, parentName: parentName };
-            throw new Error('verifyNavigationItemsListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
+        public verifyNavigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
+            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
+
+            if (!items || items.length === 0) {
+                throw new Error('verifyNavigationItemsListContains failed - found 0 navigation items, expected at least one.');
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item && item.name === name && item.kind === kind && item.fileName === fileName) {
+                    return;
+                }
+            }
+
+            var missingItem = { name: name, kind: kind, fileName: fileName, parentName: parentName };
+            throw new Error('verifyNavigationItemsListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
         }
-
+
         private getBOF(): number {
             return 0;
         }
