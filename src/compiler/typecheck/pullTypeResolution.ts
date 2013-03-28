@@ -2561,7 +2561,9 @@ module TypeScript {
                         decl = declPath[i];
                         declKind = decl.getKind();
 
-                        if (declKind == PullElementKind.Function || declKind == PullElementKind.Method) {
+                        if (declKind == PullElementKind.Function || declKind == PullElementKind.Method ||
+                            declKind == PullElementKind.ConstructorMethod || declKind == PullElementKind.GetAccessor ||
+                            declKind == PullElementKind.SetAccessor) {
                             hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
                         }
                         else if (declKind == PullElementKind.FunctionExpression) {
