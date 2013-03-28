@@ -832,7 +832,7 @@ module TypeScript {
             var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo2(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
 
             this.pushDeclLists();
@@ -862,7 +862,7 @@ module TypeScript {
 
                     var memberValue: AST = null;
 
-                    memberName = this.identifierFromToken(enumElement.propertyName, /*isOptional:*/ false, /*useValueText:*/ false);
+                    memberName = this.identifierFromToken(enumElement.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
                     this.movePast(enumElement.propertyName);
 
                     if (enumElement.equalsValueClause !== null) {
@@ -1077,7 +1077,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
@@ -1206,7 +1206,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.equalsGreaterThanToken);
 
@@ -1485,7 +1485,7 @@ module TypeScript {
             var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo2(node, node.identifier);
-            var identifier = this.identifierFromToken(node.identifier, !!node.questionToken, /*useValueText:*/ false);
+            var identifier = this.identifierFromToken(node.identifier, !!node.questionToken, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.questionToken);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
@@ -1714,7 +1714,7 @@ module TypeScript {
 
             var preComments = this.convertNodeLeadingComments(node, start);
 
-            var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             this.movePast(node.questionToken);
 
@@ -1777,7 +1777,7 @@ module TypeScript {
 
             var preComments = this.convertNodeLeadingComments(node, start);
 
-            var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             this.movePast(node.questionToken);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
@@ -1849,7 +1849,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             var constraint = node.constraint ? node.constraint.accept(this) : null;
 
@@ -1990,7 +1990,7 @@ module TypeScript {
             var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo2(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
 
             this.movePast(node.propertyName);
 
