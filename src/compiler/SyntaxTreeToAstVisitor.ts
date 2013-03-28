@@ -139,6 +139,7 @@ module TypeScript {
 
             var start = this.position + token.leadingTriviaWidth();
             this.setSpanExplicit(result, start, start + token.width());
+
             return result;
         }
 
