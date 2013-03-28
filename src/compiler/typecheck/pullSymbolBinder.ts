@@ -1340,7 +1340,7 @@ module TypeScript {
                     argDecl = <BoundDecl>funcDecl.arguments.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
                     isProperty = hasFlag(argDecl.varFlags, VarFlags.Property);
-                    parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Parameter);
+                    parameterSymbol = new PullSymbol(argDecl.id.text, PullElementKind.Parameter);
 
                     if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {
                         parameterSymbol.setIsVarArg();
@@ -1354,12 +1354,12 @@ module TypeScript {
                         parameterSymbol.setIsOptional();
                     }
 
-                    if (params[argDecl.id.actualText]) {
+                    if (params[argDecl.id.text]) {
                         decl.addDiagnostic(new PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(),
                             getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [argDecl.id.actualText])));
                     }
                     else {
-                        params[argDecl.id.actualText] = true;
+                        params[argDecl.id.text] = true;
                     }
                     if (decl) {
                         parameterSymbol.addDeclaration(decl);
@@ -1386,7 +1386,7 @@ module TypeScript {
                     // PULLREVIEW: Shouldn't need this, since parameters are created off of decl collection
                     // add a member to the parent type
                     //if (decl && isProperty) {
-                    //    parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Field);
+                    //    parameterSymbol = new PullSymbol(argDecl.id.text, PullElementKind.Field);
 
                     //    parameterSymbol.addDeclaration(decl);
                     //    decl.setPropertySymbol(parameterSymbol);

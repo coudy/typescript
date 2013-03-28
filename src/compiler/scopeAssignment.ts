@@ -249,7 +249,7 @@ module TypeScript {
 
             var funcScope = null;
             var outerFnc: FuncDecl = context.scopeChain.fnc;
-            var nameText = funcDecl.name ? funcDecl.name.actualText : null;
+            var nameText = funcDecl.name ? funcDecl.name.text : null;
 
             if (isStatic) {
                 // In the case of function-nested statics, no member list will have bee initialized for the function, so we need
@@ -380,7 +380,7 @@ module TypeScript {
             // If the function is an expression, the name will not be visible in the enclosing scope.
             // Add the function symbol under its name to the local scope to allow for recursive calls.
             if (funcDecl.name.sym) {
-                funcTable.add(funcDecl.name.actualText, funcDecl.name.sym);
+                funcTable.add(funcDecl.name.text, funcDecl.name.sym);
             }
         }
     }

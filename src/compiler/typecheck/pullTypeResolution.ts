@@ -933,7 +933,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
             
-            var aliasName = importStatementAST.id.actualText;
+            var aliasName = importStatementAST.id.text;
             var aliasedType: PullTypeSymbol = null;
 
             if (importDeclSymbol.isResolved()) {
@@ -2043,7 +2043,7 @@ module TypeScript {
                 return nameSymbol;
             }
 
-            var id = nameAST.actualText;
+            var id = nameAST.text;
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
@@ -2093,7 +2093,7 @@ module TypeScript {
             }
 
             // assemble the dotted name path
-            var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
+            var rhsName = (<Identifier>dottedNameAST.operand2).text;
 
             var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
             var lhsType = lhs.getType();
@@ -2230,7 +2230,7 @@ module TypeScript {
                 return typeNameSymbol;
             }
 
-            var id = nameAST.actualText;
+            var id = nameAST.text;
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
@@ -2264,7 +2264,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }  
 
-            var id = nameAST.actualText;
+            var id = nameAST.text;
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
@@ -2350,7 +2350,7 @@ module TypeScript {
             }
 
             // assemble the dotted name path
-            var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
+            var rhsName = (<Identifier>dottedNameAST.operand2).text;
 
             var prevSearchTypeSpace = context.searchTypeSpace;
             context.searchTypeSpace = true;

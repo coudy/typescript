@@ -26,7 +26,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var span = TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
 
-        var decl = new PullDecl(importDecl.id.actualText, PullElementKind.TypeAlias, declFlags, span, context.scriptName);
+        var decl = new PullDecl(importDecl.id.text, PullElementKind.TypeAlias, declFlags, span, context.scriptName);
 
         var parent = context.getParent();
 
@@ -262,7 +262,7 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
 
-        var decl = new PullDecl(typeParameterDecl.name.actualText, PullElementKind.TypeParameter, declFlags, span, context.scriptName);
+        var decl = new PullDecl(typeParameterDecl.name.text, PullElementKind.TypeParameter, declFlags, span, context.scriptName);
 
         context.semanticInfo.setASTForDecl(decl, ast);
         context.semanticInfo.setDeclForAST(ast, decl);
@@ -515,7 +515,7 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(funcDeclAST.minChar, funcDeclAST.limChar);
 
-        var decl = new PullDecl(funcDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl(funcDeclAST.name.text, declType, declFlags, span, context.scriptName);
 
         var parent = context.getParent();
 
@@ -610,7 +610,7 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(memberFunctionDeclAST.minChar, memberFunctionDeclAST.limChar);
 
-        var decl = new PullDecl(memberFunctionDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl(memberFunctionDeclAST.name.text, declType, declFlags, span, context.scriptName);
 
         var parent = context.getParent();
 
@@ -769,7 +769,7 @@ module TypeScript {
             }
         }
 
-        var decl = new PullDecl(constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);        
+        var decl = new PullDecl(constructorDeclAST.name.text, declType, declFlags, span, context.scriptName);        
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -817,7 +817,7 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
 
-        var decl = new PullDecl(getAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl(getAccessorDeclAST.name.text, declType, declFlags, span, context.scriptName);
 
         var parent = context.getParent();
 
