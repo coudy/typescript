@@ -61,7 +61,6 @@
 ///<reference path='typecheck\pullEmitter.ts' />
 ///<reference path='typecheck\pullErrors.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
-///<reference path='typecheck\pullDeclarationEmitter.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
 ///<reference path='Core\Timer.ts' />
 
@@ -298,7 +297,7 @@ module TypeScript {
             if (this.canEmitDeclarations(script)) {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new PullDeclarationEmitter(
+                    declarationEmitter = new DeclarationEmitter(
                         declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
                 }
 

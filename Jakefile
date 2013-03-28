@@ -63,7 +63,6 @@ var compilerSources = [
 	"typecheck/pullEmitter.ts",	
 	"typecheck/pullErrors.ts",
 	"typecheck/pullHelpers.ts",	
-	"typecheck/pullDeclarationEmitter.ts",	
 	"SyntaxTreeToAstVisitor.ts",
 	"typescript.ts"
 ].map(function (f) {
