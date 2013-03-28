@@ -16,6 +16,7 @@ module TypeScript {
         actuals: PullTypeSymbol[];
         exactCandidates: PullSignatureSymbol[];
         conversionCandidates: PullSignatureSymbol[];
+
         id: number;
     }
 
@@ -307,6 +308,9 @@ module TypeScript {
             var declMembers: PullSymbol[];
             var pathDeclKind: PullElementKind;
             var valDecl: PullDecl = null;
+            var kind: PullElementKind;
+            var instanceSymbol: PullSymbol = null;
+            var instanceType: PullTypeSymbol = null;
 
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
@@ -333,8 +337,6 @@ module TypeScript {
                     declSymbol = decl.getSymbol().getType();
                     declMembers = declSymbol.getMembers();
 
-                    var kind: PullElementKind;
-
                     for (var j = 0; j < declMembers.length; j++) {
                         // PULLTODO: declkind should equal declkind, or is it ok to just mask the value?
                         if (declMembers[j].getName() == symbolName) {
@@ -345,6 +347,7 @@ module TypeScript {
                             }
                         }
                     }
+
                 }
                 else if ((declSearchKind & PullElementKind.SomeType) || !(pathDeclKind & PullElementKind.Class)) {
                     childDecls = decl.findChildDecls(symbolName, declSearchKind);
@@ -1392,7 +1395,18 @@ module TypeScript {
                     }
                 }
             }
+            else if (declSymbol.getKind() == PullElementKind.Container) { // module instance value
+                instanceSymbol = (<PullContainerTypeSymbol>declSymbol).getInstanceSymbol();
+                var instanceType = instanceSymbol.getType();
 
+                if (instanceType) {
+                    context.setTypeInContext(declSymbol, instanceType);
+                }
+                else {
+                    context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
+                }
+            }
+            //else if () {} // class instance value
                 // Otherwise, it's of type 'any'
             else {
                 context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);

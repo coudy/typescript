@@ -146,9 +146,6 @@ module TypeScript {
         }
 
         public symbolIsRedeclaration(sym: PullSymbol): bool {
-            if (!this.reBindingAfterChange) {
-                return false;
-            }
             var symID = sym.getSymbolID();
             return (symID > this.startingSymbolForRebind) ||
                     ((sym.getRebindingID() == this.bindingPhase) && (symID != this.startingSymbolForRebind));
@@ -181,10 +178,10 @@ module TypeScript {
             var i = 0;
 
             if (parent) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName);
+                moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.Container);
             }
             else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
+                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.Container, []);
             }
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {

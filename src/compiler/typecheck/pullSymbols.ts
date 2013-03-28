@@ -1439,7 +1439,7 @@ module TypeScript {
             return this.findNestedType(name);
         }
 
-        public findNestedType(name: string): PullTypeSymbol {
+        public findNestedType(name: string, kind = PullElementKind.None): PullTypeSymbol {
             var memberSymbol: PullTypeSymbol;
 
             if (!this.memberTypeNameCache) {
@@ -1447,6 +1447,10 @@ module TypeScript {
             }
 
             memberSymbol = this.memberTypeNameCache[name];
+
+            if (memberSymbol && kind != PullElementKind.None) {
+                memberSymbol = ((memberSymbol.getKind() & kind) != 0) ? memberSymbol : null;
+            }
 
             return memberSymbol;
         }
