@@ -243,6 +243,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.setVerifyDocComments(val);
         }
 
+        public navigationItemsCount(count: number) {
+            FourSlash.currentTestState.verifyNavigationItemsCount(count);
+        }
+
         public navigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
             FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, fileName, parentName);
         }

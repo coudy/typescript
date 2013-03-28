@@ -416,6 +416,10 @@ module Services {
                 case TypeScript.PullElementKind.EnumMember:
 	// Ignore the _map for enums. this should be removed once enum new implmentation is in place
                     return declaration.getName() !== "_map";
+                case TypeScript.PullElementKind.FunctionExpression:
+                case TypeScript.PullElementKind.Function:
+	// Ignore anonomus functions
+                    return declaration.getName() !== "";
             }
 
             if (this.isContainerDeclaration(declaration)) {
