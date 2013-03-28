@@ -1,9 +1,4 @@
-///<reference path='..\..\Core\ArrayUtilities.ts' />
-///<reference path='..\Parser.ts' />
-///<reference path='..\..\Core\StringTable.ts' />
-///<reference path='..\..\Core\StringUtilities.ts' />
-///<reference path='..\..\Text\TextChangeRange.ts' />
-///<reference path='..\..\Text\TextFactory.ts' />
+///<reference path='..\..\src\Compiler\Syntax\References.ts' />
 
 module TypeScript {
     export class SyntaxElementsCollector extends SyntaxWalker {

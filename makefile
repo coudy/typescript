@@ -17,7 +17,7 @@ SSRC=$(BASE)src\services
 LSRC=$(BASE)typings
 
 #test source location
-TSRC=$(BASE)test
+TSRC=$(BASE)tests
 
 # harness source location
 HSRC=$(BASE)src\harness
@@ -116,7 +116,7 @@ SERVICES_SOURCES= \
   $(SERVICES_SOURCES_BASE)
 
 PROTOTYPE_SOURCES_PROGRAM= \
-  $(CSRC)\Syntax\Program.ts
+  $(TSRC)\Fidelity\Program.ts
 
 prebuild-local:
 	if not exist $(BUILT) mkdir $(BUILT)
@@ -153,7 +153,7 @@ local: prebuild-local $(BUILT_LOCAL)\typescript.js $(BUILT_LOCAL)\tsc.js $(BUILT
 compiler: local
 
 prototype: $(PROTOTYPE_SOURCES_PROGRAM)
-	$(STRC_LKG) $(PROTOTYPE_SOURCES_PROGRAM) -const -out $(CSRC)\Syntax\prototype.js
+	$(STRC_LKG) $(PROTOTYPE_SOURCES_PROGRAM) -const -out $(TSRC)\Fidelity\prototype.js
 
 syntaxgenerator: $(CSRC)\Syntax\SyntaxGenerator.ts
 	$(STRC_LKG) $(CSRC)\Syntax\SyntaxGenerator.ts -const -out $(CSRC)\Syntax\SyntaxGenerator.js
@@ -162,10 +162,10 @@ runsyntaxgenerator: syntaxgenerator
 	$(DEBUG_HOST) $(CSRC)\Syntax\SyntaxGenerator.js 
 
 runprototype: prototype
-	$(DEBUG_HOST) $(CSRC)\Syntax\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
+	$(DEBUG_HOST) $(TSRC)\Fidelity\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
 
 runprototype_node: prototype
-	$(NODE_HOST) $(CSRC)\Syntax\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
+	$(NODE_HOST) $(TSRC)\Fidelity\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
 
 COMPILER_TESTS=--compiler
 PROJECT_TESTS=--project

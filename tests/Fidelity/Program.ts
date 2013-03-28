@@ -1,13 +1,13 @@
-/// <reference path='..\..\Services\es5compat.ts' />
+/// <reference path='..\..\src\Services\es5compat.ts' />
 
-///<reference path='References.ts' />
-///<reference path='Emitter.ts' />
-///<reference path='PrettyPrinter.ts' />
+///<reference path='..\..\src\Compiler\Syntax\References.ts' />
+///<reference path='..\..\src\Compiler\Syntax\Emitter.ts' />
+///<reference path='..\..\src\Compiler\Syntax\PrettyPrinter.ts' />
 ///<reference path='Test262.ts' />
-///<reference path='tests\IncrementalParserTests.ts' />
-///<reference path='..\Core\Environment.ts' />
-///<reference path='..\..\Harness\Diff.ts' />
-///<reference path='..\SyntaxTreeToAstVisitor.ts' />
+///<reference path='IncrementalParserTests.ts' />
+///<reference path='..\..\src\Compiler\Core\Environment.ts' />
+///<reference path='..\..\src\Harness\Diff.ts' />
+///<reference path='..\..\src\Compiler\SyntaxTreeToAstVisitor.ts' />
 
 var timer = new TypeScript.Timer();
 
@@ -43,46 +43,42 @@ class Program {
         }
 
         Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
 
         Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\emitter\\ecmascript5",
             fileName => this.runEmitter(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
 
-        Environment.standardOut.WriteLine("Testing against monoco.");
-        this.runTests("C:\\temp\\monoco-files",
-            fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false, /*generateBaselines:*/ generate));
-
         Environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\test262",
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ true, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\prettyPrinter\\ecmascript5",
             fileName => this.runPrettyPrinter(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\findToken\\ecmascript5",
             fileName => this.runFindToken(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing trivia.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\trivia\\ecmascript5",
             fileName => this.runTrivia(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\scanner\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\scanner\\ecmascript5",
             fileName => this.runScanner(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing Incremental 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
             fileName => this.runIncremental(fileName, TypeScript.LanguageVersion.EcmaScript5));
             
         Environment.standardOut.WriteLine("Testing emitter 2.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter2\\ecmascript5",
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\emitter2\\ecmascript5",
             fileName => this.runEmitter(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ true));
     }
 
