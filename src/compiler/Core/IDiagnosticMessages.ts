@@ -35,8 +35,8 @@ module TypeScript {
         Class_can_only_extend_single_type: DiagnosticInfo;
         _implements__clause_already_seen: DiagnosticInfo;
         Accessibility_modifier_already_seen: DiagnosticInfo;
-        Accessibility_modifier_must_precede__static__modifier: DiagnosticInfo;
-        _static__modifier_already_seen: DiagnosticInfo;
+        _0__modifier_must_precede__1__modifier: DiagnosticInfo;
+        _0__modifier_already_seen: DiagnosticInfo;
         _0__modifier_cannot_appear_on_a_class_element: DiagnosticInfo;
         Interface_declaration_cannot_have__implements__clause: DiagnosticInfo;
         Enum_element_must_have_initializer: DiagnosticInfo;
@@ -50,6 +50,10 @@ module TypeScript {
         Function_implementation_expected: DiagnosticInfo;
         Constructor_implementation_expected: DiagnosticInfo;
         Function_overload_name_must_be__0_: DiagnosticInfo;
+        _0__modifier_cannot_appear_on_a_module_element: DiagnosticInfo;
+        _declare__modifier_cannot_appear_on_an_interface_declaration: DiagnosticInfo;
+
+
 
 
 

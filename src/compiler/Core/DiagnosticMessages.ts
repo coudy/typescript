@@ -189,15 +189,15 @@ module TypeScript {
             code: 1028
         },
 
-        Accessibility_modifier_must_precede__static__modifier: {
+        _0__modifier_must_precede__1__modifier: {
             category: DiagnosticCategory.Error,
-            message: "Accessibility modifier must precede 'static' modifier.",
+            message: "'{0}' modifier must precede '{1}' modifier.",
             code: 1029
         },
 
-        _static__modifier_already_seen: {
+        _0__modifier_already_seen: {
             category: DiagnosticCategory.Error,
-            message: "'static' modifier already seen.",
+            message: "'{0}' modifier already seen.",
             code: 1030
         },
 
@@ -278,6 +278,21 @@ module TypeScript {
             message: "Function overload name must be '{0}'.",
             code: 1043
         },
+
+        _0__modifier_cannot_appear_on_a_module_element: {
+            category: DiagnosticCategory.Error,
+            message: "'{0}' modifier cannot appear on a module element.",
+            code: 1044
+        },
+
+        _declare__modifier_cannot_appear_on_an_interface_declaration: {
+            category: DiagnosticCategory.Error,
+            message: "'declare' modifier cannot appear on an interface declaration.",
+            code: 1045
+        },
+
+
+
 
 
 
@@ -392,4 +407,17 @@ module TypeScript {
             code: 2017
         },
     };
+
+    var seenCodes = [];
+    for (var name in diagnosticMessages) {
+        if (diagnosticMessages.hasOwnProperty(name)) {
+            var diagnosticMessage = <DiagnosticInfo>diagnosticMessages[name];
+            var value = seenCodes[diagnosticMessage.code];
+            if (value) {
+                throw new Error("Duplicate diagnostic code: " + diagnosticMessage.code);
+            }
+
+            seenCodes[diagnosticMessage.code] = diagnosticMessage;
+        }
+    }
 }

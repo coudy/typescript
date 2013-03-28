@@ -35,8 +35,8 @@ module TypeScript {
         Class_can_only_extend_single_type,
         _implements__clause_already_seen,
         Accessibility_modifier_already_seen,
-        Accessibility_modifier_must_precede__static__modifier,
-        _static__modifier_already_seen,
+        _0__modifier_must_precede__1__modifier,
+        _0__modifier_already_seen,
         _0__modifier_cannot_appear_on_a_class_element,
         Interface_declaration_cannot_have__implements__clause,
         Enum_element_must_have_initializer,
@@ -50,7 +50,8 @@ module TypeScript {
         Function_implementation_expected,
         Constructor_implementation_expected,
         Function_overload_name_must_be__0_,
-
+        _0__modifier_cannot_appear_on_a_module_element,
+        _declare__modifier_cannot_appear_on_an_interface_declaration,
 
 
 
