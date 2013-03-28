@@ -3,11 +3,9 @@ var Foo = (function () {
     Object.defineProperty(Foo, "Foo", {
         get: function () {
             return 0;
-        }
-,
+        },
         set: function (n) {
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });

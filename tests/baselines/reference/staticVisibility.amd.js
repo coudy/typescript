@@ -20,12 +20,10 @@ var C2 = (function () {
     Object.defineProperty(C2, "Bar", {
         get: function () {
             return "bar";
-        }
-,
+        },
         set: function (bar) {
             barback = bar;
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });

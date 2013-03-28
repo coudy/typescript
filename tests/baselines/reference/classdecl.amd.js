@@ -23,8 +23,7 @@ var a = (function () {
                 x: 30,
                 y: 40
             };
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -33,8 +32,7 @@ var a = (function () {
     Object.defineProperty(a, "p3", {
         get: function () {
             return "string";
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });

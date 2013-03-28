@@ -47,8 +47,7 @@ var C = (function () {
     };
     Object.defineProperty(C, "tsF", {
         set: function (param) {
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -56,8 +55,7 @@ var C = (function () {
     };
     Object.defineProperty(C, "tgF", {
         get: function () {
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -114,8 +112,7 @@ var M;
         };
         Object.defineProperty(C, "tsF", {
             set: function (param) {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -123,8 +120,7 @@ var M;
         };
         Object.defineProperty(C, "tgF", {
             get: function () {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -214,8 +210,7 @@ var M;
         };
         Object.defineProperty(eC, "tsF", {
             set: function (param) {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -223,8 +218,7 @@ var M;
         };
         Object.defineProperty(eC, "tgF", {
             get: function () {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -321,8 +315,7 @@ var eC = (function () {
     };
     Object.defineProperty(eC, "tsF", {
         set: function (param) {
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -330,8 +323,7 @@ var eC = (function () {
     };
     Object.defineProperty(eC, "tgF", {
         get: function () {
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -388,8 +380,7 @@ exports.eC = eC;
         };
         Object.defineProperty(C, "tsF", {
             set: function (param) {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -397,8 +388,7 @@ exports.eC = eC;
         };
         Object.defineProperty(C, "tgF", {
             get: function () {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -488,8 +478,7 @@ exports.eC = eC;
         };
         Object.defineProperty(eC, "tsF", {
             set: function (param) {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -497,8 +486,7 @@ exports.eC = eC;
         };
         Object.defineProperty(eC, "tgF", {
             get: function () {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });

@@ -43,13 +43,11 @@ var c1 = (function () {
         get: /** static getter property*/
         function () {
             return c1.s2(c1.s1);
-        }
-,
+        },
         set: /** setter property*/
         function (/** this is value*/ value) {
             c1.s1 = c1.s2(value);
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -85,12 +83,10 @@ var c1 = (function () {
     Object.defineProperty(c1, "nc_s3", {
         get: function () {
             return c1.nc_s2(c1.nc_s1);
-        }
-,
+        },
         set: function (value) {
             c1.nc_s1 = c1.nc_s2(value);
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -134,13 +130,11 @@ var c1 = (function () {
         get: // static getter property
         function () {
             return c1.s2(c1.s1);
-        }
-,
+        },
         set: // setter property
         function (value) {
             c1.a_s1 = c1.a_s2(value);
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });
@@ -185,15 +179,13 @@ var c1 = (function () {
         */
         function () {
             return c1.s2(c1.s1);
-        }
-,
+        },
         set: /** setter property
         */
         function (value) {
             /** setter */
             c1.b_s1 = c1.b_s2(value);
-        }
-,
+        },
         enumerable: true,
         configurable: true
     });

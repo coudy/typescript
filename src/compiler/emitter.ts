@@ -672,6 +672,7 @@ module TypeScript {
             this.emitParensAndCommentsInPlace(funcDecl, false);
 
             if (!isMember &&
+                !funcDecl.isAccessor() &&
                 //funcDecl.name != null &&
                 !hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) &&
                 (!hasFlag(funcDecl.fncFlags, FncFlags.Signature) || funcDecl.isConstructor)) {

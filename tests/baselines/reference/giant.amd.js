@@ -48,8 +48,7 @@ define(["require", "exports"], function(require, exports) {
         };
         Object.defineProperty(C, "tsF", {
             set: function (param) {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -57,8 +56,7 @@ define(["require", "exports"], function(require, exports) {
         };
         Object.defineProperty(C, "tgF", {
             get: function () {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -115,8 +113,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(C, "tsF", {
                 set: function (param) {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -124,8 +121,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(C, "tgF", {
                 get: function () {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -215,8 +211,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(eC, "tsF", {
                 set: function (param) {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -224,8 +219,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(eC, "tgF", {
                 get: function () {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -322,8 +316,7 @@ define(["require", "exports"], function(require, exports) {
         };
         Object.defineProperty(eC, "tsF", {
             set: function (param) {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -331,8 +324,7 @@ define(["require", "exports"], function(require, exports) {
         };
         Object.defineProperty(eC, "tgF", {
             get: function () {
-            }
-,
+            },
             enumerable: true,
             configurable: true
         });
@@ -389,8 +381,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(C, "tsF", {
                 set: function (param) {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -398,8 +389,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(C, "tgF", {
                 get: function () {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -489,8 +479,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(eC, "tsF", {
                 set: function (param) {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
@@ -498,8 +487,7 @@ define(["require", "exports"], function(require, exports) {
             };
             Object.defineProperty(eC, "tgF", {
                 get: function () {
-                }
-,
+                },
                 enumerable: true,
                 configurable: true
             });
