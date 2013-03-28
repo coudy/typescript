@@ -968,7 +968,7 @@ module TypeScript {
             var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo2(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.equalsToken);
             var alias = node.moduleReference.accept(this);
@@ -989,7 +989,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo2(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.semicolonToken);
 
@@ -1290,7 +1290,7 @@ module TypeScript {
             var start = this.position;
             var left = this.visitType(node.left);
             this.movePast(node.dotToken);
-            var right = this.identifierFromToken(node.right, /*isOptional:*/ false, /*useValueText:*/ false);
+            var right = this.identifierFromToken(node.right, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.right);
 
             if (left.nodeType === NodeType.TypeRef) {
@@ -2051,7 +2051,7 @@ module TypeScript {
             var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo2(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             var parameters = node.parameterList.accept(this);
             var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
@@ -2123,7 +2123,7 @@ module TypeScript {
             var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo3(node, node.variableDeclarator, node.variableDeclarator.identifier);
-            var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.variableDeclarator.identifier);
             var typeExpr = node.variableDeclarator.typeAnnotation ? node.variableDeclarator.typeAnnotation.accept(this) : null;
             var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
@@ -2467,7 +2467,7 @@ module TypeScript {
 
             var start = this.position;
             this.moveTo2(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
             this.movePast(node.closeParenToken);
@@ -2505,7 +2505,7 @@ module TypeScript {
 
             var start = this.position;
             this.moveTo2(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
             var parameter = node.parameter.accept(this);
@@ -2546,7 +2546,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
 
             this.movePast(node.functionKeyword);
-            var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
@@ -2637,7 +2637,7 @@ module TypeScript {
             var start = this.position;
             this.movePast(node.catchKeyword);
             this.movePast(node.openParenToken);
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             this.movePast(node.closeParenToken);
@@ -2671,7 +2671,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.colonToken);
             var statement = node.statement.accept(this);
