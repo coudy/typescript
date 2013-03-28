@@ -178,9 +178,8 @@ module TypeScript.Syntax {
                 return null;
         }
 
-        
         if (SyntaxFacts.isAnyKeyword(kind) || SyntaxFacts.isAnyPunctuation(kind)) {
-            return null;
+            return SyntaxFacts.getText(kind);
         }
 
         if (kind === SyntaxKind.NumericLiteral) {

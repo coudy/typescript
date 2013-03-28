@@ -81,7 +81,7 @@ while(false) {
 label2:
 while(false) {
     while(false) {
-        continue l\u0061bel2;
+        continue label2;
     }
 }
 label3:
@@ -93,6 +93,6 @@ while(false) {
 l\u0061bel4:
 while(false) {
     while(false) {
-        continue l\u0061bel4;
+        continue label4;
     }
 }
