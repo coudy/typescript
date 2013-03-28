@@ -58,10 +58,6 @@ module TypeScript {
         private nestingLevel = 0;
         private position = 0;
 
-        private varLists: ASTList[] = [];
-        private scopeLists: ASTList[] = [];
-        private staticsLists: ASTList[] = [];
-
         private requiresExtendsBlock: bool = false;
         private previousTokenTrailingComments: Comment[] = null;
 
@@ -177,30 +173,6 @@ module TypeScript {
             var id = new Identifier(text, hasEscapeSequence);
             id.minChar = minChar;
             return id;
-        }
-
-        private pushDeclLists() {
-            this.staticsLists.push(new ASTList());
-            this.varLists.push(new ASTList());
-            this.scopeLists.push(new ASTList());
-        }
-
-        private popDeclLists() {
-            this.staticsLists.pop();
-            this.varLists.pop();
-            this.scopeLists.pop();
-        }
-
-        private topVarList() {
-            return this.varLists[this.varLists.length - 1];
-        }
-
-        private topScopeList() {
-            return this.scopeLists[this.scopeLists.length - 1];
-        }
-
-        private topStaticsList() {
-            return this.staticsLists[this.staticsLists.length - 1];
         }
 
         private convertComment(trivia: ISyntaxTrivia, commentStartPosition: number, hasTrailingNewLine: bool): Comment {
@@ -399,7 +371,6 @@ module TypeScript {
 
             var start = this.position;
             var members;
-            this.pushDeclLists();
 
             var bod = this.visitSyntaxList(node.moduleElements);
 
@@ -411,7 +382,7 @@ module TypeScript {
             if (this.compilationSettings.moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName);
-                topLevelMod = new ModuleDeclaration(id, bod, this.topVarList(), null);
+                topLevelMod = new ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
                 topLevelMod.modFlags |= ModuleFlags.IsDynamic;
@@ -433,10 +404,8 @@ module TypeScript {
                 bod.append(topLevelMod);
             }
 
-            var result = new Script(this.topVarList(), this.topScopeList());
+            var result = new Script();
             this.setSpanExplicit(result, start, this.position);
-
-            this.popDeclLists();
 
             result.bod = bod;
             result.locationInfo = new LocationInfo(this.fileName, this.lineMap);
@@ -664,8 +633,6 @@ module TypeScript {
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleDeclaration {
             this.assertElementAtPosition(node);
 
-            this.pushDeclLists();
-
             var start = this.position;
 
             var preComments = this.convertNodeLeadingComments(node, start);
@@ -693,7 +660,7 @@ module TypeScript {
                 closeBraceSpan.minChar = closeBracePosition;
                 closeBraceSpan.limChar = this.position;
 
-                moduleDecl = new ModuleDeclaration(innerName, members, this.topVarList(), closeBraceSpan);
+                moduleDecl = new ModuleDeclaration(innerName, members, closeBraceSpan);
                 this.setSpan(moduleDecl, start, node);
 
                 moduleDecl.preComments = preComments;
@@ -716,10 +683,6 @@ module TypeScript {
                 }
 
                 // REVIEW: will also possibly need to re-parent comments as well
-
-                if (i === 0) {
-                    this.popDeclLists();
-                }
 
                 members = new ASTList();
                 members.append(moduleDecl);
@@ -781,8 +744,6 @@ module TypeScript {
                 ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
-            this.pushDeclLists();
-
             var bod = this.convertBlock(node.block);
             if (bod) {
                 bod.append(new EndCode());
@@ -796,14 +757,8 @@ module TypeScript {
 
             this.movePast(node.semicolonToken);
 
-            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(funcDecl, start, node);
-
-            this.popDeclLists();
-
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
 
             funcDecl.preComments = preComments;
             funcDecl.postComments = postComments;
@@ -836,8 +791,6 @@ module TypeScript {
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
-
-            this.pushDeclLists();
 
             this.movePast(node.openBraceToken);
             var members = new ASTList();
@@ -938,7 +891,7 @@ module TypeScript {
             this.movePast(node.closeBraceToken);
 
             var endingToken = new ASTSpan();
-            var modDecl = new ModuleDeclaration(name, members, this.topVarList(), endingToken);
+            var modDecl = new ModuleDeclaration(name, members, endingToken);
             this.setSpan(modDecl, start, node);
             this.setSpan(mapDecl, start, node);
 
@@ -950,8 +903,6 @@ module TypeScript {
             if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                 modDecl.modFlags |= ModuleFlags.Exported;
             }
-
-            this.popDeclLists();
 
             return modDecl;
         }
@@ -1087,8 +1038,6 @@ module TypeScript {
             var result = new VarDecl(name, 0);
             this.setSpan(result, start, node);
 
-            this.topVarList().append(result);
-
             result.typeExpr = typeExpr;
             result.init = init;
             if (init && init.nodeType === NodeType.FuncDecl) {
@@ -1219,18 +1168,11 @@ module TypeScript {
 
             parameters.append(parameter);
 
-            this.pushDeclLists();
-
             var statements = this.getArrowFunctionStatements(node.body);
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
 
             this.setSpan(result, start, node);
-
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             result.returnTypeAnnotation = null;
             result.fncFlags |= FncFlags.IsFunctionExpression;
@@ -1251,17 +1193,10 @@ module TypeScript {
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
             this.movePast(node.equalsGreaterThanToken);
 
-            this.pushDeclLists();
-
             var statements = this.getArrowFunctionStatements(node.body);
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, typeParameters, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
-
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             result.preComments = preComments;
             result.returnTypeAnnotation = returnType;
@@ -1338,7 +1273,7 @@ module TypeScript {
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
-            var result = new FuncDecl(null, null, false, typeParameters, parameters, null, null, null, NodeType.FuncDecl);
+            var result = new FuncDecl(null, null, false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
 
             result.returnTypeAnnotation = returnType;
@@ -1366,7 +1301,7 @@ module TypeScript {
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
-            var result = new FuncDecl(null, null, false, typeParameters, parameters, null, null, null, NodeType.FuncDecl);
+            var result = new FuncDecl(null, null, false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
 
             result.returnTypeAnnotation = returnType;
@@ -1694,7 +1629,7 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
 
             result.preComments = preComments;
@@ -1703,9 +1638,6 @@ module TypeScript {
             result.hint = "_construct";
             result.fncFlags |= FncFlags.ConstructMember;
             result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             return result;
         }
@@ -1725,15 +1657,12 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var funcDecl = new FuncDecl(name, null, false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var funcDecl = new FuncDecl(name, null, false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(funcDecl, start, node);
 
             funcDecl.preComments = preComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
-
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
 
             return funcDecl;
         }
@@ -1758,7 +1687,7 @@ module TypeScript {
             var parameters = new ASTList();
             parameters.append(parameter);
 
-            var result = new FuncDecl(name, null, /*isConstructor:*/ false, null, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(name, null, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
 
             result.preComments = preComments;
@@ -1766,9 +1695,6 @@ module TypeScript {
             result.returnTypeAnnotation = returnType;
 
             result.fncFlags |= FncFlags.IndexerMember;
-
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             return result;
         }
@@ -1822,7 +1748,7 @@ module TypeScript {
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
 
             result.preComments = preComments;
@@ -1831,9 +1757,6 @@ module TypeScript {
 
             result.hint = "_call";
             result.fncFlags |= FncFlags.CallMember;
-
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             return result;
         }
@@ -1928,58 +1851,25 @@ module TypeScript {
             this.moveTo(node, node.parameterList);
             var parameters = node.parameterList.accept(this);
 
-            this.pushDeclLists();
-
             var statements = this.convertBlock(node.block);
             if (statements) {
                 statements.append(new EndCode());
             }
             this.movePast(node.semicolonToken);
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ true, null, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ true, null, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
-
-            this.popDeclLists();
-
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             result.preComments = preComments;
             result.postComments = postComments;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
-            // constructorFuncDecl.preComments = preComments;
-            //if (requiresSignature && !isAmbient) {
-            //    constructorFuncDecl.isOverload = true;
-            //}
-
-            // constructorFuncDecl.variableArgList = variableArgList;
-            // this.currentClassDecl = null;
-
-            //if (isAmbient) {
-            //    constructorFuncDecl.fncFlags |= FncFlags.Ambient;
-            //}
 
             if (node.semicolonToken) {
                 result.fncFlags |= FncFlags.Signature;
             }
 
-            //if (this.currentClassDefinition.constructorDecl) {
-            //    if (!isAmbient && !this.currentClassDefinition.constructorDecl.isSignature() && !constructorFuncDecl.isSignature()) {
-            //        this.reportParseError("Duplicate constructor definition");
-            //    }
-            //}
-
-            //if (isAmbient || !constructorFuncDecl.isSignature()) {
-            //    this.currentClassDefinition.constructorDecl = constructorFuncDecl;
-            //}
-
             // REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
             result.fncFlags |= FncFlags.ClassMethod;
-
-            //this.currentClassDefinition.members.members[this.currentClassDefinition.members.members.length] = constructorFuncDecl;
-
-            //this.parsingClasvisisConstructorDefinition = false;
 
             return result;
         }
@@ -2003,22 +1893,14 @@ module TypeScript {
                 ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
-            this.pushDeclLists();
-
             var statements = this.convertBlock(node.block);
             if (statements) {
                 statements.append(new EndCode());
             }
             this.movePast(node.semicolonToken);
 
-            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, typeParameters, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
-
-            this.popDeclLists();
-
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             result.preComments = preComments;
             result.postComments = postComments;
@@ -2059,20 +1941,12 @@ module TypeScript {
             var parameters = node.parameterList.accept(this);
             var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
 
-            this.pushDeclLists();
-
             var statements = this.convertBlock(node.block);
             if (statements) {
                 statements.append(new EndCode());
             }
-            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
             this.setSpan(result, start, node);
-
-            this.popDeclLists();
-
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
 
             result.preComments = preComments;
             result.postComments = postComments;
@@ -2481,19 +2355,11 @@ module TypeScript {
                 ? node.typeAnnotation.accept(this)
                 : null;
 
-            this.pushDeclLists();
-
             var statements = this.convertBlock(node.block);
             statements.append(new EndCode());
 
-            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, new ASTList(), this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, new ASTList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, start, node);
-
-            this.popDeclLists();
-
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
 
             funcDecl.fncFlags |= FncFlags.GetAccessor;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
@@ -2520,19 +2386,11 @@ module TypeScript {
             var parameters = new ASTList();
             parameters.append(parameter);
 
-            this.pushDeclLists();
-
             var statements = this.convertBlock(node.block);
             statements.append(new EndCode());
 
-            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
             this.setSpan(funcDecl, start, node);
-
-            this.popDeclLists();
-
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
 
             funcDecl.fncFlags |= FncFlags.SetAccessor;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
@@ -2560,8 +2418,6 @@ module TypeScript {
                 ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
-            this.pushDeclLists();
-
             var bod = this.convertBlock(node.block);
             if (bod) {
                 bod.append(new EndCode());
@@ -2573,14 +2429,8 @@ module TypeScript {
                 }
             }
 
-            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(),
-                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, NodeType.FuncDecl);
             this.setSpan(funcDecl, start, node);
-
-            this.popDeclLists();
-
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
 
             funcDecl.preComments = preComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);

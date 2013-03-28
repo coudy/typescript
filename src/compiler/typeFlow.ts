@@ -1261,8 +1261,7 @@ module TypeScript {
             // if it's a top-level module, the globals have already been added to the implicit
             // module decl
             if (!script.topLevelMod) {
-                this.addLocalsFromScope(this.scope, this.checker.gloMod,
-                                   script.vars, this.checker.globals, true);
+                this.addLocalsFromScope(this.scope, this.checker.gloMod, /*script.vars*/ null, this.checker.globals, true);
             }
 
             this.currentScript = script;
@@ -1834,6 +1833,7 @@ module TypeScript {
                     }
                 }
             }
+            /*
             var fns = funcDecl.scopes;
             var fnsLen = fns.members.length;
 
@@ -1843,6 +1843,7 @@ module TypeScript {
                     return true;
                 }
             }
+            */
             return false;
         }
 
@@ -2542,6 +2543,7 @@ module TypeScript {
                 }
 
                 if (funcDecl.isConstructor) {
+                    /*
                     var fns: ASTList = funcDecl.scopes;
                     var fnsLen = fns.members.length;
                     var freeVars: Symbol[];
@@ -2555,6 +2557,7 @@ module TypeScript {
                             }
                         }
                     }
+                    */
                 }
             }
 

@@ -104,7 +104,7 @@ module TypeScript {
         pushAssignScope(aggScope, context, null, null, null);
         mod.containedScope = aggScope;
         if (mod.symbol) {
-            context.typeFlow.addLocalsFromScope(mod.containedScope, mod.symbol, moduleDecl.vars, mod.members.privateMembers, true);
+            context.typeFlow.addLocalsFromScope(mod.containedScope, mod.symbol, /*moduleDecl.vars*/ null, mod.members.privateMembers, true);
         }
     }
 
@@ -353,10 +353,10 @@ module TypeScript {
             group.enclosingType = isStatic ? context.scopeChain.classType : context.scopeChain.thisType;
             // for mapping when type checking
             fgSym = <TypeSymbol>ast.type.symbol;
-            if (((funcDecl.fncFlags & FncFlags.Signature) === FncFlags.None) && funcDecl.vars) {
-                context.typeFlow.addLocalsFromScope(locals, fgSym, funcDecl.vars,
+            if (((funcDecl.fncFlags & FncFlags.Signature) === FncFlags.None) && /*funcDecl.vars*/ false) {
+                context.typeFlow.addLocalsFromScope(locals, fgSym, /*funcDecl.vars*/ null,
                                                     funcTable, false);
-                context.typeFlow.addLocalsFromScope(statics, fgSym, funcDecl.statics,
+                context.typeFlow.addLocalsFromScope(statics, fgSym, /*funcDecl.statics*/ null,
                                                     funcStaticTable, false);
             }
             if (signature.parameters) {
