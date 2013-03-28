@@ -462,8 +462,8 @@ module TypeScript.SimpleText {
             if (intern) {
                 // use a shared array instance of the length of this substring isn't too large.
                 var array = length <= SimpleStringText.charArray.length
-	? SimpleStringText.charArray
-	: ArrayUtilities.createArray(length, /*defaultValue:*/0);
+                    ? SimpleStringText.charArray
+                    : ArrayUtilities.createArray(length, /*defaultValue:*/0);
                 this.copyTo(start, array, 0, length);
                 return Collections.DefaultStringTable.addCharArray(array, 0, length);
             }

@@ -609,12 +609,12 @@ module TypeScript {
                         }
 
                         if (symbol === null) {
-							if(path === '/') {
-								path = '';
-							} else {
-								path = normalizePath(path + "..");
-								path = path && path != '/' ? path + '/' : path;
-							}
+                            if(path === '/') {
+                                path = '';
+                            } else {
+                                path = normalizePath(path + "..");
+                                path = path && path != '/' ? path + '/' : path;
+                            }
                         }
                     }
                 }
