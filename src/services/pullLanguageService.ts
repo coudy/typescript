@@ -17,7 +17,6 @@ module Services {
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
             this.compilerState = new CompilerState(this.host);
-            this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
         }
 
         public refresh(): void {
@@ -861,6 +860,10 @@ module Services {
 
         private getFormattingManager(fileName: string, options: FormatCodeOptions) {
             // Ensure rules are initialized and up to date wrt to formatting options
+            if (this.formattingRulesProvider == null) {
+                this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
+            }
+
             this.formattingRulesProvider.ensureUptodate(options);
 
             // Get the Syntax Tree
@@ -868,8 +871,8 @@ module Services {
 
             // Convert IScriptSnapshot to ITextSnapshot
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
+            var scriptText = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
+            var textSnapshot = new TypeScript.Formatting.TextSnapshot(scriptText);
 
             var manager = new TypeScript.Formatting.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
 
@@ -893,8 +896,8 @@ module Services {
             var syntaxTree = this.getSyntaxTree(fileName);
 
             var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var segmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
+            var scriptText = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
+            var textSnapshot = new TypeScript.Formatting.TextSnapshot(scriptText);
             var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
             
             return TypeScript.Formatting.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);

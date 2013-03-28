@@ -1472,43 +1472,48 @@ module Harness {
             this.version++;
         }
 
-        public getTextChangeRangeSinceVersion(version: number): TypeScript.TextChangeRange {
-            if (this.version === version) {
+        public getTextChangeRangeBetweenVersions(startVersion:number, endVersion: number): TypeScript.TextChangeRange {
+            if (startVersion === endVersion) {
                 // No edits!
                 return TypeScript.TextChangeRange.unchanged;
             }
 
-            var initialEditRangeIndex = this.editRanges.length - (this.version - version);
+            var initialEditRangeIndex = this.editRanges.length - (this.version - startVersion);
+            var lastEditRangeIndex = this.editRanges.length - (this.version - endVersion);
 
-            var entries = this.editRanges.slice(initialEditRangeIndex);
+            var entries = this.editRanges.slice(initialEditRangeIndex, lastEditRangeIndex);
             return TypeScript.TextChangeRange.collapseChangesAcrossMultipleVersions(entries.map(e => e.textChangeRange));
         }
     }
 
     class ScriptSnapshotShim implements Services.IScriptSnapshotShim {
         private lineMap: TypeScript.LineMap = null;
+        private textSnapshot: string;
+        private version: number;
 
         constructor(private scriptInfo: ScriptInfo) {
+            this.textSnapshot = scriptInfo.content;
+            this.version = scriptInfo.version;
         }
 
         public getText(start: number, end: number): string {
-            return this.scriptInfo.content.substring(start, end);
+            return this.textSnapshot.substring(start, end);
         }
 
         public getLength(): number {
-            return this.scriptInfo.content.length;
+            return this.textSnapshot.length;
         }
 
         public getLineStartPositions(): string {
             if (this.lineMap === null) {
-                this.lineMap = TypeScript.LineMap.fromString(this.scriptInfo.content);
+                this.lineMap = TypeScript.LineMap.fromString(this.textSnapshot);
             }
 
             return JSON2.stringify(this.lineMap.lineStarts());
         }
 
         public getTextChangeRangeSinceVersion(scriptVersion: number): string {
-            var range = this.scriptInfo.getTextChangeRangeSinceVersion(scriptVersion);
+            var range = this.scriptInfo.getTextChangeRangeBetweenVersions(scriptVersion, this.version);
             if (range === null) {
                 return null;
             }

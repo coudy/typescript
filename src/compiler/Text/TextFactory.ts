@@ -462,8 +462,8 @@ module TypeScript.SimpleText {
             if (intern) {
                 // use a shared array instance of the length of this substring isn't too large.
                 var array = length <= SimpleStringText.charArray.length
-                    ? SimpleStringText.charArray
-                    : ArrayUtilities.createArray(length, /*defaultValue:*/0);
+	? SimpleStringText.charArray
+	: ArrayUtilities.createArray(length, /*defaultValue:*/0);
                 this.copyTo(start, array, 0, length);
                 return Collections.DefaultStringTable.addCharArray(array, 0, length);
             }
@@ -485,62 +485,26 @@ module TypeScript.SimpleText {
     }
 
     // Class which wraps a host IScriptSnapshot and exposes an ISimpleText for newer compiler code. 
-    class ScriptSnapshotText implements ISimpleText {
-        private _length: number;
-        public segment: string;
-        public segmentStart: number;
-        private _lineMap: LineMap = null;
+    class SimpleScriptSnapshotText implements ISimpleText {
 
         constructor(public scriptSnapshot: IScriptSnapshot) {
-            this._length = this.scriptSnapshot.getLength();
-
-            // initialize values so the first call to fetchSegment will actually retrieve new data.
-            this.segment = "";
-            this.segmentStart = 0;
-            this.fetchSegment(0, 1024);
-        }
-
-        // Ensures we have a segment that contains the range [start, end).  The segment may start 
-        // before 'start' and may end after 'end'. 
-        private fetchSegment(start: number, end: number): void {
-            if (start >= this.segmentStart && end <= (this.segmentStart + this.segment.length)) {
-                // We're in bounds of the last fetched segment.  Nothing to do.
-                return;
-            }
-
-            // Always try to fetch at least 1k.  Unless it would go past the end of the array.
-            var lengthToFetch = this.max(1024, end - start);
-            var fetchEnd = this.min(start + lengthToFetch, this._length);
-
-            this.segment = this.scriptSnapshot.getText(start, fetchEnd);
-            this.segmentStart = start;
-        }
-
-        private max(a: number, b: number): number {
-            return a >= b ? a : b;
-        }
-
-        private min(a: number, b: number): number {
-            return a <= b ? a : b;
         }
 
         public charCodeAt(index: number): number {
-            this.fetchSegment(index, /*end:*/ index + 1);
-            return this.segment[index - this.segmentStart];
+            return this.scriptSnapshot.getText(index, index + 1).charCodeAt(0);
         }
 
         public length(): number {
-            return this._length;
+            return this.scriptSnapshot.getLength();
         }
 
         public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
-            this.fetchSegment(sourceIndex, sourceIndex + count);
-            StringUtilities.copyTo(this.segment, sourceIndex - this.segmentStart, destination, destinationIndex, count);
+            var text = this.scriptSnapshot.getText(sourceIndex, sourceIndex + count);
+            StringUtilities.copyTo(text, 0, destination, destinationIndex, count);
         }
 
         public substr(start: number, length: number, intern: bool): string {
-            this.fetchSegment(start, start + length);
-            return this.segment.substr(start - this.segmentStart, length);
+            return this.scriptSnapshot.getText(start, start + length);
         }
 
         public subText(span: TextSpan): ISimpleText {
@@ -548,12 +512,8 @@ module TypeScript.SimpleText {
         }
 
         public lineMap(): LineMap {
-            if (this._lineMap === null) {
-                var lineStartPositions = this.scriptSnapshot.getLineStartPositions();
-                this._lineMap = new LineMap(lineStartPositions, this.length());
-            }
-
-            return this._lineMap;
+            var lineStartPositions = this.scriptSnapshot.getLineStartPositions();
+            return new LineMap(lineStartPositions, this.length());
         }
     }
 
@@ -562,6 +522,7 @@ module TypeScript.SimpleText {
     }
 
     export function fromScriptSnapshot(scriptSnapshot: IScriptSnapshot): ISimpleText {
-        return new ScriptSnapshotText(scriptSnapshot);
+        return new SimpleScriptSnapshotText(scriptSnapshot);
     }
 }
+   
