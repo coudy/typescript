@@ -126,7 +126,10 @@ module TypeScript {
             } else {
                 baseType = containerSymbol.getImplementedTypes()[index];
             }
-            this.emitTypeSignature(baseType);
+
+            if (baseType) {
+                this.emitTypeSignature(baseType);
+            }
         }
 
         // PULLTODO
