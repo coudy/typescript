@@ -323,6 +323,10 @@ module Services {
             return this.compiler.pullGetVisibleSymbolsFromPath(path, script);
         }
 
+        public getTopLevelDeclarations(fileName: string): TypeScript.PullDecl[]{
+            return this.compiler.getTopLevelDeclarations(fileName);
+        }
+
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             var compilerScriptVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
 

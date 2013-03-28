@@ -73,10 +73,6 @@ module FourSlashInterface {
             FourSlash.currentTestState.goToMarker(name);
         }
 
-        public position(pos: number) {
-            FourSlash.currentTestState.goToPosition(pos);
-        }
-
         public bof() {
             FourSlash.currentTestState.goToBOF();
         }
@@ -245,6 +241,10 @@ module FourSlashInterface {
 
         public setVerifyDocComments(val: bool) {
             FourSlash.currentTestState.setVerifyDocComments(val);
+        }
+
+        public navigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
+            FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, fileName, parentName);
         }
     }
    

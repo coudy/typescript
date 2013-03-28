@@ -1819,7 +1819,7 @@ module TypeScript {
 
         public getType(): PullTypeSymbol {
             if (this.typeAliasLink) {
-                return this.typeAliasLink.end;
+                return (<PullTypeSymbol>this.typeAliasLink.end);
             }
 
             return null;

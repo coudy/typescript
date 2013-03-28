@@ -299,7 +299,7 @@ module Services {
             }
 
             var symbolName = symbolInfo.symbol.getName();
-            var symbolKind = this.mapPullElementKind(symbolInfo.symbol);//this.getSymbolElementKind(sym),
+            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.getKind(), symbolInfo.symbol);//this.getSymbolElementKind(sym),
             var container = symbolInfo.symbol.getContainer();
             var containerName = container ? container.getName() : "<global>";//this.getSymbolContainerName(sym)
             var containerKind = "";//this.getSymbolContainerKind(sym)
@@ -331,64 +331,114 @@ module Services {
         }
 
         public getNavigateToItems(searchValue: string): NavigateToItem[] {
-            this.refresh();
-
-            // Split search value in terms array
-            var terms = searchValue.split(" ");
-            for (var i = 0; i < terms.length; i++) {
-                terms[i] = terms[i].trim().toLocaleLowerCase();
-            }
-
-            var match = (ast: TypeScript.AST, parent: TypeScript.AST, name: string): string => {
-                name = name.toLocaleLowerCase();
-                for (var i = 0; i < terms.length; i++) {
-                    var term = terms[i];
-                    if (name === term)
-                        return MatchKind.exact;
-                    if (name.indexOf(term) == 0)
-                        return MatchKind.prefix;
-                    if (name.indexOf(term) > 0)
-                        return MatchKind.subString;
-                }
-                return null;
-            }
-
-            var result: NavigateToItem[] = [];
-
-            // Process all script ASTs and look for matchin symbols
-            var len = 0;
-            
-            var fileNames = this.compilerState.getFileNames();
-            for (i = 0, len = fileNames.length; i < len; i++) {
-                // Add the item for the script name if needed
-                var fileName = fileNames[i];
-                var script = this.compilerState.getScript(fileName);
-
-                var matchKind = match(null, script, fileName);
-                if (matchKind != null) {
-                    var item = new NavigateToItem();
-                    item.name = fileName;
-                    item.matchKind = matchKind;
-                    item.kind = ScriptElementKind.scriptElement;
-                    item.fileName = fileName;
-                    item.minChar = script.minChar;
-                    item.limChar = script.limChar;
-                    result.push(item);
-                }
-
-                var items = this.getASTItems(fileName, script, match);
-                for (var j = 0; j < items.length; j++) {
-                    result.push(items[j]);
-                }
-            }
-            return result;
+            return null;
         }
 
         public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
             this.refresh();
 
-            var script = this.compilerState.getScriptAST(fileName);
-            return this.getASTItems(script.locationInfo.fileName, script, (name) => MatchKind.exact);
+            var declarations = this.compilerState.getTopLevelDeclarations(fileName);
+            if (!declarations) {
+                return null;
+            }
+
+            var result: NavigateToItem[] = [];
+            this.mapPullDeclsToNavigateToItem(declarations, result);
+            return result;
+        }
+
+        private mapPullDeclsToNavigateToItem(declarations: TypeScript.PullDecl[], result: NavigateToItem[], parentSymbol?: TypeScript.PullSymbol, parentkindName?: string, includeSubcontainers:bool = true): void {
+            for (var i = 0, n = declarations.length; i < n; i++) {
+                var declaration = declarations[i];
+                var symbol = declaration.getSymbol();
+                var kindName = this.mapPullElementKind(declaration.getKind(), symbol);
+                var fileName = declaration.getScriptName();
+
+                if (this.shouldIncludeDeclarationInNavigationItems(declaration, includeSubcontainers)) {
+                    var item = new NavigateToItem();
+                    item.name = this.getNavigationItemDispalyName(declaration);
+                    item.matchKind = MatchKind.exact;
+                    item.kind = kindName;
+                    item.kindModifiers = symbol ? this.getScriptElementKindModifiers(symbol) : "";
+                    item.fileName = fileName;
+                    item.minChar = declaration.getSpan().start();
+                    item.limChar = declaration.getSpan().end();
+                    item.containerName = parentSymbol ? parentSymbol.fullName() : "";
+                    item.containerKind = parentkindName || "";
+
+                    result.push(item);
+                }
+                
+                if (includeSubcontainers && this.isContainerDeclaration(declaration)) {
+                    // process child declarations
+                    this.mapPullDeclsToNavigateToItem(declaration.getChildDecls(), result, symbol, kindName, /*includeSubcontainers*/ true);
+
+                    if (symbol) {
+                        // Process declarations in other files
+                        var otherDeclarations = symbol.getDeclarations();
+                        if (otherDeclarations.length > 1) {
+                            for (var j = 0, m = otherDeclarations.length; j < m; j++) {
+                                var otherDeclaration = otherDeclarations[j];
+                                if (otherDeclaration.getScriptName() === fileName) {
+                                    // this has already been processed 
+                                    continue;
+                                }
+                                this.mapPullDeclsToNavigateToItem(otherDeclaration.getChildDecls(), result, symbol, kindName, /*includeSubcontainers*/ false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private isContainerDeclaration(declaration: TypeScript.PullDecl): bool {
+            switch (declaration.getKind()) {
+                case TypeScript.PullElementKind.Script:
+                case TypeScript.PullElementKind.Container:
+                case TypeScript.PullElementKind.Interface:
+                case TypeScript.PullElementKind.Class:
+                case TypeScript.PullElementKind.Enum:
+                    return true;
+            }
+
+            return false;
+        }
+
+        private shouldIncludeDeclarationInNavigationItems(declaration: TypeScript.PullDecl, includeSubcontainers: bool): bool {
+            switch (declaration.getKind()) {
+                case TypeScript.PullElementKind.Script:
+                    // Do not include the script item
+                    return false;
+                case TypeScript.PullElementKind.Variable:
+                case TypeScript.PullElementKind.Property:
+	// Do not include the value side of modules or classes, as thier types has already been included
+                    var symbol = declaration.getSymbol();
+                    return !this.isModule(symbol) && !this.isConstructorMethod(symbol);
+                case TypeScript.PullElementKind.EnumMember:
+	// Ignore the _map for enums. this should be removed once enum new implmentation is in place
+                    return declaration.getName() !== "_map";
+            }
+
+            if (this.isContainerDeclaration(declaration)) {
+                return includeSubcontainers;
+            }
+
+            return true;
+        }
+
+        private getNavigationItemDispalyName(declaration: TypeScript.PullDecl): string {
+            switch (declaration.getKind()) {
+                case TypeScript.PullElementKind.ConstructorMethod:
+                    return "constructor";
+                case TypeScript.PullElementKind.CallSignature:
+                    return "()";
+                case TypeScript.PullElementKind.ConstructSignature:
+                    return "new()";
+                case TypeScript.PullElementKind.IndexSignature:
+                    return "[]";
+            }
+
+            return declaration.getName();
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
@@ -403,286 +453,6 @@ module Services {
 
         public getEmitOutput(fileName: string): IOutputFile[] {
             return [];
-        }
-
-        //
-        // Return the comma separated list of modifers (from the ScriptElementKindModifier list of constants) 
-        // of an AST node referencing a known declaration kind.
-        //
-        private getDeclNodeElementKindModifiers(ast: TypeScript.AST): string {
-            var addMofifier = (result: string, testValue: bool, value: string): string => {
-                if (!testValue)
-                    return result;
-
-                if (result === ScriptElementKindModifier.none) {
-                    return value;
-                }
-                else {
-                    return result + "," + value;
-                }
-            }
-
-            var typeDeclToKindModifiers = (decl: TypeScript.TypeDeclaration): string => {
-                var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                return result;
-            }
-
-            var classDeclToKindModifiers = (decl: TypeScript.ClassDeclaration): string => {
-                var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                return result;
-            }
-
-            var moduleDeclToKindModifiers = (decl: TypeScript.ModuleDeclaration): string => {
-                var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                return result;
-            }
-
-            var varDeclToKindModifiers = (decl: TypeScript.VarDecl): string => {
-                var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                result = addMofifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addMofifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                result = addMofifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
-                return result;
-            }
-
-            var argDeclToKindModifiers = (decl: TypeScript.ArgDecl): string => {
-                var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addMofifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                return result;
-            }
-
-            var funcDeclToKindModifiers = (decl: TypeScript.FuncDecl): string => {
-                var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                result = addMofifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addMofifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                result = addMofifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
-                return result;
-            }
-
-            switch (ast.nodeType) {
-                case TypeScript.NodeType.InterfaceDeclaration:
-                    var typeDecl = <TypeScript.TypeDeclaration>ast;
-                    return typeDeclToKindModifiers(typeDecl);
-
-                case TypeScript.NodeType.ClassDeclaration:
-                    var classDecl = <TypeScript.ClassDeclaration>ast;
-                    return classDeclToKindModifiers(classDecl);
-
-                case TypeScript.NodeType.ModuleDeclaration:
-                    var moduleDecl = <TypeScript.ModuleDeclaration>ast;
-                    return moduleDeclToKindModifiers(moduleDecl);
-
-                case TypeScript.NodeType.VarDecl:
-                    var varDecl = <TypeScript.VarDecl>ast;
-                    return varDeclToKindModifiers(varDecl);
-
-                case TypeScript.NodeType.ArgDecl:
-                    var argDecl = <TypeScript.ArgDecl>ast;
-                    return argDeclToKindModifiers(argDecl);
-
-                case TypeScript.NodeType.FuncDecl:
-                    var funcDecl = <TypeScript.FuncDecl>ast;
-                    return funcDeclToKindModifiers(funcDecl);
-
-                default:
-                    if (this.logger.warning()) {
-                        this.logger.log("Warning: unrecognized AST node type: " + (<any>TypeScript.NodeType)._map[ast.nodeType]);
-                    }
-                    return ScriptElementKindModifier.none;
-            }
-        }
-
-        private getASTItems(
-            fileName: string,
-            ast: TypeScript.AST,
-            match: (parent: TypeScript.AST, ast: TypeScript.AST, name: string) => string,
-            findMinChar?: (parent: TypeScript.AST, ast: TypeScript.AST) => number,
-            findLimChar?: (parent: TypeScript.AST, ast: TypeScript.AST) => number): NavigateToItem[] {
-
-            if (findMinChar == null) {
-                findMinChar = (parent, ast) => {
-                    return ast.minChar;
-                }
-            }
-
-            if (findLimChar == null) {
-                findLimChar = (parent, ast) => {
-                    return ast.limChar;
-                }
-            }
-
-            var context = new NavigateToContext();
-            context.fileName = fileName;
-
-            var addItem = (parent: TypeScript.AST, ast: TypeScript.AST, name: string, kind: string): NavigateToItem => {
-                // Compiler generated nodes have no positions (e.g. the "_map" of an enum)
-                if (!TypeScript.isValidAstNode(ast))
-                    return null;
-
-                var matchKind = match(parent, ast, name);
-                var minChar = findMinChar(parent, ast);
-                var limChar = findLimChar(parent, ast)
-                if (matchKind != null && minChar >= 0 && limChar >= 0 && limChar >= minChar) {
-                    var item = new NavigateToItem();
-                    item.name = name;
-                    item.matchKind = matchKind;
-                    item.kind = kind;
-                    item.kindModifiers = this.getDeclNodeElementKindModifiers(ast);
-                    item.fileName = context.fileName;
-                    item.minChar = minChar;
-                    item.limChar = limChar;
-                    item.containerName = (TypeScript.lastOf(context.containerSymbols) === null ? "" : TypeScript.lastOf(context.containerSymbols).fullName());
-                    item.containerKind = TypeScript.lastOf(context.containerKinds) === null ? "" : TypeScript.lastOf(context.containerKinds);
-                    return item;
-                }
-                return null;
-            }
-
-            var getLimChar = (ast: TypeScript.AST): number => {
-                return (ast == null ? -1 : ast.limChar);
-            }
-
-            var pre = (ast: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) => {
-                context.path.push(ast);
-
-                if (!TypeScript.isValidAstNode(ast))
-                    return ast;
-
-                var item: NavigateToItem = null;
-
-                switch (ast.nodeType) {
-                    case TypeScript.NodeType.InterfaceDeclaration: {
-                        var typeDecl = <TypeScript.TypeDeclaration>ast;
-                        item = addItem(parent, typeDecl, typeDecl.name.actualText, ScriptElementKind.interfaceElement);
-                        context.containerASTs.push(ast);
-                        //context.containerSymbols.push(typeDecl.getType().symbol);
-                        context.containerKinds.push("interface");
-                    }
-                        break;
-
-                    case TypeScript.NodeType.ClassDeclaration: {
-                        var classDecl = <TypeScript.ClassDeclaration>ast;
-                        item = addItem(parent, classDecl, classDecl.name.actualText, ScriptElementKind.classElement);
-                        context.containerASTs.push(ast);
-                        //context.containerSymbols.push(classDecl.getType().symbol);
-                        context.containerKinds.push("class");
-                    }
-                        break;
-
-                    case TypeScript.NodeType.ModuleDeclaration: {
-                        var moduleDecl = <TypeScript.ModuleDeclaration>ast;
-                        var isEnum = moduleDecl.isEnum();
-                        var kind = isEnum ? ScriptElementKind.enumElement : ScriptElementKind.moduleElement;
-                        item = addItem(parent, moduleDecl, moduleDecl.name.actualText, kind);
-                        context.containerASTs.push(ast);
-                        //context.containerSymbols.push(moduleDecl.mod.symbol);
-                        context.containerKinds.push(kind);
-                    }
-                        break;
-
-                    case TypeScript.NodeType.VarDecl: {
-                        var varDecl = <TypeScript.VarDecl>ast;
-                        if (varDecl.id !== null) {
-                            if (varDecl.isProperty()) {
-                                item = addItem(parent, varDecl, varDecl.id.actualText, ScriptElementKind.memberVariableElement);
-                            }
-                            else if (context.path.isChildOfScript() || context.path.isChildOfModule()) {
-                                item = addItem(parent, varDecl, varDecl.id.actualText, ScriptElementKind.variableElement);
-                            }
-                        }
-                    }
-                        walker.options.goChildren = false;
-                        break;
-
-                    case TypeScript.NodeType.ArgDecl: {
-                        var argDecl = <TypeScript.ArgDecl>ast;
-                        // Argument of class constructor are members (variables or properties)
-                        if (argDecl.id !== null) {
-                            if (context.path.isArgumentOfClassConstructor()) {
-                                if (argDecl.isProperty()) {
-                                    item = addItem(parent, argDecl, argDecl.id.actualText, ScriptElementKind.memberVariableElement);
-                                }
-                            }
-                        }
-                    }
-                        walker.options.goChildren = false;
-                        break;
-
-                    case TypeScript.NodeType.FuncDecl: {
-                        var funcDecl = <TypeScript.FuncDecl>ast;
-                        kind = null;
-                        var name: string = (funcDecl.name !== null ? funcDecl.name.actualText : null);
-                        if (funcDecl.isGetAccessor()) {
-                            kind = ScriptElementKind.memberGetAccessorElement;
-                        }
-                        else if (funcDecl.isSetAccessor()) {
-                            kind = ScriptElementKind.memberSetAccessorElement;
-                        }
-                        else if (funcDecl.isCallMember()) {
-                            kind = ScriptElementKind.callSignatureElement;
-                            name = "()";
-                        }
-                        else if (funcDecl.isIndexerMember()) {
-                            kind = ScriptElementKind.indexSignatureElement;
-                            name = "[]";
-                        }
-                        else if (funcDecl.isConstructMember()) {
-                            kind = ScriptElementKind.constructSignatureElement;
-                            name = "new()";
-                        }
-                        else if (funcDecl.isConstructor) {
-                            kind = ScriptElementKind.constructorImplementationElement;
-                            name = "constructor";
-                        }
-                        else if (funcDecl.isMethod()) {
-                            kind = ScriptElementKind.memberFunctionElement;
-                        }
-                        else if (context.path.isChildOfScript() || context.path.isChildOfModule()) {
-                            kind = ScriptElementKind.functionElement;
-                        }
-
-                        if (kind !== null && name !== null) {
-                            item = addItem(parent, funcDecl, name, kind);
-                        }
-                    }
-                        break;
-
-                    case TypeScript.NodeType.ObjectLit:
-                        walker.options.goChildren = false;
-                        break;
-                }
-
-                if (item !== null) {
-                    context.result.push(item);
-                }
-
-                return ast;
-            }
-
-            var post = (ast: TypeScript.AST, parent: TypeScript.AST) => {
-                context.path.pop();
-
-                if (ast === TypeScript.lastOf(context.containerASTs)) {
-                    context.containerASTs.pop();
-                    context.containerSymbols.pop();
-                    context.containerKinds.pop();
-                }
-                return ast;
-            }
-
-            TypeScript.getAstWalkerFactory().walk(ast, pre, post);
-            return context.result;
         }
 
         ///
@@ -758,7 +528,7 @@ module Services {
                 typeInfoAtPosition.symbol.getTypeNameEx(typeInfoAtPosition.enclosingScopeSymbol, true);
             var minChar = -1;
             var limChar = -1;
-            var kind = this.mapPullElementKind(typeInfoAtPosition.symbol, !typeInfoAtPosition.callSignatures,
+            var kind = this.mapPullElementKind(typeInfoAtPosition.symbol.getKind(), typeInfoAtPosition.symbol, !typeInfoAtPosition.callSignatures,
                 !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.isConstructorCall);
 
             var symbolForDocComment = typeInfoAtPosition.candidateSignature ? typeInfoAtPosition.candidateSignature : typeInfoAtPosition.symbol;
@@ -827,7 +597,7 @@ module Services {
                 var entry = new CompletionEntry();
                 entry.name = symbol.getName();
                 entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
-                entry.kind = this.mapPullElementKind(symbol, true);
+                entry.kind = this.mapPullElementKind(symbol.getKind(), symbol, true);
                 entry.fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
                 var type = symbol.getType();
                 var symbolForDocComments = symbol;
@@ -920,12 +690,22 @@ module Services {
             return false;
         }
 
-        private mapPullElementKind(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool, varIsFunction?: bool, functionIsConstructor?: bool): string {
+        private isConstructorMethod(symbol: TypeScript.PullSymbol): bool {
+            var decls = symbol.getDeclarations();
+            for (var i = 0; i < decls.length; i++) {
+                if (decls[i].getKind() == TypeScript.PullElementKind.ConstructorMethod) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private mapPullElementKind(kind: TypeScript.PullElementKind, symbol?: TypeScript.PullSymbol, useConstructorAsClass?: bool, varIsFunction?: bool, functionIsConstructor?: bool): string {
             if (functionIsConstructor) {
                 return ScriptElementKind.constructorImplementationElement;
             }
 
-            var kind = symbol.getKind();
             if (varIsFunction) {
                 switch (kind) {
                     case TypeScript.PullElementKind.Container:
@@ -934,11 +714,11 @@ module Services {
                     case TypeScript.PullElementKind.Parameter:
                         return ScriptElementKind.functionElement;
                     case TypeScript.PullElementKind.Variable:
-                        return this.isLocal(symbol) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
+                        return (symbol && this.isLocal(symbol)) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
                     case TypeScript.PullElementKind.Property:
                         return ScriptElementKind.memberFunctionElement;
                     case TypeScript.PullElementKind.Function:
-                        return this.isLocal(symbol) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
+                        return (symbol && this.isLocal(symbol)) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
                     case TypeScript.PullElementKind.ConstructorMethod:
                         return ScriptElementKind.constructorImplementationElement;
                     case TypeScript.PullElementKind.Method:
@@ -969,16 +749,16 @@ module Services {
                     case TypeScript.PullElementKind.Enum:
                         return ScriptElementKind.enumElement;
                     case TypeScript.PullElementKind.Variable:
-                        if (this.isModule(symbol)) {
+                        if (symbol && this.isModule(symbol)) {
                             return ScriptElementKind.moduleElement;
                         }
-                        return this.isLocal(symbol) ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
+                        return (symbol && this.isLocal(symbol)) ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
                     case TypeScript.PullElementKind.Parameter:
                         return ScriptElementKind.parameterElement;
                     case TypeScript.PullElementKind.Property:
                         return ScriptElementKind.memberVariableElement;
                     case TypeScript.PullElementKind.Function:
-                        return this.isLocal(symbol) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
+                        return (symbol && this.isLocal(symbol)) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
                     case TypeScript.PullElementKind.ConstructorMethod:
                         return useConstructorAsClass ? ScriptElementKind.classElement : ScriptElementKind.constructorImplementationElement;
                     case TypeScript.PullElementKind.Method:
@@ -995,6 +775,8 @@ module Services {
                         return ScriptElementKind.constructSignatureElement;
                     case TypeScript.PullElementKind.IndexSignature:
                         return ScriptElementKind.indexSignatureElement;
+                    case TypeScript.PullElementKind.EnumMember:
+                        return ScriptElementKind.memberVariableElement;
                 }
             }
 

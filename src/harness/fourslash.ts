@@ -789,6 +789,25 @@ module FourSlash {
             }
         }
 
+
+        public verifyNavigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
+            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
+
+            if (!items || items.length === 0) {
+                throw new Error('verifyNavigationItemsListContains failed - found 0 navigation items, expected at least one.');
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item && item.name === name && item.kind === kind && item.fileName === fileName) {
+                    return;
+                }
+            }
+
+            var missingItem = { name: name, kind: kind, fileName: fileName, parentName: parentName };
+            throw new Error('verifyNavigationItemsListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
+        }
+
         private getBOF(): number {
             return 0;
         }

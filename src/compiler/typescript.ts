@@ -1165,6 +1165,18 @@ module TypeScript {
             });
         }
 
+        public getTopLevelDeclarations(scriptName: string): PullDecl[] {
+            this.pullResolveFile(scriptName);
+
+            var unit = this.semanticInfoChain.getUnit(scriptName);
+
+            if (!unit) {
+                return null;
+            }
+
+            return unit.getTopLevelDecls();
+        }
+
         private reportDiagnostic(error: IDiagnostic, textWriter: ITextWriter) {
             if (error.fileName()) {
                 var lineCol = { line: -1, character: -1 };
