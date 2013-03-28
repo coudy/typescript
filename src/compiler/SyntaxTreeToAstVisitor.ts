@@ -94,15 +94,10 @@ module TypeScript {
             }
         }
 
-        private moveTo2(element1: ISyntaxNodeOrToken, element2: ISyntaxElement): void {
+        private moveTo(element1: ISyntaxNodeOrToken, element2: ISyntaxElement): void {
             if (element2 !== null) {
                 this.position += Syntax.childOffset(element1, element2);
             }
-        }
-
-        private moveTo3(element1: ISyntaxNodeOrToken, element2: ISyntaxNodeOrToken, element3: ISyntaxNodeOrToken): void {
-            this.moveTo2(element1, element2);
-            this.moveTo2(element2, element3);
         }
 
         private setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
@@ -454,7 +449,7 @@ module TypeScript {
 
         private visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
             this.assertElementAtPosition(node);
-            this.moveTo2(node, node.stringLiteral);
+            this.moveTo(node, node.stringLiteral);
             var result = this.identifierFromToken(node.stringLiteral, /*isOptional:*/ false, /*useValueText:*/ false);
             this.movePast(node.stringLiteral);
             this.movePast(node.closeParenToken);
@@ -474,7 +469,7 @@ module TypeScript {
 
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
 
@@ -559,7 +554,7 @@ module TypeScript {
 
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
@@ -676,7 +671,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.moduleKeyword);
+            this.moveTo(node, node.moduleKeyword);
             this.movePast(node.moduleKeyword);
             var names = this.getModuleNames(node);
             this.movePast(node.openBraceToken);
@@ -774,7 +769,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
 
             this.movePast(node.identifier);
@@ -838,7 +833,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
 
@@ -974,7 +969,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.equalsToken);
@@ -995,7 +990,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
             var start = this.position;
 
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.semicolonToken);
@@ -1015,7 +1010,7 @@ module TypeScript {
                 preComments = this.convertTokenLeadingComments(node.modifiers.firstToken(), start);
             }
 
-            this.moveTo2(node, node.variableDeclaration);
+            this.moveTo(node, node.variableDeclaration);
 
             var varList = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
@@ -1061,7 +1056,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.variableDeclarators);
+            this.moveTo(node, node.variableDeclarators);
             var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators);
 
             for (var i = 0; i < variableDecls.members.length; i++) {
@@ -1492,7 +1487,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var identifier = this.identifierFromToken(node.identifier, !!node.questionToken, /*useValueText:*/ true);
             this.movePast(node.identifier);
             this.movePast(node.questionToken);
@@ -1878,7 +1873,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo2(node, node.condition);
+            this.moveTo(node, node.condition);
             var condition = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             var thenBod = node.statement.accept(this);
@@ -1930,7 +1925,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.parameterList);
+            this.moveTo(node, node.parameterList);
             var parameters = node.parameterList.accept(this);
 
             this.pushDeclLists();
@@ -1997,7 +1992,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
 
             this.movePast(node.propertyName);
@@ -2058,7 +2053,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             var parameters = node.parameterList.accept(this);
@@ -2130,7 +2125,9 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo3(node, node.variableDeclarator, node.variableDeclarator.identifier);
+            this.moveTo(node, node.variableDeclarator);
+            this.moveTo(node.variableDeclarator, node.variableDeclarator.identifier);
+
             var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.variableDeclarator.identifier);
             var typeExpr = node.variableDeclarator.typeAnnotation ? node.variableDeclarator.typeAnnotation.accept(this) : null;
@@ -2382,7 +2379,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo2(node, node.condition);
+            this.moveTo(node, node.condition);
             var condition = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             var statement = node.statement.accept(this);
@@ -2399,7 +2396,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo2(node, node.condition);
+            this.moveTo(node, node.condition);
             var condition = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             var statement = node.statement.accept(this);
@@ -2475,7 +2472,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
@@ -2513,7 +2510,7 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
