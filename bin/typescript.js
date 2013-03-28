@@ -9517,7 +9517,7 @@ var TypeScript;
             }
             var funcScope = null;
             var outerFnc = context.scopeChain.fnc;
-            var nameText = funcDecl.name ? funcDecl.name.actualText : null;
+            var nameText = funcDecl.name ? funcDecl.name.text : null;
             if (isStatic) {
                 if (outerFnc.type.members === null && container.getType().memberScope) {
                     outerFnc.type.members = ((container).type.memberScope).valueMembers;
@@ -9593,7 +9593,7 @@ var TypeScript;
         }
         if (funcDecl.name && TypeScript.hasFlag(funcDecl.fncFlags, 131072 /* IsFunctionExpression */ ) && !funcDecl.isAccessor()) {
             if (funcDecl.name.sym) {
-                funcTable.add(funcDecl.name.actualText, funcDecl.name.sym);
+                funcTable.add(funcDecl.name.text, funcDecl.name.sym);
             }
         }
     }
@@ -43932,7 +43932,7 @@ var TypeScript;
             var importDecl = this.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = importDecl.getSymbol();
-            var aliasName = importStatementAST.id.actualText;
+            var aliasName = importStatementAST.id.text;
             var aliasedType = null;
             if (importDeclSymbol.isResolved()) {
                 return importDeclSymbol;
@@ -44672,7 +44672,7 @@ var TypeScript;
             if (nameSymbol) {
                 return nameSymbol;
             }
-            var id = nameAST.actualText;
+            var id = nameAST.text;
             var declPath = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
             if (enclosingDecl && !declPath.length) {
                 declPath = [
@@ -44704,7 +44704,7 @@ var TypeScript;
             if (nameSymbol) {
                 return nameSymbol;
             }
-            var rhsName = (dottedNameAST.operand2).actualText;
+            var rhsName = (dottedNameAST.operand2).text;
             var lhs = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
             var lhsType = lhs.getType();
             if (lhs.isAlias()) {
@@ -44794,7 +44794,7 @@ var TypeScript;
             if (typeNameSymbol) {
                 return typeNameSymbol;
             }
-            var id = nameAST.actualText;
+            var id = nameAST.text;
             var declPath = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
             if (enclosingDecl && !declPath.length) {
                 declPath = [
@@ -44818,7 +44818,7 @@ var TypeScript;
             if (nameAST.isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
-            var id = nameAST.actualText;
+            var id = nameAST.text;
             var declPath = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
             if (enclosingDecl && !declPath.length) {
                 declPath = [
@@ -44876,7 +44876,7 @@ var TypeScript;
             if (childTypeSymbol) {
                 return childTypeSymbol;
             }
-            var rhsName = (dottedNameAST.operand2).actualText;
+            var rhsName = (dottedNameAST.operand2).text;
             var prevSearchTypeSpace = context.searchTypeSpace;
             context.searchTypeSpace = true;
             var lhs = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
@@ -47908,7 +47908,7 @@ var TypeScript;
         var importDecl = ast;
         var declFlags = 0 /* None */ ;
         var span = TypeScript.TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
-        var decl = new TypeScript.PullDecl(importDecl.id.actualText, 512 /* TypeAlias */ , declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(importDecl.id.text, 512 /* TypeAlias */ , declFlags, span, context.scriptName);
         var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
@@ -48067,7 +48067,7 @@ var TypeScript;
         var typeParameterDecl = ast;
         var declFlags = 0 /* None */ ;
         var span = TypeScript.TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
-        var decl = new TypeScript.PullDecl(typeParameterDecl.name.actualText, 16384 /* TypeParameter */ , declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(typeParameterDecl.name.text, 16384 /* TypeParameter */ , declFlags, span, context.scriptName);
         context.semanticInfo.setASTForDecl(decl, ast);
         context.semanticInfo.setDeclForAST(ast, decl);
         var parent = context.getParent();
@@ -48224,7 +48224,7 @@ var TypeScript;
             declFlags |= 4096 /* Signature */ ;
         }
         var span = TypeScript.TextSpan.fromBounds(funcDeclAST.minChar, funcDeclAST.limChar);
-        var decl = new TypeScript.PullDecl(funcDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(funcDeclAST.name.text, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
             parent.addChildDecl(decl);
@@ -48283,7 +48283,7 @@ var TypeScript;
             declFlags |= 256 /* Optional */ ;
         }
         var span = TypeScript.TextSpan.fromBounds(memberFunctionDeclAST.minChar, memberFunctionDeclAST.limChar);
-        var decl = new TypeScript.PullDecl(memberFunctionDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(memberFunctionDeclAST.name.text, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
             parent.addChildDecl(decl);
@@ -48377,7 +48377,7 @@ var TypeScript;
                 declFlags |= 1 /* Exported */ ;
             }
         }
-        var decl = new TypeScript.PullDecl(constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(constructorDeclAST.name.text, declType, declFlags, span, context.scriptName);
         if (parent) {
             parent.addChildDecl(decl);
             decl.setParentDecl(parent);
@@ -48408,7 +48408,7 @@ var TypeScript;
             declFlags |= 4 /* Public */ ;
         }
         var span = TypeScript.TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
-        var decl = new TypeScript.PullDecl(getAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        var decl = new TypeScript.PullDecl(getAccessorDeclAST.name.text, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
             parent.addChildDecl(decl);
@@ -49522,7 +49522,7 @@ var TypeScript;
                     argDecl = funcDecl.arguments.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
                     isProperty = TypeScript.hasFlag(argDecl.varFlags, 512 /* Property */ );
-                    parameterSymbol = new TypeScript.PullSymbol(argDecl.id.actualText, 4096 /* Parameter */ );
+                    parameterSymbol = new TypeScript.PullSymbol(argDecl.id.text, 4096 /* Parameter */ );
                     if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {
                         parameterSymbol.setIsVarArg();
                         if (argDecl.init || TypeScript.hasFlag(argDecl.id.flags, 1024 /* OptionalName */ )) {
@@ -49532,12 +49532,12 @@ var TypeScript;
                     if (decl.getFlags() & 256 /* Optional */ ) {
                         parameterSymbol.setIsOptional();
                     }
-                    if (params[argDecl.id.actualText]) {
+                    if (params[argDecl.id.text]) {
                         decl.addDiagnostic(new TypeScript.PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(48 /* Duplicate_identifier__0_ */ , [
                             argDecl.id.actualText
                         ])));
                     } else {
-                        params[argDecl.id.actualText] = true;
+                        params[argDecl.id.text] = true;
                     }
                     if (decl) {
                         parameterSymbol.addDeclaration(decl);
