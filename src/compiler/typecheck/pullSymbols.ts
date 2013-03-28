@@ -791,14 +791,15 @@ module TypeScript {
                 builder.prefix = prefix + typeParameterString + "(";
             }
 
-            // TODO : shkamat : variable args
             var params = this.getParameters();
             var paramLen = params.length;
-            var len = paramLen;
-            for (var i = 0 ; i < params.length; i++) {
+            for (var i = 0 ; i < paramLen; i++) {
                 var paramType = params[i].getType();
                 var typeString = paramType ? ": " : "";
-                builder.add(MemberName.create(params[i].getScopedNameEx(scopeSymbol).toString() + (params[i].getIsOptional() ? "?" : "") + typeString));
+                var paramIsVarArg = params[i].getIsVarArg();
+                var varArgPrefix = paramIsVarArg ? "..." : "";
+                var optionalString = (!paramIsVarArg && params[i].getIsOptional()) ? "?" : "";
+                builder.add(MemberName.create(varArgPrefix + params[i].getScopedNameEx(scopeSymbol).toString() + optionalString + typeString));
                 if (paramType) {
                     builder.add(paramType.getScopedNameEx(scopeSymbol));
                 }
