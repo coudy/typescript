@@ -628,7 +628,7 @@ module TypeScript {
                 this.movePast(node.extendsOrImplementsKeyword);
                 for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
                     if (i % 2 === 1) {
-                        this.movePast(<ISyntaxToken>node.typeNames.childAt(i));
+                        this.movePast(node.typeNames.childAt(i));
                     }
                     else {
                         var type = this.visitType(node.typeNames.childAt(i));
@@ -672,7 +672,7 @@ module TypeScript {
             }
             else {
                 result.push(this.identifierFromToken(<ISyntaxToken>name, /*isOptional:*/ false, /*useValueText:*/ false));
-                this.movePast(<ISyntaxToken>name);
+                this.movePast(name);
             }
         }
 
@@ -856,7 +856,7 @@ module TypeScript {
 
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
-                    this.movePast(<ISyntaxToken>node.enumElements.childAt(i));
+                    this.movePast(node.enumElements.childAt(i));
                 }
                 else {
                     var enumElement = <EnumElementSyntax>node.enumElements.childAt(i);
@@ -1352,7 +1352,7 @@ module TypeScript {
             this.movePast(node.lessThanToken);
             for (var i = 0, n = node.typeArguments.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
-                    this.movePast(<ISyntaxToken>node.typeArguments.childAt(i));
+                    this.movePast(node.typeArguments.childAt(i));
                 }
                 else {
                     result.append(this.visitType(node.typeArguments.childAt(i)));
@@ -1379,7 +1379,7 @@ module TypeScript {
                 var returnType = node.type ? this.visitType(node.type) : null;
 
                 var funcDecl = new FuncDecl(null, null, false, typeParameters, parameters, NodeType.FuncDecl);
-                this.setSpan(result, start, node);
+                this.setSpan(funcDecl, start, node);
 
                 funcDecl.returnTypeAnnotation = returnType;
                 funcDecl.fncFlags |= FncFlags.Signature;
@@ -1814,14 +1814,13 @@ module TypeScript {
                 var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
                 result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
-                
+
                 result.preComments = preComments;
                 result.returnTypeAnnotation = returnType;
 
                 result.hint = "_construct";
                 result.fncFlags |= FncFlags.ConstructMember;
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-
             }
 
             this.setAST(node, result);
