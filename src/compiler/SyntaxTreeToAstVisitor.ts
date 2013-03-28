@@ -326,7 +326,7 @@ module TypeScript {
                 result.preComments = preComments;
             }
             else {
-                result = this.identifierFromToken(token, /*isOptional:*/ false, /*useValueText:*/ false);
+                result = this.identifierFromToken(token, /*isOptional:*/ false, /*useValueText:*/ true);
             }
 
             start = this.position + token.leadingTriviaWidth();
