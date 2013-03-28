@@ -1531,7 +1531,7 @@ module TypeScript {
             var start = this.position;
             var expression: AST = node.expression.accept(this);
             this.movePast(node.dotToken);
-            var name = this.identifierFromToken(node.name, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.name, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.name);
 
             var result = new BinaryExpression(NodeType.Dot, expression, name);
@@ -2699,7 +2699,7 @@ module TypeScript {
             var start = this.position;
             this.movePast(node.doKeyword);
             var statement = node.statement.accept(this);
-            var whileAst = this.identifierFromToken(node.whileKeyword, /*isOptional:*/ false, /*useValueText:*/ false);
+            var whileAst = this.identifierFromToken(node.whileKeyword, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.whileKeyword);
             this.movePast(node.openParenToken);
             var condition = node.condition.accept(this);
