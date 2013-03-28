@@ -70,8 +70,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         var m1_im2_public = m1_M2_private;
         
         
-    })(0.m1 || (0.m1 = {}));
-    var m1 = 0.m1;
+    })(exports.m1 || (exports.m1 = {}));
+    var m1 = exports.m1;
     var m2;
     (function (m2) {
         (function (m2_M1_public) {
@@ -157,8 +157,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         glo_M1_public.f1 = f1;
         glo_M1_public.v1 = c1;
         glo_M1_public.v2;
-    })(0.glo_M1_public || (0.glo_M1_public = {}));
-    var glo_M1_public = 0.glo_M1_public;
+    })(exports.glo_M1_public || (exports.glo_M1_public = {}));
+    var glo_M1_public = exports.glo_M1_public;
         (function (glo_M3_private) {
         var c1 = (function () {
             function c1() { }
@@ -171,8 +171,8 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
         glo_M3_private.f1 = f1;
         glo_M3_private.v1 = c1;
         glo_M3_private.v2;
-    })(0.glo_M3_private || (0.glo_M3_private = {}));
-    var glo_M3_private = 0.glo_M3_private;
+    })(exports.glo_M3_private || (exports.glo_M3_private = {}));
+    var glo_M3_private = exports.glo_M3_private;
         var glo_im1_private = glo_M1_public;
     exports.glo_im1_private_v1_public = glo_im1_private.c1;
     exports.glo_im1_private_v2_public = new glo_im1_private.c1();
@@ -231,6 +231,6 @@ define(["require", "exports", "m1_M3_public", "m1_M4_private", "m2_M3_public", "
             var a = 10;
             
         })(m4 || (m4 = {}));
-    })(0.m3 || (0.m3 = {}));
-    var m3 = 0.m3;
+    })(exports.m3 || (exports.m3 = {}));
+    var m3 = exports.m3;
 })

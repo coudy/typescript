@@ -10,8 +10,8 @@
         function C2_private() { }
         return C2_private;
     })();    
-})(0.m1 || (0.m1 = {}));
-var m1 = 0.m1;
+})(exports.m1 || (exports.m1 = {}));
+var m1 = exports.m1;
 var m2;
 (function (m2) {
     var C1_public = (function () {

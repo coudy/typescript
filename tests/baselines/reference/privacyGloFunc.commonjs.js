@@ -145,8 +145,8 @@
         return new C2_private();
     }
     m1.f12_public = f12_public;
-})(0.m1 || (0.m1 = {}));
-var m1 = 0.m1;
+})(exports.m1 || (exports.m1 = {}));
+var m1 = exports.m1;
 var m2;
 (function (m2) {
     var m2_C1_public = (function () {

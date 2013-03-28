@@ -11,8 +11,8 @@ define(["require", "exports"], function(require, exports) {
             var Street = Strasse.Street;
         })(TypeScript.Strasse || (TypeScript.Strasse = {}));
         var Strasse = TypeScript.Strasse;
-    })(0.TypeScript || (0.TypeScript = {}));
-    var TypeScript = 0.TypeScript;
+    })(exports.TypeScript || (exports.TypeScript = {}));
+    var TypeScript = exports.TypeScript;
     var rue = new TypeScript.Strasse.Street.Rue();
     rue.address = "1 Main Street";
     void 0;

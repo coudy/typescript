@@ -5,8 +5,8 @@ define(["require", "exports"], function(require, exports) {
             return C;
         })();
         Foo.C = C;        
-    })(0.Foo || (0.Foo = {}));
-    var Foo = 0.Foo;
+    })(exports.Foo || (exports.Foo = {}));
+    var Foo = exports.Foo;
     (function (Foo) {
         function Bar() {
             if (true) {
@@ -22,6 +22,6 @@ define(["require", "exports"], function(require, exports) {
             var c = Baz();
             return;
         }
-    })(0.Foo || (0.Foo = {}));
-    var Foo = 0.Foo;
+    })(exports.Foo || (exports.Foo = {}));
+    var Foo = exports.Foo;
 })

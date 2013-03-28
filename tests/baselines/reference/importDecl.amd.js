@@ -11,8 +11,8 @@ define(["require", "exports", "m4", "glo_m4", "fncOnly_m4", "private_m4", "m5", 
         var x3 = m4.x;
         var d3 = m4.d;
         var f3 = m4.foo();
-    })(0.m1 || (0.m1 = {}));
-    var m1 = 0.m1;
+    })(exports.m1 || (exports.m1 = {}));
+    var m1 = exports.m1;
         var glo_m4 = __glo_m4__;
 
     exports.useGlo_m4_x4 = glo_m4.x;
@@ -27,8 +27,8 @@ define(["require", "exports", "m4", "glo_m4", "fncOnly_m4", "private_m4", "m5", 
         var x3 = private_m4.x;
         var d3 = private_m4.d;
         var f3 = private_m4.foo();
-    })(0.usePrivate_m4_m1 || (0.usePrivate_m4_m1 = {}));
-    var usePrivate_m4_m1 = 0.usePrivate_m4_m1;
+    })(exports.usePrivate_m4_m1 || (exports.usePrivate_m4_m1 = {}));
+    var usePrivate_m4_m1 = exports.usePrivate_m4_m1;
         var m5 = __m5__;
 
     exports.d = m5.foo2();

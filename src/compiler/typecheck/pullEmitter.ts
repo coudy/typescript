@@ -231,19 +231,6 @@ module TypeScript {
             };
         }
 
-        public isParentDynamicModule(moduleDecl: ModuleDeclaration) {
-            var symbol = this.semanticInfoChain.getSymbolForAST(moduleDecl, this.locationInfo.fileName);
-            var parentSymbol = symbol.getContainer();
-
-            parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
-
-            if (parentSymbol && parentSymbol.getKind() == PullElementKind.DynamicModule) {
-                return true;
-            }
-
-            return false;
-        }
-
         public shouldCaptureThis(ast: AST) {
             if (ast == null) {
                 var scriptDecl = this.semanticInfoChain.getUnit(this.locationInfo.fileName).getTopLevelDecls()[0];

@@ -720,15 +720,6 @@ module TypeScript {
             };
         }
 
-        public isParentDynamicModule(moduleDecl: ModuleDeclaration) {
-            var containingMod: ModuleDeclaration = null;
-            if (moduleDecl.type && moduleDecl.type.symbol.container && moduleDecl.type.symbol.container.declAST) {
-                containingMod = <ModuleDeclaration>moduleDecl.type.symbol.container.declAST;
-            }
-            var parentIsDynamic = containingMod && hasFlag(containingMod.modFlags, ModuleFlags.IsDynamic);
-            return parentIsDynamic;
-        }
-
         public shouldCaptureThis(ast: AST) {
             if (ast === null) {
                 return this.checker.mustCaptureGlobalThis;
@@ -881,7 +872,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    var parentIsDynamic = this.isParentDynamicModule(moduleDecl);
+                    var parentIsDynamic = temp == EmitContainer.DynamicModule;
                     this.recordSourceMappingStart(moduleDecl.endingToken);
                     if (temp === EmitContainer.Prog && isExported) {
                         this.writeToOutput("}");

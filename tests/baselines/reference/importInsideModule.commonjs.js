@@ -4,5 +4,5 @@ exports.x = 1;
 (function (myModule) {
     var foo = require("./importInsideModule_file1")
     var a = foo.x;
-})(importInsideModule_file2.myModule || (importInsideModule_file2.myModule = {}));
-var myModule = importInsideModule_file2.myModule;
+})(exports.myModule || (exports.myModule = {}));
+var myModule = exports.myModule;

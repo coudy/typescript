@@ -545,8 +545,8 @@ define(["require", "exports"], function(require, exports) {
         eM.eaF = eaF;
         ;
         
-            })(0.eM || (0.eM = {}));
-    var eM = 0.eM;
+            })(exports.eM || (exports.eM = {}));
+    var eM = exports.eM;
     function eaF() {
     }
     exports.eaF = eaF;

@@ -25,8 +25,8 @@
         return foo();
     }
     m1.fooExport = fooExport;
-})(comments_ExternalModules_0.m1 || (comments_ExternalModules_0.m1 = {}));
-var m1 = comments_ExternalModules_0.m1;
+})(exports.m1 || (exports.m1 = {}));
+var m1 = exports.m1;
 m1.fooExport();
 var myvar = new m1.m2.c();
 /** Module comment */
@@ -57,8 +57,8 @@ var myvar = new m1.m2.c();
         return foo();
     }
     m4.fooExport = fooExport;
-})(comments_ExternalModules_0.m4 || (comments_ExternalModules_0.m4 = {}));
-var m4 = comments_ExternalModules_0.m4;
+})(exports.m4 || (exports.m4 = {}));
+var m4 = exports.m4;
 m4.fooExport();
 var myvar2 = new m4.m2.c();
 ////[comments_ExternalModules_1.js]
