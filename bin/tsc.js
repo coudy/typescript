@@ -1581,16 +1581,13 @@ var TypeScript;
     var internalId = 0;
     var FuncDecl = (function (_super) {
         __extends(FuncDecl, _super);
-        function FuncDecl(name, bod, isConstructor, typeArguments, arguments, vars, scopes, statics, nodeType) {
+        function FuncDecl(name, bod, isConstructor, typeArguments, arguments, nodeType) {
             _super.call(this, nodeType);
             this.name = name;
             this.bod = bod;
             this.isConstructor = isConstructor;
             this.typeArguments = typeArguments;
             this.arguments = arguments;
-            this.vars = vars;
-            this.scopes = scopes;
-            this.statics = statics;
             this.hint = null;
             this.fncFlags = 0 /* None */ ;
             this.returnTypeAnnotation = null;
@@ -1758,8 +1755,8 @@ var TypeScript;
     TypeScript.unknownLocationInfo = new LocationInfo("unknown", null);
     var Script = (function (_super) {
         __extends(Script, _super);
-        function Script(vars, scopes) {
-            _super.call(this, new Identifier("script"), null, false, null, null, vars, scopes, null, 95 /* Script */ );
+        function Script() {
+            _super.call(this, new Identifier("script"), null, false, null, null, 95 /* Script */ );
             this.locationInfo = null;
             this.referencedFiles = [];
             this.requiresGlobal = false;
@@ -1772,7 +1769,6 @@ var TypeScript;
             this.containsUnicodeChar = false;
             this.containsUnicodeCharInComment = false;
             this.externallyVisibleImportedSymbols = [];
-            this.vars = vars;
         }
         Script.prototype.setCachedEmitRequired = function (value) {
             this.cachedEmitRequired = value;
@@ -1867,7 +1863,7 @@ var TypeScript;
     TypeScript.NamedDeclaration = NamedDeclaration;    
     var ModuleDeclaration = (function (_super) {
         __extends(ModuleDeclaration, _super);
-        function ModuleDeclaration(name, members, vars, endingToken) {
+        function ModuleDeclaration(name, members, endingToken) {
             _super.call(this, 98 /* ModuleDeclaration */ , name, members);
             this.endingToken = endingToken;
             this.modFlags = 512 /* ShouldEmitModuleDecl */ ;
@@ -1875,7 +1871,6 @@ var TypeScript;
             this.amdDependencies = [];
             this.containsUnicodeChar = false;
             this.containsUnicodeCharInComment = false;
-            this.vars = vars;
             this.prettyName = this.name.actualText;
         }
         ModuleDeclaration.prototype.isExported = function () {
@@ -5150,7 +5145,7 @@ var TypeScript;
             }
             this.recordSourceMappingEnd(funcDecl);
             this.emitParensAndCommentsInPlace(funcDecl, false);
-            if (!isMember && !TypeScript.hasFlag(funcDecl.fncFlags, 131072 /* IsFunctionExpression */ ) && (!TypeScript.hasFlag(funcDecl.fncFlags, 512 /* Signature */ ) || funcDecl.isConstructor)) {
+            if (!isMember && !funcDecl.isAccessor() && !TypeScript.hasFlag(funcDecl.fncFlags, 131072 /* IsFunctionExpression */ ) && (!TypeScript.hasFlag(funcDecl.fncFlags, 512 /* Signature */ ) || funcDecl.isConstructor)) {
                 this.writeLineToOutput("");
             } else if (TypeScript.hasFlag(funcDecl.fncFlags, 131072 /* IsFunctionExpression */ )) {
                 if (TypeScript.hasFlag(funcDecl.flags, 1 /* ExplicitSemicolon */ ) || TypeScript.hasFlag(funcDecl.flags, 2 /* AutomaticSemicolon */ )) {
@@ -5180,14 +5175,6 @@ var TypeScript;
                 importList: importList,
                 dependencyList: dependencyList
             };
-        };
-        Emitter.prototype.isParentDynamicModule = function (moduleDecl) {
-            var containingMod = null;
-            if (moduleDecl.type && moduleDecl.type.symbol.container && moduleDecl.type.symbol.container.declAST) {
-                containingMod = moduleDecl.type.symbol.container.declAST;
-            }
-            var parentIsDynamic = containingMod && TypeScript.hasFlag(containingMod.modFlags, 2048 /* IsDynamic */ );
-            return parentIsDynamic;
         };
         Emitter.prototype.shouldCaptureThis = function (ast) {
             if (ast === null) {
@@ -5308,7 +5295,7 @@ var TypeScript;
                         this.emittingFileName = prevOutFileName;
                     }
                 } else {
-                    var parentIsDynamic = this.isParentDynamicModule(moduleDecl);
+                    var parentIsDynamic = temp == 2 /* DynamicModule */ ;
                     this.recordSourceMappingStart(moduleDecl.endingToken);
                     if (temp === 0 /* Prog */  && isExported) {
                         this.writeToOutput("}");
@@ -9413,7 +9400,7 @@ var TypeScript;
         pushAssignScope(aggScope, context, null, null, null);
         mod.containedScope = aggScope;
         if (mod.symbol) {
-            context.typeFlow.addLocalsFromScope(mod.containedScope, mod.symbol, moduleDecl.vars, mod.members.privateMembers, true);
+            context.typeFlow.addLocalsFromScope(mod.containedScope, mod.symbol, null, mod.members.privateMembers, true);
         }
     }
     TypeScript.preAssignModuleScopes = preAssignModuleScopes;
@@ -9574,9 +9561,9 @@ var TypeScript;
             funcDecl.enclosingFnc = context.scopeChain.fnc;
             group.enclosingType = isStatic ? context.scopeChain.classType : context.scopeChain.thisType;
             fgSym = ast.type.symbol;
-            if (((funcDecl.fncFlags & 512 /* Signature */ ) === 0 /* None */ ) && funcDecl.vars) {
-                context.typeFlow.addLocalsFromScope(locals, fgSym, funcDecl.vars, funcTable, false);
-                context.typeFlow.addLocalsFromScope(statics, fgSym, funcDecl.statics, funcStaticTable, false);
+            if (((funcDecl.fncFlags & 512 /* Signature */ ) === 0 /* None */ ) && false) {
+                context.typeFlow.addLocalsFromScope(locals, fgSym, null, funcTable, false);
+                context.typeFlow.addLocalsFromScope(statics, fgSym, null, funcStaticTable, false);
             }
             if (signature.parameters) {
                 var len = signature.parameters.length;
@@ -14919,7 +14906,7 @@ var TypeScript;
             this.checker.locationInfo = script.locationInfo;
             this.scope = this.checker.globalScope;
             if (!script.topLevelMod) {
-                this.addLocalsFromScope(this.scope, this.checker.gloMod, script.vars, this.checker.globals, true);
+                this.addLocalsFromScope(this.scope, this.checker.gloMod, null, this.checker.globals, true);
             }
             this.currentScript = script;
             script.bod = this.typeCheck(script.bod);
@@ -15356,14 +15343,6 @@ var TypeScript;
                     if (sym.isInstanceProperty()) {
                         return true;
                     }
-                }
-            }
-            var fns = funcDecl.scopes;
-            var fnsLen = fns.members.length;
-            for(var j = 0; j < fnsLen; j++) {
-                var fn = fns.members[j];
-                if (this.checkInitSelf(fn)) {
-                    return true;
                 }
             }
             return false;
@@ -15871,19 +15850,6 @@ var TypeScript;
                     }
                 }
                 if (funcDecl.isConstructor) {
-                    var fns = funcDecl.scopes;
-                    var fnsLen = fns.members.length;
-                    var freeVars;
-                    var sym;
-                    var j = 0;
-                    for(; j < fnsLen; j++) {
-                        var fn = fns.members[j];
-                        if (!fn.isSignature()) {
-                            if (TypeScript.hasFlag(fn.fncFlags, 1024 /* Method */ ) && (!TypeScript.hasFlag(fn.fncFlags, 16 /* Static */ ))) {
-                                this.checkPromoteFreeVars(fn, funcDecl.type.symbol);
-                            }
-                        }
-                    }
                 }
             }
             this.scope = prevScope;
@@ -41470,11 +41436,13 @@ var TypeScript;
             }
             var params = this.getParameters();
             var paramLen = params.length;
-            var len = paramLen;
-            for(var i = 0; i < params.length; i++) {
+            for(var i = 0; i < paramLen; i++) {
                 var paramType = params[i].getType();
                 var typeString = paramType ? ": " : "";
-                builder.add(TypeScript.MemberName.create(params[i].getScopedNameEx(scopeSymbol).toString() + (params[i].getIsOptional() ? "?" : "") + typeString));
+                var paramIsVarArg = params[i].getIsVarArg();
+                var varArgPrefix = paramIsVarArg ? "..." : "";
+                var optionalString = (!paramIsVarArg && params[i].getIsOptional()) ? "?" : "";
+                builder.add(TypeScript.MemberName.create(varArgPrefix + params[i].getScopedNameEx(scopeSymbol).toString() + optionalString + typeString));
                 if (paramType) {
                     builder.add(paramType.getScopedNameEx(scopeSymbol));
                 }
@@ -41991,12 +41959,16 @@ var TypeScript;
             }
             return this.findNestedType(name);
         };
-        PullTypeSymbol.prototype.findNestedType = function (name) {
+        PullTypeSymbol.prototype.findNestedType = function (name, kind) {
+            if (typeof kind === "undefined") { kind = 0 /* None */ ; }
             var memberSymbol;
             if (!this.memberTypeNameCache) {
                 this.populateMemberTypeCache();
             }
             memberSymbol = this.memberTypeNameCache[name];
+            if (memberSymbol && kind != 0 /* None */ ) {
+                memberSymbol = ((memberSymbol.getKind() & kind) != 0) ? memberSymbol : null;
+            }
             return memberSymbol;
         };
         PullTypeSymbol.prototype.populateMemberCache = function () {
@@ -43501,6 +43473,9 @@ var TypeScript;
             var declMembers;
             var pathDeclKind;
             var valDecl = null;
+            var kind;
+            var instanceSymbol = null;
+            var instanceType = null;
             for(var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
@@ -43517,7 +43492,6 @@ var TypeScript;
                     }
                     declSymbol = decl.getSymbol().getType();
                     declMembers = declSymbol.getMembers();
-                    var kind;
                     for(var j = 0; j < declMembers.length; j++) {
                         if (declMembers[j].getName() == symbolName) {
                             kind = declMembers[j].getKind();
@@ -44219,6 +44193,14 @@ var TypeScript;
                         context.setTypeInContext(declParameterSymbol, initExprSymbol.getType());
                         initExprSymbol.addOutgoingLink(declParameterSymbol, 2 /* ProvidesInferredType */ );
                     }
+                }
+            } else if (declSymbol.getKind() == 8 /* Container */ ) {
+                instanceSymbol = (declSymbol).getInstanceSymbol();
+                var instanceType = instanceSymbol.getType();
+                if (instanceType) {
+                    context.setTypeInContext(declSymbol, instanceType);
+                } else {
+                    context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
                 }
             } else {
                 context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
@@ -45015,7 +44997,7 @@ var TypeScript;
                     for(i = declPath.length - 2; i >= 0; i--) {
                         decl = declPath[i];
                         declKind = decl.getKind();
-                        if (declKind == 32768 /* Function */  || declKind == 131072 /* Method */ ) {
+                        if (declKind == 32768 /* Function */  || declKind == 131072 /* Method */  || declKind == 65536 /* ConstructorMethod */  || declKind == 524288 /* GetAccessor */  || declKind == 1048576 /* SetAccessor */ ) {
                             hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
                         } else if (declKind == 262144 /* FunctionExpression */ ) {
                             if (!(decl.getFlags() & 16384 /* FatArrow */ )) {
@@ -48717,9 +48699,6 @@ var TypeScript;
             }
         };
         PullSymbolBinder.prototype.symbolIsRedeclaration = function (sym) {
-            if (!this.reBindingAfterChange) {
-                return false;
-            }
             var symID = sym.getSymbolID();
             return (symID > this.startingSymbolForRebind) || ((sym.getRebindingID() == this.bindingPhase) && (symID != this.startingSymbolForRebind));
         };
@@ -48736,9 +48715,9 @@ var TypeScript;
             var createdNewSymbol = false;
             var i = 0;
             if (parent) {
-                moduleContainerTypeSymbol = parent.findNestedType(modName);
+                moduleContainerTypeSymbol = parent.findNestedType(modName, 8 /* Container */ );
             } else if (!(moduleContainerDecl.getFlags() & 1 /* Exported */ )) {
-                moduleContainerTypeSymbol = this.findSymbolInContext(modName, TypeScript.PullElementKind.SomeType, []);
+                moduleContainerTypeSymbol = this.findSymbolInContext(modName, 8 /* Container */ , []);
             }
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {
                 moduleContainerDecl.addDiagnostic(new TypeScript.PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(48 /* Duplicate_identifier__0_ */ , [
@@ -51028,15 +51007,6 @@ var TypeScript;
                 dependencyList: dependencyList
             };
         };
-        PullEmitter.prototype.isParentDynamicModule = function (moduleDecl) {
-            var symbol = this.semanticInfoChain.getSymbolForAST(moduleDecl, this.locationInfo.fileName);
-            var parentSymbol = symbol.getContainer();
-            parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
-            if (parentSymbol && parentSymbol.getKind() == 64 /* DynamicModule */ ) {
-                return true;
-            }
-            return false;
-        };
         PullEmitter.prototype.shouldCaptureThis = function (ast) {
             if (ast == null) {
                 var scriptDecl = this.semanticInfoChain.getUnit(this.locationInfo.fileName).getTopLevelDecls()[0];
@@ -51530,9 +51500,6 @@ var TypeScript;
             this.compilationSettings = compilationSettings;
             this.nestingLevel = 0;
             this.position = 0;
-            this.varLists = [];
-            this.scopeLists = [];
-            this.staticsLists = [];
             this.requiresExtendsBlock = false;
             this.previousTokenTrailingComments = null;
             this.isParsingAmbientModule = false;
@@ -51555,14 +51522,10 @@ var TypeScript;
                 this.position += element.fullWidth();
             }
         };
-        SyntaxTreeToAstVisitor.prototype.moveTo2 = function (element1, element2) {
+        SyntaxTreeToAstVisitor.prototype.moveTo = function (element1, element2) {
             if (element2 !== null) {
                 this.position += TypeScript.Syntax.childOffset(element1, element2);
             }
-        };
-        SyntaxTreeToAstVisitor.prototype.moveTo3 = function (element1, element2, element3) {
-            this.moveTo2(element1, element2);
-            this.moveTo2(element2, element3);
         };
         SyntaxTreeToAstVisitor.prototype.setSpan = function (span, fullStart, element) {
             span.minChar = fullStart + element.leadingTriviaWidth();
@@ -51622,25 +51585,6 @@ var TypeScript;
             var id = new TypeScript.Identifier(text, hasEscapeSequence);
             id.minChar = minChar;
             return id;
-        };
-        SyntaxTreeToAstVisitor.prototype.pushDeclLists = function () {
-            this.staticsLists.push(new TypeScript.ASTList());
-            this.varLists.push(new TypeScript.ASTList());
-            this.scopeLists.push(new TypeScript.ASTList());
-        };
-        SyntaxTreeToAstVisitor.prototype.popDeclLists = function () {
-            this.staticsLists.pop();
-            this.varLists.pop();
-            this.scopeLists.pop();
-        };
-        SyntaxTreeToAstVisitor.prototype.topVarList = function () {
-            return this.varLists[this.varLists.length - 1];
-        };
-        SyntaxTreeToAstVisitor.prototype.topScopeList = function () {
-            return this.scopeLists[this.scopeLists.length - 1];
-        };
-        SyntaxTreeToAstVisitor.prototype.topStaticsList = function () {
-            return this.staticsLists[this.staticsLists.length - 1];
         };
         SyntaxTreeToAstVisitor.prototype.convertComment = function (trivia, commentStartPosition, hasTrailingNewLine) {
             var comment = new TypeScript.Comment(trivia.fullText(), trivia.kind() === 6 /* MultiLineCommentTrivia */ , hasTrailingNewLine);
@@ -51778,7 +51722,6 @@ var TypeScript;
             this.assertElementAtPosition(node);
             var start = this.position;
             var members;
-            this.pushDeclLists();
             var bod = this.visitSyntaxList(node.moduleElements);
             if (this.hasUseStrictDirective(node.moduleElements)) {
                 bod.flags |= 128 /* StrictMode */ ;
@@ -51787,7 +51730,7 @@ var TypeScript;
             if (this.compilationSettings.moduleGenTarget != 2 /* Local */  && this.hasTopLevelImportOrExport(node)) {
                 var correctedFileName = TypeScript.switchToForwardSlashes(this.fileName);
                 var id = new TypeScript.Identifier(correctedFileName);
-                topLevelMod = new TypeScript.ModuleDeclaration(id, bod, this.topVarList(), null);
+                topLevelMod = new TypeScript.ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
                 topLevelMod.modFlags |= 2048 /* IsDynamic */ ;
                 topLevelMod.modFlags |= 1024 /* IsWholeFile */ ;
@@ -51800,9 +51743,8 @@ var TypeScript;
                 this.setSpanExplicit(bod, start, this.position);
                 bod.append(topLevelMod);
             }
-            var result = new TypeScript.Script(this.topVarList(), this.topScopeList());
+            var result = new TypeScript.Script();
             this.setSpanExplicit(result, start, this.position);
-            this.popDeclLists();
             result.bod = bod;
             result.locationInfo = new TypeScript.LocationInfo(this.fileName, this.lineMap);
             result.topLevelMod = topLevelMod;
@@ -51812,7 +51754,7 @@ var TypeScript;
         };
         SyntaxTreeToAstVisitor.prototype.visitExternalModuleReference = function (node) {
             this.assertElementAtPosition(node);
-            this.moveTo2(node, node.stringLiteral);
+            this.moveTo(node, node.stringLiteral);
             var result = this.identifierFromToken(node.stringLiteral, false, false);
             this.movePast(node.stringLiteral);
             this.movePast(node.closeParenToken);
@@ -51827,7 +51769,7 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, false, true);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
@@ -51889,7 +51831,7 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, false, true);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
@@ -51966,11 +51908,10 @@ var TypeScript;
         };
         SyntaxTreeToAstVisitor.prototype.visitModuleDeclaration = function (node) {
             this.assertElementAtPosition(node);
-            this.pushDeclLists();
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.moduleKeyword);
+            this.moveTo(node, node.moduleKeyword);
             this.movePast(node.moduleKeyword);
             var names = this.getModuleNames(node);
             this.movePast(node.openBraceToken);
@@ -51988,7 +51929,7 @@ var TypeScript;
                 var closeBraceSpan = new TypeScript.ASTSpan();
                 closeBraceSpan.minChar = closeBracePosition;
                 closeBraceSpan.limChar = this.position;
-                moduleDecl = new TypeScript.ModuleDeclaration(innerName, members, this.topVarList(), closeBraceSpan);
+                moduleDecl = new TypeScript.ModuleDeclaration(innerName, members, closeBraceSpan);
                 this.setSpan(moduleDecl, start, node);
                 moduleDecl.preComments = preComments;
                 moduleDecl.postComments = postComments;
@@ -52001,9 +51942,6 @@ var TypeScript;
                 }
                 if (this.containsToken(node.modifiers, 64 /* DeclareKeyword */ ) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
                     moduleDecl.modFlags |= 8 /* Ambient */ ;
-                }
-                if (i === 0) {
-                    this.popDeclLists();
                 }
                 members = new TypeScript.ASTList();
                 members.append(moduleDecl);
@@ -52032,13 +51970,12 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, false, true);
             this.movePast(node.identifier);
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            this.pushDeclLists();
             var bod = this.convertBlock(node.block);
             if (bod) {
                 bod.append(new TypeScript.EndCode());
@@ -52049,11 +51986,8 @@ var TypeScript;
                 }
             }
             this.movePast(node.semicolonToken);
-            var funcDecl = new TypeScript.FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var funcDecl = new TypeScript.FuncDecl(name, bod, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(funcDecl, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
             funcDecl.preComments = preComments;
             funcDecl.postComments = postComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
@@ -52074,10 +52008,9 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, false, true);
             this.movePast(node.identifier);
-            this.pushDeclLists();
             this.movePast(node.openBraceToken);
             var members = new TypeScript.ASTList();
             var mapDecl = new TypeScript.VarDecl(new TypeScript.Identifier("_map"), 0);
@@ -52147,7 +52080,7 @@ var TypeScript;
             }
             this.movePast(node.closeBraceToken);
             var endingToken = new TypeScript.ASTSpan();
-            var modDecl = new TypeScript.ModuleDeclaration(name, members, this.topVarList(), endingToken);
+            var modDecl = new TypeScript.ModuleDeclaration(name, members, endingToken);
             this.setSpan(modDecl, start, node);
             this.setSpan(mapDecl, start, node);
             modDecl.preComments = preComments;
@@ -52157,7 +52090,6 @@ var TypeScript;
             if (this.containsToken(node.modifiers, 47 /* ExportKeyword */ ) || this.isParsingAmbientModule) {
                 modDecl.modFlags |= 1 /* Exported */ ;
             }
-            this.popDeclLists();
             return modDecl;
         };
         SyntaxTreeToAstVisitor.prototype.visitEnumElement = function (node) {
@@ -52168,7 +52100,7 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, false, true);
             this.movePast(node.identifier);
             this.movePast(node.equalsToken);
@@ -52184,7 +52116,7 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitExportAssignment = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, false, true);
             this.movePast(node.identifier);
             this.movePast(node.semicolonToken);
@@ -52199,7 +52131,7 @@ var TypeScript;
             if (node.modifiers.childCount() > 0) {
                 preComments = this.convertTokenLeadingComments(node.modifiers.firstToken(), start);
             }
-            this.moveTo2(node, node.variableDeclaration);
+            this.moveTo(node, node.variableDeclaration);
             var varList = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
             if (varList.nodeType === 75 /* VarDecl */ ) {
@@ -52232,7 +52164,7 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.variableDeclarators);
+            this.moveTo(node, node.variableDeclarators);
             var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators);
             for(var i = 0; i < variableDecls.members.length; i++) {
                 (variableDecls.members[i]).nestingLevel = i;
@@ -52255,7 +52187,6 @@ var TypeScript;
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
             var result = new TypeScript.VarDecl(name, 0);
             this.setSpan(result, start, node);
-            this.topVarList().append(result);
             result.typeExpr = typeExpr;
             result.init = init;
             if (init && init.nodeType === 73 /* FuncDecl */ ) {
@@ -52352,13 +52283,9 @@ var TypeScript;
             var parameter = new TypeScript.ArgDecl(identifier);
             this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
             parameters.append(parameter);
-            this.pushDeclLists();
             var statements = this.getArrowFunctionStatements(node.body);
-            var result = new TypeScript.FuncDecl(null, statements, false, null, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(null, statements, false, null, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             result.returnTypeAnnotation = null;
             result.fncFlags |= 131072 /* IsFunctionExpression */ ;
             result.fncFlags |= 32768 /* IsFatArrowFunction */ ;
@@ -52372,13 +52299,9 @@ var TypeScript;
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
             this.movePast(node.equalsGreaterThanToken);
-            this.pushDeclLists();
             var statements = this.getArrowFunctionStatements(node.body);
-            var result = new TypeScript.FuncDecl(null, statements, false, typeParameters, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(null, statements, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             result.preComments = preComments;
             result.returnTypeAnnotation = returnType;
             result.fncFlags |= 131072 /* IsFunctionExpression */ ;
@@ -52435,7 +52358,7 @@ var TypeScript;
             var parameters = node.parameterList.accept(this);
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
-            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, null, null, null, 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
             result.returnTypeAnnotation = returnType;
             result.fncFlags |= 512 /* Signature */ ;
@@ -52455,7 +52378,7 @@ var TypeScript;
             var parameters = node.parameterList.accept(this);
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
-            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, null, null, null, 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
             result.returnTypeAnnotation = returnType;
             result.fncFlags |= 512 /* Signature */ ;
@@ -52536,7 +52459,7 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.identifier);
+            this.moveTo(node, node.identifier);
             var identifier = this.identifierFromToken(node.identifier, !!node.questionToken, true);
             this.movePast(node.identifier);
             this.movePast(node.questionToken);
@@ -52730,15 +52653,13 @@ var TypeScript;
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, new TypeScript.ASTList(), new TypeScript.ASTList(), new TypeScript.ASTList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
             result.preComments = preComments;
             result.returnTypeAnnotation = returnType;
             result.hint = "_construct";
             result.fncFlags |= 8192 /* ConstructMember */ ;
             result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             return result;
         };
         SyntaxTreeToAstVisitor.prototype.visitMethodSignature = function (node) {
@@ -52751,13 +52672,11 @@ var TypeScript;
             var typeParameters = node.callSignature.typeParameterList ? node.callSignature.typeParameterList.accept(this) : null;
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            var funcDecl = new TypeScript.FuncDecl(name, null, false, typeParameters, parameters, new TypeScript.ASTList(), new TypeScript.ASTList(), new TypeScript.ASTList(), 73 /* FuncDecl */ );
+            var funcDecl = new TypeScript.FuncDecl(name, null, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(funcDecl, start, node);
             funcDecl.preComments = preComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
             return funcDecl;
         };
         SyntaxTreeToAstVisitor.prototype.visitIndexSignature = function (node) {
@@ -52772,14 +52691,12 @@ var TypeScript;
             this.setSpanExplicit(name, start, start);
             var parameters = new TypeScript.ASTList();
             parameters.append(parameter);
-            var result = new TypeScript.FuncDecl(name, null, false, null, parameters, new TypeScript.ASTList(), new TypeScript.ASTList(), new TypeScript.ASTList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(name, null, false, null, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
             result.preComments = preComments;
             result.variableArgList = false;
             result.returnTypeAnnotation = returnType;
             result.fncFlags |= 65536 /* IndexerMember */ ;
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             return result;
         };
         SyntaxTreeToAstVisitor.prototype.visitPropertySignature = function (node) {
@@ -52814,15 +52731,13 @@ var TypeScript;
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
-            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, new TypeScript.ASTList(), new TypeScript.ASTList(), new TypeScript.ASTList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(null, null, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
             result.preComments = preComments;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
             result.hint = "_call";
             result.fncFlags |= 4096 /* CallMember */ ;
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             return result;
         };
         SyntaxTreeToAstVisitor.prototype.visitTypeParameterList = function (node) {
@@ -52850,7 +52765,7 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitIfStatement = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
-            this.moveTo2(node, node.condition);
+            this.moveTo(node, node.condition);
             var condition = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             var thenBod = node.statement.accept(this);
@@ -52885,19 +52800,15 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.parameterList);
+            this.moveTo(node, node.parameterList);
             var parameters = node.parameterList.accept(this);
-            this.pushDeclLists();
             var statements = this.convertBlock(node.block);
             if (statements) {
                 statements.append(new TypeScript.EndCode());
             }
             this.movePast(node.semicolonToken);
-            var result = new TypeScript.FuncDecl(null, statements, true, null, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(null, statements, true, null, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             result.preComments = preComments;
             result.postComments = postComments;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
@@ -52912,23 +52823,19 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, false, true);
             this.movePast(node.propertyName);
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            this.pushDeclLists();
             var statements = this.convertBlock(node.block);
             if (statements) {
                 statements.append(new TypeScript.EndCode());
             }
             this.movePast(node.semicolonToken);
-            var result = new TypeScript.FuncDecl(name, statements, false, typeParameters, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(name, statements, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             result.preComments = preComments;
             result.postComments = postComments;
             result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
@@ -52952,21 +52859,17 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, false, true);
             this.movePast(node.propertyName);
             var parameters = node.parameterList.accept(this);
             var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
-            this.pushDeclLists();
             var statements = this.convertBlock(node.block);
             if (statements) {
                 statements.append(new TypeScript.EndCode());
             }
-            var result = new TypeScript.FuncDecl(name, statements, false, null, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var result = new TypeScript.FuncDecl(name, statements, false, null, parameters, 73 /* FuncDecl */ );
             this.setSpan(result, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(result);
             result.preComments = preComments;
             result.postComments = postComments;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
@@ -53001,14 +52904,15 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo3(node, node.variableDeclarator, node.variableDeclarator.identifier);
+            this.moveTo(node, node.variableDeclarator);
+            this.moveTo(node.variableDeclarator, node.variableDeclarator.identifier);
             var name = this.identifierFromToken(node.variableDeclarator.identifier, false, true);
             this.movePast(node.variableDeclarator.identifier);
             var typeExpr = node.variableDeclarator.typeAnnotation ? node.variableDeclarator.typeAnnotation.accept(this) : null;
             var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
             this.movePast(node.semicolonToken);
             var varDecl = new TypeScript.VarDecl(name, 0);
-            this.setSpanExplicit(varDecl, name.minChar, name.limChar);
+            this.setSpan(varDecl, start, node);
             varDecl.preComments = preComments;
             varDecl.postComments = postComments;
             varDecl.typeExpr = typeExpr;
@@ -53177,7 +53081,7 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitWhileStatement = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
-            this.moveTo2(node, node.condition);
+            this.moveTo(node, node.condition);
             var condition = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             var statement = node.statement.accept(this);
@@ -53189,7 +53093,7 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitWithStatement = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
-            this.moveTo2(node, node.condition);
+            this.moveTo(node, node.condition);
             var condition = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             var statement = node.statement.accept(this);
@@ -53240,20 +53144,16 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitGetAccessorPropertyAssignment = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, false, true);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
             this.movePast(node.closeParenToken);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
-            this.pushDeclLists();
             var statements = this.convertBlock(node.block);
             statements.append(new TypeScript.EndCode());
-            var funcDecl = new TypeScript.FuncDecl(name, statements, false, null, new TypeScript.ASTList(), this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var funcDecl = new TypeScript.FuncDecl(name, statements, false, null, new TypeScript.ASTList(), 73 /* FuncDecl */ );
             this.setSpan(funcDecl, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
             funcDecl.fncFlags |= 64 /* GetAccessor */ ;
             funcDecl.fncFlags |= 131072 /* IsFunctionExpression */ ;
             funcDecl.hint = "get" + node.propertyName.valueText();
@@ -53265,7 +53165,7 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitSetAccessorPropertyAssignment = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
-            this.moveTo2(node, node.propertyName);
+            this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, false, true);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
@@ -53273,14 +53173,10 @@ var TypeScript;
             this.movePast(node.closeParenToken);
             var parameters = new TypeScript.ASTList();
             parameters.append(parameter);
-            this.pushDeclLists();
             var statements = this.convertBlock(node.block);
             statements.append(new TypeScript.EndCode());
-            var funcDecl = new TypeScript.FuncDecl(name, statements, false, null, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var funcDecl = new TypeScript.FuncDecl(name, statements, false, null, parameters, 73 /* FuncDecl */ );
             this.setSpan(funcDecl, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
             funcDecl.fncFlags |= 128 /* SetAccessor */ ;
             funcDecl.fncFlags |= 131072 /* IsFunctionExpression */ ;
             funcDecl.hint = "set" + node.propertyName.valueText();
@@ -53298,7 +53194,6 @@ var TypeScript;
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            this.pushDeclLists();
             var bod = this.convertBlock(node.block);
             if (bod) {
                 bod.append(new TypeScript.EndCode());
@@ -53308,11 +53203,8 @@ var TypeScript;
                     bod.flags |= 128 /* StrictMode */ ;
                 }
             }
-            var funcDecl = new TypeScript.FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(), this.topScopeList(), this.topStaticsList(), 73 /* FuncDecl */ );
+            var funcDecl = new TypeScript.FuncDecl(name, bod, false, typeParameters, parameters, 73 /* FuncDecl */ );
             this.setSpan(funcDecl, start, node);
-            this.popDeclLists();
-            var scopeList = this.topScopeList();
-            scopeList.append(funcDecl);
             funcDecl.preComments = preComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
