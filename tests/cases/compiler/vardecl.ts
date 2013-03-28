@@ -12,7 +12,7 @@ var withComplicatedValue = { x: 30, y: 70, desc: "position" };
 declare var declaredVar;
 declare var declareVar2
 
-declare var declaredVar;
+declare var declaredVar3;
 declare var deckareVarWithType: number;
 
 var arrayVar: string[] = ['a', 'b'];
@@ -77,7 +77,7 @@ module m2 {
     }
     var m;
     declare var d1, d2;
-    var b2;
+    var b23;
     declare var v1;
     export var mE;
     export declare var d1E, d2E;
@@ -104,7 +104,7 @@ for (var i = 0, j = 0; i < 10; i++) {
 }
 
 
-for (var i = 0; i < 30; i++) {
-    i++;
+for (var k = 0; k < 30; k++) {
+    k++;
 }
 var b = 10;

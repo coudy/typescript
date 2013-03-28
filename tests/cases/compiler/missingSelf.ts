@@ -1,12 +1,12 @@
 class CalcButton
 {
-    public a() { this.onClick(); };
+    public a() { this.onClick(); }
     public onClick() { }
 }
 
 class CalcButton2
 {
-    public b() => { this.onClick(); };
+    public b() { () => this.onClick(); }
     public onClick() { }
 }
 

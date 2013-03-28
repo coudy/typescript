@@ -10,8 +10,10 @@ var CalcButton = (function () {
 var CalcButton2 = (function () {
     function CalcButton2() { }
     CalcButton2.prototype.b = function () {
-        this.onClick();
-    };
+        var _this = this;
+        function () {
+            return _this.onClick();
+        }    };
     CalcButton2.prototype.onClick = function () {
     };
     return CalcButton2;

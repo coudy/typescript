@@ -1,1 +1,7 @@
-function f1(): { new(): void; } { return function() { return 1; } };  // this used to not be an error, but is now that we've changed our assignment compatibility rules
+function f1(): { new (): number; } {
+    return function () { return; }
+}; 
+
+var x = f1();
+var y = new x();
+var z = new (f1())();

@@ -22,7 +22,7 @@ interface a0 {
     f4? (s: number): string;
 }
 interface a1 {
-    [n: number];
+    [n: number]: number;
 }
 interface a2 {
     [s: string]: number;

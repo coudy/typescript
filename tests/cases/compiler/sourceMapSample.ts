@@ -20,7 +20,7 @@ module Foo.Bar {
     var str = greeter.greet();
 
     function foo2(greeting: string, ...restGreetings: string[]) {
-        var greeters = new Greeter[];
+        var greeters: Greeter[] = [];
         greeters[0] = new Greeter(greeting);
         for (var i = 0; i < restGreetings.length; i++) {
             greeters.push(new Greeter(restGreetings[i]));

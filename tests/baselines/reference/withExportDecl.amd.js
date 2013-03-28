@@ -52,7 +52,7 @@ define(["require", "exports"], function(require, exports) {
     var m3 = 0.m3;
     exports.eVar1;
     exports.eVar2 = 10;
-    var eVar2;
+    var eVar22;
     exports.eVar3 = 10;
     exports.eVar4;
     exports.eVar5;

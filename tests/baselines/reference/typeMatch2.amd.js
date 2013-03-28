@@ -90,14 +90,12 @@ function f4() {
         x: 1
     };
     var mf = function m(n) {
-    };
-    function (__missing) {
         return false;
-    }    var zf = function z(n) {
     };
-    function (__missing) {
+    var zf = function z(n) {
         return true;
-    }    mf = zf;
+    };
+    mf = zf;
     mf(_any);
     zf(_any);
 }

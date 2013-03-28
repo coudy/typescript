@@ -4,34 +4,35 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var C1 = (function () {
-        return C1;
+    function C1(v, p) {
+        if (typeof v === "undefined") { v = 1; }
+        if (typeof p === "undefined") { p = 0; }
+        this.n = 0;
+    }
+    C1.prototype.C1M1 = function () {
+        return 0;
+    };
+    C1.prototype.C1M2 = function (C1M2A1) {
+        return C1M2A1;
+    };
+    C1.prototype.C1M3 = function (C1M3A1, C1M3A2) {
+        if (typeof C1M3A1 === "undefined") { C1M3A1 = 0; }
+        if (typeof C1M3A2 === "undefined") { C1M3A2 = C1M3A1; }
+        return C1M3A1 + C1M3A2;
+    };
+    C1.prototype.C1M4 = function (C1M4A1, C1M4A2) {
+        return C1M4A1 + C1M4A2;
+    };
+    C1.prototype.C1M5 = function (C1M5A1, C1M5A2, C1M5A3) {
+        if (typeof C1M5A2 === "undefined") { C1M5A2 = 0; }
+        return C1M5A1 + C1M5A2;
+    };
+    C1.prototype.C1M5 = function (C1M5A1, C1M5A2, C1M5A3) {
+        if (typeof C1M5A2 === "undefined") { C1M5A2 = 0; }
+        return C1M5A1 + C1M5A2;
+    };
+    return C1;
 })();
-this.p;
-number = 0;
- {
-}
-n:
-number = 0
-C1M1();
- {
-    return 0;
-}
-C1M2(C1M2A1, number);
- {
-    return C1M2A1;
-}
-C1M3(C1M3A1 ?  : number = 0, C1M3A2 ?  : number = C1M3A1);
- {
-    return C1M3A1 + C1M3A2;
-}
-C1M4(C1M4A1, number, C1M4A2 ?  : number);
- {
-    return C1M4A1 + C1M4A2;
-}
-C1M5(C1M5A1, number, C1M5A2, number = 0, C1M5A3 ?  : number);
- {
-    return C1M5A1 + C1M5A2;
-}
 var C2 = (function (_super) {
     __extends(C2, _super);
     function C2(v2) {
@@ -97,6 +98,26 @@ c1o1.C1M4(1);
 i1o1.C1M4(1);
 var f4v2 = F4(1);
 var l4v2 = L4(1);
+c1o1.C1M1(1);
+i1o1.C1M1(1);
+F1(1);
+L1(1);
+c1o1.C1M2();
+i1o1.C1M2();
+F2();
+L2();
+c1o1.C1M2(1, 2);
+i1o1.C1M2(1, 2);
+F2(1, 2);
+L2(1, 2);
+c1o1.C1M3(1, 2, 3);
+i1o1.C1M3(1, 2, 3);
+F3(1, 2, 3);
+L3(1, 2, 3);
+c1o1.C1M4();
+i1o1.C1M4();
+F4();
+L4();
 function fnOpt1(id, children, expectedPath, isRoot) {
     if (typeof children === "undefined") { children = []; }
     if (typeof expectedPath === "undefined") { expectedPath = []; }

@@ -92,7 +92,7 @@ export module TopLevelModule1 {
     }
 
     interface InterfaceY {
-        YisIn1() { }
+        YisIn1();
     }
     
     module NotExportedModule {
@@ -103,7 +103,7 @@ export module TopLevelModule1 {
 module TopLevelModule2 {
     export module SubModule3 {
         export class ClassA {
-            public AisIn2_3() { };
+            public AisIn2_3() { }
         }
     }
 }

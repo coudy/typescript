@@ -1,6 +1,6 @@
 class C {
     public get Foo() { return "foo";} // ok
-    public set Foo(foo) {} // error - type must be declared
+    public set Foo(foo) {} // ok - type inferred from getter return statement
 
     public get Bar() { return "foo";} // ok
     public set Bar(bar:string) {} // ok - type must be declared

@@ -14,7 +14,7 @@ var M;
         C.pub = 3;
         C.y = C.priv;
         C.f = function f(n) {
-            return "wow: " + (n + y + pub + priv);
+            return "wow: " + (n + C.y + C.pub + C.priv);
         };
         return C;
     })();

@@ -1,7 +1,7 @@
 module M {
     interface I { (i:I):I; }
 
-    export function f(p:I)=>f;
+    export function f(p: I) { return f };
 
     var i:I;
 

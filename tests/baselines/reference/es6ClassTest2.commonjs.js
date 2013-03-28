@@ -18,15 +18,15 @@ var m2 = new BasicMonster("2", 100);
 m1.attack(m2);
 m1.health = 0;
 var GetSetMonster = (function () {
-    function GetSetMonster(name, health) {
+    function GetSetMonster(name, _health) {
         this.name = name;
-        this.health = health;
+        this._health = _health;
     }
     GetSetMonster.prototype.attack = function (target) {
     };
     Object.defineProperty(GetSetMonster.prototype, "isAlive", {
         get: function () {
-            return this.health > 0;
+            return this._health > 0;
         },
         enumerable: true,
         configurable: true
@@ -36,7 +36,7 @@ var GetSetMonster = (function () {
             if (value < 0) {
                 throw new Error('Health must be non-negative.');
             }
-            this.health = value;
+            this._health = value;
         },
         enumerable: true,
         configurable: true

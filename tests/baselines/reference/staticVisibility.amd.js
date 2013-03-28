@@ -9,7 +9,7 @@ var C1 = (function () {
     C1.b = function b() {
         v = 1;
         this.p = 0;
-        s = 1;
+        C1.s = 1;
     };
     return C1;
 })();

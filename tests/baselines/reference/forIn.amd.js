@@ -1,14 +1,14 @@
 var arr = null;
 for(var i in arr) {
-    var x = arr[i];
-    var y = arr[i];
+    var x1 = arr[i];
+    var y1 = arr[i];
 }
-for(var i in arr) {
-    var x = arr[i];
-    var y = arr[i];
+for(var j in arr) {
+    var x2 = arr[j];
+    var y2 = arr[j];
 }
 var arr2 = [];
-for(i in arr2) {
-    var x = arr2[i];
-    var y = arr2[i];
+for(j in arr2) {
+    var x3 = arr2[j];
+    var y3 = arr2[j];
 }

@@ -5,7 +5,7 @@ function salt() {
 
 module M {
     export function tungsten() {
-        function oxygen()=>6;
+        function oxygen() { return 6; };
         return oxygen();
     }
 }

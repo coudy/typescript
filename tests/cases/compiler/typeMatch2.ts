@@ -6,8 +6,8 @@ function f1() {
 	a = { x: 1, z: 3 }; 
 }
 
-class Animal { }
-class Giraffe extends Animal { }
+class Animal { private a; }
+class Giraffe extends Animal { private g; }
 
 function f2() {
     var a = new Animal();
@@ -33,8 +33,8 @@ function f4() {
     a = { x: 1, y: _any }; 
     a = { x: 1, y: _any, z:1 }; 
     a = { x: 1 }; // ok
-    var mf=function m(n)=>false;
-    var zf=function z(n:number)=>true;
+    var mf = function m(n) { return false; };
+    var zf = function z(n: number) { return true; };
     mf=zf;
     mf(_any);
     zf(_any);

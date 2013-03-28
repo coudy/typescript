@@ -8,7 +8,7 @@ class C2 {
 class C3 {
     set (x) {
         return x + 1;
-    };
+    }
 }
 class C4 {
     get: bool = true;
@@ -16,5 +16,5 @@ class C4 {
 class C5 {
     public set: () => bool = function () { return true; };
     get (): bool { return true; }
-    set t(x) { };
+    set t(x) { }
 }

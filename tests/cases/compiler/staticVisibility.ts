@@ -17,7 +17,7 @@ class C1 {
     static b() {
         v = 1; // should be error
         this.p = 0; // should be error
-        s = 1; // should be ok
+        C1.s = 1; // should be ok
     }
 }
 

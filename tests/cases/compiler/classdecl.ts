@@ -7,7 +7,7 @@ class a {
 
     }
 
-    public pgF() { };
+    public pgF() { }
 
     public pv;
     public get d() {
@@ -79,16 +79,16 @@ declare class aAmbient {
 
 class d {
     private foo(n: number): string;
+    private foo(s: string): string;
     private foo(ns: any) {
         return ns.toString();
-    }
-    private foo(s: string): string;
+    }    
 }
 
-class e {
+class e {    
+    private foo(s: string): string;
+    private foo(n: number): string;
     private foo(ns: any) {
         return ns.toString();
     }
-    private foo(s: string): string;
-    private foo(n: number): string;
 }

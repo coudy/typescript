@@ -16,26 +16,26 @@
 var V;
 function F() { };
 class C {
-    constructor () { };
+    constructor () { }
     public pV;
     private rV;
-    public pF() { };
-    private rF() { };
-    public pgF() { };
-    public get pgF();
-    public psF(param:any) { };
-    public set psF(param:any);
-    private rgF() { };
-    private get rgF();
-    private rsF(param:any) { };
-    private set rsF(param:any);
+    public pF() { }
+    private rF() { }
+    public pgF() { }
+    public get pgF()
+    public psF(param:any) { }
+    public set psF(param:any)
+    private rgF() { }
+    private get rgF()
+    private rsF(param:any) { }
+    private set rsF(param:any)
     static tV;
-    static tF() { };
-    static tsF(param:any) { };
-    static set tsF(param:any);
-    static tgF() { };
-    static get tgF();
-};
+    static tF() { }
+    static tsF(param:any) { }
+    static set tsF(param:any)
+    static tgF() { }
+    static get tgF()
+}
 interface I {
     //Call Signature
     ();
@@ -75,31 +75,31 @@ interface I {
     p6(pa1): void;
     p7(pa1, pa2): void;
     p7? (pa1, pa2): void;
-};
+}
 module M {
     var V;
     function F() { };
     class C {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
-        private rF() { };
-        public pgF() { };
-        public get pgF();
-        public psF(param:any) { };
-        public set psF(param:any);
-        private rgF() { };
-        private get rgF();
-        private rsF(param:any) { };
-        private set rsF(param:any);
+        public pF() { }
+        private rF() { }
+        public pgF() { }
+        public get pgF()
+        public psF(param:any) { }
+        public set psF(param:any)
+        private rgF() { }
+        private get rgF()
+        private rsF(param:any) { }
+        private set rsF(param:any)
         static tV;
-        static tF() { };
-        static tsF(param:any) { };
-        static set tsF(param:any);
-        static tgF() { };
-        static get tgF();
-    };
+        static tF() { }
+        static tsF(param:any) { }
+        static set tsF(param:any)
+        static tgF() { }
+        static get tgF()
+    }
     interface I {
         //Call Signature
         ();
@@ -139,7 +139,7 @@ module M {
         p6(pa1): void;
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
-    };
+    }
     module M {
         var V;
         function F() { };
@@ -159,26 +159,26 @@ module M {
     export var eV;
     export function eF() { };
     export class eC {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
-        private rF() { };
-        public pgF() { };
-        public get pgF();
-        public psF(param:any) { };
-        public set psF(param:any);
-        private rgF() { };
-        private get rgF();
-        private rsF(param:any) { };
-        private set rsF(param:any);
+        public pF() { }
+        private rF() { }
+        public pgF() { }
+        public get pgF()
+        public psF(param:any) { }
+        public set psF(param:any)
+        private rgF() { }
+        private get rgF()
+        private rsF(param:any) { }
+        private set rsF(param:any)
         static tV;
-        static tF() { };
-        static tsF(param:any) { };
-        static set tsF(param:any);
-        static tgF() { };
-        static get tgF();
-    };
+        static tF() { }
+        static tsF(param:any) { }
+        static set tsF(param:any)
+        static tgF() { }
+        static get tgF()
+    }
     export interface eI {
         //Call Signature
         ();
@@ -218,7 +218,7 @@ module M {
         p6(pa1): void;
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
-    };
+    }
     export module eM {
         var V;
         function F() { };
@@ -238,26 +238,26 @@ module M {
     export declare var eaV;
     export declare function eaF() { };
     export declare class eaC {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
-        private rF() { };
-        public pgF() { };
-        public get pgF();
-        public psF(param:any) { };
-        public set psF(param:any);
-        private rgF() { };
-        private get rgF();
-        private rsF(param:any) { };
-        private set rsF(param:any);
+        public pF() { }
+        private rF() { }
+        public pgF() { }
+        public get pgF()
+        public psF(param:any) { }
+        public set psF(param:any)
+        private rgF() { }
+        private get rgF()
+        private rsF(param:any) { }
+        private set rsF(param:any)
         static tV;
-        static tF() { };
-        static tsF(param:any) { };
-        static set tsF(param:any);
-        static tgF() { };
-        static get tgF();
-    };
+        static tF() { }
+        static tsF(param:any) { }
+        static set tsF(param:any)
+        static tgF() { }
+        static get tgF()
+    }
     export declare module eaM {
         var V;
         function F() { };
@@ -274,26 +274,26 @@ module M {
 export var eV;
 export function eF() { };
 export class eC {
-    constructor () { };
+    constructor () { }
     public pV;
     private rV;
-    public pF() { };
-    private rF() { };
-    public pgF() { };
-    public get pgF();
-    public psF(param:any) { };
-    public set psF(param:any);
-    private rgF() { };
-    private get rgF();
-    private rsF(param:any) { };
-    private set rsF(param:any);
+    public pF() { }
+    private rF() { }
+    public pgF() { }
+    public get pgF()
+    public psF(param:any) { }
+    public set psF(param:any)
+    private rgF() { }
+    private get rgF()
+    private rsF(param:any) { }
+    private set rsF(param:any)
     static tV;
-    static tF() { };
-    static tsF(param:any) { };
-    static set tsF(param:any);
-    static tgF() { };
-    static get tgF();
-};
+    static tF() { }
+    static tsF(param:any) { }
+    static set tsF(param:any)
+    static tgF() { }
+    static get tgF()
+}
 export interface eI {
     //Call Signature
     ();
@@ -333,31 +333,31 @@ export interface eI {
     p6(pa1): void;
     p7(pa1, pa2): void;
     p7? (pa1, pa2): void;
-};
+}
 export module eM {
     var V;
     function F() { };
     class C {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
-        private rF() { };
-        public pgF() { };
-        public get pgF();
-        public psF(param:any) { };
-        public set psF(param:any);
-        private rgF() { };
-        private get rgF();
-        private rsF(param:any) { };
-        private set rsF(param:any);
+        public pF() { }
+        private rF() { }
+        public pgF() { }
+        public get pgF()
+        public psF(param:any) { }
+        public set psF(param:any)
+        private rgF() { }
+        private get rgF()
+        private rsF(param:any) { }
+        private set rsF(param:any)
         static tV;
-        static tF() { };
-        static tsF(param:any) { };
-        static set tsF(param:any);
-        static tgF() { };
-        static get tgF();
-    };
+        static tF() { }
+        static tsF(param:any) { }
+        static set tsF(param:any)
+        static tgF() { }
+        static get tgF()
+    }
     interface I {
         //Call Signature
         ();
@@ -397,7 +397,7 @@ export module eM {
         p6(pa1): void;
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
-    };
+    }
     module M {
         var V;
         function F() { };
@@ -417,26 +417,26 @@ export module eM {
     export var eV;
     export function eF() { };
     export class eC {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
-        private rF() { };
-        public pgF() { };
-        public get pgF();
-        public psF(param:any) { };
-        public set psF(param:any);
-        private rgF() { };
-        private get rgF();
-        private rsF(param:any) { };
-        private set rsF(param:any);
+        public pF() { }
+        private rF() { }
+        public pgF() { }
+        public get pgF()
+        public psF(param:any) { }
+        public set psF(param:any)
+        private rgF() { }
+        private get rgF()
+        private rsF(param:any) { }
+        private set rsF(param:any)
         static tV;
-        static tF() { };
-        static tsF(param:any) { };
-        static set tsF(param:any);
-        static tgF() { };
-        static get tgF();
-    };
+        static tF() { }
+        static tsF(param:any) { }
+        static set tsF(param:any)
+        static tgF() { }
+        static get tgF()
+    }
     export interface eI {
         //Call Signature
         ();
@@ -476,7 +476,7 @@ export module eM {
         p6(pa1): void;
         p7(pa1, pa2): void;
         p7? (pa1, pa2): void;
-    };
+    }
     export module eM {
         var V;
         function F() { };
@@ -496,26 +496,26 @@ export module eM {
     export declare var eaV;
     export declare function eaF() { };
     export declare class eaC {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
-        private rF() { };
-        public pgF() { };
-        public get pgF();
-        public psF(param:any) { };
-        public set psF(param:any);
-        private rgF() { };
-        private get rgF();
-        private rsF(param:any) { };
-        private set rsF(param:any);
+        public pF() { }
+        private rF() { }
+        public pgF() { }
+        public get pgF()
+        public psF(param:any) { }
+        public set psF(param:any)
+        private rgF() { }
+        private get rgF()
+        private rsF(param:any) { }
+        private set rsF(param:any)
         static tV;
-        static tF() { };
-        static tsF(param:any) { };
-        static set tsF(param:any);
-        static tgF() { };
-        static get tgF();
-    };
+        static tF() { }
+        static tsF(param:any) { }
+        static set tsF(param:any)
+        static tgF() { }
+        static get tgF()
+    }
     export declare module eaM {
         var V;
         function F() { };
@@ -532,36 +532,36 @@ export module eM {
 export declare var eaV;
 export declare function eaF() { };
 export declare class eaC {
-    constructor () { };
+    constructor () { }
     public pV;
     private rV;
-    public pF() { };
-    private rF() { };
-    public pgF() { };
-    public get pgF();
-    public psF(param:any) { };
-    public set psF(param:any);
-    private rgF() { };
-    private get rgF();
-    private rsF(param:any) { };
-    private set rsF(param:any);
+    public pF() { }
+    private rF() { }
+    public pgF() { }
+    public get pgF()
+    public psF(param:any) { }
+    public set psF(param:any)
+    private rgF() { }
+    private get rgF()
+    private rsF(param:any) { }
+    private set rsF(param:any)
     static tV;
-    static tF() { };
-    static tsF(param:any) { };
-    static set tsF(param:any);
-    static tgF() { };
-    static get tgF();
-};
+    static tF() { }
+    static tsF(param:any) { }
+    static set tsF(param:any)
+    static tgF() { }
+    static get tgF()
+}
 export declare module eaM {
     var V;
     function F() { };
     class C {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
+        public pF() { }
         static tV;
-        static tF() { };
+        static tF() { }
     }
     interface I {
         //Call Signature
@@ -621,12 +621,12 @@ export declare module eaM {
     export var eV;
     export function eF() { };
     export class eC {
-        constructor () { };
+        constructor () { }
         public pV;
         private rV;
-        public pF() { };
-        static tV;
-        static tF() { };
+        public pF() { }
+        static tV
+        static tF() { }
     }
     export interface eI {
         //Call Signature

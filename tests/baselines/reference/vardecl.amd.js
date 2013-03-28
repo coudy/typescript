@@ -47,7 +47,7 @@ var m2;
     })();
     m2.C2 = C2;    
     var m;
-    var b2;
+    var b23;
     m2.mE;
     m2.b2E;
 })(m2 || (m2 = {}));
@@ -63,8 +63,8 @@ function foo(a2) {
 for(var i = 0, j = 0; i < 10; i++) {
     j++;
 }
-for(var i = 0; i < 30; i++) {
-    i++;
+for(var k = 0; k < 30; k++) {
+    k++;
 }
 var b = 10;
 ////[0.d.ts]

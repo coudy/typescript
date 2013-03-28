@@ -6,7 +6,7 @@ interface B {
     x:A[];
 }
 
-function f(p:A) => p;
+function f(p: A) { return p };
 var b:B;
 f(b);
 
@@ -22,7 +22,7 @@ interface I3 {
     y:I1;
 }
 
-function g(p:I1) => p;
+function g(p: I1) { return p };
 var i2:I2;
 g(i2);
 var i3:I3;

@@ -1,5 +1,10 @@
 module M {
-    var test1=x; // x not visible because it is a module body var
+    function f() {
+        var x;
+    }
+    var y;
+    export var z;
+    var test1=x;
     var test2=y; // y visible because same module
 }
 
