@@ -217,6 +217,75 @@ class BatchCompiler {
         return false;
     }
 
+    public updateCompile(): bool {
+        if (typeof localizedDiagnosticMessages === "undefined") {
+            localizedDiagnosticMessages = null;
+        }
+
+        var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
+        var compiler = new TypeScript.TypeScriptCompiler(this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
+
+        var anySyntacticErrors = false;
+
+        for (var iCode = 0; iCode <= this.resolvedEnvironment.code.length; iCode++) {
+            var code = this.resolvedEnvironment.code[iCode];
+
+            if (code.path.indexOf("lib.d.ts") == -1 && iCode > 0) {
+                break;
+            }
+
+            this.ioHost.stdout.WriteLine("Consuming " + this.resolvedEnvironment.code[iCode].path + "...");
+
+            // if file resolving is disabled, the file's content will not yet be loaded
+
+            if (!this.compilationSettings.resolve) {
+                code.content = this.ioHost.readFile(code.path);
+                // If declaration files are going to be emitted, 
+                // preprocess the file contents and add in referenced files as well
+                if (this.compilationSettings.generateDeclarationFiles) {
+                    TypeScript.CompilerDiagnostics.assert(code.referencedFiles === null, "With no resolve option, referenced files need to null");
+                    code.referencedFiles = TypeScript.getReferencedFiles(code.path, code);
+                }
+            }
+
+            if (code.content != null) {
+                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), code.referencedFiles);
+
+                var syntacticDiagnostics = compiler.getSyntacticDiagnostics(code.path);
+                compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
+
+                if (syntacticDiagnostics.length > 0) {
+                    anySyntacticErrors = true;
+                }
+            }
+        }
+
+        if (anySyntacticErrors) {
+            return true;
+        }
+        this.ioHost.stdout.WriteLine("Initial type check errors:");
+        compiler.pullTypeCheck(true, true);
+        // Note: we continue even if there were type check warnings.
+
+        // ok, now we got through the remaining files, 1-by-1, substituting the new code in for the old
+        if (iCode && iCode <= this.resolvedEnvironment.code.length - 1) {
+            var lastTypecheckedFileName = this.resolvedEnvironment.code[iCode - 1].path;
+            var snapshot: TypeScript.IScriptSnapshot;
+
+            for (; iCode < this.resolvedEnvironment.code.length; iCode++) {
+                this.ioHost.stdout.WriteLine("Update type check and errors for " + this.resolvedEnvironment.code[iCode].path + ":");
+                var text = this.resolvedEnvironment.code[iCode].getText(0, this.resolvedEnvironment.code[iCode].getLength());
+                snapshot = TypeScript.ScriptSnapshot.fromString(text);
+
+                compiler.updateSourceUnit(lastTypecheckedFileName, snapshot, null);
+                var semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
+                compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
+            }
+        }
+
+        return false;    
+    }
+
     // Execute the provided inputs
     private run() {
         for (var i in this.compilationEnvironment.code) {
@@ -390,6 +459,14 @@ class BatchCompiler {
             }
         });
 
+        opts.flag('update', {
+            usage: 'Typecheck each file as an update on the first',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.updateTC = true;
+            }
+        });
+
         opts.option('target', {
             usage: 'Specify ECMAScript target version: "ES3" (default), or "ES5"',
             type: 'VER',
@@ -486,7 +563,12 @@ class BatchCompiler {
         // Resolve file dependencies, if requested
         this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
 
-        this.compile();
+        if (!this.compilationSettings.updateTC) {
+            this.compile();
+        }
+        else {
+            this.updateCompile();
+        }
 
         if (!this.errorReporter.hasErrors) {
             if (this.compilationSettings.exec) {

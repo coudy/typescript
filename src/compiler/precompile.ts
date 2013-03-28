@@ -114,6 +114,8 @@ module TypeScript {
         public useCaseSensitiveFileResolution = false;
         public gatherDiagnostics = false;
 
+        public updateTC = false;
+
         public setStyleOptions(str: string) {
             this.styleSettings.parseOptions(str);
         }
