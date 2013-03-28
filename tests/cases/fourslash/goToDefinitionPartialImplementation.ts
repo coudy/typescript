@@ -2,7 +2,7 @@
 
 // @Filename: Part1.ts
 ////module A {
-/////*Part1Definition*/    export interface IA {
+////    /*Part1Definition*/export interface IA {
 ////        y: string;
 ////    }
 ////}

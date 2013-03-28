@@ -3,7 +3,7 @@
 ////class ConstructorOverload {
 ////    constructor();
 ////    constructor(foo: string);
-/////*constructorOverloadDefinition*/    constructor(foo: any)  { }
+////    /*constructorOverloadDefinition*/constructor(foo: any)  { }
 ////}
 ////
 ////var constructorOverload = new /*constructorOverloadReference*/ConstructorOverload();

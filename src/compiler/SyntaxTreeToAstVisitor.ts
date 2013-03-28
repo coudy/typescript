@@ -69,9 +69,9 @@ module TypeScript {
         private isParsingAmbientModule = false;
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
-                    private fileName: string,
-                    private lineMap: LineMap,
-                    private compilationSettings: CompilationSettings) {
+	private fileName: string,
+	private lineMap: LineMap,
+	private compilationSettings: CompilationSettings) {
             this.isParsingDeclareFile = isDTSFile(fileName);
         }
 
@@ -105,7 +105,12 @@ module TypeScript {
             this.moveTo2(element2, element3);
         }
 
-        private setSpan(span: IASTSpan, start: number, end: number): void {
+        private setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
+            span.minChar = fullStart + element.leadingTriviaWidth();
+            span.limChar = fullStart + element.fullWidth();
+        }
+
+        private setSpanExplicit(span: IASTSpan, start: number, end: number): void {
             span.minChar = start;
             span.limChar = end;
         }
@@ -132,7 +137,8 @@ module TypeScript {
                 result.flags |= ASTFlags.OptionalName;
             }
 
-            this.setSpan(result, this.position, this.position + token.width());
+            var start = this.position + token.leadingTriviaWidth();
+            this.setSpanExplicit(result, start, start + token.width());
             return result;
         }
 
@@ -144,7 +150,7 @@ module TypeScript {
                 result.append(list.childAt(i).accept(this));
             }
 
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, list);
             return result;
         }
 
@@ -160,14 +166,14 @@ module TypeScript {
                 else {
                     var separatorToken = <ISyntaxToken>list.childAt(i);
                     this.previousTokenTrailingComments = this.convertTokenTrailingComments(
-                        separatorToken, this.position + separatorToken.leadingTriviaWidth() + separatorToken.width());
+	    separatorToken, this.position + separatorToken.leadingTriviaWidth() + separatorToken.width());
                     this.movePast(separatorToken);
                 }
             }
 
             this.previousTokenTrailingComments = null;
 
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, list);
             return result;
         }
 
@@ -229,7 +235,7 @@ module TypeScript {
             return result;
         }
 
-        private mergeComments(comments1: Comment[], comments2: Comment[]): Comment[]{
+        private mergeComments(comments1: Comment[], comments2: Comment[]): Comment[] {
             if (comments1 === null) {
                 return comments2;
             }
@@ -288,7 +294,7 @@ module TypeScript {
 
             var result: AST = null;
             var start = this.position;
-            
+
             if (token.kind() === SyntaxKind.ThisKeyword) {
                 result = new AST(NodeType.This);
             }
@@ -323,7 +329,7 @@ module TypeScript {
             }
 
             start = this.position + token.leadingTriviaWidth();
-            this.setSpan(result, start, start + token.width());
+            this.setSpanExplicit(result, start, start + token.width());
             this.movePast(token);
             return result;
         }
@@ -410,7 +416,7 @@ module TypeScript {
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName);
                 topLevelMod = new ModuleDeclaration(id, bod, this.topVarList(), null);
-                this.setSpan(topLevelMod, start, this.position);
+                this.setSpanExplicit(topLevelMod, start, this.position);
 
                 topLevelMod.modFlags |= ModuleFlags.IsDynamic;
                 topLevelMod.modFlags |= ModuleFlags.IsWholeFile;
@@ -427,12 +433,12 @@ module TypeScript {
                 // topLevelMod.amdDependencies = this.amdDependencies;
 
                 bod = new ASTList();
-                this.setSpan(bod, start, this.position);
+                this.setSpanExplicit(bod, start, this.position);
                 bod.append(topLevelMod);
             }
 
             var result = new Script(this.topVarList(), this.topScopeList());
-            this.setSpan(result, start, this.position);
+            this.setSpanExplicit(result, start, this.position);
 
             this.popDeclLists();
 
@@ -496,7 +502,7 @@ module TypeScript {
             this.requiresExtendsBlock = this.requiresExtendsBlock || extendsList.members.length > 0;
 
             var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.postComments = postComments;
@@ -587,7 +593,7 @@ module TypeScript {
             this.movePast(node.body.closeBraceToken);
 
             var result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.postComments = postComments;
@@ -692,7 +698,7 @@ module TypeScript {
                 closeBraceSpan.limChar = this.position;
 
                 moduleDecl = new ModuleDeclaration(innerName, members, this.topVarList(), closeBraceSpan);
-                this.setSpan(moduleDecl, start, this.position);
+                this.setSpan(moduleDecl, start, node);
 
                 moduleDecl.preComments = preComments;
                 moduleDecl.postComments = postComments;
@@ -796,7 +802,7 @@ module TypeScript {
 
             var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(),
                 this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, this.position);
+            this.setSpan(funcDecl, start, node);
 
             this.popDeclLists();
 
@@ -883,16 +889,16 @@ module TypeScript {
                             lastValue = <NumberLiteral>memberValue;
                         }
                         var map: BinaryExpression =
-                            new BinaryExpression(NodeType.Asg,
-                                                 new BinaryExpression(NodeType.Index,
-                                                                      new Identifier("_map"),
-                                                                      memberValue),
-                                                 new StringLiteral('"' + memberName.actualText + '"'));
+	        new BinaryExpression(NodeType.Asg,
+		         new BinaryExpression(NodeType.Index,
+			          new Identifier("_map"),
+			          memberValue),
+		         new StringLiteral('"' + memberName.actualText + '"'));
                         map.flags |= ASTFlags.EnumInitializer;
                         members.append(map);
-                        this.setSpan(map, memberStart, this.position);
-                        this.setSpan(map.operand1, memberStart, this.position);
-                        this.setSpan(map.operand2, memberStart, this.position);
+                        this.setSpanExplicit(map, memberStart, this.position);
+                        this.setSpanExplicit(map.operand1, memberStart, this.position);
+                        this.setSpanExplicit(map.operand2, memberStart, this.position);
                     }
 
                     var member = new VarDecl(memberName, this.nestingLevel);
@@ -900,7 +906,7 @@ module TypeScript {
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                     member.typeExpr = new TypeReference(this.createRef(name.actualText, name.hasEscapeSequence, -1), 0);
                     member.varFlags |= (VarFlags.Readonly | VarFlags.Property);
-                    this.setSpan(member, memberStart, this.position);
+                    this.setSpanExplicit(member, memberStart, this.position);
 
                     if (memberValue.nodeType === NodeType.NumberLit) {
                         member.varFlags |= VarFlags.Constant;
@@ -937,8 +943,8 @@ module TypeScript {
 
             var endingToken = new ASTSpan();
             var modDecl = new ModuleDeclaration(name, members, this.topVarList(), endingToken);
-            this.setSpan(modDecl, start, this.position);
-            this.setSpan(mapDecl, start, this.position);
+            this.setSpan(modDecl, start, node);
+            this.setSpan(mapDecl, start, node);
 
             modDecl.preComments = preComments;
             modDecl.postComments = postComments;
@@ -975,7 +981,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var importDecl = new ImportDeclaration(name, alias);
-            this.setSpan(importDecl, start, this.position);
+            this.setSpan(importDecl, start, node);
 
             importDecl.preComments = preComments;
             importDecl.postComments = postComments;
@@ -994,7 +1000,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new ExportAssignment(name);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1040,7 +1046,7 @@ module TypeScript {
             }
             else {
                 var result = new Block(varList, /*isStatementBlock:*/ false);
-                this.setSpan(result, start, this.position);
+                this.setSpan(result, start, node);
 
                 return result;
             }
@@ -1083,7 +1089,7 @@ module TypeScript {
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
             var result = new VarDecl(name, 0);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             this.topVarList().append(result);
 
@@ -1133,7 +1139,7 @@ module TypeScript {
             var operand = node.operand.accept(this);
 
             var result = new UnaryExpression(this.getUnaryExpressionNodeType(node.kind()), operand);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1151,7 +1157,7 @@ module TypeScript {
             }
 
             var result = new UnaryExpression(NodeType.ArrayLit, expressions);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1162,7 +1168,7 @@ module TypeScript {
             var start = this.position;
 
             var result = new AST(NodeType.EmptyExpr);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1213,7 +1219,7 @@ module TypeScript {
             var parameters = new ASTList();
 
             var parameter = new ArgDecl(identifier);
-            this.setSpan(parameter, identifier.minChar, identifier.limChar);
+            this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
 
             parameters.append(parameter);
 
@@ -1222,8 +1228,9 @@ module TypeScript {
             var statements = this.getArrowFunctionStatements(node.body);
 
             var result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
-                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+
+            this.setSpan(result, start, node);
 
             this.popDeclLists();
             var scopeList = this.topScopeList();
@@ -1253,8 +1260,8 @@ module TypeScript {
             var statements = this.getArrowFunctionStatements(node.body);
 
             var result = new FuncDecl(null, statements, /*isConstructor:*/ false, typeParameters, parameters, this.topVarList(),
-                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+		this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, start, node);
 
             this.popDeclLists();
             var scopeList = this.topScopeList();
@@ -1275,7 +1282,7 @@ module TypeScript {
             if (type.isToken()) {
                 var start = this.position;
                 var result = new TypeReference(type.accept(this), 0);
-                this.setSpan(result, start, this.position);
+                this.setSpan(result, start, type);
 
                 return result;
             }
@@ -1298,10 +1305,10 @@ module TypeScript {
             }
 
             var term = new BinaryExpression(NodeType.Dot, left, right);
-            this.setSpan(term, start, this.position);
+            this.setSpan(term, start, node);
 
             var result = new TypeReference(term, 0);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1336,7 +1343,7 @@ module TypeScript {
             var returnType = node.type ? this.visitType(node.type) : null;
 
             var result = new FuncDecl(null, null, false, typeParameters, parameters, null, null, null, NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.returnTypeAnnotation = returnType;
             // funcDecl.variableArgList = variableArgList;
@@ -1349,7 +1356,7 @@ module TypeScript {
             result.classDecl = null;
 
             var typeRef = new TypeReference(result, 0);
-            this.setSpan(typeRef, start, this.position);
+            this.setSpan(typeRef, start, node);
 
             return typeRef;
         }
@@ -1364,7 +1371,7 @@ module TypeScript {
             var returnType = node.type ? this.visitType(node.type) : null;
 
             var result = new FuncDecl(null, null, false, typeParameters, parameters, null, null, null, NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.returnTypeAnnotation = returnType;
             // funcDecl.variableArgList = variableArgList;
@@ -1373,7 +1380,7 @@ module TypeScript {
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
             var typeRef = new TypeReference(result, 0);
-            this.setSpan(typeRef, start, this.position);
+            this.setSpan(typeRef, start, node);
 
             return typeRef;
         }
@@ -1403,10 +1410,10 @@ module TypeScript {
 
             result.flags |= ASTFlags.TypeReference;
 
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             var typeRef = new TypeReference(result, 0);
-            this.setSpan(typeRef, start, this.position);
+            this.setSpan(typeRef, start, node);
 
             return typeRef;
         }
@@ -1430,7 +1437,7 @@ module TypeScript {
 
             result.flags |= ASTFlags.TypeReference;
 
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1451,8 +1458,8 @@ module TypeScript {
             genericType.flags |= ASTFlags.TypeReference;
 
             var result = new TypeReference(genericType, 0);
-            this.setSpan(result, start, this.position);
-            this.setSpan(genericType, start, this.position);
+            this.setSpan(result, start, node);
+            this.setSpan(genericType, start, node);
 
             return result;
         }
@@ -1471,7 +1478,7 @@ module TypeScript {
             var statements = this.convertBlock(node);
 
             var result = new Block(statements, /*isStatementBlock:*/ true);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1492,7 +1499,7 @@ module TypeScript {
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
             var result = new ArgDecl(identifier);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.postComments = postComments;
@@ -1528,7 +1535,7 @@ module TypeScript {
             this.movePast(node.name);
 
             var result = new BinaryExpression(NodeType.Dot, expression, name);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             expression.flags |= ASTFlags.DotLHS;
 
@@ -1544,7 +1551,7 @@ module TypeScript {
 
             var result = new UnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.IncPost : NodeType.DecPost,
                 operand);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1559,7 +1566,7 @@ module TypeScript {
             this.movePast(node.closeBracketToken);
 
             var result = new BinaryExpression(NodeType.Index, expression, argumentExpression);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1586,7 +1593,7 @@ module TypeScript {
             var argumentList = this.convertArgumentListArguments(node.argumentList);
 
             var result = new CallExpression(NodeType.Call, expression, typeArguments, argumentList);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1650,7 +1657,7 @@ module TypeScript {
             var right = node.right.accept(this);
 
             var result = new BinaryExpression(nodeType, left, right);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             if (right.nodeType === NodeType.FuncDecl) {
                 var id = left.nodeType === NodeType.Dot ? (<BinaryExpression>left).operand2 : left;
@@ -1674,7 +1681,7 @@ module TypeScript {
             var whenFalse = node.whenFalse.accept(this)
 
             var result = new ConditionalExpression(condition, whenTrue, whenFalse);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1692,7 +1699,7 @@ module TypeScript {
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
             var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.returnTypeAnnotation = returnType;
@@ -1723,7 +1730,7 @@ module TypeScript {
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
             var funcDecl = new FuncDecl(name, null, false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, this.position);
+            this.setSpan(funcDecl, start, node);
 
             funcDecl.preComments = preComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
@@ -1750,13 +1757,13 @@ module TypeScript {
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var name = new Identifier("__item");
-            this.setSpan(name, start, start);   // 0 length name.
+            this.setSpanExplicit(name, start, start);   // 0 length name.
 
             var parameters = new ASTList();
             parameters.append(parameter);
 
             var result = new FuncDecl(name, null, /*isConstructor:*/ false, null, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.variableArgList = false;
@@ -1783,7 +1790,7 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var result = new VarDecl(name, 0);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.typeExpr = typeExpr;
@@ -1820,7 +1827,7 @@ module TypeScript {
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
@@ -1854,7 +1861,7 @@ module TypeScript {
             var constraint = node.constraint ? node.constraint.accept(this) : null;
 
             var result = new TypeParameter(identifier, constraint);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1877,7 +1884,7 @@ module TypeScript {
             var elseBod = node.elseClause ? node.elseClause.accept(this) : null;
 
             var result = new IfStatement(condition);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.thenBod = thenBod;
             result.elseBod = elseBod;
@@ -1904,7 +1911,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = expression;
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
             result.postComments = postComments;
@@ -1934,8 +1941,8 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new FuncDecl(null, statements, /*isConstructor:*/ true, null, parameters, this.topVarList(),
-                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+		this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, start, node);
 
             this.popDeclLists();
 
@@ -2009,8 +2016,8 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new FuncDecl(name, statements, /*isConstructor:*/ false, typeParameters, parameters, this.topVarList(),
-                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+		this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, start, node);
 
             this.popDeclLists();
 
@@ -2063,8 +2070,8 @@ module TypeScript {
                 statements.append(new EndCode());
             }
             var result = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
-                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(result, start, this.position);
+		this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, start, node);
 
             this.popDeclLists();
 
@@ -2130,7 +2137,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var varDecl = new VarDecl(name, 0);
-            this.setSpan(varDecl, name.minChar, name.limChar);
+            this.setSpanExplicit(varDecl, name.minChar, name.limChar);
 
             varDecl.preComments = preComments;
             varDecl.postComments = postComments;
@@ -2169,7 +2176,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new UnaryExpression(NodeType.Throw, expression);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2183,7 +2190,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new ReturnStatement();
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.returnExpression = expression;
 
@@ -2200,7 +2207,7 @@ module TypeScript {
             var argumentList = this.convertArgumentListArguments(node.argumentList);
 
             var result = new CallExpression(NodeType.New, expression, typeArgumentList, argumentList);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             if (expression.nodeType === NodeType.TypeRef) {
                 var typeRef = <TypeReference>expression;
@@ -2228,7 +2235,6 @@ module TypeScript {
             this.movePast(node.openBraceToken);
 
             var result = new SwitchStatement(expression);
-            this.setSpan(result, start, this.position);
 
             result.statement.minChar = start;
             result.statement.limChar = closeParenPosition;
@@ -2248,6 +2254,8 @@ module TypeScript {
 
             this.movePast(node.closeBraceToken);
 
+            this.setSpan(result, start, node);
+
             return result;
         }
 
@@ -2261,7 +2269,7 @@ module TypeScript {
             var statements = this.visitSyntaxList(node.statements);
 
             var result = new CaseStatement();
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.expr = expression;
             result.body = statements;
@@ -2278,7 +2286,7 @@ module TypeScript {
             var statements = this.visitSyntaxList(node.statements);
 
             var result = new CaseStatement();
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.body = statements;
 
@@ -2294,7 +2302,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new Jump(NodeType.Break);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             if (node.identifier !== null) {
                 result.target = node.identifier.valueText();
@@ -2312,7 +2320,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new Jump(NodeType.Continue);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             if (node.identifier !== null) {
                 result.target = node.identifier.valueText();
@@ -2330,8 +2338,8 @@ module TypeScript {
             var init = node.variableDeclaration
                 ? node.variableDeclaration.accept(this)
                 : node.initializer
-                    ? node.initializer.accept(this)
-                    : null;
+	? node.initializer.accept(this)
+	: null;
             this.movePast(node.firstSemicolonToken);
             var cond = node.condition ? node.condition.accept(this) : null;
             this.movePast(node.secondSemicolonToken);
@@ -2340,7 +2348,7 @@ module TypeScript {
             var body = node.statement.accept(this);
 
             var result = new ForStatement(init);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.cond = cond;
             result.incr = incr;
@@ -2362,7 +2370,7 @@ module TypeScript {
             var body = node.statement.accept(this);
 
             var result = new ForInStatement(init, expression);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.body = body;
 
@@ -2379,7 +2387,7 @@ module TypeScript {
             var statement = node.statement.accept(this);
 
             var result = new WhileStatement(condition);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.body = statement;
 
@@ -2396,7 +2404,7 @@ module TypeScript {
             var statement = node.statement.accept(this);
 
             var result = new WithStatement(condition);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.body = statement;
 
@@ -2413,7 +2421,7 @@ module TypeScript {
             var expression = node.expression.accept(this);
 
             var result = new UnaryExpression(NodeType.TypeAssertion, expression);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.castTerm = castTerm;
 
@@ -2429,7 +2437,7 @@ module TypeScript {
             this.movePast(node.closeBraceToken);
 
             var result = new UnaryExpression(NodeType.ObjectLit, propertyAssignments);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2450,7 +2458,7 @@ module TypeScript {
             var right = node.expression.accept(this);
 
             var result = new BinaryExpression(NodeType.Member, left, right);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.preComments = preComments;
 
@@ -2481,8 +2489,8 @@ module TypeScript {
             statements.append(new EndCode());
 
             var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, new ASTList(), this.topVarList(),
-                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, this.position);
+		this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(funcDecl, start, node);
 
             this.popDeclLists();
 
@@ -2495,7 +2503,7 @@ module TypeScript {
             funcDecl.returnTypeAnnotation = returnType;
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2520,8 +2528,8 @@ module TypeScript {
             statements.append(new EndCode());
 
             var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
-                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, this.position);
+		this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(funcDecl, start, node);
 
             this.popDeclLists();
 
@@ -2533,7 +2541,7 @@ module TypeScript {
             funcDecl.hint = "set" + node.propertyName.valueText();
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2569,7 +2577,7 @@ module TypeScript {
 
             var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(),
                 this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, this.position);
+            this.setSpan(funcDecl, start, node);
 
             this.popDeclLists();
 
@@ -2591,7 +2599,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new AST(NodeType.Empty);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2604,14 +2612,14 @@ module TypeScript {
             var block = node.block.accept(this);
 
             var tryPart: AST = new Try(block);
-            this.setSpan(tryPart, start, this.position);
+            this.setSpanExplicit(tryPart, start, this.position);
 
             var tryCatch: TryCatch = null;
             if (node.catchClause !== null) {
                 var catchBit = node.catchClause.accept(this);
 
                 tryCatch = new TryCatch(<Try>tryPart, catchBit);
-                this.setSpan(tryCatch, start, this.position);
+                this.setSpanExplicit(tryCatch, tryPart.minChar, this.position - node.catchClause.trailingTriviaWidth());
             }
 
             if (node.finallyClause !== null) {
@@ -2622,7 +2630,7 @@ module TypeScript {
                 var finallyBit = node.finallyClause.accept(this);
 
                 var result = new TryFinally(tryPart, finallyBit);
-                this.setSpan(result, start, this.position);
+                this.setSpanExplicit(result, tryPart.minChar, this.position - node.finallyClause.trailingTriviaWidth());
 
                 return result;
             }
@@ -2644,12 +2652,12 @@ module TypeScript {
             var block = node.block.accept(this);
 
             var varDecl = new VarDecl(identifier, 0);
-            this.setSpan(varDecl, identifier.minChar, identifier.limChar);
+            this.setSpanExplicit(varDecl, identifier.minChar, identifier.limChar);
 
             varDecl.typeExpr = typeExpr;
 
             var result = new Catch(varDecl, block);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2662,7 +2670,7 @@ module TypeScript {
             var block = node.block.accept(this);
 
             var result = new Finally(block);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2680,7 +2688,7 @@ module TypeScript {
             labelList.append(new Label(identifier));
 
             var result = new LabeledStatement(labelList, statement);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2699,7 +2707,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new DoWhileStatement();
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             result.whileAST = whileAst;
             result.cond = condition;
@@ -2716,7 +2724,7 @@ module TypeScript {
             var expression = node.expression.accept(this);
 
             var result = new UnaryExpression(NodeType.Typeof, expression);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2729,7 +2737,7 @@ module TypeScript {
             var expression = node.expression.accept(this);
 
             var result = new UnaryExpression(NodeType.Delete, expression);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2742,7 +2750,7 @@ module TypeScript {
             var expression = node.expression.accept(this);
 
             var result = new UnaryExpression(NodeType.Void, expression);
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -2755,7 +2763,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var result = new DebuggerStatement();
-            this.setSpan(result, start, this.position);
+            this.setSpan(result, start, node);
 
             return result;
         }

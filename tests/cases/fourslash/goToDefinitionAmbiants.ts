@@ -3,9 +3,9 @@
 ////declare var /*ambientVariableDefinition*/ambientVar;
 /////*ambientFunctionDefinition*/declare function ambientFunction();
 ////declare class ambientClass {
-/////*constructorDefinition*/    constructor();
-/////*staticMethodDefinition*/    static method();
-/////*instanceMethodDefinition*/    public method();
+////    /*constructorDefinition*/constructor();
+////    /*staticMethodDefinition*/static method();
+////    /*instanceMethodDefinition*/public method();
 ////}
 /////
 /////*ambientVariableReference*/ambientVar = 1;
