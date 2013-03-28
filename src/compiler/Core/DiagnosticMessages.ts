@@ -275,7 +275,7 @@ module TypeScript {
 
         Function_overload_name_must_be__0_: {
             category: DiagnosticCategory.Error,
-            message: "Functoin overload name must be '{0}'.",
+            message: "Function overload name must be '{0}'.",
             code: 1043
         },
 
