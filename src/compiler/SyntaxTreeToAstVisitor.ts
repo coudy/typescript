@@ -468,7 +468,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
             this.moveTo2(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
 
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
@@ -553,7 +553,7 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
             this.moveTo2(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
 
@@ -768,7 +768,7 @@ module TypeScript {
             var postComments = this.convertNodeTrailingComments(node, start);
 
             this.moveTo2(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
 
             this.movePast(node.identifier);
 

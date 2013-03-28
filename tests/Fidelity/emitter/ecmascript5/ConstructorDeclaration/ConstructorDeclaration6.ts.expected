@@ -64,6 +64,8 @@
                         "width": 3,
                         "fullWidth": 4,
                         "text": "var",
+                        "value": "var",
+                        "valueText": "var",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -101,6 +103,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "=",
+                                    "value": "=",
+                                    "valueText": "=",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -120,7 +124,9 @@
                                         "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
-                                            "text": "("
+                                            "text": "(",
+                                            "value": "(",
+                                            "valueText": "("
                                         },
                                         "expression": {
                                             "kind": "FunctionExpression",
@@ -129,7 +135,9 @@
                                             "functionKeyword": {
                                                 "kind": "FunctionKeyword",
                                                 "width": 8,
-                                                "text": "function"
+                                                "text": "function",
+                                                "value": "function",
+                                                "valueText": "function"
                                             },
                                             "callSignature": {
                                                 "kind": "CallSignature",
@@ -142,7 +150,9 @@
                                                     "openParenToken": {
                                                         "kind": "OpenParenToken",
                                                         "width": 1,
-                                                        "text": "("
+                                                        "text": "(",
+                                                        "value": "(",
+                                                        "valueText": "("
                                                     },
                                                     "parameters": [],
                                                     "closeParenToken": {
@@ -150,6 +160,8 @@
                                                         "width": 1,
                                                         "fullWidth": 2,
                                                         "text": ")",
+                                                        "value": ")",
+                                                        "valueText": ")",
                                                         "hasTrailingTrivia": true,
                                                         "trailingTrivia": [
                                                             {
@@ -169,6 +181,8 @@
                                                     "width": 1,
                                                     "fullWidth": 3,
                                                     "text": "{",
+                                                    "value": "{",
+                                                    "valueText": "{",
                                                     "hasTrailingTrivia": true,
                                                     "hasTrailingNewLine": true,
                                                     "trailingTrivia": [
@@ -189,6 +203,8 @@
                                                             "width": 8,
                                                             "fullWidth": 13,
                                                             "text": "function",
+                                                            "value": "function",
+                                                            "valueText": "function",
                                                             "hasLeadingTrivia": true,
                                                             "hasTrailingTrivia": true,
                                                             "leadingTrivia": [
@@ -222,7 +238,9 @@
                                                                 "openParenToken": {
                                                                     "kind": "OpenParenToken",
                                                                     "width": 1,
-                                                                    "text": "("
+                                                                    "text": "(",
+                                                                    "value": "(",
+                                                                    "valueText": "("
                                                                 },
                                                                 "parameters": [],
                                                                 "closeParenToken": {
@@ -230,6 +248,8 @@
                                                                     "width": 1,
                                                                     "fullWidth": 2,
                                                                     "text": ")",
+                                                                    "value": ")",
+                                                                    "valueText": ")",
                                                                     "hasTrailingTrivia": true,
                                                                     "trailingTrivia": [
                                                                         {
@@ -249,6 +269,8 @@
                                                                 "width": 1,
                                                                 "fullWidth": 3,
                                                                 "text": "{",
+                                                                "value": "{",
+                                                                "valueText": "{",
                                                                 "hasTrailingTrivia": true,
                                                                 "hasTrailingNewLine": true,
                                                                 "trailingTrivia": [
@@ -276,6 +298,8 @@
                                                                                 "width": 4,
                                                                                 "fullWidth": 12,
                                                                                 "text": "this",
+                                                                                "value": "this",
+                                                                                "valueText": "this",
                                                                                 "hasLeadingTrivia": true,
                                                                                 "leadingTrivia": [
                                                                                     {
@@ -287,7 +311,9 @@
                                                                             "dotToken": {
                                                                                 "kind": "DotToken",
                                                                                 "width": 1,
-                                                                                "text": "."
+                                                                                "text": ".",
+                                                                                "value": ".",
+                                                                                "valueText": "."
                                                                             },
                                                                             "name": {
                                                                                 "kind": "IdentifierName",
@@ -310,6 +336,8 @@
                                                                             "width": 1,
                                                                             "fullWidth": 2,
                                                                             "text": "=",
+                                                                            "value": "=",
+                                                                            "valueText": "=",
                                                                             "hasTrailingTrivia": true,
                                                                             "trailingTrivia": [
                                                                                 {
@@ -331,6 +359,8 @@
                                                                         "width": 1,
                                                                         "fullWidth": 3,
                                                                         "text": ";",
+                                                                        "value": ";",
+                                                                        "valueText": ";",
                                                                         "hasTrailingTrivia": true,
                                                                         "hasTrailingNewLine": true,
                                                                         "trailingTrivia": [
@@ -347,6 +377,8 @@
                                                                 "width": 1,
                                                                 "fullWidth": 7,
                                                                 "text": "}",
+                                                                "value": "}",
+                                                                "valueText": "}",
                                                                 "hasLeadingTrivia": true,
                                                                 "hasTrailingTrivia": true,
                                                                 "hasTrailingNewLine": true,
@@ -374,6 +406,8 @@
                                                             "width": 6,
                                                             "fullWidth": 11,
                                                             "text": "return",
+                                                            "value": "return",
+                                                            "valueText": "return",
                                                             "hasLeadingTrivia": true,
                                                             "hasTrailingTrivia": true,
                                                             "leadingTrivia": [
@@ -401,6 +435,8 @@
                                                             "width": 1,
                                                             "fullWidth": 3,
                                                             "text": ";",
+                                                            "value": ";",
+                                                            "valueText": ";",
                                                             "hasTrailingTrivia": true,
                                                             "hasTrailingNewLine": true,
                                                             "trailingTrivia": [
@@ -415,14 +451,18 @@
                                                 "closeBraceToken": {
                                                     "kind": "CloseBraceToken",
                                                     "width": 1,
-                                                    "text": "}"
+                                                    "text": "}",
+                                                    "value": "}",
+                                                    "valueText": "}"
                                                 }
                                             }
                                         },
                                         "closeParenToken": {
                                             "kind": "CloseParenToken",
                                             "width": 1,
-                                            "text": ")"
+                                            "text": ")",
+                                            "value": ")",
+                                            "valueText": ")"
                                         }
                                     },
                                     "argumentList": {
@@ -432,13 +472,17 @@
                                         "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
-                                            "text": "("
+                                            "text": "(",
+                                            "value": "(",
+                                            "valueText": "("
                                         },
                                         "arguments": [],
                                         "closeParenToken": {
                                             "kind": "CloseParenToken",
                                             "width": 1,
-                                            "text": ")"
+                                            "text": ")",
+                                            "value": ")",
+                                            "valueText": ")"
                                         }
                                     }
                                 }
@@ -451,6 +495,8 @@
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [
@@ -475,6 +521,8 @@
                         "width": 3,
                         "fullWidth": 6,
                         "text": "var",
+                        "value": "var",
+                        "valueText": "var",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
                         "hasTrailingTrivia": true,
@@ -511,6 +559,8 @@
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [
@@ -536,7 +586,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "expression": {
                             "kind": "FunctionExpression",
@@ -545,7 +597,9 @@
                             "functionKeyword": {
                                 "kind": "FunctionKeyword",
                                 "width": 8,
-                                "text": "function"
+                                "text": "function",
+                                "value": "function",
+                                "valueText": "function"
                             },
                             "callSignature": {
                                 "kind": "CallSignature",
@@ -558,7 +612,9 @@
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
-                                        "text": "("
+                                        "text": "(",
+                                        "value": "(",
+                                        "valueText": "("
                                     },
                                     "parameters": [
                                         {
@@ -579,6 +635,8 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": ")",
+                                        "value": ")",
+                                        "valueText": ")",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -598,6 +656,8 @@
                                     "width": 1,
                                     "fullWidth": 3,
                                     "text": "{",
+                                    "value": "{",
+                                    "valueText": "{",
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLine": true,
                                     "trailingTrivia": [
@@ -622,6 +682,8 @@
                                                 "width": 3,
                                                 "fullWidth": 8,
                                                 "text": "var",
+                                                "value": "var",
+                                                "valueText": "var",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
                                                 "leadingTrivia": [
@@ -666,6 +728,8 @@
                                                             "width": 1,
                                                             "fullWidth": 2,
                                                             "text": "=",
+                                                            "value": "=",
+                                                            "valueText": "=",
                                                             "hasTrailingTrivia": true,
                                                             "trailingTrivia": [
                                                                 {
@@ -685,7 +749,9 @@
                                                                 "openParenToken": {
                                                                     "kind": "OpenParenToken",
                                                                     "width": 1,
-                                                                    "text": "("
+                                                                    "text": "(",
+                                                                    "value": "(",
+                                                                    "valueText": "("
                                                                 },
                                                                 "expression": {
                                                                     "kind": "FunctionExpression",
@@ -694,7 +760,9 @@
                                                                     "functionKeyword": {
                                                                         "kind": "FunctionKeyword",
                                                                         "width": 8,
-                                                                        "text": "function"
+                                                                        "text": "function",
+                                                                        "value": "function",
+                                                                        "valueText": "function"
                                                                     },
                                                                     "callSignature": {
                                                                         "kind": "CallSignature",
@@ -707,7 +775,9 @@
                                                                             "openParenToken": {
                                                                                 "kind": "OpenParenToken",
                                                                                 "width": 1,
-                                                                                "text": "("
+                                                                                "text": "(",
+                                                                                "value": "(",
+                                                                                "valueText": "("
                                                                             },
                                                                             "parameters": [],
                                                                             "closeParenToken": {
@@ -715,6 +785,8 @@
                                                                                 "width": 1,
                                                                                 "fullWidth": 2,
                                                                                 "text": ")",
+                                                                                "value": ")",
+                                                                                "valueText": ")",
                                                                                 "hasTrailingTrivia": true,
                                                                                 "trailingTrivia": [
                                                                                     {
@@ -734,6 +806,8 @@
                                                                             "width": 1,
                                                                             "fullWidth": 3,
                                                                             "text": "{",
+                                                                            "value": "{",
+                                                                            "valueText": "{",
                                                                             "hasTrailingTrivia": true,
                                                                             "hasTrailingNewLine": true,
                                                                             "trailingTrivia": [
@@ -754,6 +828,8 @@
                                                                                     "width": 8,
                                                                                     "fullWidth": 17,
                                                                                     "text": "function",
+                                                                                    "value": "function",
+                                                                                    "valueText": "function",
                                                                                     "hasLeadingTrivia": true,
                                                                                     "hasTrailingTrivia": true,
                                                                                     "leadingTrivia": [
@@ -787,7 +863,9 @@
                                                                                         "openParenToken": {
                                                                                             "kind": "OpenParenToken",
                                                                                             "width": 1,
-                                                                                            "text": "("
+                                                                                            "text": "(",
+                                                                                            "value": "(",
+                                                                                            "valueText": "("
                                                                                         },
                                                                                         "parameters": [],
                                                                                         "closeParenToken": {
@@ -795,6 +873,8 @@
                                                                                             "width": 1,
                                                                                             "fullWidth": 2,
                                                                                             "text": ")",
+                                                                                            "value": ")",
+                                                                                            "valueText": ")",
                                                                                             "hasTrailingTrivia": true,
                                                                                             "trailingTrivia": [
                                                                                                 {
@@ -814,6 +894,8 @@
                                                                                         "width": 1,
                                                                                         "fullWidth": 3,
                                                                                         "text": "{",
+                                                                                        "value": "{",
+                                                                                        "valueText": "{",
                                                                                         "hasTrailingTrivia": true,
                                                                                         "hasTrailingNewLine": true,
                                                                                         "trailingTrivia": [
@@ -841,6 +923,8 @@
                                                                                                         "width": 4,
                                                                                                         "fullWidth": 16,
                                                                                                         "text": "this",
+                                                                                                        "value": "this",
+                                                                                                        "valueText": "this",
                                                                                                         "hasLeadingTrivia": true,
                                                                                                         "leadingTrivia": [
                                                                                                             {
@@ -852,7 +936,9 @@
                                                                                                     "dotToken": {
                                                                                                         "kind": "DotToken",
                                                                                                         "width": 1,
-                                                                                                        "text": "."
+                                                                                                        "text": ".",
+                                                                                                        "value": ".",
+                                                                                                        "valueText": "."
                                                                                                     },
                                                                                                     "name": {
                                                                                                         "kind": "IdentifierName",
@@ -875,6 +961,8 @@
                                                                                                     "width": 1,
                                                                                                     "fullWidth": 2,
                                                                                                     "text": "=",
+                                                                                                    "value": "=",
+                                                                                                    "valueText": "=",
                                                                                                     "hasTrailingTrivia": true,
                                                                                                     "trailingTrivia": [
                                                                                                         {
@@ -896,6 +984,8 @@
                                                                                                 "width": 1,
                                                                                                 "fullWidth": 3,
                                                                                                 "text": ";",
+                                                                                                "value": ";",
+                                                                                                "valueText": ";",
                                                                                                 "hasTrailingTrivia": true,
                                                                                                 "hasTrailingNewLine": true,
                                                                                                 "trailingTrivia": [
@@ -912,6 +1002,8 @@
                                                                                         "width": 1,
                                                                                         "fullWidth": 11,
                                                                                         "text": "}",
+                                                                                        "value": "}",
+                                                                                        "valueText": "}",
                                                                                         "hasLeadingTrivia": true,
                                                                                         "hasTrailingTrivia": true,
                                                                                         "hasTrailingNewLine": true,
@@ -939,6 +1031,8 @@
                                                                                     "width": 6,
                                                                                     "fullWidth": 15,
                                                                                     "text": "return",
+                                                                                    "value": "return",
+                                                                                    "valueText": "return",
                                                                                     "hasLeadingTrivia": true,
                                                                                     "hasTrailingTrivia": true,
                                                                                     "leadingTrivia": [
@@ -966,6 +1060,8 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 3,
                                                                                     "text": ";",
+                                                                                    "value": ";",
+                                                                                    "valueText": ";",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "hasTrailingNewLine": true,
                                                                                     "trailingTrivia": [
@@ -982,6 +1078,8 @@
                                                                             "width": 1,
                                                                             "fullWidth": 5,
                                                                             "text": "}",
+                                                                            "value": "}",
+                                                                            "valueText": "}",
                                                                             "hasLeadingTrivia": true,
                                                                             "leadingTrivia": [
                                                                                 {
@@ -995,7 +1093,9 @@
                                                                 "closeParenToken": {
                                                                     "kind": "CloseParenToken",
                                                                     "width": 1,
-                                                                    "text": ")"
+                                                                    "text": ")",
+                                                                    "value": ")",
+                                                                    "valueText": ")"
                                                                 }
                                                             },
                                                             "argumentList": {
@@ -1005,13 +1105,17 @@
                                                                 "openParenToken": {
                                                                     "kind": "OpenParenToken",
                                                                     "width": 1,
-                                                                    "text": "("
+                                                                    "text": "(",
+                                                                    "value": "(",
+                                                                    "valueText": "("
                                                                 },
                                                                 "arguments": [],
                                                                 "closeParenToken": {
                                                                     "kind": "CloseParenToken",
                                                                     "width": 1,
-                                                                    "text": ")"
+                                                                    "text": ")",
+                                                                    "value": ")",
+                                                                    "valueText": ")"
                                                                 }
                                                             }
                                                         }
@@ -1024,6 +1128,8 @@
                                             "width": 1,
                                             "fullWidth": 3,
                                             "text": ";",
+                                            "value": ";",
+                                            "valueText": ";",
                                             "hasTrailingTrivia": true,
                                             "hasTrailingNewLine": true,
                                             "trailingTrivia": [
@@ -1038,14 +1144,18 @@
                                 "closeBraceToken": {
                                     "kind": "CloseBraceToken",
                                     "width": 1,
-                                    "text": "}"
+                                    "text": "}",
+                                    "value": "}",
+                                    "valueText": "}"
                                 }
                             }
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     },
                     "argumentList": {
@@ -1055,7 +1165,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "arguments": [
                             {
@@ -1072,7 +1184,9 @@
                                 "operatorToken": {
                                     "kind": "BarBarToken",
                                     "width": 2,
-                                    "text": "||"
+                                    "text": "||",
+                                    "value": "||",
+                                    "valueText": "||"
                                 },
                                 "right": {
                                     "kind": "ParenthesizedExpression",
@@ -1081,7 +1195,9 @@
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
-                                        "text": "("
+                                        "text": "(",
+                                        "value": "(",
+                                        "valueText": "("
                                     },
                                     "expression": {
                                         "kind": "AssignmentExpression",
@@ -1097,7 +1213,9 @@
                                         "operatorToken": {
                                             "kind": "EqualsToken",
                                             "width": 1,
-                                            "text": "="
+                                            "text": "=",
+                                            "value": "=",
+                                            "valueText": "="
                                         },
                                         "right": {
                                             "kind": "ObjectLiteralExpression",
@@ -1106,20 +1224,26 @@
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,
-                                                "text": "{"
+                                                "text": "{",
+                                                "value": "{",
+                                                "valueText": "{"
                                             },
                                             "propertyAssignments": [],
                                             "closeBraceToken": {
                                                 "kind": "CloseBraceToken",
                                                 "width": 1,
-                                                "text": "}"
+                                                "text": "}",
+                                                "value": "}",
+                                                "valueText": "}"
                                             }
                                         }
                                     },
                                     "closeParenToken": {
                                         "kind": "CloseParenToken",
                                         "width": 1,
-                                        "text": ")"
+                                        "text": ")",
+                                        "value": ")",
+                                        "valueText": ")"
                                     }
                                 }
                             }
@@ -1127,7 +1251,9 @@
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     }
                 },
@@ -1136,6 +1262,8 @@
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [
@@ -1160,6 +1288,8 @@
                         "width": 3,
                         "fullWidth": 6,
                         "text": "var",
+                        "value": "var",
+                        "valueText": "var",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
                         "hasTrailingTrivia": true,
@@ -1196,6 +1326,8 @@
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [
@@ -1221,7 +1353,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "expression": {
                             "kind": "FunctionExpression",
@@ -1230,7 +1364,9 @@
                             "functionKeyword": {
                                 "kind": "FunctionKeyword",
                                 "width": 8,
-                                "text": "function"
+                                "text": "function",
+                                "value": "function",
+                                "valueText": "function"
                             },
                             "callSignature": {
                                 "kind": "CallSignature",
@@ -1243,7 +1379,9 @@
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
-                                        "text": "("
+                                        "text": "(",
+                                        "value": "(",
+                                        "valueText": "("
                                     },
                                     "parameters": [
                                         {
@@ -1264,6 +1402,8 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": ")",
+                                        "value": ")",
+                                        "valueText": ")",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -1283,6 +1423,8 @@
                                     "width": 1,
                                     "fullWidth": 3,
                                     "text": "{",
+                                    "value": "{",
+                                    "valueText": "{",
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLine": true,
                                     "trailingTrivia": [
@@ -1307,6 +1449,8 @@
                                                 "width": 3,
                                                 "fullWidth": 8,
                                                 "text": "var",
+                                                "value": "var",
+                                                "valueText": "var",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
                                                 "leadingTrivia": [
@@ -1342,6 +1486,8 @@
                                             "width": 1,
                                             "fullWidth": 3,
                                             "text": ";",
+                                            "value": ";",
+                                            "valueText": ";",
                                             "hasTrailingTrivia": true,
                                             "hasTrailingNewLine": true,
                                             "trailingTrivia": [
@@ -1369,6 +1515,8 @@
                                                     "width": 1,
                                                     "fullWidth": 5,
                                                     "text": "(",
+                                                    "value": "(",
+                                                    "valueText": "(",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
                                                         {
@@ -1384,7 +1532,9 @@
                                                     "functionKeyword": {
                                                         "kind": "FunctionKeyword",
                                                         "width": 8,
-                                                        "text": "function"
+                                                        "text": "function",
+                                                        "value": "function",
+                                                        "valueText": "function"
                                                     },
                                                     "callSignature": {
                                                         "kind": "CallSignature",
@@ -1397,7 +1547,9 @@
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
-                                                                "text": "("
+                                                                "text": "(",
+                                                                "value": "(",
+                                                                "valueText": "("
                                                             },
                                                             "parameters": [
                                                                 {
@@ -1418,6 +1570,8 @@
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": ")",
+                                                                "value": ")",
+                                                                "valueText": ")",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -1437,6 +1591,8 @@
                                                             "width": 1,
                                                             "fullWidth": 3,
                                                             "text": "{",
+                                                            "value": "{",
+                                                            "valueText": "{",
                                                             "hasTrailingTrivia": true,
                                                             "hasTrailingNewLine": true,
                                                             "trailingTrivia": [
@@ -1461,6 +1617,8 @@
                                                                         "width": 3,
                                                                         "fullWidth": 12,
                                                                         "text": "var",
+                                                                        "value": "var",
+                                                                        "valueText": "var",
                                                                         "hasLeadingTrivia": true,
                                                                         "hasTrailingTrivia": true,
                                                                         "leadingTrivia": [
@@ -1505,6 +1663,8 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "=",
+                                                                                    "value": "=",
+                                                                                    "valueText": "=",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
                                                                                         {
@@ -1524,7 +1684,9 @@
                                                                                         "openParenToken": {
                                                                                             "kind": "OpenParenToken",
                                                                                             "width": 1,
-                                                                                            "text": "("
+                                                                                            "text": "(",
+                                                                                            "value": "(",
+                                                                                            "valueText": "("
                                                                                         },
                                                                                         "expression": {
                                                                                             "kind": "FunctionExpression",
@@ -1533,7 +1695,9 @@
                                                                                             "functionKeyword": {
                                                                                                 "kind": "FunctionKeyword",
                                                                                                 "width": 8,
-                                                                                                "text": "function"
+                                                                                                "text": "function",
+                                                                                                "value": "function",
+                                                                                                "valueText": "function"
                                                                                             },
                                                                                             "callSignature": {
                                                                                                 "kind": "CallSignature",
@@ -1546,7 +1710,9 @@
                                                                                                     "openParenToken": {
                                                                                                         "kind": "OpenParenToken",
                                                                                                         "width": 1,
-                                                                                                        "text": "("
+                                                                                                        "text": "(",
+                                                                                                        "value": "(",
+                                                                                                        "valueText": "("
                                                                                                     },
                                                                                                     "parameters": [],
                                                                                                     "closeParenToken": {
@@ -1554,6 +1720,8 @@
                                                                                                         "width": 1,
                                                                                                         "fullWidth": 2,
                                                                                                         "text": ")",
+                                                                                                        "value": ")",
+                                                                                                        "valueText": ")",
                                                                                                         "hasTrailingTrivia": true,
                                                                                                         "trailingTrivia": [
                                                                                                             {
@@ -1573,6 +1741,8 @@
                                                                                                     "width": 1,
                                                                                                     "fullWidth": 3,
                                                                                                     "text": "{",
+                                                                                                    "value": "{",
+                                                                                                    "valueText": "{",
                                                                                                     "hasTrailingTrivia": true,
                                                                                                     "hasTrailingNewLine": true,
                                                                                                     "trailingTrivia": [
@@ -1593,6 +1763,8 @@
                                                                                                             "width": 8,
                                                                                                             "fullWidth": 21,
                                                                                                             "text": "function",
+                                                                                                            "value": "function",
+                                                                                                            "valueText": "function",
                                                                                                             "hasLeadingTrivia": true,
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "leadingTrivia": [
@@ -1626,7 +1798,9 @@
                                                                                                                 "openParenToken": {
                                                                                                                     "kind": "OpenParenToken",
                                                                                                                     "width": 1,
-                                                                                                                    "text": "("
+                                                                                                                    "text": "(",
+                                                                                                                    "value": "(",
+                                                                                                                    "valueText": "("
                                                                                                                 },
                                                                                                                 "parameters": [],
                                                                                                                 "closeParenToken": {
@@ -1634,6 +1808,8 @@
                                                                                                                     "width": 1,
                                                                                                                     "fullWidth": 2,
                                                                                                                     "text": ")",
+                                                                                                                    "value": ")",
+                                                                                                                    "valueText": ")",
                                                                                                                     "hasTrailingTrivia": true,
                                                                                                                     "trailingTrivia": [
                                                                                                                         {
@@ -1653,6 +1829,8 @@
                                                                                                                 "width": 1,
                                                                                                                 "fullWidth": 3,
                                                                                                                 "text": "{",
+                                                                                                                "value": "{",
+                                                                                                                "valueText": "{",
                                                                                                                 "hasTrailingTrivia": true,
                                                                                                                 "hasTrailingNewLine": true,
                                                                                                                 "trailingTrivia": [
@@ -1680,6 +1858,8 @@
                                                                                                                                 "width": 4,
                                                                                                                                 "fullWidth": 20,
                                                                                                                                 "text": "this",
+                                                                                                                                "value": "this",
+                                                                                                                                "valueText": "this",
                                                                                                                                 "hasLeadingTrivia": true,
                                                                                                                                 "leadingTrivia": [
                                                                                                                                     {
@@ -1691,7 +1871,9 @@
                                                                                                                             "dotToken": {
                                                                                                                                 "kind": "DotToken",
                                                                                                                                 "width": 1,
-                                                                                                                                "text": "."
+                                                                                                                                "text": ".",
+                                                                                                                                "value": ".",
+                                                                                                                                "valueText": "."
                                                                                                                             },
                                                                                                                             "name": {
                                                                                                                                 "kind": "IdentifierName",
@@ -1714,6 +1896,8 @@
                                                                                                                             "width": 1,
                                                                                                                             "fullWidth": 2,
                                                                                                                             "text": "=",
+                                                                                                                            "value": "=",
+                                                                                                                            "valueText": "=",
                                                                                                                             "hasTrailingTrivia": true,
                                                                                                                             "trailingTrivia": [
                                                                                                                                 {
@@ -1735,6 +1919,8 @@
                                                                                                                         "width": 1,
                                                                                                                         "fullWidth": 3,
                                                                                                                         "text": ";",
+                                                                                                                        "value": ";",
+                                                                                                                        "valueText": ";",
                                                                                                                         "hasTrailingTrivia": true,
                                                                                                                         "hasTrailingNewLine": true,
                                                                                                                         "trailingTrivia": [
@@ -1751,6 +1937,8 @@
                                                                                                                 "width": 1,
                                                                                                                 "fullWidth": 15,
                                                                                                                 "text": "}",
+                                                                                                                "value": "}",
+                                                                                                                "valueText": "}",
                                                                                                                 "hasLeadingTrivia": true,
                                                                                                                 "hasTrailingTrivia": true,
                                                                                                                 "hasTrailingNewLine": true,
@@ -1778,6 +1966,8 @@
                                                                                                             "width": 6,
                                                                                                             "fullWidth": 19,
                                                                                                             "text": "return",
+                                                                                                            "value": "return",
+                                                                                                            "valueText": "return",
                                                                                                             "hasLeadingTrivia": true,
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "leadingTrivia": [
@@ -1805,6 +1995,8 @@
                                                                                                             "width": 1,
                                                                                                             "fullWidth": 3,
                                                                                                             "text": ";",
+                                                                                                            "value": ";",
+                                                                                                            "valueText": ";",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "hasTrailingNewLine": true,
                                                                                                             "trailingTrivia": [
@@ -1821,6 +2013,8 @@
                                                                                                     "width": 1,
                                                                                                     "fullWidth": 9,
                                                                                                     "text": "}",
+                                                                                                    "value": "}",
+                                                                                                    "valueText": "}",
                                                                                                     "hasLeadingTrivia": true,
                                                                                                     "leadingTrivia": [
                                                                                                         {
@@ -1834,7 +2028,9 @@
                                                                                         "closeParenToken": {
                                                                                             "kind": "CloseParenToken",
                                                                                             "width": 1,
-                                                                                            "text": ")"
+                                                                                            "text": ")",
+                                                                                            "value": ")",
+                                                                                            "valueText": ")"
                                                                                         }
                                                                                     },
                                                                                     "argumentList": {
@@ -1844,13 +2040,17 @@
                                                                                         "openParenToken": {
                                                                                             "kind": "OpenParenToken",
                                                                                             "width": 1,
-                                                                                            "text": "("
+                                                                                            "text": "(",
+                                                                                            "value": "(",
+                                                                                            "valueText": "("
                                                                                         },
                                                                                         "arguments": [],
                                                                                         "closeParenToken": {
                                                                                             "kind": "CloseParenToken",
                                                                                             "width": 1,
-                                                                                            "text": ")"
+                                                                                            "text": ")",
+                                                                                            "value": ")",
+                                                                                            "valueText": ")"
                                                                                         }
                                                                                     }
                                                                                 }
@@ -1863,6 +2063,8 @@
                                                                     "width": 1,
                                                                     "fullWidth": 3,
                                                                     "text": ";",
+                                                                    "value": ";",
+                                                                    "valueText": ";",
                                                                     "hasTrailingTrivia": true,
                                                                     "hasTrailingNewLine": true,
                                                                     "trailingTrivia": [
@@ -1879,6 +2081,8 @@
                                                             "width": 1,
                                                             "fullWidth": 5,
                                                             "text": "}",
+                                                            "value": "}",
+                                                            "valueText": "}",
                                                             "hasLeadingTrivia": true,
                                                             "leadingTrivia": [
                                                                 {
@@ -1892,7 +2096,9 @@
                                                 "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
-                                                    "text": ")"
+                                                    "text": ")",
+                                                    "value": ")",
+                                                    "valueText": ")"
                                                 }
                                             },
                                             "argumentList": {
@@ -1902,7 +2108,9 @@
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
-                                                    "text": "("
+                                                    "text": "(",
+                                                    "value": "(",
+                                                    "valueText": "("
                                                 },
                                                 "arguments": [
                                                     {
@@ -1919,7 +2127,9 @@
                                                         "operatorToken": {
                                                             "kind": "BarBarToken",
                                                             "width": 2,
-                                                            "text": "||"
+                                                            "text": "||",
+                                                            "value": "||",
+                                                            "valueText": "||"
                                                         },
                                                         "right": {
                                                             "kind": "ParenthesizedExpression",
@@ -1928,7 +2138,9 @@
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
-                                                                "text": "("
+                                                                "text": "(",
+                                                                "value": "(",
+                                                                "valueText": "("
                                                             },
                                                             "expression": {
                                                                 "kind": "AssignmentExpression",
@@ -1944,7 +2156,9 @@
                                                                 "operatorToken": {
                                                                     "kind": "EqualsToken",
                                                                     "width": 1,
-                                                                    "text": "="
+                                                                    "text": "=",
+                                                                    "value": "=",
+                                                                    "valueText": "="
                                                                 },
                                                                 "right": {
                                                                     "kind": "ObjectLiteralExpression",
@@ -1953,20 +2167,26 @@
                                                                     "openBraceToken": {
                                                                         "kind": "OpenBraceToken",
                                                                         "width": 1,
-                                                                        "text": "{"
+                                                                        "text": "{",
+                                                                        "value": "{",
+                                                                        "valueText": "{"
                                                                     },
                                                                     "propertyAssignments": [],
                                                                     "closeBraceToken": {
                                                                         "kind": "CloseBraceToken",
                                                                         "width": 1,
-                                                                        "text": "}"
+                                                                        "text": "}",
+                                                                        "value": "}",
+                                                                        "valueText": "}"
                                                                     }
                                                                 }
                                                             },
                                                             "closeParenToken": {
                                                                 "kind": "CloseParenToken",
                                                                 "width": 1,
-                                                                "text": ")"
+                                                                "text": ")",
+                                                                "value": ")",
+                                                                "valueText": ")"
                                                             }
                                                         }
                                                     }
@@ -1974,7 +2194,9 @@
                                                 "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
-                                                    "text": ")"
+                                                    "text": ")",
+                                                    "value": ")",
+                                                    "valueText": ")"
                                                 }
                                             }
                                         },
@@ -1983,6 +2205,8 @@
                                             "width": 1,
                                             "fullWidth": 3,
                                             "text": ";",
+                                            "value": ";",
+                                            "valueText": ";",
                                             "hasTrailingTrivia": true,
                                             "hasTrailingNewLine": true,
                                             "trailingTrivia": [
@@ -2023,7 +2247,9 @@
                                                 "dotToken": {
                                                     "kind": "DotToken",
                                                     "width": 1,
-                                                    "text": "."
+                                                    "text": ".",
+                                                    "value": ".",
+                                                    "valueText": "."
                                                 },
                                                 "name": {
                                                     "kind": "IdentifierName",
@@ -2046,6 +2272,8 @@
                                                 "width": 1,
                                                 "fullWidth": 2,
                                                 "text": "=",
+                                                "value": "=",
+                                                "valueText": "=",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -2067,6 +2295,8 @@
                                             "width": 1,
                                             "fullWidth": 3,
                                             "text": ";",
+                                            "value": ";",
+                                            "valueText": ";",
                                             "hasTrailingTrivia": true,
                                             "hasTrailingNewLine": true,
                                             "trailingTrivia": [
@@ -2081,14 +2311,18 @@
                                 "closeBraceToken": {
                                     "kind": "CloseBraceToken",
                                     "width": 1,
-                                    "text": "}"
+                                    "text": "}",
+                                    "value": "}",
+                                    "valueText": "}"
                                 }
                             }
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     },
                     "argumentList": {
@@ -2098,7 +2332,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "arguments": [
                             {
@@ -2115,7 +2351,9 @@
                                 "operatorToken": {
                                     "kind": "BarBarToken",
                                     "width": 2,
-                                    "text": "||"
+                                    "text": "||",
+                                    "value": "||",
+                                    "valueText": "||"
                                 },
                                 "right": {
                                     "kind": "ParenthesizedExpression",
@@ -2124,7 +2362,9 @@
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
-                                        "text": "("
+                                        "text": "(",
+                                        "value": "(",
+                                        "valueText": "("
                                     },
                                     "expression": {
                                         "kind": "AssignmentExpression",
@@ -2140,7 +2380,9 @@
                                         "operatorToken": {
                                             "kind": "EqualsToken",
                                             "width": 1,
-                                            "text": "="
+                                            "text": "=",
+                                            "value": "=",
+                                            "valueText": "="
                                         },
                                         "right": {
                                             "kind": "ObjectLiteralExpression",
@@ -2149,20 +2391,26 @@
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,
-                                                "text": "{"
+                                                "text": "{",
+                                                "value": "{",
+                                                "valueText": "{"
                                             },
                                             "propertyAssignments": [],
                                             "closeBraceToken": {
                                                 "kind": "CloseBraceToken",
                                                 "width": 1,
-                                                "text": "}"
+                                                "text": "}",
+                                                "value": "}",
+                                                "valueText": "}"
                                             }
                                         }
                                     },
                                     "closeParenToken": {
                                         "kind": "CloseParenToken",
                                         "width": 1,
-                                        "text": ")"
+                                        "text": ")",
+                                        "value": ")",
+                                        "valueText": ")"
                                     }
                                 }
                             }
@@ -2170,7 +2418,9 @@
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     }
                 },
@@ -2179,6 +2429,8 @@
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [
@@ -2203,6 +2455,8 @@
                         "width": 3,
                         "fullWidth": 6,
                         "text": "var",
+                        "value": "var",
+                        "valueText": "var",
                         "hasLeadingTrivia": true,
                         "hasLeadingNewLine": true,
                         "hasTrailingTrivia": true,
@@ -2239,6 +2493,8 @@
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [
@@ -2264,7 +2520,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "expression": {
                             "kind": "FunctionExpression",
@@ -2273,7 +2531,9 @@
                             "functionKeyword": {
                                 "kind": "FunctionKeyword",
                                 "width": 8,
-                                "text": "function"
+                                "text": "function",
+                                "value": "function",
+                                "valueText": "function"
                             },
                             "callSignature": {
                                 "kind": "CallSignature",
@@ -2286,7 +2546,9 @@
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
-                                        "text": "("
+                                        "text": "(",
+                                        "value": "(",
+                                        "valueText": "("
                                     },
                                     "parameters": [
                                         {
@@ -2307,6 +2569,8 @@
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": ")",
+                                        "value": ")",
+                                        "valueText": ")",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -2326,6 +2590,8 @@
                                     "width": 1,
                                     "fullWidth": 3,
                                     "text": "{",
+                                    "value": "{",
+                                    "valueText": "{",
                                     "hasTrailingTrivia": true,
                                     "hasTrailingNewLine": true,
                                     "trailingTrivia": [
@@ -2350,6 +2616,8 @@
                                                 "width": 3,
                                                 "fullWidth": 8,
                                                 "text": "var",
+                                                "value": "var",
+                                                "valueText": "var",
                                                 "hasLeadingTrivia": true,
                                                 "hasTrailingTrivia": true,
                                                 "leadingTrivia": [
@@ -2385,6 +2653,8 @@
                                             "width": 1,
                                             "fullWidth": 3,
                                             "text": ";",
+                                            "value": ";",
+                                            "valueText": ";",
                                             "hasTrailingTrivia": true,
                                             "hasTrailingNewLine": true,
                                             "trailingTrivia": [
@@ -2412,6 +2682,8 @@
                                                     "width": 1,
                                                     "fullWidth": 5,
                                                     "text": "(",
+                                                    "value": "(",
+                                                    "valueText": "(",
                                                     "hasLeadingTrivia": true,
                                                     "leadingTrivia": [
                                                         {
@@ -2427,7 +2699,9 @@
                                                     "functionKeyword": {
                                                         "kind": "FunctionKeyword",
                                                         "width": 8,
-                                                        "text": "function"
+                                                        "text": "function",
+                                                        "value": "function",
+                                                        "valueText": "function"
                                                     },
                                                     "callSignature": {
                                                         "kind": "CallSignature",
@@ -2440,7 +2714,9 @@
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
-                                                                "text": "("
+                                                                "text": "(",
+                                                                "value": "(",
+                                                                "valueText": "("
                                                             },
                                                             "parameters": [
                                                                 {
@@ -2461,6 +2737,8 @@
                                                                 "width": 1,
                                                                 "fullWidth": 2,
                                                                 "text": ")",
+                                                                "value": ")",
+                                                                "valueText": ")",
                                                                 "hasTrailingTrivia": true,
                                                                 "trailingTrivia": [
                                                                     {
@@ -2480,6 +2758,8 @@
                                                             "width": 1,
                                                             "fullWidth": 3,
                                                             "text": "{",
+                                                            "value": "{",
+                                                            "valueText": "{",
                                                             "hasTrailingTrivia": true,
                                                             "hasTrailingNewLine": true,
                                                             "trailingTrivia": [
@@ -2504,6 +2784,8 @@
                                                                         "width": 3,
                                                                         "fullWidth": 12,
                                                                         "text": "var",
+                                                                        "value": "var",
+                                                                        "valueText": "var",
                                                                         "hasLeadingTrivia": true,
                                                                         "hasTrailingTrivia": true,
                                                                         "leadingTrivia": [
@@ -2548,6 +2830,8 @@
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
                                                                                     "text": "=",
+                                                                                    "value": "=",
+                                                                                    "valueText": "=",
                                                                                     "hasTrailingTrivia": true,
                                                                                     "trailingTrivia": [
                                                                                         {
@@ -2567,7 +2851,9 @@
                                                                                         "openParenToken": {
                                                                                             "kind": "OpenParenToken",
                                                                                             "width": 1,
-                                                                                            "text": "("
+                                                                                            "text": "(",
+                                                                                            "value": "(",
+                                                                                            "valueText": "("
                                                                                         },
                                                                                         "expression": {
                                                                                             "kind": "FunctionExpression",
@@ -2576,7 +2862,9 @@
                                                                                             "functionKeyword": {
                                                                                                 "kind": "FunctionKeyword",
                                                                                                 "width": 8,
-                                                                                                "text": "function"
+                                                                                                "text": "function",
+                                                                                                "value": "function",
+                                                                                                "valueText": "function"
                                                                                             },
                                                                                             "callSignature": {
                                                                                                 "kind": "CallSignature",
@@ -2589,7 +2877,9 @@
                                                                                                     "openParenToken": {
                                                                                                         "kind": "OpenParenToken",
                                                                                                         "width": 1,
-                                                                                                        "text": "("
+                                                                                                        "text": "(",
+                                                                                                        "value": "(",
+                                                                                                        "valueText": "("
                                                                                                     },
                                                                                                     "parameters": [],
                                                                                                     "closeParenToken": {
@@ -2597,6 +2887,8 @@
                                                                                                         "width": 1,
                                                                                                         "fullWidth": 2,
                                                                                                         "text": ")",
+                                                                                                        "value": ")",
+                                                                                                        "valueText": ")",
                                                                                                         "hasTrailingTrivia": true,
                                                                                                         "trailingTrivia": [
                                                                                                             {
@@ -2616,6 +2908,8 @@
                                                                                                     "width": 1,
                                                                                                     "fullWidth": 3,
                                                                                                     "text": "{",
+                                                                                                    "value": "{",
+                                                                                                    "valueText": "{",
                                                                                                     "hasTrailingTrivia": true,
                                                                                                     "hasTrailingNewLine": true,
                                                                                                     "trailingTrivia": [
@@ -2636,6 +2930,8 @@
                                                                                                             "width": 8,
                                                                                                             "fullWidth": 21,
                                                                                                             "text": "function",
+                                                                                                            "value": "function",
+                                                                                                            "valueText": "function",
                                                                                                             "hasLeadingTrivia": true,
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "leadingTrivia": [
@@ -2669,7 +2965,9 @@
                                                                                                                 "openParenToken": {
                                                                                                                     "kind": "OpenParenToken",
                                                                                                                     "width": 1,
-                                                                                                                    "text": "("
+                                                                                                                    "text": "(",
+                                                                                                                    "value": "(",
+                                                                                                                    "valueText": "("
                                                                                                                 },
                                                                                                                 "parameters": [],
                                                                                                                 "closeParenToken": {
@@ -2677,6 +2975,8 @@
                                                                                                                     "width": 1,
                                                                                                                     "fullWidth": 2,
                                                                                                                     "text": ")",
+                                                                                                                    "value": ")",
+                                                                                                                    "valueText": ")",
                                                                                                                     "hasTrailingTrivia": true,
                                                                                                                     "trailingTrivia": [
                                                                                                                         {
@@ -2696,6 +2996,8 @@
                                                                                                                 "width": 1,
                                                                                                                 "fullWidth": 3,
                                                                                                                 "text": "{",
+                                                                                                                "value": "{",
+                                                                                                                "valueText": "{",
                                                                                                                 "hasTrailingTrivia": true,
                                                                                                                 "hasTrailingNewLine": true,
                                                                                                                 "trailingTrivia": [
@@ -2723,6 +3025,8 @@
                                                                                                                                 "width": 4,
                                                                                                                                 "fullWidth": 20,
                                                                                                                                 "text": "this",
+                                                                                                                                "value": "this",
+                                                                                                                                "valueText": "this",
                                                                                                                                 "hasLeadingTrivia": true,
                                                                                                                                 "leadingTrivia": [
                                                                                                                                     {
@@ -2734,7 +3038,9 @@
                                                                                                                             "dotToken": {
                                                                                                                                 "kind": "DotToken",
                                                                                                                                 "width": 1,
-                                                                                                                                "text": "."
+                                                                                                                                "text": ".",
+                                                                                                                                "value": ".",
+                                                                                                                                "valueText": "."
                                                                                                                             },
                                                                                                                             "name": {
                                                                                                                                 "kind": "IdentifierName",
@@ -2757,6 +3063,8 @@
                                                                                                                             "width": 1,
                                                                                                                             "fullWidth": 2,
                                                                                                                             "text": "=",
+                                                                                                                            "value": "=",
+                                                                                                                            "valueText": "=",
                                                                                                                             "hasTrailingTrivia": true,
                                                                                                                             "trailingTrivia": [
                                                                                                                                 {
@@ -2778,6 +3086,8 @@
                                                                                                                         "width": 1,
                                                                                                                         "fullWidth": 3,
                                                                                                                         "text": ";",
+                                                                                                                        "value": ";",
+                                                                                                                        "valueText": ";",
                                                                                                                         "hasTrailingTrivia": true,
                                                                                                                         "hasTrailingNewLine": true,
                                                                                                                         "trailingTrivia": [
@@ -2794,6 +3104,8 @@
                                                                                                                 "width": 1,
                                                                                                                 "fullWidth": 15,
                                                                                                                 "text": "}",
+                                                                                                                "value": "}",
+                                                                                                                "valueText": "}",
                                                                                                                 "hasLeadingTrivia": true,
                                                                                                                 "hasTrailingTrivia": true,
                                                                                                                 "hasTrailingNewLine": true,
@@ -2821,6 +3133,8 @@
                                                                                                             "width": 6,
                                                                                                             "fullWidth": 19,
                                                                                                             "text": "return",
+                                                                                                            "value": "return",
+                                                                                                            "valueText": "return",
                                                                                                             "hasLeadingTrivia": true,
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "leadingTrivia": [
@@ -2848,6 +3162,8 @@
                                                                                                             "width": 1,
                                                                                                             "fullWidth": 3,
                                                                                                             "text": ";",
+                                                                                                            "value": ";",
+                                                                                                            "valueText": ";",
                                                                                                             "hasTrailingTrivia": true,
                                                                                                             "hasTrailingNewLine": true,
                                                                                                             "trailingTrivia": [
@@ -2864,6 +3180,8 @@
                                                                                                     "width": 1,
                                                                                                     "fullWidth": 9,
                                                                                                     "text": "}",
+                                                                                                    "value": "}",
+                                                                                                    "valueText": "}",
                                                                                                     "hasLeadingTrivia": true,
                                                                                                     "leadingTrivia": [
                                                                                                         {
@@ -2877,7 +3195,9 @@
                                                                                         "closeParenToken": {
                                                                                             "kind": "CloseParenToken",
                                                                                             "width": 1,
-                                                                                            "text": ")"
+                                                                                            "text": ")",
+                                                                                            "value": ")",
+                                                                                            "valueText": ")"
                                                                                         }
                                                                                     },
                                                                                     "argumentList": {
@@ -2887,13 +3207,17 @@
                                                                                         "openParenToken": {
                                                                                             "kind": "OpenParenToken",
                                                                                             "width": 1,
-                                                                                            "text": "("
+                                                                                            "text": "(",
+                                                                                            "value": "(",
+                                                                                            "valueText": "("
                                                                                         },
                                                                                         "arguments": [],
                                                                                         "closeParenToken": {
                                                                                             "kind": "CloseParenToken",
                                                                                             "width": 1,
-                                                                                            "text": ")"
+                                                                                            "text": ")",
+                                                                                            "value": ")",
+                                                                                            "valueText": ")"
                                                                                         }
                                                                                     }
                                                                                 }
@@ -2906,6 +3230,8 @@
                                                                     "width": 1,
                                                                     "fullWidth": 3,
                                                                     "text": ";",
+                                                                    "value": ";",
+                                                                    "valueText": ";",
                                                                     "hasTrailingTrivia": true,
                                                                     "hasTrailingNewLine": true,
                                                                     "trailingTrivia": [
@@ -2922,6 +3248,8 @@
                                                             "width": 1,
                                                             "fullWidth": 5,
                                                             "text": "}",
+                                                            "value": "}",
+                                                            "valueText": "}",
                                                             "hasLeadingTrivia": true,
                                                             "leadingTrivia": [
                                                                 {
@@ -2935,7 +3263,9 @@
                                                 "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
-                                                    "text": ")"
+                                                    "text": ")",
+                                                    "value": ")",
+                                                    "valueText": ")"
                                                 }
                                             },
                                             "argumentList": {
@@ -2945,7 +3275,9 @@
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
-                                                    "text": "("
+                                                    "text": "(",
+                                                    "value": "(",
+                                                    "valueText": "("
                                                 },
                                                 "arguments": [
                                                     {
@@ -2962,7 +3294,9 @@
                                                         "operatorToken": {
                                                             "kind": "BarBarToken",
                                                             "width": 2,
-                                                            "text": "||"
+                                                            "text": "||",
+                                                            "value": "||",
+                                                            "valueText": "||"
                                                         },
                                                         "right": {
                                                             "kind": "ParenthesizedExpression",
@@ -2971,7 +3305,9 @@
                                                             "openParenToken": {
                                                                 "kind": "OpenParenToken",
                                                                 "width": 1,
-                                                                "text": "("
+                                                                "text": "(",
+                                                                "value": "(",
+                                                                "valueText": "("
                                                             },
                                                             "expression": {
                                                                 "kind": "AssignmentExpression",
@@ -2987,7 +3323,9 @@
                                                                 "operatorToken": {
                                                                     "kind": "EqualsToken",
                                                                     "width": 1,
-                                                                    "text": "="
+                                                                    "text": "=",
+                                                                    "value": "=",
+                                                                    "valueText": "="
                                                                 },
                                                                 "right": {
                                                                     "kind": "ObjectLiteralExpression",
@@ -2996,20 +3334,26 @@
                                                                     "openBraceToken": {
                                                                         "kind": "OpenBraceToken",
                                                                         "width": 1,
-                                                                        "text": "{"
+                                                                        "text": "{",
+                                                                        "value": "{",
+                                                                        "valueText": "{"
                                                                     },
                                                                     "propertyAssignments": [],
                                                                     "closeBraceToken": {
                                                                         "kind": "CloseBraceToken",
                                                                         "width": 1,
-                                                                        "text": "}"
+                                                                        "text": "}",
+                                                                        "value": "}",
+                                                                        "valueText": "}"
                                                                     }
                                                                 }
                                                             },
                                                             "closeParenToken": {
                                                                 "kind": "CloseParenToken",
                                                                 "width": 1,
-                                                                "text": ")"
+                                                                "text": ")",
+                                                                "value": ")",
+                                                                "valueText": ")"
                                                             }
                                                         }
                                                     }
@@ -3017,7 +3361,9 @@
                                                 "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
-                                                    "text": ")"
+                                                    "text": ")",
+                                                    "value": ")",
+                                                    "valueText": ")"
                                                 }
                                             }
                                         },
@@ -3026,6 +3372,8 @@
                                             "width": 1,
                                             "fullWidth": 3,
                                             "text": ";",
+                                            "value": ";",
+                                            "valueText": ";",
                                             "hasTrailingTrivia": true,
                                             "hasTrailingNewLine": true,
                                             "trailingTrivia": [
@@ -3040,14 +3388,18 @@
                                 "closeBraceToken": {
                                     "kind": "CloseBraceToken",
                                     "width": 1,
-                                    "text": "}"
+                                    "text": "}",
+                                    "value": "}",
+                                    "valueText": "}"
                                 }
                             }
                         },
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     },
                     "argumentList": {
@@ -3057,7 +3409,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "arguments": [
                             {
@@ -3074,7 +3428,9 @@
                                 "operatorToken": {
                                     "kind": "BarBarToken",
                                     "width": 2,
-                                    "text": "||"
+                                    "text": "||",
+                                    "value": "||",
+                                    "valueText": "||"
                                 },
                                 "right": {
                                     "kind": "ParenthesizedExpression",
@@ -3083,7 +3439,9 @@
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
-                                        "text": "("
+                                        "text": "(",
+                                        "value": "(",
+                                        "valueText": "("
                                     },
                                     "expression": {
                                         "kind": "AssignmentExpression",
@@ -3099,7 +3457,9 @@
                                         "operatorToken": {
                                             "kind": "EqualsToken",
                                             "width": 1,
-                                            "text": "="
+                                            "text": "=",
+                                            "value": "=",
+                                            "valueText": "="
                                         },
                                         "right": {
                                             "kind": "ObjectLiteralExpression",
@@ -3108,20 +3468,26 @@
                                             "openBraceToken": {
                                                 "kind": "OpenBraceToken",
                                                 "width": 1,
-                                                "text": "{"
+                                                "text": "{",
+                                                "value": "{",
+                                                "valueText": "{"
                                             },
                                             "propertyAssignments": [],
                                             "closeBraceToken": {
                                                 "kind": "CloseBraceToken",
                                                 "width": 1,
-                                                "text": "}"
+                                                "text": "}",
+                                                "value": "}",
+                                                "valueText": "}"
                                             }
                                         }
                                     },
                                     "closeParenToken": {
                                         "kind": "CloseParenToken",
                                         "width": 1,
-                                        "text": ")"
+                                        "text": ")",
+                                        "value": ")",
+                                        "valueText": ")"
                                     }
                                 }
                             }
@@ -3129,7 +3495,9 @@
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     }
                 },
@@ -3138,6 +3506,8 @@
                     "width": 1,
                     "fullWidth": 3,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [

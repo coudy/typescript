@@ -28,7 +28,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "arguments": [
                             {
@@ -54,6 +56,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "<",
+                                    "value": "<",
+                                    "valueText": "<",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -75,6 +79,8 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": ",",
+                                "value": ",",
+                                "valueText": ",",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -106,6 +112,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": ">",
+                                    "value": ">",
+                                    "valueText": ">",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -120,7 +128,9 @@
                                     "operatorToken": {
                                         "kind": "PlusToken",
                                         "width": 1,
-                                        "text": "+"
+                                        "text": "+",
+                                        "value": "+",
+                                        "valueText": "+"
                                     },
                                     "operand": {
                                         "kind": "ParenthesizedExpression",
@@ -128,7 +138,9 @@
                                         "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
-                                            "text": "("
+                                            "text": "(",
+                                            "value": "(",
+                                            "valueText": "("
                                         },
                                         "expression": {
                                             "kind": "NumericLiteral",
@@ -140,7 +152,9 @@
                                         "closeParenToken": {
                                             "kind": "CloseParenToken",
                                             "width": 1,
-                                            "text": ")"
+                                            "text": ")",
+                                            "value": ")",
+                                            "valueText": ")"
                                         }
                                     }
                                 }
@@ -149,14 +163,18 @@
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     }
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "text": ";"
+                    "text": ";",
+                    "value": ";",
+                    "valueText": ";"
                 }
             }
         ],

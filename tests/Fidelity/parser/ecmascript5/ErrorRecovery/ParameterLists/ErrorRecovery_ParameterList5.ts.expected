@@ -38,7 +38,9 @@
                             "openParenToken": {
                                 "kind": "OpenParenToken",
                                 "width": 1,
-                                "text": "("
+                                "text": "(",
+                                "value": "(",
+                                "valueText": "("
                             },
                             "parameters": [
                                 {
@@ -57,13 +59,17 @@
                                         "colonToken": {
                                             "kind": "ColonToken",
                                             "width": 1,
-                                            "text": ":"
+                                            "text": ":",
+                                            "value": ":",
+                                            "valueText": ":"
                                         },
                                         "type": {
                                             "kind": "NumberKeyword",
                                             "width": 6,
                                             "fullWidth": 7,
                                             "text": "number",
+                                            "value": "number",
+                                            "valueText": "number",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -87,6 +93,8 @@
                         "width": 2,
                         "fullWidth": 3,
                         "text": "=>",
+                        "value": "=>",
+                        "valueText": "=>",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -103,6 +111,8 @@
                             "width": 1,
                             "fullWidth": 2,
                             "text": "{",
+                            "value": "{",
+                            "valueText": "{",
                             "hasTrailingTrivia": true,
                             "trailingTrivia": [
                                 {
@@ -115,7 +125,9 @@
                         "closeBraceToken": {
                             "kind": "CloseBraceToken",
                             "width": 1,
-                            "text": "}"
+                            "text": "}",
+                            "value": "}",
+                            "valueText": "}"
                         }
                     }
                 },

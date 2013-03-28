@@ -21,6 +21,8 @@
                         "width": 3,
                         "fullWidth": 4,
                         "text": "var",
+                        "value": "var",
+                        "valueText": "var",
                         "hasTrailingTrivia": true,
                         "trailingTrivia": [
                             {
@@ -48,6 +50,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": ":",
+                                    "value": ":",
+                                    "valueText": ":",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -62,18 +66,24 @@
                                     "type": {
                                         "kind": "NumberKeyword",
                                         "width": 6,
-                                        "text": "number"
+                                        "text": "number",
+                                        "value": "number",
+                                        "valueText": "number"
                                     },
                                     "openBracketToken": {
                                         "kind": "OpenBracketToken",
                                         "width": 1,
-                                        "text": "["
+                                        "text": "[",
+                                        "value": "[",
+                                        "valueText": "["
                                     },
                                     "closeBracketToken": {
                                         "kind": "CloseBracketToken",
                                         "width": 1,
                                         "fullWidth": 2,
                                         "text": "]",
+                                        "value": "]",
+                                        "valueText": "]",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -92,6 +102,8 @@
                                     "width": 1,
                                     "fullWidth": 2,
                                     "text": "=",
+                                    "value": "=",
+                                    "valueText": "=",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -108,6 +120,8 @@
                                         "width": 3,
                                         "fullWidth": 4,
                                         "text": "new",
+                                        "value": "new",
+                                        "valueText": "new",
                                         "hasTrailingTrivia": true,
                                         "trailingTrivia": [
                                             {
@@ -132,7 +146,9 @@
                                             "lessThanToken": {
                                                 "kind": "LessThanToken",
                                                 "width": 1,
-                                                "text": "<"
+                                                "text": "<",
+                                                "value": "<",
+                                                "valueText": "<"
                                             },
                                             "typeArguments": [
                                                 {
@@ -141,30 +157,40 @@
                                                     "type": {
                                                         "kind": "NumberKeyword",
                                                         "width": 6,
-                                                        "text": "number"
+                                                        "text": "number",
+                                                        "value": "number",
+                                                        "valueText": "number"
                                                     },
                                                     "openBracketToken": {
                                                         "kind": "OpenBracketToken",
                                                         "width": 1,
-                                                        "text": "["
+                                                        "text": "[",
+                                                        "value": "[",
+                                                        "valueText": "["
                                                     },
                                                     "closeBracketToken": {
                                                         "kind": "CloseBracketToken",
                                                         "width": 1,
-                                                        "text": "]"
+                                                        "text": "]",
+                                                        "value": "]",
+                                                        "valueText": "]"
                                                     }
                                                 }
                                             ],
                                             "greaterThanToken": {
                                                 "kind": "GreaterThanToken",
                                                 "width": 1,
-                                                "text": ">"
+                                                "text": ">",
+                                                "value": ">",
+                                                "valueText": ">"
                                             }
                                         },
                                         "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
-                                            "text": "("
+                                            "text": "(",
+                                            "value": "(",
+                                            "valueText": "("
                                         },
                                         "arguments": [
                                             {
@@ -178,7 +204,9 @@
                                         "closeParenToken": {
                                             "kind": "CloseParenToken",
                                             "width": 1,
-                                            "text": ")"
+                                            "text": ")",
+                                            "value": ")",
+                                            "valueText": ")"
                                         }
                                     }
                                 }
@@ -189,7 +217,9 @@
                 "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "text": ";"
+                    "text": ";",
+                    "value": ";",
+                    "valueText": ";"
                 }
             }
         ],

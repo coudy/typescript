@@ -28,7 +28,9 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "arguments": [
                             {
@@ -44,7 +46,9 @@
                                 "operatorToken": {
                                     "kind": "LessThanToken",
                                     "width": 1,
-                                    "text": "<"
+                                    "text": "<",
+                                    "value": "<",
+                                    "valueText": "<"
                                 },
                                 "right": {
                                     "kind": "IdentifierName",
@@ -59,6 +63,8 @@
                                 "width": 1,
                                 "fullWidth": 2,
                                 "text": ",",
+                                "value": ",",
+                                "valueText": ",",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -80,7 +86,9 @@
                                 "operatorToken": {
                                     "kind": "GreaterThanToken",
                                     "width": 1,
-                                    "text": ">"
+                                    "text": ">",
+                                    "value": ">",
+                                    "valueText": ">"
                                 },
                                 "right": {
                                     "kind": "NumericLiteral",
@@ -94,14 +102,18 @@
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     }
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
-                    "text": ";"
+                    "text": ";",
+                    "value": ";",
+                    "valueText": ";"
                 }
             }
         ],

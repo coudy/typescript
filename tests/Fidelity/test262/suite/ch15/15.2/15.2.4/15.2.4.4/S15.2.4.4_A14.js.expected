@@ -22,6 +22,8 @@
                             "width": 1,
                             "fullWidth": 376,
                             "text": "(",
+                            "value": "(",
+                            "valueText": "(",
                             "hasLeadingTrivia": true,
                             "hasLeadingComment": true,
                             "hasLeadingNewLine": true,
@@ -73,7 +75,9 @@
                             "operatorToken": {
                                 "kind": "CommaToken",
                                 "width": 1,
-                                "text": ","
+                                "text": ",",
+                                "value": ",",
+                                "valueText": ","
                             },
                             "right": {
                                 "kind": "MemberAccessExpression",
@@ -91,7 +95,9 @@
                                     "dotToken": {
                                         "kind": "DotToken",
                                         "width": 1,
-                                        "text": "."
+                                        "text": ".",
+                                        "value": ".",
+                                        "valueText": "."
                                     },
                                     "name": {
                                         "kind": "IdentifierName",
@@ -104,7 +110,9 @@
                                 "dotToken": {
                                     "kind": "DotToken",
                                     "width": 1,
-                                    "text": "."
+                                    "text": ".",
+                                    "value": ".",
+                                    "valueText": "."
                                 },
                                 "name": {
                                     "kind": "IdentifierName",
@@ -118,7 +126,9 @@
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     },
                     "argumentList": {
@@ -127,13 +137,17 @@
                         "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
-                            "text": "("
+                            "text": "(",
+                            "value": "(",
+                            "valueText": "("
                         },
                         "arguments": [],
                         "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
-                            "text": ")"
+                            "text": ")",
+                            "value": ")",
+                            "valueText": ")"
                         }
                     }
                 },
@@ -142,6 +156,8 @@
                     "width": 1,
                     "fullWidth": 2,
                     "text": ";",
+                    "value": ";",
+                    "valueText": ";",
                     "hasTrailingTrivia": true,
                     "hasTrailingNewLine": true,
                     "trailingTrivia": [
