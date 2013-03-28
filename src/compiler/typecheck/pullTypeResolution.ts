@@ -779,6 +779,7 @@ module TypeScript {
 
             if (classDeclAST.implementsList) {
                 var implementedType: PullTypeSymbol = null;
+
                 for (i = 0; i < classDeclAST.implementsList.members.length; i++) {
                     implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
 
@@ -790,7 +791,7 @@ module TypeScript {
 
                     if ((implementedType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
                         context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, "A class may only implement other class or interface types", enclosingDecl);
-                    }                    
+                    }
                 }
             }
 
@@ -869,10 +870,12 @@ module TypeScript {
             if (interfaceDeclSymbol.isResolved()) {
                 return interfaceDeclSymbol;
             }
+
             var i = 0;
 
             if (interfaceDeclAST.extendsList) {
                 var parentType: PullTypeSymbol = null;
+
                 for (i = 0; i < interfaceDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
 
@@ -882,14 +885,14 @@ module TypeScript {
 
                     if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                         parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
-                    }                   
-                                       
-                    interfaceDeclSymbol.addExtendedType(parentType);
+                    }
                 }
+
+                interfaceDeclSymbol.addExtendedType(parentType);
             }
 
             if (interfaceDeclAST.implementsList) {
-                context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath, "An interface may not implement other types", enclosingDecl);            
+                context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath, "An interface may not implement other types", enclosingDecl);
             }
 
             interfaceDeclSymbol.setResolved();
@@ -933,6 +936,12 @@ module TypeScript {
             var aliasName = importStatementAST.id.actualText;
             var aliasedType: PullTypeSymbol = null;
 
+            if (importDeclSymbol.isResolved()) {
+                return importDeclSymbol;
+            }
+
+            importDeclSymbol.startResolving();
+
             // the alias name may be a string literal, in which case we'll need to convert it to a type
             // reference
             if (importStatementAST.alias.nodeType == NodeType.TypeRef) { // dotted name
@@ -969,7 +978,7 @@ module TypeScript {
 
                 this.setSymbolForAST(importStatementAST.alias, aliasedType);
             }
-            
+         
             return importDeclSymbol;
         }
 

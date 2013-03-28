@@ -1006,7 +1006,9 @@ module TypeScript {
         // validate:
         //  -
         public typeCheckTypeOf(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext);
+
+            return this.semanticInfoChain.stringTypeSymbol;
         }
 
         // Type reference expression
@@ -1226,7 +1228,38 @@ module TypeScript {
         public typeCheckReturnExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var returnAST = <ReturnStatement>ast;
             typeCheckContext.setEnclosingDeclHasReturn();
-            return this.typeCheckAST(returnAST.returnExpression, typeCheckContext);
+            var returnType = this.typeCheckAST(returnAST.returnExpression, typeCheckContext);
+
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {
+                var signatureSymbol = enclosingDecl.getSignatureSymbol();
+                var sigReturnType = signatureSymbol.getReturnType();
+
+                if (returnType && sigReturnType) {
+                    var comparisonInfo = new TypeComparisonInfo();
+
+                    if (!returnType.isResolved()) {
+                        this.resolver.resolveDeclaredSymbol(returnType, enclosingDecl, this.context);
+                    }
+
+                    if (!sigReturnType.isResolved()) {
+                        this.resolver.resolveDeclaredSymbol(sigReturnType, enclosingDecl, this.context);
+                    }
+
+                    var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, sigReturnType, this.context, comparisonInfo);
+
+                    if (!isAssignable) {
+
+                    // ignore comparison info for now
+                        var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [returnType.toString(), sigReturnType.toString()]);
+
+                        this.context.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                    }
+                }
+            }
+
+            return returnType;
         }
 
         public typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
