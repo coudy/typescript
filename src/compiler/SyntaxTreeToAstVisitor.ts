@@ -134,37 +134,62 @@ module TypeScript {
             return result;
         }
 
-        private visitSyntaxList(list: ISyntaxList): ASTList {
-            var result = new ASTList();
-            var start = this.position;
+        private getAST(element: ISyntaxElement): any {
+            return null;
+            var result = (<any>element)._ast;
+            return result ? result : null;
+        }
 
-            for (var i = 0, n = list.childCount(); i < n; i++) {
-                result.append(list.childAt(i).accept(this));
+        private setAST(element: ISyntaxElement, ast: IASTSpan): void {
+            return;
+            (<any>element)._ast = ast;
+        }
+
+        private visitSyntaxList(list: ISyntaxList): ASTList {
+            var result: ASTList = this.getAST(list);
+            if (result) {
+                this.movePast(list);
+            }
+            else {
+                result = new ASTList();
+                var start = this.position;
+
+                for (var i = 0, n = list.childCount(); i < n; i++) {
+                    result.append(list.childAt(i).accept(this));
+                }
             }
 
+            this.setAST(list, result);
             this.setSpan(result, start, list);
             return result;
         }
 
         private visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
-            var result = new ASTList();
-            var start = this.position;
+            var result: ASTList = this.getAST(list);
+            if (result) {
+                this.movePast(list);
+            }
+            else {
+                result = new ASTList();
+                var start = this.position;
 
-            for (var i = 0, n = list.childCount(); i < n; i++) {
-                if (i % 2 === 0) {
-                    result.append(list.childAt(i).accept(this));
-                    this.previousTokenTrailingComments = null;
+                for (var i = 0, n = list.childCount(); i < n; i++) {
+                    if (i % 2 === 0) {
+                        result.append(list.childAt(i).accept(this));
+                        this.previousTokenTrailingComments = null;
+                    }
+                    else {
+                        var separatorToken = <ISyntaxToken>list.childAt(i);
+                        this.previousTokenTrailingComments = this.convertTokenTrailingComments(
+                            separatorToken, this.position + separatorToken.leadingTriviaWidth() + separatorToken.width());
+                        this.movePast(separatorToken);
+                    }
                 }
-                else {
-                    var separatorToken = <ISyntaxToken>list.childAt(i);
-                    this.previousTokenTrailingComments = this.convertTokenTrailingComments(
-            separatorToken, this.position + separatorToken.leadingTriviaWidth() + separatorToken.width());
-                    this.movePast(separatorToken);
-                }
+
+                this.previousTokenTrailingComments = null;
             }
 
-            this.previousTokenTrailingComments = null;
-
+            this.setAST(list, result);
             this.setSpan(result, start, list);
             return result;
         }
@@ -260,45 +285,52 @@ module TypeScript {
         private visitToken(token: ISyntaxToken): AST {
             this.assertElementAtPosition(token);
 
-            var result: AST = null;
-            var start = this.position;
+            var result: AST = this.getAST(token);
+            var fullStart = this.position;
 
-            if (token.kind() === SyntaxKind.ThisKeyword) {
-                result = new AST(NodeType.This);
-            }
-            else if (token.kind() === SyntaxKind.SuperKeyword) {
-                result = new AST(NodeType.Super);
-            }
-            else if (token.kind() === SyntaxKind.TrueKeyword) {
-                result = new AST(NodeType.True);
-            }
-            else if (token.kind() === SyntaxKind.FalseKeyword) {
-                result = new AST(NodeType.False);
-            }
-            else if (token.kind() === SyntaxKind.NullKeyword) {
-                result = new AST(NodeType.Null);
-            }
-            else if (token.kind() === SyntaxKind.StringLiteral) {
-                result = new StringLiteral(token.text());
-            }
-            else if (token.kind() === SyntaxKind.RegularExpressionLiteral) {
-                result = new RegexLiteral(token.text());
-            }
-            else if (token.kind() === SyntaxKind.NumericLiteral) {
-                var preComments = this.convertTokenLeadingComments(token, start);
-
-                var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
-                result = new NumberLiteral(value, token.text());
-
-                result.preComments = preComments;
+            if (result) {
+                this.movePast(token);
             }
             else {
-                result = this.identifierFromToken(token, /*isOptional:*/ false, /*useValueText:*/ true);
+                if (token.kind() === SyntaxKind.ThisKeyword) {
+                    result = new AST(NodeType.This);
+                }
+                else if (token.kind() === SyntaxKind.SuperKeyword) {
+                    result = new AST(NodeType.Super);
+                }
+                else if (token.kind() === SyntaxKind.TrueKeyword) {
+                    result = new AST(NodeType.True);
+                }
+                else if (token.kind() === SyntaxKind.FalseKeyword) {
+                    result = new AST(NodeType.False);
+                }
+                else if (token.kind() === SyntaxKind.NullKeyword) {
+                    result = new AST(NodeType.Null);
+                }
+                else if (token.kind() === SyntaxKind.StringLiteral) {
+                    result = new StringLiteral(token.text());
+                }
+                else if (token.kind() === SyntaxKind.RegularExpressionLiteral) {
+                    result = new RegexLiteral(token.text());
+                }
+                else if (token.kind() === SyntaxKind.NumericLiteral) {
+                    var preComments = this.convertTokenLeadingComments(token, fullStart);
+                    
+                    var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
+                    result = new NumberLiteral(value, token.text());
+
+                    result.preComments = preComments;
+                }
+                else {
+                    result = this.identifierFromToken(token, /*isOptional:*/ false, /*useValueText:*/ true);
+                }
+
+                this.movePast(token);
             }
 
-            start = this.position + token.leadingTriviaWidth();
+            var start = fullStart + token.leadingTriviaWidth();
+            this.setAST(token, result);
             this.setSpanExplicit(result, start, start + token.width());
-            this.movePast(token);
             return result;
         }
 
@@ -435,84 +467,90 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var extendsList = new ASTList();
-            var implementsList = new ASTList();
-
-            var i = 0;
-            var n = 0;
-
-            for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
-                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
-                if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
-                    extendsList = heritageClause.accept(this);
-                }
-                else {
-                    Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
-                    implementsList = heritageClause.accept(this);
-                }
+            var result: ClassDeclaration = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
+                this.moveTo(node, node.identifier);
+                var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
 
-            this.movePast(node.openBraceToken);
-            var members = this.visitSyntaxList(node.classElements);
-            this.movePast(node.closeBraceToken);
+                var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+                var extendsList = new ASTList();
+                var implementsList = new ASTList();
 
-            this.requiresExtendsBlock = this.requiresExtendsBlock || extendsList.members.length > 0;
+                var i = 0;
+                var n = 0;
 
-            var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
-            this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.postComments = postComments;
-
-            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                result.varFlags |= VarFlags.Exported;
-            }
-
-            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                result.varFlags |= VarFlags.Ambient;
-            }
-
-            result.varFlags |= VarFlags.Class;
-
-            for (i = 0; i < members.members.length; i++) {
-                var member = members.members[i];
-                if (member.nodeType === NodeType.FuncDecl) {
-                    var funcDecl = <FuncDecl>member;
-
-                    if (funcDecl.isConstructor) {
-                        funcDecl.name = name;
-                        funcDecl.classDecl = result;
-
-                        result.constructorDecl = funcDecl;
+                for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                    var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
+                    if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
+                        extendsList = heritageClause.accept(this);
+                    }
+                    else {
+                        Debug.assert(heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ImplementsKeyword);
+                        implementsList = heritageClause.accept(this);
                     }
                 }
+
+                this.movePast(node.openBraceToken);
+                var members = this.visitSyntaxList(node.classElements);
+                this.movePast(node.closeBraceToken);
+
+                result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
+
+                result.preComments = preComments;
+                result.postComments = postComments;
+
+                if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
+                    result.varFlags |= VarFlags.Exported;
+                }
+
+                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                    result.varFlags |= VarFlags.Ambient;
+                }
+
+                result.varFlags |= VarFlags.Class;
+
+                for (i = 0; i < members.members.length; i++) {
+                    var member = members.members[i];
+                    if (member.nodeType === NodeType.FuncDecl) {
+                        var funcDecl = <FuncDecl>member;
+
+                        if (funcDecl.isConstructor) {
+                            funcDecl.name = name;
+                            funcDecl.classDecl = result;
+
+                            result.constructorDecl = funcDecl;
+                        }
+                    }
+                }
+
+                var knownMemberNames: any = {};
+
+                for (i = 0, n = node.classElements.childCount(); i < n; i++) {
+                    var classElement = <IClassElementSyntax>node.classElements.childAt(i);
+
+                    if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
+                        var variableDeclaration = <MemberVariableDeclarationSyntax>classElement;
+                        knownMemberNames[variableDeclaration.variableDeclarator.identifier.valueText()] = true;
+                    }
+                    else if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
+                        var functionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
+                        knownMemberNames[functionDeclaration.propertyName.valueText()] = true;
+                    }
+                }
+
+                result.knownMemberNames = knownMemberNames;
             }
 
-            var knownMemberNames: any = {};
+            this.requiresExtendsBlock = this.requiresExtendsBlock || result.extendsList.members.length > 0;
 
-            for (i = 0, n = node.classElements.childCount(); i < n; i++) {
-                var classElement = <IClassElementSyntax>node.classElements.childAt(i);
-
-                if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
-                    var variableDeclaration = <MemberVariableDeclarationSyntax>classElement;
-                    knownMemberNames[variableDeclaration.variableDeclarator.identifier.valueText()] = true;
-                }
-                else if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
-                    var functionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
-                    knownMemberNames[functionDeclaration.propertyName.valueText()] = true;
-                }
-            }
-
-            result.knownMemberNames = knownMemberNames;
-
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -520,83 +558,91 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-
-            var i = 0;
-            var n = 0;
-            var extendsList: ASTList = null;
-
-            for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
-                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
-                if (i === 0) {
-                    extendsList = heritageClause.accept(this);
-                }
-                else {
-                    this.movePast(heritageClause);
-                }
+            var result: InterfaceDeclaration = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
+                this.moveTo(node, node.identifier);
+                var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
 
-            this.movePast(node.body.openBraceToken);
-            var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
+                var i = 0;
+                var n = 0;
+                var extendsList: ASTList = null;
 
-            // Fix up interface method flags
-            if (members.members) {
-                for (i = 0; i < members.members.length; i++) {
-                    if (members.members[i].nodeType === NodeType.FuncDecl) {
-                        (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Method;
-                        (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Signature;
+                for (i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
+                    var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
+                    if (i === 0) {
+                        extendsList = heritageClause.accept(this);
+                    }
+                    else {
+                        this.movePast(heritageClause);
                     }
                 }
+
+                this.movePast(node.body.openBraceToken);
+                var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
+
+                // Fix up interface method flags
+                if (members.members) {
+                    for (i = 0; i < members.members.length; i++) {
+                        if (members.members[i].nodeType === NodeType.FuncDecl) {
+                            (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Method;
+                            (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Signature;
+                        }
+                    }
+                }
+
+                this.movePast(node.body.closeBraceToken);
+
+                result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);
+
+                result.preComments = preComments;
+                result.postComments = postComments;
+
+                if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
+                    result.varFlags |= VarFlags.Exported;
+                }
             }
 
-            this.movePast(node.body.closeBraceToken);
-
-            var result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.postComments = postComments;
-
-            //if (node.publicOrPrivateKeyword) {
-            //    result.varFlags |= VarFlags.Private;
-            //}
-            //if (hasFlag(modifiers, Modifiers.Public)) {
-            //    result.varFlags |= VarFlags.Public;
-            //}
-
-            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                result.varFlags |= VarFlags.Exported;
-            }
-
             return result;
         }
 
         private visitHeritageClause(node: HeritageClauseSyntax): ASTList {
             this.assertElementAtPosition(node);
 
-            var result = new ASTList();
+            var start = this.position;
+            var result: ASTList = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                result = new ASTList();
 
-            this.movePast(node.extendsOrImplementsKeyword);
-            for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
-                if (i % 2 === 1) {
-                    this.movePast(<ISyntaxToken>node.typeNames.childAt(i));
-                }
-                else {
-                    var type = this.visitType(node.typeNames.childAt(i));
-                    if (type.nodeType === NodeType.TypeRef) {
-                        type = (<TypeReference>type).term;
+                this.movePast(node.extendsOrImplementsKeyword);
+                for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
+                    if (i % 2 === 1) {
+                        this.movePast(<ISyntaxToken>node.typeNames.childAt(i));
                     }
+                    else {
+                        var type = this.visitType(node.typeNames.childAt(i));
+                        if (type.nodeType === NodeType.TypeRef) {
+                            type = (<TypeReference>type).term;
+                        }
 
-                    result.append(type);
+                        result.append(type);
+                    }
                 }
             }
 
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -634,72 +680,66 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-
-            this.moveTo(node, node.moduleKeyword);
-            this.movePast(node.moduleKeyword);
-            var names = this.getModuleNames(node);
-            this.movePast(node.openBraceToken);
-            var svIsParsingAmbientModule = this.isParsingAmbientModule;
-            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingDeclareFile) {
-                this.isParsingAmbientModule = true;
+            var result: ModuleDeclaration = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
-            var members = this.visitSyntaxList(node.moduleElements);
-            this.isParsingAmbientModule = svIsParsingAmbientModule;
-            var closeBracePosition = this.position;
-            this.movePast(node.closeBraceToken);
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
 
-            var moduleDecl: ModuleDeclaration = null;
-
-            for (var i = names.length - 1; i >= 0; i--) {
-                var innerName = names[i];
-
-                var closeBraceSpan = new ASTSpan();
-                closeBraceSpan.minChar = closeBracePosition;
-                closeBraceSpan.limChar = this.position;
-
-                moduleDecl = new ModuleDeclaration(innerName, members, closeBraceSpan);
-                this.setSpan(moduleDecl, start, node);
-
-                moduleDecl.preComments = preComments;
-                moduleDecl.postComments = postComments;
-
-                preComments = null;
-                postComments = null;
-
-                // mark the inner module declarations as exported
-                if (i) {
-                    moduleDecl.modFlags |= ModuleFlags.Exported;
-                } else if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    // outer module is exported if export key word or parsing ambient module
-                    moduleDecl.modFlags |= ModuleFlags.Exported;
+                this.moveTo(node, node.moduleKeyword);
+                this.movePast(node.moduleKeyword);
+                var names = this.getModuleNames(node);
+                this.movePast(node.openBraceToken);
+                var svIsParsingAmbientModule = this.isParsingAmbientModule;
+                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingDeclareFile) {
+                    this.isParsingAmbientModule = true;
                 }
+                var members = this.visitSyntaxList(node.moduleElements);
+                this.isParsingAmbientModule = svIsParsingAmbientModule;
+                var closeBracePosition = this.position;
+                this.movePast(node.closeBraceToken);
 
-                // mark ambient if declare keyword or parsing ambient module or parsing declare file
-                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                    moduleDecl.modFlags |= ModuleFlags.Ambient;
+                for (var i = names.length - 1; i >= 0; i--) {
+                    var innerName = names[i];
+
+                    var closeBraceSpan = new ASTSpan();
+                    closeBraceSpan.minChar = closeBracePosition;
+                    closeBraceSpan.limChar = this.position;
+
+                    result = new ModuleDeclaration(innerName, members, closeBraceSpan);
+                    this.setSpan(result, start, node);
+
+                    result.preComments = preComments;
+                    result.postComments = postComments;
+
+                    preComments = null;
+                    postComments = null;
+
+                    // mark the inner module declarations as exported
+                    if (i) {
+                        result.modFlags |= ModuleFlags.Exported;
+                    } else if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
+                        // outer module is exported if export key word or parsing ambient module
+                        result.modFlags |= ModuleFlags.Exported;
+                    }
+
+                    // mark ambient if declare keyword or parsing ambient module or parsing declare file
+                    if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                        result.modFlags |= ModuleFlags.Ambient;
+                    }
+
+                    // REVIEW: will also possibly need to re-parent comments as well
+
+                    members = new ASTList();
+                    members.append(result);
                 }
-
-                // REVIEW: will also possibly need to re-parent comments as well
-
-                members = new ASTList();
-                members.append(moduleDecl);
             }
 
-            //if (isDynamicMod) {
-            //    moduleDecl.modFlags |= ModuleFlags.IsDynamic;
-            //}
-
-            //this.ambientModule = svAmbient;
-
-            //this.topLevel = svTopLevel;
-            //moduleDecl.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
-            //moduleDecl.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
-            //moduleDecl.limChar = moduleBody.limChar;
-
-            return moduleDecl;
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private hasDotDotDotParameter(parameters: ISeparatedSyntaxList): bool {
@@ -728,56 +768,62 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-
-            this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-
-            this.movePast(node.identifier);
-
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-
-            var returnType = node.callSignature.typeAnnotation
-                ? node.callSignature.typeAnnotation.accept(this)
-                : null;
-
-            var bod = this.convertBlock(node.block);
-            if (bod) {
-                bod.append(new EndCode());
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
 
-            if (node.block) {
-                if (this.hasUseStrictDirective(node.block.statements)) {
-                    bod.flags |= ASTFlags.StrictMode;
+                this.moveTo(node, node.identifier);
+                var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+
+                this.movePast(node.identifier);
+
+                var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+                var parameters = node.callSignature.parameterList.accept(this);
+
+                var returnType = node.callSignature.typeAnnotation
+                    ? node.callSignature.typeAnnotation.accept(this)
+                    : null;
+
+                var bod = this.convertBlock(node.block);
+                if (bod) {
+                    bod.append(new EndCode());
+                }
+
+                if (node.block) {
+                    if (this.hasUseStrictDirective(node.block.statements)) {
+                        bod.flags |= ASTFlags.StrictMode;
+                    }
+                }
+
+                this.movePast(node.semicolonToken);
+
+                result = new FuncDecl(name, bod, false, typeParameters, parameters, NodeType.FuncDecl);
+
+                result.preComments = preComments;
+                result.postComments = postComments;
+                result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
+                result.returnTypeAnnotation = returnType;
+
+                if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
+                    result.fncFlags |= FncFlags.Exported;
+                }
+
+                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                    result.fncFlags |= FncFlags.Ambient;
+                }
+
+                if (node.semicolonToken) {
+                    result.fncFlags |= FncFlags.Signature;
                 }
             }
 
-            this.movePast(node.semicolonToken);
-
-            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, node);
-
-            funcDecl.preComments = preComments;
-            funcDecl.postComments = postComments;
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-            funcDecl.returnTypeAnnotation = returnType;
-
-            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                funcDecl.fncFlags |= FncFlags.Exported;
-            }
-
-            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                funcDecl.fncFlags |= FncFlags.Ambient;
-            }
-
-            if (node.semicolonToken) {
-                funcDecl.fncFlags |= FncFlags.Signature;
-            }
-
-            return funcDecl;
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): ModuleDeclaration {
@@ -838,11 +884,11 @@ module TypeScript {
                             lastValue = <NumberLiteral>memberValue;
                         }
                         var map: BinaryExpression =
-                new BinaryExpression(NodeType.Asg,
-                         new BinaryExpression(NodeType.Index,
-                                  new Identifier("_map"),
-                                  memberValue),
-                         new StringLiteral('"' + memberName.actualText + '"'));
+                            new BinaryExpression(NodeType.Asg,
+                                     new BinaryExpression(NodeType.Index,
+                                              new Identifier("_map"),
+                                              memberValue),
+                                     new StringLiteral('"' + memberName.actualText + '"'));
                         map.flags |= ASTFlags.EnumInitializer;
                         members.append(map);
                         this.setSpanExplicit(map, memberStart, this.position);
@@ -916,44 +962,58 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: ImportDeclaration = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+                this.moveTo(node, node.identifier);
+                var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                this.movePast(node.equalsToken);
+                var alias = node.moduleReference.accept(this);
+                this.movePast(node.semicolonToken);
 
-            this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            this.movePast(node.equalsToken);
-            var alias = node.moduleReference.accept(this);
-            this.movePast(node.semicolonToken);
+                result = new ImportDeclaration(name, alias);
 
-            var importDecl = new ImportDeclaration(name, alias);
-            this.setSpan(importDecl, start, node);
+                result.preComments = preComments;
+                result.postComments = postComments;
+                result.isDynamicImport = node.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
+            }
 
-            importDecl.preComments = preComments;
-            importDecl.postComments = postComments;
-            importDecl.isDynamicImport = node.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
-
-            return importDecl;
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private visitExportAssignment(node: ExportAssignmentSyntax): ExportAssignment {
             this.assertElementAtPosition(node);
+
             var start = this.position;
+            var result: ExportAssignment = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.moveTo(node, node.identifier);
+                var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                this.movePast(node.semicolonToken);
 
-            this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            this.movePast(node.semicolonToken);
+                result = new ExportAssignment(name);
+            }
 
-            var result = new ExportAssignment(name);
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
         private visitVariableStatement(node: VariableStatementSyntax): AST {
             this.assertElementAtPosition(node);
+
             var start = this.position;
 
             var preComments: Comment[] = null;
@@ -1080,12 +1140,19 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.operatorToken);
-            var operand = node.operand.accept(this);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.operatorToken);
+                var operand = node.operand.accept(this);
 
-            var result = new UnaryExpression(this.getUnaryExpressionNodeType(node.kind()), operand);
+                result = new UnaryExpression(this.getUnaryExpressionNodeType(node.kind()), operand);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1093,28 +1160,41 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.openBracketToken);
-            var expressions = this.visitSeparatedSyntaxList(node.expressions);
-            this.movePast(node.closeBracketToken);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.openBracketToken);
+                var expressions = this.visitSeparatedSyntaxList(node.expressions);
+                this.movePast(node.closeBracketToken);
 
-            if (node.expressions.childCount() > 0 && node.expressions.childAt(node.expressions.childCount() - 1).kind() === SyntaxKind.CommaToken) {
-                expressions.append(new AST(NodeType.EmptyExpr));
+                if (node.expressions.childCount() > 0 && node.expressions.childAt(node.expressions.childCount() - 1).kind() === SyntaxKind.CommaToken) {
+                    expressions.append(new AST(NodeType.EmptyExpr));
+                }
+
+                result = new UnaryExpression(NodeType.ArrayLit, expressions);
             }
 
-            var result = new UnaryExpression(NodeType.ArrayLit, expressions);
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
-        private visitOmittedExpression(node: OmittedExpressionSyntax): any {
+        private visitOmittedExpression(node: OmittedExpressionSyntax): AST {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: AST = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                result = new AST(NodeType.EmptyExpr);
+            }
 
-            var result = new AST(NodeType.EmptyExpr);
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1157,27 +1237,33 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            this.movePast(node.equalsGreaterThanToken);
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                this.movePast(node.equalsGreaterThanToken);
 
-            var parameters = new ASTList();
+                var parameters = new ASTList();
 
-            var parameter = new ArgDecl(identifier);
-            this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
+                var parameter = new ArgDecl(identifier);
+                this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
 
-            parameters.append(parameter);
+                parameters.append(parameter);
 
-            var statements = this.getArrowFunctionStatements(node.body);
+                var statements = this.getArrowFunctionStatements(node.body);
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
+                result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
 
+                result.returnTypeAnnotation = null;
+                result.fncFlags |= FncFlags.IsFunctionExpression;
+                result.fncFlags |= FncFlags.IsFatArrowFunction;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.returnTypeAnnotation = null;
-            result.fncFlags |= FncFlags.IsFunctionExpression;
-            result.fncFlags |= FncFlags.IsFatArrowFunction;
-
             return result;
         }
 
@@ -1185,25 +1271,31 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
+                var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+                var parameters = node.callSignature.parameterList.accept(this);
+                var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+                this.movePast(node.equalsGreaterThanToken);
 
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            this.movePast(node.equalsGreaterThanToken);
+                var statements = this.getArrowFunctionStatements(node.body);
 
-            var statements = this.getArrowFunctionStatements(node.body);
+                result = new FuncDecl(null, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
+                result.preComments = preComments;
+                result.returnTypeAnnotation = returnType;
+                result.fncFlags |= FncFlags.IsFunctionExpression;
+                result.fncFlags |= FncFlags.IsFatArrowFunction;
+                result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.returnTypeAnnotation = returnType;
-            result.fncFlags |= FncFlags.IsFunctionExpression;
-            result.fncFlags |= FncFlags.IsFatArrowFunction;
-            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-
             return result;
         }
 
@@ -1226,21 +1318,29 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var left = this.visitType(node.left);
-            this.movePast(node.dotToken);
-            var right = this.identifierFromToken(node.right, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.right);
+            var result: TypeReference = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
 
-            if (left.nodeType === NodeType.TypeRef) {
-                left = (<TypeReference>left).term;
+                var left = this.visitType(node.left);
+                this.movePast(node.dotToken);
+                var right = this.identifierFromToken(node.right, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.right);
+
+                if (left.nodeType === NodeType.TypeRef) {
+                    left = (<TypeReference>left).term;
+                }
+
+                var term = new BinaryExpression(NodeType.Dot, left, right);
+                this.setSpan(term, start, node);
+
+                result = new TypeReference(term, 0);
             }
 
-            var term = new BinaryExpression(NodeType.Dot, left, right);
-            this.setSpan(term, start, node);
-
-            var result = new TypeReference(term, 0);
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1263,113 +1363,134 @@ module TypeScript {
             return result;
         }
 
-        private visitConstructorType(node: ConstructorTypeSyntax): any {
+        private visitConstructorType(node: ConstructorTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.newKeyword);
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var parameters = node.parameterList.accept(this);
-            this.movePast(node.equalsGreaterThanToken);
-            var returnType = node.type ? this.visitType(node.type) : null;
+            var result: TypeReference = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.newKeyword);
+                var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+                var parameters = node.parameterList.accept(this);
+                this.movePast(node.equalsGreaterThanToken);
+                var returnType = node.type ? this.visitType(node.type) : null;
 
-            var result = new FuncDecl(null, null, false, typeParameters, parameters, NodeType.FuncDecl);
+                var funcDecl = new FuncDecl(null, null, false, typeParameters, parameters, NodeType.FuncDecl);
+                this.setSpan(result, start, node);
+
+                funcDecl.returnTypeAnnotation = returnType;
+                funcDecl.fncFlags |= FncFlags.Signature;
+                funcDecl.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
+
+                funcDecl.fncFlags |= FncFlags.ConstructMember;
+                funcDecl.flags |= ASTFlags.TypeReference;
+                funcDecl.hint = "_construct";
+                funcDecl.classDecl = null;
+
+                result = new TypeReference(funcDecl, 0);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.returnTypeAnnotation = returnType;
-            // funcDecl.variableArgList = variableArgList;
-            result.fncFlags |= FncFlags.Signature;
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
-
-            result.fncFlags |= FncFlags.ConstructMember;
-            result.flags |= ASTFlags.TypeReference;
-            result.hint = "_construct";
-            result.classDecl = null;
-
-            var typeRef = new TypeReference(result, 0);
-            this.setSpan(typeRef, start, node);
-
-            return typeRef;
+            return result;
         }
 
         private visitFunctionType(node: FunctionTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var parameters = node.parameterList.accept(this);
-            this.movePast(node.equalsGreaterThanToken);
-            var returnType = node.type ? this.visitType(node.type) : null;
+            var result: TypeReference = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+                var parameters = node.parameterList.accept(this);
+                this.movePast(node.equalsGreaterThanToken);
+                var returnType = node.type ? this.visitType(node.type) : null;
 
-            var result = new FuncDecl(null, null, false, typeParameters, parameters, NodeType.FuncDecl);
+                var funcDecl = new FuncDecl(null, null, false, typeParameters, parameters, NodeType.FuncDecl);
+                this.setSpan(funcDecl, start, node);
+
+                funcDecl.returnTypeAnnotation = returnType;
+                // funcDecl.variableArgList = variableArgList;
+                funcDecl.fncFlags |= FncFlags.Signature;
+                funcDecl.flags |= ASTFlags.TypeReference;
+                funcDecl.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
+
+                result = new TypeReference(funcDecl, 0);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.returnTypeAnnotation = returnType;
-            // funcDecl.variableArgList = variableArgList;
-            result.fncFlags |= FncFlags.Signature;
-            result.flags |= ASTFlags.TypeReference;
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
-
-            var typeRef = new TypeReference(result, 0);
-            this.setSpan(typeRef, start, node);
-
-            return typeRef;
+            return result;
         }
 
         private visitObjectType(node: ObjectTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.openBraceToken);
-            var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
+            var result: TypeReference = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.openBraceToken);
+                var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
 
-            if (typeMembers.members) {
-                for (var i = 0; i < typeMembers.members.length; i++) {
-                    if (typeMembers.members[i].nodeType === NodeType.FuncDecl) {
-                        (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Method;
-                        (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Signature;
+                if (typeMembers.members) {
+                    for (var i = 0; i < typeMembers.members.length; i++) {
+                        if (typeMembers.members[i].nodeType === NodeType.FuncDecl) {
+                            (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Method;
+                            (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Signature;
+                        }
                     }
                 }
+                this.movePast(node.closeBraceToken);
+
+                var interfaceDecl = new InterfaceDeclaration(
+                    new Identifier("_anonymous"), null, typeMembers, null, null);
+                this.setSpan(interfaceDecl, start, node);
+
+                interfaceDecl.flags |= ASTFlags.TypeReference;
+
+                result = new TypeReference(interfaceDecl, 0);
             }
-            this.movePast(node.closeBraceToken);
 
-            var result = new InterfaceDeclaration(
-                new Identifier("_anonymous"),
-                null,
-                typeMembers,
-                null, null);
-
-            result.flags |= ASTFlags.TypeReference;
-
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            var typeRef = new TypeReference(result, 0);
-            this.setSpan(typeRef, start, node);
-
-            return typeRef;
+            return result;
         }
 
         private visitArrayType(node: ArrayTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var underlying = this.visitType(node.type);
-            this.movePast(node.openBracketToken);
-            this.movePast(node.closeBracketToken);
-
-            var result: TypeReference = null;
-            if (underlying.nodeType === NodeType.TypeRef) {
-                result = <TypeReference>underlying;
-                result.arrayCount++;
+            var result: TypeReference = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
             else {
-                result = new TypeReference(underlying, 1);
+                var underlying = this.visitType(node.type);
+                this.movePast(node.openBracketToken);
+                this.movePast(node.closeBracketToken);
+
+                if (underlying.nodeType === NodeType.TypeRef) {
+                    result = <TypeReference>underlying;
+                    result.arrayCount++;
+                }
+                else {
+                    result = new TypeReference(underlying, 1);
+                }
+
+                result.flags |= ASTFlags.TypeReference;
             }
 
-            result.flags |= ASTFlags.TypeReference;
-
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1377,21 +1498,28 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var underlying = this.visitType(node.name);
-            var typeArguments = node.typeArgumentList.accept(this);
+            var result: TypeReference = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var underlying = this.visitType(node.name);
+                var typeArguments = node.typeArgumentList.accept(this);
 
-            if (underlying.nodeType === NodeType.TypeRef) {
-                underlying = (<TypeReference>underlying).term;
+                if (underlying.nodeType === NodeType.TypeRef) {
+                    underlying = (<TypeReference>underlying).term;
+                }
+
+                var genericType = new GenericType(underlying, typeArguments);
+                this.setSpan(genericType, start, node);
+
+                genericType.flags |= ASTFlags.TypeReference;
+
+                result = new TypeReference(genericType, 0);
             }
 
-            var genericType = new GenericType(underlying, typeArguments);
-
-            genericType.flags |= ASTFlags.TypeReference;
-
-            var result = new TypeReference(genericType, 0);
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-            this.setSpan(genericType, start, node);
-
             return result;
         }
 
@@ -1406,11 +1534,17 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var statements = this.convertBlock(node);
+            var result: Block = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var statements = this.convertBlock(node);
+                result = new Block(statements, /*isStatementBlock:*/ true);
+            }
 
-            var result = new Block(statements, /*isStatementBlock:*/ true);
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1418,41 +1552,47 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: ArgDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+                this.moveTo(node, node.identifier);
+                var identifier = this.identifierFromToken(node.identifier, !!node.questionToken, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                this.movePast(node.questionToken);
+                var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+                var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            this.moveTo(node, node.identifier);
-            var identifier = this.identifierFromToken(node.identifier, !!node.questionToken, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            this.movePast(node.questionToken);
-            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
-            var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
+                result = new ArgDecl(identifier);
 
-            var result = new ArgDecl(identifier);
+                result.preComments = preComments;
+                result.postComments = postComments;
+                result.isOptional = !!node.questionToken;
+                result.init = init;
+                result.typeExpr = typeExpr;
+
+                if (node.publicOrPrivateKeyword) {
+                    result.varFlags |= VarFlags.Property;
+
+                    if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PublicKeyword) {
+                        result.varFlags |= VarFlags.Public;
+                    }
+                    else {
+                        result.varFlags |= VarFlags.Private;
+                    }
+                }
+
+                if (node.equalsValueClause || node.dotDotDotToken) {
+                    result.flags |= ASTFlags.OptionalName;
+                }
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.postComments = postComments;
-            result.isOptional = !!node.questionToken;
-            result.init = init;
-            result.typeExpr = typeExpr;
-
-            if (node.publicOrPrivateKeyword) {
-                result.varFlags |= VarFlags.Property;
-
-                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PublicKeyword) {
-                    result.varFlags |= VarFlags.Public;
-                }
-                else {
-                    result.varFlags |= VarFlags.Private;
-                }
-            }
-
-            if (node.equalsValueClause || node.dotDotDotToken) {
-                result.flags |= ASTFlags.OptionalName;
-            }
-
             return result;
         }
 
@@ -1460,16 +1600,22 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var expression: AST = node.expression.accept(this);
-            this.movePast(node.dotToken);
-            var name = this.identifierFromToken(node.name, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.name);
+            var result: BinaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var expression: AST = node.expression.accept(this);
+                this.movePast(node.dotToken);
+                var name = this.identifierFromToken(node.name, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.name);
 
-            var result = new BinaryExpression(NodeType.Dot, expression, name);
+                result = new BinaryExpression(NodeType.Dot, expression, name);
+                expression.flags |= ASTFlags.DotLHS;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            expression.flags |= ASTFlags.DotLHS;
-
             return result;
         }
 
@@ -1477,13 +1623,19 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var operand = node.operand.accept(this);
-            this.movePast(node.operatorToken);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var operand = node.operand.accept(this);
+                this.movePast(node.operatorToken);
 
-            var result = new UnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.IncPost : NodeType.DecPost,
-                operand);
+                result = new UnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.IncPost : NodeType.DecPost, operand);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1491,14 +1643,21 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var expression = node.expression.accept(this);
-            this.movePast(node.openBracketToken);
-            var argumentExpression = node.argumentExpression.accept(this);
-            this.movePast(node.closeBracketToken);
+            var result: BinaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var expression = node.expression.accept(this);
+                this.movePast(node.openBracketToken);
+                var argumentExpression = node.argumentExpression.accept(this);
+                this.movePast(node.closeBracketToken);
 
-            var result = new BinaryExpression(NodeType.Index, expression, argumentExpression);
+                result = new BinaryExpression(NodeType.Index, expression, argumentExpression);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1517,15 +1676,22 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var expression = node.expression.accept(this);
-            var typeArguments = node.argumentList.typeArgumentList !== null
-                ? node.argumentList.typeArgumentList.accept(this)
-                : null;
-            var argumentList = this.convertArgumentListArguments(node.argumentList);
+            var result: CallExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var expression = node.expression.accept(this);
+                var typeArguments = node.argumentList.typeArgumentList !== null
+                    ? node.argumentList.typeArgumentList.accept(this)
+                    : null;
+                var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-            var result = new CallExpression(NodeType.Call, expression, typeArguments, argumentList);
+                result = new CallExpression(NodeType.Call, expression, typeArguments, argumentList);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1582,22 +1748,29 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var nodeType = this.getBinaryExpressionNodeType(node);
-            var left = node.left.accept(this);
-            this.movePast(node.operatorToken);
-            var right = node.right.accept(this);
+            var result: BinaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var nodeType = this.getBinaryExpressionNodeType(node);
+                var left = node.left.accept(this);
+                this.movePast(node.operatorToken);
+                var right = node.right.accept(this);
 
-            var result = new BinaryExpression(nodeType, left, right);
-            this.setSpan(result, start, node);
+                result = new BinaryExpression(nodeType, left, right);
 
-            if (right.nodeType === NodeType.FuncDecl) {
-                var id = left.nodeType === NodeType.Dot ? (<BinaryExpression>left).operand2 : left;
-                var idHint: string = id.nodeType === NodeType.Name ? id.actualText : null;
+                if (right.nodeType === NodeType.FuncDecl) {
+                    var id = left.nodeType === NodeType.Dot ? (<BinaryExpression>left).operand2 : left;
+                    var idHint: string = id.nodeType === NodeType.Name ? id.actualText : null;
 
-                var funcDecl = <FuncDecl>right;
-                funcDecl.hint = idHint;
+                    var funcDecl = <FuncDecl>right;
+                    funcDecl.hint = idHint;
+                }
             }
 
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -1605,15 +1778,22 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var condition = node.condition.accept(this);
-            this.movePast(node.questionToken);
-            var whenTrue = node.whenTrue.accept(this);
-            this.movePast(node.colonToken);
-            var whenFalse = node.whenFalse.accept(this)
+            var result: ConditionalExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var condition = node.condition.accept(this);
+                this.movePast(node.questionToken);
+                var whenTrue = node.whenTrue.accept(this);
+                this.movePast(node.colonToken);
+                var whenFalse = node.whenFalse.accept(this)
 
-            var result = new ConditionalExpression(condition, whenTrue, whenFalse);
+                result = new ConditionalExpression(condition, whenTrue, whenFalse);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1621,24 +1801,31 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
+                this.movePast(node.newKeyword);
+                var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+                var parameters = node.callSignature.parameterList.accept(this);
+                var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            this.movePast(node.newKeyword);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+                result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
+                
+                result.preComments = preComments;
+                result.returnTypeAnnotation = returnType;
 
-            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
+                result.hint = "_construct";
+                result.fncFlags |= FncFlags.ConstructMember;
+                result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
+
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.returnTypeAnnotation = returnType;
-
-            result.hint = "_construct";
-            result.fncFlags |= FncFlags.ConstructMember;
-            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-
             return result;
         }
 
@@ -1646,56 +1833,68 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
+                var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ true);
+                this.movePast(node.propertyName);
+                this.movePast(node.questionToken);
 
-            var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ true);
-            this.movePast(node.propertyName);
-            this.movePast(node.questionToken);
+                var typeParameters = node.callSignature.typeParameterList ? node.callSignature.typeParameterList.accept(this) : null;
+                var parameters = node.callSignature.parameterList.accept(this);
+                var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var typeParameters = node.callSignature.typeParameterList ? node.callSignature.typeParameterList.accept(this) : null;
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+                result = new FuncDecl(name, null, false, typeParameters, parameters, NodeType.FuncDecl);
 
-            var funcDecl = new FuncDecl(name, null, false, typeParameters, parameters, NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, node);
+                result.preComments = preComments;
+                result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
+                result.returnTypeAnnotation = returnType;
+            }
 
-            funcDecl.preComments = preComments;
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-            funcDecl.returnTypeAnnotation = returnType;
-
-            return funcDecl;
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private visitIndexSignature(node: IndexSignatureSyntax): FuncDecl {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
+                this.movePast(node.openBracketToken);
 
-            this.movePast(node.openBracketToken);
+                var parameter = node.parameter.accept(this);
 
-            var parameter = node.parameter.accept(this);
+                this.movePast(node.closeBracketToken);
+                var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            this.movePast(node.closeBracketToken);
-            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+                var name = new Identifier("__item");
+                this.setSpanExplicit(name, start, start);   // 0 length name.
 
-            var name = new Identifier("__item");
-            this.setSpanExplicit(name, start, start);   // 0 length name.
+                var parameters = new ASTList();
+                parameters.append(parameter);
 
-            var parameters = new ASTList();
-            parameters.append(parameter);
+                result = new FuncDecl(name, null, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
 
-            var result = new FuncDecl(name, null, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
+                result.preComments = preComments;
+                result.variableArgList = false;
+                result.returnTypeAnnotation = returnType;
+
+                result.fncFlags |= FncFlags.IndexerMember;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.variableArgList = false;
-            result.returnTypeAnnotation = returnType;
-
-            result.fncFlags |= FncFlags.IndexerMember;
-
             return result;
         }
 
@@ -1703,21 +1902,27 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: VarDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
+                var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ true);
+                this.movePast(node.propertyName);
+                this.movePast(node.questionToken);
+                var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var name = this.identifierFromToken(node.propertyName, !!node.questionToken, /*useValueText:*/ true);
-            this.movePast(node.propertyName);
-            this.movePast(node.questionToken);
-            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+                result = new VarDecl(name, 0);
 
-            var result = new VarDecl(name, 0);
+                result.preComments = preComments;
+                result.typeExpr = typeExpr;
+                result.varFlags |= VarFlags.Property;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.typeExpr = typeExpr;
-            result.varFlags |= VarFlags.Property;
-
             return result;
         }
 
@@ -1741,23 +1946,29 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
+                var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+                var parameters = node.parameterList.accept(this);
+                var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var parameters = node.parameterList.accept(this);
-            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+                result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
 
-            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
+                result.preComments = preComments;
+                result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
+                result.returnTypeAnnotation = returnType;
+
+                result.hint = "_call";
+                result.fncFlags |= FncFlags.CallMember;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
-            result.returnTypeAnnotation = returnType;
-
-            result.hint = "_call";
-            result.fncFlags |= FncFlags.CallMember;
-
             return result;
         }
 
@@ -1775,13 +1986,20 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            var constraint = node.constraint ? node.constraint.accept(this) : null;
+            var result: TypeParameter = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                var constraint = node.constraint ? node.constraint.accept(this) : null;
 
-            var result = new TypeParameter(identifier, constraint);
+                result = new TypeParameter(identifier, constraint);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -1796,18 +2014,24 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo(node, node.condition);
-            var condition = node.condition.accept(this);
-            this.movePast(node.closeParenToken);
-            var thenBod = node.statement.accept(this);
-            var elseBod = node.elseClause ? node.elseClause.accept(this) : null;
+            var result: IfStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.moveTo(node, node.condition);
+                var condition = node.condition.accept(this);
+                this.movePast(node.closeParenToken);
+                var thenBod = node.statement.accept(this);
+                var elseBod = node.elseClause ? node.elseClause.accept(this) : null;
 
-            var result = new IfStatement(condition);
+                result = new IfStatement(condition);
+                result.thenBod = thenBod;
+                result.elseBod = elseBod;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.thenBod = thenBod;
-            result.elseBod = elseBod;
-
             return result;
         }
 
@@ -1822,21 +2046,25 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: AST = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
+                result = node.expression.accept(this);
+                this.movePast(node.semicolonToken);
 
-            var expression = node.expression.accept(this);
-            this.movePast(node.semicolonToken);
+                result.preComments = preComments;
+                result.postComments = postComments;
 
-            var result = expression;
+                result.flags |= ASTFlags.IsStatement;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.postComments = postComments;
-
-            result.flags |= ASTFlags.IsStatement;
-
             return result;
         }
 
@@ -1844,33 +2072,39 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-
-            this.moveTo(node, node.parameterList);
-            var parameters = node.parameterList.accept(this);
-
-            var statements = this.convertBlock(node.block);
-            if (statements) {
-                statements.append(new EndCode());
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
-            this.movePast(node.semicolonToken);
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ true, null, parameters, NodeType.FuncDecl);
+                this.moveTo(node, node.parameterList);
+                var parameters = node.parameterList.accept(this);
+
+                var statements = this.convertBlock(node.block);
+                if (statements) {
+                    statements.append(new EndCode());
+                }
+                this.movePast(node.semicolonToken);
+
+                result = new FuncDecl(null, statements, /*isConstructor:*/ true, null, parameters, NodeType.FuncDecl);
+
+                result.preComments = preComments;
+                result.postComments = postComments;
+                result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
+
+                if (node.semicolonToken) {
+                    result.fncFlags |= FncFlags.Signature;
+                }
+
+                // REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
+                result.fncFlags |= FncFlags.ClassMethod;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.postComments = postComments;
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
-
-            if (node.semicolonToken) {
-                result.fncFlags |= FncFlags.Signature;
-            }
-
-            // REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
-            result.fncFlags |= FncFlags.ClassMethod;
-
             return result;
         }
 
@@ -1878,52 +2112,58 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
-
-            this.movePast(node.propertyName);
-
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation
-                ? node.callSignature.typeAnnotation.accept(this)
-                : null;
-
-            var statements = this.convertBlock(node.block);
-            if (statements) {
-                statements.append(new EndCode());
-            }
-            this.movePast(node.semicolonToken);
-
-            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
-            this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.postComments = postComments;
-            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-            result.returnTypeAnnotation = returnType;
-
-            if (node.semicolonToken) {
-                result.fncFlags |= FncFlags.Signature;
-            }
-
-            if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                result.fncFlags |= FncFlags.Private;
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
             else {
-                result.fncFlags |= FncFlags.Public;
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
+
+                this.moveTo(node, node.propertyName);
+                var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
+
+                this.movePast(node.propertyName);
+
+                var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+                var parameters = node.callSignature.parameterList.accept(this);
+                var returnType = node.callSignature.typeAnnotation
+                    ? node.callSignature.typeAnnotation.accept(this)
+                    : null;
+
+                var statements = this.convertBlock(node.block);
+                if (statements) {
+                    statements.append(new EndCode());
+                }
+                this.movePast(node.semicolonToken);
+
+                result = new FuncDecl(name, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
+
+                result.preComments = preComments;
+                result.postComments = postComments;
+                result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
+                result.returnTypeAnnotation = returnType;
+
+                if (node.semicolonToken) {
+                    result.fncFlags |= FncFlags.Signature;
+                }
+
+                if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
+                    result.fncFlags |= FncFlags.Private;
+                }
+                else {
+                    result.fncFlags |= FncFlags.Public;
+                }
+
+                if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
+                    result.fncFlags |= FncFlags.Static;
+                }
+
+                result.fncFlags |= FncFlags.Method;
             }
 
-            if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                result.fncFlags |= FncFlags.Static;
-            }
-
-            result.fncFlags |= FncFlags.Method;
-
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -1931,41 +2171,48 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.propertyName);
-            var parameters = node.parameterList.accept(this);
-            var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
-
-            var statements = this.convertBlock(node.block);
-            if (statements) {
-                statements.append(new EndCode());
-            }
-            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
-            this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-            result.postComments = postComments;
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
-            result.returnTypeAnnotation = returnType;
-
-            if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                result.fncFlags |= FncFlags.Private;
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
             else {
-                result.fncFlags |= FncFlags.Public;
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
+
+                this.moveTo(node, node.propertyName);
+                var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.propertyName);
+                var parameters = node.parameterList.accept(this);
+                var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
+
+                var statements = this.convertBlock(node.block);
+                if (statements) {
+                    statements.append(new EndCode());
+                }
+
+                result = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
+
+                result.preComments = preComments;
+                result.postComments = postComments;
+                result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
+                result.returnTypeAnnotation = returnType;
+
+                if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
+                    result.fncFlags |= FncFlags.Private;
+                }
+                else {
+                    result.fncFlags |= FncFlags.Public;
+                }
+
+                if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
+                    result.fncFlags |= FncFlags.Static;
+                }
+
+                result.fncFlags |= FncFlags.Method;
             }
 
-            if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                result.fncFlags |= FncFlags.Static;
-            }
-
-            result.fncFlags |= FncFlags.Method;
-
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -1995,61 +2242,67 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-            var postComments = this.convertNodeTrailingComments(node, start);
-
-            this.moveTo(node, node.variableDeclarator);
-            this.moveTo(node.variableDeclarator, node.variableDeclarator.identifier);
-
-            var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.variableDeclarator.identifier);
-            var typeExpr = node.variableDeclarator.typeAnnotation ? node.variableDeclarator.typeAnnotation.accept(this) : null;
-            var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
-            this.movePast(node.semicolonToken);
-
-            var varDecl = new VarDecl(name, 0);
-            this.setSpan(varDecl, start, node);
-
-            varDecl.preComments = preComments;
-            varDecl.postComments = postComments;
-            varDecl.typeExpr = typeExpr;
-            varDecl.init = init;
-
-            if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                varDecl.varFlags |= VarFlags.Static;
-            }
-
-            if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                varDecl.varFlags |= VarFlags.Private;
+            var result: VarDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
             else {
-                varDecl.varFlags |= VarFlags.Public;
+                var preComments = this.convertNodeLeadingComments(node, start);
+                var postComments = this.convertNodeTrailingComments(node, start);
+
+                this.moveTo(node, node.variableDeclarator);
+                this.moveTo(node.variableDeclarator, node.variableDeclarator.identifier);
+
+                var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.variableDeclarator.identifier);
+                var typeExpr = node.variableDeclarator.typeAnnotation ? node.variableDeclarator.typeAnnotation.accept(this) : null;
+                var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
+                this.movePast(node.semicolonToken);
+
+                result = new VarDecl(name, 0);
+
+                result.preComments = preComments;
+                result.postComments = postComments;
+                result.typeExpr = typeExpr;
+                result.init = init;
+
+                if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
+                    result.varFlags |= VarFlags.Static;
+                }
+
+                if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
+                    result.varFlags |= VarFlags.Private;
+                }
+                else {
+                    result.varFlags |= VarFlags.Public;
+                }
+
+                result.varFlags |= VarFlags.ClassProperty;
             }
 
-            varDecl.varFlags |= VarFlags.ClassProperty;
-
-            // this.currentClassDefinition.knownMemberNames[text.actualText] = true;
-
-            //if (!isDeclaredInConstructor) {
-            //    this.currentClassDefinition.members.members[this.currentClassDefinition.members.members.length] = varDecl;
-            //}
-
-            // varDecl.postComments = this.parseComments();
-            return varDecl;
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private visitThrowStatement(node: ThrowStatementSyntax): UnaryExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.throwKeyword);
-            var expression = node.expression.accept(this);
-            this.movePast(node.semicolonToken);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.throwKeyword);
+                var expression = node.expression.accept(this);
+                this.movePast(node.semicolonToken);
 
-            var result = new UnaryExpression(NodeType.Throw, expression);
+                result = new UnaryExpression(NodeType.Throw, expression);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2057,15 +2310,21 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.returnKeyword);
-            var expression = node.expression ? node.expression.accept(this) : null;
-            this.movePast(node.semicolonToken);
+            var result: ReturnStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.returnKeyword);
+                var expression = node.expression ? node.expression.accept(this) : null;
+                this.movePast(node.semicolonToken);
 
-            var result = new ReturnStatement();
+                result = new ReturnStatement();
+                result.returnExpression = expression;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.returnExpression = expression;
-
             return result;
         }
 
@@ -2073,25 +2332,32 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.newKeyword);
-            var expression = node.expression.accept(this);
-            var typeArgumentList = node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this);
-            var argumentList = this.convertArgumentListArguments(node.argumentList);
+            var result: CallExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.newKeyword);
+                var expression = node.expression.accept(this);
+                var typeArgumentList = node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this);
+                var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-            var result = new CallExpression(NodeType.New, expression, typeArgumentList, argumentList);
-            this.setSpan(result, start, node);
+                result = new CallExpression(NodeType.New, expression, typeArgumentList, argumentList);
 
-            if (expression.nodeType === NodeType.TypeRef) {
-                var typeRef = <TypeReference>expression;
+                if (expression.nodeType === NodeType.TypeRef) {
+                    var typeRef = <TypeReference>expression;
 
-                if (typeRef.arrayCount === 0) {
-                    var term = typeRef.term;
-                    if (term.nodeType === NodeType.Dot || term.nodeType === NodeType.Name) {
-                        expression = term;
+                    if (typeRef.arrayCount === 0) {
+                        var term = typeRef.term;
+                        if (term.nodeType === NodeType.Dot || term.nodeType === NodeType.Name) {
+                            expression = term;
+                        }
                     }
                 }
             }
 
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -2099,35 +2365,41 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.switchKeyword);
-            this.movePast(node.openParenToken);
-            var expression = node.expression.accept(this);
-            this.movePast(node.closeParenToken);
-            var closeParenPosition = this.position;
-            this.movePast(node.openBraceToken);
+            var result: SwitchStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.switchKeyword);
+                this.movePast(node.openParenToken);
+                var expression = node.expression.accept(this);
+                this.movePast(node.closeParenToken);
+                var closeParenPosition = this.position;
+                this.movePast(node.openBraceToken);
 
-            var result = new SwitchStatement(expression);
+                result = new SwitchStatement(expression);
 
-            result.statement.minChar = start;
-            result.statement.limChar = closeParenPosition;
+                result.statement.minChar = start;
+                result.statement.limChar = closeParenPosition;
 
-            result.caseList = new ASTList()
+                result.caseList = new ASTList()
 
-            for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
-                var switchClause = node.switchClauses.childAt(i);
-                var translated = switchClause.accept(this);
+                for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
+                    var switchClause = node.switchClauses.childAt(i);
+                    var translated = switchClause.accept(this);
 
-                if (switchClause.kind() === SyntaxKind.DefaultSwitchClause) {
-                    result.defaultCase = translated;
+                    if (switchClause.kind() === SyntaxKind.DefaultSwitchClause) {
+                        result.defaultCase = translated;
+                    }
+
+                    result.caseList.append(translated);
                 }
 
-                result.caseList.append(translated);
+                this.movePast(node.closeBraceToken);
             }
 
-            this.movePast(node.closeBraceToken);
-
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2135,17 +2407,24 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.caseKeyword);
-            var expression = node.expression.accept(this);
-            this.movePast(node.colonToken);
-            var statements = this.visitSyntaxList(node.statements);
+            var result: CaseStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.caseKeyword);
+                var expression = node.expression.accept(this);
+                this.movePast(node.colonToken);
+                var statements = this.visitSyntaxList(node.statements);
 
-            var result = new CaseStatement();
+                result = new CaseStatement();
+
+                result.expr = expression;
+                result.body = statements;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.expr = expression;
-            result.body = statements;
-
             return result;
         }
 
@@ -2153,15 +2432,21 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.defaultKeyword);
-            this.movePast(node.colonToken);
-            var statements = this.visitSyntaxList(node.statements);
+            var result: CaseStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.defaultKeyword);
+                this.movePast(node.colonToken);
+                var statements = this.visitSyntaxList(node.statements);
 
-            var result = new CaseStatement();
+                result = new CaseStatement();
+                result.body = statements;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.body = statements;
-
             return result;
         }
 
@@ -2169,17 +2454,24 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.breakKeyword);
-            this.movePast(node.identifier);
-            this.movePast(node.semicolonToken);
+            var result: Jump = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.breakKeyword);
+                this.movePast(node.identifier);
+                this.movePast(node.semicolonToken);
 
-            var result = new Jump(NodeType.Break);
-            this.setSpan(result, start, node);
+                result = new Jump(NodeType.Break);
 
-            if (node.identifier !== null) {
-                result.target = node.identifier.valueText();
+                if (node.identifier !== null) {
+                    result.target = node.identifier.valueText();
+                }
             }
 
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -2187,17 +2479,24 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.continueKeyword);
-            this.movePast(node.identifier);
-            this.movePast(node.semicolonToken);
+            var result: Jump = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.continueKeyword);
+                this.movePast(node.identifier);
+                this.movePast(node.semicolonToken);
 
-            var result = new Jump(NodeType.Continue);
-            this.setSpan(result, start, node);
+                result = new Jump(NodeType.Continue);
 
-            if (node.identifier !== null) {
-                result.target = node.identifier.valueText();
+                if (node.identifier !== null) {
+                    result.target = node.identifier.valueText();
+                }
             }
 
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -2205,27 +2504,34 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.forKeyword);
-            this.movePast(node.openParenToken);
-            var init = node.variableDeclaration
-                ? node.variableDeclaration.accept(this)
-                : node.initializer
-        ? node.initializer.accept(this)
-        : null;
-            this.movePast(node.firstSemicolonToken);
-            var cond = node.condition ? node.condition.accept(this) : null;
-            this.movePast(node.secondSemicolonToken);
-            var incr = node.incrementor ? node.incrementor.accept(this) : null;
-            this.movePast(node.closeParenToken);
-            var body = node.statement.accept(this);
+            var result: ForStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.forKeyword);
+                this.movePast(node.openParenToken);
+                var init = node.variableDeclaration
+                    ? node.variableDeclaration.accept(this)
+                    : node.initializer
+                        ? node.initializer.accept(this)
+                        : null;
+                this.movePast(node.firstSemicolonToken);
+                var cond = node.condition ? node.condition.accept(this) : null;
+                this.movePast(node.secondSemicolonToken);
+                var incr = node.incrementor ? node.incrementor.accept(this) : null;
+                this.movePast(node.closeParenToken);
+                var body = node.statement.accept(this);
 
-            var result = new ForStatement(init);
+                result = new ForStatement(init);
+
+                result.cond = cond;
+                result.incr = incr;
+                result.body = body;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.cond = cond;
-            result.incr = incr;
-            result.body = body;
-
             return result;
         }
 
@@ -2233,19 +2539,25 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.forKeyword);
-            this.movePast(node.openParenToken);
-            var init = node.variableDeclaration ? node.variableDeclaration.accept(this) : node.left.accept(this);
-            this.movePast(node.inKeyword);
-            var expression = node.expression.accept(this);
-            this.movePast(node.closeParenToken);
-            var body = node.statement.accept(this);
+            var result: ForInStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.forKeyword);
+                this.movePast(node.openParenToken);
+                var init = node.variableDeclaration ? node.variableDeclaration.accept(this) : node.left.accept(this);
+                this.movePast(node.inKeyword);
+                var expression = node.expression.accept(this);
+                this.movePast(node.closeParenToken);
+                var body = node.statement.accept(this);
 
-            var result = new ForInStatement(init, expression);
+                result = new ForInStatement(init, expression);
+                result.body = body;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.body = body;
-
             return result;
         }
 
@@ -2253,16 +2565,22 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo(node, node.condition);
-            var condition = node.condition.accept(this);
-            this.movePast(node.closeParenToken);
-            var statement = node.statement.accept(this);
+            var result: WhileStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.moveTo(node, node.condition);
+                var condition = node.condition.accept(this);
+                this.movePast(node.closeParenToken);
+                var statement = node.statement.accept(this);
 
-            var result = new WhileStatement(condition);
+                result = new WhileStatement(condition);
+                result.body = statement;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.body = statement;
-
             return result;
         }
 
@@ -2270,16 +2588,22 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo(node, node.condition);
-            var condition = node.condition.accept(this);
-            this.movePast(node.closeParenToken);
-            var statement = node.statement.accept(this);
+            var result: WithStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.moveTo(node, node.condition);
+                var condition = node.condition.accept(this);
+                this.movePast(node.closeParenToken);
+                var statement = node.statement.accept(this);
 
-            var result = new WithStatement(condition);
+                result = new WithStatement(condition);
+                result.body = statement;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.body = statement;
-
             return result;
         }
 
@@ -2287,16 +2611,22 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.lessThanToken);
-            var castTerm = this.visitType(node.type);
-            this.movePast(node.greaterThanToken);
-            var expression = node.expression.accept(this);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.lessThanToken);
+                var castTerm = this.visitType(node.type);
+                this.movePast(node.greaterThanToken);
+                var expression = node.expression.accept(this);
 
-            var result = new UnaryExpression(NodeType.TypeAssertion, expression);
+                result = new UnaryExpression(NodeType.TypeAssertion, expression);
+                result.castTerm = castTerm;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.castTerm = castTerm;
-
             return result;
         }
 
@@ -2304,13 +2634,20 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.openBraceToken);
-            var propertyAssignments = this.visitSeparatedSyntaxList(node.propertyAssignments);
-            this.movePast(node.closeBraceToken);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.openBraceToken);
+                var propertyAssignments = this.visitSeparatedSyntaxList(node.propertyAssignments);
+                this.movePast(node.closeBraceToken);
 
-            var result = new UnaryExpression(NodeType.ObjectLit, propertyAssignments);
+                result = new UnaryExpression(NodeType.ObjectLit, propertyAssignments);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2318,27 +2655,32 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+            var result: BinaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            var preComments = this.convertNodeLeadingComments(node, start);
+                var left = node.propertyName.accept(this);
 
-            var left = node.propertyName.accept(this);
+                this.previousTokenTrailingComments = this.convertTokenTrailingComments(
+                    node.colonToken, this.position + node.colonToken.leadingTriviaWidth() + node.colonToken.width());
 
-            this.previousTokenTrailingComments = this.convertTokenTrailingComments(
-                node.colonToken, this.position + node.colonToken.leadingTriviaWidth() + node.colonToken.width());
+                this.movePast(node.colonToken);
+                var right = node.expression.accept(this);
 
-            this.movePast(node.colonToken);
-            var right = node.expression.accept(this);
+                result = new BinaryExpression(NodeType.Member, left, right);
+                result.preComments = preComments;
 
-            var result = new BinaryExpression(NodeType.Member, left, right);
-            this.setSpan(result, start, node);
-
-            result.preComments = preComments;
-
-            if (right.nodeType === NodeType.FuncDecl) {
-                var funcDecl = <FuncDecl>right;
-                funcDecl.hint = left.text;
+                if (right.nodeType === NodeType.FuncDecl) {
+                    var funcDecl = <FuncDecl>right;
+                    funcDecl.hint = left.text;
+                }
             }
 
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 
@@ -2346,29 +2688,36 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.propertyName);
-            this.movePast(node.openParenToken);
-            this.movePast(node.closeParenToken);
-            var returnType = node.typeAnnotation
-                ? node.typeAnnotation.accept(this)
-                : null;
+            var result: BinaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.moveTo(node, node.propertyName);
+                var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.propertyName);
+                this.movePast(node.openParenToken);
+                this.movePast(node.closeParenToken);
+                var returnType = node.typeAnnotation
+                    ? node.typeAnnotation.accept(this)
+                    : null;
 
-            var statements = this.convertBlock(node.block);
-            statements.append(new EndCode());
+                var statements = this.convertBlock(node.block);
+                statements.append(new EndCode());
 
-            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, new ASTList(), NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, node);
+                var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, new ASTList(), NodeType.FuncDecl);
+                this.setSpan(funcDecl, start, node);
 
-            funcDecl.fncFlags |= FncFlags.GetAccessor;
-            funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
-            funcDecl.hint = "get" + node.propertyName.valueText();
-            funcDecl.returnTypeAnnotation = returnType;
+                funcDecl.fncFlags |= FncFlags.GetAccessor;
+                funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
+                funcDecl.hint = "get" + node.propertyName.valueText();
+                funcDecl.returnTypeAnnotation = returnType;
 
-            var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+                result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2376,29 +2725,36 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.propertyName);
-            this.movePast(node.openParenToken);
-            var parameter = node.parameter.accept(this);
-            this.movePast(node.closeParenToken);
+            var result: BinaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.moveTo(node, node.propertyName);
+                var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.propertyName);
+                this.movePast(node.openParenToken);
+                var parameter = node.parameter.accept(this);
+                this.movePast(node.closeParenToken);
 
-            var parameters = new ASTList();
-            parameters.append(parameter);
+                var parameters = new ASTList();
+                parameters.append(parameter);
 
-            var statements = this.convertBlock(node.block);
-            statements.append(new EndCode());
+                var statements = this.convertBlock(node.block);
+                statements.append(new EndCode());
 
-            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, node);
+                var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
+                this.setSpan(funcDecl, start, node);
 
-            funcDecl.fncFlags |= FncFlags.SetAccessor;
-            funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
-            funcDecl.hint = "set" + node.propertyName.valueText();
+                funcDecl.fncFlags |= FncFlags.SetAccessor;
+                funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
+                funcDecl.hint = "set" + node.propertyName.valueText();
 
-            var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+                result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2406,49 +2762,62 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-
-            var preComments = this.convertNodeLeadingComments(node, start);
-
-            this.movePast(node.functionKeyword);
-            var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation
-                ? node.callSignature.typeAnnotation.accept(this)
-                : null;
-
-            var bod = this.convertBlock(node.block);
-            if (bod) {
-                bod.append(new EndCode());
+            var result: FuncDecl = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
+            else {
+                var preComments = this.convertNodeLeadingComments(node, start);
 
-            if (node.block) {
-                if (this.hasUseStrictDirective(node.block.statements)) {
-                    bod.flags |= ASTFlags.StrictMode;
+                this.movePast(node.functionKeyword);
+                var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+                var parameters = node.callSignature.parameterList.accept(this);
+                var returnType = node.callSignature.typeAnnotation
+                    ? node.callSignature.typeAnnotation.accept(this)
+                    : null;
+
+                var bod = this.convertBlock(node.block);
+                if (bod) {
+                    bod.append(new EndCode());
                 }
+
+                if (node.block) {
+                    if (this.hasUseStrictDirective(node.block.statements)) {
+                        bod.flags |= ASTFlags.StrictMode;
+                    }
+                }
+
+                result = new FuncDecl(name, bod, false, typeParameters, parameters, NodeType.FuncDecl);
+
+                result.preComments = preComments;
+                result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
+                result.returnTypeAnnotation = returnType;
+                result.fncFlags |= FncFlags.IsFunctionExpression;
             }
 
-            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, NodeType.FuncDecl);
-            this.setSpan(funcDecl, start, node);
-
-            funcDecl.preComments = preComments;
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
-            funcDecl.returnTypeAnnotation = returnType;
-            funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
-
-            return funcDecl;
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private visitEmptyStatement(node: EmptyStatementSyntax): AST {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.semicolonToken);
+            var result: AST = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.semicolonToken);
 
-            var result = new AST(NodeType.Empty);
+                result = new AST(NodeType.Empty);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2456,57 +2825,73 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.tryKeyword);
-            var block = node.block.accept(this);
-
-            var tryPart: AST = new Try(block);
-            this.setSpanExplicit(tryPart, start, this.position);
-
-            var tryCatch: TryCatch = null;
-            if (node.catchClause !== null) {
-                var catchBit = node.catchClause.accept(this);
-
-                tryCatch = new TryCatch(<Try>tryPart, catchBit);
-                this.setSpanExplicit(tryCatch, tryPart.minChar, this.position - node.catchClause.trailingTriviaWidth());
+            var result: AST = this.getAST(node);
+            if (result) {
+                this.movePast(node);
             }
+            else {
+                this.movePast(node.tryKeyword);
+                var block = node.block.accept(this);
 
-            if (node.finallyClause !== null) {
-                if (tryCatch !== null) {
-                    tryPart = tryCatch;
+                var tryPart: AST = new Try(block);
+                this.setSpanExplicit(tryPart, start, this.position);
+
+                var tryCatch: TryCatch = null;
+                if (node.catchClause !== null) {
+                    var catchBit = node.catchClause.accept(this);
+
+                    tryCatch = new TryCatch(<Try>tryPart, catchBit);
+                    this.setSpanExplicit(tryCatch, tryPart.minChar, this.position - node.catchClause.trailingTriviaWidth());
                 }
 
-                var finallyBit = node.finallyClause.accept(this);
+                if (node.finallyClause !== null) {
+                    if (tryCatch !== null) {
+                        tryPart = tryCatch;
+                    }
 
-                var result = new TryFinally(tryPart, finallyBit);
-                this.setSpanExplicit(result, tryPart.minChar, this.position - node.finallyClause.trailingTriviaWidth());
+                    var finallyBit = node.finallyClause.accept(this);
 
-                return result;
+                    result = new TryFinally(tryPart, finallyBit);
+                    this.setSpanExplicit(result, tryPart.minChar, this.position - node.finallyClause.trailingTriviaWidth());
+                }
+                else {
+                    result = tryCatch;
+                }
             }
 
-            Debug.assert(tryCatch !== null);
-            return tryCatch;
+            Debug.assert(result !== null);
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private visitCatchClause(node: CatchClauseSyntax): Catch {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.catchKeyword);
-            this.movePast(node.openParenToken);
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
-            this.movePast(node.closeParenToken);
-            var block = node.block.accept(this);
+            var result: Catch = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.catchKeyword);
+                this.movePast(node.openParenToken);
+                var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+                this.movePast(node.closeParenToken);
+                var block = node.block.accept(this);
 
-            var varDecl = new VarDecl(identifier, 0);
-            this.setSpanExplicit(varDecl, identifier.minChar, identifier.limChar);
+                var varDecl = new VarDecl(identifier, 0);
+                this.setSpanExplicit(varDecl, identifier.minChar, identifier.limChar);
 
-            varDecl.typeExpr = typeExpr;
+                varDecl.typeExpr = typeExpr;
 
-            var result = new Catch(varDecl, block);
+                result = new Catch(varDecl, block);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2514,12 +2899,19 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.finallyKeyword);
-            var block = node.block.accept(this);
+            var result: Finally = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.finallyKeyword);
+                var block = node.block.accept(this);
 
-            var result = new Finally(block);
+                result = new Finally(block);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2527,17 +2919,24 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.identifier);
-            this.movePast(node.colonToken);
-            var statement = node.statement.accept(this);
+            var result: LabeledStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.identifier);
+                this.movePast(node.colonToken);
+                var statement = node.statement.accept(this);
 
-            var labelList = new ASTList();
-            labelList.append(new Label(identifier));
+                var labelList = new ASTList();
+                labelList.append(new Label(identifier));
 
-            var result = new LabeledStatement(labelList, statement);
+                result = new LabeledStatement(labelList, statement);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2545,22 +2944,29 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.doKeyword);
-            var statement = node.statement.accept(this);
-            var whileAst = this.identifierFromToken(node.whileKeyword, /*isOptional:*/ false, /*useValueText:*/ true);
-            this.movePast(node.whileKeyword);
-            this.movePast(node.openParenToken);
-            var condition = node.condition.accept(this);
-            this.movePast(node.closeParenToken);
-            this.movePast(node.semicolonToken);
+            var result: DoWhileStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.doKeyword);
+                var statement = node.statement.accept(this);
+                var whileAst = this.identifierFromToken(node.whileKeyword, /*isOptional:*/ false, /*useValueText:*/ true);
+                this.movePast(node.whileKeyword);
+                this.movePast(node.openParenToken);
+                var condition = node.condition.accept(this);
+                this.movePast(node.closeParenToken);
+                this.movePast(node.semicolonToken);
 
-            var result = new DoWhileStatement();
+                result = new DoWhileStatement();
+
+                result.whileAST = whileAst;
+                result.cond = condition;
+                result.body = statement;
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
-            result.whileAST = whileAst;
-            result.cond = condition;
-            result.body = statement;
-
             return result;
         }
 
@@ -2568,12 +2974,19 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.typeOfKeyword);
-            var expression = node.expression.accept(this);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.typeOfKeyword);
+                var expression = node.expression.accept(this);
 
-            var result = new UnaryExpression(NodeType.Typeof, expression);
+                result = new UnaryExpression(NodeType.Typeof, expression);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2581,12 +2994,19 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.deleteKeyword);
-            var expression = node.expression.accept(this);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.deleteKeyword);
+                var expression = node.expression.accept(this);
 
-            var result = new UnaryExpression(NodeType.Delete, expression);
+                result = new UnaryExpression(NodeType.Delete, expression);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2594,12 +3014,19 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.voidKeyword);
-            var expression = node.expression.accept(this);
+            var result: UnaryExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.voidKeyword);
+                var expression = node.expression.accept(this);
 
-            var result = new UnaryExpression(NodeType.Void, expression);
+                result = new UnaryExpression(NodeType.Void, expression);
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
 
@@ -2607,12 +3034,19 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            this.movePast(node.debuggerKeyword);
-            this.movePast(node.semicolonToken);
+            var result: DebuggerStatement = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
+                this.movePast(node.debuggerKeyword);
+                this.movePast(node.semicolonToken);
 
-            var result = new DebuggerStatement();
+                result = new DebuggerStatement();
+            }
+
+            this.setAST(node, result);
             this.setSpan(result, start, node);
-
             return result;
         }
     }
