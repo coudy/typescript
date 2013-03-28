@@ -2138,7 +2138,7 @@ module TypeScript {
             this.movePast(node.semicolonToken);
 
             var varDecl = new VarDecl(name, 0);
-            this.setSpanExplicit(varDecl, name.minChar, name.limChar);
+            this.setSpan(varDecl, start, node);
 
             varDecl.preComments = preComments;
             varDecl.postComments = postComments;
