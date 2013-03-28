@@ -245,7 +245,7 @@ module TypeScript {
                 case NodeType.Script:
                     var script = <Script>declarationContainerAst;
                     if (script.bod) {
-                        containingScope = script.bod.enclosingScope;
+                        // containingScope = script.bod.enclosingScope;
                     }
                     break;
 

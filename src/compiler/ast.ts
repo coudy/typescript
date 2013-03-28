@@ -240,7 +240,7 @@ module TypeScript {
     }
 
     export class ASTList extends AST {
-        public enclosingScope: SymbolScope = null;
+        // public enclosingScope: SymbolScope = null;
         public members: AST[] = [];
 
         constructor () {

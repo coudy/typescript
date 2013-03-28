@@ -403,7 +403,7 @@ module TypeScript {
         if (ast) {
             if (ast.nodeType === NodeType.List) {
                 var list = <ASTList>ast;
-                list.enclosingScope = context.scopeChain.scope;
+                // list.enclosingScope = context.scopeChain.scope;
             }
             else if (ast.nodeType === NodeType.ModuleDeclaration) {
                 preAssignModuleScopes(ast, context);
