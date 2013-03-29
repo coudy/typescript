@@ -18,7 +18,7 @@
 module TypeScript {
 
     export function hasFlag(val: number, flag: number) {
-        return (val & flag) != 0;
+        return (val & flag) !== 0;
     }
 
     export enum ASTFlags {
@@ -26,18 +26,13 @@ module TypeScript {
         ExplicitSemicolon = 1, // statment terminated by an explicit semicolon
         AutomaticSemicolon = 1 << 1, // statment terminated by an automatic semicolon
         Writeable = 1 << 2,  // node is lhs that can be modified
-        Error = 1 << 3, // node has an error
-        DotLHSPartial = 1 << 4, // node is the lhs of an incomplete dot expr at cursor
-        DotLHS = 1 << 5, // node is the lhs of a dot expr
         IsStatement = 1 << 6, // node is a statement
         StrictMode = 1 << 7, // node is in the strict mode environment
-        PossibleOptionalParameter = 1 << 8,
         ClassBaseConstructorCall = 1 << 9,
         OptionalName = 1 << 10,
         // REVIEW: This flag is to mark lambda nodes to note that the LParen of an expression has already been matched in the lambda header.
         //         The flag is used to communicate this piece of information to the calling parseTerm, which intern will remove it.
         //         Once we have a better way to associate information with nodes, this flag should not be used.
-        SkipNextRParen = 1 << 11,
         TypeReference = 1 << 12,
         EnumInitializer = 1 << 13,
     }

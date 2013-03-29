@@ -111,7 +111,6 @@ module TypeScript {
             var result: Identifier = null;
             if (token.fullWidth() === 0) {
                 result = new MissingIdentifier();
-                result.flags |= ASTFlags.Error;
             }
             else {
                 result = new Identifier(token.text());
@@ -1583,7 +1582,6 @@ module TypeScript {
                 this.movePast(node.name);
 
                 result = new BinaryExpression(NodeType.Dot, expression, name);
-                expression.flags |= ASTFlags.DotLHS;
             }
 
             this.setAST(node, result);

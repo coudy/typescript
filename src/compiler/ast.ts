@@ -137,14 +137,7 @@ module TypeScript {
 
         public print(context: PrintContext) {
             context.startLine();
-            var lineCol = { line: -1, character: -1 };
-            var limLineCol = { line: -1, character: -1 };
-
-            var lab = this.printLabel();
-            if (hasFlag(this.flags, ASTFlags.Error)) {
-                lab += " (Error)";
-            }
-            context.writeLine(lab);
+            context.writeLine(this.printLabel());
         }
 
         public printLabel() {

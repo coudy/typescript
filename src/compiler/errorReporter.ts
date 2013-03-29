@@ -61,7 +61,7 @@ module TypeScript {
 
         public setError(ast: AST) {
             if (ast) {
-                ast.flags |= ASTFlags.Error;
+                // ast.flags |= ASTFlags.Error;
                 if (this.locationInfo.lineMap) {
                     this.locationInfo.lineMap.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
                     if (this.lineCol.line >= 0) {
