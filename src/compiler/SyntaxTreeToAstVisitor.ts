@@ -2800,21 +2800,12 @@ module TypeScript {
                 var catchClause: CatchClause = null;
                 if (node.catchClause !== null) {
                     catchClause = node.catchClause.accept(this);
-
-                    //tryCatch = new TryCatch(<Try>tryPart, catchBit);
-                    //this.setSpanExplicit(tryCatch, tryPart.minChar, this.position - node.catchClause.trailingTriviaWidth());
                 }
 
                 var finallyBody: AST = null;
                 if (node.finallyClause !== null) {
                     finallyBody = node.finallyClause.accept(this);
-
-                    //result = new TryFinally(tryPart, finallyBit);
-                    //this.setSpanExplicit(result, tryPart.minChar, this.position - node.finallyClause.trailingTriviaWidth());
                 }
-                //else {
-                //    result = tryCatch;
-                //}
 
                 result = new TryStatement(tryBody, catchClause, finallyBody);
             }
@@ -2858,22 +2849,6 @@ module TypeScript {
         private visitFinallyClause(node: FinallyClauseSyntax): AST {
             this.movePast(node.finallyKeyword);
             return node.block.accept(this);
-
-            //var start = this.position;
-            //var result: Finally = this.getAST(node);
-            //if (result) {
-            //    this.movePast(node);
-            //}
-            //else {
-            //    this.movePast(node.finallyKeyword);
-            //    var block = node.block.accept(this);
-
-            //    result = new Finally(block);
-            //}
-
-            //this.setAST(node, result);
-            //this.setSpan(result, start, node);
-            //return result;
         }
 
         private visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {
