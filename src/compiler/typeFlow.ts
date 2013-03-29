@@ -1175,9 +1175,9 @@ module TypeScript {
                     }
                     if (!this.checker.styleSettings.innerScopeDeclEscape) {
                         if (infSym.declAST && (infSym.declAST.nodeType === NodeType.VarDecl)) {
-                            if (this.nestingLevel < (<VarDecl>infSym.declAST).nestingLevel) {
-                                this.checker.errorReporter.styleError(ast, "Illegal reference to a variable defined in more nested scope");
-                            }
+                            //if (this.nestingLevel < (<VarDecl>infSym.declAST).nestingLevel) {
+                            //    this.checker.errorReporter.styleError(ast, "Illegal reference to a variable defined in more nested scope");
+                            //}
                         }
                     }
                 }

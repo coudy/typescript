@@ -55,7 +55,6 @@ module TypeScript {
     export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
         public static checkPositions = false;
 
-        private nestingLevel = 0;
         private position = 0;
 
         private requiresExtendsBlock: bool = false;
@@ -819,7 +818,7 @@ module TypeScript {
             this.movePast(node.openBraceToken);
             var members = new ASTList();
 
-            var mapDecl = new VarDecl(new Identifier("_map"), 0);
+            var mapDecl = new VarDecl(new Identifier("_map"));
 
             mapDecl.varFlags |= VarFlags.Exported;
             mapDecl.varFlags |= VarFlags.Private;
@@ -874,7 +873,7 @@ module TypeScript {
                         this.setSpanExplicit(map.operand2, memberStart, this.position);
                     }
 
-                    var member = new VarDecl(memberName, this.nestingLevel);
+                    var member = new VarDecl(memberName);
                     member.init = memberValue;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                     member.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
@@ -1049,8 +1048,6 @@ module TypeScript {
             var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators);
 
             for (var i = 0; i < variableDecls.members.length; i++) {
-                (<BoundDecl>variableDecls.members[i]).nestingLevel = i;
-
                 if (i === 0) {
                     variableDecls.members[i].preComments = preComments;
                     variableDecls.members[i].postComments = postComments;
@@ -1073,7 +1070,7 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            var result = new VarDecl(name, 0);
+            var result = new VarDecl(name);
             this.setSpan(result, start, node);
 
             result.typeExpr = typeExpr;
@@ -1888,7 +1885,7 @@ module TypeScript {
                 this.movePast(node.questionToken);
                 var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-                result = new VarDecl(name, 0);
+                result = new VarDecl(name);
 
                 result.preComments = preComments;
                 result.typeExpr = typeExpr;
@@ -2231,7 +2228,7 @@ module TypeScript {
                 var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
                 this.movePast(node.semicolonToken);
 
-                result = new VarDecl(name, 0);
+                result = new VarDecl(name);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -2846,7 +2843,7 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 var block = node.block.accept(this);
 
-                var varDecl = new VarDecl(identifier, 0);
+                var varDecl = new VarDecl(identifier);
                 this.setSpanExplicit(varDecl, identifier.minChar, identifier.limChar);
 
                 varDecl.typeExpr = typeExpr;
@@ -2915,7 +2912,9 @@ module TypeScript {
             else {
                 this.movePast(node.doKeyword);
                 var statement = node.statement.accept(this);
-                var whileAst = this.identifierFromToken(node.whileKeyword, /*isOptional:*/ false, /*useValueText:*/ true);
+                var whileSpan = new ASTSpan();
+                this.setSpan(whileSpan, this.position, node.whileKeyword);
+
                 this.movePast(node.whileKeyword);
                 this.movePast(node.openParenToken);
                 var condition = node.condition.accept(this);
@@ -2923,7 +2922,7 @@ module TypeScript {
                 this.movePast(node.semicolonToken);
 
                 result = new DoWhileStatement(statement, condition);
-                result.whileAST = whileAst;
+                result.whileSpan = whileSpan;
             }
 
             this.setAST(node, result);

@@ -24,6 +24,7 @@ module TypeScript {
     export class ASTSpan implements IASTSpan {
         public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
+
     }
 
     export var astID = 0;
@@ -861,7 +862,7 @@ module TypeScript {
         public sym: Symbol = null;
         public isDeclaration() { return true; }
 
-        constructor(public id: Identifier, nodeType: NodeType, public nestingLevel: number) {
+        constructor(public id: Identifier, nodeType: NodeType) {
             super(nodeType);
         }
 
@@ -877,8 +878,8 @@ module TypeScript {
     }
 
     export class VarDecl extends BoundDecl {
-        constructor(id: Identifier, nest: number) {
-            super(id, NodeType.VarDecl, nest);
+        constructor(id: Identifier) {
+            super(id, NodeType.VarDecl);
         }
 
         public isExported() { return hasFlag(this.varFlags, VarFlags.Exported); }
@@ -896,7 +897,7 @@ module TypeScript {
 
     export class ArgDecl extends BoundDecl {
         constructor(id: Identifier) {
-            super(id, NodeType.ArgDecl, 0);
+            super(id, NodeType.ArgDecl);
         }
 
         public isOptional = false;
@@ -1422,7 +1423,7 @@ module TypeScript {
     }
 
     export class DoWhileStatement extends Statement {
-        public whileAST: AST = null;
+        public whileSpan: ASTSpan = null;
 
         constructor(public body: AST, public cond: AST) {
             super(NodeType.DoWhile);
@@ -1434,9 +1435,9 @@ module TypeScript {
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
             emitter.emitJavascriptStatements(this.body, true);
-            emitter.recordSourceMappingStart(this.whileAST);
+            emitter.recordSourceMappingStart(this.whileSpan);
             emitter.writeToOutput(" while");
-            emitter.recordSourceMappingEnd(this.whileAST);
+            emitter.recordSourceMappingEnd(this.whileSpan);
             emitter.writeToOutput('(');
             emitter.emitJavascript(this.cond, TokenID.CloseParen, false);
             emitter.writeToOutput(")");
