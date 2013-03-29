@@ -636,7 +636,7 @@ module TypeScript {
                 if (i) {
                     this.declFile.Write(", ");
                 }
-                var memberName = typars[i].getScopedNameEx(containerSymbol);
+                var memberName = typars[i].getScopedNameEx(containerSymbol, true);
                 this.emitTypeNamesMember(memberName);
             }
             this.declFile.Write(">");

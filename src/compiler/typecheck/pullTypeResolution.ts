@@ -2346,7 +2346,7 @@ module TypeScript {
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
                     if (!this.sourceIsAssignableToTarget(typeArgs[iArg], typeConstraint, context)) {
-                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), "Type '" + typeArgs[iArg].toString() + "' does not satisfy the constraint '" + typeConstraint.toString() + "' for type parameter '" + typeParameters[iArg].toString() + "'", enclosingDecl);
+                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), "Type '" + typeArgs[iArg].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[iArg].toString(true) + "'", enclosingDecl);
                     }
                 }
             }
@@ -3191,7 +3191,7 @@ module TypeScript {
                                 // test specialization type for assignment compatibility with the constraint
                                 if (typeConstraint) {
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                        context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString() + "' does not satisfy the constraint '" + typeConstraint.toString() + "' for type parameter '" + typeParameters[j].toString() + "'", enclosingDecl);
+                                        context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[j].toString(true) + "'", enclosingDecl);
                                     }
                                 }
                             }
@@ -3378,7 +3378,7 @@ module TypeScript {
                                     // test specialization type for assignment compatibility with the constraint
                                     if (typeConstraint) {
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString() + "' does not satisfy the constraint '" + typeConstraint.toString() + "' for type parameter '" + typeParameters[j].toString() + "'", enclosingDecl);
+                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[j].toString(true) + "'", enclosingDecl);
                                         }
                                     }
                                 }

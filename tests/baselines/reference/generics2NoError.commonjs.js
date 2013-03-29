@@ -15,7 +15,7 @@ interface C extends B {
 }
 interface G<T, U extends B> {
     x: T;
-    y: U extends B;
+    y: U;
 }
 var v1: {
     x: {
