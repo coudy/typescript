@@ -474,10 +474,12 @@ module FourSlash {
             var errorList = syntacticErrors.concat(semanticErrors);
 
             IO.printLine('Error list (' + errorList.length + ' errors)');
-            errorList.forEach( err => {
-                IO.printLine("start: " + err.start() + ", length: " + err.length() + 
+            if (errorList.length) {
+                errorList.forEach(err => {
+                    IO.printLine("start: " + err.start() + ", length: " + err.length() +
                     ", message: " + err.message());
-            } )
+                } )
+            }
         }
 
         public printCurrentFileState(makeWhitespaceVisible = false, makeCaretVisible = true) {
