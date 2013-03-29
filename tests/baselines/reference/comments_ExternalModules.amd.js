@@ -106,5 +106,5 @@ export module m4 {
     function fooExport(): number;
 }
 ////[comments_ExternalModules_1.d.ts]
-export var newVar: m1.m2.c;
-export var newVar2: m4.m2.c;
+export var newVar: extMod.m1.m2.c;
+export var newVar2: extMod.m4.m2.c;

@@ -39,21 +39,21 @@ define(["require", "exports", "m4", "glo_m4", "fncOnly_m4", "private_m4", "m5", 
     exports.useMultiImport_m4_f4 = multiImport_m4.foo();
 })
 ////[0.d.ts]
-export var x4: d;
-export var d4: d;
-export var f4: d;
+export var x4: m4.d;
+export var d4: m4.d;
+export var f4: m4.d;
 export module m1 {
-    var x2: d;
-    var d2: d;
-    var f2: d;
+    var x2: m4.d;
+    var d2: m4.d;
+    var f2: m4.d;
 }
-export var useGlo_m4_x4: d;
-export var useGlo_m4_d4: d;
-export var useGlo_m4_f4: d;
-export var useFncOnly_m4_f4: d;
+export var useGlo_m4_x4: glo_m4.d;
+export var useGlo_m4_d4: glo_m4.d;
+export var useGlo_m4_f4: glo_m4.d;
+export var useFncOnly_m4_f4: fncOnly_m4.d;
 export module usePrivate_m4_m1 {
 }
-export var d: d;
-export var useMultiImport_m4_x4: d;
-export var useMultiImport_m4_d4: d;
-export var useMultiImport_m4_f4: d;
+export var d: m4.d;
+export var useMultiImport_m4_x4: m4.d;
+export var useMultiImport_m4_d4: m4.d;
+export var useMultiImport_m4_f4: m4.d;

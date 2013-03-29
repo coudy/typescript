@@ -85,7 +85,7 @@ module TypeScript {
         public isAlias() { return false; }
         public isContainer() { return false; }        
 
-        public getName(useConstraintInName?: bool) { return this.name; }
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool) { return this.name; }
 
         public getKind() { return this.declKind; }
         public setKind(declType: PullElementKind) { this.declKind = declType; }
@@ -406,13 +406,13 @@ module TypeScript {
             return str;
         }
 
-        public fullName() {
+        public fullName(scopeSymbol?: PullSymbol) {
             var path = this.pathToRoot();
             var fullName = "";
             for (var i = 1; i < path.length; i++) {
-                fullName = path[i].getName() + "." + fullName;
+                fullName = path[i].getName(scopeSymbol) + "." + fullName;
             }
-            fullName = fullName + this.getName(true);
+            fullName = fullName + this.getName(scopeSymbol, true);
             return fullName;
         }
 
@@ -423,11 +423,14 @@ module TypeScript {
                 var kind = path[i].getKind();
                 if (kind == PullElementKind.Container) {
                     fullName = path[i].getName() + "." + fullName;
+                } else if (kind == PullElementKind.DynamicModule) {
+                    fullName = path[i].getName(scopeSymbol) + "." + fullName;
+                    break;
                 } else {
                     break;
                 }
             }
-            fullName = fullName + this.getName(useConstraintInName);
+            fullName = fullName + this.getName(scopeSymbol, useConstraintInName);
             return fullName;
         }
 
@@ -1801,6 +1804,47 @@ module TypeScript {
 
             super.invalidate();
         }
+
+        private findAliasedType(decls: PullDecl[]) {
+            for (var i = 0; i < decls.length; i++) {
+                var childDecls = decls[i].getChildDecls();
+                for (var j = 0; j < childDecls.length; j++) {
+                    if (childDecls[j].getKind() == PullElementKind.TypeAlias) {
+                        var symbol = childDecls[j].getSymbol();
+                        if (symbol.getType() == this) {
+                            return symbol;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+        
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool): string {
+            if (scopeSymbol && this.getKind() == PullElementKind.DynamicModule) {
+                var scopePath = scopeSymbol.pathToRoot();
+                if (scopePath.length && scopePath[scopePath.length - 1].getKind() == PullElementKind.DynamicModule) {
+                    var decls: PullDecl[] = null;
+                    var symbol: PullSymbol = null;
+                    if (scopePath.length > 1 && scopePath[scopePath.length - 2].getKind() == PullElementKind.DynamicModule) {
+                        // This is the ambient dynamicModule
+                        decls = scopePath[scopePath.length - 2].getDeclarations();
+                        symbol = this.findAliasedType(decls);
+                    }
+
+                    if (symbol == null) {
+                        decls = scopePath[scopePath.length - 1].getDeclarations();
+                        symbol = this.findAliasedType(decls);
+                    }
+
+                    if (symbol) {
+                        return symbol.getName();
+                    }
+                }
+            }
+            return super.getName();
+        }
     }
 
     export class PullTypeAliasSymbol extends PullTypeSymbol {
@@ -2011,9 +2055,9 @@ module TypeScript {
 
         public isGeneric() { return true; }
 
-        public getName(useConstraintInName?: bool) {
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool) {
 
-            var name = super.getName();
+            var name = super.getName(scopeSymbol);
 
             if (this.isPrinting) {
                 return name;
