@@ -266,18 +266,6 @@ module TypeScript {
                 (<TypeScript.CaseStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
-        public isBodyOfTry(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Try &&
-                (<TypeScript.Try>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
-        public isBodyOfCatch(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Catch &&
-                (<TypeScript.Catch>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
         public isBodyOfDoWhile(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.DoWhile &&
@@ -300,12 +288,6 @@ module TypeScript {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.With &&
                 (<TypeScript.WithStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
-        public isBodyOfFinally(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Finally &&
-                (<TypeScript.Finally>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isCaseOfSwitch(): bool {

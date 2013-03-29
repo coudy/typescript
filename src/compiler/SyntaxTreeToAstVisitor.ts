@@ -2782,42 +2782,41 @@ module TypeScript {
             return result;
         }
 
-        private visitTryStatement(node: TryStatementSyntax): AST {
+        private visitTryStatement(node: TryStatementSyntax): TryStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: AST = this.getAST(node);
+            var result: TryStatement = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
             else {
                 this.movePast(node.tryKeyword);
-                var block = node.block.accept(this);
+                var tryBody = node.block.accept(this);
 
-                var tryPart: AST = new Try(block);
-                this.setSpanExplicit(tryPart, start, this.position);
+                // var tryPart: AST = new Try(block);
+                // this.setSpanExplicit(tryPart, start, this.position);
 
-                var tryCatch: TryCatch = null;
+                var catchClause: CatchClause = null;
                 if (node.catchClause !== null) {
-                    var catchBit = node.catchClause.accept(this);
+                    catchClause = node.catchClause.accept(this);
 
-                    tryCatch = new TryCatch(<Try>tryPart, catchBit);
-                    this.setSpanExplicit(tryCatch, tryPart.minChar, this.position - node.catchClause.trailingTriviaWidth());
+                    //tryCatch = new TryCatch(<Try>tryPart, catchBit);
+                    //this.setSpanExplicit(tryCatch, tryPart.minChar, this.position - node.catchClause.trailingTriviaWidth());
                 }
 
+                var finallyBody: AST = null;
                 if (node.finallyClause !== null) {
-                    if (tryCatch !== null) {
-                        tryPart = tryCatch;
-                    }
+                    finallyBody = node.finallyClause.accept(this);
 
-                    var finallyBit = node.finallyClause.accept(this);
+                    //result = new TryFinally(tryPart, finallyBit);
+                    //this.setSpanExplicit(result, tryPart.minChar, this.position - node.finallyClause.trailingTriviaWidth());
+                }
+                //else {
+                //    result = tryCatch;
+                //}
 
-                    result = new TryFinally(tryPart, finallyBit);
-                    this.setSpanExplicit(result, tryPart.minChar, this.position - node.finallyClause.trailingTriviaWidth());
-                }
-                else {
-                    result = tryCatch;
-                }
+                result = new TryStatement(tryBody, catchClause, finallyBody);
             }
 
             Debug.assert(result !== null);
@@ -2826,11 +2825,11 @@ module TypeScript {
             return result;
         }
 
-        private visitCatchClause(node: CatchClauseSyntax): Catch {
+        private visitCatchClause(node: CatchClauseSyntax): CatchClause {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: Catch = this.getAST(node);
+            var result: CatchClause = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2848,7 +2847,7 @@ module TypeScript {
 
                 varDecl.typeExpr = typeExpr;
 
-                result = new Catch(varDecl, block);
+                result = new CatchClause(varDecl, block);
             }
 
             this.setAST(node, result);
@@ -2856,24 +2855,25 @@ module TypeScript {
             return result;
         }
 
-        private visitFinallyClause(node: FinallyClauseSyntax): Finally {
-            this.assertElementAtPosition(node);
+        private visitFinallyClause(node: FinallyClauseSyntax): AST {
+            this.movePast(node.finallyKeyword);
+            return node.block.accept(this);
 
-            var start = this.position;
-            var result: Finally = this.getAST(node);
-            if (result) {
-                this.movePast(node);
-            }
-            else {
-                this.movePast(node.finallyKeyword);
-                var block = node.block.accept(this);
+            //var start = this.position;
+            //var result: Finally = this.getAST(node);
+            //if (result) {
+            //    this.movePast(node);
+            //}
+            //else {
+            //    this.movePast(node.finallyKeyword);
+            //    var block = node.block.accept(this);
 
-                result = new Finally(block);
-            }
+            //    result = new Finally(block);
+            //}
 
-            this.setAST(node, result);
-            this.setSpan(result, start, node);
-            return result;
+            //this.setAST(node, result);
+            //this.setSpan(result, start, node);
+            //return result;
         }
 
         private visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {

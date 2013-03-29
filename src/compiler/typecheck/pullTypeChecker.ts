@@ -232,20 +232,11 @@ module TypeScript {
                 case NodeType.With:
                     return this.typeCheckWithStatement(ast, typeCheckContext);
 
-                case NodeType.TryFinally:
-                    return this.typeCheckTryFinallyStatement(ast, typeCheckContext);
+                case NodeType.TryStatement:
+                    return this.typeCheckTryStatement(ast, typeCheckContext);
 
-                case NodeType.TryCatch:
-                    return this.typeCheckTryCatchStatement(ast, typeCheckContext);
-
-                case NodeType.Try:
-                    return this.typeCheckTryBlock(ast, typeCheckContext);
-
-                case NodeType.Catch:
-                    return this.typeCheckCatchBlock(ast, typeCheckContext);
-
-                case NodeType.Finally:
-                    return this.typeCheckFinallyBlock(ast, typeCheckContext);
+                case NodeType.CatchClause:
+                    return this.typeCheckCatchClause(ast, typeCheckContext);
 
                 case NodeType.Return:
                     return this.typeCheckReturnExpression(ast, typeCheckContext);
@@ -1183,44 +1174,20 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckTryFinallyStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var tryFinallyAST = <TryFinally>ast;
+        public typeCheckTryStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var tryStatementAST = <TryStatement>ast;
 
-            this.typeCheckAST(tryFinallyAST.tryNode, typeCheckContext);
-            this.typeCheckAST(tryFinallyAST.finallyNode, typeCheckContext);
-
-            return this.semanticInfoChain.voidTypeSymbol;
-        }
-
-        public typeCheckTryCatchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var tryCatchAST = <TryCatch>ast;
-
-            this.typeCheckAST(tryCatchAST.tryNode, typeCheckContext);
-            this.typeCheckAST(tryCatchAST.catchNode, typeCheckContext);
+            this.typeCheckAST(tryStatementAST.tryBody, typeCheckContext);
+            this.typeCheckAST(tryStatementAST.catchClause, typeCheckContext);
+            this.typeCheckAST(tryStatementAST.finallyBody, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckTryBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var tryAST = <Try>ast;
-
-            this.typeCheckAST(tryAST.body, typeCheckContext);
-
-            return this.semanticInfoChain.voidTypeSymbol;
-        }
-
-        public typeCheckCatchBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var catchAST = <Catch>ast;
+        public typeCheckCatchClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var catchAST = <CatchClause>ast;
 
             this.typeCheckAST(catchAST.body, typeCheckContext);
-
-            return this.semanticInfoChain.voidTypeSymbol;
-        }
-
-        public typeCheckFinallyBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var finallyAST = <Finally>ast;
-
-            this.typeCheckAST(finallyAST.body, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }

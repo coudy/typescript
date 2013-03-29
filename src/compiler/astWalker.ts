@@ -181,11 +181,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.Block] = ChildrenWalkers.walkBlockChildren;
             this.childrenWalkers[NodeType.Case] = ChildrenWalkers.walkCaseStatementChildren;
             this.childrenWalkers[NodeType.Switch] = ChildrenWalkers.walkSwitchStatementChildren;
-            this.childrenWalkers[NodeType.Try] = ChildrenWalkers.walkTryChildren;
-            this.childrenWalkers[NodeType.TryCatch] = ChildrenWalkers.walkTryCatchChildren;
-            this.childrenWalkers[NodeType.TryFinally] = ChildrenWalkers.walkTryFinallyChildren;
-            this.childrenWalkers[NodeType.Finally] = ChildrenWalkers.walkFinallyChildren;
-            this.childrenWalkers[NodeType.Catch] = ChildrenWalkers.walkCatchChildren;
+            this.childrenWalkers[NodeType.TryStatement] = ChildrenWalkers.walkTryStatementChildren;
+            this.childrenWalkers[NodeType.CatchClause] = ChildrenWalkers.walkCatchClauseChildren;
             this.childrenWalkers[NodeType.List] = ChildrenWalkers.walkListChildren;
             this.childrenWalkers[NodeType.Script] = ChildrenWalkers.walkScriptChildren;
             this.childrenWalkers[NodeType.ClassDeclaration] = ChildrenWalkers.walkClassDeclChildren;
@@ -407,39 +404,19 @@ module TypeScript {
             }
         }
 
-        export function walkTryChildren(preAst: Try, parent: AST, walker: IAstWalker): void {
-            if (preAst.body) {
-                preAst.body = walker.walk(preAst.body, preAst);
+        export function walkTryStatementChildren(preAst: TryStatement, parent: AST, walker: IAstWalker): void {
+            if (preAst.tryBody) {
+                preAst.tryBody = walker.walk(preAst.tryBody, preAst);
+            }
+            if (preAst.catchClause) {
+                preAst.catchClause = <CatchClause>walker.walk(preAst.catchClause, preAst);
+            }
+            if (preAst.finallyBody) {
+                preAst.finallyBody = walker.walk(preAst.finallyBody, preAst);
             }
         }
 
-        export function walkTryCatchChildren(preAst: TryCatch, parent: AST, walker: IAstWalker): void {
-            if (preAst.tryNode) {
-                preAst.tryNode = <Try>walker.walk(preAst.tryNode, preAst);
-            }
-
-            if (preAst.catchNode) {
-                preAst.catchNode = <Catch>walker.walk(preAst.catchNode, preAst);
-            }
-        }
-
-        export function walkTryFinallyChildren(preAst: TryFinally, parent: AST, walker: IAstWalker): void {
-            if (preAst.tryNode) {
-                preAst.tryNode = walker.walk(preAst.tryNode, preAst);
-            }
-
-            if (preAst.finallyNode) {
-                preAst.finallyNode = <Finally>walker.walk(preAst.finallyNode, preAst);
-            }
-        }
-
-        export function walkFinallyChildren(preAst: Finally, parent: AST, walker: IAstWalker): void {
-            if (preAst.body) {
-                preAst.body = walker.walk(preAst.body, preAst);
-            }
-        }
-
-        export function walkCatchChildren(preAst: Catch, parent: AST, walker: IAstWalker): void {
+        export function walkCatchClauseChildren(preAst: CatchClause, parent: AST, walker: IAstWalker): void {
             if (preAst.param) {
                 preAst.param = <VarDecl>walker.walk(preAst.param, preAst);
             }

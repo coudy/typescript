@@ -386,7 +386,7 @@ module TypeScript {
     }
 
     export function preAssignCatchScopes(ast: AST, context: AssignScopeContext) {
-        var catchBlock = <Catch>ast;
+        var catchBlock = <CatchClause>ast;
         if (catchBlock.param) {
             var catchTable = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable())); // REVIEW: Should we be allocating a public table instead of a private one?
             var catchLocals = new SymbolScopeBuilder(catchTable, null, null, null, context.scopeChain.scope,
@@ -420,7 +420,7 @@ module TypeScript {
             else if (ast.nodeType === NodeType.FuncDecl) {
                 preAssignFuncDeclScopes(ast, context);
             }
-            else if (ast.nodeType === NodeType.Catch) {
+            else if (ast.nodeType === NodeType.CatchClause) {
                 preAssignCatchScopes(ast, context);
             }
             else if (ast.nodeType === NodeType.TypeRef) {
@@ -460,8 +460,8 @@ module TypeScript {
                     popAssignScope(context);
                 }
             }
-            else if (ast.nodeType === NodeType.Catch) {
-                var catchBlock = <Catch>ast;
+            else if (ast.nodeType === NodeType.CatchClause) {
+                var catchBlock = <CatchClause>ast;
                 if (catchBlock.param) {
                     popAssignScope(context);
                 }

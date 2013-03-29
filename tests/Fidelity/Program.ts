@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "Class1.ts";
+    // "harness.ts";
     undefined;
 
 var generate = false;

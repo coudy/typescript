@@ -2001,6 +2001,29 @@ module TypeScript {
         }
     }
 
+    export class TryStatement extends Statement {
+        constructor(public tryBody: AST, public catchClause: CatchClause, public finallyBody: AST) {
+            super(NodeType.TryStatement);
+        }
+
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.recordSourceMappingStart(this);
+            emitter.writeToOutput("try ");
+            emitter.emitJavascript(this.tryBody, TokenID.Try, false);
+            emitter.emitJavascript(this.catchClause, TokenID.Catch, false);
+
+            if (this.finallyBody) {
+                emitter.writeToOutput(" finally");
+                emitter.emitJavascript(this.finallyBody, TokenID.Finally, false);
+            }
+
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitParensAndCommentsInPlace(this, false);
+        }
+    }
+
+    /*
     export class TryFinally extends Statement {
         constructor(public tryNode: AST, public finallyNode: Finally) {
             super(NodeType.TryFinally);
@@ -2119,10 +2142,11 @@ module TypeScript {
             context.noContinuation = false;
         }
     }
+    */
 
-    export class Catch extends Statement {
+    export class CatchClause extends AST {
         constructor(public param: VarDecl, public body: AST) {
-            super(NodeType.Catch);
+            super(NodeType.CatchClause);
             if (this.param) {
                 this.param.varFlags |= VarFlags.AutoInit;
             }
@@ -2198,6 +2222,7 @@ module TypeScript {
         }
     }
 
+    /*
     export class Finally extends Statement {
         constructor(public body: AST) {
             super(NodeType.Finally);
@@ -2225,6 +2250,7 @@ module TypeScript {
             return this;
         }
     }
+*/
 
     export class Comment extends AST {
         public text: string[] = null;
