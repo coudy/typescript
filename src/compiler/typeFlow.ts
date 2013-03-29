@@ -125,7 +125,7 @@ module TypeScript {
 
             var options = new AstWalkOptions();
             // traverse ASTs in reverse order of execution (to match uses with preceding defs)
-            options.reverseSiblings = true;
+            // options.reverseSiblings = true;
 
             getAstWalkerFactory().walk(this.bb.content, initUseDefPre, null, options, useDefContext);
         }
@@ -1893,7 +1893,7 @@ module TypeScript {
                             break;
                     }
                     walker.options.goChildren = go;
-                    walker.options.goNextSibling = go;
+                    // walker.options.goNextSibling = go;
                     return ast;
                 }
 

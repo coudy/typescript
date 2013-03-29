@@ -122,8 +122,6 @@ module TypeScript {
         With,
         Label,
         LabeledStatement,
-        EBStart,
-        GotoEB,
         EndCode,
         Comment,
         Debugger,

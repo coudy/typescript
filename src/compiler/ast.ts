@@ -24,7 +24,6 @@ module TypeScript {
     export class ASTSpan implements IASTSpan {
         public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
-
     }
 
     export var astID = 0;
@@ -1022,11 +1021,8 @@ module TypeScript {
     }
 
     export class LocationInfo {
-        public fileName: string;
-
-        constructor(fileName: string,
+        constructor(public fileName: string,
                     public lineMap: LineMap) {
-            this.fileName = fileName;
         }
     }
 
