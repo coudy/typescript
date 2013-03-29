@@ -210,7 +210,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.EBStart] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.GotoEB] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.EndCode] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.Error] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Debugger] = ChildrenWalkers.walkNone;
 

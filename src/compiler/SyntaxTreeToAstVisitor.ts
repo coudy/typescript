@@ -1199,10 +1199,7 @@ module TypeScript {
             else {
                 statements = new ASTList();
 
-                var expr = body.accept(this);
-                var retStmt = new ReturnStatement();
-                retStmt.returnExpression = expr;
-
+                var retStmt = new ReturnStatement(body.accept(this));
                 statements.append(retStmt);
             }
 
@@ -2002,9 +1999,7 @@ module TypeScript {
                 var thenBod = node.statement.accept(this);
                 var elseBod = node.elseClause ? node.elseClause.accept(this) : null;
 
-                result = new IfStatement(condition);
-                result.thenBod = thenBod;
-                result.elseBod = elseBod;
+                result = new IfStatement(condition, thenBod, elseBod);
             }
 
             this.setAST(node, result);
@@ -2296,8 +2291,7 @@ module TypeScript {
                 var expression = node.expression ? node.expression.accept(this) : null;
                 this.movePast(node.semicolonToken);
 
-                result = new ReturnStatement();
-                result.returnExpression = expression;
+                result = new ReturnStatement(expression);
             }
 
             this.setAST(node, result);
@@ -2500,11 +2494,7 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 var body = node.statement.accept(this);
 
-                result = new ForStatement(init);
-
-                result.cond = cond;
-                result.incr = incr;
-                result.body = body;
+                result = new ForStatement(init, cond, incr, body);
             }
 
             this.setAST(node, result);
@@ -2529,8 +2519,7 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 var body = node.statement.accept(this);
 
-                result = new ForInStatement(init, expression);
-                result.body = body;
+                result = new ForInStatement(init, expression, body);
             }
 
             this.setAST(node, result);
@@ -2552,8 +2541,7 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 var statement = node.statement.accept(this);
 
-                result = new WhileStatement(condition);
-                result.body = statement;
+                result = new WhileStatement(condition, statement);
             }
 
             this.setAST(node, result);
@@ -2575,8 +2563,7 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 var statement = node.statement.accept(this);
 
-                result = new WithStatement(condition);
-                result.body = statement;
+                result = new WithStatement(condition, statement);
             }
 
             this.setAST(node, result);
@@ -2935,11 +2922,8 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 this.movePast(node.semicolonToken);
 
-                result = new DoWhileStatement();
-
+                result = new DoWhileStatement(statement, condition);
                 result.whileAST = whileAst;
-                result.cond = condition;
-                result.body = statement;
             }
 
             this.setAST(node, result);

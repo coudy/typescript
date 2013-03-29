@@ -15,7 +15,6 @@
 
 ///<reference path='formatting.ts' />
 
-
 module TypeScript.Formatting {
     export class SingleTokenIndenter extends IndentationTrackingWalker {
         private indentationAmount: number = null;

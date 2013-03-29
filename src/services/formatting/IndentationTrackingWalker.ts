@@ -197,8 +197,8 @@ module TypeScript.Formatting {
 
                 case SyntaxKind.IfStatement:
                     if (parent.kind() === SyntaxKind.ElseClause &&
-	    !(<ElseClauseSyntax>parent).elseKeyword.hasTrailingNewLine() &&
-	    !(<IfStatementSyntax>node).ifKeyword.hasLeadingNewLine()) {
+                        !(<ElseClauseSyntax>parent).elseKeyword.hasTrailingNewLine() &&
+                        !(<IfStatementSyntax>node).ifKeyword.hasLeadingNewLine()) {
                         // This is an else if statement with the if on the same line as the else, do not indent the if statmement.
                         // Note: Children indentation has already been set by the parent if statement, so no need to increment
                         indentationLevel = parentIndentationLevel;
@@ -227,9 +227,9 @@ module TypeScript.Formatting {
                         case SyntaxKind.DoStatement:
                         case SyntaxKind.WithStatement:
                         case SyntaxKind.IfStatement:
-	    case SyntaxKind.ElseClause:
-	        // This has already been counted before in the parent, no new indentation scopes
-	        // inherit the parents indentation level and its child delta
+                        case SyntaxKind.ElseClause:
+                            // This has already been counted before in the parent, no new indentation scopes
+                            // inherit the parents indentation level and its child delta
                             indentationLevel = parentIndentationLevel;
                             indentationLevelDelta = parentIndentationLevelDelta;
                             break;

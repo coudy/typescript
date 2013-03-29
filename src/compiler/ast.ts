@@ -59,7 +59,6 @@ module TypeScript {
 
         public typeCheck(typeFlow: TypeFlow) {
             switch (this.nodeType) {
-                case NodeType.Error:
                 case NodeType.EmptyExpr:
                     this.type = typeFlow.anyType;
                     break;
@@ -119,7 +118,6 @@ module TypeScript {
                     emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.EndCode:
-                case NodeType.Error:
                 case NodeType.EmptyExpr:
                     break;
                 case NodeType.Empty:
@@ -196,15 +194,6 @@ module TypeScript {
         }
     }
 
-    export class IncompleteAST extends AST {
-        constructor(min: number, lim: number) {
-            super(NodeType.Error);
-
-            this.minChar = min;
-            this.limChar = lim;
-        }
-    }
-
     export class ASTList extends AST {
         // public enclosingScope: SymbolScope = null;
         public members: AST[] = [];
@@ -229,19 +218,6 @@ module TypeScript {
 
         public append(ast: AST) {
             this.members[this.members.length] = ast;
-            return this;
-        }
-
-        public appendAll(ast: AST) {
-            if (ast.nodeType === NodeType.List) {
-                var list = <ASTList>ast;
-                for (var i = 0, len = list.members.length; i < len; i++) {
-                    this.append(list.members[i]);
-                }
-            }
-            else {
-                this.append(ast);
-            }
             return this;
         }
 
@@ -519,9 +495,9 @@ module TypeScript {
 
     export class CallExpression extends Expression {
         constructor(nodeType: NodeType,
-                     public target: AST,
-                     public typeArguments: ASTList,
-                     public arguments: ASTList) {
+                    public target: AST,
+                    public typeArguments: ASTList,
+                    public arguments: ASTList) {
             super(nodeType);
             this.minChar = this.target.minChar;
         }
@@ -907,6 +883,7 @@ module TypeScript {
         }
 
         public isExported() { return hasFlag(this.varFlags, VarFlags.Exported); }
+
         public isStatic() { return hasFlag(this.varFlags, VarFlags.Static); }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -942,8 +919,6 @@ module TypeScript {
         }
     }
 
-    var internalId = 0;
-
     export class FuncDecl extends AST {
         public hint: string = null;
         public fncFlags = FncFlags.None;
@@ -971,7 +946,7 @@ module TypeScript {
                     public isConstructor: bool,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
-            nodeType: number) {
+                    nodeType: number) {
 
             super(nodeType);
         }
@@ -1025,14 +1000,9 @@ module TypeScript {
         public isConstructMember() { return hasFlag(this.fncFlags, FncFlags.ConstructMember); }
         public isIndexerMember() { return hasFlag(this.fncFlags, FncFlags.IndexerMember); }
         public isSpecialFn() { return this.isCallMember() || this.isIndexerMember() || this.isConstructMember(); }
-        public isAnonymousFn() { return this.name === null; }
         public isAccessor() { return hasFlag(this.fncFlags, FncFlags.GetAccessor) || hasFlag(this.fncFlags, FncFlags.SetAccessor); }
         public isGetAccessor() { return hasFlag(this.fncFlags, FncFlags.GetAccessor); }
         public isSetAccessor() { return hasFlag(this.fncFlags, FncFlags.SetAccessor); }
-        public isAmbient() { return hasFlag(this.fncFlags, FncFlags.Ambient); }
-        public isExported() { return hasFlag(this.fncFlags, FncFlags.Exported); }
-        public isPrivate() { return hasFlag(this.fncFlags, FncFlags.Private); }
-        public isPublic() { return hasFlag(this.fncFlags, FncFlags.Public); }
         public isStatic() { return hasFlag(this.fncFlags, FncFlags.Static); }
 
         public treeViewLabel() {
@@ -1177,8 +1147,8 @@ module TypeScript {
         public isDeclaration() { return true; }
 
         constructor(nodeType: NodeType,
-                     public name: Identifier,
-                     public members: ASTList) {
+                    public name: Identifier,
+                    public members: ASTList) {
             super(nodeType);
         }
     }
@@ -1233,7 +1203,6 @@ module TypeScript {
 
     export class ClassDeclaration extends TypeDeclaration {
         public constructorDecl: FuncDecl = null;
-        public constructorNestingLevel = 0;
         public endingToken: ASTSpan = null;
 
         constructor(name: Identifier,
@@ -1255,10 +1224,10 @@ module TypeScript {
 
     export class InterfaceDeclaration extends TypeDeclaration {
         constructor(name: Identifier,
-            typeParameters: ASTList,
-            members: ASTList,
-            extendsList: ASTList,
-            implementsList: ASTList) {
+                    typeParameters: ASTList,
+                    members: ASTList,
+                    extendsList: ASTList,
+                    implementsList: ASTList) {
             super(NodeType.InterfaceDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
@@ -1403,13 +1372,9 @@ module TypeScript {
     }
 
     export class WhileStatement extends Statement {
-        public body: AST = null;
-
-        constructor(public cond: AST) {
+       constructor(public cond: AST, public body: AST) {
             super(NodeType.While);
         }
-
-        public isLoop() { return true; }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -1458,12 +1423,9 @@ module TypeScript {
     }
 
     export class DoWhileStatement extends Statement {
-        public body: AST = null;
         public whileAST: AST = null;
-        public cond: AST = null;
-        public isLoop() { return true; }
 
-        constructor() {
+        constructor(public body: AST, public cond: AST) {
             super(NodeType.DoWhile);
         }
 
@@ -1517,11 +1479,11 @@ module TypeScript {
     }
 
     export class IfStatement extends Statement {
-        public thenBod: AST;
-        public elseBod: AST = null;
         public statement: ASTSpan = new ASTSpan();
 
-        constructor(public cond: AST) {
+        constructor(public cond: AST,
+                    public thenBod: AST,
+                    public elseBod: AST) {
             super(NodeType.If);
         }
 
@@ -1602,9 +1564,7 @@ module TypeScript {
     }
 
     export class ReturnStatement extends Statement {
-        public returnExpression: AST = null;
-
-        constructor() {
+        constructor(public returnExpression: AST) {
             super(NodeType.Return);
         }
 
@@ -1645,16 +1605,13 @@ module TypeScript {
     }
 
     export class ForInStatement extends Statement {
-        constructor(public lval: AST, public obj: AST) {
+        constructor(public lval: AST, public obj: AST, public body: AST) {
             super(NodeType.ForIn);
             if (this.lval && (this.lval.nodeType === NodeType.VarDecl)) {
                 (<BoundDecl>this.lval).varFlags |= VarFlags.AutoInit;
             }
         }
         public statement: ASTSpan = new ASTSpan();
-        public body: AST;
-
-        public isLoop() { return true; }
 
         public isFiltered() {
             if (this.body) {
@@ -1764,15 +1721,12 @@ module TypeScript {
     }
 
     export class ForStatement extends Statement {
-        public cond: AST;
-        public body: AST;
-        public incr: AST;
-
-        constructor(public init: AST) {
+        constructor(public init: AST,
+                    public cond: AST,
+                    public incr: AST,
+                    public body: AST) {
             super(NodeType.For);
         }
-
-        public isLoop() { return true; }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -1862,11 +1816,9 @@ module TypeScript {
     }
 
     export class WithStatement extends Statement {
-        public body: AST;
-
         public withSym: WithSymbol = null;
 
-        constructor(public expr: AST) {
+        constructor(public expr: AST, public body: AST) {
             super(NodeType.With);
         }
 

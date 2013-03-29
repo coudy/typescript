@@ -125,7 +125,6 @@ module TypeScript {
         EBStart,
         GotoEB,
         EndCode,
-        Error,
         Comment,
         Debugger,
         GeneralNode = FuncDecl,

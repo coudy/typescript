@@ -15,8 +15,6 @@
 
 ///<reference path='formatting.ts' />
 
-
-//module EditorAbstractions {
 module TypeScript.Formatting {
     export class RulesMap {
         public map: RulesBucket[];

@@ -177,7 +177,7 @@ module Services {
 
                 // Path that should make us stop looking up..
                 if (position > path.ast().minChar) {  // If cursor is on the "{" of the body, we may wat to display param help
-                    if (path.ast().nodeType !== TypeScript.NodeType.List && path.ast().nodeType !== TypeScript.NodeType.Error) { 
+                    if (path.ast().nodeType !== TypeScript.NodeType.List) { 
                         break;
                     }
                 }
