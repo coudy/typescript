@@ -394,8 +394,9 @@ module Services {
             switch (declaration.getKind()) {
                 case TypeScript.PullElementKind.Script:
                 case TypeScript.PullElementKind.Container:
-                case TypeScript.PullElementKind.Interface:
                 case TypeScript.PullElementKind.Class:
+                case TypeScript.PullElementKind.Interface:
+                case TypeScript.PullElementKind.DynamicModule:                
                 case TypeScript.PullElementKind.Enum:
                     return true;
             }
@@ -412,7 +413,7 @@ module Services {
                 case TypeScript.PullElementKind.Property:
 	// Do not include the value side of modules or classes, as thier types has already been included
                     var symbol = declaration.getSymbol();
-                    return !this.isModule(symbol) && !this.isConstructorMethod(symbol);
+                    return !this.isModule(symbol) && !this.isDynamicModule(symbol)  && !this.isConstructorMethod(symbol) && !this.isClass(symbol);
                 case TypeScript.PullElementKind.EnumMember:
 	// Ignore the _map for enums. this should be removed once enum new implmentation is in place
                     return declaration.getName() !== "_map";
@@ -683,20 +684,25 @@ module Services {
         }
 
         private isModule(symbol: TypeScript.PullSymbol) {
-            var decls = symbol.getDeclarations();
-            for (var i = 0; i < decls.length; i++) {
-                if (decls[i].getKind() == TypeScript.PullElementKind.Container) {
-                    return true;
-                }
-            }
+            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.Container);
+        }
 
-            return false;
+        private isDynamicModule(symbol: TypeScript.PullSymbol) {
+            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.DynamicModule);
         }
 
         private isConstructorMethod(symbol: TypeScript.PullSymbol): bool {
+            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.ConstructorMethod);
+        }
+
+        private isClass(symbol: TypeScript.PullSymbol): bool {
+            return this.isOneDeclarationOfKind(symbol, TypeScript.PullElementKind.Class);
+        }
+
+        private isOneDeclarationOfKind(symbol: TypeScript.PullSymbol, kind: TypeScript.PullElementKind): bool {
             var decls = symbol.getDeclarations();
             for (var i = 0; i < decls.length; i++) {
-                if (decls[i].getKind() == TypeScript.PullElementKind.ConstructorMethod) {
+                if (decls[i].getKind() === kind) {
                     return true;
                 }
             }
@@ -712,6 +718,7 @@ module Services {
             if (varIsFunction) {
                 switch (kind) {
                     case TypeScript.PullElementKind.Container:
+                    case TypeScript.PullElementKind.DynamicModule:
                     case TypeScript.PullElementKind.Interface:
                     case TypeScript.PullElementKind.Class:
                     case TypeScript.PullElementKind.Parameter:
@@ -744,6 +751,7 @@ module Services {
                     case TypeScript.PullElementKind.Script:
                         return ScriptElementKind.scriptElement;
                     case TypeScript.PullElementKind.Container:
+                    case TypeScript.PullElementKind.DynamicModule:
                         return ScriptElementKind.moduleElement;
                     case TypeScript.PullElementKind.Interface:
                         return ScriptElementKind.interfaceElement;
