@@ -1,3 +1,4 @@
+// @declaration: true
 /*
 var n: number[];
 

@@ -19,3 +19,15 @@ var v2;
 var y = v2.x;
 var u = v2.a;
 var z = v2.b;
+////[0.d.ts]
+class B<T> {
+    public a: T;
+    public b: T;
+}
+class C<T> extends B<T> {
+    public x: T;
+}
+var v2: C<string>;
+var y: string;
+var u: string;
+var z: string;

@@ -1,3 +1,4 @@
+// @declaration: true
 class B<T> {
     a: T;
     b: T;

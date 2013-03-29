@@ -1,3 +1,4 @@
+// @declaration: true
 class C<T> {
 	public x: T;
 }

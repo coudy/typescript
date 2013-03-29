@@ -1,4 +1,4 @@
-
+// @declaration: true
 interface G<T> {
     x: T;
 }

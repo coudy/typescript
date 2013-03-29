@@ -1,3 +1,4 @@
+// @declaration: true
 interface Foo<T> {
 	a: T;
 }
