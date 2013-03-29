@@ -305,30 +305,6 @@ module TypeScript {
         }
     }
 
-    export class Label extends AST {
-        constructor(public id: Identifier) {
-            super(NodeType.Label);
-        }
-
-        public printLabel() { return this.id.actualText + ":"; }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            this.type = typeFlow.voidType;
-            return this;
-        }
-
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
-            emitter.recordSourceMappingStart(this);
-            emitter.recordSourceMappingStart(this.id);
-            emitter.writeToOutput(this.id.actualText);
-            emitter.recordSourceMappingEnd(this.id);
-            emitter.writeLineToOutput(":");
-            emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
-        }
-    }
-
     export class Expression extends AST {
         constructor(nodeType: NodeType) {
             super(nodeType);
@@ -603,8 +579,6 @@ module TypeScript {
                     return typeFlow.typeCheckInstOf(this);
                 case NodeType.In:
                     return typeFlow.typeCheckInOperator(this);
-                case NodeType.From:
-                    typeFlow.checker.errorReporter.simpleError(this, "Illegal use of 'from' keyword in binary expression");
                     break;
                 default:
                     throw new Error("please implement in derived class");
@@ -1248,27 +1222,26 @@ module TypeScript {
     }
 
     export class LabeledStatement extends Statement {
-        constructor(public labels: ASTList, public stmt: AST) {
+        constructor(public identifier: Identifier, public statement: AST) {
             super(NodeType.LabeledStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.labels) {
-                var labelsLen = this.labels.members.length;
-                for (var i = 0; i < labelsLen; i++) {
-                    this.labels.members[i].emit(emitter, tokenId, startLine);
-                }
-            }
-            this.stmt.emit(emitter, tokenId, true);
+
+            emitter.recordSourceMappingStart(this.identifier);
+            emitter.writeToOutput(this.identifier.actualText);
+            emitter.recordSourceMappingEnd(this.identifier);
+            emitter.writeLineToOutput(":");
+
+            this.statement.emit(emitter, tokenId, true);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
-            typeFlow.typeCheck(this.labels);
-            this.stmt = this.stmt.typeCheck(typeFlow);
+            this.statement = this.statement.typeCheck(typeFlow);
             return this;
         }
 

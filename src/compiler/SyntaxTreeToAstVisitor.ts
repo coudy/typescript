@@ -2890,10 +2890,7 @@ module TypeScript {
                 this.movePast(node.colonToken);
                 var statement = node.statement.accept(this);
 
-                var labelList = new ASTList();
-                labelList.append(new Label(identifier));
-
-                result = new LabeledStatement(labelList, statement);
+                result = new LabeledStatement(identifier, statement);
             }
 
             this.setAST(node, result);

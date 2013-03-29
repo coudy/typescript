@@ -113,7 +113,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.Delete] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.In] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.Dot] = ChildrenWalkers.walkBinaryExpressionChildren;
-            this.childrenWalkers[NodeType.From] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.Is] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.InstOf] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.Typeof] = ChildrenWalkers.walkUnaryExpressionChildren;
@@ -195,7 +194,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.ImportDeclaration] = ChildrenWalkers.walkImportDeclChildren;
             this.childrenWalkers[NodeType.ExportAssignment] = ChildrenWalkers.walkExportAssignmentChildren;
             this.childrenWalkers[NodeType.With] = ChildrenWalkers.walkWithStatementChildren;
-            this.childrenWalkers[NodeType.Label] = ChildrenWalkers.walkLabelChildren;
             this.childrenWalkers[NodeType.LabeledStatement] = ChildrenWalkers.walkLabeledStatementChildren;
             this.childrenWalkers[NodeType.EndCode] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone;
@@ -530,13 +528,9 @@ module TypeScript {
             }
         }
 
-        export function walkLabelChildren(preAst: Label, parent: AST, walker: IAstWalker): void {
-            //TODO: Walk "id"?
-        }
-
         export function walkLabeledStatementChildren(preAst: LabeledStatement, parent: AST, walker: IAstWalker): void {
-            preAst.labels = <ASTList>walker.walk(preAst.labels, preAst);
-            preAst.stmt = walker.walk(preAst.stmt, preAst);
+            preAst.identifier = <Identifier>walker.walk(preAst.identifier, preAst);
+            preAst.statement = walker.walk(preAst.statement, preAst);
         }
     }
 }
