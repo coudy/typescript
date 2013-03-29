@@ -844,7 +844,7 @@ module TypeScript {
             go = preCollectFuncDeclTypes(ast, parent, context);
         }
         else {
-            if (ast.isStatementOrExpression() && context.scopeChain.moduleDecl) {
+            if (/* ast.isStatementOrExpression() && */ context.scopeChain.moduleDecl) {
                 context.scopeChain.moduleDecl.recordNonInterface();
             }
         }
