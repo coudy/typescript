@@ -58,7 +58,6 @@
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
-///<reference path='typecheck\pullEmitter.ts' />
 ///<reference path='typecheck\pullErrors.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
@@ -370,7 +369,7 @@ module TypeScript {
         // May throw exceptions.
         private emitUnit(script: Script,
                          inputOutputMapper?: (inputName: string, outputName: string) => void,
-                         emitter?: PullEmitter): PullEmitter {
+                         emitter?: Emitter): Emitter {
 
             if (script.emitRequired(this.emitOptions)) {
                 var typeScriptFileName = script.locationInfo.fileName;
@@ -378,7 +377,7 @@ module TypeScript {
                     var javaScriptFileName = this.emitOptions.mapOutputFileName(typeScriptFileName, TypeScriptCompiler.mapToJSFileName);
                     var outFile = this.createFile(javaScriptFileName, this.useUTF8ForFile(script));
 
-                    emitter = new PullEmitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
+                    emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
 
                     if (this.settings.mapSourceFiles) {
                         var sourceMapFileName = javaScriptFileName + SourceMapper.MapFileExtension;
@@ -414,7 +413,7 @@ module TypeScript {
             var startEmitTime = (new Date()).getTime();
 
             var fileNames = this.fileNameToScript.getAllKeys();
-            var sharedEmitter: PullEmitter = null;
+            var sharedEmitter: Emitter = null;
 
             // Iterate through the files, as long as we don't get an error.
             for (var i = 0, n = fileNames.length; i < n; i++) {

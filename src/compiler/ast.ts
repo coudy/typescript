@@ -797,7 +797,6 @@ module TypeScript {
         public isDeclaration() { return true; }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            var mod = <ModuleType>this.alias.type;
             // REVIEW: Only modules may be aliased for now, though there's no real
             // restriction on what the type symbol may be
             if (emitter.importStatementShouldBeEmitted(this)) {
