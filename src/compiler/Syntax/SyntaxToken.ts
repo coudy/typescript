@@ -263,7 +263,7 @@ module TypeScript.Syntax {
         private isTypeScriptSpecific() { return false; }
 
         // Empty tokens are never incrementally reusable.
-        private isIncrementallyReusable() { return false; }
+        private isIncrementallyUnusable() { return true; }
 
         public fullWidth() { return 0; }
         public width() { return 0; }
@@ -337,7 +337,7 @@ module TypeScript.Syntax {
         private isTypeScriptSpecific() { return false; }
 
         // Realized tokens are created from the parser.  They are *never* incrementally reusable.
-        private isIncrementallyReusable() { return false; }
+        private isIncrementallyUnusable() { return true; }
 
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 

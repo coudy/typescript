@@ -41,7 +41,7 @@ module TypeScript.Syntax {
         width: () => 0,
 
         isTypeScriptSpecific: () => false,
-        isIncrementallyReusable: () => true,
+        isIncrementallyUnusable: () => false,
 
         findTokenInternal: (parent: PositionedElement, position: number, fullStart: number): PositionedToken => {
             // This should never have been called on this list.  It has a 0 width, so the client 
@@ -148,8 +148,8 @@ module TypeScript.Syntax {
             return this.item.isTypeScriptSpecific();
         }
 
-        public isIncrementallyReusable(): bool {
-            return this.item.isIncrementallyReusable();
+        public isIncrementallyUnusable(): bool {
+            return this.item.isIncrementallyUnusable();
         }
 
         public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
@@ -165,7 +165,7 @@ module TypeScript.Syntax {
 
     class NormalSeparatedSyntaxList implements ISeparatedSyntaxList {
         private elements: ISyntaxNodeOrToken[];
-        private _data: number = -1;
+        private _data: number = 0;
 
         constructor(elements: ISyntaxNodeOrToken[]) {
             this.elements = elements;
@@ -278,8 +278,8 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public isIncrementallyReusable(): bool {
-            return (this.data() & SyntaxConstants.NodeIncrementallyReusableMask) !== 0;
+        public isIncrementallyUnusable(): bool {
+            return (this.data() & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0;
         }
 
         public fullWidth(): number {
@@ -309,7 +309,7 @@ module TypeScript.Syntax {
 
         private computeData(): number {
             var fullWidth = 0;
-            var isIncrementallyReusable = true;
+            var isIncrementallyUnusable = false;
 
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
@@ -317,15 +317,16 @@ module TypeScript.Syntax {
                 var childWidth = element.fullWidth();
                 fullWidth += childWidth;
 
-                isIncrementallyReusable = isIncrementallyReusable && element.isIncrementallyReusable();
+                isIncrementallyUnusable = isIncrementallyUnusable || element.isIncrementallyUnusable();
             }
 
             return (fullWidth << SyntaxConstants.NodeFullWidthShift)
-                 | (isIncrementallyReusable ? SyntaxConstants.NodeIncrementallyReusableMask : 0);
+                 | (isIncrementallyUnusable ? SyntaxConstants.NodeIncrementallyUnusableMask : 0)
+                 | SyntaxConstants.NodeDataComputed;
         }
 
         private data(): number {
-            if (this._data === -1) {
+            if ((this._data & SyntaxConstants.NodeDataComputed) === 0) {
                 this._data = this.computeData();
             }
 

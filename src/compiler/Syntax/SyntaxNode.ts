@@ -90,8 +90,8 @@ module TypeScript {
                 fullWidth: this.fullWidth()
             };
 
-            if (!this.isIncrementallyReusable()) {
-                result.isIncrementallyReusable = false;
+            if (this.isIncrementallyUnusable()) {
+                result.isIncrementallyUnusable = true;
             }
 
             if (this.parsedInStrictMode()) {
@@ -162,8 +162,8 @@ module TypeScript {
             return false;
         }
 
-        public isIncrementallyReusable(): bool {
-            return (this.data() & SyntaxConstants.NodeIncrementallyReusableMask) !== 0;
+        public isIncrementallyUnusable(): bool {
+            return (this.data() & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0;
         }
 
         // True if this node was parsed while the parser was in 'strict' mode.  A node parsed in strict
@@ -184,8 +184,9 @@ module TypeScript {
             var fullWidth = 0;
             var childWidth = 0;
 
+            // If we're already set as incrementally unusable, then don't need to check children.
             // If we have no children (like an OmmittedExpressionSyntax), we're automatically not reusable.
-            var isIncrementallyReusable = slotCount !== 0;
+            var isIncrementallyUnusable = ((this._data & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0) || slotCount === 0;
 
             for (var i = 0, n = slotCount; i < n; i++) {
                 var element = this.childAt(i);
@@ -194,18 +195,19 @@ module TypeScript {
                     childWidth = element.fullWidth();
                     fullWidth += childWidth;
 
-                    if (isIncrementallyReusable) {
-                        isIncrementallyReusable = element.isIncrementallyReusable();
+                    if (!isIncrementallyUnusable) {
+                        isIncrementallyUnusable = element.isIncrementallyUnusable();
                     }
                 }
             }
 
             return (fullWidth << SyntaxConstants.NodeFullWidthShift)
-                 | (isIncrementallyReusable ? SyntaxConstants.NodeIncrementallyReusableMask : 0);
+                 | (isIncrementallyUnusable ? SyntaxConstants.NodeIncrementallyUnusableMask : 0)
+                 | SyntaxConstants.NodeDataComputed;
         }
 
         private data(): number {
-            if (this._data === 0 || this._data === SyntaxConstants.NodeParsedInStrictModeMask) {
+            if ((this._data & SyntaxConstants.NodeDataComputed) === 0) {
                 this._data |= this.computeData();
             }
 

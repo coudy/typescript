@@ -4,7 +4,7 @@
 ///<reference path='..\..\src\Compiler\Syntax\Emitter.ts' />
 ///<reference path='..\..\src\Compiler\Syntax\PrettyPrinter.ts' />
 ///<reference path='Test262.ts' />
-///<reference path='IncrementalParserTests.ts' />
+///<reference path='incremental\IncrementalParserTests.ts' />
 ///<reference path='..\..\src\Compiler\Core\Environment.ts' />
 ///<reference path='..\..\src\Harness\Diff.ts' />
 ///<reference path='..\..\src\Compiler\SyntaxTreeToAstVisitor.ts' />

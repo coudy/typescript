@@ -1,4 +1,5 @@
-///<reference path='..\..\src\Compiler\Syntax\References.ts' />
+///<reference path='..\..\..\src\Compiler\Syntax\References.ts' />
+///<reference path='..\..\..\src\Compiler\Core\Environment.ts' />
 
 module TypeScript {
     export class SyntaxElementsCollector extends SyntaxWalker {
@@ -20,6 +21,42 @@ module TypeScript {
         }
     }
 
+    function withChange(text: IText, start: number, length: number, newText: string): { text: IText; textChangeRange: TextChangeRange; } {
+        var contents = text.toString();
+        var newContents = contents.substr(0, start) + newText + contents.substring(start + length);
+
+        return { text: TextFactory.createText(newContents), textChangeRange: new TextChangeRange(new TextSpan(start, length), newText.length) }
+    }
+
+    function withInsert(text: IText, start: number, newText: string): { text: IText; textChangeRange: TextChangeRange; } {
+        return withChange(text, start, 0, newText);
+    }
+
+    function withDelete(text: IText, start: number, length: number): { text: IText; textChangeRange: TextChangeRange; } {
+        return withChange(text, start, length, "");
+    }
+
+    // NOTE: 'reusedElements' is the expected count of elements reused from the old tree to the new
+    // tree.  It may change as we tweak the parser.  If the count increases then that should always
+    // be a good thing.  If it decreases, that's not great (less reusability), but that may be 
+    // unavoidable.  If it does decrease an investigation 
+    function compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedElements: number = -1): void {
+        var oldTree = Parser.parse("", oldText, false, LanguageVersion.EcmaScript5);
+
+        var newTree = Parser.parse("", newText, false, LanguageVersion.EcmaScript5);
+        var incrementalNewTree = Parser.incrementalParse(oldTree, textChangeRange, newText);
+
+        // We should get the same tree when doign a full or incremental parse.
+        Debug.assert(newTree.structuralEquals(incrementalNewTree));
+
+        // There should be no reused nodes between two trees that are fully parsed.
+        Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
+
+        if (reusedElements !== -1) {
+            Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
+        }
+    }
+
     export class IncrementalParserTests {
         public static runAllTests() {
             for (var name in IncrementalParserTests) {
@@ -29,45 +66,12 @@ module TypeScript {
             }
         }
 
-        private static withChange(text: IText, start: number, length: number, newText: string): { text: IText; textChangeRange: TextChangeRange; } {
-            var contents = text.toString();
-            var newContents = contents.substr(0, start) + newText + contents.substring(start + length);
-
-            return { text: TextFactory.createText(newContents), textChangeRange: new TextChangeRange(new TextSpan(start, length), newText.length) }
-        }
-
-        private static withInsert(text: IText, start: number, newText: string): { text: IText; textChangeRange: TextChangeRange; } {
-            return IncrementalParserTests.withChange(text, start, 0, newText);
-        }
-
-        private static withDelete(text: IText, start: number, length: number): { text: IText; textChangeRange: TextChangeRange; } {
-            return IncrementalParserTests.withChange(text, start, length, "");
-        }
-
         private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax): number {
             var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
             var allNewElements = SyntaxElementsCollector.collectElements(newNode);
 
             return ArrayUtilities.where(allOldElements,
                 v => ArrayUtilities.contains(allNewElements, v)).length;
-        }
-
-        // NOTE: 'reusedElements' is the expected count of elements reused from the old tree to the new
-        // tree.  It may change as we tweak the parser.  If the count increases then that should always
-        // be a good thing.  If it decreases, that's not great (less reusability), but that may be 
-        // unavoidable.  If it does decrease an investigation 
-        private static compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedElements: number): void {
-            var oldTree = Parser.parse("", oldText, false, LanguageVersion.EcmaScript5);
-
-            var newTree = Parser.parse("", newText, false, LanguageVersion.EcmaScript5);
-            var incrementalNewTree = Parser.incrementalParse(oldTree, textChangeRange, newText);
-
-            // We should get the same tree when doign a full or incremental parse.
-            Debug.assert(newTree.structuralEquals(incrementalNewTree));
-
-            // There should be no reused nodes between two trees that are fully parsed.
-            Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
-            Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
         }
 
         public static testIncremental1() {
@@ -82,9 +86,9 @@ module TypeScript {
             var semicolonIndex = source.indexOf(";");
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
+            var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
         }
 
         public static testIncremental2() {
@@ -99,9 +103,9 @@ module TypeScript {
             var index = source.indexOf("+ 1");
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
+            var newTextAndChange = withDelete(oldText, index, 3);
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
         }
 
         public static testIncrementalRegex1() {
@@ -110,9 +114,9 @@ module TypeScript {
             var semicolonIndex = source.indexOf(";}");
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
+            var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
         }
 
         public static testIncrementalComment1() {
@@ -121,27 +125,27 @@ module TypeScript {
             var semicolonIndex = source.indexOf(";");
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
+            var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
         }
 
         public static testIncrementalComment2() {
             var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "//");
+            var newTextAndChange = withInsert(oldText, 0, "//");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
         }
 
         public static testIncrementalComment3() {
             var source = "//class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, 2);
+            var newTextAndChange = withDelete(oldText, 0, 2);
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
         }
 
         public static testIncrementalComment4() {
@@ -149,9 +153,9 @@ module TypeScript {
 
             var index = source.indexOf(";");
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
+            var newTextAndChange = withInsert(oldText, index, "*");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
         }
 
         public static testParameter1() {
@@ -165,9 +169,9 @@ module TypeScript {
             var semicolonIndex = source.indexOf(";");
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
+            var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
         }
 
         public static testTypeMember1() {
@@ -177,9 +181,9 @@ module TypeScript {
             var index = source.indexOf(": string");
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
+            var newTextAndChange = withInsert(oldText, index, "?");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
         }
 
         public static testEnumElement1() {
@@ -189,9 +193,9 @@ module TypeScript {
             var index = source.indexOf("<<");
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
+            var newTextAndChange = withChange(oldText, index, 2, "+");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
         }
 
         //public static testEnumElement1() {
@@ -203,7 +207,7 @@ module TypeScript {
         //    var oldText = TextFactory.createText(source);
         //    var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
 
-        //    IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
+        //    compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
         //}
 
         public static testStrictMode1() {
@@ -215,9 +219,9 @@ module TypeScript {
             var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'strict';\r\n");
+            var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
         }
 
         public static testStrictMode2() {
@@ -226,10 +230,10 @@ module TypeScript {
             var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'use strict';\r\n");
+            var newTextAndChange = withInsert(oldText, 0, "'use strict';\r\n");
 
             // Note the decreased reuse of nodes compared to testStrictMode1
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
         }
 
         public static testStrictMode3() {
@@ -243,9 +247,9 @@ module TypeScript {
             var index = source.indexOf('f');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+            var newTextAndChange = withDelete(oldText, 0, index);
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
         }
 
         public static testStrictMode4() {
@@ -256,10 +260,10 @@ module TypeScript {
             var index = source.indexOf('f');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+            var newTextAndChange = withDelete(oldText, 0, index);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 12);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 12);
         }
 
         public static testIncremental5() {
@@ -268,9 +272,9 @@ module TypeScript {
             var index = source.indexOf('b');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "strict");
+            var newTextAndChange = withChange(oldText, index, 6, "strict");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
         }
 
         public static testIncremental6() {
@@ -279,9 +283,9 @@ module TypeScript {
             var index = source.indexOf('s');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "blahhh");
+            var newTextAndChange = withChange(oldText, index, 6, "blahhh");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
         }
 
         public static testDelete1() {
@@ -290,10 +294,10 @@ module TypeScript {
             var index = source.indexOf('f');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+            var newTextAndChange = withDelete(oldText, 0, index);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 59);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 59);
         }
 
         public static testGenerics1() {
@@ -302,10 +306,10 @@ module TypeScript {
             var index = source.indexOf(';');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, " => 1");
+            var newTextAndChange = withInsert(oldText, index, " => 1");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
         }
 
         public static testGenerics2() {
@@ -314,10 +318,10 @@ module TypeScript {
             var index = source.indexOf(' =>');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, " => 1".length);
+            var newTextAndChange = withDelete(oldText, index, " => 1".length);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
         }
 
         public static testGenerics3() {
@@ -326,10 +330,10 @@ module TypeScript {
             var index = source.indexOf('>> =');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, index + 2, 1);
+            var newTextAndChange = withDelete(oldText, index + 2, 1);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
         }
 
         public static testGenerics4() {
@@ -338,10 +342,10 @@ module TypeScript {
             var index = source.indexOf('>>=');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, index + 2, " ");
+            var newTextAndChange = withInsert(oldText, index + 2, " ");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
         }
 
         public static testGenerics5() {
@@ -350,10 +354,10 @@ module TypeScript {
             var index = source.indexOf('T');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "Foo<Bar<");
+            var newTextAndChange = withInsert(oldText, index, "Foo<Bar<");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
         }
 
         public static testGenerics6() {
@@ -362,10 +366,10 @@ module TypeScript {
             var index = source.indexOf('Foo<Bar<');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, "Foo<Bar<".length);
+            var newTextAndChange = withDelete(oldText, index, "Foo<Bar<".length);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
         }
 
         public static testGenerics7() {
@@ -374,10 +378,10 @@ module TypeScript {
             var index = source.indexOf('=');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withChange(oldText, index, "= ".length, ": Foo<Bar<");
+            var newTextAndChange = withChange(oldText, index, "= ".length, ": Foo<Bar<");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
         }
 
         public static testGenerics8() {
@@ -386,10 +390,69 @@ module TypeScript {
             var index = source.indexOf(':');
 
             var oldText = TextFactory.createText(source);
-            var newTextAndChange = IncrementalParserTests.withChange(oldText, index, ": Foo<Bar<".length, "= ");
+            var newTextAndChange = withChange(oldText, index, ": Foo<Bar<".length, "= ");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
         }
+
+        public static testParenthesizedExpressionToLambda() {
+            var source = "var v = (a, b) = c";
+
+            var index = source.indexOf("= c") + 1;
+
+            var oldText = TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, ">");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
+
+        public static testLambdaToParenthesizedExpression() {
+            var source = "var v = (a, b) => c";
+
+            var index = source.indexOf(">");
+
+            var oldText = TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index, 1);
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
+
+        public static testGenericToArithmetic() {
+            var source = "var v = new Dictionary<A, B>()";
+
+            var index = source.indexOf("()");
+
+            var oldText = TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index, 2);
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
+
+        //public static testArithmeticToGeneric() {
+        //    var source = "var v = new Dictionary<A, B>";
+
+        //    var index = source.length;
+
+        //    var oldText = TextFactory.createText(source);
+        //    var newTextAndChange = withInsert(oldText, index, "()");
+
+        //    compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        //}
+
+        //public static testComplexEdits1() {
+        //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");
+            
+        //    var index = source.indexOf("if (isGetter && !hasReturn) {");
+        //    index += "if (isGetter ".length;
+
+        //    var text1 = TextFactory.createText(source);
+        //    var newTextAndChange1 = withChange(text1, index, "&& !hasReturn".length, "/*&& !hasReturn*/");
+        //    var text2 = newTextAndChange1.text;
+
+        //    compareTrees(text1, text2, newTextAndChange1.textChangeRange);
+
+        //    // index = 
+        //}
     }
 }

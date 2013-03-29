@@ -11,8 +11,6 @@ module TypeScript {
         value(): any;
         valueText(): string;
 
-        isIncrementallyReusable(): bool;
-
         hasLeadingTrivia(): bool;
         hasLeadingComment(): bool;
         hasLeadingNewLine(): bool;

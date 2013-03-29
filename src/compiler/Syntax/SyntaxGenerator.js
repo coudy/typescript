@@ -285,10 +285,10 @@ var TypeScript;
         DiagnosticCode._implements__clause_already_seen = 29;
         DiagnosticCode._map[30] = "Accessibility_modifier_already_seen";
         DiagnosticCode.Accessibility_modifier_already_seen = 30;
-        DiagnosticCode._map[31] = "Accessibility_modifier_must_precede__static__modifier";
-        DiagnosticCode.Accessibility_modifier_must_precede__static__modifier = 31;
-        DiagnosticCode._map[32] = "_static__modifier_already_seen";
-        DiagnosticCode._static__modifier_already_seen = 32;
+        DiagnosticCode._map[31] = "_0__modifier_must_precede__1__modifier";
+        DiagnosticCode._0__modifier_must_precede__1__modifier = 31;
+        DiagnosticCode._map[32] = "_0__modifier_already_seen";
+        DiagnosticCode._0__modifier_already_seen = 32;
         DiagnosticCode._map[33] = "_0__modifier_cannot_appear_on_a_class_element";
         DiagnosticCode._0__modifier_cannot_appear_on_a_class_element = 33;
         DiagnosticCode._map[34] = "Interface_declaration_cannot_have__implements__clause";
@@ -313,42 +313,48 @@ var TypeScript;
         DiagnosticCode.Function_implementation_expected = 43;
         DiagnosticCode._map[44] = "Constructor_implementation_expected";
         DiagnosticCode.Constructor_implementation_expected = 44;
-        DiagnosticCode._map[45] = "Duplicate_identifier__0_";
-        DiagnosticCode.Duplicate_identifier__0_ = 45;
-        DiagnosticCode._map[46] = "The_name__0__does_not_exist_in_the_current_scope";
-        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 46;
-        DiagnosticCode._map[47] = "The_name__0__does_not_refer_to_a_value";
-        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 47;
-        DiagnosticCode._map[48] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
-        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 48;
-        DiagnosticCode._map[49] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
-        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 49;
-        DiagnosticCode._map[50] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
-        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 50;
-        DiagnosticCode._map[51] = "Value_of_type__0__is_not_callable";
-        DiagnosticCode.Value_of_type__0__is_not_callable = 51;
-        DiagnosticCode._map[52] = "Value_of_type__0__is_not_newable";
-        DiagnosticCode.Value_of_type__0__is_not_newable = 52;
-        DiagnosticCode._map[53] = "Value_of_type__0__is_not_indexable_by_type__1_";
-        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 53;
-        DiagnosticCode._map[54] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 54;
-        DiagnosticCode._map[55] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 55;
-        DiagnosticCode._map[56] = "Cannot_convert__0__to__1_";
-        DiagnosticCode.Cannot_convert__0__to__1_ = 56;
-        DiagnosticCode._map[57] = "Cannot_convert__0__to__1___2";
-        DiagnosticCode.Cannot_convert__0__to__1___2 = 57;
-        DiagnosticCode._map[58] = "Expected_var__class__interface__or_module";
-        DiagnosticCode.Expected_var__class__interface__or_module = 58;
-        DiagnosticCode._map[59] = "Operator__0__cannot_be_applied_to_type__1_";
-        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 59;
-        DiagnosticCode._map[60] = "Getter__0__already_declared";
-        DiagnosticCode.Getter__0__already_declared = 60;
-        DiagnosticCode._map[61] = "Setter__0__already_declared";
-        DiagnosticCode.Setter__0__already_declared = 61;
-        DiagnosticCode._map[62] = "Accessor_may_not_take_type_parameters";
-        DiagnosticCode.Accessor_may_not_take_type_parameters = 62;
+        DiagnosticCode._map[45] = "Function_overload_name_must_be__0_";
+        DiagnosticCode.Function_overload_name_must_be__0_ = 45;
+        DiagnosticCode._map[46] = "_0__modifier_cannot_appear_on_a_module_element";
+        DiagnosticCode._0__modifier_cannot_appear_on_a_module_element = 46;
+        DiagnosticCode._map[47] = "_declare__modifier_cannot_appear_on_an_interface_declaration";
+        DiagnosticCode._declare__modifier_cannot_appear_on_an_interface_declaration = 47;
+        DiagnosticCode._map[48] = "Duplicate_identifier__0_";
+        DiagnosticCode.Duplicate_identifier__0_ = 48;
+        DiagnosticCode._map[49] = "The_name__0__does_not_exist_in_the_current_scope";
+        DiagnosticCode.The_name__0__does_not_exist_in_the_current_scope = 49;
+        DiagnosticCode._map[50] = "The_name__0__does_not_refer_to_a_value";
+        DiagnosticCode.The_name__0__does_not_refer_to_a_value = 50;
+        DiagnosticCode._map[51] = "Keyword__super__can_only_be_used_inside_a_class_instance_method";
+        DiagnosticCode.Keyword__super__can_only_be_used_inside_a_class_instance_method = 51;
+        DiagnosticCode._map[52] = "The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer";
+        DiagnosticCode.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer = 52;
+        DiagnosticCode._map[53] = "Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__";
+        DiagnosticCode.Value_of_type__0__is_not_callable__Did_you_mean_to_include__new__ = 53;
+        DiagnosticCode._map[54] = "Value_of_type__0__is_not_callable";
+        DiagnosticCode.Value_of_type__0__is_not_callable = 54;
+        DiagnosticCode._map[55] = "Value_of_type__0__is_not_newable";
+        DiagnosticCode.Value_of_type__0__is_not_newable = 55;
+        DiagnosticCode._map[56] = "Value_of_type__0__is_not_indexable_by_type__1_";
+        DiagnosticCode.Value_of_type__0__is_not_indexable_by_type__1_ = 56;
+        DiagnosticCode._map[57] = "Operator__0__cannot_be_applied_to_types__1__and__2_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2_ = 57;
+        DiagnosticCode._map[58] = "Operator__0__cannot_be_applied_to_types__1__and__2__3";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_types__1__and__2__3 = 58;
+        DiagnosticCode._map[59] = "Cannot_convert__0__to__1_";
+        DiagnosticCode.Cannot_convert__0__to__1_ = 59;
+        DiagnosticCode._map[60] = "Cannot_convert__0__to__1___2";
+        DiagnosticCode.Cannot_convert__0__to__1___2 = 60;
+        DiagnosticCode._map[61] = "Expected_var__class__interface__or_module";
+        DiagnosticCode.Expected_var__class__interface__or_module = 61;
+        DiagnosticCode._map[62] = "Operator__0__cannot_be_applied_to_type__1_";
+        DiagnosticCode.Operator__0__cannot_be_applied_to_type__1_ = 62;
+        DiagnosticCode._map[63] = "Getter__0__already_declared";
+        DiagnosticCode.Getter__0__already_declared = 63;
+        DiagnosticCode._map[64] = "Setter__0__already_declared";
+        DiagnosticCode.Setter__0__already_declared = 64;
+        DiagnosticCode._map[65] = "Accessor_may_not_take_type_parameters";
+        DiagnosticCode.Accessor_may_not_take_type_parameters = 65;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -510,14 +516,14 @@ var TypeScript;
             message: "Accessibility modifier already seen.",
             code: 1028
         },
-        Accessibility_modifier_must_precede__static__modifier: {
+        _0__modifier_must_precede__1__modifier: {
             category: 1 /* Error */ ,
-            message: "Accessibility modifier must precede 'static' modifier.",
+            message: "'{0}' modifier must precede '{1}' modifier.",
             code: 1029
         },
-        _static__modifier_already_seen: {
+        _0__modifier_already_seen: {
             category: 1 /* Error */ ,
-            message: "'static' modifier already seen.",
+            message: "'{0}' modifier already seen.",
             code: 1030
         },
         _0__modifier_cannot_appear_on_a_class_element: {
@@ -579,6 +585,21 @@ var TypeScript;
             category: 1 /* Error */ ,
             message: "Constructor implementation expected.",
             code: 1042
+        },
+        Function_overload_name_must_be__0_: {
+            category: 1 /* Error */ ,
+            message: "Function overload name must be '{0}'.",
+            code: 1043
+        },
+        _0__modifier_cannot_appear_on_a_module_element: {
+            category: 1 /* Error */ ,
+            message: "'{0}' modifier cannot appear on a module element.",
+            code: 1044
+        },
+        _declare__modifier_cannot_appear_on_an_interface_declaration: {
+            category: 1 /* Error */ ,
+            message: "'declare' modifier cannot appear on an interface declaration.",
+            code: 1045
         },
         Duplicate_identifier__0_: {
             category: 1 /* Error */ ,
@@ -671,6 +692,17 @@ var TypeScript;
             code: 2017
         }
     };
+    var seenCodes = [];
+    for(var name in TypeScript.diagnosticMessages) {
+        if (TypeScript.diagnosticMessages.hasOwnProperty(name)) {
+            var diagnosticMessage = TypeScript.diagnosticMessages[name];
+            var value = seenCodes[diagnosticMessage.code];
+            if (value) {
+                throw new Error("Duplicate diagnostic code: " + diagnosticMessage.code);
+            }
+            seenCodes[diagnosticMessage.code] = diagnosticMessage;
+        }
+    }
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -5521,7 +5553,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner1.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedText(): bool { return false; }\r\n";
-    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): bool { return false; }\r\n" + "        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): bool { return false; }\r\n" + "        public isIncrementallyUnusable(): bool { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
     result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";
     result += "    }\r\n";

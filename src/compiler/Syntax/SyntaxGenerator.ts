@@ -2429,7 +2429,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 "        public firstToken(): ISyntaxToken { return this; }\r\n" +
 "        public lastToken(): ISyntaxToken { return this; }\r\n" +
 "        public isTypeScriptSpecific(): bool { return false; }\r\n" +
-"        public isIncrementallyReusable(): bool { return this.fullWidth() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
+"        public isIncrementallyUnusable(): bool { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
 "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" +
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";

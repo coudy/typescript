@@ -15,7 +15,7 @@ module TypeScript {
         // True if this element is typescript specific and would not be legal in pure javascript.
         isTypeScriptSpecific(): bool;
 
-        // True if this element can be reused in incremental parsing.  There are several situations
+        // True if this element cannot be reused in incremental parsing.  There are several situations
         // in which an element can not be reused.  They are:
         //
         // 1) The element contained skipped text.
@@ -38,7 +38,7 @@ module TypeScript {
         //    
         //    Then even though only the 'return' and ';' colons were touched, we'd want to rescan the '/'
         //    token which we would then realize was a regex.
-        isIncrementallyReusable(): bool;
+        isIncrementallyUnusable(): bool;
 
         // With of this element, including leading and trailing trivia.
         fullWidth(): number;
