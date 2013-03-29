@@ -468,13 +468,17 @@ module FourSlash {
             IO.printLine(JSON2.stringify(quickInfo));
         }
 
-        //public printErrorList() {
-        //    var errors = this.realLangSvc.getErrors(9999);
-        //    IO.printLine('Error list (' + errors.length + ' errors)');
-        //    errors.forEach(err => {
-        //        IO.printLine(err.message);
-        //    });
-        //}
+        public printErrorList() {
+            var syntacticErrors = this.languageService.getSyntacticDiagnostics(this.activeFile.fileName);
+            var semanticErrors = this.languageService.getSemanticDiagnostics(this.activeFile.fileName);
+            var errorList = syntacticErrors.concat(semanticErrors);
+
+            IO.printLine('Error list (' + errorList.length + ' errors)');
+            errorList.forEach( err => {
+                IO.printLine("start: " + err.start() + ", length: " + err.length() + 
+                    ", message: " + err.message());
+            } )
+        }
 
         public printCurrentFileState(makeWhitespaceVisible = false, makeCaretVisible = true) {
             for (var i = 0; i < this.testData.files.length; i++) {
