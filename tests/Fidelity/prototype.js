@@ -24573,6 +24573,28 @@ var TypeScript;
             var newTextAndChange = withInsert(oldText, index, "()");
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         };
+        IncrementalParserTests.textComplexEdits1 = function textComplexEdits1() {
+            var source = "if (typeParameterSymbol.isResolved() || typeParameterSymbol.isResolving()) {\
+    return typeParameterSymbol;\
+}\
+else {\
+    return null;\
+}";
+            var index = source.indexOf("||");
+            var text1 = TypeScript.TextFactory.createText(source);
+            var textAndChange1 = withChange(text1, index, "|| typeParameterSymbol.isResolving()".length, "/*|| typeParameterSymbol.isResolving()*/");
+            var text2 = textAndChange1.text;
+            var start = text2.toString().indexOf("else");
+            var end = text2.toString().lastIndexOf("}") + 1;
+            var textAndChange2 = withDelete(text2, start, end - start);
+            var text3 = textAndChange2.text;
+            compareTrees(text1, text2, textAndChange1.textChangeRange, -1);
+            compareTrees(text2, text3, textAndChange2.textChangeRange, -1);
+            compareTrees(text1, text3, TypeScript.TextChangeRange.collapseChangesAcrossMultipleVersions([
+                textAndChange1.textChangeRange, 
+                textAndChange2.textChangeRange
+            ]), -1);
+        };
         return IncrementalParserTests;
     })();
     TypeScript.IncrementalParserTests = IncrementalParserTests;    
