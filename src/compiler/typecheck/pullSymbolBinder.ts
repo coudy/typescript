@@ -212,6 +212,8 @@ module TypeScript {
                 moduleInstanceSymbol.addDeclaration(moduleContainerDecl);
 
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
+            } else if (moduleInstanceSymbol) {
+                moduleInstanceSymbol.addDeclaration(moduleContainerDecl);
             }
 
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
