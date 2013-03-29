@@ -13,3 +13,18 @@
 0.ts line 21 col 4: error TS2011: Cannot convert 'number' to '{ x: string; w: { y: number; }; (): {}; new(): number; new(n: number): number; }'.
 0.ts line 22 col 4: error TS2011: Cannot convert 'number' to '{ f(x: number): bool; p: any; q: any; (): string; }'.
 0.ts line 23 col 4: error TS2011: Cannot convert '{ zeek: number; new(): C; }' to 'number'.
+0.ts line 9 col 4: error TS2011: Cannot convert 'number' to '{ f(s: string): numberf(n: number): string; }'.
+0.ts line 10 col 4: error TS2011: Cannot convert 'number' to '{ f(s: string): number; }'.
+0.ts line 11 col 4: error TS2011: Cannot convert 'number' to '{ (s: string): number; (n: number): string; }'.
+0.ts line 12 col 4: error TS2011: Cannot convert 'number' to '{ x: any; y: any; z: number; f(n: number): stringf(s: string): number; }'.
+0.ts line 13 col 4: error TS2011: Cannot convert 'number' to '{ x: any; y: any; z: number; f(n: number): stringf(s: string): number; (s: string): number; (n: number): string; }'.
+0.ts line 14 col 4: error TS2011: Cannot convert 'number' to '{ z: number; f: { (n: number): string; (s: string): number; }; }'.
+0.ts line 15 col 4: error TS2011: Cannot convert 'number' to '(s: string) => bool'.
+0.ts line 16 col 4: error TS2011: Cannot convert 'number' to '{ z: I; (): bool; [s: string]: { x: any; y: any; }; [n: number]: { x: any; y: any; }; }'.
+0.ts line 17 col 4: error TS2011: Cannot convert 'number' to 'I'.
+0.ts line 18 col 4: error TS2011: Cannot convert 'number' to 'I[][][][]'.
+0.ts line 19 col 4: error TS2011: Cannot convert 'number' to '{ z: I; x: bool; }[][]'.
+0.ts line 20 col 4: error TS2011: Cannot convert 'number' to '{ z: I; x: bool; y: (s: string) => bool; w: { z: I; (): bool; [s: string]: { x: any; y: any; }; [n: number]: { x: any; y: any; }; }; }[][]'.
+0.ts line 21 col 4: error TS2011: Cannot convert 'number' to '{ x: string; w: { y: number; }; (): {}; new(): number; new(n: number): number; }'.
+0.ts line 22 col 4: error TS2011: Cannot convert 'number' to '{ f(x: number): bool; p: any; q: any; (): string; }'.
+0.ts line 23 col 4: error TS2011: Cannot convert '{ zeek: number; new(): C; }' to 'number'.
