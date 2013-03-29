@@ -1595,7 +1595,7 @@ module TypeScript {
             binex.operand2 = this.typeCheck(binex.operand2); // IndexExpr
 
             if (!this.checker.styleSettings.literalSubscript) {
-                if (binex.operand2.nodeType === NodeType.QString) {
+                if (binex.operand2.nodeType === NodeType.StringLiteral) {
                     this.checker.errorReporter.styleError(ast, "use literal subscript ('.') notation instead)");
                 }
             }
@@ -1917,7 +1917,7 @@ module TypeScript {
                     case NodeType.Call:
                         var call = <CallExpression>ast;
 
-                        if (call.target.nodeType === NodeType.Super) {
+                        if (call.target.nodeType === NodeType.SuperExpression) {
                             go = false;
                             foundSuper = true;
                             break;
@@ -2307,9 +2307,9 @@ module TypeScript {
                     if (superCallMustBeFirst) {
                         if (!funcDecl.bod ||
                             !funcDecl.bod.members.length ||
-                            !((funcDecl.bod.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[0]).target.nodeType === NodeType.Super) ||
+                            !((funcDecl.bod.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[0]).target.nodeType === NodeType.SuperExpression) ||
                             (hasFlag(funcDecl.bod.flags, ASTFlags.StrictMode) && funcDecl.bod.members.length > 1 &&
-                             funcDecl.bod.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[1]).target.nodeType === NodeType.Super))) {
+                             funcDecl.bod.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[1]).target.nodeType === NodeType.SuperExpression))) {
                             this.checker.errorReporter.simpleError(funcDecl, "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor");
                         }
                     }
@@ -3197,7 +3197,7 @@ module TypeScript {
                     if (id.nodeType === NodeType.Name) {
                         text = (<Identifier>id).text;
                     }
-                    else if (id.nodeType === NodeType.QString) {
+                    else if (id.nodeType === NodeType.StringLiteral) {
                         // TODO: set text to unescaped string
                         var idText = (<StringLiteral>id).text;
                         text = idText.substring(1, idText.length - 1);
@@ -3808,7 +3808,7 @@ module TypeScript {
 
             var prevInSuperCall = this.inSuperCall;
 
-            if (callEx.target.nodeType === NodeType.Super) {
+            if (callEx.target.nodeType === NodeType.SuperExpression) {
                 this.inSuperCall = true;
             }
 
@@ -3835,7 +3835,7 @@ module TypeScript {
                 }
                 else {
                     // track calls to class base class
-                    if (callEx.target.nodeType === NodeType.Super &&
+                    if (callEx.target.nodeType === NodeType.SuperExpression &&
                         this.thisFnc &&
                         this.thisFnc.isConstructor &&
                         hasFlag(this.thisFnc.fncFlags, FncFlags.ClassMethod)) {

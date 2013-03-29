@@ -287,16 +287,16 @@ module TypeScript {
             }
             else {
                 if (token.kind() === SyntaxKind.ThisKeyword) {
-                    result = new AST(NodeType.This);
+                    result = new AST(NodeType.ThisExpression);
                 }
                 else if (token.kind() === SyntaxKind.SuperKeyword) {
-                    result = new AST(NodeType.Super);
+                    result = new AST(NodeType.SuperExpression);
                 }
                 else if (token.kind() === SyntaxKind.TrueKeyword) {
-                    result = new AST(NodeType.True);
+                    result = new AST(NodeType.TrueLiteral);
                 }
                 else if (token.kind() === SyntaxKind.FalseKeyword) {
-                    result = new AST(NodeType.False);
+                    result = new AST(NodeType.FalseLiteral);
                 }
                 else if (token.kind() === SyntaxKind.NullKeyword) {
                     result = new AST(NodeType.Null);

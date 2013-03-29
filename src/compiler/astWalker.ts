@@ -97,12 +97,12 @@ module TypeScript {
             this.childrenWalkers[NodeType.None] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Empty] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.EmptyExpr] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.True] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.False] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.This] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.Super] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.QString] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.Regex] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.TrueLiteral] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.FalseLiteral] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.ThisExpression] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.SuperExpression] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.StringLiteral] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.RegularExpressionLiteral] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Null] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.ArrayLit] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.ObjectLit] = ChildrenWalkers.walkUnaryExpressionChildren;
@@ -111,7 +111,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.Pos] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.Neg] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.Delete] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[NodeType.Await] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.In] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.Dot] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.From] = ChildrenWalkers.walkBinaryExpressionChildren;

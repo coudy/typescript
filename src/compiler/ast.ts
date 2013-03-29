@@ -62,16 +62,16 @@ module TypeScript {
                 case NodeType.EmptyExpr:
                     this.type = typeFlow.anyType;
                     break;
-                case NodeType.This:
+                case NodeType.ThisExpression:
                     return typeFlow.typeCheckThis(this);
                 case NodeType.Null:
                     this.type = typeFlow.nullType;
                     break;
-                case NodeType.False:
-                case NodeType.True:
+                case NodeType.FalseLiteral:
+                case NodeType.TrueLiteral:
                     this.type = typeFlow.booleanType;
                     break;
-                case NodeType.Super:
+                case NodeType.SuperExpression:
                     return typeFlow.typeCheckSuper(this);
                 case NodeType.EndCode:
                 case NodeType.Empty:
@@ -87,7 +87,7 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             switch (this.nodeType) {
-                case NodeType.This:
+                case NodeType.ThisExpression:
                     emitter.recordSourceMappingStart(this);
                     if (emitter.thisFnc && (hasFlag(emitter.thisFnc.fncFlags, FncFlags.IsFatArrowFunction))) {
                         emitter.writeToOutput("_this");
@@ -102,17 +102,17 @@ module TypeScript {
                     emitter.writeToOutput("null");
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.False:
+                case NodeType.FalseLiteral:
                     emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("false");
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.True:
+                case NodeType.TrueLiteral:
                     emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("true");
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.Super:
+                case NodeType.SuperExpression:
                     emitter.recordSourceMappingStart(this);
                     emitter.emitSuperReference();
                     emitter.recordSourceMappingEnd(this);
@@ -736,7 +736,7 @@ module TypeScript {
 
     export class RegexLiteral extends Expression {
         constructor(public text: string) {
-            super(NodeType.Regex);
+            super(NodeType.RegularExpressionLiteral);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -755,7 +755,7 @@ module TypeScript {
 
     export class StringLiteral extends Expression {
         constructor(public text: string) {
-            super(NodeType.QString);
+            super(NodeType.StringLiteral);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {

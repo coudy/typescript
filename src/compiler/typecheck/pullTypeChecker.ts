@@ -111,10 +111,10 @@ module TypeScript {
                 case NodeType.ArrayLit:
                     return this.typeCheckArrayLiteral(ast, typeCheckContext, inTypedAssignment);
 
-                case NodeType.This:
+                case NodeType.ThisExpression:
                     return this.typeCheckThis(ast, typeCheckContext);
 
-                case NodeType.Super:
+                case NodeType.SuperExpression:
                     return this.typeCheckSuper(ast, typeCheckContext);
 
                 case NodeType.Call:
@@ -201,7 +201,7 @@ module TypeScript {
                 case NodeType.Delete:
                     return this.typeCheckDeleteExpression(ast, typeCheckContext);
 
-                case NodeType.Regex:
+                case NodeType.RegularExpressionLiteral:
                     return this.typeCheckRegExpExpression(ast, typeCheckContext);
 
                 case NodeType.In:
@@ -265,12 +265,12 @@ module TypeScript {
                 // primitives
                 case NodeType.NumberLit:
                     return this.semanticInfoChain.numberTypeSymbol;
-                case NodeType.QString:
+                case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
                 case NodeType.Null:
                     return this.semanticInfoChain.nullTypeSymbol;
-                case NodeType.True:
-                case NodeType.False:
+                case NodeType.TrueLiteral:
+                case NodeType.FalseLiteral:
                     return this.semanticInfoChain.boolTypeSymbol;
                 case NodeType.Void:
                     return this.semanticInfoChain.voidTypeSymbol;
@@ -736,7 +736,7 @@ module TypeScript {
                         if (binex.operand1.nodeType == NodeType.Name) {
                             text = (<Identifier>binex.operand1).text;
                         }
-                        else if (binex.operand1.nodeType == NodeType.QString) {
+                        else if (binex.operand1.nodeType == NodeType.StringLiteral) {
                             text = (<StringLiteral>binex.operand1).text;
                             text = text.substring(1, text.length - 1);
                         }

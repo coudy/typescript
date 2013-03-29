@@ -833,7 +833,7 @@ module TypeScript {
                     // if the found AST is a named, we want to check for previous dotted expressions,
                     // since those will give us the right typing
                     var callExpression: CallExpression = null;
-                    if ((foundAST.nodeType == NodeType.Super || foundAST.nodeType == NodeType.This || foundAST.nodeType == NodeType.Name) &&
+                    if ((foundAST.nodeType == NodeType.SuperExpression || foundAST.nodeType == NodeType.ThisExpression || foundAST.nodeType == NodeType.Name) &&
                         resultASTs.length > 1) {
                         for (i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType === NodeType.Dot &&
@@ -919,9 +919,9 @@ module TypeScript {
                         }
 
                         if (!isPropertyOrVar) {
-                            isConstructorCall = foundAST.nodeType == NodeType.Super || callExpression.nodeType === NodeType.New;
+                            isConstructorCall = foundAST.nodeType == NodeType.SuperExpression || callExpression.nodeType === NodeType.New;
 
-                            if (foundAST.nodeType == NodeType.Super) {
+                            if (foundAST.nodeType == NodeType.SuperExpression) {
                                 if (symbol.getKind() == PullElementKind.Class) {
                                     callSignatures = (<PullClassTypeSymbol>symbol).getConstructorMethod().getType().getConstructSignatures();
                                 }

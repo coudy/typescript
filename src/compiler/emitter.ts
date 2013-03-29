@@ -444,7 +444,7 @@ module TypeScript {
                     if (target.nodeType === NodeType.FuncDecl && !target.isParenthesized) {
                         this.writeToOutput("(");
                     }
-                    if (callNode.target.nodeType === NodeType.Super && this.emitState.container === EmitContainer.Constructor) {
+                    if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                         this.writeToOutput("_super.call");
                     }
                     else {
@@ -455,7 +455,7 @@ module TypeScript {
                     }
                     this.recordSourceMappingStart(args);
                     this.writeToOutput("(");
-                    if (callNode.target.nodeType === NodeType.Super && this.emitState.container === EmitContainer.Constructor) {
+                    if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                         this.writeToOutput("this");
                         if (args && args.members.length) {
                             this.writeToOutput(", ");
@@ -1881,7 +1881,7 @@ module TypeScript {
         public emitSuperCall(callEx: CallExpression): bool {
             if (callEx.target.nodeType === NodeType.Dot) {
                 var dotNode = <BinaryExpression>callEx.target;
-                if (dotNode.operand1.nodeType === NodeType.Super) {
+                if (dotNode.operand1.nodeType === NodeType.SuperExpression) {
                     this.emitJavascript(dotNode, TokenID.OpenParen, false);
                     this.writeToOutput(".call(");
                     this.emitThis();

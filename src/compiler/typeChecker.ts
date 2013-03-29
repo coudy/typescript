@@ -1448,7 +1448,7 @@ module TypeScript {
                 if (id.nodeType === NodeType.Name) {
                     text = (<Identifier>id).text;
                 }
-                else if (id.nodeType === NodeType.QString) {
+                else if (id.nodeType === NodeType.StringLiteral) {
                     // TODO: set text to unescaped string
                     var idText = (<StringLiteral>id).text;
                     text = idText.substring(1, idText.length - 1);

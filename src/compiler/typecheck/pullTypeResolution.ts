@@ -1948,9 +1948,9 @@ module TypeScript {
                 case NodeType.ArrayLit:
                     return this.resolveArrayLiteralExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
-                case NodeType.This:
+                case NodeType.ThisExpression:
                     return this.resolveThisExpression(expressionAST, enclosingDecl, context);
-                case NodeType.Super:
+                case NodeType.SuperExpression:
                     return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
 
                 case NodeType.Call:
@@ -1968,12 +1968,12 @@ module TypeScript {
                 // primitives
                 case NodeType.NumberLit:
                     return this.semanticInfoChain.numberTypeSymbol;
-                case NodeType.QString:
+                case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
                 case NodeType.Null:
                     return this.semanticInfoChain.nullTypeSymbol;
-                case NodeType.True:
-                case NodeType.False:
+                case NodeType.TrueLiteral:
+                case NodeType.FalseLiteral:
                     return this.semanticInfoChain.boolTypeSymbol;
                 case NodeType.Void:
                     return this.semanticInfoChain.voidTypeSymbol;
@@ -2048,7 +2048,7 @@ module TypeScript {
                 case NodeType.ConditionalExpression:
                     return this.resolveConditionalExpression(<ConditionalExpression>expressionAST, enclosingDecl, context);
 
-                case NodeType.Regex:
+                case NodeType.RegularExpressionLiteral:
                     return this.cachedRegExpInterfaceType ? this.cachedRegExpInterfaceType : this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -2762,7 +2762,7 @@ module TypeScript {
                     if (id.nodeType == NodeType.Name) {
                         text = (<Identifier>id).text;
                     }
-                    else if (id.nodeType == NodeType.QString) {
+                    else if (id.nodeType == NodeType.StringLiteral) {
                         idText = (<StringLiteral>id).text;
                         text = idText.substring(1, idText.length - 1);
                     }
@@ -3126,7 +3126,7 @@ module TypeScript {
 
             var isSuperCall = false;
 
-            if (callEx.target.nodeType == NodeType.Super) {
+            if (callEx.target.nodeType == NodeType.SuperExpression) {
                 isSuperCall = true;
 
                 if (targetSymbol.isClass()) { 

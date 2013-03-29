@@ -625,8 +625,8 @@ module Services {
             var node = path.count() >= 1 && path.ast();
             if (node) {
                 if (node.nodeType === TypeScript.NodeType.Comment ||
-                    node.nodeType === TypeScript.NodeType.Regex ||
-                    node.nodeType === TypeScript.NodeType.QString) {
+                    node.nodeType === TypeScript.NodeType.RegularExpressionLiteral ||
+                    node.nodeType === TypeScript.NodeType.StringLiteral) {
                     return true;
                 }
             }

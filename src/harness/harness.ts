@@ -1026,18 +1026,18 @@ module Harness {
                     case TypeScript.NodeType.Empty:
                     case TypeScript.NodeType.EmptyExpr:
                     case TypeScript.NodeType.Asg:
-                    case TypeScript.NodeType.True:
-                    case TypeScript.NodeType.False:
+                    case TypeScript.NodeType.TrueLiteral:
+                    case TypeScript.NodeType.FalseLiteral:
                     case TypeScript.NodeType.ArrayLit:
                     case TypeScript.NodeType.TypeRef:
                         break;
-                    case TypeScript.NodeType.Super:
+                    case TypeScript.NodeType.SuperExpression:
                         name = (<any>ast).text;
                         break;
-                    case TypeScript.NodeType.Regex:
+                    case TypeScript.NodeType.RegularExpressionLiteral:
                         name = (<TypeScript.RegexLiteral>ast).text;
                         break;
-                    case TypeScript.NodeType.QString:
+                    case TypeScript.NodeType.StringLiteral:
                         name = (<any>ast).text;
                         break;
                     case TypeScript.NodeType.NumberLit:
