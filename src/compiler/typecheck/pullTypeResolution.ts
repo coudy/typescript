@@ -520,8 +520,15 @@ module TypeScript {
                     }
                 }
 
-
                 var members = lhsType.getAllMembers(PullElementKind.SomeValue, includePrivate);
+                if (lhsType.isContainer()) {
+                    var associatedInstance = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
+                    if (associatedInstance) {
+                        var instanceType = associatedInstance.getType();
+                        var instanceMembers = instanceType.getAllMembers(PullElementKind.SomeValue, includePrivate);
+                        members = members.concat(instanceMembers);
+                    }
+                }
 
                 // Add any additional members
                 /// TODO: add "prototype" for classes

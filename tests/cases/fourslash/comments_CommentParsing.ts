@@ -273,7 +273,7 @@ goTo.marker('14q');
 verify.quickInfoIs("(): void", "", "noHelpComment3", "function");
 
 goTo.marker('15');
-verify.completionListContains("sum", "(a: number, b: number) => number", "Adds two integers and returns the result", "sum", "function");
+verify.completionListContains("sum", "(a: number, b: number): number", "Adds two integers and returns the result", "sum", "function");
 
 goTo.marker('16');
 verify.currentSignatureHelpDocCommentIs("Adds two integers and returns the result");
@@ -329,7 +329,7 @@ goTo.marker('26q');
 verify.quickInfoIs("(b: string): any (+ 1 overload(s))", "", "f1", "function");
 
 goTo.marker('27');
-verify.completionListContains("multiply", "(a: number, b: number, c?: number, d?: any, e?: any) => void", "This is multiplication function\n@anotherTag\n@anotherTag", "multiply", "function");
+verify.completionListContains("multiply", "(a: number, b: number, c?: number, d?: any, e?: any): void", "This is multiplication function\n@anotherTag\n@anotherTag", "multiply", "function");
 verify.completionListContains("f1", "(a: number): any (+ 1 overload(s))", "fn f1 with number", "f1", "function");
 
 goTo.marker('28');
@@ -409,7 +409,7 @@ verify.currentSignatureHelpDocCommentIs("this is jsdoc style function with param
 verify.currentParameterHelpArgumentDocCommentIs("");
 
 goTo.marker('44');
-verify.completionListContains("jsDocParamTest", "(a: number, b: number, c: number, d: number) => number", "this is jsdoc style function with param tag as well as inline parameter help", "jsDocParamTest", "function");
+verify.completionListContains("jsDocParamTest", "(a: number, b: number, c: number, d: number): number", "this is jsdoc style function with param tag as well as inline parameter help", "jsDocParamTest", "function");
 verify.completionListContains("x", "any", "This is a comment ", "x", "var");
 verify.completionListContains("y", "any", "This is a comment ", "y", "var");
 

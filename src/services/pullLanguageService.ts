@@ -497,7 +497,7 @@ module Services {
                 return "";
             }
 
-            return symbol.fullName();
+            return symbol.fullName(enclosingScopeSymbol);
         }
 
         //
@@ -719,6 +719,7 @@ module Services {
                 switch (kind) {
                     case TypeScript.PullElementKind.Container:
                     case TypeScript.PullElementKind.DynamicModule:
+                    case TypeScript.PullElementKind.TypeAlias:
                     case TypeScript.PullElementKind.Interface:
                     case TypeScript.PullElementKind.Class:
                     case TypeScript.PullElementKind.Parameter:
@@ -752,6 +753,7 @@ module Services {
                         return ScriptElementKind.scriptElement;
                     case TypeScript.PullElementKind.Container:
                     case TypeScript.PullElementKind.DynamicModule:
+                    case TypeScript.PullElementKind.TypeAlias:
                         return ScriptElementKind.moduleElement;
                     case TypeScript.PullElementKind.Interface:
                         return ScriptElementKind.interfaceElement;

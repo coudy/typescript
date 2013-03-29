@@ -31,8 +31,7 @@
 ////        var /*28*/localVar = "Hello ";
 ////        return /*29*/localVar + /*30*/b;
 ////    }
-
-////    return lam/*31*/daVar("World") + /*32*/a;
+////    return lamb/*31*/daVar("World") + /*32*/a;
 ////}
 
 goTo.marker('1');
@@ -47,10 +46,10 @@ verify.currentSignatureHelpDocCommentIs("This is comment for function signature"
 verify.currentParameterHelpArgumentDocCommentIs("this is comment for b");
 
 goTo.marker('4');
-verify.completionListContains('foo', '() => void', 'This comment should appear for foo', "foo", "function");
+verify.completionListContains('foo', '(): void', 'This comment should appear for foo', "foo", "function");
 
 goTo.marker('5');
-verify.completionListContains('fooWithParameters', '(a: string, b: number) => void', 'This is comment for function signature', "fooWithParameters", "function");
+verify.completionListContains('fooWithParameters', '(a: string, b: number): void', 'This is comment for function signature', "fooWithParameters", "function");
 
 goTo.marker('6');
 verify.quickInfoIs("(): void", "This comment should appear for foo", "foo", "function");
@@ -117,7 +116,7 @@ goTo.marker('24');
 verify.quickInfoIs('number', '', 'a', "parameter");
 
 goTo.marker('25');
-verify.quickInfoIs('(a: number): void', '', 'anotherFunc', "function");
+verify.quickInfoIs('(a: number): string', '', 'anotherFunc', "function");
 goTo.marker('26');
 verify.quickInfoIs('number', '', 'a', "parameter");
 goTo.marker('27a');
@@ -130,7 +129,7 @@ goTo.marker('29');
 verify.quickInfoIs('string', '', 'localVar', "local var");
 goTo.marker('30');
 verify.quickInfoIs('string', '', 'b', "parameter");
-//goTo.marker('31');
-//verify.quickInfoIs('(b: string) => string', '', 'lambdaVar', "local var");
-//goTo.marker('32');
-//verify.quickInfoIs('number', '', 'a', "parameter");
+goTo.marker('31');
+verify.quickInfoIs('(b: string) => string', '', 'lambdaVar', "local var");
+goTo.marker('32');
+verify.quickInfoIs('number', '', 'a', "parameter");

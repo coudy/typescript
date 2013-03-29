@@ -95,8 +95,8 @@ verify.memberListContains("x", "number", "this is x", "i2.x", "property");
 verify.memberListContains("foo", "(b: number) => string", "this is foo", "i2.foo", "property");
 verify.memberListContains("nc_x", "number", "", "i2.nc_x", "property");
 verify.memberListContains("nc_foo", "(b: number) => string", "", "i2.nc_foo", "property");
-verify.memberListContains("fnfoo", "(b: number) => string", "this is fnfoo", "i2.fnfoo", "method");
-verify.memberListContains("nc_fnfoo", "(b: number) => string", "", "i2.nc_fnfoo", "method");
+verify.memberListContains("fnfoo", "(b: number): string", "this is fnfoo", "i2.fnfoo", "method");
+verify.memberListContains("nc_fnfoo", "(b: number): string", "", "i2.nc_fnfoo", "method");
 
 goTo.marker('9');
 verify.quickInfoIs("(b: number) => string", "", "i2_i_foo", "var");
@@ -229,10 +229,10 @@ verify.completionListContains("i3_i", "i3", "", "i3_i", "var");
 
 goTo.marker('41');
 verify.quickInfoIs("(a: number): string", "Function i3 f", "i3.f", "method");
-verify.memberListContains("f", "(a: number) => string", "Function i3 f", "i3.f", "method");
+verify.memberListContains("f", "(a: number): string", "Function i3 f", "i3.f", "method");
 verify.memberListContains("l", "(b: number) => string", "i3 l", "i3.l", "property");
 verify.memberListContains("x", "number", "Comment i3 x", "i3.x", "property");
-verify.memberListContains("nc_f", "(a: number) => string", "", "i3.nc_f", "method");
+verify.memberListContains("nc_f", "(a: number): string", "", "i3.nc_f", "method");
 verify.memberListContains("nc_l", "(b: number) => string", "", "i3.nc_l", "property");
 verify.memberListContains("nc_x", "number", "", "i3.nc_x", "property");
 

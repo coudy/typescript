@@ -410,7 +410,18 @@ module TypeScript {
             var path = this.pathToRoot();
             var fullName = "";
             for (var i = 1; i < path.length; i++) {
-                fullName = path[i].getName(scopeSymbol) + "." + fullName;
+                var scopedName = path[i].getName(scopeSymbol);
+                if (path[i].getKind() == PullElementKind.DynamicModule) {
+                    if (scopeSymbol) {
+                        var scopePath = scopeSymbol.pathToRoot();
+                        if (scopePath.length && scopePath[scopePath.length - 1] == path[i] && !isQuoted(scopedName)) {
+                            // Same file as dynamic module - do not include this name
+                            break;
+                        }
+                    }
+                    
+                }
+                fullName = scopedName + "." + fullName;
             }
             fullName = fullName + this.getName(scopeSymbol, true);
             return fullName;
@@ -447,9 +458,27 @@ module TypeScript {
         public getTypeNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
             var type = this.getType();
             if (type) {
-                return type.getScopedNameEx(scopeSymbol, false, getPrettyTypeName);
+                var memberName: MemberName = getPrettyTypeName ? this.getTypeNameForFunctionSignature("", scopeSymbol, getPrettyTypeName) : null;
+                if (!memberName) {
+                    memberName = type.getScopedNameEx(scopeSymbol, false, getPrettyTypeName);
+                }
+
+                return memberName;
             }
             return MemberName.create("");
+        }
+
+        private getTypeNameForFunctionSignature(prefix: string, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+            var type = this.getType();
+            if (type && !type.isNamedTypeSymbol() && this.declKind != PullElementKind.Property && this.declKind != PullElementKind.Variable && this.declKind != PullElementKind.Parameter) {
+                var signatures = type.getCallSignatures();
+                var typeName = new MemberNameArray();
+                var signatureName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, prefix, false, false, scopeSymbol, getPrettyTypeName);
+                typeName.addAll(signatureName);
+                return typeName;
+            }
+
+            return null;
         }
 
         public getNameAndTypeName(scopeSymbol?: PullSymbol) {
@@ -462,17 +491,12 @@ module TypeScript {
             var nameEx = this.getScopedNameEx(scopeSymbol);
             if (type) {
                 var nameStr = nameEx.toString() + (this.getIsOptional() ? "?" : "");
-                if (this.declKind != PullElementKind.Property) {
-                    var signatures = type.getCallSignatures();
-                    var typeName = new MemberNameArray();
-                    var signatureName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, nameStr, false, false, scopeSymbol);
-                    typeName.addAll(signatureName);
-                    return typeName;
-                } else {
+                var memberName: MemberName = this.getTypeNameForFunctionSignature(nameStr, scopeSymbol);
+                if (!memberName) {
                     var typeNameEx = type.getScopedNameEx(scopeSymbol);
-                    var memberName = MemberName.create(typeNameEx, nameStr + ": ", "");
-                    return memberName;
+                    memberName = MemberName.create(typeNameEx, nameStr + ": ", "");
                 }
+                return memberName;
             }
             return nameEx;
         }
@@ -1509,6 +1533,10 @@ module TypeScript {
             var n = 0;
 
             // Update the cache id needed
+            if (!this.memberCache) {
+                this.populateMemberCache();
+            }
+            // Update the cache id needed
             if (!this.memberTypeNameCache) {
                 this.populateMemberTypeCache();
             }
@@ -1633,6 +1661,7 @@ module TypeScript {
             if (kind == PullElementKind.Primitive || // primitives
                 kind == PullElementKind.Class || // class
                 kind == PullElementKind.Container || // module
+                kind == PullElementKind.DynamicModule || // dynamic module
                 kind == PullElementKind.Enum || // enum
                 kind == PullElementKind.TypeParameter || //TypeParameter
                 ((kind == PullElementKind.Interface || kind == PullElementKind.ObjectType) && this.getName() != "")) {
@@ -1825,19 +1854,8 @@ module TypeScript {
             if (scopeSymbol && this.getKind() == PullElementKind.DynamicModule) {
                 var scopePath = scopeSymbol.pathToRoot();
                 if (scopePath.length && scopePath[scopePath.length - 1].getKind() == PullElementKind.DynamicModule) {
-                    var decls: PullDecl[] = null;
-                    var symbol: PullSymbol = null;
-                    if (scopePath.length > 1 && scopePath[scopePath.length - 2].getKind() == PullElementKind.DynamicModule) {
-                        // This is the ambient dynamicModule
-                        decls = scopePath[scopePath.length - 2].getDeclarations();
-                        symbol = this.findAliasedType(decls);
-                    }
-
-                    if (symbol == null) {
-                        decls = scopePath[scopePath.length - 1].getDeclarations();
-                        symbol = this.findAliasedType(decls);
-                    }
-
+                    var decls = scopePath[scopePath.length - 1].getDeclarations();
+                    var symbol = this.findAliasedType(decls);
                     if (symbol) {
                         return symbol.getName();
                     }

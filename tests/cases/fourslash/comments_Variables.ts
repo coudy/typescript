@@ -51,7 +51,7 @@ verify.completionListContains("myVariable", "number", "This is my variable", "my
 verify.completionListContains("d", "number", "d variable", "d", "var");
 
 goTo.marker('4');
-verify.completionListContains("foo", "() => void", "foos comment", "foo", "function");
+verify.completionListContains("foo", "(): void", "foos comment", "foo", "function");
 verify.completionListContains("fooVar", "() => void", "fooVar comment", "fooVar", "var");
 
 goTo.marker('5');
@@ -65,7 +65,7 @@ goTo.marker('6q');
 verify.quickInfoIs("() => void", "fooVar comment", "fooVar", "var");
 
 goTo.marker('7');
-verify.completionListContains("foo", "() => void", "foos comment", "foo", "function");
+verify.completionListContains("foo", "(): void", "foos comment", "foo", "function");
 verify.completionListContains("fooVar", "() => void", "fooVar comment", "fooVar", "var");
 
 goTo.marker('8');
