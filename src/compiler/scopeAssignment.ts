@@ -414,7 +414,7 @@ module TypeScript {
             else if (ast.nodeType === NodeType.InterfaceDeclaration) {
                 preAssignInterfaceScopes(ast, context);
             }
-            else if (ast.nodeType === NodeType.With) {
+            else if (ast.nodeType === NodeType.WithStatement) {
                 preAssignWithScopes(ast, context);
             }
             else if (ast.nodeType === NodeType.FuncDecl) {
@@ -451,7 +451,7 @@ module TypeScript {
             else if (ast.nodeType === NodeType.InterfaceDeclaration) {
                 popAssignScope(context);
             }
-            else if (ast.nodeType === NodeType.With) {
+            else if (ast.nodeType === NodeType.WithStatement) {
                 popAssignScope(context);
             }
             else if (ast.nodeType === NodeType.FuncDecl) {

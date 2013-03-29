@@ -1881,7 +1881,7 @@ module TypeScript {
                             // return type with the top-level function's return type
                             go = false;
                             break;
-                        case NodeType.Return:
+                        case NodeType.ReturnStatement:
                             var returnStmt: ReturnStatement = <ReturnStatement>ast;
 
                             if (returnStmt.returnExpression) {
@@ -2630,7 +2630,7 @@ module TypeScript {
                     !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression) &&
                     !hasFlag(funcDecl.fncFlags, FncFlags.IsFatArrowFunction)) {
                     // relax the restriction if the method only contains a single "throw" statement
-                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === NodeType.Throw)
+                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === NodeType.ThrowStatement)
 
                     if (!onlyHasThrow) {
                         this.checker.errorReporter.simpleError(funcDecl.returnTypeAnnotation || funcDecl,

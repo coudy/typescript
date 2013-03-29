@@ -123,7 +123,7 @@ module TypeScript {
                 case NodeType.New:
                     return this.typeCheckNew(ast, typeCheckContext);
 
-                case NodeType.TypeAssertion:
+                case NodeType.CastExpression:
                     return this.typeCheckTypeAssertion(ast, typeCheckContext);
 
                 case NodeType.TypeRef:
@@ -195,7 +195,7 @@ module TypeScript {
                 case NodeType.Void:
                     return this.typeCheckVoidExpression(ast, typeCheckContext);
 
-                case NodeType.Throw:
+                case NodeType.ThrowStatement:
                     return this.typeCheckThrowExpression(ast, typeCheckContext);
 
                 case NodeType.Delete:
@@ -211,25 +211,25 @@ module TypeScript {
                     return this.typeCheckInstanceOfExpression(ast, typeCheckContext);                    
 
                 // statements
-                case NodeType.For:
+                case NodeType.ForStatement:
                     return this.typeCheckForStatement(ast, typeCheckContext);
 
-                case NodeType.ForIn:
+                case NodeType.ForInStatement:
                     return this.typeCheckForInStatement(ast, typeCheckContext);
 
-                case NodeType.While:
+                case NodeType.WhileStatement:
                     return this.typeCheckWhileStatement(ast, typeCheckContext);
 
-                case NodeType.DoWhile:
+                case NodeType.DoStatement:
                     return this.typeCheckDoWhileStatement(ast, typeCheckContext);
 
-                case NodeType.If:
+                case NodeType.IfStatement:
                     return this.typeCheckIfStatement(ast, typeCheckContext);
 
                 case NodeType.Block:
                     return this.typeCheckBlockStatement(ast, typeCheckContext);
 
-                case NodeType.With:
+                case NodeType.WithStatement:
                     return this.typeCheckWithStatement(ast, typeCheckContext);
 
                 case NodeType.TryStatement:
@@ -238,7 +238,7 @@ module TypeScript {
                 case NodeType.CatchClause:
                     return this.typeCheckCatchClause(ast, typeCheckContext);
 
-                case NodeType.Return:
+                case NodeType.ReturnStatement:
                     return this.typeCheckReturnExpression(ast, typeCheckContext);
 
                 case NodeType.Name:
@@ -247,7 +247,7 @@ module TypeScript {
                 case NodeType.Dot:
                     return this.typeCheckDottedNameExpression(ast, typeCheckContext);
 
-                case NodeType.Switch:
+                case NodeType.SwitchStatement:
                     return this.typeCheckSwitchStatement(ast, typeCheckContext);
 
                 case NodeType.Case:
@@ -408,7 +408,7 @@ module TypeScript {
                 var returnType = functionSignature.getReturnType();
                 var isVoidOrAny = returnType == this.semanticInfoChain.anyTypeSymbol || returnType == this.semanticInfoChain.voidTypeSymbol;
                 
-                if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.Throw)) {
+                if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.ThrowStatement)) {
                     var funcName = functionDecl.getName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
                     this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Function "+ funcName +" declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
@@ -466,7 +466,7 @@ module TypeScript {
 
             // PULLREVIEW: Should we also raise an error if the setter returns a value?
             if (isGetter && !hasReturn) {
-                if (!(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.Throw)) {
+                if (!(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.ThrowStatement)) {
                     this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
                 }
             }

@@ -1478,7 +1478,7 @@ module TypeScript {
                         go = false;
                         break;
 
-                    case NodeType.Return:
+                    case NodeType.ReturnStatement:
                         var returnStatement: ReturnStatement = <ReturnStatement>ast;
                         returnStatements[returnStatements.length] = returnStatement;
                         go = false;
@@ -1959,7 +1959,7 @@ module TypeScript {
                 case NodeType.New:
                     return this.resolveNewExpression(<CallExpression>expressionAST, isTypedAssignment, enclosingDecl, context);
 
-                case NodeType.TypeAssertion:
+                case NodeType.CastExpression:
                     return this.resolveTypeAssertionExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 case NodeType.TypeRef:
@@ -2039,7 +2039,7 @@ module TypeScript {
                 case NodeType.Typeof:
                     return this.semanticInfoChain.stringTypeSymbol;
 
-                case NodeType.Throw:
+                case NodeType.ThrowStatement:
                     return this.semanticInfoChain.voidTypeSymbol;
 
                 case NodeType.Delete:

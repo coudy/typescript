@@ -248,7 +248,7 @@ module TypeScript {
     setTokenInfo(TokenID.TypeOf, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.Unary, NodeType.Typeof, "typeof");
     setTokenInfo(TokenID.Var, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "var");
     setTokenInfo(TokenID.Void, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.Unary, NodeType.Void, "void");
-    setTokenInfo(TokenID.With, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.With, "with");
+    setTokenInfo(TokenID.With, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.WithStatement, "with");
     setTokenInfo(TokenID.While, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "while");
     setTokenInfo(TokenID.Yield, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "yield");
 

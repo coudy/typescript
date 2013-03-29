@@ -2267,7 +2267,7 @@ module TypeScript {
                 var expression = node.expression.accept(this);
                 this.movePast(node.semicolonToken);
 
-                result = new UnaryExpression(NodeType.Throw, expression);
+                result = new UnaryExpression(NodeType.ThrowStatement, expression);
             }
 
             this.setAST(node, result);
@@ -2431,7 +2431,7 @@ module TypeScript {
                 this.movePast(node.identifier);
                 this.movePast(node.semicolonToken);
 
-                result = new Jump(NodeType.Break);
+                result = new Jump(NodeType.BreakStatement);
 
                 if (node.identifier !== null) {
                     result.target = node.identifier.valueText();
@@ -2456,7 +2456,7 @@ module TypeScript {
                 this.movePast(node.identifier);
                 this.movePast(node.semicolonToken);
 
-                result = new Jump(NodeType.Continue);
+                result = new Jump(NodeType.ContinueStatement);
 
                 if (node.identifier !== null) {
                     result.target = node.identifier.valueText();
@@ -2582,7 +2582,7 @@ module TypeScript {
                 this.movePast(node.greaterThanToken);
                 var expression = node.expression.accept(this);
 
-                result = new UnaryExpression(NodeType.TypeAssertion, expression);
+                result = new UnaryExpression(NodeType.CastExpression, expression);
                 result.castTerm = castTerm;
             }
 

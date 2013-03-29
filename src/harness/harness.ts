@@ -1043,7 +1043,7 @@ module Harness {
                     case TypeScript.NodeType.NumberLit:
                         name = (<TypeScript.NumberLiteral>ast).text;
                         break;
-                    case TypeScript.NodeType.Return:
+                    case TypeScript.NodeType.ReturnStatement:
                         //name = (<TypeScript.ReturnStatement>tyInfo.ast).returnExpression.actualText; // why is this complaining?
                         break;
                     case TypeScript.NodeType.InterfaceDeclaration:

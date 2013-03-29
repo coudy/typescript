@@ -817,7 +817,7 @@ module TypeScript {
         else if (ast.nodeType === NodeType.ImportDeclaration) {
             go = preCollectImportTypes(ast, parent, context);
         }
-        else if (ast.nodeType === NodeType.With) {
+        else if (ast.nodeType === NodeType.WithStatement) {
             go = false;
         }
         else if (ast.nodeType === NodeType.ModuleDeclaration) {

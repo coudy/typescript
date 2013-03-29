@@ -220,7 +220,7 @@ module TypeScript {
 
         public isBodyOfSwitch(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Switch &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.SwitchStatement &&
                  (<TypeScript.SwitchStatement>this.asts[this.top - 1]).caseList === this.asts[this.top - 0];
         }
 
@@ -256,7 +256,7 @@ module TypeScript {
 
         public isBodyOfFor(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.For &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ForStatement &&
                 (<TypeScript.ForStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
@@ -268,38 +268,38 @@ module TypeScript {
 
         public isBodyOfDoWhile(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.DoWhile &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.DoStatement &&
                 (<TypeScript.DoWhileStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfWhile(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.While &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.WhileStatement &&
                 (<TypeScript.WhileStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfForIn(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ForIn &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ForInStatement &&
                 (<TypeScript.ForInStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfWith(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.With &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.WithStatement &&
                 (<TypeScript.WithStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isCaseOfSwitch(): bool {
             return this.count() >= 3 &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.Switch &&
+                this.asts[this.top - 2].nodeType === TypeScript.NodeType.SwitchStatement &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
                 (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList === this.asts[this.top - 1];
         }
 
         public isDefaultCaseOfSwitch(): bool {
             return this.count() >= 3 &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.Switch &&
+                this.asts[this.top - 2].nodeType === TypeScript.NodeType.SwitchStatement &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
                 (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList === this.asts[this.top - 1] &&
                 (<TypeScript.SwitchStatement>this.asts[this.top - 2]).defaultCase === this.asts[this.top - 0];
@@ -368,13 +368,13 @@ module TypeScript {
 
         public isThenOfIf(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.If &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.IfStatement &&
                 (<TypeScript.IfStatement>this.asts[this.top - 1]).thenBod === this.asts[this.top - 0];
         }
 
         public isElseOfIf(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.If &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.IfStatement &&
                 (<TypeScript.IfStatement>this.asts[this.top - 1]).elseBod === this.asts[this.top - 0];
         }
 

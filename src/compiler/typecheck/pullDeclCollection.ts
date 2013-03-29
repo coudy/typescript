@@ -968,29 +968,29 @@ module TypeScript {
         else if (ast.nodeType == NodeType.TypeParameter) {
             go = preCollectTypeParameterDecl(ast, parentAST, context);
         }
-        else if (ast.nodeType == NodeType.If) {
+        else if (ast.nodeType == NodeType.IfStatement) {
             go = true;
         }
-        else if (ast.nodeType == NodeType.For) {
+        else if (ast.nodeType == NodeType.ForStatement) {
             go = true;
         }
-        else if (ast.nodeType == NodeType.ForIn) {
+        else if (ast.nodeType == NodeType.ForInStatement) {
             go = true;
         }
-        else if (ast.nodeType == NodeType.While) {
+        else if (ast.nodeType == NodeType.WhileStatement) {
             go = true;
         }
-        else if (ast.nodeType == NodeType.DoWhile) {
+        else if (ast.nodeType == NodeType.DoStatement) {
             go = true;
         }
         else if (ast.nodeType == NodeType.Comma) {
             go = true;
         }
-        else if (ast.nodeType == NodeType.Return) {
+        else if (ast.nodeType == NodeType.ReturnStatement) {
             // want to be able to bind lambdas in return positions
             go = true;
         }
-        else if (ast.nodeType == NodeType.Switch || ast.nodeType == NodeType.Case) {
+        else if (ast.nodeType == NodeType.SwitchStatement || ast.nodeType == NodeType.Case) {
             go = true;
         }
 

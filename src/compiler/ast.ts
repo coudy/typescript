@@ -322,7 +322,7 @@ module TypeScript {
         public addToControlFlow(context: ControlFlowContext): void {
             super.addToControlFlow(context);
             // TODO: add successor as catch block/finally block if present
-            if (this.nodeType === NodeType.Throw) {
+            if (this.nodeType === NodeType.ThrowStatement) {
                 context.returnStmt();
             }
         }
@@ -353,7 +353,7 @@ module TypeScript {
                     typeFlow.typeCheckObjectLit(this);
                     return this;
 
-                case NodeType.Throw:
+                case NodeType.ThrowStatement:
                     this.operand = typeFlow.typeCheck(this.operand);
                     this.type = typeFlow.voidType;
                     return this;
@@ -368,7 +368,7 @@ module TypeScript {
                     this.type = typeFlow.booleanType;
                     break;
 
-                case NodeType.TypeAssertion:
+                case NodeType.CastExpression:
                     this.castTerm = typeFlow.typeCheck(this.castTerm);
                     var applyTargetType = !this.operand.isParenthesized;
 
@@ -441,7 +441,7 @@ module TypeScript {
                     emitter.writeToOutput("--");
                     emitter.emitJavascript(this.operand, TokenID.MinusMinus, false);
                     break;
-                case NodeType.Throw:
+                case NodeType.ThrowStatement:
                     emitter.writeToOutput("throw ");
                     emitter.emitJavascript(this.operand, TokenID.Tilde, false);
                     emitter.writeToOutput(";");
@@ -458,7 +458,7 @@ module TypeScript {
                     emitter.writeToOutput("void ");
                     emitter.emitJavascript(this.operand, TokenID.Tilde, false);
                     break;
-                case NodeType.TypeAssertion:
+                case NodeType.CastExpression:
                     emitter.emitJavascript(this.operand, TokenID.Tilde, false);
                     break;
                 default:
@@ -1319,13 +1319,13 @@ module TypeScript {
 
         public addToControlFlow(context: ControlFlowContext): void {
             super.addToControlFlow(context);
-            context.unconditionalBranch(this.resolvedTarget, (this.nodeType === NodeType.Continue));
+            context.unconditionalBranch(this.resolvedTarget, (this.nodeType === NodeType.ContinueStatement));
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.nodeType === NodeType.Break) {
+            if (this.nodeType === NodeType.BreakStatement) {
                 emitter.writeToOutput("break");
             }
             else {
@@ -1342,7 +1342,7 @@ module TypeScript {
 
     export class WhileStatement extends Statement {
        constructor(public cond: AST, public body: AST) {
-            super(NodeType.While);
+            super(NodeType.WhileStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1395,7 +1395,7 @@ module TypeScript {
         public whileSpan: ASTSpan = null;
 
         constructor(public body: AST, public cond: AST) {
-            super(NodeType.DoWhile);
+            super(NodeType.DoStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1453,7 +1453,7 @@ module TypeScript {
         constructor(public cond: AST,
                     public thenBod: AST,
                     public elseBod: AST) {
-            super(NodeType.If);
+            super(NodeType.IfStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1467,7 +1467,7 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitJavascriptStatements(this.thenBod, true);
             if (this.elseBod) {
-                if (this.elseBod.nodeType === NodeType.If) {
+                if (this.elseBod.nodeType === NodeType.IfStatement) {
                     emitter.writeToOutput(" else ");
                     this.elseBod.emit(emitter, tokenId, /*startLine:*/ false);
                 }
@@ -1534,7 +1534,7 @@ module TypeScript {
 
     export class ReturnStatement extends Statement {
         constructor(public returnExpression: AST) {
-            super(NodeType.Return);
+            super(NodeType.ReturnStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1575,7 +1575,7 @@ module TypeScript {
 
     export class ForInStatement extends Statement {
         constructor(public lval: AST, public obj: AST, public body: AST) {
-            super(NodeType.ForIn);
+            super(NodeType.ForInStatement);
             if (this.lval && (this.lval.nodeType === NodeType.VarDecl)) {
                 (<BoundDecl>this.lval).varFlags |= VarFlags.AutoInit;
             }
@@ -1602,7 +1602,7 @@ module TypeScript {
                             singleItem = block.statements.members[0];
                         }
                     }
-                    if (singleItem.nodeType === NodeType.If) {
+                    if (singleItem.nodeType === NodeType.IfStatement) {
                         var cond = (<IfStatement>singleItem).cond;
                         if (cond.nodeType === NodeType.Call) {
                             var target = (<CallExpression>cond).target;
@@ -1694,7 +1694,7 @@ module TypeScript {
                     public cond: AST,
                     public incr: AST,
                     public body: AST) {
-            super(NodeType.For);
+            super(NodeType.ForStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1788,7 +1788,7 @@ module TypeScript {
         public withSym: WithSymbol = null;
 
         constructor(public expr: AST, public body: AST) {
-            super(NodeType.With);
+            super(NodeType.WithStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1816,7 +1816,7 @@ module TypeScript {
         public statement: ASTSpan = new ASTSpan();
 
         constructor(public val: AST) {
-            super(NodeType.Switch);
+            super(NodeType.SwitchStatement);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
