@@ -84,7 +84,7 @@ export module m1 {
         class c {
         }
         /** i*/
-        var i: c;
+        var i;
     }
     /** exported function*/
     function fooExport(): number;
@@ -100,7 +100,7 @@ export module m4 {
         class c {
         }
         /** i */
-        var i: c;
+        var i;
     }
     /** exported function */
     function fooExport(): number;

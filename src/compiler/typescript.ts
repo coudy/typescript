@@ -672,7 +672,7 @@ module TypeScript {
                     var traceEndTime = new Date().getTime();
 
                     // Don't re-typecheck or re-report errors just yet
-                    this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
+                    //this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
 
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
