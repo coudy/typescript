@@ -106,11 +106,6 @@ module TypeScript {
             span.limChar = end;
         }
 
-        private hasEscapeSequence(token: ISyntaxToken): bool {
-            // TODO: implement this.
-            return false;
-        }
-
         private identifierFromToken(token: ISyntaxToken, isOptional: bool, useValueText: bool): Identifier {
             this.assertElementAtPosition(token);
 
@@ -120,7 +115,7 @@ module TypeScript {
                 result.flags |= ASTFlags.Error;
             }
             else {
-                result = new Identifier(token.text(), this.hasEscapeSequence(token));
+                result = new Identifier(token.text());
                 result.text = useValueText ? token.valueText() : result.text;
             }
 
@@ -194,8 +189,8 @@ module TypeScript {
             return result;
         }
 
-        private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
-            var id = new Identifier(text, hasEscapeSequence);
+        private createRef(text: string, minChar: number): Identifier {
+            var id = new Identifier(text);
             id.minChar = minChar;
             return id;
         }
@@ -899,7 +894,7 @@ module TypeScript {
                     var member = new VarDecl(memberName, this.nestingLevel);
                     member.init = memberValue;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
-                    member.typeExpr = new TypeReference(this.createRef(name.actualText, name.hasEscapeSequence, -1), 0);
+                    member.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
                     member.varFlags |= (VarFlags.Readonly | VarFlags.Property);
                     this.setSpanExplicit(member, memberStart, this.position);
 

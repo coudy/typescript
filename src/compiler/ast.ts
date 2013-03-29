@@ -179,29 +179,6 @@ module TypeScript {
             return (<any>NodeType)._map[this.nodeType];
         }
 
-        public static getResolvedIdentifierName(name: string): string {
-            if (!name) return "";
-
-            var resolved = "";
-            var start = 0;
-            var i = 0;
-            while(i <= name.length - 6) {
-                // Look for escape sequence \uxxxx
-                if (name.charAt(i) === '\\' && name.charAt(i+1) === 'u') {
-                    var charCode = parseInt(name.substr(i + 2, 4), 16);
-                    resolved += name.substr(start, i - start);
-                    resolved += String.fromCharCode(charCode);
-                    i += 6;
-                    start = i;
-                    continue;
-                } 
-                i++;
-            }
-            // Append remaining string
-            resolved += name.substring(start);
-            return resolved;
-        }
-
         public getDocComments() : Comment[] {
             if (!this.isDeclaration() || !this.preComments || this.preComments.length === 0) {
                 return [];
@@ -315,19 +292,14 @@ module TypeScript {
         // Note: 
         //    To change text, and to avoid running into a situation where 'actualText' does not 
         //    match 'text', always use setText.
-        constructor (public actualText: string, public hasEscapeSequence?: bool) {
+        constructor (public actualText: string) {
             super(NodeType.Name);
-            this.setText(actualText, hasEscapeSequence);
+            this.setText(actualText);
         }
 
-        public setText(actualText: string, hasEscapeSequence?: bool) {
+        public setText(actualText: string) {
             this.actualText = actualText;
-            if (hasEscapeSequence) {
-                this.text = AST.getResolvedIdentifierName(actualText);
-            }
-            else {
-                this.text = actualText;
-            }
+            this.text = actualText;
         }
 
         public isMissing() { return false; }
@@ -352,10 +324,6 @@ module TypeScript {
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitJavascriptName(this, true);
-        }
-
-        public static fromToken(token: Token): Identifier {
-            return new Identifier(token.getText(), (<IdentifierToken>token).hasEscapeSequence);
         }
     }
 
