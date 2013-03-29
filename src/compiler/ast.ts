@@ -164,9 +164,6 @@ module TypeScript {
             context.addContent(this);
         }
 
-        public netFreeUses(container: Symbol, freeUses: StringHashTable) {
-        }
-
         public treeViewLabel() {
             return (<any>NodeType)._map[this.nodeType];
         }
@@ -712,8 +709,8 @@ module TypeScript {
 
     export class ConditionalExpression extends Expression {
         constructor(public operand1: AST,
-                     public operand2: AST,
-                     public operand3: AST) {
+                    public operand2: AST,
+                    public operand3: AST) {
             super(NodeType.ConditionalExpression);
         }
 
@@ -816,11 +813,12 @@ module TypeScript {
     export class ImportDeclaration extends ModuleElement {
         public varFlags = VarFlags.None;
         public isDynamicImport = false;
-        public isDeclaration() { return true; }
 
         constructor(public id: Identifier, public alias: AST) {
             super(NodeType.ImportDeclaration);
         }
+
+        public isDeclaration() { return true; }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             var mod = <ModuleType>this.alias.type;
@@ -892,8 +890,6 @@ module TypeScript {
             super(nodeType);
         }
 
-        public isPrivate() { return hasFlag(this.varFlags, VarFlags.Private); }
-        public isPublic() { return hasFlag(this.varFlags, VarFlags.Public); }
         public isProperty() { return hasFlag(this.varFlags, VarFlags.Property); }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -910,7 +906,6 @@ module TypeScript {
             super(id, NodeType.VarDecl, nest);
         }
 
-        public isAmbient() { return hasFlag(this.varFlags, VarFlags.Ambient); }
         public isExported() { return hasFlag(this.varFlags, VarFlags.Exported); }
         public isStatic() { return hasFlag(this.varFlags, VarFlags.Static); }
 
