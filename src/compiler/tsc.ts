@@ -226,11 +226,15 @@ class BatchCompiler {
         var compiler = new TypeScript.TypeScriptCompiler(this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
 
         var anySyntacticErrors = false;
+        var foundLib = false;
 
         for (var iCode = 0; iCode <= this.resolvedEnvironment.code.length; iCode++) {
             var code = this.resolvedEnvironment.code[iCode];
 
-            if (code.path.indexOf("lib.d.ts") == -1 && iCode > 0) {
+            if (code.path.indexOf("lib.d.ts") != -1) {
+                foundLib = true;
+            }
+            else if ((foundLib && iCode > 1) || (!foundLib && iCode > 0)) {
                 break;
             }
 
@@ -265,6 +269,7 @@ class BatchCompiler {
         }
         this.ioHost.stdout.WriteLine("Initial type check errors:");
         compiler.pullTypeCheck(true, true);
+
         // Note: we continue even if there were type check warnings.
 
         // ok, now we got through the remaining files, 1-by-1, substituting the new code in for the old

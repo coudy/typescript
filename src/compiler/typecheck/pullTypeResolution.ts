@@ -1363,7 +1363,10 @@ module TypeScript {
                     // we filter out arrays, since for those we just want to know if their element type is a type parameter...
                     if ((varDecl.nodeType == NodeType.ArgDecl) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
                         var signature = enclosingDecl.getSignatureSymbol();
-                        signature.setHasGenericParameter();
+
+                        if (signature) {
+                            signature.setHasGenericParameter();
+                        }
                     }
                 }
             }

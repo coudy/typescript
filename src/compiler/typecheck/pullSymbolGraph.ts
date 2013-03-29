@@ -303,6 +303,7 @@ module TypeScript {
         }
         else if (link.kind == SymbolLinkKind.ContainedBy) {
             (<PullTypeSymbol>affectedSymbol).removeMember(symbolToRemove);
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Extends) {
             // no action...
@@ -411,10 +412,8 @@ module TypeScript {
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
-            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
