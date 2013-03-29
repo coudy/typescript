@@ -951,9 +951,6 @@ module TypeScript {
         public symbols: IHashTable;
         public variableArgList = false;
         public signature: Signature;
-        public envids: Identifier[];
-        public internalNameCache: string = null;
-        public tmp1Declared = false;
         public enclosingFnc: FuncDecl = null;
         public freeVariables: Symbol[] = [];
         public fileName = unknownLocationInfo.fileName;
@@ -977,19 +974,6 @@ module TypeScript {
             nodeType: number) {
 
             super(nodeType);
-        }
-
-        public internalName(): string {
-            if (this.internalNameCache === null) {
-                var extName = this.getNameText();
-                if (extName) {
-                    this.internalNameCache = "_internal_" + extName;
-                }
-                else {
-                    this.internalNameCache = "_internal_" + internalId++;
-                }
-            }
-            return this.internalNameCache;
         }
 
         public hasSelfReference() { return hasFlag(this.fncFlags, FncFlags.HasSelfReference); }
@@ -1084,10 +1068,7 @@ module TypeScript {
         public requiresGlobal = false;
         public requiresExtendsBlock = false;
         public isDeclareFile = false;
-        public hasBeenTypeChecked = false;
         public topLevelMod: ModuleDeclaration = null;
-        public leftCurlyCount = 0;
-        public rightCurlyCount = 0;
         // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
         public containsUnicodeChar = false;
         public containsUnicodeCharInComment = false;
@@ -1193,8 +1174,6 @@ module TypeScript {
     }
 
     export class NamedDeclaration extends ModuleElement {
-        public leftCurlyCount = 0;
-        public rightCurlyCount = 0;
         public isDeclaration() { return true; }
 
         constructor(nodeType: NodeType,
@@ -1219,8 +1198,6 @@ module TypeScript {
             this.prettyName = this.name.actualText;
         }
 
-        public isExported() { return hasFlag(this.modFlags, ModuleFlags.Exported); }
-        public isAmbient() { return hasFlag(this.modFlags, ModuleFlags.Ambient); }
         public isEnum() { return hasFlag(this.modFlags, ModuleFlags.IsEnum); }
         public isWholeFile() { return hasFlag(this.modFlags, ModuleFlags.IsWholeFile); }
 
@@ -1245,34 +1222,25 @@ module TypeScript {
         public varFlags = VarFlags.None;
 
         constructor(nodeType: NodeType,
-            name: Identifier,
+                    name: Identifier,
                     public typeParameters: ASTList,
                     public extendsList: ASTList,
                     public implementsList: ASTList,
-            members: ASTList) {
+                    members: ASTList) {
             super(nodeType, name, members);
-        }
-
-        public isExported() {
-            return hasFlag(this.varFlags, VarFlags.Exported);
-        }
-
-        public isAmbient() {
-            return hasFlag(this.varFlags, VarFlags.Ambient);
         }
     }
 
     export class ClassDeclaration extends TypeDeclaration {
-        public knownMemberNames: any = {};
         public constructorDecl: FuncDecl = null;
         public constructorNestingLevel = 0;
         public endingToken: ASTSpan = null;
 
         constructor(name: Identifier,
-            typeParameters: ASTList,
-            members: ASTList,
-            extendsList: ASTList,
-            implementsList: ASTList) {
+                    typeParameters: ASTList,
+                    members: ASTList,
+                    extendsList: ASTList,
+                    implementsList: ASTList) {
             super(NodeType.ClassDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
@@ -1349,7 +1317,7 @@ module TypeScript {
 
     export class Block extends Statement {
         constructor(public statements: ASTList,
-                     public isStatementBlock: bool) {
+                    public isStatementBlock: bool) {
             super(NodeType.Block);
         }
 

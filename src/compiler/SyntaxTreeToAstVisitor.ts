@@ -523,23 +523,6 @@ module TypeScript {
                         }
                     }
                 }
-
-                var knownMemberNames: any = {};
-
-                for (i = 0, n = node.classElements.childCount(); i < n; i++) {
-                    var classElement = <IClassElementSyntax>node.classElements.childAt(i);
-
-                    if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
-                        var variableDeclaration = <MemberVariableDeclarationSyntax>classElement;
-                        knownMemberNames[variableDeclaration.variableDeclarator.identifier.valueText()] = true;
-                    }
-                    else if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
-                        var functionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
-                        knownMemberNames[functionDeclaration.propertyName.valueText()] = true;
-                    }
-                }
-
-                result.knownMemberNames = knownMemberNames;
             }
 
             this.requiresExtendsBlock = this.requiresExtendsBlock || result.extendsList.members.length > 0;
