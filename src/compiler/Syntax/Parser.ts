@@ -3355,6 +3355,29 @@ module TypeScript.Parser {
             return this.isIdentifier(this.currentToken());
         }
 
+        private canReuseVariableDeclaratorNode(node: ISyntaxNode) {
+            if (node === null || node.kind() !== SyntaxKind.VariableDeclarator) {
+                return false;
+            }
+
+            // Very subtle incremental parsing bug.  Consider the following code:
+            //
+            //      var v = new List < A, B
+            //
+            // This is actually legal code.  It's a list of variable declarators "v = new List<A" 
+            // on one side and "B" on the other. If you then change that to:
+            //
+            //      var v = new List < A, B >()
+            // 
+            // then we have a problem.  "v = new List<A" doesn't intersect the change range, so we
+            // start reparsing at "B" and we completely fail to handle this properly.
+            //
+            // In order to prevent this, we do not allow a variable declarator to be reused if it
+            // has an initializer.
+            var variableDeclarator = <VariableDeclaratorSyntax>node;
+            return variableDeclarator.equalsValueClause === null;
+        }
+
         private parseVariableDeclarator(allowIn: bool, allowPropertyName: bool): VariableDeclaratorSyntax {
             // TODO(cyrusn): What if the 'allowIn' context has changed between when we last parsed 
             // and now?  We could end up with an incorrect tree.  For example, say we had in the old 
@@ -3362,7 +3385,7 @@ module TypeScript.Parser {
             // "for (var i = a in b".  We would not want to reuse the declarator as the "in b" portion 
             // would need to be consumed by the for declaration instead.  Need to see if it is possible
             // to hit this case.
-            if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.VariableDeclarator) {
+            if (this.canReuseVariableDeclaratorNode(this.currentNode())) {
                 return <VariableDeclaratorSyntax>this.eatNode();
             }
 
@@ -3962,8 +3985,8 @@ module TypeScript.Parser {
             // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
             // we want "new Foo()" to parse as "new Foo()" (one node), not "new (Foo())".
             var expression = this.parseTerm(/*allowInvocation:*/ false);
-
             var argumentList = this.tryParseArgumentList();
+
             return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
         }
 

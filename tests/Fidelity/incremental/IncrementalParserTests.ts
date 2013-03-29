@@ -429,16 +429,16 @@ module TypeScript {
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
 
-        //public static testArithmeticToGeneric() {
-        //    var source = "var v = new Dictionary<A, B>";
+        public static testArithmeticToGeneric() {
+            var source = "var v = new Dictionary<A, B>";
 
-        //    var index = source.length;
+            var index = source.length;
 
-        //    var oldText = TextFactory.createText(source);
-        //    var newTextAndChange = withInsert(oldText, index, "()");
+            var oldText = TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, "()");
 
-        //    compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
-        //}
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
 
         //public static testComplexEdits1() {
         //    var source = Environment.readFile(Environment.currentDirectory() + "\\tests\\Fidelity\\incremental\\resources\\pullTypeChecker.ts");
