@@ -952,7 +952,6 @@ module TypeScript {
         public variableArgList = false;
         public signature: Signature;
         public envids: Identifier[];
-        public jumpRefs: Identifier[] = null;
         public internalNameCache: string = null;
         public tmp1Declared = false;
         public enclosingFnc: FuncDecl = null;
@@ -964,8 +963,6 @@ module TypeScript {
         public innerStaticFuncs: FuncDecl[] = [];
         public isInlineCallLiteral = false;
         public accessorSymbol: Symbol = null;
-        public leftCurlyCount = 0;
-        public rightCurlyCount = 0;
         public returnStatementsWithExpressions: ReturnStatement[] = [];
         public scopeType: Type = null; // Type of the FuncDecl, before target typing
         public endingToken: ASTSpan = null;
@@ -1000,31 +997,6 @@ module TypeScript {
 
         public hasSuperReferenceInFatArrowFunction() { return hasFlag(this.fncFlags, FncFlags.HasSuperReferenceInFatArrowFunction); }
         public setHasSuperReferenceInFatArrowFunction() { this.fncFlags |= FncFlags.HasSuperReferenceInFatArrowFunction; }
-
-        public addCloRef(id: Identifier, sym: Symbol): number {
-            if (this.envids === null) {
-                this.envids = [];
-            }
-            this.envids[this.envids.length] = id;
-            var outerFnc = this.enclosingFnc;
-            if (sym) {
-                while (outerFnc && (outerFnc.type.symbol != sym.container)) {
-                    outerFnc.addJumpRef(sym);
-                    outerFnc = outerFnc.enclosingFnc;
-                }
-            }
-            return this.envids.length - 1;
-        }
-
-        public addJumpRef(sym: Symbol): void {
-            if (this.jumpRefs === null) {
-                this.jumpRefs = [];
-            }
-            var id = new Identifier(sym.name);
-            this.jumpRefs[this.jumpRefs.length] = id;
-            id.sym = sym;
-            id.cloId = this.addCloRef(id, null);
-        }
 
         public buildControlFlow(): ControlFlowContext {
             var entry = new BasicBlock();

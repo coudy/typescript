@@ -288,8 +288,6 @@ module TypeScript {
         prevLine: number;
         line: number;
         col: number;
-        leftCurlyCount: number;
-        rightCurlyCount: number;
         lastTokenLimChar(): number;
         lastTokenHadNewline(): bool;
         lexState: number;
@@ -325,8 +323,6 @@ module TypeScript {
         public scanComments: bool = true;
         public interveningWhitespace = false; // Was there a whitespace token between the last token and the current one?
         private interveningWhitespacePos = 0; //  If yes, this contains the start position of the whitespace
-        public leftCurlyCount = 0;
-        public rightCurlyCount = 0;
         public commentStack: CommentToken[] = [];
         public seenUnicodeChar: bool = false;
         seenUnicodeCharInComment: bool = false;
@@ -361,8 +357,6 @@ module TypeScript {
             this.len = this.src.length;
             this.lineMap = LineMap.fromScriptSnapshot(newSrc);
             this.commentStack = [];
-            this.leftCurlyCount = 0;
-            this.rightCurlyCount = 0;
             this.seenUnicodeChar = false;
             this.seenUnicodeCharInComment = false;
         }
@@ -787,8 +781,6 @@ module TypeScript {
             var lexState = this.lexState;
             var interveningWhitespace = this.interveningWhitespace;
             var interveningWhitespacePos = this.interveningWhitespacePos;
-            var leftCurlyCount = this.leftCurlyCount;
-            var rightCurlyCount = this.rightCurlyCount;
             var seenUnicodeChar = this.seenUnicodeChar;
             var seenUnicodeCharInComment = this.seenUnicodeCharInComment;
             var commentStackLength = this.commentStack.length;
@@ -808,8 +800,6 @@ module TypeScript {
             this.lexState = lexState;
             this.interveningWhitespace = interveningWhitespace;
             this.interveningWhitespacePos = interveningWhitespacePos;
-            this.leftCurlyCount = leftCurlyCount;
-            this.rightCurlyCount = rightCurlyCount;
             this.seenUnicodeChar = seenUnicodeChar;
             this.seenUnicodeCharInComment = seenUnicodeCharInComment;
             this.commentStack.length = commentStackLength;
@@ -1109,12 +1099,6 @@ module TypeScript {
                 }
                 else if (autoToken[this.ch]) {
                     var atok = autoToken[this.ch];
-                    if (atok.tokenId === TokenID.OpenBrace) {
-                        this.leftCurlyCount++;
-                    }
-                    else if (atok.tokenId === TokenID.CloseBrace) {
-                        this.rightCurlyCount++;
-                    }
                     this.nextChar();
                     return atok;
                 }
