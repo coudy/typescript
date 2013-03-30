@@ -107,11 +107,11 @@ module TypeScript {
         public fileNameToLocationInfo = new TypeScript.StringHashTable();
         public fileNameToSyntaxTree = new TypeScript.StringHashTable();
 
-        constructor(public errorOutput: ITextWriter,
+        constructor(errorOutput: ITextWriter,
                     public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
                     public diagnosticMessages: IDiagnosticMessages = null) {
-            this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
+            this.pullErrorReporter = new PullErrorReporter(errorOutput);
 
             this.emitOptions = new EmitOptions(this.settings);
 
