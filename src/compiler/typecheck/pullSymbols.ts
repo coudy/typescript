@@ -130,7 +130,10 @@ module TypeScript {
         }
 
         // declaration methods
-        public addDeclaration(decl: PullDecl) { this.declarations.addItem(decl); }
+        public addDeclaration(decl: PullDecl) { 
+            Debug.assert(!!decl);
+            this.declarations.addItem(decl);
+        }
 
         public getDeclarations() { return <PullDecl[]>this.declarations.find(d => d); }
 
