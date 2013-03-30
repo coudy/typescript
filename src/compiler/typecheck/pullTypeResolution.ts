@@ -2346,15 +2346,26 @@ module TypeScript {
 
             // check constraints, if appropriate
             var typeConstraint: PullTypeSymbol = null;
+            var upperBound: PullTypeSymbol = null;
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
+                typeArg = typeArgs[iArg];
 
                 typeConstraint = typeParameters[iArg].getConstraint();
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
-                    if (!this.sourceIsAssignableToTarget(typeArgs[iArg], typeConstraint, context)) {
-                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), "Type '" + typeArgs[iArg].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[iArg].toString(true) + "'", enclosingDecl);
+
+                    if (typeArg.isTypeParameter()) {
+                        upperBound = (<PullTypeParameterSymbol>typeArg).getConstraint();
+
+                        if (upperBound) {
+                            typeArg = upperBound;
+                        }
+                    }
+
+                    if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
+                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), "Type '" + typeArg.toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[iArg].toString(true) + "'", enclosingDecl);
                     }
                 }
             }
