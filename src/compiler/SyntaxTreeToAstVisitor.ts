@@ -4,6 +4,7 @@
 /// <reference path='ast.ts' />
 
 module TypeScript {
+    var incrementalAst = false;
     export class SyntaxPositionMap {
         private position = 0;
         private elementToPosition = Collections.createHashTable(2048, Collections.identityHashCode);
@@ -98,11 +99,15 @@ module TypeScript {
         private setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
             span.minChar = fullStart + element.leadingTriviaWidth();
             span.limChar = fullStart + element.fullWidth();
+            Debug.assert(!isNaN(span.minChar));
+            Debug.assert(!isNaN(span.limChar));
         }
 
         private setSpanExplicit(span: IASTSpan, start: number, end: number): void {
             span.minChar = start;
             span.limChar = end;
+            Debug.assert(!isNaN(span.minChar));
+            Debug.assert(!isNaN(span.limChar));
         }
 
         private identifierFromToken(token: ISyntaxToken, isOptional: bool, useValueText: bool): Identifier {
@@ -128,24 +133,29 @@ module TypeScript {
         }
 
         private getAST(element: ISyntaxElement): any {
-            return null;
-            var result = (<any>element)._ast;
-            return result ? result : null;
+            if (incrementalAst) {
+                var result = (<any>element)._ast;
+                return result ? result : null;
+            }
+            else {
+                return null;
+            }
         }
 
         private setAST(element: ISyntaxElement, ast: IASTSpan): void {
-            return;
-            (<any>element)._ast = ast;
+            if (incrementalAst) {
+                (<any>element)._ast = ast;
+            }
         }
 
         private visitSyntaxList(list: ISyntaxList): ASTList {
+            var start = this.position;
             var result: ASTList = this.getAST(list);
             if (result) {
                 this.movePast(list);
             }
             else {
                 result = new ASTList();
-                var start = this.position;
 
                 for (var i = 0, n = list.childCount(); i < n; i++) {
                     result.append(list.childAt(i).accept(this));
@@ -158,13 +168,13 @@ module TypeScript {
         }
 
         private visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
+            var start = this.position;
             var result: ASTList = this.getAST(list);
             if (result) {
                 this.movePast(list);
             }
             else {
                 result = new ASTList();
-                var start = this.position;
 
                 for (var i = 0, n = list.childCount(); i < n; i++) {
                     if (i % 2 === 0) {

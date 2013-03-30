@@ -48964,6 +48964,7 @@ var TypeScript;
                     for(i = 0; i < constructSigs.length; i++) {
                         constructorTypeSymbol.removeConstructSignature(constructSigs[i], false);
                     }
+                    constructorTypeSymbol.recomputeConstructSignatures();
                 }
                 classSymbol.invalidate();
             }
@@ -48990,7 +48991,6 @@ var TypeScript;
                     constructorTypeSymbol.addConstructSignature(constructorSignature);
                     constructorSignature.addDeclaration(classDecl);
                 }
-                this.semanticInfo.setASTForDecl(classDecl, classAST);
             }
             constructorTypeSymbol.setAssociatedContainerType(classSymbol);
             if (this.staticClassMembers.length) {
@@ -51543,6 +51543,7 @@ var TypeScript;
             }
             var i = 0;
             var n = 0;
+            this.pullTypeChecker.resolver.setUnitPath(semanticInfo.getPath());
             for(i = 0, n = path.count(); i < n; i++) {
                 var current = path.asts[i];
                 var decl = semanticInfo.getDeclForAST(current);
@@ -53939,6 +53940,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
+    var incrementalAst = false;
     var SyntaxPositionMap = (function () {
         function SyntaxPositionMap(node) {
             this.position = 0;
@@ -54016,10 +54018,14 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.setSpan = function (span, fullStart, element) {
             span.minChar = fullStart + element.leadingTriviaWidth();
             span.limChar = fullStart + element.fullWidth();
+            TypeScript.Debug.assert(!isNaN(span.minChar));
+            TypeScript.Debug.assert(!isNaN(span.limChar));
         };
         SyntaxTreeToAstVisitor.prototype.setSpanExplicit = function (span, start, end) {
             span.minChar = start;
             span.limChar = end;
+            TypeScript.Debug.assert(!isNaN(span.minChar));
+            TypeScript.Debug.assert(!isNaN(span.limChar));
         };
         SyntaxTreeToAstVisitor.prototype.identifierFromToken = function (token, isOptional, useValueText) {
             this.assertElementAtPosition(token);
@@ -54038,21 +54044,25 @@ var TypeScript;
             return result;
         };
         SyntaxTreeToAstVisitor.prototype.getAST = function (element) {
-            return null;
-            var result = (element)._ast;
-            return result ? result : null;
+            if (incrementalAst) {
+                var result = (element)._ast;
+                return result ? result : null;
+            } else {
+                return null;
+            }
         };
         SyntaxTreeToAstVisitor.prototype.setAST = function (element, ast) {
-            return;
-            (element)._ast = ast;
+            if (incrementalAst) {
+                (element)._ast = ast;
+            }
         };
         SyntaxTreeToAstVisitor.prototype.visitSyntaxList = function (list) {
+            var start = this.position;
             var result = this.getAST(list);
             if (result) {
                 this.movePast(list);
             } else {
                 result = new TypeScript.ASTList();
-                var start = this.position;
                 for(var i = 0, n = list.childCount(); i < n; i++) {
                     result.append(list.childAt(i).accept(this));
                 }
@@ -54062,12 +54072,12 @@ var TypeScript;
             return result;
         };
         SyntaxTreeToAstVisitor.prototype.visitSeparatedSyntaxList = function (list) {
+            var start = this.position;
             var result = this.getAST(list);
             if (result) {
                 this.movePast(list);
             } else {
                 result = new TypeScript.ASTList();
-                var start = this.position;
                 for(var i = 0, n = list.childCount(); i < n; i++) {
                     if (i % 2 === 0) {
                         result.append(list.childAt(i).accept(this));
@@ -57097,6 +57107,8 @@ var Program = (function () {
         }
         if (true) {
         }
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
@@ -57105,8 +57117,6 @@ var Program = (function () {
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5", function (fileName) {
             return _this.runParser(fileName, 1 /* EcmaScript5 */ , verify, generate);
         });
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\emitter\\ecmascript5", function (fileName) {
             return _this.runEmitter(fileName, 1 /* EcmaScript5 */ , verify, generate, false);
