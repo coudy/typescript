@@ -135,18 +135,13 @@ module TypeScript {
             if (declSymbol) {
                 declSymbol.removeDeclaration(declToRemove);
 
-                var decls = declSymbol.getDeclarations();
+                var childDecls = declToRemove.getChildDecls();
 
-                if (!decls.length) {
-                    this.removeSymbol(declSymbol);
+                for (var i = 0; i < childDecls.length; i++) {
+                    this.removeDecl(childDecls[i]);
                 }
-                else {
-                    var childDecls = declToRemove.getChildDecls();
 
-                    for (var i = 0; i < childDecls.length; i++) {
-                        this.removeDecl(childDecls[i]);
-                    }
-                }
+                this.removeSymbol(declSymbol);
 
                 this.semanticInfoChain.removeSymbolFromCache(declSymbol);
             }
@@ -244,6 +239,13 @@ module TypeScript {
             symbolWhoseTypeChanged.updateOutgoingLinks(propagateChangedTypeToOutgoingLinks, new PullSymbolUpdate(GraphUpdateKind.TypeChanged, symbolWhoseTypeChanged, this));
 
             symbolWhoseTypeChanged.updateIncomingLinks(propagateChangedTypeToIncomingLinks, new PullSymbolUpdate(GraphUpdateKind.TypeChanged, symbolWhoseTypeChanged, this));
+
+            if (symbolWhoseTypeChanged.getKind() == PullElementKind.Container) {
+                var instanceSymbol = (<PullContainerTypeSymbol>symbolWhoseTypeChanged).getInstanceSymbol();
+                
+                this.invalidateType(instanceSymbol);
+            }
+
 
             symbolWhoseTypeChanged.invalidate();
 

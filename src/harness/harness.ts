@@ -783,7 +783,7 @@ module Harness {
         var needsFullTypeCheck = true;
         export function compile(code?: string, fileName?: string) {
             if (needsFullTypeCheck) {
-                compiler.pullTypeCheck(true);
+                compiler.pullTypeCheck(true, true);
                 needsFullTypeCheck = false;
             }
             else {
@@ -806,7 +806,7 @@ module Harness {
 
             public compilesOk(testCode): bool {
                 var errors = null;
-                compileString(testCode, 'test.ts', function (compilerResult) {
+                compileString(testCode, '0.ts', function (compilerResult) {
                     errors = compilerResult.errors;
                 })
 
@@ -882,19 +882,19 @@ module Harness {
             //}
 
             public isAssignmentCompatibleWith(other: Type) {
+                var thisValName = '__val__' + this.identifier;
+                var otherValName = '__val__' + other.identifier;
                 var testCode = 'module __test1__ {\n';
                 testCode += '    ' + this.code + ';\n';
-                testCode += '    export var __val__ = ' + this.identifier + ';\n';
+                testCode += '    export var ' + thisValName + ' = ' + this.identifier + ';\n';
                 testCode += '}\n';
-                testCode += 'var __test1__val__ = __test1__.__val__;\n';
 
                 testCode += 'module __test2__ {\n';
                 testCode += '    export ' + other.code + ';\n';
-                testCode += '    export var __val__ = ' + other.identifier + ';\n';
+                testCode += '    export var ' + otherValName + ' = ' + other.identifier + ';\n';
                 testCode += '}\n';
-                testCode += 'var __test2__val__ = __test2__.__val__;\n';
 
-                testCode += '__test2__val__ = __test1__val__;';
+                testCode += '__test2__.' + otherValName +' = __test1__.' + thisValName;
 
                 return this.compilesOk(testCode);
             }

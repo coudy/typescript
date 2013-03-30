@@ -193,7 +193,7 @@ module TypeScript {
         // PULLTODO: compilationUnitPath is only really there for debug purposes
         public updateUnit(oldUnit: SemanticInfo, newUnit: SemanticInfo) {
             for (var i = 0; i < this.units.length; i++) {
-                if (this.units[i] == oldUnit) {
+                if (this.units[i].getPath() == oldUnit.getPath()) {
                     this.units[i] = newUnit;
                     this.unitCache[oldUnit.getPath()] = newUnit;
                     return;
