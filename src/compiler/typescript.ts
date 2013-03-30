@@ -96,8 +96,6 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public pullErrorReporter: PullErrorReporter = null;
-
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;
 
@@ -107,12 +105,9 @@ module TypeScript {
         public fileNameToLocationInfo = new TypeScript.StringHashTable();
         public fileNameToSyntaxTree = new TypeScript.StringHashTable();
 
-        constructor(errorOutput: ITextWriter,
-                    public logger: ILogger = new NullLogger(),
+        constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
                     public diagnosticMessages: IDiagnosticMessages = null) {
-            this.pullErrorReporter = new PullErrorReporter(errorOutput);
-
             this.emitOptions = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
@@ -308,9 +303,7 @@ module TypeScript {
 
         // Will not throw exceptions.
         public emitDeclarations(): IDiagnostic[] {
-            if (this.canEmitDeclarations() &&
-                !this.pullErrorReporter.hasErrors) {
-
+            if (this.canEmitDeclarations()) {
                 var sharedEmitter: DeclarationEmitter = null;
                 var fileNames = this.fileNameToScript.getAllKeys();
 
@@ -526,8 +519,6 @@ module TypeScript {
                     this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
                 }
 
-                this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
-
                 var declCollectionContext: DeclCollectionContext = null;
                 var i: number;
 
@@ -585,10 +576,6 @@ module TypeScript {
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
-
-                if (reportDiagnostics) {
-                    this.pullErrorReporter.reportDiagnostics(this.semanticInfoChain.postDiagnostics());
-                }
             });
         }
 
@@ -676,16 +663,7 @@ module TypeScript {
 
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
-
-                    this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
-
-                    //this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors())
-
-                    return;
                 }
-
-                this.pullErrorReporter.setUnits(this.fileNameToLocationInfo);
-                this.pullErrorReporter.reportDiagnostics(this.semanticInfoChain.postDiagnostics());
             });
         }
 

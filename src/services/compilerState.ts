@@ -145,15 +145,13 @@ module Services {
         }
 
         private createCompiler(): void {
-            var outerr = { Write: (s) => { }, WriteLine: (s) => { }, Close: () => { } };
-
             // Create and initialize compiler
             this.logger.log("Initializing compiler");
 
             this._compilationSettings = new TypeScript.CompilationSettings();
 
             Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
-            this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings());
+            this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
             this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
 
             // Add unit for all source files

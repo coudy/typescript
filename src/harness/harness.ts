@@ -762,7 +762,7 @@ module Harness {
         }
 
         export function makeDefaultCompilerForTest(c?: TypeScript.TypeScriptCompiler) {
-            var compiler = c || new TypeScript.TypeScriptCompiler(stderr);
+            var compiler = c || new TypeScript.TypeScriptCompiler();
             compiler.settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
@@ -1141,8 +1141,6 @@ module Harness {
                     updateUnit('', fname);
                 }
             }
-
-            compiler.pullErrorReporter.hasErrors = false;
         }
 
         // Defines functions to invoke before compiling a piece of code and a post compile action intended to clean up the
@@ -1245,8 +1243,6 @@ module Harness {
             var uName = context ? unitName : isDeclareFile ? '0.d.ts' : '0.ts';
             scripts.push(addUnit(code, uName, isDeclareFile, references));
             compile(code, uName);
-
-            // compiler.pullErrorReporter.textWriter = stderr;
 
             var syntacticDiagnostics = compiler.getSyntacticDiagnostics(uName);
             compiler.reportDiagnostics(syntacticDiagnostics, stderr);

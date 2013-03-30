@@ -151,12 +151,12 @@ class BatchCompiler {
             localizedDiagnosticMessages = null;
         }
 
-        var nullWriter: ITextWriter = { Write: (a) => { }, WriteLine: (a) => { }, Close: () => { } };
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        var compiler = new TypeScript.TypeScriptCompiler(
-            nullWriter, logger, this.compilationSettings, localizedDiagnosticMessages);
+        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings, localizedDiagnosticMessages);
 
         var anySyntacticErrors = false;
+        var anySemanticErrors = false;
+
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
             var code = this.resolvedEnvironment.code[iCode];
 
@@ -192,7 +192,11 @@ class BatchCompiler {
         var fileNames = compiler.fileNameToSyntaxTree.getAllKeys();
         for (var i = 0, n = fileNames.length; i < n; i++) {
             var fileName = fileNames[i];
-            compiler.reportDiagnostics(compiler.getSemanticDiagnostics(fileName), this.errorReporter);
+            var semanticDiagnostics = compiler.getSemanticDiagnostics(fileName);
+            if (semanticDiagnostics.length > 0) {
+                anySemanticErrors = true;
+                compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
+            }
         }
 
         var emitterIOHost = {
@@ -213,6 +217,11 @@ class BatchCompiler {
             return true;
         }
 
+        // Don't emit declarations if we have any semantic diagnostics.
+        if (anySemanticErrors) {
+            return true;
+        }
+
         var emitDeclarationsDiagnostics = compiler.emitDeclarations();
         compiler.reportDiagnostics(emitDeclarationsDiagnostics, this.errorReporter);
         if (emitDeclarationsDiagnostics.length > 0) {
@@ -228,7 +237,7 @@ class BatchCompiler {
         }
 
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        var compiler = new TypeScript.TypeScriptCompiler(this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
+        var compiler = new TypeScript.TypeScriptCompiler(logger, this.compilationSettings, localizedDiagnosticMessages);
 
         var anySyntacticErrors = false;
         var foundLib = false;
