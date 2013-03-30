@@ -1,4 +1,4 @@
-/// <reference path='Syntax\SyntaxVisitor.generated.ts' />
+﻿/// <reference path='Syntax\SyntaxVisitor.generated.ts' />
 /// <reference path='Syntax\SyntaxWalker.generated.ts' />
 /// <reference path='Syntax\SyntaxInformationMap.ts' />
 /// <reference path='ast.ts' />
@@ -1182,15 +1182,25 @@ module TypeScript {
             return result;
         }
 
-        private visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): AST {
+        private visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): ParenthesizedExpression {
             this.assertElementAtPosition(node);
 
-            this.movePast(node.openParenToken);
-            var result = node.expression.accept(this);
-            this.movePast(node.closeParenToken);
+            var start = this.position;
+            var result: ParenthesizedExpression = this.getAST(node);
+            if (result) {
+                this.movePast(node);
+            }
+            else {
 
-            result.isParenthesized = true;
+                this.movePast(node.openParenToken);
+                var expr = node.expression.accept(this);
+                this.movePast(node.closeParenToken);
 
+                result = new ParenthesizedExpression(expr);
+            }
+
+            this.setAST(node, result);
+            this.setSpan(result, start, node);
             return result;
         }
 

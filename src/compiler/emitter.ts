@@ -284,17 +284,10 @@ module TypeScript {
         public emitParensAndCommentsInPlace(ast: AST, pre: bool) {
             var comments = pre ? ast.preComments : ast.postComments;
 
-            // comments should be printed before the LParen, but after the RParen
-            if (ast.isParenthesized && !pre) {
-                this.writeToOutput(")");
-            }
             if (this.emitOptions.compilationSettings.emitComments && comments && comments.length != 0) {
                 for (var i = 0; i < comments.length; i++) {
                     this.emitCommentInPlace(comments[i]);
                 }
-            }
-            if (ast.isParenthesized && pre) {
-                this.writeToOutput("(");
             }
         }
 
@@ -441,7 +434,7 @@ module TypeScript {
         public emitCall(callNode: CallExpression, target: AST, args: ASTList) {
             if (!this.emitSuperCall(callNode)) {
                 if (!hasFlag(callNode.flags, ASTFlags.ClassBaseConstructorCall)) {
-                    if (target.nodeType === NodeType.FuncDecl && !target.isParenthesized) {
+                    if (target.nodeType === NodeType.FuncDecl) {
                         this.writeToOutput("(");
                     }
                     if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
@@ -450,7 +443,7 @@ module TypeScript {
                     else {
                         this.emitJavascript(target, TokenID.OpenParen, false);
                     }
-                    if (target.nodeType === NodeType.FuncDecl && !target.isParenthesized) {
+                    if (target.nodeType === NodeType.FuncDecl) {
                         this.writeToOutput(")");
                     }
                     this.recordSourceMappingStart(args);
@@ -544,7 +537,7 @@ module TypeScript {
 
             // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
             // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
-            var shouldParenthesize = hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) && !funcDecl.isParenthesized && !funcDecl.isAccessor() && (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon));
+            var shouldParenthesize = hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon));
 
             this.emitParensAndCommentsInPlace(funcDecl, true);
             if (shouldParenthesize) {

@@ -165,6 +165,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.IncPost] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.DecPost] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.CastExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.ParenthesizedExpression] = ChildrenWalkers.walkParenthesizedExpressionChildren;
             this.childrenWalkers[NodeType.FuncDecl] = ChildrenWalkers.walkFuncDeclChildren;
             this.childrenWalkers[NodeType.Member] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.VarDecl] = ChildrenWalkers.walkBoundDeclChildren;
@@ -233,6 +234,12 @@ module TypeScript {
             }
             if (preAst.operand) {
                 preAst.operand = walker.walk(preAst.operand, preAst);
+            }
+        }
+
+        export function walkParenthesizedExpressionChildren(preAst: ParenthesizedExpression, parent: AST, walker: IAstWalker): void {
+            if (preAst.expression) {
+                preAst.expression = walker.walk(preAst.expression, preAst);
             }
         }
 

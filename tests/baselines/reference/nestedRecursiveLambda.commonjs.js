@@ -20,4 +20,5 @@ void (function (r) {
         return (function (r) {
             return r;
         });
-    })];
+    })
+];

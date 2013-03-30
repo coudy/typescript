@@ -1907,8 +1907,6 @@ module TypeScript {
         }
 
         public resolveStatementOrExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-
-
             switch (expressionAST.nodeType) {
                 case NodeType.Name:
                     if (context.searchTypeSpace) {
@@ -2050,6 +2048,9 @@ module TypeScript {
 
                 case NodeType.RegularExpressionLiteral:
                     return this.cachedRegExpInterfaceType ? this.cachedRegExpInterfaceType : this.semanticInfoChain.anyTypeSymbol;
+
+                case NodeType.ParenthesizedExpression:
+                    return this.resolveParenthesizedExpression(<ParenthesizedExpression>expressionAST, enclosingDecl, context);
             }
 
             return this.semanticInfoChain.anyTypeSymbol;
@@ -2428,7 +2429,7 @@ module TypeScript {
             // we'll contextually type it
             // otherwise, just process it as a normal function declaration
 
-            var shouldContextuallyType = isTypedAssignment && !funcDeclAST.isParenthesized;
+            var shouldContextuallyType = isTypedAssignment;
 
             var assigningFunctionTypeSymbol: PullFunctionTypeSymbol = null;
             var assigningFunctionSignature: PullSignatureSymbol = null;
@@ -3115,6 +3116,10 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
+        public resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            return this.resolveAST(ast.expression, false, enclosingDecl, context);
+        }
+
         public resolveCallExpression(callEx: CallExpression, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
 
             // resolve the target
@@ -3508,7 +3513,7 @@ module TypeScript {
 
             // PULLTODO: We don't technically need to resolve the operand, since the type of the
             // expression is the type of the cast term.  Still, it makes life a bit easier for the LS
-            if (context.resolveAggressively && !assertionExpression.operand.isParenthesized) {
+            if (context.resolveAggressively && assertionExpression.operand.nodeType !== NodeType.ParenthesizedExpression) {
                 context.pushContextualType(typeReference, context.inProvisionalResolution(), null);
                 this.resolveStatementOrExpression(assertionExpression.operand, true, enclosingDecl, context);
                 context.popContextualType();
@@ -4750,8 +4755,7 @@ module TypeScript {
             // in these cases, we do not attempt to apply a contextual type
             //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type
             //  to its body - instead, it should be applied to its return type
-            if (funcDecl.isParenthesized ||
-                funcDecl.isMethod() ||
+            if (funcDecl.isMethod() ||
                 beStringent && funcDecl.returnTypeAnnotation ||
                 funcDecl.isInlineCallLiteral) {
                 return false;

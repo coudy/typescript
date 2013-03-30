@@ -1,3 +1,3 @@
 function getObj() {
-    .toString();
+    ().toString();
 }

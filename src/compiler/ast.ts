@@ -60,8 +60,6 @@ module TypeScript {
         public postComments: Comment[] = null;
         private docComments: Comment[] = null;
 
-        public isParenthesized = false;
-
         constructor(public nodeType: NodeType) {
         }
 
@@ -205,8 +203,7 @@ module TypeScript {
                    this.limChar === ast.limChar &&
                    // this.flags === ast.flags &&
                    astArrayStructuralEquals(this.preComments, ast.preComments) &&
-                   astArrayStructuralEquals(this.postComments, ast.postComments) &&
-                   this.isParenthesized === ast.isParenthesized;
+                   astArrayStructuralEquals(this.postComments, ast.postComments)
         }
     }
 
@@ -338,6 +335,28 @@ module TypeScript {
         }
     }
 
+    export class ParenthesizedExpression extends Expression {
+        constructor(public expression: AST) {
+            super(NodeType.ParenthesizedExpression);
+        }
+
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.writeToOutput("(");
+            emitter.recordSourceMappingStart(this);
+            emitter.emitJavascript(this.expression, TokenID.CloseParen, false);
+            emitter.recordSourceMappingEnd(this);
+            emitter.writeToOutput(")");
+            emitter.emitParensAndCommentsInPlace(this, false);
+        }
+
+
+        public structuralEquals(ast: ParenthesizedExpression): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.expression, ast.expression);
+        }
+    }
+
     export class UnaryExpression extends Expression {
         public targetType: Type = null; // Target type for an object literal (null if no target type)
         public castTerm: AST = null;
@@ -397,8 +416,8 @@ module TypeScript {
 
                 case NodeType.CastExpression:
                     this.castTerm = typeFlow.typeCheck(this.castTerm);
-                    var applyTargetType = !this.operand.isParenthesized;
-
+                    var applyTargetType = this.operand.nodeType !== NodeType.ParenthesizedExpression;
+                    
                     var targetType = applyTargetType ? this.castTerm.type : null;
 
                     typeFlow.checker.typeCheckWithContextualType(targetType, typeFlow.checker.inProvisionalTypecheckMode(), true, this.operand);
@@ -448,15 +467,15 @@ module TypeScript {
                     break;
                 case NodeType.Neg:
                     emitter.writeToOutput("-");
-                    if (this.operand.nodeType === NodeType.Neg) {
-                        this.operand.isParenthesized = true;
+                    if (this.operand.nodeType === NodeType.Neg || this.operand.nodeType === NodeType.DecPre) {
+                        emitter.writeToOutput(" ");
                     }
                     emitter.emitJavascript(this.operand, TokenID.Minus, false);
                     break;
                 case NodeType.Pos:
                     emitter.writeToOutput("+");
-                    if (this.operand.nodeType === NodeType.Pos) {
-                        this.operand.isParenthesized = true;
+                    if (this.operand.nodeType === NodeType.Pos || this.operand.nodeType === NodeType.IncPre) {
+                        emitter.writeToOutput(" ");
                     }
                     emitter.emitJavascript(this.operand, TokenID.Plus, false);
                     break;

@@ -48,29 +48,38 @@ function () {
     return 19;
 }(function () {
     return 21;
-})(function (arg) {
+});
+(function (arg) {
     return 22;
-})(function (arg) {
+});
+(function (arg) {
     if (typeof arg === "undefined") { arg = 1; }
     return 23;
-})(function (arg) {
+});
+(function (arg) {
     return 24;
-})(function (arg) {
+});
+(function (arg) {
     return 25;
-})(function (arg) {
+});
+(function (arg) {
     if (typeof arg === "undefined") { arg = 0; }
     return 26;
-})(function (arg) {
+});
+(function (arg) {
     return 27;
-})(function () {
+});
+(function () {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
         arg[_i] = arguments[_i + 0];
     }
     return 28;
-})(function (arg) {
+});
+((((function (arg) {
     return 32;
-})false ? function () {
+}))));
+false ? function () {
     return 41;
 } : null;
 false ? function (arg) {

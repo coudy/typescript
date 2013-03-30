@@ -1370,8 +1370,7 @@ module TypeScript {
             // in these cases, we do not attempt to apply a contextual type
             //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type
             //  to its body - instead, it should be applied to its return type
-            if (funcDecl.isParenthesized ||
-                funcDecl.isMethod() ||
+            if (funcDecl.isMethod() ||
                 beStringent && funcDecl.returnTypeAnnotation ||
                 funcDecl.isInlineCallLiteral) {
                 return false;

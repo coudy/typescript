@@ -208,7 +208,10 @@ module TypeScript {
                     return this.typeCheckInExpression(ast, typeCheckContext);
 
                 case NodeType.InstOf:
-                    return this.typeCheckInstanceOfExpression(ast, typeCheckContext);                    
+                    return this.typeCheckInstanceOfExpression(ast, typeCheckContext);
+
+                case NodeType.ParenthesizedExpression:
+                    return this.typeCheckParenthesizedExpression(<ParenthesizedExpression>ast, typeCheckContext);
 
                 // statements
                 case NodeType.ForStatement:
@@ -1130,7 +1133,11 @@ module TypeScript {
             }        
 
             return this.semanticInfoChain.boolTypeSymbol;
-        }  
+        }
+
+        private typeCheckParenthesizedExpression(ast: ParenthesizedExpression, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            return this.typeCheckAST(ast.expression, typeCheckContext);
+        }
 
         public typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var whileStatementAST = <WhileStatement>ast;

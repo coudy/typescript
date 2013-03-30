@@ -940,7 +940,7 @@ module TypeScript {
                         // encapsulating scope to the function's member scope
                         var isLocalStatic = hasFlag(varDecl.varFlags, VarFlags.LocalStatic);
                         var prevScope = this.scope;
-                        var applyTargetType = !varDecl.init.isParenthesized;
+                        var applyTargetType = varDecl.init.nodeType !== NodeType.ParenthesizedExpression;
                         if (isLocalStatic) {
                             this.scope = varDecl.sym.container.getType().memberScope;
                         }
@@ -1560,7 +1560,7 @@ module TypeScript {
 
         public typeCheckAsgOperator(ast: AST): AST {
             var binex = <BinaryExpression>ast;
-            var applyTargetType = !binex.operand2.isParenthesized;
+            var applyTargetType = binex.operand2.nodeType !== NodeType.ParenthesizedExpression;
             binex.operand1 = this.typeCheck(binex.operand1);
 
             this.checker.typeCheckWithContextualType(binex.operand1.type, this.checker.inProvisionalTypecheckMode(), applyTargetType, binex.operand2);
@@ -3747,7 +3747,8 @@ module TypeScript {
                             case NodeType.FuncDecl:
                             case NodeType.ObjectLit:
                             case NodeType.ArrayLit:
-                                this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(), !sig.parameters[i].declAST.isParenthesized, callEx.arguments.members[i]);
+                                this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(),
+                                    sig.parameters[i].declAST.nodeType !== NodeType.ParenthesizedExpression, callEx.arguments.members[i]);
                                 break;
                         }
                     }
@@ -3758,7 +3759,7 @@ module TypeScript {
                         if (targetType) {
                             targetType = targetType.elementType;
                         }
-                        var isParenthesized = !sig.parameters[varArgParamIndex].declAST.isParenthesized;
+                        var isParenthesized = sig.parameters[varArgParamIndex].declAST.nodeType !== NodeType.ParenthesizedExpression;
                         for (i = nonVarArgActualParamLength; i < callEx.arguments.members.length; i++) {
                             switch (callEx.arguments.members[i].nodeType) {
                                 case NodeType.FuncDecl:
