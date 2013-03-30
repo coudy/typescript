@@ -52121,7 +52121,6 @@ var TypeScript;
             this.typeArguments = typeArguments;
             this.arguments = arguments;
             this.signature = null;
-            this.minChar = this.target.minChar;
         }
         CallExpression.prototype.typeCheck = function (typeFlow) {
             if (this.nodeType === 29 /* New */ ) {

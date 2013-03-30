@@ -508,7 +508,6 @@ module TypeScript {
                     public typeArguments: ASTList,
                     public arguments: ASTList) {
             super(nodeType);
-            this.minChar = this.target.minChar;
         }
 
         public signature: Signature = null;
