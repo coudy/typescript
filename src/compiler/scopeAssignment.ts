@@ -259,7 +259,7 @@ module TypeScript {
                     outerFnc.type.members = (<SymbolScopeBuilder>(<TypeSymbol>container).type.memberScope).valueMembers;
                 }
                 funcScope = context.scopeChain.fnc.type.memberScope;
-                outerFnc.innerStaticFuncs[outerFnc.innerStaticFuncs.length] = funcDecl;
+                //outerFnc.innerStaticFuncs[outerFnc.innerStaticFuncs.length] = funcDecl;
             }
             else {
                 funcScope = context.scopeChain.scope;
@@ -318,7 +318,7 @@ module TypeScript {
         var ambientFuncStaticMembers = new ScopedMembers(new DualStringHashTable(ambientFuncStaticTable, new StringHashTable()));
 
         // REVIEW: Is it a problem that this is being set twice for properties and constructors?
-        funcDecl.fileName = context.typeFlow.checker.locationInfo.fileName;
+        // funcDecl.fileName = context.typeFlow.checker.locationInfo.fileName;
 
         var locals = new SymbolScopeBuilder(funcMembers, ambientFuncMembers, null, null, parentScope, localContainer);
         var statics = new SymbolScopeBuilder(funcStaticMembers, ambientFuncStaticMembers, null, null, parentScope, null);
@@ -349,7 +349,7 @@ module TypeScript {
                 group.memberScope = statics;
                 statics.container = group.symbol;
             }
-            funcDecl.enclosingFnc = context.scopeChain.fnc;
+            // funcDecl.enclosingFnc = context.scopeChain.fnc;
             group.enclosingType = isStatic ? context.scopeChain.classType : context.scopeChain.thisType;
             // for mapping when type checking
             fgSym = <TypeSymbol>ast.type.symbol;

@@ -235,7 +235,6 @@ module TypeScript {
 
     export class Identifier extends AST {
         public sym: Symbol = null;
-        public cloId = -1;
         public text: string;
 
         // 'actualText' is the text that the user has entered for the identifier. the text might 
@@ -754,7 +753,6 @@ module TypeScript {
     }
 
     export class ImportDeclaration extends ModuleElement {
-        public varFlags = VarFlags.None;
         public isDynamicImport = false;
 
         constructor(public id: Identifier, public alias: AST) {
@@ -892,20 +890,15 @@ module TypeScript {
         public symbols: IHashTable;
         public variableArgList = false;
         public signature: Signature;
-        public enclosingFnc: FuncDecl = null;
         public freeVariables: Symbol[] = [];
-        public fileName = unknownLocationInfo.fileName;
         public classDecl: NamedDeclaration = null;
-        public boundToProperty: VarDecl = null;
         public isOverload = false;
-        public innerStaticFuncs: FuncDecl[] = [];
         public isInlineCallLiteral = false;
         public accessorSymbol: Symbol = null;
-        public returnStatementsWithExpressions: ReturnStatement[] = [];
+        public returnStatementsWithExpressions: ReturnStatement[];
         public scopeType: Type = null; // Type of the FuncDecl, before target typing
         public endingToken: ASTSpan = null;
         public isDeclaration() { return true; }
-        public constructorSpan: ASTSpan = null;
 
         constructor(public name: Identifier,
                     public bod: ASTList,

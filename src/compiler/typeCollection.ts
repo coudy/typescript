@@ -634,7 +634,7 @@ module TypeScript {
             containerScope = scopeChain.previous.scope;
         }
 
-        funcDecl.fileName = context.checker.locationInfo.fileName;
+        // funcDecl.fileName = context.checker.locationInfo.fileName;
         
         // If the parent is the constructor, and this isn't an instance method, skip it.
         // That way, we'll set the type during scope assignment, and can be sure that the

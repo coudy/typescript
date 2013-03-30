@@ -1053,7 +1053,7 @@ module TypeScript {
                     this.thisType && this.thisType.baseClass() &&
                     this.thisFnc && hasFlag(this.thisFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
                     // Find the closest non lambda function
-                    var enclosingFnc = this.thisFnc.enclosingFnc;
+                    var enclosingFnc = null;  //this.thisFnc.enclosingFnc;
                     while (hasFlag(enclosingFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
                         enclosingFnc = enclosingFnc.enclosingFnc;
                     }
@@ -1108,14 +1108,14 @@ module TypeScript {
                 // if the enclosing function was bound to a property,
                 // checkInitSelf would not have been able to mark the 
                 // function for a self init
-                if (this.thisFnc.boundToProperty) {
-                    var container = this.thisFnc.boundToProperty.sym.container;
+                if (false /*this.thisFnc.boundToProperty*/) {
+                    var container = null; //this.thisFnc.boundToProperty.sym.container;
                     if (container.declAST.nodeType === NodeType.FuncDecl) {
                         (<FuncDecl>container.declAST).setHasSelfReference();
                     }
                 }
                 else {
-                    var encFnc = this.thisFnc.enclosingFnc;
+                    var encFnc = null;// this.thisFnc.enclosingFnc;
                     var firstEncFnc = encFnc;
 
                     while (encFnc) {
@@ -2352,15 +2352,15 @@ module TypeScript {
                 }
             }
 
-            if (funcDecl.fileName !== unknownLocationInfo.fileName) {
-                if (this.checker.fileNameToLocationInfo &&
-                    this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName)) {
-                    this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName);
-                }
-                else {
-                    this.checker.locationInfo = unknownLocationInfo;
-                }
-            }
+            //if (funcDecl.fileName !== unknownLocationInfo.fileName) {
+            //    if (this.checker.fileNameToLocationInfo &&
+            //        this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName)) {
+            //        this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName);
+            //    }
+            //    else {
+            //        this.checker.locationInfo = unknownLocationInfo;
+            //    }
+            //}
 
             if (fnType.enclosingType) {
                 this.thisType = fnType.enclosingType;
