@@ -188,7 +188,7 @@ class BatchCompiler {
             return true;
         }
 
-        compiler.pullTypeCheck(true, true);
+        compiler.pullTypeCheck();
         var fileNames = compiler.fileNameToSyntaxTree.getAllKeys();
         for (var i = 0, n = fileNames.length; i < n; i++) {
             var fileName = fileNames[i];
@@ -282,7 +282,7 @@ class BatchCompiler {
             return true;
         }
         this.ioHost.stdout.WriteLine("Initial type check errors:");
-        compiler.pullTypeCheck(true, true);
+        compiler.pullTypeCheck();
 
         // Note: we continue even if there were type check warnings.
 

@@ -511,13 +511,11 @@ module TypeScript {
             return errors;
         }
 
-        public pullTypeCheck(refresh = false, reportDiagnostics = false) {
+        public pullTypeCheck() {
             return this.timeFunction("pullTypeCheck()", () => {
 
-                if (!this.pullTypeChecker || refresh) {
-                    this.semanticInfoChain = new SemanticInfoChain();
-                    this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
-                }
+                this.semanticInfoChain = new SemanticInfoChain();
+                this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
 
                 var declCollectionContext: DeclCollectionContext = null;
                 var i: number;
@@ -561,15 +559,10 @@ module TypeScript {
                 for (i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
 
-                    if (reportDiagnostics) {
-                        this.logger.log("Type checking " + fileName);
-                        this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
-                    }
-                    else {
-                        this.logger.log("Resolving " + fileName);
-                        this.pullResolveFile(fileName);
-                    }
+                    this.logger.log("Type checking " + fileName);
+                    this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
                 }
+
                 var findErrorsEndTime = new Date().getTime();
 
                 this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));

@@ -757,12 +757,8 @@ module Harness {
         var stdout = new EmitterIOHost();
         var stderr = new WriterAggregator();
 
-        export function isDeclareFile(fileName: string) {
-            return /\.d\.ts$/.test(fileName);
-        }
-
-        export function makeDefaultCompilerForTest(c?: TypeScript.TypeScriptCompiler) {
-            var compiler = c || new TypeScript.TypeScriptCompiler();
+        export function makeDefaultCompilerForTest() {
+            var compiler = new TypeScript.TypeScriptCompiler();
             compiler.settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
@@ -773,6 +769,8 @@ module Harness {
             }
             
             compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText));
+            compiler.pullTypeCheck();
+
             return compiler;
         }
 
@@ -783,7 +781,7 @@ module Harness {
         var needsFullTypeCheck = true;
         export function compile(code?: string, fileName?: string) {
             if (needsFullTypeCheck) {
-                compiler.pullTypeCheck(true, true);
+                compiler.pullTypeCheck();
                 needsFullTypeCheck = false;
             }
             else {
@@ -1126,7 +1124,6 @@ module Harness {
         /** Create a new instance of the compiler with default settings and lib.d.ts, then typecheck */
         export function recreate() {
             compiler = makeDefaultCompilerForTest();
-            compiler.pullTypeCheck(true);
         }
 
         export function reset() {
@@ -1238,7 +1235,7 @@ module Harness {
                 context.preCompile();
             }
 
-            var isDeclareFile = Harness.Compiler.isDeclareFile(unitName);
+            var isDeclareFile = TypeScript.isDTSFile(unitName);
             // for single file tests just add them as using the old '0.ts' naming scheme
             var uName = context ? unitName : isDeclareFile ? '0.d.ts' : '0.ts';
             scripts.push(addUnit(code, uName, isDeclareFile, references));
@@ -1276,7 +1273,7 @@ module Harness {
                     // REVIEW: if any dependency has a triple slash reference then does postCompile potentially have to do a recreate since we can't update references with updateUnit?
                     // easy enough to do if so, prefer to avoid the recreate cost until it proves to be an issue
                     dependencies.forEach(dep => {
-                        addUnit(dep.content, dep.name, Harness.Compiler.isDeclareFile(dep.name));
+                        addUnit(dep.content, dep.name, TypeScript.isDTSFile(dep.name));
                         addedFiles.push(dep.name);
                     });
                 };

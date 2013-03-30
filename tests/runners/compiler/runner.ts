@@ -79,7 +79,7 @@ class CompilerBaselineRunner extends RunnerBase {
             var jsOutputAsync = '';
             var jsOutputSync = '';
 
-            var declFileName = Harness.Compiler.isDeclareFile(lastUnit.name) ? lastUnit.name : lastUnit.name.replace('.ts', '.d.ts');
+            var declFileName = TypeScript.isDTSFile(lastUnit.name) ? lastUnit.name : lastUnit.name.replace('.ts', '.d.ts');
             var declFileCode = '';
 
             var errorDescriptionAsync = '';
@@ -155,7 +155,7 @@ class CompilerBaselineRunner extends RunnerBase {
                 //});
             }
 
-            if (!Harness.Compiler.isDeclareFile(lastUnit.name)) {
+            if (!TypeScript.isDTSFile(lastUnit.name)) {
                 if (that.emit) {
                     // check js output
                     Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + fileName, justName.replace(/\.ts/, '.commonjs.js'), () => {

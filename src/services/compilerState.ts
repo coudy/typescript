@@ -162,7 +162,7 @@ module Services {
 
             // Initial typecheck
             this.onTypeCheckStarting();
-            this.compiler.pullTypeCheck(/*refresh:*/ false, /*reportErrors:*/ true);
+            this.compiler.pullTypeCheck();
         }
 
         public minimalRefresh(): void {
@@ -256,7 +256,7 @@ module Services {
             }
 
             if (fileAdded) {
-                this.compiler.pullTypeCheck(true);
+                this.compiler.pullTypeCheck();
             }
         }
 
