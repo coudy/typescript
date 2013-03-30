@@ -601,6 +601,8 @@ module TypeScript {
                     for (i = 0; i < constructSigs.length; i++) {
                         constructorTypeSymbol.removeConstructSignature(constructSigs[i], false);
                     }
+
+                    constructorTypeSymbol.recomputeConstructSignatures();
                 }
 
                 // just invalidate this once, so we don't pay the cost of rebuilding caches
@@ -646,7 +648,7 @@ module TypeScript {
                 }
 
                 // set the class decl's AST to the class declaration
-                this.semanticInfo.setASTForDecl(classDecl, classAST);
+                //this.semanticInfo.setASTForDecl(classDecl, classAST);
             }
 
             constructorTypeSymbol.setAssociatedContainerType(classSymbol);

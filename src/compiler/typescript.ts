@@ -968,6 +968,8 @@ module TypeScript {
             var i = 0;
             var n = 0;
 
+            this.pullTypeChecker.resolver.setUnitPath(semanticInfo.getPath());
+
             // Extract infromation from path
             for (i = 0, n = path.count(); i < n; i++) {
                 var current = path.asts[i];
