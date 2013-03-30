@@ -990,7 +990,7 @@ module TypeScript {
             // want to be able to bind lambdas in return positions
             go = true;
         }
-        else if (ast.nodeType == NodeType.SwitchStatement || ast.nodeType == NodeType.Case) {
+        else if (ast.nodeType == NodeType.SwitchStatement || ast.nodeType == NodeType.CaseClause) {
             go = true;
         }
 

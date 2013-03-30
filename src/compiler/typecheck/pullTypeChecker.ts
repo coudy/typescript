@@ -250,8 +250,8 @@ module TypeScript {
                 case NodeType.SwitchStatement:
                     return this.typeCheckSwitchStatement(ast, typeCheckContext);
 
-                case NodeType.Case:
-                    return this.typeCheckCaseStatement(ast, typeCheckContext);
+                case NodeType.CaseClause:
+                    return this.typeCheckCaseClause(ast, typeCheckContext);
 
                 // primitives
                 case NodeType.NumberLit:
@@ -1247,14 +1247,13 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckCaseStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var caseAST = <CaseStatement>ast;
+        public typeCheckCaseClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var caseAST = <CaseClause>ast;
 
             this.typeCheckAST(caseAST.expr, typeCheckContext);
             this.typeCheckAST(caseAST.body, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
-
     }
 }

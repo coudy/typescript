@@ -103,7 +103,7 @@ module TypeScript {
         WhileStatement,
         DoStatement,
         Block,
-        Case,
+        CaseClause,
         SwitchStatement,
         TryStatement,
         CatchClause,

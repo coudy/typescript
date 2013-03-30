@@ -260,12 +260,6 @@ module TypeScript {
                 (<TypeScript.ForStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
-        public isBodyOfCase(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Case &&
-                (<TypeScript.CaseStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
         public isBodyOfDoWhile(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.DoStatement &&
@@ -376,10 +370,6 @@ module TypeScript {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.IfStatement &&
                 (<TypeScript.IfStatement>this.asts[this.top - 1]).elseBod === this.asts[this.top - 0];
-        }
-
-        public isBodyOfDefaultCase(): bool {
-            return this.isBodyOfCase();
         }
 
         public isSingleStatementList(): bool {

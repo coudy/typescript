@@ -28,6 +28,20 @@ module TypeScript {
 
     export var astID = 0;
 
+    export function structuralEquals(ast1: AST, ast2: AST): bool {
+        if (ast1 === ast2) {
+            return true;
+        }
+
+        return ast1 !== null && ast2 !== null &&
+               ast1.nodeType === ast2.nodeType &&
+               ast1.structuralEquals(ast2);
+    }
+
+    export function astArrayStructuralEquals(array1: AST[], array2: AST[]): bool {
+        return ArrayUtilities.sequenceEquals(array1, array2, structuralEquals);
+    }
+
     export class AST implements IASTSpan {
         public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
@@ -36,7 +50,7 @@ module TypeScript {
         public flags = ASTFlags.Writeable;
 
         public typeCheckPhase = -1;
-
+        
         private astID = astID++;
 
         // REVIEW: for diagnostic purposes
@@ -185,6 +199,15 @@ module TypeScript {
 
             return this.docComments;
         }
+
+        public structuralEquals(ast: AST): bool {
+            return this.minChar === ast.minChar &&
+                   this.limChar === ast.limChar &&
+                   // this.flags === ast.flags &&
+                   astArrayStructuralEquals(this.preComments, ast.preComments) &&
+                   astArrayStructuralEquals(this.postComments, ast.postComments) &&
+                   this.isParenthesized === ast.isParenthesized;
+        }
     }
 
     export class ASTList extends AST {
@@ -230,6 +253,11 @@ module TypeScript {
             }
             typeFlow.nestingLevel--;
             return this;
+        }
+
+        public structuralEquals(ast: ASTList): bool {
+            return super.structuralEquals(ast) &&
+                   astArrayStructuralEquals(this.members, ast.members);
         }
     }
 
@@ -280,6 +308,13 @@ module TypeScript {
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitJavascriptName(this, true);
+        }
+
+        public structuralEquals(ast: Identifier): bool {
+            return super.structuralEquals(ast) &&
+                   this.text === ast.text &&
+                   this.actualText === ast.actualText &&
+                   this.isMissing() === ast.isMissing();
         }
     }
 
@@ -459,6 +494,12 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
+
+        public structuralEquals(ast: UnaryExpression): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.castTerm, ast.castTerm) &&
+                   structuralEquals(this.operand, ast.operand);
+        }
     }
 
     export class CallExpression extends Expression {
@@ -495,10 +536,19 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
+
+        public structuralEquals(ast: CallExpression): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.target, ast.target) &&
+                   structuralEquals(this.typeArguments, ast.typeArguments) &&
+                   structuralEquals(this.arguments, ast.arguments);
+        }
     }
 
     export class BinaryExpression extends Expression {
-        constructor(nodeType: NodeType, public operand1: AST, public operand2: AST) {
+        constructor(nodeType: NodeType,
+                    public operand1: AST,
+                    public operand2: AST) {
             super(nodeType);
         }
 
@@ -647,6 +697,12 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
+
+        public structuralEquals(ast: BinaryExpression): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.operand1, ast.operand1) &&
+                   structuralEquals(this.operand2, ast.operand2);
+        }
     }
 
     export class ConditionalExpression extends Expression {
@@ -670,6 +726,13 @@ module TypeScript {
             emitter.emitJavascript(this.operand3, TokenID.Question, false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        }
+
+        public structuralEquals(ast: ConditionalExpression): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.operand1, ast.operand1) &&
+                   structuralEquals(this.operand2, ast.operand2) &&
+                   structuralEquals(this.operand3, ast.operand3);
         }
     }
 
@@ -698,6 +761,12 @@ module TypeScript {
         public printLabel(): string {
             return this.text;
         }
+
+        public structuralEquals(ast: NumberLiteral): bool {
+            return super.structuralEquals(ast) &&
+                   this.value === ast.value &&
+                   this.text === ast.text;
+        }
     }
 
     export class RegexLiteral extends Expression {
@@ -716,6 +785,11 @@ module TypeScript {
             emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        }
+
+        public structuralEquals(ast: RegexLiteral): bool {
+            return super.structuralEquals(ast) &&
+                   this.text === ast.text;
         }
     }
 
@@ -744,15 +818,14 @@ module TypeScript {
         public printLabel() {
             return this.text;
         }
-    }
 
-    export class ModuleElement extends AST {
-        constructor(nodeType: NodeType) {
-            super(nodeType);
+        public structuralEquals(ast: StringLiteral): bool {
+            return super.structuralEquals(ast) &&
+                   this.text === ast.text;
         }
     }
 
-    export class ImportDeclaration extends ModuleElement {
+    export class ImportDeclaration extends AST {
         public isDynamicImport = false;
 
         constructor(public id: Identifier, public alias: AST) {
@@ -811,11 +884,22 @@ module TypeScript {
                 return firstMod.actualText;
             }
         }
+
+        public structuralEquals(ast: ImportDeclaration): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.id, ast.id) &&
+                   structuralEquals(this.alias, ast.alias);
+        }
     }
 
-    export class ExportAssignment extends ModuleElement {
+    export class ExportAssignment extends AST {
         constructor(public id: Identifier) {
             super(NodeType.ExportAssignment);
+        }
+
+        public structuralEquals(ast: ExportAssignment): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.id, ast.id);
         }
     }
 
@@ -839,6 +923,13 @@ module TypeScript {
         public printLabel() {
             return this.treeViewLabel();
         }
+
+        public structuralEquals(ast: BoundDecl): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.init, ast.init) &&
+                   structuralEquals(this.typeExpr, ast.typeExpr) &&
+                   structuralEquals(this.id, ast.id);
+        }
     }
 
     export class VarDecl extends BoundDecl {
@@ -858,7 +949,7 @@ module TypeScript {
             return "var " + this.id.actualText;
         }
     }
-
+    
     export class ArgDecl extends BoundDecl {
         constructor(id: Identifier) {
             super(id, NodeType.ArgDecl);
@@ -881,6 +972,11 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
+
+        public structuralEquals(ast: ArgDecl): bool {
+            return super.structuralEquals(ast) &&
+                   this.isOptional === ast.isOptional;
+        }
     }
 
     export class FuncDecl extends AST {
@@ -892,6 +988,8 @@ module TypeScript {
         public signature: Signature;
         public freeVariables: Symbol[] = [];
         public classDecl: NamedDeclaration = null;
+
+        // TODO: Who ever sets this?
         public isOverload = false;
         public isInlineCallLiteral = false;
         public accessorSymbol: Symbol = null;
@@ -908,6 +1006,18 @@ module TypeScript {
                     nodeType: number) {
 
             super(nodeType);
+        }
+
+        public structuralEquals(ast: FuncDecl): bool {
+            return super.structuralEquals(ast) &&
+                   this.hint === ast.hint &&
+                   this.variableArgList === ast.variableArgList &&
+                   this.isOverload === ast.isOverload &&
+                   structuralEquals(this.name, ast.name) &&
+                   structuralEquals(this.bod, ast.bod) &&
+                   this.isConstructor === ast.isConstructor &&
+                   structuralEquals(this.typeArguments, ast.typeArguments) &&
+                   structuralEquals(this.arguments, ast.arguments);
         }
 
         public hasSelfReference() { return hasFlag(this.fncFlags, FncFlags.HasSelfReference); }
@@ -933,7 +1043,7 @@ module TypeScript {
 
             return context;
         }
-
+        
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckFunction(this);
         }
@@ -1099,13 +1209,19 @@ module TypeScript {
         }
     }
 
-    export class NamedDeclaration extends ModuleElement {
+    export class NamedDeclaration extends AST {
         public isDeclaration() { return true; }
 
         constructor(nodeType: NodeType,
                     public name: Identifier,
                     public members: ASTList) {
             super(nodeType);
+        }
+
+        public structuralEquals(ast: NamedDeclaration): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.name, ast.name) &&
+                   structuralEquals(this.members, ast.members);
         }
     }
 
@@ -1155,6 +1271,13 @@ module TypeScript {
                     members: ASTList) {
             super(nodeType, name, members);
         }
+
+        public structuralEquals(ast: TypeDeclaration): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.typeParameters, ast.typeParameters) &&
+                   structuralEquals(this.extendsList, ast.extendsList) &&
+                   structuralEquals(this.implementsList, ast.implementsList);
+        }
     }
 
     export class ClassDeclaration extends TypeDeclaration {
@@ -1195,7 +1318,7 @@ module TypeScript {
         }
     }
 
-    export class Statement extends ModuleElement {
+    export class Statement extends AST {
         constructor(nodeType: NodeType) {
             super(nodeType);
             this.flags |= ASTFlags.IsStatement;
@@ -1236,6 +1359,12 @@ module TypeScript {
             var bb = new BasicBlock();
             context.current = bb;
             beforeBB.addSuccessor(bb);
+        }
+
+        public structuralEquals(ast: LabeledStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.identifier, ast.identifier) &&
+                   structuralEquals(this.statement, ast.statement);
         }
     }
 
@@ -1292,6 +1421,12 @@ module TypeScript {
             typeFlow.typeCheck(this.statements);
             return this;
         }
+
+        public structuralEquals(ast: Block): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.statements, ast.statements) &&
+                   this.isStatementBlock === ast.isStatementBlock;
+        }
     }
 
     export class Jump extends Statement {
@@ -1323,6 +1458,11 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
             emitter.emitParensAndCommentsInPlace(this, false);
+        }
+
+        public structuralEquals(ast: Jump): bool {
+            return super.structuralEquals(ast) &&
+                   this.target === ast.target;
         }
     }
 
@@ -1374,6 +1514,12 @@ module TypeScript {
             // TODO: check for while (true) and then only continue if afterLoop has predecessors
             context.noContinuation = false;
             context.walker.options.goChildren = false;
+        }
+
+        public structuralEquals(ast: WhileStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.cond, ast.cond) &&
+                   structuralEquals(this.body, ast.body);
         }
     }
 
@@ -1430,6 +1576,12 @@ module TypeScript {
                 context.addUnreachable(this.cond);
             }
             context.walker.options.goChildren = false;
+        }
+
+        public structuralEquals(ast: DoWhileStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.body, ast.body) &&
+                   structuralEquals(this.cond, ast.cond);
         }
     }
 
@@ -1516,6 +1668,13 @@ module TypeScript {
             }
             context.walker.options.goChildren = false;
         }
+
+        public structuralEquals(ast: IfStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.cond, ast.cond) &&
+                   structuralEquals(this.thenBod, ast.thenBod) &&
+                   structuralEquals(this.elseBod, ast.elseBod);
+        }
     }
 
     export class ReturnStatement extends Statement {
@@ -1551,6 +1710,11 @@ module TypeScript {
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckReturn(this);
         }
+
+        public structuralEquals(ast: ReturnStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.returnExpression, ast.returnExpression);
+        }
     }
 
     export class EndCode extends AST {
@@ -1566,58 +1730,8 @@ module TypeScript {
                 (<BoundDecl>this.lval).varFlags |= VarFlags.AutoInit;
             }
         }
-        public statement: ASTSpan = new ASTSpan();
 
-        public isFiltered() {
-            if (this.body) {
-                var singleItem: AST = null;
-                if (this.body.nodeType === NodeType.List) {
-                    var stmts = <ASTList>this.body;
-                    if (stmts.members.length === 1) {
-                        singleItem = stmts.members[0];
-                    }
-                }
-                else {
-                    singleItem = this.body;
-                }
-                // match template for filtering 'own' properties from obj
-                if (singleItem !== null) {
-                    if (singleItem.nodeType === NodeType.Block) {
-                        var block = <Block>singleItem;
-                        if ((block.statements !== null) && (block.statements.members.length === 1)) {
-                            singleItem = block.statements.members[0];
-                        }
-                    }
-                    if (singleItem.nodeType === NodeType.IfStatement) {
-                        var cond = (<IfStatement>singleItem).cond;
-                        if (cond.nodeType === NodeType.Call) {
-                            var target = (<CallExpression>cond).target;
-                            if (target.nodeType === NodeType.Dot) {
-                                var binex = <BinaryExpression>target;
-                                if ((binex.operand1.nodeType === NodeType.Name) &&
-                                    (this.obj.nodeType === NodeType.Name) &&
-                                    ((<Identifier>binex.operand1).actualText === (<Identifier>this.obj).actualText)) {
-                                    var prop = <Identifier>binex.operand2;
-                                    if (prop.actualText === "hasOwnProperty") {
-                                        var args = (<CallExpression>cond).arguments;
-                                        if ((args !== null) && (args.members.length === 1)) {
-                                            var arg = args.members[0];
-                                            if ((arg.nodeType === NodeType.Name) &&
-                                                 (this.lval.nodeType === NodeType.Name)) {
-                                                if (((<Identifier>this.lval).actualText) === (<Identifier>arg).actualText) {
-                                                    return true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        }
+        public statement: ASTSpan = new ASTSpan();
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -1637,11 +1751,6 @@ module TypeScript {
         }
 
         public typeCheck(typeFlow: TypeFlow) {
-            if (typeFlow.checker.styleSettings.forin) {
-                if (!this.isFiltered()) {
-                    typeFlow.checker.errorReporter.styleError(this, "no hasOwnProperty filter");
-                }
-            }
             return typeFlow.typeCheckForIn(this);
         }
 
@@ -1672,6 +1781,13 @@ module TypeScript {
             context.noContinuation = false;
             loopHeader.addSuccessor(afterLoop);
             context.walker.options.goChildren = false;
+        }
+
+        public structuralEquals(ast: ForInStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.lval, ast.lval) &&
+                   structuralEquals(this.obj, ast.obj) &&
+                   structuralEquals(this.body, ast.body);
         }
     }
 
@@ -1768,6 +1884,14 @@ module TypeScript {
             }
             context.walker.options.goChildren = false;
         }
+
+        public structuralEquals(ast: ForStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.init, ast.init) &&
+                   structuralEquals(this.cond, ast.cond) &&
+                   structuralEquals(this.incr, ast.incr) &&
+                   structuralEquals(this.body, ast.body);
+        }
     }
 
     export class WithStatement extends Statement {
@@ -1794,11 +1918,17 @@ module TypeScript {
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckWith(this);
         }
+
+        public structuralEquals(ast: WithStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.expr, ast.expr) &&
+                   structuralEquals(this.body, ast.body);
+        }
     }
 
     export class SwitchStatement extends Statement {
         public caseList: ASTList;
-        public defaultCase: CaseStatement = null;
+        public defaultCase: CaseClause = null;
         public statement: ASTSpan = new ASTSpan();
 
         constructor(public val: AST) {
@@ -1835,7 +1965,7 @@ module TypeScript {
             for (var i = 0; i < len; i++) {
                 this.caseList.members[i] = typeFlow.typeCheck(this.caseList.members[i]);
             }
-            this.defaultCase = <CaseStatement>typeFlow.typeCheck(this.defaultCase);
+            this.defaultCase = <CaseClause>typeFlow.typeCheck(this.defaultCase);
             this.type = typeFlow.voidType;
             return this;
         }
@@ -1867,15 +1997,21 @@ module TypeScript {
             }
             context.walker.options.goChildren = false;
         }
+
+        public structuralEquals(ast: SwitchStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.caseList, ast.caseList) &&
+                   structuralEquals(this.val, ast.val);
+        }
     }
 
-    export class CaseStatement extends Statement {
+    export class CaseClause extends AST {
         public expr: AST = null;
         public body: ASTList;
         public colonSpan: ASTSpan = new ASTSpan();
 
         constructor() {
-            super(NodeType.Case);
+            super(NodeType.CaseClause);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1905,7 +2041,7 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
-
+        
         public typeCheck(typeFlow: TypeFlow) {
             this.expr = typeFlow.typeCheck(this.expr);
             typeFlow.typeCheck(this.body);
@@ -1936,11 +2072,23 @@ module TypeScript {
             context.noContinuation = false;
             context.walker.options.goChildren = false;
         }
+
+        public structuralEquals(ast: CaseClause): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.expr, ast.expr) &&
+                   structuralEquals(this.body, ast.body);
+        }
     }
 
     export class TypeParameter extends AST {
         constructor(public name: Identifier, public constraint: AST) {
             super(NodeType.TypeParameter);
+        }
+
+        public structuralEquals(ast: TypeParameter): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.name, ast.name) &&
+                   structuralEquals(this.constraint, ast.constraint);
         }
     }
 
@@ -1951,6 +2099,12 @@ module TypeScript {
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitJavascript(this.name, TokenID.Identifier, false);
+        }
+
+        public structuralEquals(ast: GenericType): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.name, ast.name) &&
+                   structuralEquals(this.typeArguments, ast.typeArguments);
         }
     }
 
@@ -1985,6 +2139,12 @@ module TypeScript {
             typeFlow.inTypeRefTypeCheck = prevInTCTR;
             return this;
         }
+
+        public structuralEquals(ast: TypeReference): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.term, ast.term) &&
+                   this.arrayCount === ast.arrayCount;
+        }
     }
 
     export class TryStatement extends Statement {
@@ -2006,6 +2166,13 @@ module TypeScript {
 
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        }
+
+        public structuralEquals(ast: TryStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.tryBody, ast.tryBody) &&
+                   structuralEquals(this.catchClause, ast.catchClause) &&
+                   structuralEquals(this.finallyBody, ast.finallyBody);
         }
     }
 
@@ -2085,37 +2252,13 @@ module TypeScript {
             typeFlow.scope = prevScope;
             return this;
         }
-    }
 
-    /*
-    export class Finally extends Statement {
-        constructor(public body: AST) {
-            super(NodeType.Finally);
-        }
-
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
-            emitter.recordSourceMappingStart(this);
-            emitter.writeToOutput(" finally");
-            emitter.emitJavascript(this.body, TokenID.Finally, false);
-            emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
-        }
-
-        public addToControlFlow(context: ControlFlowContext) {
-            if (this.body) {
-                context.walk(this.body, this);
-            }
-            context.walker.options.goChildren = false;
-            context.noContinuation = false;
-        }
-
-        public typeCheck(typeFlow: TypeFlow) {
-            this.body = typeFlow.typeCheck(this.body);
-            return this;
+        public structuralEquals(ast: CatchClause): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.param, ast.param) &&
+                   structuralEquals(this.body, ast.body);
         }
     }
-*/
 
     export class Comment extends AST {
         public text: string[] = null;
@@ -2127,6 +2270,14 @@ module TypeScript {
                     public isBlockComment: bool,
                     public endsLine) {
             super(NodeType.Comment);
+        }
+
+        public structuralEquals(ast: Comment): bool {
+            return super.structuralEquals(ast) &&
+                   this.minLine === ast.minLine &&
+                   this.content === ast.content &&
+                   this.isBlockComment === ast.isBlockComment &&
+                   this.endsLine === ast.endsLine;
         }
 
         public getText(): string[] {

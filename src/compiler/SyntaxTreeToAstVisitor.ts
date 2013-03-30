@@ -2369,11 +2369,11 @@ module TypeScript {
             return result;
         }
 
-        private visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseStatement {
+        private visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseClause {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: CaseStatement = this.getAST(node);
+            var result: CaseClause = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2383,7 +2383,7 @@ module TypeScript {
                 this.movePast(node.colonToken);
                 var statements = this.visitSyntaxList(node.statements);
 
-                result = new CaseStatement();
+                result = new CaseClause();
 
                 result.expr = expression;
                 result.body = statements;
@@ -2394,11 +2394,11 @@ module TypeScript {
             return result;
         }
 
-        private visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): CaseStatement {
+        private visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): CaseClause {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: CaseStatement = this.getAST(node);
+            var result: CaseClause = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2407,7 +2407,7 @@ module TypeScript {
                 this.movePast(node.colonToken);
                 var statements = this.visitSyntaxList(node.statements);
 
-                result = new CaseStatement();
+                result = new CaseClause();
                 result.body = statements;
             }
 
