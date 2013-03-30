@@ -151,9 +151,10 @@ class BatchCompiler {
             localizedDiagnosticMessages = null;
         }
 
+        var nullWriter: ITextWriter = { Write: (a) => { }, WriteLine: (a) => { }, Close: () => { } };
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
         var compiler = new TypeScript.TypeScriptCompiler(
-            this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
+            nullWriter, logger, this.compilationSettings, localizedDiagnosticMessages);
 
         var anySyntacticErrors = false;
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
@@ -187,16 +188,20 @@ class BatchCompiler {
             return true;
         }
 
+        compiler.pullTypeCheck(true, true);
+        var fileNames = compiler.fileNameToSyntaxTree.getAllKeys();
+        for (var i = 0, n = fileNames.length; i < n; i++) {
+            var fileName = fileNames[i];
+            compiler.reportDiagnostics(compiler.getSemanticDiagnostics(fileName), this.errorReporter);
+        }
+
         var emitterIOHost = {
             createFile: (fileName: string, useUTF8?: bool) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
             directoryExists: this.ioHost.directoryExists,
             fileExists: this.ioHost.fileExists,
             resolvePath: this.ioHost.resolvePath
-        };
+        } ;
 
-        compiler.pullTypeCheck(true, true);
-        // Note: we continue even if there were type check warnings.
-        
         var mapInputToOutput = (inputFile: string, outputFile: string): void => {
             this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
         };
