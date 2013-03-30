@@ -112,9 +112,11 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5);
+        var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
 
         var totalIncrementalTime = 0;
-        var count = 1000;
+        var totalIncrementalASTTime = 0;
+        var count = 500;
         var timer = new TypeScript.Timer();
 
         for (var i = 0; i < count; i++) {
@@ -125,26 +127,34 @@ class Program {
                 new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength), text);
             
             timer.end();
-
             totalIncrementalTime += timer.time;
 
             TypeScript.Debug.assert(tree.structuralEquals(tree2));
+            
+            timer.start();
+            var ast2 = TypeScript.SyntaxTreeToAstVisitor.visit(tree2, fileName, new TypeScript.CompilationSettings());
+            timer.end();
+            totalIncrementalASTTime += timer.time;
 
-            //if (i % 100 === 0) {
-            //    var info = Program.reusedElements(tree.sourceUnit(), tree2.sourceUnit(), i);
-            //    Environment.standardOut.WriteLine("Total Elements : " + info.originalElements);
-            //    Environment.standardOut.WriteLine("Reused Elements: " + info.reusedElements);
-            //}
+            TypeScript.Debug.assert(ast.structuralEquals(ast2));
 
             tree = tree2;
+            ast = ast2;
         }
         
         var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
         var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
 
-        Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
-        Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
+        Environment.standardOut.WriteLine("Incremental     time: " + totalIncrementalTime);
+        Environment.standardOut.WriteLine("Incremental     rate: " + rateMBPerSecond + " MB/s");
+
+        rateBytesPerMillisecond = (contents.length * count) / totalIncrementalASTTime;
+        rateBytesPerSecond = rateBytesPerMillisecond * 1000;
+        rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
+
+        Environment.standardOut.WriteLine("Incremental AST time: " + totalIncrementalASTTime);
+        Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
     }
 
     private handleException(fileName: string, e: Error): void {

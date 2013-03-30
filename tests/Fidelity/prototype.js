@@ -24295,884 +24295,6 @@ var Environment = (function () {
 })();
 var TypeScript;
 (function (TypeScript) {
-    var SyntaxElementsCollector = (function (_super) {
-        __extends(SyntaxElementsCollector, _super);
-        function SyntaxElementsCollector() {
-            _super.apply(this, arguments);
-
-            this.elements = [];
-        }
-        SyntaxElementsCollector.prototype.visitNode = function (node) {
-            this.elements.push(node);
-            _super.prototype.visitNode.call(this, node);
-        };
-        SyntaxElementsCollector.prototype.visitToken = function (token) {
-            this.elements.push(token);
-        };
-        SyntaxElementsCollector.collectElements = function collectElements(node) {
-            var collector = new SyntaxElementsCollector();
-            node.accept(collector);
-            return collector.elements;
-        };
-        return SyntaxElementsCollector;
-    })(TypeScript.SyntaxWalker);
-    TypeScript.SyntaxElementsCollector = SyntaxElementsCollector;    
-    function withChange(text, start, length, newText) {
-        var contents = text.toString();
-        var newContents = contents.substr(0, start) + newText + contents.substring(start + length);
-        return {
-            text: TypeScript.TextFactory.createText(newContents),
-            textChangeRange: new TypeScript.TextChangeRange(new TypeScript.TextSpan(start, length), newText.length)
-        };
-    }
-    function withInsert(text, start, newText) {
-        return withChange(text, start, 0, newText);
-    }
-    function withDelete(text, start, length) {
-        return withChange(text, start, length, "");
-    }
-    function compareTrees(oldText, newText, textChangeRange, reusedElements) {
-        if (typeof reusedElements === "undefined") { reusedElements = -1; }
-        var oldTree = TypeScript.Parser.parse("", oldText, false, 1 /* EcmaScript5 */ );
-        var newTree = TypeScript.Parser.parse("", newText, false, 1 /* EcmaScript5 */ );
-        var incrementalNewTree = TypeScript.Parser.incrementalParse(oldTree, textChangeRange, newText);
-        TypeScript.Debug.assert(newTree.structuralEquals(incrementalNewTree));
-        TypeScript.Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
-        if (reusedElements !== -1) {
-            TypeScript.Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
-        }
-    }
-    var IncrementalParserTests = (function () {
-        function IncrementalParserTests() { }
-        IncrementalParserTests.runAllTests = function runAllTests() {
-            for(var name in IncrementalParserTests) {
-                if (IncrementalParserTests.hasOwnProperty(name) && TypeScript.StringUtilities.startsWith(name, "test")) {
-                    IncrementalParserTests[name]();
-                }
-            }
-        };
-        IncrementalParserTests.reusedElements = function reusedElements(oldNode, newNode) {
-            var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
-            var allNewElements = SyntaxElementsCollector.collectElements(newNode);
-            return TypeScript.ArrayUtilities.where(allOldElements, function (v) {
-                return TypeScript.ArrayUtilities.contains(allNewElements, v);
-            }).length;
-        };
-        IncrementalParserTests.testIncremental1 = function testIncremental1() {
-            var source = "class C {\r\n";
-            source += "    public foo1() { }\r\n";
-            source += "    public foo2() {\r\n";
-            source += "        return 1;\r\n";
-            source += "    }\r\n";
-            source += "    public foo3() { }\r\n";
-            source += "}";
-            var semicolonIndex = source.indexOf(";");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
-        };
-        IncrementalParserTests.testIncremental2 = function testIncremental2() {
-            var source = "class C {\r\n";
-            source += "    public foo1() { }\r\n";
-            source += "    public foo2() {\r\n";
-            source += "        return 1 + 1;\r\n";
-            source += "    }\r\n";
-            source += "    public foo3() { }\r\n";
-            source += "}";
-            var index = source.indexOf("+ 1");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, index, 3);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
-        };
-        IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
-            var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
-            var semicolonIndex = source.indexOf(";}");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
-        };
-        IncrementalParserTests.testIncrementalComment1 = function testIncrementalComment1() {
-            var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
-            var semicolonIndex = source.indexOf(";");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
-        };
-        IncrementalParserTests.testIncrementalComment2 = function testIncrementalComment2() {
-            var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, 0, "//");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
-        };
-        IncrementalParserTests.testIncrementalComment3 = function testIncrementalComment3() {
-            var source = "//class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, 0, 2);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
-        };
-        IncrementalParserTests.testIncrementalComment4 = function testIncrementalComment4() {
-            var source = "class C { public foo1() { /; } public foo2() { */ return 1; } public foo3() { } }";
-            var index = source.indexOf(";");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, index, "*");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
-        };
-        IncrementalParserTests.testParameter1 = function testParameter1() {
-            var source = "class C {\r\n";
-            source += "    public foo2(a, b, c, d) {\r\n";
-            source += "        return 1;\r\n";
-            source += "    }\r\n";
-            source += "}";
-            var semicolonIndex = source.indexOf(";");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
-        };
-        IncrementalParserTests.testTypeMember1 = function testTypeMember1() {
-            var source = "interface I { a: number; b: string; (c): d; new (e): f; g(): h }";
-            var index = source.indexOf(": string");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, index, "?");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
-        };
-        IncrementalParserTests.testEnumElement1 = function testEnumElement1() {
-            var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
-            var index = source.indexOf("<<");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withChange(oldText, index, 2, "+");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
-        };
-        IncrementalParserTests.testStrictMode1 = function testStrictMode1() {
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
-        };
-        IncrementalParserTests.testStrictMode2 = function testStrictMode2() {
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, 0, "'use strict';\r\n");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
-        };
-        IncrementalParserTests.testStrictMode3 = function testStrictMode3() {
-            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
-            var index = source.indexOf('f');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, 0, index);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
-        };
-        IncrementalParserTests.testStrictMode4 = function testStrictMode4() {
-            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
-            var index = source.indexOf('f');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, 0, index);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 12);
-        };
-        IncrementalParserTests.testIncremental5 = function testIncremental5() {
-            var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
-            var index = source.indexOf('b');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withChange(oldText, index, 6, "strict");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
-        };
-        IncrementalParserTests.testIncremental6 = function testIncremental6() {
-            var source = "'use strict';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
-            var index = source.indexOf('s');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withChange(oldText, index, 6, "blahhh");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
-        };
-        IncrementalParserTests.testDelete1 = function testDelete1() {
-            var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
-            var index = source.indexOf('f');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, 0, index);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 59);
-        };
-        IncrementalParserTests.testGenerics1 = function testGenerics1() {
-            var source = "var v = <T>(a);";
-            var index = source.indexOf(';');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, index, " => 1");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
-        };
-        IncrementalParserTests.testGenerics2 = function testGenerics2() {
-            var source = "var v = <T>(a) => 1;";
-            var index = source.indexOf(' =>');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, index, " => 1".length);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
-        };
-        IncrementalParserTests.testGenerics3 = function testGenerics3() {
-            var source = "var v = 1 >> = 2";
-            var index = source.indexOf('>> =');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, index + 2, 1);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
-        };
-        IncrementalParserTests.testGenerics4 = function testGenerics4() {
-            var source = "var v = 1 >>= 2";
-            var index = source.indexOf('>>=');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, index + 2, " ");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
-        };
-        IncrementalParserTests.testGenerics5 = function testGenerics5() {
-            var source = "var v = T>>(2)";
-            var index = source.indexOf('T');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, index, "Foo<Bar<");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
-        };
-        IncrementalParserTests.testGenerics6 = function testGenerics6() {
-            var source = "var v = Foo<Bar<T>>(2)";
-            var index = source.indexOf('Foo<Bar<');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, index, "Foo<Bar<".length);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
-        };
-        IncrementalParserTests.testGenerics7 = function testGenerics7() {
-            var source = "var v = T>>=2;";
-            var index = source.indexOf('=');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withChange(oldText, index, "= ".length, ": Foo<Bar<");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
-        };
-        IncrementalParserTests.testGenerics8 = function testGenerics8() {
-            var source = "var v : Foo<Bar<T>>=2;";
-            var index = source.indexOf(':');
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withChange(oldText, index, ": Foo<Bar<".length, "= ");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
-        };
-        IncrementalParserTests.testParenthesizedExpressionToLambda = function testParenthesizedExpressionToLambda() {
-            var source = "var v = (a, b) = c";
-            var index = source.indexOf("= c") + 1;
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, index, ">");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
-        };
-        IncrementalParserTests.testLambdaToParenthesizedExpression = function testLambdaToParenthesizedExpression() {
-            var source = "var v = (a, b) => c";
-            var index = source.indexOf(">");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, index, 1);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
-        };
-        IncrementalParserTests.testGenericToArithmetic = function testGenericToArithmetic() {
-            var source = "var v = new Dictionary<A, B>()";
-            var index = source.indexOf("()");
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withDelete(oldText, index, 2);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
-        };
-        IncrementalParserTests.testArithmeticToGeneric = function testArithmeticToGeneric() {
-            var source = "var v = new Dictionary<A, B>";
-            var index = source.length;
-            var oldText = TypeScript.TextFactory.createText(source);
-            var newTextAndChange = withInsert(oldText, index, "()");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
-        };
-        IncrementalParserTests.textComplexEdits1 = function textComplexEdits1() {
-            var source = "if (typeParameterSymbol.isResolved() || typeParameterSymbol.isResolving()) {\
-    return typeParameterSymbol;\
-}\
-else {\
-    return null;\
-}";
-            var index = source.indexOf("||");
-            var text1 = TypeScript.TextFactory.createText(source);
-            var textAndChange1 = withChange(text1, index, "|| typeParameterSymbol.isResolving()".length, "/*|| typeParameterSymbol.isResolving()*/");
-            var text2 = textAndChange1.text;
-            var start = text2.toString().indexOf("else");
-            var end = text2.toString().lastIndexOf("}") + 1;
-            var textAndChange2 = withDelete(text2, start, end - start);
-            var text3 = textAndChange2.text;
-            compareTrees(text1, text2, textAndChange1.textChangeRange, -1);
-            compareTrees(text2, text3, textAndChange2.textChangeRange, -1);
-            compareTrees(text1, text3, TypeScript.TextChangeRange.collapseChangesAcrossMultipleVersions([
-                textAndChange1.textChangeRange, 
-                textAndChange2.textChangeRange
-            ]), -1);
-        };
-        return IncrementalParserTests;
-    })();
-    TypeScript.IncrementalParserTests = IncrementalParserTests;    
-})(TypeScript || (TypeScript = {}));
-var Diff;
-(function (Diff) {
-    (function (SegmentType) {
-        SegmentType._map = [];
-        SegmentType._map[0] = "Unchanged";
-        SegmentType.Unchanged = 0;
-        SegmentType._map[1] = "Added";
-        SegmentType.Added = 1;
-        SegmentType._map[2] = "Removed";
-        SegmentType.Removed = 2;
-        SegmentType._map[3] = "MovedFrom";
-        SegmentType.MovedFrom = 3;
-        SegmentType._map[4] = "MovedTo";
-        SegmentType.MovedTo = 4;
-    })(Diff.SegmentType || (Diff.SegmentType = {}));
-    var SegmentType = Diff.SegmentType;
-    (function (UnicodeCategory) {
-        UnicodeCategory._map = [];
-        UnicodeCategory._map[0] = "SpaceSeparator";
-        UnicodeCategory.SpaceSeparator = 0;
-        UnicodeCategory._map[1] = "LowercaseLetter";
-        UnicodeCategory.LowercaseLetter = 1;
-    })(Diff.UnicodeCategory || (Diff.UnicodeCategory = {}));
-    var UnicodeCategory = Diff.UnicodeCategory;
-    var Segment = (function () {
-        function Segment(content, type) {
-            if (typeof content === "undefined") { content = ''; }
-            if (typeof type === "undefined") { type = 0 /* Unchanged */ ; }
-            this.content = content;
-            this.type = type;
-        }
-        return Segment;
-    })();
-    Diff.Segment = Segment;    
-    var Region = (function () {
-        function Region(index, length, type) {
-            this.index = index;
-            this.length = length;
-            this.type = type;
-        }
-        return Region;
-    })();
-    Diff.Region = Region;    
-    var Chunk = (function () {
-        function Chunk(content, delimiterContent) {
-            this.content = content;
-            this.delimiterContent = delimiterContent;
-            this.hashCode = "~!!" + content;
-            this.matchingIndex = -1;
-            this.innerDiff = null;
-        }
-        Chunk.prototype.mergedContent = function () {
-            return this.content + this.delimiterContent;
-        };
-        Chunk.prototype.equals = function (otherChunk) {
-            if (otherChunk === null) {
-                throw new Error("otherChunk is null");
-            }
-            if (this.hashCode != otherChunk.hashCode) {
-                return false;
-            }
-            return this.content === otherChunk.content;
-        };
-        Chunk.isDelimiter = function isDelimiter(c, delimiters) {
-            return delimiters.indexOf(c) >= 0;
-        };
-        Chunk.Split = function Split(content, delimiters) {
-            var set = [];
-            var currentIndex, currentLength;
-            var index = 0;
-            var length = content.length;
-            var delimiterCount = 0;
-            while(index < length) {
-                currentIndex = index;
-                currentLength = 0;
-                while(index < length && !Chunk.isDelimiter(content.substr(index, 1), delimiters)) {
-                    currentLength++;
-                    index++;
-                }
-                delimiterCount = 0;
-                while(index < length && Chunk.isDelimiter(content.substr(index, 1), delimiters)) {
-                    currentLength++;
-                    index++;
-                    delimiterCount++;
-                }
-                set.push(new Chunk(content.substr(currentIndex, currentLength - delimiterCount), content.substr(currentIndex + currentLength - delimiterCount, delimiterCount)));
-            }
-            return set;
-        };
-        Chunk.SplitSeparateDelimiters = function SplitSeparateDelimiters(content, delimiters) {
-            if (content === null || content.length === 0) {
-                return [];
-            }
-            var set = [];
-            var wantDelimiter = Chunk.isDelimiter(content[0], delimiters);
-            var currentIndex, currentLength;
-            var index = 0;
-            var length = content.length;
-            while(index < length) {
-                currentIndex = index;
-                currentLength = 0;
-                while(index < length && wantDelimiter === Chunk.isDelimiter(content[index], delimiters)) {
-                    currentLength++;
-                    index++;
-                }
-                wantDelimiter = !wantDelimiter;
-                set.push(new Chunk(content.substr(currentIndex, currentLength), ''));
-            }
-            return set;
-        };
-        Chunk.SplitInner = function SplitInner(content) {
-            return Chunk.SplitCategory(content);
-        };
-        Chunk.SplitCategory = function SplitCategory(content) {
-            if (content === null || content.length === 0) {
-                return [];
-            }
-            var set = [];
-            var categoryToMatch = Chunk.GetCategory(content[0]);
-            var currentIndex, currentLength;
-            var index = 0;
-            var length = content.length;
-            while(index < length) {
-                currentIndex = index;
-                currentLength = 1;
-                index++;
-                while(index < length && Chunk.CategoryMatches(Chunk.GetCategory(content[index]), categoryToMatch)) {
-                    currentLength++;
-                    index++;
-                }
-                if (index < length) {
-                    categoryToMatch = Chunk.GetCategory(content[index]);
-                }
-                set.push(new Chunk(content.substr(currentIndex, currentLength), ''));
-            }
-            return set;
-        };
-        Chunk.CategoryMatches = function CategoryMatches(left, right) {
-            if (left === 0 /* SpaceSeparator */  || right === 0 /* SpaceSeparator */ ) {
-                return false;
-            }
-            return left === right;
-        };
-        Chunk.GetCategory = function GetCategory(c) {
-            if (c === ' ' || c === '\r' || c === '\n' || c === '\t') {
-                return 0 /* SpaceSeparator */ ;
-            } else {
-                return 1 /* LowercaseLetter */ ;
-            }
-        };
-        Chunk.SplitEveryChar = function SplitEveryChar(content) {
-            var set = [];
-            for(var i = 0; i < content.length; ++i) {
-                set.push(new Chunk(content[i], ''));
-            }
-            return set;
-        };
-        Chunk.prototype.toString = function () {
-            return 'NYI?';
-        };
-        return Chunk;
-    })();
-    Diff.Chunk = Chunk;    
-    var UniquenessEntry = (function () {
-        function UniquenessEntry(index, content) {
-            this.index = index;
-            this.content = content;
-            this.MatchCount = 1;
-        }
-        UniquenessEntry.prototype.equals = function (other) {
-            return this.content === other.content;
-        };
-        UniquenessEntry.prototype.Increment = function () {
-            this.MatchCount++;
-        };
-        return UniquenessEntry;
-    })();    
-    var SegmentBuilder = (function () {
-        function SegmentBuilder() {
-            this.segmentSet = [];
-        }
-        SegmentBuilder.prototype.AddSegment = function (content, type) {
-            if (this.segmentExists && this.currentType === type) {
-                this.currentContent += content;
-            } else {
-                if (this.segmentExists) {
-                    var currentSegment = new Segment();
-                    currentSegment.content = this.currentContent;
-                    currentSegment.type = this.currentType;
-                    this.segmentSet.push(currentSegment);
-                }
-                this.segmentExists = true;
-                this.currentContent = content;
-                this.currentType = type;
-            }
-        };
-        SegmentBuilder.prototype.FlushSegment = function () {
-            if (this.segmentExists) {
-                this.segmentExists = false;
-                var currentSegment = new Segment();
-                currentSegment.content = this.currentContent;
-                currentSegment.type = this.currentType;
-                this.segmentSet.push(currentSegment);
-            }
-        };
-        SegmentBuilder.prototype.GetSegments = function () {
-            this.FlushSegment();
-            return this.segmentSet;
-        };
-        return SegmentBuilder;
-    })();    
-    var InnerDiff = (function () {
-        function InnerDiff(oldContent, newContent) {
-            var oldChunks = Chunk.SplitInner(oldContent);
-            var newChunks = Chunk.SplitInner(newContent);
-            StringDiff.Compare(oldChunks, 0, oldChunks.length - 1, newChunks, 0, newChunks.length - 1);
-            this.Segments = StringDiff.CompressArraysToSegments(oldChunks, newChunks);
-        }
-        return InnerDiff;
-    })();
-    Diff.InnerDiff = InnerDiff;    
-    var StringDiff = (function () {
-        function StringDiff(oldContent, newContent, includeUnchangedRegions) {
-            if (typeof includeUnchangedRegions === "undefined") { includeUnchangedRegions = true; }
-            this.includeUnchangedRegions = includeUnchangedRegions;
-            this.regionsGenerated = false;
-            this.segmentSet = [];
-            var delimitersToUse = '\n\r';
-            var useNestedAlgorithm = true;
-            var oldChunks = Chunk.Split(oldContent, delimitersToUse.split(''));
-            var newChunks = Chunk.Split(newContent, delimitersToUse.split(''));
-            StringDiff.Compare(oldChunks, 0, oldChunks.length - 1, newChunks, 0, newChunks.length - 1);
-            if (useNestedAlgorithm) {
-                StringDiff.PerformNestedDiff(oldChunks, newChunks);
-            }
-            this.segmentSet = StringDiff.CompressArraysToSegments(oldChunks, newChunks);
-            this.GenerateStringsAndRegions();
-        }
-        StringDiff.Compare = function Compare(oldContent, oldStart, oldEnd, newContent, newStart, newEnd) {
-            var oldTable = StringDiff.BuildUniquenessTable(oldContent, oldStart, oldEnd);
-            var newTable = StringDiff.BuildUniquenessTable(newContent, newStart, newEnd);
-            for(var i = newStart; i <= newEnd; ++i) {
-                var newEntries = (newTable[newContent[i].hashCode]);
-                var oldEntries = (oldTable[newContent[i].hashCode]);
-                if (newEntries && oldEntries) {
-                    var foundIt = false;
-                    for(var x = 0; x < newEntries.length; x++) {
-                        var newEntry = newEntries[x];
-                        for(var y = 0; y < oldEntries.length; y++) {
-                            var oldEntry = oldEntries[y];
-                            if (newEntry && oldEntry && newEntry.MatchCount === 1 && oldEntry.MatchCount === 1 && (newEntry.content.localeCompare(oldEntry.content) === 0)) {
-                                var oldIndex = oldEntry.index;
-                                newContent[i].matchingIndex = oldIndex;
-                                oldContent[oldIndex].matchingIndex = i;
-                                foundIt = true;
-                                break;
-                            }
-                        }
-                        if (foundIt) {
-                            break;
-                        }
-                    }
-                }
-            }
-            if (oldStart <= oldEnd && newStart <= newEnd) {
-                StringDiff.TryMatch(oldContent, oldStart, newContent, newStart);
-                StringDiff.TryMatch(oldContent, oldEnd, newContent, newEnd);
-            }
-            for(i = newStart; i < newEnd; ++i) {
-                var j = newContent[i].matchingIndex;
-                if (j != -1 && j < oldEnd && j >= oldStart) {
-                    if (oldContent[j].matchingIndex === i) {
-                        StringDiff.TryMatch(oldContent, j + 1, newContent, i + 1);
-                    }
-                }
-            }
-            for(i = newEnd; i > newStart; --i) {
-                j = newContent[i].matchingIndex;
-                if (j != -1 && j <= oldEnd && j > oldStart) {
-                    if (oldContent[j].matchingIndex === i) {
-                        StringDiff.TryMatch(oldContent, j - 1, newContent, i - 1);
-                    }
-                }
-            }
-        };
-        StringDiff.TryMatch = function TryMatch(oldContent, oldIndex, newContent, newIndex) {
-            var newChunk = newContent[newIndex];
-            var oldChunk = oldContent[oldIndex];
-            if (newChunk.matchingIndex === -1 && oldChunk.matchingIndex === -1) {
-                if (newChunk.content === oldChunk.content) {
-                    newChunk.matchingIndex = oldIndex;
-                    oldChunk.matchingIndex = newIndex;
-                }
-            }
-        };
-        StringDiff.BuildUniquenessTable = function BuildUniquenessTable(content, start, end) {
-            var table = {};
-            for(var i = start; i <= end; ++i) {
-                var entries = table[content[i].hashCode];
-                if (!entries) {
-                    entries = [];
-                }
-                var hasMatch = false;
-                for(var k = 0; k < entries.length; k++) {
-                    if (entries[k].content.localeCompare(content[i].content) === 0) {
-                        hasMatch = true;
-                        entries[k].Increment();
-                        break;
-                    }
-                }
-                if (!hasMatch) {
-                    var newEntry = new UniquenessEntry(i, content[i].content);
-                    entries.push(newEntry);
-                }
-                table[content[i].hashCode] = entries;
-            }
-            return table;
-        };
-        StringDiff.PerformNestedDiff = function PerformNestedDiff(oldContent, newContent) {
-            if (oldContent.length > 0 && newContent.length > 0) {
-                StringDiff.TryInnerMatch(oldContent, 0, newContent, 0);
-                StringDiff.TryInnerMatch(oldContent, oldContent.length - 1, newContent, newContent.length - 1);
-            }
-            for(var i = 0; i < newContent.length - 1; ++i) {
-                var j = newContent[i].matchingIndex;
-                if (j != -1 && j < oldContent.length - 1 && j >= 0) {
-                    if (oldContent[j].matchingIndex === i) {
-                        StringDiff.TryInnerMatch(oldContent, j + 1, newContent, i + 1);
-                    }
-                }
-            }
-            for(i = newContent.length - 1; i > 0; --i) {
-                j = newContent[i].matchingIndex;
-                if (j != -1 && j < oldContent.length && j > 0) {
-                    if (oldContent[j].matchingIndex === i) {
-                        StringDiff.TryInnerMatch(oldContent, j - 1, newContent, i - i);
-                    }
-                }
-            }
-        };
-        StringDiff.TryInnerMatch = function TryInnerMatch(oldContent, oldIndex, newContent, newIndex) {
-            var newChunk = newContent[newIndex];
-            var oldChunk = oldContent[oldIndex];
-            if (newChunk.matchingIndex === -1 && oldChunk.matchingIndex === -1) {
-                var difference = new InnerDiff(oldContent[oldIndex].content, newContent[newIndex].content);
-                if (StringDiff.AreSimilarEnough(difference)) {
-                    newChunk.innerDiff = difference;
-                    oldChunk.innerDiff = difference;
-                    newChunk.matchingIndex = oldIndex;
-                    oldChunk.matchingIndex = newIndex;
-                }
-            }
-        };
-        StringDiff.AreSimilarEnough = function AreSimilarEnough(difference) {
-            var identicalChars = 0;
-            var differentChars = 0;
-            var addedCount = 0;
-            var removedCount = 0;
-            var movedCount = 0;
-            for(var i = 0; i < difference.Segments.length; i++) {
-                var s = difference.Segments[i];
-                switch(s.type) {
-                    case 1 /* Added */ :
-                        addedCount++;
-                        break;
-                    case 2 /* Removed */ :
-                        removedCount++;
-                        break;
-                    case 3 /* MovedFrom */ :
-                        movedCount++;
-                        break;
-                    case 4 /* MovedTo */ :
-                        movedCount++;
-                        break;
-                }
-                if (s.content.trim().length === 0) {
-                    continue;
-                }
-                if (s.type === 0 /* Unchanged */ ) {
-                    identicalChars += s.content.length * 2;
-                } else {
-                    differentChars += s.content.length;
-                }
-            }
-            var totalChars = identicalChars + differentChars;
-            if (totalChars === 0) {
-                return true;
-            }
-            if (removedCount === 0 && movedCount === 0) {
-                return true;
-            }
-            if (addedCount === 0 && movedCount === 0) {
-                return true;
-            }
-            return (identicalChars / totalChars) > 0.50;
-        };
-        StringDiff.CompressArraysToSegments = function CompressArraysToSegments(oldContent, newContent) {
-            var builder = new SegmentBuilder();
-            var oldIndex = 0;
-            var newIndex = 0;
-            while(oldIndex < oldContent.length && newIndex < newContent.length) {
-                if (oldContent[oldIndex].matchingIndex === newIndex) {
-                    if (newContent[newIndex].innerDiff === null) {
-                        builder.AddSegment(newContent[newIndex].mergedContent(), 0 /* Unchanged */ );
-                    } else {
-                        for(var i = 0; i < newContent[newIndex].innerDiff.Segments.length; i++) {
-                            var s = newContent[newIndex].innerDiff.Segments[i];
-                            builder.AddSegment(s.content, s.type);
-                        }
-                    }
-                    oldIndex++;
-                    newIndex++;
-                } else if (oldContent[oldIndex].matchingIndex === -1) {
-                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 2 /* Removed */ );
-                    oldIndex++;
-                } else if (newContent[newIndex].matchingIndex === -1) {
-                    builder.AddSegment(newContent[newIndex].mergedContent(), 1 /* Added */ );
-                    newIndex++;
-                } else if (oldContent[oldIndex].matchingIndex < newIndex) {
-                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 3 /* MovedFrom */ );
-                    oldIndex++;
-                } else if (newContent[newIndex].matchingIndex < oldIndex) {
-                    builder.AddSegment(newContent[newIndex].mergedContent(), 4 /* MovedTo */ );
-                    newIndex++;
-                } else {
-                    var linesOnLeftBeforeUnchanged = newContent[newIndex].matchingIndex - oldIndex;
-                    var linesOnRightBeforeUnchanged = oldContent[oldIndex].matchingIndex - newIndex;
-                    if (linesOnLeftBeforeUnchanged < linesOnRightBeforeUnchanged) {
-                        builder.AddSegment(oldContent[oldIndex].mergedContent(), 3 /* MovedFrom */ );
-                        oldIndex++;
-                    } else {
-                        builder.AddSegment(newContent[newIndex].mergedContent(), 4 /* MovedTo */ );
-                        newIndex++;
-                    }
-                }
-            }
-            while(oldIndex < oldContent.length) {
-                if (oldContent[oldIndex].matchingIndex === -1) {
-                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 2 /* Removed */ );
-                } else {
-                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 3 /* MovedFrom */ );
-                }
-                oldIndex++;
-            }
-            while(newIndex < newContent.length) {
-                if (newContent[newIndex].matchingIndex === -1) {
-                    builder.AddSegment(newContent[newIndex].mergedContent(), 1 /* Added */ );
-                } else {
-                    builder.AddSegment(newContent[newIndex].mergedContent(), 4 /* MovedTo */ );
-                }
-                newIndex++;
-            }
-            return builder.GetSegments();
-        };
-        StringDiff.prototype.GenerateStringsAndRegions = function () {
-            if (this.regionsGenerated === false) {
-                this.regionsGenerated = true;
-                var MergedHtml = '';
-                var MergedText = '';
-                var OldText = '';
-                var NewText = '';
-                var Regions = [];
-                MergedHtml += StringDiff.htmlPrefix();
-                for(var i = 0; i < this.segmentSet.length; i++) {
-                    var segment = this.segmentSet[i];
-                    var newRegion = new Region(MergedText.length, segment.content.length, segment.type);
-                    Regions.push(newRegion);
-                    MergedText += segment.content;
-                    switch(segment.type) {
-                        case 1 /* Added */ :
-                            OldText += (StringDiff.whitespaceEquivalent(segment.content));
-                            NewText += (segment.content);
-                            MergedHtml += (StringDiff.addedStringHtml(segment.content));
-                            break;
-                        case 4 /* MovedTo */ :
-                            OldText += (StringDiff.whitespaceEquivalent(segment.content));
-                            NewText += (segment.content);
-                            MergedHtml += (StringDiff.movedToStringHtml(segment.content));
-                            break;
-                        case 2 /* Removed */ :
-                            OldText += (segment.content);
-                            NewText += (StringDiff.whitespaceEquivalent(segment.content));
-                            MergedHtml += (StringDiff.removedStringHtml(segment.content));
-                            break;
-                        case 3 /* MovedFrom */ :
-                            OldText += (segment.content);
-                            NewText += (StringDiff.whitespaceEquivalent(segment.content));
-                            MergedHtml += (StringDiff.movedFromStringHtml(segment.content));
-                            break;
-                        default:
-                            OldText += (segment.content);
-                            NewText += (segment.content);
-                            if (this.includeUnchangedRegions) {
-                                MergedHtml += (StringDiff.unchangedStringHtml(segment.content));
-                            }
-                            break;
-                    }
-                }
-                MergedHtml += StringDiff.htmlSuffix();
-                this.mergedHtml = MergedHtml;
-                this.mergedOutput = MergedText;
-                this.oldOutput = OldText;
-                this.newOutput = NewText;
-                this.regions = Regions;
-            }
-        };
-        StringDiff.htmlPrefix = function htmlPrefix() {
-            var content = '';
-            return content;
-        };
-        StringDiff.htmlSuffix = function htmlSuffix() {
-            return '';
-        };
-        StringDiff.addedStringHtml = function addedStringHtml(text) {
-            return "<span class=\"new\">" + StringDiff.fullHtmlEncode(text) + "</span>";
-        };
-        StringDiff.removedStringHtml = function removedStringHtml(text) {
-            return "<span class=\"old\">" + StringDiff.fullHtmlEncode(text) + "</span>";
-        };
-        StringDiff.movedFromStringHtml = function movedFromStringHtml(text) {
-            return "<span class=\"from\">" + StringDiff.fullHtmlEncode(text) + "</span>";
-        };
-        StringDiff.movedToStringHtml = function movedToStringHtml(text) {
-            return "<span class=\"to\">" + StringDiff.fullHtmlEncode(text) + "</span>";
-        };
-        StringDiff.unchangedStringHtml = function unchangedStringHtml(text) {
-            return StringDiff.fullHtmlEncode(text);
-        };
-        StringDiff.fullHtmlEncode = function fullHtmlEncode(text) {
-            return text.replace('<', '&lt;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
-        };
-        StringDiff.whitespaceEquivalent = function whitespaceEquivalent(input) {
-            return input.replace(/./g, ' ');
-        };
-        return StringDiff;
-    })();
-    Diff.StringDiff = StringDiff;    
-    var HtmlBaselineReport = (function () {
-        function HtmlBaselineReport(reportFileName) {
-            this.reportFileName = reportFileName;
-            this.reportContent = null;
-            var htmlTrailer = '</body></html>';
-            if (Environment.fileExists(this.reportFileName)) {
-                this.reportContent = Environment.readFile(this.reportFileName);
-            } else {
-                this.reportContent = HtmlBaselineReport.htmlLeader;
-            }
-        }
-        HtmlBaselineReport.htmlTrailer = '</body></html>';
-        HtmlBaselineReport.htmlLeader = '<html><head><title>Baseline Report</title>' + '\r\n' + ("<style>") + '\r\n' + (".code { font: 9pt 'Courier New'; }") + '\r\n' + (".old { background-color: #EE1111; }") + '\r\n' + (".new { background-color: #FFFF11; }") + '\r\n' + (".from { background-color: #EE1111; color: #1111EE; }") + '\r\n' + (".to { background-color: #EEEE11; color: #1111EE; }") + '\r\n' + ("h2 { margin-bottom: 0px; }") + '\r\n' + ("h2 { padding-bottom: 0px; }") + '\r\n' + ("h4 { font-weight: normal; }") + '\r\n' + ("</style>");
-        HtmlBaselineReport.prototype.reset = function () {
-            if (Environment.fileExists(this.reportFileName)) {
-                Environment.deleteFile(this.reportFileName);
-            }
-            this.reportContent = HtmlBaselineReport.htmlLeader;
-        };
-        HtmlBaselineReport.prototype.addDifference = function (description, expectedFileName, actualFileName, expected, actual, includeUnchangedRegions) {
-            var diff = new Diff.StringDiff(expected, actual, includeUnchangedRegions);
-            var header = "";
-            if (description !== "") {
-                header = '<h2>' + description + '</h2>';
-            }
-            header += '<h4>Left file: ' + expectedFileName + '; Right file: ' + actualFileName + '</h4>';
-            this.reportContent = this.reportContent.replace(HtmlBaselineReport.htmlTrailer, '');
-            this.reportContent += header + '<div class="code">' + diff.mergedHtml + '</div>' + '<hr>';
-            this.reportContent += HtmlBaselineReport.htmlTrailer;
-            Environment.writeFile(this.reportFileName, this.reportContent);
-        };
-        return HtmlBaselineReport;
-    })();
-    Diff.HtmlBaselineReport = HtmlBaselineReport;    
-})(Diff || (Diff = {}));
-var TypeScript;
-(function (TypeScript) {
     (function (CompilerDiagnostics) {
         CompilerDiagnostics.debug = false;
         CompilerDiagnostics.diagnosticWriter = null;
@@ -25341,7 +24463,7 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     function hasFlag(val, flag) {
-        return (val & flag) != 0;
+        return (val & flag) !== 0;
     }
     TypeScript.hasFlag = hasFlag;
     (function (ASTFlags) {
@@ -25350,15 +24472,10 @@ var TypeScript;
         ASTFlags.ExplicitSemicolon = 1;
         ASTFlags.AutomaticSemicolon = 1 << 1;
         ASTFlags.Writeable = 1 << 2;
-        ASTFlags.Error = 1 << 3;
-        ASTFlags.DotLHSPartial = 1 << 4;
-        ASTFlags.DotLHS = 1 << 5;
         ASTFlags.IsStatement = 1 << 6;
         ASTFlags.StrictMode = 1 << 7;
-        ASTFlags.PossibleOptionalParameter = 1 << 8;
         ASTFlags.ClassBaseConstructorCall = 1 << 9;
         ASTFlags.OptionalName = 1 << 10;
-        ASTFlags.SkipNextRParen = 1 << 11;
         ASTFlags.TypeReference = 1 << 12;
         ASTFlags.EnumInitializer = 1 << 13;
     })(TypeScript.ASTFlags || (TypeScript.ASTFlags = {}));
@@ -25657,8 +24774,8 @@ var TypeScript;
         NodeType.IncPost = 68;
         NodeType._map[69] = "DecPost";
         NodeType.DecPost = 69;
-        NodeType._map[70] = "TypeAssertion";
-        NodeType.TypeAssertion = 70;
+        NodeType._map[70] = "CastExpression";
+        NodeType.CastExpression = 70;
         NodeType._map[71] = "FuncDecl";
         NodeType.FuncDecl = 71;
         NodeType._map[72] = "Member";
@@ -25667,30 +24784,30 @@ var TypeScript;
         NodeType.VarDecl = 73;
         NodeType._map[74] = "ArgDecl";
         NodeType.ArgDecl = 74;
-        NodeType._map[75] = "Return";
-        NodeType.Return = 75;
-        NodeType._map[76] = "Break";
-        NodeType.Break = 76;
-        NodeType._map[77] = "Continue";
-        NodeType.Continue = 77;
-        NodeType._map[78] = "Throw";
-        NodeType.Throw = 78;
-        NodeType._map[79] = "For";
-        NodeType.For = 79;
-        NodeType._map[80] = "ForIn";
-        NodeType.ForIn = 80;
-        NodeType._map[81] = "If";
-        NodeType.If = 81;
-        NodeType._map[82] = "While";
-        NodeType.While = 82;
-        NodeType._map[83] = "DoWhile";
-        NodeType.DoWhile = 83;
+        NodeType._map[75] = "ReturnStatement";
+        NodeType.ReturnStatement = 75;
+        NodeType._map[76] = "BreakStatement";
+        NodeType.BreakStatement = 76;
+        NodeType._map[77] = "ContinueStatement";
+        NodeType.ContinueStatement = 77;
+        NodeType._map[78] = "ThrowStatement";
+        NodeType.ThrowStatement = 78;
+        NodeType._map[79] = "ForStatement";
+        NodeType.ForStatement = 79;
+        NodeType._map[80] = "ForInStatement";
+        NodeType.ForInStatement = 80;
+        NodeType._map[81] = "IfStatement";
+        NodeType.IfStatement = 81;
+        NodeType._map[82] = "WhileStatement";
+        NodeType.WhileStatement = 82;
+        NodeType._map[83] = "DoStatement";
+        NodeType.DoStatement = 83;
         NodeType._map[84] = "Block";
         NodeType.Block = 84;
-        NodeType._map[85] = "Case";
-        NodeType.Case = 85;
-        NodeType._map[86] = "Switch";
-        NodeType.Switch = 86;
+        NodeType._map[85] = "CaseClause";
+        NodeType.CaseClause = 85;
+        NodeType._map[86] = "SwitchStatement";
+        NodeType.SwitchStatement = 86;
         NodeType._map[87] = "TryStatement";
         NodeType.TryStatement = 87;
         NodeType._map[88] = "CatchClause";
@@ -25709,8 +24826,8 @@ var TypeScript;
         NodeType.ImportDeclaration = 94;
         NodeType._map[95] = "ExportAssignment";
         NodeType.ExportAssignment = 95;
-        NodeType._map[96] = "With";
-        NodeType.With = 96;
+        NodeType._map[96] = "WithStatement";
+        NodeType.WithStatement = 96;
         NodeType._map[97] = "LabeledStatement";
         NodeType.LabeledStatement = 97;
         NodeType._map[98] = "EndCode";
@@ -26072,23 +25189,23 @@ var TypeScript;
             this.childrenWalkers[67 /* DecPre */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[68 /* IncPost */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[69 /* DecPost */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[70 /* TypeAssertion */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[70 /* CastExpression */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[71 /* FuncDecl */ ] = ChildrenWalkers.walkFuncDeclChildren;
             this.childrenWalkers[72 /* Member */ ] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[73 /* VarDecl */ ] = ChildrenWalkers.walkBoundDeclChildren;
             this.childrenWalkers[74 /* ArgDecl */ ] = ChildrenWalkers.walkBoundDeclChildren;
-            this.childrenWalkers[75 /* Return */ ] = ChildrenWalkers.walkReturnStatementChildren;
-            this.childrenWalkers[76 /* Break */ ] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[77 /* Continue */ ] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[78 /* Throw */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[79 /* For */ ] = ChildrenWalkers.walkForStatementChildren;
-            this.childrenWalkers[80 /* ForIn */ ] = ChildrenWalkers.walkForInStatementChildren;
-            this.childrenWalkers[81 /* If */ ] = ChildrenWalkers.walkIfStatementChildren;
-            this.childrenWalkers[82 /* While */ ] = ChildrenWalkers.walkWhileStatementChildren;
-            this.childrenWalkers[83 /* DoWhile */ ] = ChildrenWalkers.walkDoWhileStatementChildren;
+            this.childrenWalkers[75 /* ReturnStatement */ ] = ChildrenWalkers.walkReturnStatementChildren;
+            this.childrenWalkers[76 /* BreakStatement */ ] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[77 /* ContinueStatement */ ] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[78 /* ThrowStatement */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[79 /* ForStatement */ ] = ChildrenWalkers.walkForStatementChildren;
+            this.childrenWalkers[80 /* ForInStatement */ ] = ChildrenWalkers.walkForInStatementChildren;
+            this.childrenWalkers[81 /* IfStatement */ ] = ChildrenWalkers.walkIfStatementChildren;
+            this.childrenWalkers[82 /* WhileStatement */ ] = ChildrenWalkers.walkWhileStatementChildren;
+            this.childrenWalkers[83 /* DoStatement */ ] = ChildrenWalkers.walkDoWhileStatementChildren;
             this.childrenWalkers[84 /* Block */ ] = ChildrenWalkers.walkBlockChildren;
-            this.childrenWalkers[85 /* Case */ ] = ChildrenWalkers.walkCaseStatementChildren;
-            this.childrenWalkers[86 /* Switch */ ] = ChildrenWalkers.walkSwitchStatementChildren;
+            this.childrenWalkers[85 /* CaseClause */ ] = ChildrenWalkers.walkCaseClauseChildren;
+            this.childrenWalkers[86 /* SwitchStatement */ ] = ChildrenWalkers.walkSwitchStatementChildren;
             this.childrenWalkers[87 /* TryStatement */ ] = ChildrenWalkers.walkTryStatementChildren;
             this.childrenWalkers[88 /* CatchClause */ ] = ChildrenWalkers.walkCatchClauseChildren;
             this.childrenWalkers[89 /* List */ ] = ChildrenWalkers.walkListChildren;
@@ -26098,7 +25215,7 @@ var TypeScript;
             this.childrenWalkers[93 /* ModuleDeclaration */ ] = ChildrenWalkers.walkModuleDeclChildren;
             this.childrenWalkers[94 /* ImportDeclaration */ ] = ChildrenWalkers.walkImportDeclChildren;
             this.childrenWalkers[95 /* ExportAssignment */ ] = ChildrenWalkers.walkExportAssignmentChildren;
-            this.childrenWalkers[96 /* With */ ] = ChildrenWalkers.walkWithStatementChildren;
+            this.childrenWalkers[96 /* WithStatement */ ] = ChildrenWalkers.walkWithStatementChildren;
             this.childrenWalkers[97 /* LabeledStatement */ ] = ChildrenWalkers.walkLabeledStatementChildren;
             this.childrenWalkers[98 /* EndCode */ ] = ChildrenWalkers.walkNone;
             this.childrenWalkers[99 /* Comment */ ] = ChildrenWalkers.walkNone;
@@ -26282,7 +25399,7 @@ var TypeScript;
             }
         }
         ChildrenWalkers.walkBlockChildren = walkBlockChildren;
-        function walkCaseStatementChildren(preAst, parent, walker) {
+        function walkCaseClauseChildren(preAst, parent, walker) {
             if (preAst.expr) {
                 preAst.expr = walker.walk(preAst.expr, preAst);
             }
@@ -26290,7 +25407,7 @@ var TypeScript;
                 preAst.body = walker.walk(preAst.body, preAst);
             }
         }
-        ChildrenWalkers.walkCaseStatementChildren = walkCaseStatementChildren;
+        ChildrenWalkers.walkCaseClauseChildren = walkCaseClauseChildren;
         function walkSwitchStatementChildren(preAst, parent, walker) {
             if (preAst.val) {
                 preAst.val = walker.walk(preAst.val, preAst);
@@ -26570,7 +25687,7 @@ var TypeScript;
             return this.count() >= 2 && this.asts[this.top - 1].nodeType === 90 /* Script */  && (this.asts[this.top - 1]).bod === this.asts[this.top - 0];
         };
         AstPath.prototype.isBodyOfSwitch = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 86 /* Switch */  && (this.asts[this.top - 1]).caseList === this.asts[this.top - 0];
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 86 /* SwitchStatement */  && (this.asts[this.top - 1]).caseList === this.asts[this.top - 0];
         };
         AstPath.prototype.isBodyOfModule = function () {
             return this.count() >= 2 && this.asts[this.top - 1].nodeType === 93 /* ModuleDeclaration */  && (this.asts[this.top - 1]).members === this.asts[this.top - 0];
@@ -26588,28 +25705,25 @@ var TypeScript;
             return this.count() >= 2 && this.asts[this.top - 1].nodeType === 84 /* Block */  && (this.asts[this.top - 1]).statements === this.asts[this.top - 0];
         };
         AstPath.prototype.isBodyOfFor = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 79 /* For */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        };
-        AstPath.prototype.isBodyOfCase = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 85 /* Case */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 79 /* ForStatement */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
         };
         AstPath.prototype.isBodyOfDoWhile = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 83 /* DoWhile */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 83 /* DoStatement */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
         };
         AstPath.prototype.isBodyOfWhile = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 82 /* While */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 82 /* WhileStatement */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
         };
         AstPath.prototype.isBodyOfForIn = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 80 /* ForIn */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 80 /* ForInStatement */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
         };
         AstPath.prototype.isBodyOfWith = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 96 /* With */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 96 /* WithStatement */  && (this.asts[this.top - 1]).body === this.asts[this.top - 0];
         };
         AstPath.prototype.isCaseOfSwitch = function () {
-            return this.count() >= 3 && this.asts[this.top - 2].nodeType === 86 /* Switch */  && this.asts[this.top - 1].nodeType === 89 /* List */  && (this.asts[this.top - 2]).caseList === this.asts[this.top - 1];
+            return this.count() >= 3 && this.asts[this.top - 2].nodeType === 86 /* SwitchStatement */  && this.asts[this.top - 1].nodeType === 89 /* List */  && (this.asts[this.top - 2]).caseList === this.asts[this.top - 1];
         };
         AstPath.prototype.isDefaultCaseOfSwitch = function () {
-            return this.count() >= 3 && this.asts[this.top - 2].nodeType === 86 /* Switch */  && this.asts[this.top - 1].nodeType === 89 /* List */  && (this.asts[this.top - 2]).caseList === this.asts[this.top - 1] && (this.asts[this.top - 2]).defaultCase === this.asts[this.top - 0];
+            return this.count() >= 3 && this.asts[this.top - 2].nodeType === 86 /* SwitchStatement */  && this.asts[this.top - 1].nodeType === 89 /* List */  && (this.asts[this.top - 2]).caseList === this.asts[this.top - 1] && (this.asts[this.top - 2]).defaultCase === this.asts[this.top - 0];
         };
         AstPath.prototype.isListOfObjectLit = function () {
             return this.count() >= 2 && this.asts[this.top - 1].nodeType === 11 /* ObjectLit */  && this.asts[this.top - 0].nodeType === 89 /* List */  && (this.asts[this.top - 1]).operand === this.asts[this.top - 0];
@@ -26639,13 +25753,10 @@ var TypeScript;
             return this.count() >= 2 && this.asts[this.top - 1].nodeType === 89 /* List */ ;
         };
         AstPath.prototype.isThenOfIf = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 81 /* If */  && (this.asts[this.top - 1]).thenBod === this.asts[this.top - 0];
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 81 /* IfStatement */  && (this.asts[this.top - 1]).thenBod === this.asts[this.top - 0];
         };
         AstPath.prototype.isElseOfIf = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 81 /* If */  && (this.asts[this.top - 1]).elseBod === this.asts[this.top - 0];
-        };
-        AstPath.prototype.isBodyOfDefaultCase = function () {
-            return this.isBodyOfCase();
+            return this.count() >= 2 && this.asts[this.top - 1].nodeType === 81 /* IfStatement */  && (this.asts[this.top - 1]).elseBod === this.asts[this.top - 0];
         };
         AstPath.prototype.isSingleStatementList = function () {
             return this.count() >= 1 && this.asts[this.top].nodeType === 89 /* List */  && (this.asts[this.top]).members.length === 1;
@@ -28741,7 +27852,6 @@ var TypeScript;
         };
         ErrorReporter.prototype.setError = function (ast) {
             if (ast) {
-                ast.flags |= 8 /* Error */ ;
                 if (this.locationInfo.lineMap) {
                     this.locationInfo.lineMap.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
                     if (this.lineCol.line >= 0) {
@@ -32122,7 +31232,6 @@ var TypeScript;
                     outerFnc.type.members = ((container).type.memberScope).valueMembers;
                 }
                 funcScope = context.scopeChain.fnc.type.memberScope;
-                outerFnc.innerStaticFuncs[outerFnc.innerStaticFuncs.length] = funcDecl;
             } else {
                 funcScope = context.scopeChain.scope;
             }
@@ -32154,7 +31263,6 @@ var TypeScript;
         var funcStaticMembers = new TypeScript.ScopedMembers(new TypeScript.DualStringHashTable(funcStaticTable, new TypeScript.StringHashTable()));
         var ambientFuncStaticTable = new TypeScript.StringHashTable();
         var ambientFuncStaticMembers = new TypeScript.ScopedMembers(new TypeScript.DualStringHashTable(ambientFuncStaticTable, new TypeScript.StringHashTable()));
-        funcDecl.fileName = context.typeFlow.checker.locationInfo.fileName;
         var locals = new TypeScript.SymbolScopeBuilder(funcMembers, ambientFuncMembers, null, null, parentScope, localContainer);
         var statics = new TypeScript.SymbolScopeBuilder(funcStaticMembers, ambientFuncStaticMembers, null, null, parentScope, null);
         if (funcDecl.isConstructor && context.scopeChain.thisType) {
@@ -32170,7 +31278,6 @@ var TypeScript;
                 group.memberScope = statics;
                 statics.container = group.symbol;
             }
-            funcDecl.enclosingFnc = context.scopeChain.fnc;
             group.enclosingType = isStatic ? context.scopeChain.classType : context.scopeChain.thisType;
             fgSym = ast.type.symbol;
             if (((funcDecl.fncFlags & 512 /* Signature */ ) === 0 /* None */ ) && false) {
@@ -32219,7 +31326,7 @@ var TypeScript;
                 preAssignClassScopes(ast, context);
             } else if (ast.nodeType === 92 /* InterfaceDeclaration */ ) {
                 preAssignInterfaceScopes(ast, context);
-            } else if (ast.nodeType === 96 /* With */ ) {
+            } else if (ast.nodeType === 96 /* WithStatement */ ) {
                 preAssignWithScopes(ast, context);
             } else if (ast.nodeType === 71 /* FuncDecl */ ) {
                 preAssignFuncDeclScopes(ast, context);
@@ -32248,7 +31355,7 @@ var TypeScript;
                 popAssignScope(context);
             } else if (ast.nodeType === 92 /* InterfaceDeclaration */ ) {
                 popAssignScope(context);
-            } else if (ast.nodeType === 96 /* With */ ) {
+            } else if (ast.nodeType === 96 /* WithStatement */ ) {
                 popAssignScope(context);
             } else if (ast.nodeType === 71 /* FuncDecl */ ) {
                 var funcDecl = ast;
@@ -34087,7 +33194,7 @@ var TypeScript;
     setTokenInfo(48 /* TypeOf */ , 0 /* None */ , 0 /* None */ , 14 /* Unary */ , 21 /* Typeof */ , "typeof");
     setTokenInfo(49 /* Var */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , "var");
     setTokenInfo(50 /* Void */ , 0 /* None */ , 0 /* None */ , 14 /* Unary */ , 12 /* Void */ , "void");
-    setTokenInfo(51 /* With */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , 96 /* With */ , "with");
+    setTokenInfo(51 /* With */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , 96 /* WithStatement */ , "with");
     setTokenInfo(52 /* While */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , "while");
     setTokenInfo(53 /* Yield */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , "yield");
     setTokenInfo(106 /* Identifier */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , 0 /* None */ , "identifier");
@@ -36329,7 +35436,6 @@ var TypeScript;
             containerSym = containerSym.container;
             containerScope = scopeChain.previous.scope;
         }
-        funcDecl.fileName = context.checker.locationInfo.fileName;
         if (!funcDecl.isConstructor && containerSym && containerSym.declAST && containerSym.declAST.nodeType === 71 /* FuncDecl */  && (containerSym.declAST).isConstructor && !funcDecl.isMethod()) {
             return go;
         }
@@ -36442,7 +35548,7 @@ var TypeScript;
             go = true;
         } else if (ast.nodeType === 94 /* ImportDeclaration */ ) {
             go = preCollectImportTypes(ast, parent, context);
-        } else if (ast.nodeType === 96 /* With */ ) {
+        } else if (ast.nodeType === 96 /* WithStatement */ ) {
             go = false;
         } else if (ast.nodeType === 93 /* ModuleDeclaration */ ) {
             go = preCollectModuleTypes(ast, parent, context);
@@ -37355,7 +36461,7 @@ var TypeScript;
                 ast.type = this.thisType.baseClass();
             } else {
                 if (!this.enclosingFncIsMethod && this.thisType && this.thisType.baseClass() && this.thisFnc && TypeScript.hasFlag(this.thisFnc.fncFlags, 32768 /* IsFatArrowFunction */ )) {
-                    var enclosingFnc = this.thisFnc.enclosingFnc;
+                    var enclosingFnc = null;
                     while(TypeScript.hasFlag(enclosingFnc.fncFlags, 32768 /* IsFatArrowFunction */ )) {
                         enclosingFnc = enclosingFnc.enclosingFnc;
                     }
@@ -37394,13 +36500,13 @@ var TypeScript;
                 }
             }
             if (!this.enclosingFncIsMethod && this.thisFnc && TypeScript.hasFlag(this.thisFnc.fncFlags, 32768 /* IsFatArrowFunction */ )) {
-                if (this.thisFnc.boundToProperty) {
-                    var container = this.thisFnc.boundToProperty.sym.container;
+                if (false) {
+                    var container = null;
                     if (container.declAST.nodeType === 71 /* FuncDecl */ ) {
                         (container.declAST).setHasSelfReference();
                     }
                 } else {
-                    var encFnc = this.thisFnc.enclosingFnc;
+                    var encFnc = null;
                     var firstEncFnc = encFnc;
                     while(encFnc) {
                         if (this.thisClassNode && TypeScript.hasFlag(encFnc.fncFlags, 2097152 /* IsPropertyBound */ )) {
@@ -37976,7 +37082,7 @@ var TypeScript;
                         case 71 /* FuncDecl */ :
                             go = false;
                             break;
-                        case 75 /* Return */ :
+                        case 75 /* ReturnStatement */ :
                             var returnStmt = ast;
                             if (returnStmt.returnExpression) {
                                 allReturnsAreVoid = false;
@@ -38327,13 +37433,6 @@ var TypeScript;
                     this.checker.currentModDecl = enclosingSym.declAST;
                 }
             }
-            if (funcDecl.fileName !== TypeScript.unknownLocationInfo.fileName) {
-                if (this.checker.fileNameToLocationInfo && this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName)) {
-                    this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName);
-                } else {
-                    this.checker.locationInfo = TypeScript.unknownLocationInfo;
-                }
-            }
             if (fnType.enclosingType) {
                 this.thisType = fnType.enclosingType;
             } else {
@@ -38511,7 +37610,7 @@ var TypeScript;
                 signature.returnType.type = this.anyType;
             } else if ((signature.returnType.type !== this.voidType && signature.returnType.type !== this.checker.undefinedType && signature.returnType.type !== this.anyType)) {
                 if (!funcDecl.isSignature() && !funcDecl.isConstructor && !TypeScript.hasFlag(funcDecl.fncFlags, 2048 /* HasReturnExpression */ ) && !TypeScript.hasFlag(funcDecl.fncFlags, 32768 /* IsFatArrowFunction */ )) {
-                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === 78 /* Throw */ );
+                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === 78 /* ThrowStatement */ );
                     if (!onlyHasThrow) {
                         this.checker.errorReporter.simpleError(funcDecl.returnTypeAnnotation || funcDecl, "Function declared a non-void return type, but has no return expression");
                     }
@@ -45123,7 +44222,7 @@ var TypeScript;
                     case 71 /* FuncDecl */ :
                         go = false;
                         break;
-                    case 75 /* Return */ :
+                    case 75 /* ReturnStatement */ :
                         var returnStatement = ast;
                         returnStatements[returnStatements.length] = returnStatement;
                         go = false;
@@ -45449,7 +44548,7 @@ var TypeScript;
                     return this.resolveCallExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
                 case 29 /* New */ :
                     return this.resolveNewExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
-                case 70 /* TypeAssertion */ :
+                case 70 /* CastExpression */ :
                     return this.resolveTypeAssertionExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
                 case 26 /* TypeRef */ :
                     return this.resolveTypeReference(expressionAST, enclosingDecl, context);
@@ -45514,7 +44613,7 @@ var TypeScript;
                     return this.resolveLogicalAndExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
                 case 21 /* Typeof */ :
                     return this.semanticInfoChain.stringTypeSymbol;
-                case 78 /* Throw */ :
+                case 78 /* ThrowStatement */ :
                     return this.semanticInfoChain.voidTypeSymbol;
                 case 16 /* Delete */ :
                     return this.semanticInfoChain.boolTypeSymbol;
@@ -47683,7 +46782,7 @@ var TypeScript;
                     return this.typeCheckCall(ast, typeCheckContext);
                 case 29 /* New */ :
                     return this.typeCheckNew(ast, typeCheckContext);
-                case 70 /* TypeAssertion */ :
+                case 70 /* CastExpression */ :
                     return this.typeCheckTypeAssertion(ast, typeCheckContext);
                 case 26 /* TypeRef */ :
                     return this.typeCheckTypeReference(ast, typeCheckContext);
@@ -47741,7 +46840,7 @@ var TypeScript;
                     return this.typeCheckConditionalExpression(ast, typeCheckContext);
                 case 12 /* Void */ :
                     return this.typeCheckVoidExpression(ast, typeCheckContext);
-                case 78 /* Throw */ :
+                case 78 /* ThrowStatement */ :
                     return this.typeCheckThrowExpression(ast, typeCheckContext);
                 case 16 /* Delete */ :
                     return this.typeCheckDeleteExpression(ast, typeCheckContext);
@@ -47751,34 +46850,34 @@ var TypeScript;
                     return this.typeCheckInExpression(ast, typeCheckContext);
                 case 20 /* InstOf */ :
                     return this.typeCheckInstanceOfExpression(ast, typeCheckContext);
-                case 79 /* For */ :
+                case 79 /* ForStatement */ :
                     return this.typeCheckForStatement(ast, typeCheckContext);
-                case 80 /* ForIn */ :
+                case 80 /* ForInStatement */ :
                     return this.typeCheckForInStatement(ast, typeCheckContext);
-                case 82 /* While */ :
+                case 82 /* WhileStatement */ :
                     return this.typeCheckWhileStatement(ast, typeCheckContext);
-                case 83 /* DoWhile */ :
+                case 83 /* DoStatement */ :
                     return this.typeCheckDoWhileStatement(ast, typeCheckContext);
-                case 81 /* If */ :
+                case 81 /* IfStatement */ :
                     return this.typeCheckIfStatement(ast, typeCheckContext);
                 case 84 /* Block */ :
                     return this.typeCheckBlockStatement(ast, typeCheckContext);
-                case 96 /* With */ :
+                case 96 /* WithStatement */ :
                     return this.typeCheckWithStatement(ast, typeCheckContext);
                 case 87 /* TryStatement */ :
                     return this.typeCheckTryStatement(ast, typeCheckContext);
                 case 88 /* CatchClause */ :
                     return this.typeCheckCatchClause(ast, typeCheckContext);
-                case 75 /* Return */ :
+                case 75 /* ReturnStatement */ :
                     return this.typeCheckReturnExpression(ast, typeCheckContext);
                 case 23 /* Name */ :
                     return this.typeCheckNameExpression(ast, typeCheckContext);
                 case 18 /* Dot */ :
                     return this.typeCheckDottedNameExpression(ast, typeCheckContext);
-                case 86 /* Switch */ :
+                case 86 /* SwitchStatement */ :
                     return this.typeCheckSwitchStatement(ast, typeCheckContext);
-                case 85 /* Case */ :
-                    return this.typeCheckCaseStatement(ast, typeCheckContext);
+                case 85 /* CaseClause */ :
+                    return this.typeCheckCaseClause(ast, typeCheckContext);
                 case 22 /* NumberLit */ :
                     return this.semanticInfoChain.numberTypeSymbol;
                 case 7 /* StringLiteral */ :
@@ -47871,7 +46970,7 @@ var TypeScript;
             if (funcDeclAST.bod && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
                 var returnType = functionSignature.getReturnType();
                 var isVoidOrAny = returnType == this.semanticInfoChain.anyTypeSymbol || returnType == this.semanticInfoChain.voidTypeSymbol;
-                if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === 78 /* Throw */ )) {
+                if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === 78 /* ThrowStatement */ )) {
                     var funcName = functionDecl.getName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
                     this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Function " + funcName + " declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
@@ -47913,7 +47012,7 @@ var TypeScript;
                 }
             }
             if (isGetter && !hasReturn) {
-                if (!(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === 78 /* Throw */ )) {
+                if (!(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === 78 /* ThrowStatement */ )) {
                     this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
                 }
             } else if (isSetter && hasReturn) {
@@ -48368,7 +47467,7 @@ var TypeScript;
             this.typeCheckAST(switchAST.defaultCase, typeCheckContext);
             return this.semanticInfoChain.voidTypeSymbol;
         };
-        PullTypeChecker.prototype.typeCheckCaseStatement = function (ast, typeCheckContext) {
+        PullTypeChecker.prototype.typeCheckCaseClause = function (ast, typeCheckContext) {
             var caseAST = ast;
             this.typeCheckAST(caseAST.expr, typeCheckContext);
             this.typeCheckAST(caseAST.body, typeCheckContext);
@@ -48578,7 +47677,7 @@ var TypeScript;
         };
         SemanticInfoChain.prototype.updateUnit = function (oldUnit, newUnit) {
             for(var i = 0; i < this.units.length; i++) {
-                if (this.units[i] == oldUnit) {
+                if (this.units[i].getPath() == oldUnit.getPath()) {
                     this.units[i] = newUnit;
                     this.unitCache[oldUnit.getPath()] = newUnit;
                     return;
@@ -49345,21 +48444,21 @@ var TypeScript;
             go = preCollectImportDecls(ast, parentAST, context);
         } else if (ast.nodeType == 24 /* TypeParameter */ ) {
             go = preCollectTypeParameterDecl(ast, parentAST, context);
-        } else if (ast.nodeType == 81 /* If */ ) {
+        } else if (ast.nodeType == 81 /* IfStatement */ ) {
             go = true;
-        } else if (ast.nodeType == 79 /* For */ ) {
+        } else if (ast.nodeType == 79 /* ForStatement */ ) {
             go = true;
-        } else if (ast.nodeType == 80 /* ForIn */ ) {
+        } else if (ast.nodeType == 80 /* ForInStatement */ ) {
             go = true;
-        } else if (ast.nodeType == 82 /* While */ ) {
+        } else if (ast.nodeType == 82 /* WhileStatement */ ) {
             go = true;
-        } else if (ast.nodeType == 83 /* DoWhile */ ) {
+        } else if (ast.nodeType == 83 /* DoStatement */ ) {
             go = true;
         } else if (ast.nodeType == 13 /* Comma */ ) {
             go = true;
-        } else if (ast.nodeType == 75 /* Return */ ) {
+        } else if (ast.nodeType == 75 /* ReturnStatement */ ) {
             go = true;
-        } else if (ast.nodeType == 86 /* Switch */  || ast.nodeType == 85 /* Case */ ) {
+        } else if (ast.nodeType == 86 /* SwitchStatement */  || ast.nodeType == 85 /* CaseClause */ ) {
             go = true;
         } else if (ast.nodeType == 28 /* Call */ ) {
             go = true;
@@ -51372,15 +50471,11 @@ var TypeScript;
             var declSymbol = declToRemove.getSymbol();
             if (declSymbol) {
                 declSymbol.removeDeclaration(declToRemove);
-                var decls = declSymbol.getDeclarations();
-                if (!decls.length) {
-                    this.removeSymbol(declSymbol);
-                } else {
-                    var childDecls = declToRemove.getChildDecls();
-                    for(var i = 0; i < childDecls.length; i++) {
-                        this.removeDecl(childDecls[i]);
-                    }
+                var childDecls = declToRemove.getChildDecls();
+                for(var i = 0; i < childDecls.length; i++) {
+                    this.removeDecl(childDecls[i]);
                 }
+                this.removeSymbol(declSymbol);
                 this.semanticInfoChain.removeSymbolFromCache(declSymbol);
             }
             var valDecl = declToRemove.getValueDecl();
@@ -51441,6 +50536,10 @@ var TypeScript;
             symbolWhoseTypeChanged.typeChangeUpdateVersion = TypeScript.updateVersion;
             symbolWhoseTypeChanged.updateOutgoingLinks(propagateChangedTypeToOutgoingLinks, new PullSymbolUpdate(3 /* TypeChanged */ , symbolWhoseTypeChanged, this));
             symbolWhoseTypeChanged.updateIncomingLinks(propagateChangedTypeToIncomingLinks, new PullSymbolUpdate(3 /* TypeChanged */ , symbolWhoseTypeChanged, this));
+            if (symbolWhoseTypeChanged.getKind() == 8 /* Container */ ) {
+                var instanceSymbol = (symbolWhoseTypeChanged).getInstanceSymbol();
+                this.invalidateType(instanceSymbol);
+            }
             symbolWhoseTypeChanged.invalidate();
         };
         return PullSymbolGraphUpdater;
@@ -51736,52 +50835,6 @@ var TypeScript;
         }
     }
     TypeScript.getDiagnosticsFromEnclosingDecl = getDiagnosticsFromEnclosingDecl;
-    var PullErrorReporter = (function () {
-        function PullErrorReporter(textWriter) {
-            this.textWriter = textWriter;
-            this.lineCol = {
-                line: 0,
-                character: 0
-            };
-            this.locationInfoCache = {};
-            this.hasErrors = false;
-        }
-        PullErrorReporter.prototype.setUnits = function (fileNameToLocationInfo) {
-            this.locationInfoCache = {};
-            var fileNames = fileNameToLocationInfo.getAllKeys();
-            for(var i = 0; i < fileNames.length; i++) {
-                var fileName = fileNames[i];
-                this.locationInfoCache[fileName] = fileNameToLocationInfo.lookup(fileName);
-            }
-        };
-        PullErrorReporter.prototype.reportDiagnostic = function (error, lineMap) {
-            if (typeof lineMap === "undefined") { lineMap = null; }
-            this.hasErrors = true;
-            if (lineMap === null) {
-                var locationInfo = this.locationInfoCache[error.fileName()];
-                if (locationInfo && locationInfo.lineMap) {
-                    lineMap = locationInfo.lineMap;
-                }
-            }
-            if (error.fileName()) {
-                if (lineMap) {
-                    lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
-                    this.textWriter.Write(error.fileName() + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
-                } else {
-                    this.textWriter.Write(error.fileName() + "(0,0): ");
-                }
-            }
-            this.textWriter.WriteLine(error.message());
-        };
-        PullErrorReporter.prototype.reportDiagnostics = function (errors, lineMap) {
-            if (typeof lineMap === "undefined") { lineMap = null; }
-            for(var i = 0; i < errors.length; i++) {
-                this.reportDiagnostic(errors[i], lineMap);
-            }
-        };
-        return PullErrorReporter;
-    })();
-    TypeScript.PullErrorReporter = PullErrorReporter;    
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -51866,21 +50919,18 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var TypeScriptCompiler = (function () {
-        function TypeScriptCompiler(errorOutput, logger, settings, diagnosticMessages) {
+        function TypeScriptCompiler(logger, settings, diagnosticMessages) {
             if (typeof logger === "undefined") { logger = new TypeScript.NullLogger(); }
             if (typeof settings === "undefined") { settings = new TypeScript.CompilationSettings(); }
             if (typeof diagnosticMessages === "undefined") { diagnosticMessages = null; }
-            this.errorOutput = errorOutput;
             this.logger = logger;
             this.settings = settings;
             this.diagnosticMessages = diagnosticMessages;
-            this.pullErrorReporter = null;
             this.pullTypeChecker = null;
             this.semanticInfoChain = null;
             this.fileNameToScript = new TypeScript.StringHashTable();
             this.fileNameToLocationInfo = new TypeScript.StringHashTable();
             this.fileNameToSyntaxTree = new TypeScript.StringHashTable();
-            this.pullErrorReporter = new TypeScript.PullErrorReporter(this.errorOutput);
             this.emitOptions = new TypeScript.EmitOptions(this.settings);
             if (this.diagnosticMessages) {
                 TypeScript.diagnosticMessages = this.diagnosticMessages;
@@ -52023,7 +51073,7 @@ var TypeScript;
             return declarationEmitter;
         };
         TypeScriptCompiler.prototype.emitDeclarations = function () {
-            if (this.canEmitDeclarations() && !this.pullErrorReporter.hasErrors) {
+            if (this.canEmitDeclarations()) {
                 var sharedEmitter = null;
                 var fileNames = this.fileNameToScript.getAllKeys();
                 for(var i = 0, n = fileNames.length; i < n; i++) {
@@ -52164,16 +51214,11 @@ var TypeScript;
             }
             return errors;
         };
-        TypeScriptCompiler.prototype.pullTypeCheck = function (refresh, reportDiagnostics) {
-            if (typeof refresh === "undefined") { refresh = false; }
-            if (typeof reportDiagnostics === "undefined") { reportDiagnostics = false; }
+        TypeScriptCompiler.prototype.pullTypeCheck = function () {
             var _this = this;
             return this.timeFunction("pullTypeCheck()", function () {
-                if (!_this.pullTypeChecker || refresh) {
-                    _this.semanticInfoChain = new TypeScript.SemanticInfoChain();
-                    _this.pullTypeChecker = new TypeScript.PullTypeChecker(_this.settings, _this.semanticInfoChain);
-                }
-                _this.pullErrorReporter.setUnits(_this.fileNameToLocationInfo);
+                _this.semanticInfoChain = new TypeScript.SemanticInfoChain();
+                _this.pullTypeChecker = new TypeScript.PullTypeChecker(_this.settings, _this.semanticInfoChain);
                 var declCollectionContext = null;
                 var i;
                 var createDeclsStartTime = new Date().getTime();
@@ -52198,22 +51243,14 @@ var TypeScript;
                 fileNames = _this.fileNameToScript.getAllKeys();
                 for(i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
-                    if (reportDiagnostics) {
-                        _this.logger.log("Type checking " + fileName);
-                        _this.pullTypeChecker.typeCheckScript(_this.fileNameToScript.lookup(fileName), fileName, _this);
-                    } else {
-                        _this.logger.log("Resolving " + fileName);
-                        _this.pullResolveFile(fileName);
-                    }
+                    _this.logger.log("Type checking " + fileName);
+                    _this.pullTypeChecker.typeCheckScript(_this.fileNameToScript.lookup(fileName), fileName, _this);
                 }
                 var findErrorsEndTime = new Date().getTime();
                 _this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
                 _this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 _this.logger.log("    Time in findSymbol: " + TypeScript.time_in_findSymbol);
                 _this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
-                if (reportDiagnostics) {
-                    _this.pullErrorReporter.reportDiagnostics(_this.semanticInfoChain.postDiagnostics());
-                }
             });
         };
         TypeScriptCompiler.prototype.pullUpdateScript = function (oldScript, newScript) {
@@ -52262,14 +51299,9 @@ var TypeScript;
                         }
                     }
                     var traceEndTime = new Date().getTime();
-                    _this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, _this);
                     _this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     _this.logger.log("Update Script - Number of diffs: " + diffResults.length);
-                    _this.pullErrorReporter.setUnits(_this.fileNameToLocationInfo);
-                    return;
                 }
-                _this.pullErrorReporter.setUnits(_this.fileNameToLocationInfo);
-                _this.pullErrorReporter.reportDiagnostics(_this.semanticInfoChain.postDiagnostics());
             });
         };
         TypeScriptCompiler.prototype.getSymbolOfDeclaration = function (decl) {
@@ -52324,7 +51356,7 @@ var TypeScript;
                                 declarationInitASTs[declarationInitASTs.length] = cur;
                             } else if (cur.nodeType === 11 /* ObjectLit */ ) {
                                 objectLitAST = cur;
-                            } else if (cur.nodeType === 70 /* TypeAssertion */ ) {
+                            } else if (cur.nodeType === 70 /* CastExpression */ ) {
                                 typeAssertionASTs[typeAssertionASTs.length] = cur;
                             } else if (cur.nodeType === 30 /* Asg */ ) {
                                 asgAST = cur;
@@ -52542,7 +51574,7 @@ var TypeScript;
                     case 30 /* Asg */ :
                         this.pullTypeChecker.resolver.resolveAST((current), isTypedAssignment, enclosingDecl, resolutionContext);
                         break;
-                    case 70 /* TypeAssertion */ :
+                    case 70 /* CastExpression */ :
                         this.pullTypeChecker.resolver.resolveAST((current), isTypedAssignment, enclosingDecl, resolutionContext);
                         resolutionContext.searchTypeSpace = true;
                         break;
@@ -52680,6 +51712,17 @@ var TypeScript;
     })();
     TypeScript.ASTSpan = ASTSpan;    
     TypeScript.astID = 0;
+    function structuralEquals(ast1, ast2) {
+        if (ast1 === ast2) {
+            return true;
+        }
+        return ast1 !== null && ast2 !== null && ast1.nodeType === ast2.nodeType && ast1.structuralEquals(ast2);
+    }
+    TypeScript.structuralEquals = structuralEquals;
+    function astArrayStructuralEquals(array1, array2) {
+        return TypeScript.ArrayUtilities.sequenceEquals(array1, array2, structuralEquals);
+    }
+    TypeScript.astArrayStructuralEquals = astArrayStructuralEquals;
     var AST = (function () {
         function AST(nodeType) {
             this.nodeType = nodeType;
@@ -52781,19 +51824,7 @@ var TypeScript;
         };
         AST.prototype.print = function (context) {
             context.startLine();
-            var lineCol = {
-                line: -1,
-                character: -1
-            };
-            var limLineCol = {
-                line: -1,
-                character: -1
-            };
-            var lab = this.printLabel();
-            if (TypeScript.hasFlag(this.flags, 8 /* Error */ )) {
-                lab += " (Error)";
-            }
-            context.writeLine(lab);
+            context.writeLine(this.printLabel());
         };
         AST.prototype.printLabel = function () {
             if (TypeScript.nodeTypeTable[this.nodeType] !== undefined) {
@@ -52829,6 +51860,9 @@ var TypeScript;
                 this.docComments = docComments.reverse();
             }
             return this.docComments;
+        };
+        AST.prototype.structuralEquals = function (ast) {
+            return this.minChar === ast.minChar && this.limChar === ast.limChar && astArrayStructuralEquals(this.preComments, ast.preComments) && astArrayStructuralEquals(this.postComments, ast.postComments) && this.isParenthesized === ast.isParenthesized;
         };
         return AST;
     })();
@@ -52871,6 +51905,9 @@ var TypeScript;
             typeFlow.nestingLevel--;
             return this;
         };
+        ASTList.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && astArrayStructuralEquals(this.members, ast.members);
+        };
         return ASTList;
     })(AST);
     TypeScript.ASTList = ASTList;    
@@ -52880,7 +51917,6 @@ var TypeScript;
             _super.call(this, 23 /* Name */ );
             this.actualText = actualText;
             this.sym = null;
-            this.cloId = -1;
             this.setText(actualText);
         }
         Identifier.prototype.setText = function (actualText) {
@@ -52905,6 +51941,9 @@ var TypeScript;
         };
         Identifier.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitJavascriptName(this, true);
+        };
+        Identifier.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.text === ast.text && this.actualText === ast.actualText && this.isMissing() === ast.isMissing();
         };
         return Identifier;
     })(AST);
@@ -52940,7 +51979,7 @@ var TypeScript;
         }
         UnaryExpression.prototype.addToControlFlow = function (context) {
             _super.prototype.addToControlFlow.call(this, context);
-            if (this.nodeType === 78 /* Throw */ ) {
+            if (this.nodeType === 78 /* ThrowStatement */ ) {
                 context.returnStmt();
             }
         };
@@ -52964,7 +52003,7 @@ var TypeScript;
                 case 11 /* ObjectLit */ :
                     typeFlow.typeCheckObjectLit(this);
                     return this;
-                case 78 /* Throw */ :
+                case 78 /* ThrowStatement */ :
                     this.operand = typeFlow.typeCheck(this.operand);
                     this.type = typeFlow.voidType;
                     return this;
@@ -52976,7 +52015,7 @@ var TypeScript;
                     this.operand = typeFlow.typeCheck(this.operand);
                     this.type = typeFlow.booleanType;
                     break;
-                case 70 /* TypeAssertion */ :
+                case 70 /* CastExpression */ :
                     this.castTerm = typeFlow.typeCheck(this.castTerm);
                     var applyTargetType = !this.operand.isParenthesized;
                     var targetType = applyTargetType ? this.castTerm.type : null;
@@ -53041,7 +52080,7 @@ var TypeScript;
                     emitter.writeToOutput("--");
                     emitter.emitJavascript(this.operand, 100 /* MinusMinus */ , false);
                     break;
-                case 78 /* Throw */ :
+                case 78 /* ThrowStatement */ :
                     emitter.writeToOutput("throw ");
                     emitter.emitJavascript(this.operand, 97 /* Tilde */ , false);
                     emitter.writeToOutput(";");
@@ -53058,7 +52097,7 @@ var TypeScript;
                     emitter.writeToOutput("void ");
                     emitter.emitJavascript(this.operand, 97 /* Tilde */ , false);
                     break;
-                case 70 /* TypeAssertion */ :
+                case 70 /* CastExpression */ :
                     emitter.emitJavascript(this.operand, 97 /* Tilde */ , false);
                     break;
                 default:
@@ -53066,6 +52105,9 @@ var TypeScript;
             }
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        };
+        UnaryExpression.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.castTerm, ast.castTerm) && structuralEquals(this.operand, ast.operand);
         };
         return UnaryExpression;
     })(Expression);
@@ -53097,6 +52139,9 @@ var TypeScript;
             }
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        };
+        CallExpression.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.target, ast.target) && structuralEquals(this.typeArguments, ast.typeArguments) && structuralEquals(this.arguments, ast.arguments);
         };
         return CallExpression;
     })(Expression);
@@ -53241,6 +52286,9 @@ var TypeScript;
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         };
+        BinaryExpression.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.operand1, ast.operand1) && structuralEquals(this.operand2, ast.operand2);
+        };
         return BinaryExpression;
     })(Expression);
     TypeScript.BinaryExpression = BinaryExpression;    
@@ -53265,6 +52313,9 @@ var TypeScript;
             emitter.emitJavascript(this.operand3, 74 /* Question */ , false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        };
+        ConditionalExpression.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.operand1, ast.operand1) && structuralEquals(this.operand2, ast.operand2) && structuralEquals(this.operand3, ast.operand3);
         };
         return ConditionalExpression;
     })(Expression);
@@ -53293,6 +52344,9 @@ var TypeScript;
         NumberLiteral.prototype.printLabel = function () {
             return this.text;
         };
+        NumberLiteral.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.value === ast.value && this.text === ast.text;
+        };
         return NumberLiteral;
     })(Expression);
     TypeScript.NumberLiteral = NumberLiteral;    
@@ -53312,6 +52366,9 @@ var TypeScript;
             emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        };
+        RegexLiteral.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.text === ast.text;
         };
         return RegexLiteral;
     })(Expression);
@@ -53339,24 +52396,18 @@ var TypeScript;
         StringLiteral.prototype.printLabel = function () {
             return this.text;
         };
+        StringLiteral.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.text === ast.text;
+        };
         return StringLiteral;
     })(Expression);
     TypeScript.StringLiteral = StringLiteral;    
-    var ModuleElement = (function (_super) {
-        __extends(ModuleElement, _super);
-        function ModuleElement(nodeType) {
-            _super.call(this, nodeType);
-        }
-        return ModuleElement;
-    })(AST);
-    TypeScript.ModuleElement = ModuleElement;    
     var ImportDeclaration = (function (_super) {
         __extends(ImportDeclaration, _super);
         function ImportDeclaration(id, alias) {
             _super.call(this, 94 /* ImportDeclaration */ );
             this.id = id;
             this.alias = alias;
-            this.varFlags = 0 /* None */ ;
             this.isDynamicImport = false;
         }
         ImportDeclaration.prototype.isDeclaration = function () {
@@ -53403,8 +52454,11 @@ var TypeScript;
                 return firstMod.actualText;
             }
         };
+        ImportDeclaration.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.id, ast.id) && structuralEquals(this.alias, ast.alias);
+        };
         return ImportDeclaration;
-    })(ModuleElement);
+    })(AST);
     TypeScript.ImportDeclaration = ImportDeclaration;    
     var ExportAssignment = (function (_super) {
         __extends(ExportAssignment, _super);
@@ -53412,8 +52466,11 @@ var TypeScript;
             _super.call(this, 95 /* ExportAssignment */ );
             this.id = id;
         }
+        ExportAssignment.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.id, ast.id);
+        };
         return ExportAssignment;
-    })(ModuleElement);
+    })(AST);
     TypeScript.ExportAssignment = ExportAssignment;    
     var BoundDecl = (function (_super) {
         __extends(BoundDecl, _super);
@@ -53436,6 +52493,9 @@ var TypeScript;
         };
         BoundDecl.prototype.printLabel = function () {
             return this.treeViewLabel();
+        };
+        BoundDecl.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.init, ast.init) && structuralEquals(this.typeExpr, ast.typeExpr) && structuralEquals(this.id, ast.id);
         };
         return BoundDecl;
     })(AST);
@@ -53480,6 +52540,9 @@ var TypeScript;
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         };
+        ArgDecl.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.isOptional === ast.isOptional;
+        };
         return ArgDecl;
     })(BoundDecl);
     TypeScript.ArgDecl = ArgDecl;    
@@ -53496,22 +52559,19 @@ var TypeScript;
             this.fncFlags = 0 /* None */ ;
             this.returnTypeAnnotation = null;
             this.variableArgList = false;
-            this.enclosingFnc = null;
             this.freeVariables = [];
-            this.fileName = TypeScript.unknownLocationInfo.fileName;
             this.classDecl = null;
-            this.boundToProperty = null;
             this.isOverload = false;
-            this.innerStaticFuncs = [];
             this.isInlineCallLiteral = false;
             this.accessorSymbol = null;
-            this.returnStatementsWithExpressions = [];
             this.scopeType = null;
             this.endingToken = null;
-            this.constructorSpan = null;
         }
         FuncDecl.prototype.isDeclaration = function () {
             return true;
+        };
+        FuncDecl.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.hint === ast.hint && this.variableArgList === ast.variableArgList && this.isOverload === ast.isOverload && structuralEquals(this.name, ast.name) && structuralEquals(this.bod, ast.bod) && this.isConstructor === ast.isConstructor && structuralEquals(this.typeArguments, ast.typeArguments) && structuralEquals(this.arguments, ast.arguments);
         };
         FuncDecl.prototype.hasSelfReference = function () {
             return TypeScript.hasFlag(this.fncFlags, 16384 /* HasSelfReference */ );
@@ -53703,8 +52763,11 @@ var TypeScript;
         NamedDeclaration.prototype.isDeclaration = function () {
             return true;
         };
+        NamedDeclaration.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.name, ast.name) && structuralEquals(this.members, ast.members);
+        };
         return NamedDeclaration;
-    })(ModuleElement);
+    })(AST);
     TypeScript.NamedDeclaration = NamedDeclaration;    
     var ModuleDeclaration = (function (_super) {
         __extends(ModuleDeclaration, _super);
@@ -53749,6 +52812,9 @@ var TypeScript;
             this.implementsList = implementsList;
             this.varFlags = 0 /* None */ ;
         }
+        TypeDeclaration.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.typeParameters, ast.typeParameters) && structuralEquals(this.extendsList, ast.extendsList) && structuralEquals(this.implementsList, ast.implementsList);
+        };
         return TypeDeclaration;
     })(NamedDeclaration);
     TypeScript.TypeDeclaration = TypeDeclaration;    
@@ -53792,7 +52858,7 @@ var TypeScript;
             return this;
         };
         return Statement;
-    })(ModuleElement);
+    })(AST);
     TypeScript.Statement = Statement;    
     var LabeledStatement = (function (_super) {
         __extends(LabeledStatement, _super);
@@ -53821,6 +52887,9 @@ var TypeScript;
             var bb = new TypeScript.BasicBlock();
             context.current = bb;
             beforeBB.addSuccessor(bb);
+        };
+        LabeledStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.identifier, ast.identifier) && structuralEquals(this.statement, ast.statement);
         };
         return LabeledStatement;
     })(Statement);
@@ -53876,6 +52945,9 @@ var TypeScript;
             typeFlow.typeCheck(this.statements);
             return this;
         };
+        Block.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.statements, ast.statements) && this.isStatementBlock === ast.isStatementBlock;
+        };
         return Block;
     })(Statement);
     TypeScript.Block = Block;    
@@ -53891,12 +52963,12 @@ var TypeScript;
         };
         Jump.prototype.addToControlFlow = function (context) {
             _super.prototype.addToControlFlow.call(this, context);
-            context.unconditionalBranch(this.resolvedTarget, (this.nodeType === 77 /* Continue */ ));
+            context.unconditionalBranch(this.resolvedTarget, (this.nodeType === 77 /* ContinueStatement */ ));
         };
         Jump.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.nodeType === 76 /* Break */ ) {
+            if (this.nodeType === 76 /* BreakStatement */ ) {
                 emitter.writeToOutput("break");
             } else {
                 emitter.writeToOutput("continue");
@@ -53908,13 +52980,16 @@ var TypeScript;
             emitter.writeToOutput(";");
             emitter.emitParensAndCommentsInPlace(this, false);
         };
+        Jump.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.target === ast.target;
+        };
         return Jump;
     })(Statement);
     TypeScript.Jump = Jump;    
     var WhileStatement = (function (_super) {
         __extends(WhileStatement, _super);
         function WhileStatement(cond, body) {
-            _super.call(this, 82 /* While */ );
+            _super.call(this, 82 /* WhileStatement */ );
             this.cond = cond;
             this.body = body;
         }
@@ -53958,13 +53033,16 @@ var TypeScript;
             context.noContinuation = false;
             context.walker.options.goChildren = false;
         };
+        WhileStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.cond, ast.cond) && structuralEquals(this.body, ast.body);
+        };
         return WhileStatement;
     })(Statement);
     TypeScript.WhileStatement = WhileStatement;    
     var DoWhileStatement = (function (_super) {
         __extends(DoWhileStatement, _super);
         function DoWhileStatement(body, cond) {
-            _super.call(this, 83 /* DoWhile */ );
+            _super.call(this, 83 /* DoStatement */ );
             this.body = body;
             this.cond = cond;
             this.whileSpan = null;
@@ -54012,13 +53090,16 @@ var TypeScript;
             }
             context.walker.options.goChildren = false;
         };
+        DoWhileStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.body, ast.body) && structuralEquals(this.cond, ast.cond);
+        };
         return DoWhileStatement;
     })(Statement);
     TypeScript.DoWhileStatement = DoWhileStatement;    
     var IfStatement = (function (_super) {
         __extends(IfStatement, _super);
         function IfStatement(cond, thenBod, elseBod) {
-            _super.call(this, 81 /* If */ );
+            _super.call(this, 81 /* IfStatement */ );
             this.cond = cond;
             this.thenBod = thenBod;
             this.elseBod = elseBod;
@@ -54035,7 +53116,7 @@ var TypeScript;
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitJavascriptStatements(this.thenBod, true);
             if (this.elseBod) {
-                if (this.elseBod.nodeType === 81 /* If */ ) {
+                if (this.elseBod.nodeType === 81 /* IfStatement */ ) {
                     emitter.writeToOutput(" else ");
                     this.elseBod.emit(emitter, tokenId, false);
                 } else {
@@ -54091,13 +53172,16 @@ var TypeScript;
             }
             context.walker.options.goChildren = false;
         };
+        IfStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.cond, ast.cond) && structuralEquals(this.thenBod, ast.thenBod) && structuralEquals(this.elseBod, ast.elseBod);
+        };
         return IfStatement;
     })(Statement);
     TypeScript.IfStatement = IfStatement;    
     var ReturnStatement = (function (_super) {
         __extends(ReturnStatement, _super);
         function ReturnStatement(returnExpression) {
-            _super.call(this, 75 /* Return */ );
+            _super.call(this, 75 /* ReturnStatement */ );
             this.returnExpression = returnExpression;
         }
         ReturnStatement.prototype.emit = function (emitter, tokenId, startLine) {
@@ -54124,6 +53208,9 @@ var TypeScript;
         ReturnStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckReturn(this);
         };
+        ReturnStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.returnExpression, ast.returnExpression);
+        };
         return ReturnStatement;
     })(Statement);
     TypeScript.ReturnStatement = ReturnStatement;    
@@ -54138,7 +53225,7 @@ var TypeScript;
     var ForInStatement = (function (_super) {
         __extends(ForInStatement, _super);
         function ForInStatement(lval, obj, body) {
-            _super.call(this, 80 /* ForIn */ );
+            _super.call(this, 80 /* ForInStatement */ );
             this.lval = lval;
             this.obj = obj;
             this.body = body;
@@ -54147,51 +53234,6 @@ var TypeScript;
                 (this.lval).varFlags |= 256 /* AutoInit */ ;
             }
         }
-        ForInStatement.prototype.isFiltered = function () {
-            if (this.body) {
-                var singleItem = null;
-                if (this.body.nodeType === 89 /* List */ ) {
-                    var stmts = this.body;
-                    if (stmts.members.length === 1) {
-                        singleItem = stmts.members[0];
-                    }
-                } else {
-                    singleItem = this.body;
-                }
-                if (singleItem !== null) {
-                    if (singleItem.nodeType === 84 /* Block */ ) {
-                        var block = singleItem;
-                        if ((block.statements !== null) && (block.statements.members.length === 1)) {
-                            singleItem = block.statements.members[0];
-                        }
-                    }
-                    if (singleItem.nodeType === 81 /* If */ ) {
-                        var cond = (singleItem).cond;
-                        if (cond.nodeType === 28 /* Call */ ) {
-                            var target = (cond).target;
-                            if (target.nodeType === 18 /* Dot */ ) {
-                                var binex = target;
-                                if ((binex.operand1.nodeType === 23 /* Name */ ) && (this.obj.nodeType === 23 /* Name */ ) && ((binex.operand1).actualText === (this.obj).actualText)) {
-                                    var prop = binex.operand2;
-                                    if (prop.actualText === "hasOwnProperty") {
-                                        var args = (cond).arguments;
-                                        if ((args !== null) && (args.members.length === 1)) {
-                                            var arg = args.members[0];
-                                            if ((arg.nodeType === 23 /* Name */ ) && (this.lval.nodeType === 23 /* Name */ )) {
-                                                if (((this.lval).actualText) === (arg).actualText) {
-                                                    return true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        };
         ForInStatement.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
@@ -54209,11 +53251,6 @@ var TypeScript;
             emitter.emitParensAndCommentsInPlace(this, false);
         };
         ForInStatement.prototype.typeCheck = function (typeFlow) {
-            if (typeFlow.checker.styleSettings.forin) {
-                if (!this.isFiltered()) {
-                    typeFlow.checker.errorReporter.styleError(this, "no hasOwnProperty filter");
-                }
-            }
             return typeFlow.typeCheckForIn(this);
         };
         ForInStatement.prototype.addToControlFlow = function (context) {
@@ -54242,13 +53279,16 @@ var TypeScript;
             loopHeader.addSuccessor(afterLoop);
             context.walker.options.goChildren = false;
         };
+        ForInStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.lval, ast.lval) && structuralEquals(this.obj, ast.obj) && structuralEquals(this.body, ast.body);
+        };
         return ForInStatement;
     })(Statement);
     TypeScript.ForInStatement = ForInStatement;    
     var ForStatement = (function (_super) {
         __extends(ForStatement, _super);
         function ForStatement(init, cond, incr, body) {
-            _super.call(this, 79 /* For */ );
+            _super.call(this, 79 /* ForStatement */ );
             this.init = init;
             this.cond = cond;
             this.incr = incr;
@@ -54333,13 +53373,16 @@ var TypeScript;
             }
             context.walker.options.goChildren = false;
         };
+        ForStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.init, ast.init) && structuralEquals(this.cond, ast.cond) && structuralEquals(this.incr, ast.incr) && structuralEquals(this.body, ast.body);
+        };
         return ForStatement;
     })(Statement);
     TypeScript.ForStatement = ForStatement;    
     var WithStatement = (function (_super) {
         __extends(WithStatement, _super);
         function WithStatement(expr, body) {
-            _super.call(this, 96 /* With */ );
+            _super.call(this, 96 /* WithStatement */ );
             this.expr = expr;
             this.body = body;
             this.withSym = null;
@@ -54359,13 +53402,16 @@ var TypeScript;
         WithStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckWith(this);
         };
+        WithStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.expr, ast.expr) && structuralEquals(this.body, ast.body);
+        };
         return WithStatement;
     })(Statement);
     TypeScript.WithStatement = WithStatement;    
     var SwitchStatement = (function (_super) {
         __extends(SwitchStatement, _super);
         function SwitchStatement(val) {
-            _super.call(this, 86 /* Switch */ );
+            _super.call(this, 86 /* SwitchStatement */ );
             this.val = val;
             this.defaultCase = null;
             this.statement = new ASTSpan();
@@ -54427,17 +53473,20 @@ var TypeScript;
             }
             context.walker.options.goChildren = false;
         };
+        SwitchStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.caseList, ast.caseList) && structuralEquals(this.val, ast.val);
+        };
         return SwitchStatement;
     })(Statement);
     TypeScript.SwitchStatement = SwitchStatement;    
-    var CaseStatement = (function (_super) {
-        __extends(CaseStatement, _super);
-        function CaseStatement() {
-            _super.call(this, 85 /* Case */ );
+    var CaseClause = (function (_super) {
+        __extends(CaseClause, _super);
+        function CaseClause() {
+            _super.call(this, 85 /* CaseClause */ );
             this.expr = null;
             this.colonSpan = new ASTSpan();
         }
-        CaseStatement.prototype.emit = function (emitter, tokenId, startLine) {
+        CaseClause.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.expr) {
@@ -54460,13 +53509,13 @@ var TypeScript;
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         };
-        CaseStatement.prototype.typeCheck = function (typeFlow) {
+        CaseClause.prototype.typeCheck = function (typeFlow) {
             this.expr = typeFlow.typeCheck(this.expr);
             typeFlow.typeCheck(this.body);
             this.type = typeFlow.voidType;
             return this;
         };
-        CaseStatement.prototype.addToControlFlow = function (context) {
+        CaseClause.prototype.addToControlFlow = function (context) {
             var execBlock = new TypeScript.BasicBlock();
             var sw = context.currentSwitch[context.currentSwitch.length - 1];
             if (this.expr) {
@@ -54485,9 +53534,12 @@ var TypeScript;
             context.noContinuation = false;
             context.walker.options.goChildren = false;
         };
-        return CaseStatement;
-    })(Statement);
-    TypeScript.CaseStatement = CaseStatement;    
+        CaseClause.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.expr, ast.expr) && structuralEquals(this.body, ast.body);
+        };
+        return CaseClause;
+    })(AST);
+    TypeScript.CaseClause = CaseClause;    
     var TypeParameter = (function (_super) {
         __extends(TypeParameter, _super);
         function TypeParameter(name, constraint) {
@@ -54495,6 +53547,9 @@ var TypeScript;
             this.name = name;
             this.constraint = constraint;
         }
+        TypeParameter.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.name, ast.name) && structuralEquals(this.constraint, ast.constraint);
+        };
         return TypeParameter;
     })(AST);
     TypeScript.TypeParameter = TypeParameter;    
@@ -54507,6 +53562,9 @@ var TypeScript;
         }
         GenericType.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitJavascript(this.name, 106 /* Identifier */ , false);
+        };
+        GenericType.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.name, ast.name) && structuralEquals(this.typeArguments, ast.typeArguments);
         };
         return GenericType;
     })(AST);
@@ -54537,6 +53595,9 @@ var TypeScript;
             typeFlow.inTypeRefTypeCheck = prevInTCTR;
             return this;
         };
+        TypeReference.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.term, ast.term) && this.arrayCount === ast.arrayCount;
+        };
         return TypeReference;
     })(AST);
     TypeScript.TypeReference = TypeReference;    
@@ -54560,6 +53621,9 @@ var TypeScript;
             }
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
+        };
+        TryStatement.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.tryBody, ast.tryBody) && structuralEquals(this.catchClause, ast.catchClause) && structuralEquals(this.finallyBody, ast.finallyBody);
         };
         return TryStatement;
     })(Statement);
@@ -54628,6 +53692,9 @@ var TypeScript;
             typeFlow.scope = prevScope;
             return this;
         };
+        CatchClause.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.param, ast.param) && structuralEquals(this.body, ast.body);
+        };
         return CatchClause;
     })(AST);
     TypeScript.CatchClause = CatchClause;    
@@ -54641,6 +53708,9 @@ var TypeScript;
             this.text = null;
             this.docCommentText = null;
         }
+        Comment.prototype.structuralEquals = function (ast) {
+            return _super.prototype.structuralEquals.call(this, ast) && this.minLine === ast.minLine && this.content === ast.content && this.isBlockComment === ast.isBlockComment && this.endsLine === ast.endsLine;
+        };
         Comment.prototype.getText = function () {
             if (this.text === null) {
                 if (this.isBlockComment) {
@@ -54956,7 +54026,6 @@ var TypeScript;
             var result = null;
             if (token.fullWidth() === 0) {
                 result = new TypeScript.MissingIdentifier();
-                result.flags |= 8 /* Error */ ;
             } else {
                 result = new TypeScript.Identifier(token.text());
                 result.text = useValueText ? token.valueText() : result.text;
@@ -56042,7 +55111,6 @@ var TypeScript;
                 var name = this.identifierFromToken(node.name, false, true);
                 this.movePast(node.name);
                 result = new TypeScript.BinaryExpression(18 /* Dot */ , expression, name);
-                expression.flags |= 32 /* DotLHS */ ;
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -56588,7 +55656,7 @@ var TypeScript;
                 this.movePast(node.throwKeyword);
                 var expression = node.expression.accept(this);
                 this.movePast(node.semicolonToken);
-                result = new TypeScript.UnaryExpression(78 /* Throw */ , expression);
+                result = new TypeScript.UnaryExpression(78 /* ThrowStatement */ , expression);
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -56678,7 +55746,7 @@ var TypeScript;
                 var expression = node.expression.accept(this);
                 this.movePast(node.colonToken);
                 var statements = this.visitSyntaxList(node.statements);
-                result = new TypeScript.CaseStatement();
+                result = new TypeScript.CaseClause();
                 result.expr = expression;
                 result.body = statements;
             }
@@ -56696,7 +55764,7 @@ var TypeScript;
                 this.movePast(node.defaultKeyword);
                 this.movePast(node.colonToken);
                 var statements = this.visitSyntaxList(node.statements);
-                result = new TypeScript.CaseStatement();
+                result = new TypeScript.CaseClause();
                 result.body = statements;
             }
             this.setAST(node, result);
@@ -56713,7 +55781,7 @@ var TypeScript;
                 this.movePast(node.breakKeyword);
                 this.movePast(node.identifier);
                 this.movePast(node.semicolonToken);
-                result = new TypeScript.Jump(76 /* Break */ );
+                result = new TypeScript.Jump(76 /* BreakStatement */ );
                 if (node.identifier !== null) {
                     result.target = node.identifier.valueText();
                 }
@@ -56732,7 +55800,7 @@ var TypeScript;
                 this.movePast(node.continueKeyword);
                 this.movePast(node.identifier);
                 this.movePast(node.semicolonToken);
-                result = new TypeScript.Jump(77 /* Continue */ );
+                result = new TypeScript.Jump(77 /* ContinueStatement */ );
                 if (node.identifier !== null) {
                     result.target = node.identifier.valueText();
                 }
@@ -56828,7 +55896,7 @@ var TypeScript;
                 var castTerm = this.visitType(node.type);
                 this.movePast(node.greaterThanToken);
                 var expression = node.expression.accept(this);
-                result = new TypeScript.UnaryExpression(70 /* TypeAssertion */ , expression);
+                result = new TypeScript.UnaryExpression(70 /* CastExpression */ , expression);
                 result.castTerm = castTerm;
             }
             this.setAST(node, result);
@@ -57131,6 +56199,888 @@ var TypeScript;
     })();
     TypeScript.SyntaxTreeToAstVisitor = SyntaxTreeToAstVisitor;    
 })(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
+    var SyntaxElementsCollector = (function (_super) {
+        __extends(SyntaxElementsCollector, _super);
+        function SyntaxElementsCollector() {
+            _super.apply(this, arguments);
+
+            this.elements = [];
+        }
+        SyntaxElementsCollector.prototype.visitNode = function (node) {
+            this.elements.push(node);
+            _super.prototype.visitNode.call(this, node);
+        };
+        SyntaxElementsCollector.prototype.visitToken = function (token) {
+            this.elements.push(token);
+        };
+        SyntaxElementsCollector.collectElements = function collectElements(node) {
+            var collector = new SyntaxElementsCollector();
+            node.accept(collector);
+            return collector.elements;
+        };
+        return SyntaxElementsCollector;
+    })(TypeScript.SyntaxWalker);
+    TypeScript.SyntaxElementsCollector = SyntaxElementsCollector;    
+    function withChange(text, start, length, newText) {
+        var contents = text.toString();
+        var newContents = contents.substr(0, start) + newText + contents.substring(start + length);
+        return {
+            text: TypeScript.TextFactory.createText(newContents),
+            textChangeRange: new TypeScript.TextChangeRange(new TypeScript.TextSpan(start, length), newText.length)
+        };
+    }
+    function withInsert(text, start, newText) {
+        return withChange(text, start, 0, newText);
+    }
+    function withDelete(text, start, length) {
+        return withChange(text, start, length, "");
+    }
+    function compareTrees(oldText, newText, textChangeRange, reusedElements) {
+        if (typeof reusedElements === "undefined") { reusedElements = -1; }
+        var oldTree = TypeScript.Parser.parse("", oldText, false, 1 /* EcmaScript5 */ );
+        var oldAST = TypeScript.SyntaxTreeToAstVisitor.visit(oldTree, "", new TypeScript.CompilationSettings());
+        var newTree = TypeScript.Parser.parse("", newText, false, 1 /* EcmaScript5 */ );
+        var newAST = TypeScript.SyntaxTreeToAstVisitor.visit(newTree, "", new TypeScript.CompilationSettings());
+        var incrementalNewTree = TypeScript.Parser.incrementalParse(oldTree, textChangeRange, newText);
+        var incrementalNewAST = TypeScript.SyntaxTreeToAstVisitor.visit(incrementalNewTree, "", new TypeScript.CompilationSettings());
+        TypeScript.Debug.assert(newTree.structuralEquals(incrementalNewTree));
+        TypeScript.Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
+        if (reusedElements !== -1) {
+            TypeScript.Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
+        }
+        TypeScript.Debug.assert(newAST.structuralEquals(incrementalNewAST));
+    }
+    var IncrementalParserTests = (function () {
+        function IncrementalParserTests() { }
+        IncrementalParserTests.runAllTests = function runAllTests() {
+            for(var name in IncrementalParserTests) {
+                if (IncrementalParserTests.hasOwnProperty(name) && TypeScript.StringUtilities.startsWith(name, "test")) {
+                    IncrementalParserTests[name]();
+                }
+            }
+        };
+        IncrementalParserTests.reusedElements = function reusedElements(oldNode, newNode) {
+            var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
+            var allNewElements = SyntaxElementsCollector.collectElements(newNode);
+            return TypeScript.ArrayUtilities.where(allOldElements, function (v) {
+                return TypeScript.ArrayUtilities.contains(allNewElements, v);
+            }).length;
+        };
+        IncrementalParserTests.testIncremental1 = function testIncremental1() {
+            var source = "class C {\r\n";
+            source += "    public foo1() { }\r\n";
+            source += "    public foo2() {\r\n";
+            source += "        return 1;\r\n";
+            source += "    }\r\n";
+            source += "    public foo3() { }\r\n";
+            source += "}";
+            var semicolonIndex = source.indexOf(";");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+        };
+        IncrementalParserTests.testIncremental2 = function testIncremental2() {
+            var source = "class C {\r\n";
+            source += "    public foo1() { }\r\n";
+            source += "    public foo2() {\r\n";
+            source += "        return 1 + 1;\r\n";
+            source += "    }\r\n";
+            source += "    public foo3() { }\r\n";
+            source += "}";
+            var index = source.indexOf("+ 1");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+        };
+        IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
+            var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
+            var semicolonIndex = source.indexOf(";}");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+        };
+        IncrementalParserTests.testIncrementalComment1 = function testIncrementalComment1() {
+            var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+            var semicolonIndex = source.indexOf(";");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
+        };
+        IncrementalParserTests.testIncrementalComment2 = function testIncrementalComment2() {
+            var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, 0, "//");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+        };
+        IncrementalParserTests.testIncrementalComment3 = function testIncrementalComment3() {
+            var source = "//class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, 0, 2);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
+        };
+        IncrementalParserTests.testIncrementalComment4 = function testIncrementalComment4() {
+            var source = "class C { public foo1() { /; } public foo2() { */ return 1; } public foo3() { } }";
+            var index = source.indexOf(";");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, "*");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+        };
+        IncrementalParserTests.testParameter1 = function testParameter1() {
+            var source = "class C {\r\n";
+            source += "    public foo2(a, b, c, d) {\r\n";
+            source += "        return 1;\r\n";
+            source += "    }\r\n";
+            source += "}";
+            var semicolonIndex = source.indexOf(";");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+        };
+        IncrementalParserTests.testTypeMember1 = function testTypeMember1() {
+            var source = "interface I { a: number; b: string; (c): d; new (e): f; g(): h }";
+            var index = source.indexOf(": string");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, "?");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
+        };
+        IncrementalParserTests.testEnumElement1 = function testEnumElement1() {
+            var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
+            var index = source.indexOf("<<");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withChange(oldText, index, 2, "+");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
+        };
+        IncrementalParserTests.testStrictMode1 = function testStrictMode1() {
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+        };
+        IncrementalParserTests.testStrictMode2 = function testStrictMode2() {
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, 0, "'use strict';\r\n");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
+        };
+        IncrementalParserTests.testStrictMode3 = function testStrictMode3() {
+            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
+            var index = source.indexOf('f');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, 0, index);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
+        };
+        IncrementalParserTests.testStrictMode4 = function testStrictMode4() {
+            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
+            var index = source.indexOf('f');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, 0, index);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 12);
+        };
+        IncrementalParserTests.testIncremental5 = function testIncremental5() {
+            var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+            var index = source.indexOf('b');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withChange(oldText, index, 6, "strict");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+        };
+        IncrementalParserTests.testIncremental6 = function testIncremental6() {
+            var source = "'use strict';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+            var index = source.indexOf('s');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withChange(oldText, index, 6, "blahhh");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+        };
+        IncrementalParserTests.testDelete1 = function testDelete1() {
+            var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+            var index = source.indexOf('f');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, 0, index);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 59);
+        };
+        IncrementalParserTests.testGenerics1 = function testGenerics1() {
+            var source = "var v = <T>(a);";
+            var index = source.indexOf(';');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, " => 1");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+        };
+        IncrementalParserTests.testGenerics2 = function testGenerics2() {
+            var source = "var v = <T>(a) => 1;";
+            var index = source.indexOf(' =>');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index, " => 1".length);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+        };
+        IncrementalParserTests.testGenerics3 = function testGenerics3() {
+            var source = "var v = 1 >> = 2";
+            var index = source.indexOf('>> =');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index + 2, 1);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+        };
+        IncrementalParserTests.testGenerics4 = function testGenerics4() {
+            var source = "var v = 1 >>= 2";
+            var index = source.indexOf('>>=');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index + 2, " ");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+        };
+        IncrementalParserTests.testGenerics5 = function testGenerics5() {
+            var source = "var v = T>>(2)";
+            var index = source.indexOf('T');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, "Foo<Bar<");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+        };
+        IncrementalParserTests.testGenerics6 = function testGenerics6() {
+            var source = "var v = Foo<Bar<T>>(2)";
+            var index = source.indexOf('Foo<Bar<');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index, "Foo<Bar<".length);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+        };
+        IncrementalParserTests.testGenerics7 = function testGenerics7() {
+            var source = "var v = T>>=2;";
+            var index = source.indexOf('=');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withChange(oldText, index, "= ".length, ": Foo<Bar<");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+        };
+        IncrementalParserTests.testGenerics8 = function testGenerics8() {
+            var source = "var v : Foo<Bar<T>>=2;";
+            var index = source.indexOf(':');
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withChange(oldText, index, ": Foo<Bar<".length, "= ");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+        };
+        IncrementalParserTests.testParenthesizedExpressionToLambda = function testParenthesizedExpressionToLambda() {
+            var source = "var v = (a, b) = c";
+            var index = source.indexOf("= c") + 1;
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, ">");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
+        IncrementalParserTests.testLambdaToParenthesizedExpression = function testLambdaToParenthesizedExpression() {
+            var source = "var v = (a, b) => c";
+            var index = source.indexOf(">");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index, 1);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
+        IncrementalParserTests.testGenericToArithmetic = function testGenericToArithmetic() {
+            var source = "var v = new Dictionary<A, B>()";
+            var index = source.indexOf("()");
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withDelete(oldText, index, 2);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
+        IncrementalParserTests.testArithmeticToGeneric = function testArithmeticToGeneric() {
+            var source = "var v = new Dictionary<A, B>";
+            var index = source.length;
+            var oldText = TypeScript.TextFactory.createText(source);
+            var newTextAndChange = withInsert(oldText, index, "()");
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        };
+        IncrementalParserTests.textComplexEdits1 = function textComplexEdits1() {
+            var source = "if (typeParameterSymbol.isResolved() || typeParameterSymbol.isResolving()) {\
+    return typeParameterSymbol;\
+}\
+else {\
+    return null;\
+}";
+            var index = source.indexOf("||");
+            var text1 = TypeScript.TextFactory.createText(source);
+            var textAndChange1 = withChange(text1, index, "|| typeParameterSymbol.isResolving()".length, "/*|| typeParameterSymbol.isResolving()*/");
+            var text2 = textAndChange1.text;
+            var start = text2.toString().indexOf("else");
+            var end = text2.toString().lastIndexOf("}") + 1;
+            var textAndChange2 = withDelete(text2, start, end - start);
+            var text3 = textAndChange2.text;
+            compareTrees(text1, text2, textAndChange1.textChangeRange, -1);
+            compareTrees(text2, text3, textAndChange2.textChangeRange, -1);
+            compareTrees(text1, text3, TypeScript.TextChangeRange.collapseChangesAcrossMultipleVersions([
+                textAndChange1.textChangeRange, 
+                textAndChange2.textChangeRange
+            ]), -1);
+        };
+        return IncrementalParserTests;
+    })();
+    TypeScript.IncrementalParserTests = IncrementalParserTests;    
+})(TypeScript || (TypeScript = {}));
+var Diff;
+(function (Diff) {
+    (function (SegmentType) {
+        SegmentType._map = [];
+        SegmentType._map[0] = "Unchanged";
+        SegmentType.Unchanged = 0;
+        SegmentType._map[1] = "Added";
+        SegmentType.Added = 1;
+        SegmentType._map[2] = "Removed";
+        SegmentType.Removed = 2;
+        SegmentType._map[3] = "MovedFrom";
+        SegmentType.MovedFrom = 3;
+        SegmentType._map[4] = "MovedTo";
+        SegmentType.MovedTo = 4;
+    })(Diff.SegmentType || (Diff.SegmentType = {}));
+    var SegmentType = Diff.SegmentType;
+    (function (UnicodeCategory) {
+        UnicodeCategory._map = [];
+        UnicodeCategory._map[0] = "SpaceSeparator";
+        UnicodeCategory.SpaceSeparator = 0;
+        UnicodeCategory._map[1] = "LowercaseLetter";
+        UnicodeCategory.LowercaseLetter = 1;
+    })(Diff.UnicodeCategory || (Diff.UnicodeCategory = {}));
+    var UnicodeCategory = Diff.UnicodeCategory;
+    var Segment = (function () {
+        function Segment(content, type) {
+            if (typeof content === "undefined") { content = ''; }
+            if (typeof type === "undefined") { type = 0 /* Unchanged */ ; }
+            this.content = content;
+            this.type = type;
+        }
+        return Segment;
+    })();
+    Diff.Segment = Segment;    
+    var Region = (function () {
+        function Region(index, length, type) {
+            this.index = index;
+            this.length = length;
+            this.type = type;
+        }
+        return Region;
+    })();
+    Diff.Region = Region;    
+    var Chunk = (function () {
+        function Chunk(content, delimiterContent) {
+            this.content = content;
+            this.delimiterContent = delimiterContent;
+            this.hashCode = "~!!" + content;
+            this.matchingIndex = -1;
+            this.innerDiff = null;
+        }
+        Chunk.prototype.mergedContent = function () {
+            return this.content + this.delimiterContent;
+        };
+        Chunk.prototype.equals = function (otherChunk) {
+            if (otherChunk === null) {
+                throw new Error("otherChunk is null");
+            }
+            if (this.hashCode != otherChunk.hashCode) {
+                return false;
+            }
+            return this.content === otherChunk.content;
+        };
+        Chunk.isDelimiter = function isDelimiter(c, delimiters) {
+            return delimiters.indexOf(c) >= 0;
+        };
+        Chunk.Split = function Split(content, delimiters) {
+            var set = [];
+            var currentIndex, currentLength;
+            var index = 0;
+            var length = content.length;
+            var delimiterCount = 0;
+            while(index < length) {
+                currentIndex = index;
+                currentLength = 0;
+                while(index < length && !Chunk.isDelimiter(content.substr(index, 1), delimiters)) {
+                    currentLength++;
+                    index++;
+                }
+                delimiterCount = 0;
+                while(index < length && Chunk.isDelimiter(content.substr(index, 1), delimiters)) {
+                    currentLength++;
+                    index++;
+                    delimiterCount++;
+                }
+                set.push(new Chunk(content.substr(currentIndex, currentLength - delimiterCount), content.substr(currentIndex + currentLength - delimiterCount, delimiterCount)));
+            }
+            return set;
+        };
+        Chunk.SplitSeparateDelimiters = function SplitSeparateDelimiters(content, delimiters) {
+            if (content === null || content.length === 0) {
+                return [];
+            }
+            var set = [];
+            var wantDelimiter = Chunk.isDelimiter(content[0], delimiters);
+            var currentIndex, currentLength;
+            var index = 0;
+            var length = content.length;
+            while(index < length) {
+                currentIndex = index;
+                currentLength = 0;
+                while(index < length && wantDelimiter === Chunk.isDelimiter(content[index], delimiters)) {
+                    currentLength++;
+                    index++;
+                }
+                wantDelimiter = !wantDelimiter;
+                set.push(new Chunk(content.substr(currentIndex, currentLength), ''));
+            }
+            return set;
+        };
+        Chunk.SplitInner = function SplitInner(content) {
+            return Chunk.SplitCategory(content);
+        };
+        Chunk.SplitCategory = function SplitCategory(content) {
+            if (content === null || content.length === 0) {
+                return [];
+            }
+            var set = [];
+            var categoryToMatch = Chunk.GetCategory(content[0]);
+            var currentIndex, currentLength;
+            var index = 0;
+            var length = content.length;
+            while(index < length) {
+                currentIndex = index;
+                currentLength = 1;
+                index++;
+                while(index < length && Chunk.CategoryMatches(Chunk.GetCategory(content[index]), categoryToMatch)) {
+                    currentLength++;
+                    index++;
+                }
+                if (index < length) {
+                    categoryToMatch = Chunk.GetCategory(content[index]);
+                }
+                set.push(new Chunk(content.substr(currentIndex, currentLength), ''));
+            }
+            return set;
+        };
+        Chunk.CategoryMatches = function CategoryMatches(left, right) {
+            if (left === 0 /* SpaceSeparator */  || right === 0 /* SpaceSeparator */ ) {
+                return false;
+            }
+            return left === right;
+        };
+        Chunk.GetCategory = function GetCategory(c) {
+            if (c === ' ' || c === '\r' || c === '\n' || c === '\t') {
+                return 0 /* SpaceSeparator */ ;
+            } else {
+                return 1 /* LowercaseLetter */ ;
+            }
+        };
+        Chunk.SplitEveryChar = function SplitEveryChar(content) {
+            var set = [];
+            for(var i = 0; i < content.length; ++i) {
+                set.push(new Chunk(content[i], ''));
+            }
+            return set;
+        };
+        Chunk.prototype.toString = function () {
+            return 'NYI?';
+        };
+        return Chunk;
+    })();
+    Diff.Chunk = Chunk;    
+    var UniquenessEntry = (function () {
+        function UniquenessEntry(index, content) {
+            this.index = index;
+            this.content = content;
+            this.MatchCount = 1;
+        }
+        UniquenessEntry.prototype.equals = function (other) {
+            return this.content === other.content;
+        };
+        UniquenessEntry.prototype.Increment = function () {
+            this.MatchCount++;
+        };
+        return UniquenessEntry;
+    })();    
+    var SegmentBuilder = (function () {
+        function SegmentBuilder() {
+            this.segmentSet = [];
+        }
+        SegmentBuilder.prototype.AddSegment = function (content, type) {
+            if (this.segmentExists && this.currentType === type) {
+                this.currentContent += content;
+            } else {
+                if (this.segmentExists) {
+                    var currentSegment = new Segment();
+                    currentSegment.content = this.currentContent;
+                    currentSegment.type = this.currentType;
+                    this.segmentSet.push(currentSegment);
+                }
+                this.segmentExists = true;
+                this.currentContent = content;
+                this.currentType = type;
+            }
+        };
+        SegmentBuilder.prototype.FlushSegment = function () {
+            if (this.segmentExists) {
+                this.segmentExists = false;
+                var currentSegment = new Segment();
+                currentSegment.content = this.currentContent;
+                currentSegment.type = this.currentType;
+                this.segmentSet.push(currentSegment);
+            }
+        };
+        SegmentBuilder.prototype.GetSegments = function () {
+            this.FlushSegment();
+            return this.segmentSet;
+        };
+        return SegmentBuilder;
+    })();    
+    var InnerDiff = (function () {
+        function InnerDiff(oldContent, newContent) {
+            var oldChunks = Chunk.SplitInner(oldContent);
+            var newChunks = Chunk.SplitInner(newContent);
+            StringDiff.Compare(oldChunks, 0, oldChunks.length - 1, newChunks, 0, newChunks.length - 1);
+            this.Segments = StringDiff.CompressArraysToSegments(oldChunks, newChunks);
+        }
+        return InnerDiff;
+    })();
+    Diff.InnerDiff = InnerDiff;    
+    var StringDiff = (function () {
+        function StringDiff(oldContent, newContent, includeUnchangedRegions) {
+            if (typeof includeUnchangedRegions === "undefined") { includeUnchangedRegions = true; }
+            this.includeUnchangedRegions = includeUnchangedRegions;
+            this.regionsGenerated = false;
+            this.segmentSet = [];
+            var delimitersToUse = '\n\r';
+            var useNestedAlgorithm = true;
+            var oldChunks = Chunk.Split(oldContent, delimitersToUse.split(''));
+            var newChunks = Chunk.Split(newContent, delimitersToUse.split(''));
+            StringDiff.Compare(oldChunks, 0, oldChunks.length - 1, newChunks, 0, newChunks.length - 1);
+            if (useNestedAlgorithm) {
+                StringDiff.PerformNestedDiff(oldChunks, newChunks);
+            }
+            this.segmentSet = StringDiff.CompressArraysToSegments(oldChunks, newChunks);
+            this.GenerateStringsAndRegions();
+        }
+        StringDiff.Compare = function Compare(oldContent, oldStart, oldEnd, newContent, newStart, newEnd) {
+            var oldTable = StringDiff.BuildUniquenessTable(oldContent, oldStart, oldEnd);
+            var newTable = StringDiff.BuildUniquenessTable(newContent, newStart, newEnd);
+            for(var i = newStart; i <= newEnd; ++i) {
+                var newEntries = (newTable[newContent[i].hashCode]);
+                var oldEntries = (oldTable[newContent[i].hashCode]);
+                if (newEntries && oldEntries) {
+                    var foundIt = false;
+                    for(var x = 0; x < newEntries.length; x++) {
+                        var newEntry = newEntries[x];
+                        for(var y = 0; y < oldEntries.length; y++) {
+                            var oldEntry = oldEntries[y];
+                            if (newEntry && oldEntry && newEntry.MatchCount === 1 && oldEntry.MatchCount === 1 && (newEntry.content.localeCompare(oldEntry.content) === 0)) {
+                                var oldIndex = oldEntry.index;
+                                newContent[i].matchingIndex = oldIndex;
+                                oldContent[oldIndex].matchingIndex = i;
+                                foundIt = true;
+                                break;
+                            }
+                        }
+                        if (foundIt) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (oldStart <= oldEnd && newStart <= newEnd) {
+                StringDiff.TryMatch(oldContent, oldStart, newContent, newStart);
+                StringDiff.TryMatch(oldContent, oldEnd, newContent, newEnd);
+            }
+            for(i = newStart; i < newEnd; ++i) {
+                var j = newContent[i].matchingIndex;
+                if (j != -1 && j < oldEnd && j >= oldStart) {
+                    if (oldContent[j].matchingIndex === i) {
+                        StringDiff.TryMatch(oldContent, j + 1, newContent, i + 1);
+                    }
+                }
+            }
+            for(i = newEnd; i > newStart; --i) {
+                j = newContent[i].matchingIndex;
+                if (j != -1 && j <= oldEnd && j > oldStart) {
+                    if (oldContent[j].matchingIndex === i) {
+                        StringDiff.TryMatch(oldContent, j - 1, newContent, i - 1);
+                    }
+                }
+            }
+        };
+        StringDiff.TryMatch = function TryMatch(oldContent, oldIndex, newContent, newIndex) {
+            var newChunk = newContent[newIndex];
+            var oldChunk = oldContent[oldIndex];
+            if (newChunk.matchingIndex === -1 && oldChunk.matchingIndex === -1) {
+                if (newChunk.content === oldChunk.content) {
+                    newChunk.matchingIndex = oldIndex;
+                    oldChunk.matchingIndex = newIndex;
+                }
+            }
+        };
+        StringDiff.BuildUniquenessTable = function BuildUniquenessTable(content, start, end) {
+            var table = {};
+            for(var i = start; i <= end; ++i) {
+                var entries = table[content[i].hashCode];
+                if (!entries) {
+                    entries = [];
+                }
+                var hasMatch = false;
+                for(var k = 0; k < entries.length; k++) {
+                    if (entries[k].content.localeCompare(content[i].content) === 0) {
+                        hasMatch = true;
+                        entries[k].Increment();
+                        break;
+                    }
+                }
+                if (!hasMatch) {
+                    var newEntry = new UniquenessEntry(i, content[i].content);
+                    entries.push(newEntry);
+                }
+                table[content[i].hashCode] = entries;
+            }
+            return table;
+        };
+        StringDiff.PerformNestedDiff = function PerformNestedDiff(oldContent, newContent) {
+            if (oldContent.length > 0 && newContent.length > 0) {
+                StringDiff.TryInnerMatch(oldContent, 0, newContent, 0);
+                StringDiff.TryInnerMatch(oldContent, oldContent.length - 1, newContent, newContent.length - 1);
+            }
+            for(var i = 0; i < newContent.length - 1; ++i) {
+                var j = newContent[i].matchingIndex;
+                if (j != -1 && j < oldContent.length - 1 && j >= 0) {
+                    if (oldContent[j].matchingIndex === i) {
+                        StringDiff.TryInnerMatch(oldContent, j + 1, newContent, i + 1);
+                    }
+                }
+            }
+            for(i = newContent.length - 1; i > 0; --i) {
+                j = newContent[i].matchingIndex;
+                if (j != -1 && j < oldContent.length && j > 0) {
+                    if (oldContent[j].matchingIndex === i) {
+                        StringDiff.TryInnerMatch(oldContent, j - 1, newContent, i - i);
+                    }
+                }
+            }
+        };
+        StringDiff.TryInnerMatch = function TryInnerMatch(oldContent, oldIndex, newContent, newIndex) {
+            var newChunk = newContent[newIndex];
+            var oldChunk = oldContent[oldIndex];
+            if (newChunk.matchingIndex === -1 && oldChunk.matchingIndex === -1) {
+                var difference = new InnerDiff(oldContent[oldIndex].content, newContent[newIndex].content);
+                if (StringDiff.AreSimilarEnough(difference)) {
+                    newChunk.innerDiff = difference;
+                    oldChunk.innerDiff = difference;
+                    newChunk.matchingIndex = oldIndex;
+                    oldChunk.matchingIndex = newIndex;
+                }
+            }
+        };
+        StringDiff.AreSimilarEnough = function AreSimilarEnough(difference) {
+            var identicalChars = 0;
+            var differentChars = 0;
+            var addedCount = 0;
+            var removedCount = 0;
+            var movedCount = 0;
+            for(var i = 0; i < difference.Segments.length; i++) {
+                var s = difference.Segments[i];
+                switch(s.type) {
+                    case 1 /* Added */ :
+                        addedCount++;
+                        break;
+                    case 2 /* Removed */ :
+                        removedCount++;
+                        break;
+                    case 3 /* MovedFrom */ :
+                        movedCount++;
+                        break;
+                    case 4 /* MovedTo */ :
+                        movedCount++;
+                        break;
+                }
+                if (s.content.trim().length === 0) {
+                    continue;
+                }
+                if (s.type === 0 /* Unchanged */ ) {
+                    identicalChars += s.content.length * 2;
+                } else {
+                    differentChars += s.content.length;
+                }
+            }
+            var totalChars = identicalChars + differentChars;
+            if (totalChars === 0) {
+                return true;
+            }
+            if (removedCount === 0 && movedCount === 0) {
+                return true;
+            }
+            if (addedCount === 0 && movedCount === 0) {
+                return true;
+            }
+            return (identicalChars / totalChars) > 0.50;
+        };
+        StringDiff.CompressArraysToSegments = function CompressArraysToSegments(oldContent, newContent) {
+            var builder = new SegmentBuilder();
+            var oldIndex = 0;
+            var newIndex = 0;
+            while(oldIndex < oldContent.length && newIndex < newContent.length) {
+                if (oldContent[oldIndex].matchingIndex === newIndex) {
+                    if (newContent[newIndex].innerDiff === null) {
+                        builder.AddSegment(newContent[newIndex].mergedContent(), 0 /* Unchanged */ );
+                    } else {
+                        for(var i = 0; i < newContent[newIndex].innerDiff.Segments.length; i++) {
+                            var s = newContent[newIndex].innerDiff.Segments[i];
+                            builder.AddSegment(s.content, s.type);
+                        }
+                    }
+                    oldIndex++;
+                    newIndex++;
+                } else if (oldContent[oldIndex].matchingIndex === -1) {
+                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 2 /* Removed */ );
+                    oldIndex++;
+                } else if (newContent[newIndex].matchingIndex === -1) {
+                    builder.AddSegment(newContent[newIndex].mergedContent(), 1 /* Added */ );
+                    newIndex++;
+                } else if (oldContent[oldIndex].matchingIndex < newIndex) {
+                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 3 /* MovedFrom */ );
+                    oldIndex++;
+                } else if (newContent[newIndex].matchingIndex < oldIndex) {
+                    builder.AddSegment(newContent[newIndex].mergedContent(), 4 /* MovedTo */ );
+                    newIndex++;
+                } else {
+                    var linesOnLeftBeforeUnchanged = newContent[newIndex].matchingIndex - oldIndex;
+                    var linesOnRightBeforeUnchanged = oldContent[oldIndex].matchingIndex - newIndex;
+                    if (linesOnLeftBeforeUnchanged < linesOnRightBeforeUnchanged) {
+                        builder.AddSegment(oldContent[oldIndex].mergedContent(), 3 /* MovedFrom */ );
+                        oldIndex++;
+                    } else {
+                        builder.AddSegment(newContent[newIndex].mergedContent(), 4 /* MovedTo */ );
+                        newIndex++;
+                    }
+                }
+            }
+            while(oldIndex < oldContent.length) {
+                if (oldContent[oldIndex].matchingIndex === -1) {
+                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 2 /* Removed */ );
+                } else {
+                    builder.AddSegment(oldContent[oldIndex].mergedContent(), 3 /* MovedFrom */ );
+                }
+                oldIndex++;
+            }
+            while(newIndex < newContent.length) {
+                if (newContent[newIndex].matchingIndex === -1) {
+                    builder.AddSegment(newContent[newIndex].mergedContent(), 1 /* Added */ );
+                } else {
+                    builder.AddSegment(newContent[newIndex].mergedContent(), 4 /* MovedTo */ );
+                }
+                newIndex++;
+            }
+            return builder.GetSegments();
+        };
+        StringDiff.prototype.GenerateStringsAndRegions = function () {
+            if (this.regionsGenerated === false) {
+                this.regionsGenerated = true;
+                var MergedHtml = '';
+                var MergedText = '';
+                var OldText = '';
+                var NewText = '';
+                var Regions = [];
+                MergedHtml += StringDiff.htmlPrefix();
+                for(var i = 0; i < this.segmentSet.length; i++) {
+                    var segment = this.segmentSet[i];
+                    var newRegion = new Region(MergedText.length, segment.content.length, segment.type);
+                    Regions.push(newRegion);
+                    MergedText += segment.content;
+                    switch(segment.type) {
+                        case 1 /* Added */ :
+                            OldText += (StringDiff.whitespaceEquivalent(segment.content));
+                            NewText += (segment.content);
+                            MergedHtml += (StringDiff.addedStringHtml(segment.content));
+                            break;
+                        case 4 /* MovedTo */ :
+                            OldText += (StringDiff.whitespaceEquivalent(segment.content));
+                            NewText += (segment.content);
+                            MergedHtml += (StringDiff.movedToStringHtml(segment.content));
+                            break;
+                        case 2 /* Removed */ :
+                            OldText += (segment.content);
+                            NewText += (StringDiff.whitespaceEquivalent(segment.content));
+                            MergedHtml += (StringDiff.removedStringHtml(segment.content));
+                            break;
+                        case 3 /* MovedFrom */ :
+                            OldText += (segment.content);
+                            NewText += (StringDiff.whitespaceEquivalent(segment.content));
+                            MergedHtml += (StringDiff.movedFromStringHtml(segment.content));
+                            break;
+                        default:
+                            OldText += (segment.content);
+                            NewText += (segment.content);
+                            if (this.includeUnchangedRegions) {
+                                MergedHtml += (StringDiff.unchangedStringHtml(segment.content));
+                            }
+                            break;
+                    }
+                }
+                MergedHtml += StringDiff.htmlSuffix();
+                this.mergedHtml = MergedHtml;
+                this.mergedOutput = MergedText;
+                this.oldOutput = OldText;
+                this.newOutput = NewText;
+                this.regions = Regions;
+            }
+        };
+        StringDiff.htmlPrefix = function htmlPrefix() {
+            var content = '';
+            return content;
+        };
+        StringDiff.htmlSuffix = function htmlSuffix() {
+            return '';
+        };
+        StringDiff.addedStringHtml = function addedStringHtml(text) {
+            return "<span class=\"new\">" + StringDiff.fullHtmlEncode(text) + "</span>";
+        };
+        StringDiff.removedStringHtml = function removedStringHtml(text) {
+            return "<span class=\"old\">" + StringDiff.fullHtmlEncode(text) + "</span>";
+        };
+        StringDiff.movedFromStringHtml = function movedFromStringHtml(text) {
+            return "<span class=\"from\">" + StringDiff.fullHtmlEncode(text) + "</span>";
+        };
+        StringDiff.movedToStringHtml = function movedToStringHtml(text) {
+            return "<span class=\"to\">" + StringDiff.fullHtmlEncode(text) + "</span>";
+        };
+        StringDiff.unchangedStringHtml = function unchangedStringHtml(text) {
+            return StringDiff.fullHtmlEncode(text);
+        };
+        StringDiff.fullHtmlEncode = function fullHtmlEncode(text) {
+            return text.replace('<', '&lt;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+        };
+        StringDiff.whitespaceEquivalent = function whitespaceEquivalent(input) {
+            return input.replace(/./g, ' ');
+        };
+        return StringDiff;
+    })();
+    Diff.StringDiff = StringDiff;    
+    var HtmlBaselineReport = (function () {
+        function HtmlBaselineReport(reportFileName) {
+            this.reportFileName = reportFileName;
+            this.reportContent = null;
+            var htmlTrailer = '</body></html>';
+            if (Environment.fileExists(this.reportFileName)) {
+                this.reportContent = Environment.readFile(this.reportFileName);
+            } else {
+                this.reportContent = HtmlBaselineReport.htmlLeader;
+            }
+        }
+        HtmlBaselineReport.htmlTrailer = '</body></html>';
+        HtmlBaselineReport.htmlLeader = '<html><head><title>Baseline Report</title>' + '\r\n' + ("<style>") + '\r\n' + (".code { font: 9pt 'Courier New'; }") + '\r\n' + (".old { background-color: #EE1111; }") + '\r\n' + (".new { background-color: #FFFF11; }") + '\r\n' + (".from { background-color: #EE1111; color: #1111EE; }") + '\r\n' + (".to { background-color: #EEEE11; color: #1111EE; }") + '\r\n' + ("h2 { margin-bottom: 0px; }") + '\r\n' + ("h2 { padding-bottom: 0px; }") + '\r\n' + ("h4 { font-weight: normal; }") + '\r\n' + ("</style>");
+        HtmlBaselineReport.prototype.reset = function () {
+            if (Environment.fileExists(this.reportFileName)) {
+                Environment.deleteFile(this.reportFileName);
+            }
+            this.reportContent = HtmlBaselineReport.htmlLeader;
+        };
+        HtmlBaselineReport.prototype.addDifference = function (description, expectedFileName, actualFileName, expected, actual, includeUnchangedRegions) {
+            var diff = new Diff.StringDiff(expected, actual, includeUnchangedRegions);
+            var header = "";
+            if (description !== "") {
+                header = '<h2>' + description + '</h2>';
+            }
+            header += '<h4>Left file: ' + expectedFileName + '; Right file: ' + actualFileName + '</h4>';
+            this.reportContent = this.reportContent.replace(HtmlBaselineReport.htmlTrailer, '');
+            this.reportContent += header + '<div class="code">' + diff.mergedHtml + '</div>' + '<hr>';
+            this.reportContent += HtmlBaselineReport.htmlTrailer;
+            Environment.writeFile(this.reportFileName, this.reportContent);
+        };
+        return HtmlBaselineReport;
+    })();
+    Diff.HtmlBaselineReport = HtmlBaselineReport;    
+})(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
 var generate = false;
@@ -57163,7 +57113,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\test262", function (fileName) {
-            return _this.runParser(fileName, 1 /* EcmaScript5 */ , false, generate);
+            return _this.runParser(fileName, 1 /* EcmaScript5 */ , true, generate);
         });
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\prettyPrinter\\ecmascript5", function (fileName) {
@@ -57216,8 +57166,10 @@ var Program = (function () {
         var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
+        var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
         var totalIncrementalTime = 0;
-        var count = 1000;
+        var totalIncrementalASTTime = 0;
+        var count = 500;
         var timer = new TypeScript.Timer();
         for(var i = 0; i < count; i++) {
             timer.start();
@@ -57226,13 +57178,24 @@ var Program = (function () {
             timer.end();
             totalIncrementalTime += timer.time;
             TypeScript.Debug.assert(tree.structuralEquals(tree2));
+            timer.start();
+            var ast2 = TypeScript.SyntaxTreeToAstVisitor.visit(tree2, fileName, new TypeScript.CompilationSettings());
+            timer.end();
+            totalIncrementalASTTime += timer.time;
+            TypeScript.Debug.assert(ast.structuralEquals(ast2));
             tree = tree2;
+            ast = ast2;
         }
         var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
         var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
-        Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
-        Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
+        Environment.standardOut.WriteLine("Incremental     time: " + totalIncrementalTime);
+        Environment.standardOut.WriteLine("Incremental     rate: " + rateMBPerSecond + " MB/s");
+        rateBytesPerMillisecond = (contents.length * count) / totalIncrementalASTTime;
+        rateBytesPerSecond = rateBytesPerMillisecond * 1000;
+        rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
+        Environment.standardOut.WriteLine("Incremental AST time: " + totalIncrementalASTTime);
+        Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
     };
     Program.prototype.handleException = function (fileName, e) {
         Environment.standardOut.WriteLine("");

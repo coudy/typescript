@@ -1,5 +1,6 @@
 ///<reference path='..\..\..\src\Compiler\Syntax\References.ts' />
 ///<reference path='..\..\..\src\Compiler\Core\Environment.ts' />
+///<reference path='..\..\..\src\Compiler\SyntaxTreeToAstVisitor.ts' />
 
 module TypeScript {
     export class SyntaxElementsCollector extends SyntaxWalker {
@@ -42,9 +43,13 @@ module TypeScript {
     // unavoidable.  If it does decrease an investigation 
     function compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedElements: number = -1): void {
         var oldTree = Parser.parse("", oldText, false, LanguageVersion.EcmaScript5);
+        var oldAST = SyntaxTreeToAstVisitor.visit(oldTree, "", new CompilationSettings());
 
         var newTree = Parser.parse("", newText, false, LanguageVersion.EcmaScript5);
+        var newAST = SyntaxTreeToAstVisitor.visit(newTree, "", new CompilationSettings());
+
         var incrementalNewTree = Parser.incrementalParse(oldTree, textChangeRange, newText);
+        var incrementalNewAST = SyntaxTreeToAstVisitor.visit(incrementalNewTree, "", new CompilationSettings());
 
         // We should get the same tree when doign a full or incremental parse.
         Debug.assert(newTree.structuralEquals(incrementalNewTree));
@@ -55,6 +60,8 @@ module TypeScript {
         if (reusedElements !== -1) {
             Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
         }
+
+        Debug.assert(newAST.structuralEquals(incrementalNewAST));
     }
 
     export class IncrementalParserTests {
