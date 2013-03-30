@@ -22,10 +22,10 @@ var m1;
         })();
         m1_M2_private.c1 = c1;        
         function f1() {
-            return new m1_M2_private.c1();
+            return new c1();
         }
         m1_M2_private.f1 = f1;
-        m1_M2_private.v1 = m1_M2_private.c1;
+        m1_M2_private.v1 = c1;
         m1_M2_private.v2;
     })(m1_M2_private || (m1_M2_private = {}));
             var m1_im1_private = m1_M1_public;

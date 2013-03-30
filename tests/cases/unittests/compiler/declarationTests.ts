@@ -45,7 +45,7 @@ describe('Compiling unittests\\compiler\\declarationTests.ts', function() {
             code += '   var bar;'
             code += '}'
         Harness.Compiler.compileString(code, 'declarations', function(result) {
-            assert.equal(result.errors.length, 0);
+            assert.equal(result.errors.length, 1);
         });
     });
 });

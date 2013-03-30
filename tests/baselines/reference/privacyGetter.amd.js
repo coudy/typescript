@@ -111,7 +111,7 @@ define(["require", "exports"], function(require, exports) {
             function m2_C3_public() { }
             Object.defineProperty(m2_C3_public.prototype, "p1_private", {
                 get: function () {
-                    return new m2.m2_C1_public();
+                    return new m2_C1_public();
                 },
                 set: function (m2_c3_p1_arg) {
                 },
@@ -120,7 +120,7 @@ define(["require", "exports"], function(require, exports) {
             });
             Object.defineProperty(m2_C3_public.prototype, "p2_private", {
                 get: function () {
-                    return new m2.m2_C1_public();
+                    return new m2_C1_public();
                 },
                 set: function (m2_c3_p2_arg) {
                 },
@@ -152,7 +152,7 @@ define(["require", "exports"], function(require, exports) {
             function m2_C4_private() { }
             Object.defineProperty(m2_C4_private.prototype, "p1_private", {
                 get: function () {
-                    return new m2.m2_C1_public();
+                    return new m2_C1_public();
                 },
                 set: function (m2_c3_p1_arg) {
                 },
@@ -161,7 +161,7 @@ define(["require", "exports"], function(require, exports) {
             });
             Object.defineProperty(m2_C4_private.prototype, "p2_private", {
                 get: function () {
-                    return new m2.m2_C1_public();
+                    return new m2_C1_public();
                 },
                 set: function (m2_c3_p2_arg) {
                 },

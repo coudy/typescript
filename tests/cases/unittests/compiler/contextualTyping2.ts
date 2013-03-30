@@ -25,7 +25,7 @@ describe('Contextual typing tests', function() {
             it("Variable - Object with expression having less properties 2", function() {
                 var code = "var foo: {id:number;} = { };";
                 Harness.Compiler.compileString(code, 'Object Literal', function(result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 1);
                 });
             });
             /*
@@ -46,7 +46,7 @@ describe('Contextual typing tests', function() {
             it("Property - Object with expression having less properties", function() {
                 var code = "class foo { public bar:{id:number;} = { }; }";
                 Harness.Compiler.compileString(code, 'Object Literal', function(result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 1);
                 });
             });   
         });
@@ -84,7 +84,7 @@ describe('Contextual typing tests', function() {
             it("Property - Positive 2", function() {
                 var code = "class foo { public bar:{id:number;}[] = [<foo>({})]; }";
                 Harness.Compiler.compileString(code, 'Object Literal', function(result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 1);
                 });
             });  
             it("Property - Negative", function() {
@@ -118,7 +118,7 @@ describe('Contextual typing tests', function() {
             it("Negative", function() {
                 var code = "class foo { public bar: { (i: number): number; } = function(a:string) { return 1 }; }";
                 Harness.Compiler.compileString(code, 'Object Literal', function(result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 1);
                 });
             });
         });
@@ -184,7 +184,7 @@ describe('Contextual typing tests', function() {
             it("Negative", function() {
                 var code = "var foo:(a:{():number; (i:number):number; })=>number; foo = function(a:string){return 5};";
                 Harness.Compiler.compileString(code, 'Object Literal', function(result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 1);
                 });
             });
         });        

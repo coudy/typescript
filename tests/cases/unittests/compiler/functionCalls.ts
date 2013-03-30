@@ -54,7 +54,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 'bar');";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 12);
+                    assert.equal(result.errors.length, 6);
                 });
             });
 
@@ -66,7 +66,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo();";
                 code += "foo({}, {});";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 16);
+                    assert.equal(result.errors.length, 8);
                 });
             });
 
@@ -79,7 +79,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(4);";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 12);
+                    assert.equal(result.errors.length, 6);
                 });
             });
 
@@ -90,7 +90,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(4);";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 8);
+                    assert.equal(result.errors.length, 4);
                 });
             });
 
@@ -102,7 +102,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 1, 'bar');";
                 code += "foo();";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 8);
+                    assert.equal(result.errors.length, 4);
                 });
             });
 
@@ -113,7 +113,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo();";
                 code += "foo(1, 'bar');";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 8);
+                    assert.equal(result.errors.length, 4);
                 });
             });
 
@@ -125,7 +125,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 'bar');";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 12);
+                    assert.equal(result.errors.length, 6);
                 });
             });
 
@@ -138,7 +138,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 12);
+                    assert.equal(result.errors.length, 6);
                 });
             });
 
@@ -150,7 +150,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 4);
+                    assert.equal(result.errors.length, 2);
                 });
             });
 
@@ -163,7 +163,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 8);
+                    assert.equal(result.errors.length, 4);
                 });
             });
 
@@ -184,7 +184,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 'bar', 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 12);
+                    assert.equal(result.errors.length, 6);
                 });
             });
 
@@ -198,7 +198,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo('foo', 1, 3);";
                 code += "foo('foo', 'bar', 3, 4);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 16);
+                    assert.equal(result.errors.length, 8);
                 });
             });
         });
