@@ -47418,7 +47418,7 @@ var TypeScript;
         };
         SemanticInfoChain.prototype.updateUnit = function (oldUnit, newUnit) {
             for(var i = 0; i < this.units.length; i++) {
-                if (this.units[i] == oldUnit) {
+                if (this.units[i].getPath() == oldUnit.getPath()) {
                     this.units[i] = newUnit;
                     this.unitCache[oldUnit.getPath()] = newUnit;
                     return;
@@ -50212,15 +50212,11 @@ var TypeScript;
             var declSymbol = declToRemove.getSymbol();
             if (declSymbol) {
                 declSymbol.removeDeclaration(declToRemove);
-                var decls = declSymbol.getDeclarations();
-                if (!decls.length) {
-                    this.removeSymbol(declSymbol);
-                } else {
-                    var childDecls = declToRemove.getChildDecls();
-                    for(var i = 0; i < childDecls.length; i++) {
-                        this.removeDecl(childDecls[i]);
-                    }
+                var childDecls = declToRemove.getChildDecls();
+                for(var i = 0; i < childDecls.length; i++) {
+                    this.removeDecl(childDecls[i]);
                 }
+                this.removeSymbol(declSymbol);
                 this.semanticInfoChain.removeSymbolFromCache(declSymbol);
             }
             var valDecl = declToRemove.getValueDecl();
@@ -50281,6 +50277,10 @@ var TypeScript;
             symbolWhoseTypeChanged.typeChangeUpdateVersion = TypeScript.updateVersion;
             symbolWhoseTypeChanged.updateOutgoingLinks(propagateChangedTypeToOutgoingLinks, new PullSymbolUpdate(3 /* TypeChanged */ , symbolWhoseTypeChanged, this));
             symbolWhoseTypeChanged.updateIncomingLinks(propagateChangedTypeToIncomingLinks, new PullSymbolUpdate(3 /* TypeChanged */ , symbolWhoseTypeChanged, this));
+            if (symbolWhoseTypeChanged.getKind() == 8 /* Container */ ) {
+                var instanceSymbol = (symbolWhoseTypeChanged).getInstanceSymbol();
+                this.invalidateType(instanceSymbol);
+            }
             symbolWhoseTypeChanged.invalidate();
         };
         return PullSymbolGraphUpdater;
@@ -53311,7 +53311,6 @@ var TypeScript;
                         }
                     }
                     var traceEndTime = new Date().getTime();
-                    _this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, _this);
                     _this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     _this.logger.log("Update Script - Number of diffs: " + diffResults.length);
                 }
