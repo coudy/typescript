@@ -37,13 +37,13 @@ class Program {
             // return;
         }
 
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
-
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
         }
+
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
 
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",

@@ -96,18 +96,91 @@ module TypeScript {
             }
         }
 
-        private setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
-            span.minChar = fullStart + element.leadingTriviaWidth();
-            span.limChar = fullStart + element.fullWidth();
-            Debug.assert(!isNaN(span.minChar));
-            Debug.assert(!isNaN(span.limChar));
+        private applyDelta(ast: TypeScript.AST, delta: number) {
+            var applyDelta = (ast: TypeScript.AST) => {
+                if (ast.minChar !== -1) {
+                    ast.minChar += delta;
+                }
+                if (ast.limChar !== -1) {
+                    ast.limChar += delta;
+                }
+            }
+
+            var applyDeltaToComments = (comments: TypeScript.Comment[]) => {
+                if (comments && comments.length > 0) {
+                    for (var i = 0; i < comments.length; i++) {
+                        var comment = comments[i];
+                        applyDelta(comment);
+                        comment.minLine = this.lineMap.getLineNumberFromPosition(comment.minChar);
+                        comment.limLine = this.lineMap.getLineNumberFromPosition(comment.limChar);
+                    }
+                }
+            }
+
+            var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
+                // Apply delta to this node
+                applyDelta(cur);
+                applyDeltaToComments(cur.preComments);
+                applyDeltaToComments(cur.postComments);
+
+                return cur;
+            }
+
+            TypeScript.getAstWalkerFactory().walk(ast, pre);
         }
+
+        private setSpan(span: AST, fullStart: number, element: ISyntaxElement): void {
+            var desiredMinChar = fullStart + element.leadingTriviaWidth();
+            var desiredLimChar = fullStart + element.fullWidth();
+            Debug.assert(!isNaN(desiredMinChar));
+            Debug.assert(!isNaN(desiredLimChar));
+
+            if (span.minChar !== -1) {
+                Debug.assert(span.limChar !== -1);
+
+                // Have an existing span.  We need to adjust it so that it starts at the provided
+                // desiredMinChar.
+                
+                var delta = desiredMinChar - span.minChar;
+                this.applyDelta(span, delta);
+
+                span.limChar = desiredLimChar;
+
+                Debug.assert(span.minChar === desiredMinChar);
+                Debug.assert(span.limChar === desiredLimChar);
+            }
+            else {
+                Debug.assert(span.limChar === -1);
+                // Have a new span, just set it to the lim/min we were given.
+                span.minChar = desiredMinChar;
+                span.limChar = desiredLimChar;
+            }
+
+            Debug.assert(span.minChar !== -1);
+            Debug.assert(span.limChar !== -1);
+        }
+
+        private setSpan1(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
+            var desiredMinChar = fullStart + element.leadingTriviaWidth();
+            var desiredLimChar = fullStart + element.fullWidth();
+            Debug.assert(!isNaN(desiredMinChar));
+            Debug.assert(!isNaN(desiredLimChar));
+
+            span.minChar = desiredMinChar;
+            span.limChar = desiredLimChar;
+
+            Debug.assert(span.minChar !== -1);
+            Debug.assert(span.limChar !== -1);
+        }
+
 
         private setSpanExplicit(span: IASTSpan, start: number, end: number): void {
             span.minChar = start;
             span.limChar = end;
             Debug.assert(!isNaN(span.minChar));
             Debug.assert(!isNaN(span.limChar));
+            Debug.assert(span.minChar !== -1);
+            Debug.assert(span.limChar !== -1);
         }
 
         private identifierFromToken(token: ISyntaxToken, isOptional: bool, useValueText: bool): Identifier {
@@ -2903,7 +2976,7 @@ module TypeScript {
                 this.movePast(node.doKeyword);
                 var statement = node.statement.accept(this);
                 var whileSpan = new ASTSpan();
-                this.setSpan(whileSpan, this.position, node.whileKeyword);
+                this.setSpan1(whileSpan, this.position, node.whileKeyword);
 
                 this.movePast(node.whileKeyword);
                 this.movePast(node.openParenToken);

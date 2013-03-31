@@ -25192,6 +25192,7 @@ var TypeScript;
             this.childrenWalkers[68 /* IncPost */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[69 /* DecPost */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[70 /* CastExpression */ ] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[71 /* ParenthesizedExpression */ ] = ChildrenWalkers.walkParenthesizedExpressionChildren;
             this.childrenWalkers[72 /* FuncDecl */ ] = ChildrenWalkers.walkFuncDeclChildren;
             this.childrenWalkers[73 /* Member */ ] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[74 /* VarDecl */ ] = ChildrenWalkers.walkBoundDeclChildren;
@@ -25260,6 +25261,12 @@ var TypeScript;
             }
         }
         ChildrenWalkers.walkUnaryExpressionChildren = walkUnaryExpressionChildren;
+        function walkParenthesizedExpressionChildren(preAst, parent, walker) {
+            if (preAst.expression) {
+                preAst.expression = walker.walk(preAst.expression, preAst);
+            }
+        }
+        ChildrenWalkers.walkParenthesizedExpressionChildren = walkParenthesizedExpressionChildren;
         function walkBinaryExpressionChildren(preAst, parent, walker) {
             if (preAst.operand1) {
                 preAst.operand1 = walker.walk(preAst.operand1, preAst);
@@ -26490,7 +26497,7 @@ var TypeScript;
                 this.writeToOutput(" ");
             }
         };
-        Emitter.prototype.emitParensAndCommentsInPlace = function (ast, pre) {
+        Emitter.prototype.emitComments = function (ast, pre) {
             var comments = pre ? ast.preComments : ast.postComments;
             if (this.emitOptions.compilationSettings.emitComments && comments && comments.length != 0) {
                 for(var i = 0; i < comments.length; i++) {
@@ -26702,7 +26709,7 @@ var TypeScript;
             var hasNonObjectBaseType = isClassConstructor && classDecl.extendsList && classDecl.extendsList.members.length > 0;
             var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
             var shouldParenthesize = TypeScript.hasFlag(funcDecl.fncFlags, 131072 /* IsFunctionExpression */ ) && !funcDecl.isAccessor() && (TypeScript.hasFlag(funcDecl.flags, 1 /* ExplicitSemicolon */ ) || TypeScript.hasFlag(funcDecl.flags, 2 /* AutomaticSemicolon */ ));
-            this.emitParensAndCommentsInPlace(funcDecl, true);
+            this.emitComments(funcDecl, true);
             if (shouldParenthesize) {
                 this.writeToOutput("(");
             }
@@ -26860,7 +26867,7 @@ var TypeScript;
                 this.writeToOutput(")");
             }
             this.recordSourceMappingEnd(funcDecl);
-            this.emitParensAndCommentsInPlace(funcDecl, false);
+            this.emitComments(funcDecl, false);
             if (!isMember && !funcDecl.isAccessor() && !TypeScript.hasFlag(funcDecl.fncFlags, 131072 /* IsFunctionExpression */ ) && (!TypeScript.hasFlag(funcDecl.fncFlags, 512 /* Signature */ ) || funcDecl.isConstructor)) {
                 this.writeLineToOutput("");
             } else if (TypeScript.hasFlag(funcDecl.fncFlags, 131072 /* IsFunctionExpression */ )) {
@@ -27124,7 +27131,7 @@ var TypeScript;
         };
         Emitter.prototype.emitAmbientVarDecl = function (varDecl) {
             if (varDecl.init) {
-                this.emitParensAndCommentsInPlace(varDecl, true);
+                this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
                 this.recordSourceMappingStart(varDecl.id);
                 this.writeToOutput(varDecl.id.actualText);
@@ -27133,7 +27140,7 @@ var TypeScript;
                 this.emitJavascript(varDecl.init, 61 /* Comma */ , false);
                 this.recordSourceMappingEnd(varDecl);
                 this.writeToOutput(";");
-                this.emitParensAndCommentsInPlace(varDecl, false);
+                this.emitComments(varDecl, false);
             }
         };
         Emitter.prototype.varListCount = function () {
@@ -27160,7 +27167,7 @@ var TypeScript;
                 this.emitAmbientVarDecl(varDecl);
                 this.onEmitVar();
             } else {
-                this.emitParensAndCommentsInPlace(varDecl, true);
+                this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.locationInfo.fileName);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -27209,7 +27216,7 @@ var TypeScript;
                     }
                 }
                 this.recordSourceMappingEnd(varDecl);
-                this.emitParensAndCommentsInPlace(varDecl, false);
+                this.emitComments(varDecl, false);
             }
             this.popDecl(pullDecl);
         };
@@ -27261,7 +27268,7 @@ var TypeScript;
             return false;
         };
         Emitter.prototype.emitJavascriptName = function (name, addThis) {
-            this.emitParensAndCommentsInPlace(name, true);
+            this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
                 var resolvingContext = new TypeScript.PullTypeResolutionContext();
@@ -27330,7 +27337,7 @@ var TypeScript;
                 }
             }
             this.recordSourceMappingEnd(name);
-            this.emitParensAndCommentsInPlace(name, false);
+            this.emitComments(name, false);
         };
         Emitter.prototype.emitJavascriptStatements = function (stmts, emitEmptyBod) {
             if (stmts) {
@@ -27447,9 +27454,9 @@ var TypeScript;
                 this.emitJavascript(ast, tokenId, startLine);
             } else {
                 var list = ast;
-                this.emitParensAndCommentsInPlace(ast, true);
+                this.emitComments(ast, true);
                 if (list.members.length === 0) {
-                    this.emitParensAndCommentsInPlace(ast, false);
+                    this.emitComments(ast, false);
                     return;
                 }
                 var len = list.members.length;
@@ -27509,7 +27516,7 @@ var TypeScript;
                         this.writeLineToOutput("");
                     }
                 }
-                this.emitParensAndCommentsInPlace(ast, false);
+                this.emitComments(ast, false);
             }
         };
         Emitter.prototype.emitJavascript = function (ast, tokenId, startLine) {
@@ -27596,7 +27603,7 @@ var TypeScript;
                 var i = 0;
                 this.thisClassNode = classDecl;
                 var className = classDecl.name.actualText;
-                this.emitParensAndCommentsInPlace(classDecl, true);
+                this.emitComments(classDecl, true);
                 var temp = this.setContainer(3 /* Class */ );
                 this.recordSourceMappingStart(classDecl);
                 this.writeToOutput("var " + className);
@@ -27723,7 +27730,7 @@ var TypeScript;
                 }
                 this.emitIndent();
                 this.recordSourceMappingEnd(classDecl);
-                this.emitParensAndCommentsInPlace(classDecl, false);
+                this.emitComments(classDecl, false);
                 this.setContainer(temp);
                 this.thisClassNode = svClassNode;
                 this.popDecl(pullDecl);
@@ -51780,7 +51787,7 @@ var TypeScript;
             return this;
         };
         AST.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             switch(this.nodeType) {
                 case 5 /* ThisExpression */ :
                     emitter.recordSourceMappingStart(this);
@@ -51826,7 +51833,7 @@ var TypeScript;
                 default:
                     throw new Error("please implement in derived class");
             }
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         AST.prototype.print = function (context) {
             context.startLine();
@@ -51982,13 +51989,13 @@ var TypeScript;
             this.expression = expression;
         }
         ParenthesizedExpression.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.writeToOutput("(");
             emitter.recordSourceMappingStart(this);
             emitter.emitJavascript(this.expression, 56 /* CloseParen */ , false);
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(")");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         ParenthesizedExpression.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.expression, ast.expression);
@@ -52060,7 +52067,7 @@ var TypeScript;
             return this;
         };
         UnaryExpression.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             switch(this.nodeType) {
                 case 68 /* IncPost */ :
@@ -52087,10 +52094,16 @@ var TypeScript;
                     break;
                 case 15 /* Neg */ :
                     emitter.writeToOutput("-");
+                    if (this.operand.nodeType === 15 /* Neg */  || this.operand.nodeType === 67 /* DecPre */ ) {
+                        emitter.writeToOutput(" ");
+                    }
                     emitter.emitJavascript(this.operand, 93 /* Minus */ , false);
                     break;
                 case 14 /* Pos */ :
                     emitter.writeToOutput("+");
+                    if (this.operand.nodeType === 14 /* Pos */  || this.operand.nodeType === 66 /* IncPre */ ) {
+                        emitter.writeToOutput(" ");
+                    }
                     emitter.emitJavascript(this.operand, 92 /* Plus */ , false);
                     break;
                 case 66 /* IncPre */ :
@@ -52125,7 +52138,7 @@ var TypeScript;
                     throw new Error("please implement in derived class");
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         UnaryExpression.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.castTerm, ast.castTerm) && structuralEquals(this.operand, ast.operand);
@@ -52150,7 +52163,7 @@ var TypeScript;
             }
         };
         CallExpression.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.nodeType === 29 /* New */ ) {
                 emitter.emitNew(this.target, this.arguments);
@@ -52158,7 +52171,7 @@ var TypeScript;
                 emitter.emitCall(this, this.target, this.arguments);
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         CallExpression.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.target, ast.target) && structuralEquals(this.typeArguments, ast.typeArguments) && structuralEquals(this.arguments, ast.arguments);
@@ -52249,7 +52262,7 @@ var TypeScript;
         };
         BinaryExpression.prototype.emit = function (emitter, tokenId, startLine) {
             var binTokenId = TypeScript.nodeTypeToTokTable[this.nodeType];
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.nodeType != 13 /* Comma */  && binTokenId != undefined) {
                 emitter.emitJavascript(this.operand1, binTokenId, false);
@@ -52304,7 +52317,7 @@ var TypeScript;
                 }
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         BinaryExpression.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.operand1, ast.operand1) && structuralEquals(this.operand2, ast.operand2);
@@ -52324,7 +52337,7 @@ var TypeScript;
             return typeFlow.typeCheckQMark(this);
         };
         ConditionalExpression.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitJavascript(this.operand1, 74 /* Question */ , false);
             emitter.writeToOutput(" ? ");
@@ -52332,7 +52345,7 @@ var TypeScript;
             emitter.writeToOutput(" : ");
             emitter.emitJavascript(this.operand3, 74 /* Question */ , false);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         ConditionalExpression.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.operand1, ast.operand1) && structuralEquals(this.operand2, ast.operand2) && structuralEquals(this.operand3, ast.operand3);
@@ -52355,11 +52368,11 @@ var TypeScript;
             return "num: " + this.printLabel();
         };
         NumberLiteral.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         NumberLiteral.prototype.printLabel = function () {
             return this.text;
@@ -52381,11 +52394,11 @@ var TypeScript;
             return this;
         };
         RegexLiteral.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         RegexLiteral.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && this.text === ast.text;
@@ -52400,11 +52413,11 @@ var TypeScript;
             this.text = text;
         }
         StringLiteral.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitStringLiteral(this.text);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         StringLiteral.prototype.typeCheck = function (typeFlow) {
             this.type = typeFlow.stringType;
@@ -52438,7 +52451,7 @@ var TypeScript;
                 var prevModAliasId = emitter.modAliasId;
                 var prevFirstModAlias = emitter.firstModAlias;
                 emitter.recordSourceMappingStart(this);
-                emitter.emitParensAndCommentsInPlace(this, true);
+                emitter.emitComments(this, true);
                 emitter.writeToOutput("var " + this.id.actualText + " = ");
                 emitter.modAliasId = this.id.actualText;
                 emitter.firstModAlias = this.firstAliasedModToString();
@@ -52447,7 +52460,7 @@ var TypeScript;
                 if (!this.isDynamicImport) {
                     emitter.writeToOutput(";");
                 }
-                emitter.emitParensAndCommentsInPlace(this, false);
+                emitter.emitComments(this, false);
                 emitter.recordSourceMappingEnd(this);
                 emitter.modAliasId = prevModAliasId;
                 emitter.firstModAlias = prevFirstModAlias;
@@ -52554,11 +52567,11 @@ var TypeScript;
             return "arg: " + this.id.actualText;
         };
         ArgDecl.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.id.actualText);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         ArgDecl.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && this.isOptional === ast.isOptional;
@@ -52815,9 +52828,9 @@ var TypeScript;
         };
         ModuleDeclaration.prototype.emit = function (emitter, tokenId, startLine) {
             if (!TypeScript.hasFlag(this.modFlags, 512 /* ShouldEmitModuleDecl */ )) {
-                emitter.emitParensAndCommentsInPlace(this, true);
+                emitter.emitComments(this, true);
                 emitter.emitJavascriptModule(this);
-                emitter.emitParensAndCommentsInPlace(this, false);
+                emitter.emitComments(this, false);
             }
         };
         return ModuleDeclaration;
@@ -52888,7 +52901,7 @@ var TypeScript;
             this.statement = statement;
         }
         LabeledStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.recordSourceMappingStart(this.identifier);
             emitter.writeToOutput(this.identifier.actualText);
@@ -52896,7 +52909,7 @@ var TypeScript;
             emitter.writeLineToOutput(":");
             this.statement.emit(emitter, tokenId, true);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         LabeledStatement.prototype.typeCheck = function (typeFlow) {
             this.statement = this.statement.typeCheck(typeFlow);
@@ -52922,7 +52935,7 @@ var TypeScript;
             this.isStatementBlock = isStatementBlock;
         }
         Block.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.isStatementBlock) {
                 emitter.writeLineToOutput(" {");
@@ -52941,7 +52954,7 @@ var TypeScript;
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         Block.prototype.addToControlFlow = function (context) {
             var afterIfNeeded = new TypeScript.BasicBlock();
@@ -52986,7 +52999,7 @@ var TypeScript;
             context.unconditionalBranch(this.resolvedTarget, (this.nodeType === 78 /* ContinueStatement */ ));
         };
         Jump.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.nodeType === 77 /* BreakStatement */ ) {
                 emitter.writeToOutput("break");
@@ -52998,7 +53011,7 @@ var TypeScript;
             }
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         Jump.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && this.target === ast.target;
@@ -53014,7 +53027,7 @@ var TypeScript;
             this.body = body;
         }
         WhileStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("while(");
@@ -53023,7 +53036,7 @@ var TypeScript;
             emitter.emitJavascriptStatements(this.body, false);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         WhileStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckWhile(this);
@@ -53068,7 +53081,7 @@ var TypeScript;
             this.whileSpan = null;
         }
         DoWhileStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
@@ -53082,7 +53095,7 @@ var TypeScript;
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         DoWhileStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckDoWhile(this);
@@ -53126,7 +53139,7 @@ var TypeScript;
             this.statement = new ASTSpan();
         }
         IfStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
@@ -53146,7 +53159,7 @@ var TypeScript;
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         IfStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckIf(this);
@@ -53205,7 +53218,7 @@ var TypeScript;
             this.returnExpression = returnExpression;
         }
         ReturnStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             if (this.returnExpression) {
@@ -53219,7 +53232,7 @@ var TypeScript;
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         ReturnStatement.prototype.addToControlFlow = function (context) {
             _super.prototype.addToControlFlow.call(this, context);
@@ -53255,7 +53268,7 @@ var TypeScript;
             }
         }
         ForInStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
@@ -53268,7 +53281,7 @@ var TypeScript;
             emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         ForInStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckForIn(this);
@@ -53315,7 +53328,7 @@ var TypeScript;
             this.body = body;
         }
         ForStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("for(");
@@ -53335,7 +53348,7 @@ var TypeScript;
             emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         ForStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckFor(this);
@@ -53408,7 +53421,7 @@ var TypeScript;
             this.withSym = null;
         }
         WithStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("with (");
             if (this.expr) {
@@ -53417,7 +53430,7 @@ var TypeScript;
             emitter.writeToOutput(")");
             emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         WithStatement.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckWith(this);
@@ -53437,7 +53450,7 @@ var TypeScript;
             this.statement = new ASTSpan();
         }
         SwitchStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
@@ -53457,7 +53470,7 @@ var TypeScript;
             emitter.writeToOutput("}");
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         SwitchStatement.prototype.typeCheck = function (typeFlow) {
             var len = this.caseList.members.length;
@@ -53507,7 +53520,7 @@ var TypeScript;
             this.colonSpan = new ASTSpan();
         }
         CaseClause.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.expr) {
                 emitter.writeToOutput("case ");
@@ -53527,7 +53540,7 @@ var TypeScript;
                 emitter.indenter.decreaseIndent();
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         CaseClause.prototype.typeCheck = function (typeFlow) {
             this.expr = typeFlow.typeCheck(this.expr);
@@ -53630,7 +53643,7 @@ var TypeScript;
             this.finallyBody = finallyBody;
         }
         TryStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("try ");
             emitter.emitJavascript(this.tryBody, 47 /* Try */ , false);
@@ -53640,7 +53653,7 @@ var TypeScript;
                 emitter.emitJavascript(this.finallyBody, 18 /* Finally */ , false);
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         TryStatement.prototype.structuralEquals = function (ast) {
             return _super.prototype.structuralEquals.call(this, ast) && structuralEquals(this.tryBody, ast.tryBody) && structuralEquals(this.catchClause, ast.catchClause) && structuralEquals(this.finallyBody, ast.finallyBody);
@@ -53661,7 +53674,7 @@ var TypeScript;
             }
         }
         CatchClause.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(" ");
             emitter.recordSourceMappingStart(this.statement);
@@ -53671,7 +53684,7 @@ var TypeScript;
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitJavascript(this.body, 4 /* Catch */ , false);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         CatchClause.prototype.addToControlFlow = function (context) {
             if (this.param) {
@@ -53946,12 +53959,12 @@ var TypeScript;
             _super.call(this, 101 /* Debugger */ );
         }
         DebuggerStatement.prototype.emit = function (emitter, tokenId, startLine) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("debugger");
             emitter.recordSourceMappingEnd(this);
             emitter.writeLineToOutput(";");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         };
         return DebuggerStatement;
     })(Statement);
@@ -54034,17 +54047,71 @@ var TypeScript;
                 this.position += TypeScript.Syntax.childOffset(element1, element2);
             }
         };
+        SyntaxTreeToAstVisitor.prototype.applyDelta = function (ast, delta) {
+            var _this = this;
+            var applyDelta = function (ast) {
+                if (ast.minChar !== -1) {
+                    ast.minChar += delta;
+                }
+                if (ast.limChar !== -1) {
+                    ast.limChar += delta;
+                }
+            };
+            var applyDeltaToComments = function (comments) {
+                if (comments && comments.length > 0) {
+                    for(var i = 0; i < comments.length; i++) {
+                        var comment = comments[i];
+                        applyDelta(comment);
+                        comment.minLine = _this.lineMap.getLineNumberFromPosition(comment.minChar);
+                        comment.limLine = _this.lineMap.getLineNumberFromPosition(comment.limChar);
+                    }
+                }
+            };
+            var pre = function (cur, parent, walker) {
+                applyDelta(cur);
+                applyDeltaToComments(cur.preComments);
+                applyDeltaToComments(cur.postComments);
+                return cur;
+            };
+            TypeScript.getAstWalkerFactory().walk(ast, pre);
+        };
         SyntaxTreeToAstVisitor.prototype.setSpan = function (span, fullStart, element) {
-            span.minChar = fullStart + element.leadingTriviaWidth();
-            span.limChar = fullStart + element.fullWidth();
-            TypeScript.Debug.assert(!isNaN(span.minChar));
-            TypeScript.Debug.assert(!isNaN(span.limChar));
+            var desiredMinChar = fullStart + element.leadingTriviaWidth();
+            var desiredLimChar = fullStart + element.fullWidth();
+            TypeScript.Debug.assert(!isNaN(desiredMinChar));
+            TypeScript.Debug.assert(!isNaN(desiredLimChar));
+            if (span.minChar !== -1) {
+                TypeScript.Debug.assert(span.limChar !== -1);
+                var delta = desiredMinChar - span.minChar;
+                this.applyDelta(span, delta);
+                span.limChar = desiredLimChar;
+                TypeScript.Debug.assert(span.minChar === desiredMinChar);
+                TypeScript.Debug.assert(span.limChar === desiredLimChar);
+            } else {
+                TypeScript.Debug.assert(span.limChar === -1);
+                span.minChar = desiredMinChar;
+                span.limChar = desiredLimChar;
+            }
+            TypeScript.Debug.assert(span.minChar !== -1);
+            TypeScript.Debug.assert(span.limChar !== -1);
+        };
+        SyntaxTreeToAstVisitor.prototype.setSpan1 = function (span, fullStart, element) {
+            var desiredMinChar = fullStart + element.leadingTriviaWidth();
+            var desiredLimChar = fullStart + element.fullWidth();
+            TypeScript.Debug.assert(!isNaN(desiredMinChar));
+            TypeScript.Debug.assert(!isNaN(desiredLimChar));
+            span.minChar = desiredMinChar;
+            span.limChar = desiredLimChar;
+            TypeScript.Debug.assert(span.minChar !== -1);
+            TypeScript.Debug.assert(span.limChar !== -1);
         };
         SyntaxTreeToAstVisitor.prototype.setSpanExplicit = function (span, start, end) {
             span.minChar = start;
             span.limChar = end;
             TypeScript.Debug.assert(!isNaN(span.minChar));
             TypeScript.Debug.assert(!isNaN(span.limChar));
+            TypeScript.Debug.assert(span.minChar !== -1);
+            TypeScript.Debug.assert(span.limChar !== -1);
         };
         SyntaxTreeToAstVisitor.prototype.identifierFromToken = function (token, isOptional, useValueText) {
             this.assertElementAtPosition(token);
@@ -56159,7 +56226,7 @@ var TypeScript;
                 this.movePast(node.doKeyword);
                 var statement = node.statement.accept(this);
                 var whileSpan = new TypeScript.ASTSpan();
-                this.setSpan(whileSpan, this.position, node.whileKeyword);
+                this.setSpan1(whileSpan, this.position, node.whileKeyword);
                 this.movePast(node.whileKeyword);
                 this.movePast(node.openParenToken);
                 var condition = node.condition.accept(this);
@@ -57134,12 +57201,12 @@ var Program = (function () {
         }
         if (true) {
         }
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
         }
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5", function (fileName) {
             return _this.runParser(fileName, 1 /* EcmaScript5 */ , verify, generate);
