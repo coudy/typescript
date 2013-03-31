@@ -97,7 +97,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             switch (this.nodeType) {
                 case NodeType.ThisExpression:
                     emitter.recordSourceMappingStart(this);
@@ -144,7 +144,7 @@ module TypeScript {
                 default:
                     throw new Error("please implement in derived class");
             }
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public print(context: PrintContext) {
@@ -341,13 +341,13 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.writeToOutput("(");
             emitter.recordSourceMappingStart(this);
             emitter.emitJavascript(this.expression, TokenID.CloseParen, false);
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(")");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
 
@@ -440,7 +440,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             switch (this.nodeType) {
                 case NodeType.IncPost:
@@ -511,7 +511,7 @@ module TypeScript {
                     throw new Error("please implement in derived class");
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: UnaryExpression): bool {
@@ -541,7 +541,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
 
             if (this.nodeType === NodeType.New) {
@@ -552,7 +552,7 @@ module TypeScript {
             }
 
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: CallExpression): bool {
@@ -649,7 +649,7 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             var binTokenId = nodeTypeToTokTable[this.nodeType];
 
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.nodeType != NodeType.Comma && binTokenId != undefined) {
                 emitter.emitJavascript(this.operand1, binTokenId, false);
@@ -713,7 +713,7 @@ module TypeScript {
                 }
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: BinaryExpression): bool {
@@ -735,7 +735,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitJavascript(this.operand1, TokenID.Question, false);
             emitter.writeToOutput(" ? ");
@@ -743,7 +743,7 @@ module TypeScript {
             emitter.writeToOutput(" : ");
             emitter.emitJavascript(this.operand3, TokenID.Question, false);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: ConditionalExpression): bool {
@@ -769,11 +769,11 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public printLabel(): string {
@@ -798,11 +798,11 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: RegexLiteral): bool {
@@ -817,11 +817,11 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitStringLiteral(this.text);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -860,7 +860,7 @@ module TypeScript {
                 var prevFirstModAlias = emitter.firstModAlias;
 
                 emitter.recordSourceMappingStart(this);
-                emitter.emitParensAndCommentsInPlace(this, true);
+                emitter.emitComments(this, true);
                 emitter.writeToOutput("var " + this.id.actualText + " = ");
                 emitter.modAliasId = this.id.actualText;
                 emitter.firstModAlias = this.firstAliasedModToString();
@@ -871,7 +871,7 @@ module TypeScript {
                 if (!this.isDynamicImport) {
                     emitter.writeToOutput(";");
                 }
-                emitter.emitParensAndCommentsInPlace(this, false);
+                emitter.emitComments(this, false);
                 emitter.recordSourceMappingEnd(this);
 
                 emitter.modAliasId = prevModAliasId;
@@ -984,11 +984,11 @@ module TypeScript {
         public parameterPropertySym: FieldSymbol = null;
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.id.actualText);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: ArgDecl): bool {
@@ -1271,9 +1271,9 @@ module TypeScript {
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             if (!hasFlag(this.modFlags, ModuleFlags.ShouldEmitModuleDecl)) {
-                emitter.emitParensAndCommentsInPlace(this, true);
+                emitter.emitComments(this, true);
                 emitter.emitJavascriptModule(this);
-                emitter.emitParensAndCommentsInPlace(this, false);
+                emitter.emitComments(this, false);
             }
         }
     }
@@ -1354,7 +1354,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
 
             emitter.recordSourceMappingStart(this.identifier);
@@ -1364,7 +1364,7 @@ module TypeScript {
 
             this.statement.emit(emitter, tokenId, true);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1393,7 +1393,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.isStatementBlock) {
                 emitter.writeLineToOutput(" {");
@@ -1412,7 +1412,7 @@ module TypeScript {
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public addToControlFlow(context: ControlFlowContext) {
@@ -1462,7 +1462,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.nodeType === NodeType.BreakStatement) {
                 emitter.writeToOutput("break");
@@ -1475,7 +1475,7 @@ module TypeScript {
             }
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: Jump): bool {
@@ -1490,7 +1490,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("while(");
@@ -1499,7 +1499,7 @@ module TypeScript {
             emitter.emitJavascriptStatements(this.body, false);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1549,7 +1549,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
@@ -1563,7 +1563,7 @@ module TypeScript {
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1613,7 +1613,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
@@ -1634,7 +1634,7 @@ module TypeScript {
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1701,7 +1701,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             if (this.returnExpression) {
@@ -1717,7 +1717,7 @@ module TypeScript {
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
@@ -1752,7 +1752,7 @@ module TypeScript {
         public statement: ASTSpan = new ASTSpan();
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
@@ -1765,7 +1765,7 @@ module TypeScript {
             emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1818,7 +1818,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("for(");
@@ -1839,7 +1839,7 @@ module TypeScript {
             emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1920,7 +1920,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("with (");
             if (this.expr) {
@@ -1930,7 +1930,7 @@ module TypeScript {
             emitter.writeToOutput(")");
             emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1954,7 +1954,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
@@ -1974,7 +1974,7 @@ module TypeScript {
             emitter.writeToOutput("}");
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -2033,7 +2033,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.expr) {
                 emitter.writeToOutput("case ");
@@ -2057,7 +2057,7 @@ module TypeScript {
                 emitter.indenter.decreaseIndent();
             }
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
         
         public typeCheck(typeFlow: TypeFlow) {
@@ -2171,7 +2171,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("try ");
             emitter.emitJavascript(this.tryBody, TokenID.Try, false);
@@ -2183,7 +2183,7 @@ module TypeScript {
             }
 
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: TryStatement): bool {
@@ -2206,7 +2206,7 @@ module TypeScript {
         public containedScope: SymbolScope = null;
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(" ");
             emitter.recordSourceMappingStart(this.statement);
@@ -2216,7 +2216,7 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitJavascript(this.body, TokenID.Catch, false);
             emitter.recordSourceMappingEnd(this);
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
 
         public addToControlFlow(context: ControlFlowContext) {
@@ -2584,12 +2584,12 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            emitter.emitParensAndCommentsInPlace(this, true);
+            emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("debugger");
             emitter.recordSourceMappingEnd(this);
             emitter.writeLineToOutput(";");
-            emitter.emitParensAndCommentsInPlace(this, false);
+            emitter.emitComments(this, false);
         }
     }
 }

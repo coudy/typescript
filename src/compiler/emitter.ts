@@ -281,7 +281,7 @@ module TypeScript {
             }
         }
 
-        public emitParensAndCommentsInPlace(ast: AST, pre: bool) {
+        public emitComments(ast: AST, pre: bool) {
             var comments = pre ? ast.preComments : ast.postComments;
 
             if (this.emitOptions.compilationSettings.emitComments && comments && comments.length != 0) {
@@ -539,7 +539,7 @@ module TypeScript {
             // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
             var shouldParenthesize = hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon));
 
-            this.emitParensAndCommentsInPlace(funcDecl, true);
+            this.emitComments(funcDecl, true);
             if (shouldParenthesize) {
                 this.writeToOutput("(");
             }
@@ -716,7 +716,7 @@ module TypeScript {
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
             this.recordSourceMappingEnd(funcDecl);
 
-            this.emitParensAndCommentsInPlace(funcDecl, false);
+            this.emitComments(funcDecl, false);
 
             if (!isMember &&
                 !funcDecl.isAccessor() &&
@@ -1055,7 +1055,7 @@ module TypeScript {
 
         public emitAmbientVarDecl(varDecl: VarDecl) {
             if (varDecl.init) {
-                this.emitParensAndCommentsInPlace(varDecl, true);
+                this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
                 this.recordSourceMappingStart(varDecl.id);
                 this.writeToOutput(varDecl.id.actualText);
@@ -1064,7 +1064,7 @@ module TypeScript {
                 this.emitJavascript(varDecl.init, TokenID.Comma, false);
                 this.recordSourceMappingEnd(varDecl);
                 this.writeToOutput(";");
-                this.emitParensAndCommentsInPlace(varDecl, false);
+                this.emitComments(varDecl, false);
             }
         }
 
@@ -1100,7 +1100,7 @@ module TypeScript {
                 this.onEmitVar();
             }
             else {
-                this.emitParensAndCommentsInPlace(varDecl, true);
+                this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.locationInfo.fileName);
@@ -1166,7 +1166,7 @@ module TypeScript {
                     }
                 }
                 this.recordSourceMappingEnd(varDecl);
-                this.emitParensAndCommentsInPlace(varDecl, false);
+                this.emitComments(varDecl, false);
             }
             this.popDecl(pullDecl);
         }
@@ -1232,7 +1232,7 @@ module TypeScript {
         }
 
         public emitJavascriptName(name: Identifier, addThis: bool) {
-            this.emitParensAndCommentsInPlace(name, true);
+            this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
                 var resolvingContext = new PullTypeResolutionContext();
@@ -1330,7 +1330,7 @@ module TypeScript {
             }
 
             this.recordSourceMappingEnd(name);
-            this.emitParensAndCommentsInPlace(name, false);
+            this.emitComments(name, false);
         }
 
         public emitJavascriptStatements(stmts: AST, emitEmptyBod: bool) {
@@ -1473,9 +1473,9 @@ module TypeScript {
             }
             else {
                 var list = <ASTList>ast;
-                this.emitParensAndCommentsInPlace(ast, true);
+                this.emitComments(ast, true);
                 if (list.members.length === 0) {
-                    this.emitParensAndCommentsInPlace(ast, false);
+                    this.emitComments(ast, false);
                     return;
                 }
 
@@ -1562,7 +1562,7 @@ module TypeScript {
                         this.writeLineToOutput("");
                     }
                 }
-                this.emitParensAndCommentsInPlace(ast, false);
+                this.emitComments(ast, false);
             }
         }
 
@@ -1673,7 +1673,7 @@ module TypeScript {
                 var i = 0;
                 this.thisClassNode = classDecl;
                 var className = classDecl.name.actualText;
-                this.emitParensAndCommentsInPlace(classDecl, true);
+                this.emitComments(classDecl, true);
                 var temp = this.setContainer(EmitContainer.Class);
 
                 this.recordSourceMappingStart(classDecl);
@@ -1839,7 +1839,7 @@ module TypeScript {
 
                 this.emitIndent();
                 this.recordSourceMappingEnd(classDecl);
-                this.emitParensAndCommentsInPlace(classDecl, false);
+                this.emitComments(classDecl, false);
                 this.setContainer(temp);
                 this.thisClassNode = svClassNode;
 
