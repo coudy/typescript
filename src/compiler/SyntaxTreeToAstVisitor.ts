@@ -4,7 +4,7 @@
 /// <reference path='ast.ts' />
 
 module TypeScript {
-    var incrementalAst = false;
+    var incrementalAst = true;
     export class SyntaxPositionMap {
         private position = 0;
         private elementToPosition = Collections.createHashTable(2048, Collections.identityHashCode);
@@ -97,6 +97,10 @@ module TypeScript {
         }
 
         private applyDelta(ast: TypeScript.AST, delta: number) {
+            if (delta === 0) {
+                return;
+            }
+
             var applyDelta = (ast: TypeScript.AST) => {
                 if (ast.minChar !== -1) {
                     ast.minChar += delta;
@@ -233,9 +237,12 @@ module TypeScript {
                 for (var i = 0, n = list.childCount(); i < n; i++) {
                     result.append(list.childAt(i).accept(this));
                 }
+
+                if (n > 0) {
+                    this.setAST(list, result);
+                }
             }
 
-            this.setAST(list, result);
             this.setSpan(result, start, list);
             return result;
         }
@@ -263,9 +270,12 @@ module TypeScript {
                 }
 
                 this.previousTokenTrailingComments = null;
+
+                if (n > 0) {
+                    this.setAST(list, result);
+                }
             }
 
-            this.setAST(list, result);
             this.setSpan(result, start, list);
             return result;
         }

@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "harness.ts";
+    // "10.1.1-8gs.ts";
     undefined;
 
 var generate = false;
@@ -37,13 +37,15 @@ class Program {
             // return;
         }
 
-        Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
+            Environment.standardOut.WriteLine("Testing Incremental 2.");
             TypeScript.IncrementalParserTests.runAllTests();
         }
 
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
+        if (specificFile === undefined) {
+            Environment.standardOut.WriteLine("Testing Incremental Perf.");
+            this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
+        }
 
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",

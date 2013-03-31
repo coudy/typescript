@@ -53972,7 +53972,7 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    var incrementalAst = false;
+    var incrementalAst = true;
     var SyntaxPositionMap = (function () {
         function SyntaxPositionMap(node) {
             this.position = 0;
@@ -54049,6 +54049,9 @@ var TypeScript;
         };
         SyntaxTreeToAstVisitor.prototype.applyDelta = function (ast, delta) {
             var _this = this;
+            if (delta === 0) {
+                return;
+            }
             var applyDelta = function (ast) {
                 if (ast.minChar !== -1) {
                     ast.minChar += delta;
@@ -54152,8 +54155,10 @@ var TypeScript;
                 for(var i = 0, n = list.childCount(); i < n; i++) {
                     result.append(list.childAt(i).accept(this));
                 }
+                if (n > 0) {
+                    this.setAST(list, result);
+                }
             }
-            this.setAST(list, result);
             this.setSpan(result, start, list);
             return result;
         };
@@ -54175,8 +54180,10 @@ var TypeScript;
                     }
                 }
                 this.previousTokenTrailingComments = null;
+                if (n > 0) {
+                    this.setAST(list, result);
+                }
             }
-            this.setAST(list, result);
             this.setSpan(result, start, list);
             return result;
         };
@@ -57201,12 +57208,14 @@ var Program = (function () {
         }
         if (true) {
         }
-        Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
+            Environment.standardOut.WriteLine("Testing Incremental 2.");
             TypeScript.IncrementalParserTests.runAllTests();
         }
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
+        if (specificFile === undefined) {
+            Environment.standardOut.WriteLine("Testing Incremental Perf.");
+            this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
+        }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5", function (fileName) {
             return _this.runParser(fileName, 1 /* EcmaScript5 */ , verify, generate);
