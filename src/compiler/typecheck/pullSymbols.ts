@@ -790,7 +790,7 @@ module TypeScript {
                 }
             }
 
-            if (getPrettyTypeName && len > 1) {
+            if (getPrettyTypeName && result.length && len > 1) {
                 var lastMemberName = <MemberNameArray>result[result.length - 1];
                 for (i = i + 1; i < len; i++) {
                     if (signatures[i].isDefinition()) {
