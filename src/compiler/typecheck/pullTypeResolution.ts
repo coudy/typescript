@@ -3200,7 +3200,7 @@ module TypeScript {
                         // if we could infer Args, or we have type arguments, then attempt to specialize the signature
                         if (inferredTypeArgs) {
 
-                            if (inferredTypeArgs.length != typeParameters.length) {
+                            if (inferredTypeArgs.length < typeParameters.length) {
                                 continue;
                             }
 

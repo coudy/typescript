@@ -2483,6 +2483,7 @@ module TypeScript {
             signature = callSignatures[i];
 
             if (signature.currentlyBeingSpecialized()) {
+                newType.addCallSignature(signature);
                 continue;
             }
 

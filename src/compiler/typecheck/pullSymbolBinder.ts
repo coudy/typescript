@@ -178,10 +178,10 @@ module TypeScript {
             var i = 0;
 
             if (parent) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.Container);
+                moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, PullElementKind.SomeType);
             }
-            else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported)) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.Container, []);
+            else if (!(moduleContainerDecl.getFlags() & PullElementFlags.Exported) || moduleContainerDecl.getKind() == PullElementKind.DynamicModule) {
+                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
             }
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {
@@ -1491,8 +1491,6 @@ module TypeScript {
             var i = 0;
             var j = 0;
 
-            var isGeneric = false;
-
             if (parent) {
                 functionSymbol = parent.findMember(funcName);
 
@@ -1527,7 +1525,7 @@ module TypeScript {
                 // prune out-of-date decls...
                 var decls = functionSymbol.getDeclarations();
                 var scriptName = functionDeclaration.getScriptName();
-                isGeneric = functionTypeSymbol.isGeneric();
+                var isGeneric = functionTypeSymbol.isGeneric();
 
                 for (j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
@@ -1811,7 +1809,6 @@ module TypeScript {
 
             var isPrivate = (declFlags & PullElementFlags.Private) != 0;
             var isStatic = (declFlags & PullElementFlags.Static) != 0;
-            var isGeneric = false;
 
             var methodName = methodDeclaration.getName();
 
@@ -1860,7 +1857,7 @@ module TypeScript {
                 // prune out-of-date decls...
                 var decls = methodSymbol.getDeclarations();
                 var scriptName = methodDeclaration.getScriptName();
-                isGeneric = methodTypeSymbol.isGeneric();
+                var isGeneric = methodTypeSymbol.isGeneric();
 
                 for (j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
@@ -2043,6 +2040,7 @@ module TypeScript {
                     // prune out-of-date decls...
                     var decls = constructorSymbol.getDeclarations();
                     var scriptName = constructorDeclaration.getScriptName();
+                    var isGeneric = constructorTypeSymbol.isGeneric();
 
                     for (var j = 0; j < decls.length; j++) {
                         if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
@@ -2060,7 +2058,24 @@ module TypeScript {
 
                             cleanedPreviousDecls = true;
                         }
-                    }                    
+                    }
+
+                    if (isGeneric) {
+                        var specializations = constructorTypeSymbol.getKnownSpecializations();
+
+                        for (i = 0; i < specializations.length; i++) {
+                            decls = specializations[i].getDeclarations();
+
+                            for (j = 0; j < decls.length; j++) {
+                                if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                                    specializations[i].removeDeclaration(decls[j]);
+                                    specializations[i].addDeclaration(constructorDeclaration);
+                                    specializations[i].invalidate();
+                                    cleanedPreviousDecls = true;
+                                }                    
+                            }
+                        }
+                    }                          
 
                     constructorSymbol.invalidate();
                     constructorTypeSymbol.invalidate();
