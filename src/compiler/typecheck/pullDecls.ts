@@ -71,6 +71,15 @@ module TypeScript {
         public setValueDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
         public getValueDecl() { return this.synthesizedValDecl; }
 
+        public isEqual(other: PullDecl) {
+            return  (this.declName == other.declName) &&
+                    (this.declType == other.declType) &&
+                    (this.declFlags == other.declFlags) &&
+                    (this.scriptName == other.scriptName) &&
+                    (this.span.start() == other.span.start()) &&
+                    (this.span.end() == other.span.end());
+        }
+
         public getParentDecl(): PullDecl {
             return this.parentDecl;
         }

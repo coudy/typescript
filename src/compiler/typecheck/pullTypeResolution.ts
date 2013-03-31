@@ -3193,7 +3193,7 @@ module TypeScript {
                         if (typeArgs) {
                             inferredTypeArgs = typeArgs;
                         }
-                        else {
+                        else if (callEx.arguments) {
                             inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
                         }
 
@@ -3379,7 +3379,7 @@ module TypeScript {
                             if (typeArgs) {
                                 inferredTypeArgs = typeArgs;
                             }
-                            else {
+                            else if (callEx.arguments) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
                             }
 
@@ -4155,7 +4155,7 @@ module TypeScript {
                         var mDecl = mProp.getDeclarations()[0];
                         var nDecl = nProp.getDeclarations()[0];
 
-                        if (mDecl != nDecl) {
+                        if (!mDecl.isEqual(nDecl)) {
                             return false;
                         }
                     }
