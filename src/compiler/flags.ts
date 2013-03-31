@@ -26,7 +26,6 @@ module TypeScript {
         ExplicitSemicolon = 1, // statment terminated by an explicit semicolon
         AutomaticSemicolon = 1 << 1, // statment terminated by an automatic semicolon
         Writeable = 1 << 2,  // node is lhs that can be modified
-        IsStatement = 1 << 6, // node is a statement
         StrictMode = 1 << 7, // node is in the strict mode environment
         ClassBaseConstructorCall = 1 << 9,
         OptionalName = 1 << 10,

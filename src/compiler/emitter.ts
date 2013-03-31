@@ -1036,8 +1036,7 @@ module TypeScript {
                         else {
                             this.emitIndent();
                             this.recordSourceMappingStart(funcDecl);
-                            this.writeLineToOutput(this.thisClassNode.name.actualText + "." + funcName +
-                                          " = " + funcName + ";");
+                            this.writeLineToOutput(this.thisClassNode.name.actualText + "." + funcName + " = " + funcName + ";");
                             this.recordSourceMappingEnd(funcDecl);
                         }
                     }
@@ -1551,6 +1550,8 @@ module TypeScript {
                         }
                     }
                     else if (startLine &&
+                             (emitNode.nodeType !== NodeType.ExpressionStatement) &&
+                             (emitNode.nodeType !== NodeType.ReturnStatement) &&
                              (emitNode.nodeType != NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType === NodeType.VarDecl) &&
@@ -1587,10 +1588,6 @@ module TypeScript {
             }
 
             ast.emit(this, tokenId, startLine);
-
-            if ((tokenId === TokenID.Semicolon) && (ast.nodeType < NodeType.GeneralNode)) {
-                this.writeToOutput(";");
-            }
         }
 
         public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: bool) {

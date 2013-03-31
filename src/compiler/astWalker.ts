@@ -192,6 +192,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ImportDeclaration] = ChildrenWalkers.walkImportDeclChildren;
             this.childrenWalkers[NodeType.ExportAssignment] = ChildrenWalkers.walkExportAssignmentChildren;
             this.childrenWalkers[NodeType.WithStatement] = ChildrenWalkers.walkWithStatementChildren;
+            this.childrenWalkers[NodeType.ExpressionStatement] = ChildrenWalkers.walkExpressionStatementChildren;
             this.childrenWalkers[NodeType.LabeledStatement] = ChildrenWalkers.walkLabeledStatementChildren;
             this.childrenWalkers[NodeType.EndCode] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone;
@@ -510,6 +511,10 @@ module TypeScript {
             if (preAst.body) {
                 preAst.body = walker.walk(preAst.body, preAst);
             }
+        }
+
+        export function walkExpressionStatementChildren(preAst: ExpressionStatement, parent: AST, walker: IAstWalker): void {
+            preAst.expression = <AST>walker.walk(preAst.expression, preAst);
         }
 
         export function walkLabeledStatementChildren(preAst: LabeledStatement, parent: AST, walker: IAstWalker): void {

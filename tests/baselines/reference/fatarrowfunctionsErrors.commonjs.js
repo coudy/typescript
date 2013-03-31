@@ -18,7 +18,8 @@ foo(function (x) {
 var y = x, number;
 function (__missing) {
     return x * x;
-}false ? (function () {
+};
+false ? (function () {
     return null;
 }) : null;
 var x1 = function () {

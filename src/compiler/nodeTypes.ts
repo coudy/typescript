@@ -116,6 +116,7 @@ module TypeScript {
         ImportDeclaration,
         ExportAssignment,
         WithStatement,
+        ExpressionStatement,
         LabeledStatement,
         EndCode,
         Comment,

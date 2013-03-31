@@ -461,7 +461,7 @@ module TypeScript {
             return this.getVisibleSymbolsFromDeclPath(declPath);
         }
 
-        public getVisibleMembersFromExpresion(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
+        public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
             var lhs: PullSymbol = this.resolveStatementOrExpression(expression, false, enclosingDecl, context);
             var lhsType = lhs.getType();
 
@@ -2051,6 +2051,9 @@ module TypeScript {
 
                 case NodeType.ParenthesizedExpression:
                     return this.resolveParenthesizedExpression(<ParenthesizedExpression>expressionAST, enclosingDecl, context);
+
+                case NodeType.ExpressionStatement:
+                    return this.resolveExpressionStatement(<ExpressionStatement>expressionAST, isTypedAssignment, enclosingDecl, context);
             }
 
             return this.semanticInfoChain.anyTypeSymbol;
@@ -3129,6 +3132,10 @@ module TypeScript {
 
         public resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             return this.resolveAST(ast.expression, false, enclosingDecl, context);
+        }
+
+        public resolveExpressionStatement(ast: ExpressionStatement, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            return this.resolveAST(ast.expression, isTypedAssignment, enclosingDecl, context);
         }
 
         public resolveCallExpression(callEx: CallExpression, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {

@@ -832,7 +832,7 @@ module TypeScript {
         }
 
         public DefaultCallback(pre: bool, ast: AST): bool {
-            return !hasFlag(ast.flags, ASTFlags.IsStatement);
+            return !ast.isStatement();
         }
     }
 }

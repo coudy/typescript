@@ -15,7 +15,7 @@
             return c;
         })();
         m2.c = c;        
-        ;
+        
         /** i*/
         m2.i = new c();
     })(m1.m2 || (m1.m2 = {}));
@@ -47,7 +47,7 @@ var myvar = new m1.m2.c();
             return c;
         })();
         m2.c = c;        
-        ;
+        
         /** i */
         m2.i = new c();
     })(m4.m2 || (m4.m2 = {}));

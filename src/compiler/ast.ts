@@ -69,6 +69,10 @@ module TypeScript {
 
         public isDeclaration() { return false; }
 
+        public isStatement() {
+            return false;
+        }
+
         public typeCheck(typeFlow: TypeFlow) {
             switch (this.nodeType) {
                 case NodeType.EmptyExpr:
@@ -1339,12 +1343,35 @@ module TypeScript {
     export class Statement extends AST {
         constructor(nodeType: NodeType) {
             super(nodeType);
-            this.flags |= ASTFlags.IsStatement;
+        }
+
+        public isStatement() {
+            return true;
         }
 
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.voidType;
             return this;
+        }
+    }
+
+    export class ExpressionStatement extends Statement {
+        constructor(public expression: AST) {
+            super(NodeType.ExpressionStatement);
+        }
+
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            this.expression.emit(emitter, TokenID.Semicolon, startLine);
+            emitter.writeLineToOutput(";");
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitComments(this, false);
+        }
+
+        public structuralEquals(ast: ExpressionStatement): bool {
+            return super.structuralEquals(ast) &&
+                   structuralEquals(this.expression, ast.expression);
         }
     }
 
@@ -1707,13 +1734,10 @@ module TypeScript {
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
                 emitter.emitJavascript(this.returnExpression, TokenID.Semicolon, false);
-
-                if (this.returnExpression.nodeType === NodeType.FuncDecl) {
-                    emitter.writeToOutput(";");
-                }
+                emitter.writeLineToOutput(";");
             }
             else {
-                emitter.writeToOutput("return;");
+                emitter.writeLineToOutput("return;");
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);

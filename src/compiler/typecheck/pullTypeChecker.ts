@@ -253,6 +253,9 @@ module TypeScript {
                 case NodeType.SwitchStatement:
                     return this.typeCheckSwitchStatement(ast, typeCheckContext);
 
+                case NodeType.ExpressionStatement:
+                    return this.typeCheckExpressionStatement(<ExpressionStatement>ast, typeCheckContext, inTypedAssignment);
+
                 case NodeType.CaseClause:
                     return this.typeCheckCaseClause(ast, typeCheckContext);
 
@@ -1269,6 +1272,10 @@ module TypeScript {
             this.typeCheckAST(switchAST.defaultCase, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckExpressionStatement(ast: ExpressionStatement, typeCheckContext: PullTypeCheckContext, inTypedAssignment: bool): PullTypeSymbol {
+            return this.typeCheckAST(ast.expression, typeCheckContext, inTypedAssignment);
         }
 
         public typeCheckCaseClause(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {

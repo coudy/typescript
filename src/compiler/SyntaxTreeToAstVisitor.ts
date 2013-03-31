@@ -959,7 +959,7 @@ module TypeScript {
                                               memberValue),
                                      new StringLiteral('"' + memberName.actualText + '"'));
                         map.flags |= ASTFlags.EnumInitializer;
-                        members.append(map);
+                        members.append(new ExpressionStatement(map));
                         this.setSpanExplicit(map, memberStart, this.position);
                         this.setSpanExplicit(map.operand1, memberStart, this.position);
                         this.setSpanExplicit(map.operand2, memberStart, this.position);
@@ -2112,11 +2112,11 @@ module TypeScript {
             return node.statement.accept(this);
         }
 
-        private visitExpressionStatement(node: ExpressionStatementSyntax): AST {
+        private visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: AST = this.getAST(node);
+            var result: ExpressionStatement = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2124,13 +2124,12 @@ module TypeScript {
                 var preComments = this.convertNodeLeadingComments(node, start);
                 var postComments = this.convertNodeTrailingComments(node, start);
 
-                result = node.expression.accept(this);
+                var expression = node.expression.accept(this);
                 this.movePast(node.semicolonToken);
 
+                result = new ExpressionStatement(expression);
                 result.preComments = preComments;
                 result.postComments = postComments;
-
-                result.flags |= ASTFlags.IsStatement;
             }
 
             this.setAST(node, result);

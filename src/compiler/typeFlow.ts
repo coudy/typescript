@@ -3793,9 +3793,9 @@ module TypeScript {
         public typeCheckCall(ast: AST): AST {
             var callEx = <CallExpression>ast;
             if (this.checker.styleSettings.newMustBeUsed && (ast.nodeType === NodeType.New)) {
-                if (hasFlag(ast.flags, ASTFlags.IsStatement)) {
-                    this.checker.errorReporter.styleError(ast, "use of new expression as a statement");
-                }
+                //if (hasFlag(ast.flags, ASTFlags.IsStatement)) {
+                //    this.checker.errorReporter.styleError(ast, "use of new expression as a statement");
+                //}
             }
             else if ((!this.checker.styleSettings.evalOK) && (ast.nodeType === NodeType.Call)) {
                 if ((callEx.target.nodeType === NodeType.Name) && ((<Identifier>callEx.target).text === "eval")) {

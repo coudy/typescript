@@ -13,7 +13,8 @@ var CalcButton2 = (function () {
         var _this = this;
         function () {
             return _this.onClick();
-        }    };
+        };
+    };
     CalcButton2.prototype.onClick = function () {
     };
     return CalcButton2;

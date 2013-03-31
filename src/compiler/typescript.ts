@@ -1100,7 +1100,7 @@ module TypeScript {
                 return null;
             }
 
-            var symbols = this.pullTypeChecker.resolver.getVisibleMembersFromExpresion(path.ast(), context.enclosingDecl, context.resolutionContext);
+            var symbols = this.pullTypeChecker.resolver.getVisibleMembersFromExpression(path.ast(), context.enclosingDecl, context.resolutionContext);
             if (!symbols) {
                 return null;
             }

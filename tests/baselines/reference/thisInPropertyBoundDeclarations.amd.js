@@ -21,7 +21,8 @@ var A = (function () {
             }
             function () {
                 return _this;
-            }        };
+            };
+        };
         this.prop3 = function () {
             function inner() {
                 this;

@@ -6,6 +6,7 @@ var A;
             function ping(x) {
                 if (x > 0) {
                     XYZ.pong(x - 1);
+
                 }
             }
             C.ping = ping;
@@ -20,6 +21,7 @@ var X;
     function pong(x) {
         if (x > 0) {
             ABC.ping(x - 1);
+
         }
     }
     X.pong = pong;
