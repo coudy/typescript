@@ -57213,7 +57213,6 @@ var Program = (function () {
             TypeScript.IncrementalParserTests.runAllTests();
         }
         if (specificFile === undefined) {
-            Environment.standardOut.WriteLine("Testing Incremental Perf.");
             this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         }
         Environment.standardOut.WriteLine("Testing parser.");
@@ -57273,6 +57272,14 @@ var Program = (function () {
         };
     };
     Program.prototype.testIncrementalSpeed = function (fileName) {
+        var repeat = 1000;
+        Environment.standardOut.WriteLine("Incremental Perf - Changed Text.");
+        this.testIncrementalSpeedChange(fileName, repeat);
+        Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Incremental Perf - No Changed Text.");
+        this.testIncrementalSpeedNoChange(fileName, repeat);
+    };
+    Program.prototype.testIncrementalSpeedNoChange = function (fileName, repeat) {
         if (specificFile !== undefined) {
             return;
         }
@@ -57282,11 +57289,10 @@ var Program = (function () {
         var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
         var totalIncrementalTime = 0;
         var totalIncrementalASTTime = 0;
-        var count = 500;
         var timer = new TypeScript.Timer();
-        for(var i = 0; i < count; i++) {
-            timer.start();
+        for(var i = 0; i < repeat; i++) {
             var changeLength = i * 2;
+            timer.start();
             var tree2 = TypeScript.Parser.incrementalParse(tree, new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength), text);
             timer.end();
             totalIncrementalTime += timer.time;
@@ -57299,15 +57305,59 @@ var Program = (function () {
             tree = tree2;
             ast = ast2;
         }
-        var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
+        var rateBytesPerMillisecond = (contents.length * repeat) / totalIncrementalTime;
         var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
-        Environment.standardOut.WriteLine("Incremental     time: " + totalIncrementalTime);
         Environment.standardOut.WriteLine("Incremental     rate: " + rateMBPerSecond + " MB/s");
-        rateBytesPerMillisecond = (contents.length * count) / totalIncrementalASTTime;
+        rateBytesPerMillisecond = (contents.length * repeat) / totalIncrementalASTTime;
         rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
-        Environment.standardOut.WriteLine("Incremental AST time: " + totalIncrementalASTTime);
+        Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
+    };
+    Program.prototype.testIncrementalSpeedChange = function (fileName, repeat) {
+        if (specificFile !== undefined) {
+            return;
+        }
+        var contents = Environment.readFile(fileName, true);
+        var text = TypeScript.TextFactory.createText(contents);
+        var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
+        var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
+        var totalIncrementalTime = 0;
+        var totalIncrementalASTTime = 0;
+        var timer = new TypeScript.Timer();
+        for(var i = 0; i < repeat; i++) {
+            var changeLength = i * 2;
+            var changeSpan = new TypeScript.TextSpan((text.length() / 2) - i, changeLength);
+            contents = text.toString();
+            var contentsToReplace = contents.substr(changeSpan.start(), changeSpan.length());
+            var first = true;
+            var updatedText = contentsToReplace.replace(/[^a-zA-Z0-9][a-z]+[^a-zA-Z0-9]/, function (sub, args) {
+                if (first && TypeScript.SyntaxFacts.getTokenKind(sub.substr(1, sub.length - 2)) === 0 /* None */ ) {
+                    first = false;
+                    return sub.substr(0, sub.length - 1) + "a" + sub.substr(sub.length - 1);
+                }
+                return sub;
+            });
+            text = TypeScript.TextFactory.createText(contents.substr(0, changeSpan.start()) + updatedText + contents.substr(changeSpan.end()));
+            var changeRange = new TypeScript.TextChangeRange(changeSpan, updatedText.length);
+            timer.start();
+            var tree2 = TypeScript.Parser.incrementalParse(tree, changeRange, text);
+            timer.end();
+            totalIncrementalTime += timer.time;
+            timer.start();
+            var ast2 = TypeScript.SyntaxTreeToAstVisitor.visit(tree2, fileName, new TypeScript.CompilationSettings());
+            timer.end();
+            totalIncrementalASTTime += timer.time;
+            tree = tree2;
+            ast = ast2;
+        }
+        var rateBytesPerMillisecond = (contents.length * repeat) / totalIncrementalTime;
+        var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
+        var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
+        Environment.standardOut.WriteLine("Incremental     rate: " + rateMBPerSecond + " MB/s");
+        rateBytesPerMillisecond = (contents.length * repeat) / totalIncrementalASTTime;
+        rateBytesPerSecond = rateBytesPerMillisecond * 1000;
+        rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
         Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
     };
     Program.prototype.handleException = function (fileName, e) {
