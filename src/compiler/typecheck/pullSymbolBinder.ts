@@ -1664,6 +1664,8 @@ module TypeScript {
 
                 this.popParent();
             }
+
+            //functionSymbol.setIsBound(this.bindingPhase);
         }
 
         public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
@@ -2002,6 +2004,8 @@ module TypeScript {
 
                 this.popParent();
             }
+
+            //methodSymbol.setIsBound(this.bindingPhase);
         }
 
         // class constructor declarations
@@ -2139,6 +2143,8 @@ module TypeScript {
 
                 this.popParent();
             }
+
+            //constructorSymbol.setIsBound(this.bindingPhase);
         }
 
         public bindConstructSignatureDeclarationToPullSymbol(constructSignatureDeclaration: PullDecl) {

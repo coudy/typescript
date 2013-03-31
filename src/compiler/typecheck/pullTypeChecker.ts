@@ -1208,10 +1208,27 @@ module TypeScript {
 
             if (enclosingDecl.getKind() & PullElementKind.SomeFunction) {
                 var signatureSymbol = enclosingDecl.getSignatureSymbol();
-                var sigReturnType = signatureSymbol.getReturnType();
+                var sigReturnType = signatureSymbol.getReturnType();          
 
                 if (returnType && sigReturnType) {
                     var comparisonInfo = new TypeComparisonInfo();
+                    var upperBound: PullTypeSymbol = null;     
+
+                    if (returnType.isTypeParameter()) {
+                        upperBound = (<PullTypeParameterSymbol>returnType).getConstraint();
+
+                        if (upperBound) {
+                            returnType = upperBound;
+                        }
+                    }
+
+                    if (sigReturnType.isTypeParameter()) {
+                        upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
+
+                        if (upperBound) {
+                            sigReturnType = upperBound;
+                        }
+                    }     
 
                     if (!returnType.isResolved()) {
                         this.resolver.resolveDeclaredSymbol(returnType, enclosingDecl, this.context);
@@ -1219,7 +1236,7 @@ module TypeScript {
 
                     if (!sigReturnType.isResolved()) {
                         this.resolver.resolveDeclaredSymbol(sigReturnType, enclosingDecl, this.context);
-                    }
+                    }                
 
                     var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, sigReturnType, this.context, comparisonInfo);
 
