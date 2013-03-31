@@ -102,7 +102,7 @@ module FourSlashInterface {
     export class verifyNegatable {
         public not: verifyNegatable;
 
-        constructor (private negative ?= false) {
+        constructor (private negative = false) {
             if (!negative) {
                 this.not = new verifyNegatable(true);
             }
@@ -148,11 +148,11 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(startMarker, endMarker, !this.negative);
         }
 
-        public errorExistsAfterMarker(markerName? = "") {
+        public errorExistsAfterMarker(markerName = "") {
             FourSlash.currentTestState.verifyErrorExistsAfterMarker(markerName, !this.negative, true);
         }
 
-        public errorExistsBeforeMarker(markerName? = "") {
+        public errorExistsBeforeMarker(markerName = "") {
             FourSlash.currentTestState.verifyErrorExistsAfterMarker(markerName, !this.negative, false);
         }
 
