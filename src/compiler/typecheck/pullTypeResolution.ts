@@ -3438,6 +3438,16 @@ module TypeScript {
 
                 returnType = signature.getReturnType();
 
+                // if it's a default constructor, and we have a type argument, we need to specialize
+                if (returnType && !signature.isGeneric() && returnType.isGeneric() && !returnType.getIsSpecialized()) {
+                    if (typeArgs.length) {
+                        returnType = specializeType(returnType, typeArgs, this, enclosingDecl, context, callEx);
+                    }
+                    else {
+                        returnType = this.specializeTypeToAny(returnType, enclosingDecl, context);
+                    }
+                }
+
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
                         context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Call signatures used in a 'new' expression must have a return type of 'void'", enclosingDecl);
