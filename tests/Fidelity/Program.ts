@@ -104,7 +104,7 @@ class Program {
     }
 
     private testIncrementalSpeed(fileName: string): void {
-        var repeat = 1000;
+        var repeat = 500;
         Environment.standardOut.WriteLine("Incremental Perf - Changed Text.");
         this.testIncrementalSpeedChange(fileName, repeat);
 
@@ -123,6 +123,7 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5);
+        var originalTree = tree;
         var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
 
         var totalIncrementalTime = 0;
@@ -163,6 +164,14 @@ class Program {
 
         // Environment.standardOut.WriteLine("Incremental AST time: " + totalIncrementalASTTime);
         Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
+
+        var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(originalTree.sourceUnit());
+        var allNewElements = TypeScript.SyntaxElementsCollector.collectElements(tree.sourceUnit());
+
+        var reuse = TypeScript.ArrayUtilities.where(allNewElements,
+            v => TypeScript.ArrayUtilities.contains(allOldElements, v)).length;
+
+        Environment.standardOut.WriteLine("Reuse: " + reuse / allNewElements.length);
     }
 
     private testIncrementalSpeedChange(fileName: string, repeat: number): void {
@@ -175,6 +184,7 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), TypeScript.LanguageVersion.EcmaScript5);
+        var originalTree = tree;
         var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
 
         var totalIncrementalTime = 0;
@@ -232,6 +242,14 @@ class Program {
 
         // Environment.standardOut.WriteLine("Incremental AST time: " + totalIncrementalASTTime);
         Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
+
+        var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(originalTree.sourceUnit());
+        var allNewElements = TypeScript.SyntaxElementsCollector.collectElements(tree.sourceUnit());
+
+        var reuse = TypeScript.ArrayUtilities.where(allNewElements,
+            v => TypeScript.ArrayUtilities.contains(allOldElements, v)).length;
+
+        Environment.standardOut.WriteLine("Reuse: " + reuse / allNewElements.length);
     }
 
     private handleException(fileName: string, e: Error): void {

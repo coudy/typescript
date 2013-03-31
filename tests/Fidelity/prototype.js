@@ -57272,7 +57272,7 @@ var Program = (function () {
         };
     };
     Program.prototype.testIncrementalSpeed = function (fileName) {
-        var repeat = 1000;
+        var repeat = 500;
         Environment.standardOut.WriteLine("Incremental Perf - Changed Text.");
         this.testIncrementalSpeedChange(fileName, repeat);
         Environment.standardOut.WriteLine("");
@@ -57286,6 +57286,7 @@ var Program = (function () {
         var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
+        var originalTree = tree;
         var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
         var totalIncrementalTime = 0;
         var totalIncrementalASTTime = 0;
@@ -57313,6 +57314,12 @@ var Program = (function () {
         rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
         Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
+        var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(originalTree.sourceUnit());
+        var allNewElements = TypeScript.SyntaxElementsCollector.collectElements(tree.sourceUnit());
+        var reuse = TypeScript.ArrayUtilities.where(allNewElements, function (v) {
+            return TypeScript.ArrayUtilities.contains(allOldElements, v);
+        }).length;
+        Environment.standardOut.WriteLine("Reuse: " + reuse / allNewElements.length);
     };
     Program.prototype.testIncrementalSpeedChange = function (fileName, repeat) {
         if (specificFile !== undefined) {
@@ -57321,6 +57328,7 @@ var Program = (function () {
         var contents = Environment.readFile(fileName, true);
         var text = TypeScript.TextFactory.createText(contents);
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), 1 /* EcmaScript5 */ );
+        var originalTree = tree;
         var ast = TypeScript.SyntaxTreeToAstVisitor.visit(tree, fileName, new TypeScript.CompilationSettings());
         var totalIncrementalTime = 0;
         var totalIncrementalASTTime = 0;
@@ -57359,6 +57367,12 @@ var Program = (function () {
         rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
         Environment.standardOut.WriteLine("Incremental AST rate: " + rateMBPerSecond + " MB/s");
+        var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(originalTree.sourceUnit());
+        var allNewElements = TypeScript.SyntaxElementsCollector.collectElements(tree.sourceUnit());
+        var reuse = TypeScript.ArrayUtilities.where(allNewElements, function (v) {
+            return TypeScript.ArrayUtilities.contains(allOldElements, v);
+        }).length;
+        Environment.standardOut.WriteLine("Reuse: " + reuse / allNewElements.length);
     };
     Program.prototype.handleException = function (fileName, e) {
         Environment.standardOut.WriteLine("");
