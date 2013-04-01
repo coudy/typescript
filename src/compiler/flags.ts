@@ -86,7 +86,7 @@ module TypeScript {
         CompilerGenerated = 1 << 18,
     }
 
-    export enum VarFlags {
+    export enum VariableFlags {
         None = 0,
         Exported = 1,
         Private = 1 << 1,
@@ -107,7 +107,7 @@ module TypeScript {
         MustCaptureThis = 1 << 16,
     }
 
-    export enum FncFlags {
+    export enum FunctionFlags {
         None = 0,
         Exported = 1,
         Private = 1 << 1,
@@ -137,8 +137,8 @@ module TypeScript {
         IsNumberIndexer = 1 << 2,
     }
 
-    export function ToDeclFlags(functionFlags: FncFlags) : DeclFlags;
-    export function ToDeclFlags(varFlags: VarFlags) : DeclFlags;
+    export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;
+    export function ToDeclFlags(varFlags: VariableFlags) : DeclFlags;
     export function ToDeclFlags(symFlags: SymbolFlags): DeclFlags;
     export function ToDeclFlags(moduleFlags: ModuleFlags): DeclFlags;
     export function ToDeclFlags(fncOrVarOrSymbolOrModuleFlags: any) {

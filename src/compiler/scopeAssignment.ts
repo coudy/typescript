@@ -194,7 +194,7 @@ module TypeScript {
             localContainer = ast.type.symbol;
         }
 
-        var isStatic = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Static);
+        var isStatic = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static);
         var isInnerStatic = isStatic && context.scopeChain.fnc != null;
         // for inner static functions, use the parent's member scope, so local vars cannot be captured
         var parentScope = isInnerStatic ? context.scopeChain.fnc.type.memberScope : context.scopeChain.scope;
@@ -204,10 +204,10 @@ module TypeScript {
         // REVIEW: Some twisted logic here - this needs to be cleaned up once old classes are removed
         //  - if it's a new class, always use the contained scope, since we initialize the constructor scope below
         if (context.scopeChain.thisType &&
-            (!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod))) {
+            (!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod))) {
             var instType = context.scopeChain.thisType;
 
-            if (!(instType.typeFlags & TypeFlags.IsClass) && !hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod)) {
+            if (!(instType.typeFlags & TypeFlags.IsClass) && !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) {
                 if (!funcDecl.isMethod() || isStatic) {
                     parentScope = instType.constructorScope;
                 }
@@ -283,7 +283,7 @@ module TypeScript {
 
             // it's a getter or setter for a class property                     
             if (!funcDecl.accessorSymbol && 
-                (funcDecl.getFunctionFlags() & FncFlags.ClassMethod) &&
+                (funcDecl.getFunctionFlags() & FunctionFlags.ClassMethod) &&
                 container && 
                 ((!fgSym || fgSym.declAST.nodeType != NodeType.FuncDecl) && funcDecl.isAccessor()) || 
                     (fgSym && fgSym.isAccessor())) 
@@ -353,7 +353,7 @@ module TypeScript {
             group.enclosingType = isStatic ? context.scopeChain.classType : context.scopeChain.thisType;
             // for mapping when type checking
             fgSym = <TypeSymbol>ast.type.symbol;
-            if (((funcDecl.getFunctionFlags() & FncFlags.Signature) === FncFlags.None) && /*funcDecl.vars*/ false) {
+            if (((funcDecl.getFunctionFlags() & FunctionFlags.Signature) === FunctionFlags.None) && /*funcDecl.vars*/ false) {
                 context.typeFlow.addLocalsFromScope(locals, fgSym, /*funcDecl.vars*/ null,
                                                     funcTable, false);
                 context.typeFlow.addLocalsFromScope(statics, fgSym, /*funcDecl.statics*/ null,
@@ -371,12 +371,12 @@ module TypeScript {
                                                         funcDecl.isSignature());
         }
 
-        if (!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod)) {
-            var thisType = (funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod)) ? context.scopeChain.thisType : null;
+        if (!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) {
+            var thisType = (funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) ? context.scopeChain.thisType : null;
             pushAssignScope(locals, context, thisType, null, funcDecl);
         }
 
-        if (funcDecl.name && hasFlag(funcDecl.getFunctionFlags(), FncFlags.IsFunctionExpression) && !funcDecl.isAccessor()) {
+        if (funcDecl.name && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) && !funcDecl.isAccessor()) {
             // If the function is an expression, the name will not be visible in the enclosing scope.
             // Add the function symbol under its name to the local scope to allow for recursive calls.
             if (funcDecl.name.sym) {
@@ -456,7 +456,7 @@ module TypeScript {
             }
             else if (ast.nodeType === NodeType.FuncDecl) {
                 var funcDecl = <FuncDecl>ast;
-                if ((!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod)) && !funcDecl.isOverload) {
+                if ((!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) && !funcDecl.isOverload) {
                     popAssignScope(context);
                 }
             }

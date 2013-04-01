@@ -368,10 +368,10 @@ module TypeScript {
 
             var funcDeclAST = <FuncDecl>ast;
 
-            if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.ConstructMember)) {
+            if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
                 return this.typeCheckConstructor(ast, typeCheckContext, inTypedAssignment);
             }
-            else if (hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.IndexerMember)) {
+            else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
                 return this.typeCheckIndexer(ast, typeCheckContext, inTypedAssignment);
             }
             else if (funcDeclAST.isAccessor()) {
@@ -431,7 +431,7 @@ module TypeScript {
 
             var accessorSymbol = <PullAccessorSymbol>this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
 
-            var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.GetAccessor);
+            var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = !isGetter;
 
             var getter = accessorSymbol.getGetter();

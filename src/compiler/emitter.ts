@@ -531,13 +531,13 @@ module TypeScript {
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.locationInfo.fileName);
             this.pushDecl(pullDecl);
 
-            var isClassConstructor = funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod);
+            var isClassConstructor = funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod);
             var hasNonObjectBaseType = isClassConstructor && classDecl.extendsList && classDecl.extendsList.members.length > 0;
             var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
 
             // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
             // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
-            var shouldParenthesize = hasFlag(funcDecl.getFunctionFlags(), FncFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon));
+            var shouldParenthesize = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon));
 
             this.emitComments(funcDecl, true);
             if (shouldParenthesize) {
@@ -624,7 +624,7 @@ module TypeScript {
                     argsLen = funcDecl.arguments.members.length;
                     for (i = 0; i < argsLen; i++) {
                         arg = <ArgDecl>funcDecl.arguments.members[i];
-                        if ((arg.getVarFlags() & VarFlags.Property) != VarFlags.None) {
+                        if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
                             this.emitIndent();
                             this.recordSourceMappingStart(arg);
                             this.recordSourceMappingStart(arg.id);
@@ -681,14 +681,14 @@ module TypeScript {
             }
 
             // if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
-            if (funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod) && !classPropertiesMustComeAfterSuperCall) {
+            if (funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod) && !classPropertiesMustComeAfterSuperCall) {
 
                 var nProps = (<ASTList>this.thisClassNode.members).members.length;
 
                 for (i = 0; i < nProps; i++) {
                     if ((<ASTList>this.thisClassNode.members).members[i].nodeType === NodeType.VarDecl) {
                         var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[i];
-                        if (!hasFlag(varDecl.getVarFlags(), VarFlags.Static) && varDecl.init) {
+                        if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                             this.emitIndent();
                             this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
                             this.writeLineToOutput("");
@@ -721,10 +721,10 @@ module TypeScript {
             if (!isMember &&
                 !funcDecl.isAccessor() &&
                 //funcDecl.name != null &&
-                !hasFlag(funcDecl.getFunctionFlags(), FncFlags.IsFunctionExpression) &&
-                (!hasFlag(funcDecl.getFunctionFlags(), FncFlags.Signature) || funcDecl.isConstructor)) {
+                !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) &&
+                (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) || funcDecl.isConstructor)) {
                 this.writeLineToOutput("");
-            } else if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.IsFunctionExpression)) {
+            } else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
                 if (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon)) {
                     // If either of these two flags are set, then the function expression is a statement. Terminate it.
                     this.writeLineToOutput(";");
@@ -998,7 +998,7 @@ module TypeScript {
         }
 
         public emitJavascriptFunction(funcDecl: FuncDecl) {
-            if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.Signature) || funcDecl.isOverload) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) || funcDecl.isOverload) {
                 return;
             }
             var temp: number;
@@ -1017,7 +1017,7 @@ module TypeScript {
 
             if ((this.emitState.inObjectLiteral || !funcDecl.isAccessor()) &&
                 ((temp != EmitContainer.Constructor) ||
-                ((funcDecl.getFunctionFlags() & FncFlags.Method) === FncFlags.None))) {
+                ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
                 var tempLit = this.setInObjectLiteral(false);
                 hasSelfRef = this.shouldCaptureThis(funcDecl);
                 this.recordSourceMappingStart(funcDecl);
@@ -1027,8 +1027,8 @@ module TypeScript {
             this.setContainer(temp);
             this.thisFnc = tempFnc;
 
-            if (!hasFlag(funcDecl.getFunctionFlags(), FncFlags.Signature)) {
-                if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.Static)) {
+            if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
+                if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
                     if (this.thisClassNode) {
                         if (funcDecl.isAccessor()) {
                             this.emitPropertyAccessor(funcDecl, this.thisClassNode.name.actualText, false);
@@ -1041,7 +1041,7 @@ module TypeScript {
                         }
                     }
                 }
-                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(funcDecl.getFunctionFlags(), FncFlags.Exported | FncFlags.ClassPropertyMethodExported)) {
+                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Exported | FunctionFlags.ClassPropertyMethodExported)) {
                     this.emitIndent();
                     var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
                     this.recordSourceMappingStart(funcDecl);
@@ -1094,7 +1094,7 @@ module TypeScript {
         public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.locationInfo.fileName);
             this.pushDecl(pullDecl);
-            if ((varDecl.getVarFlags() & VarFlags.Ambient) === VarFlags.Ambient) {
+            if ((varDecl.getVarFlags() & VariableFlags.Ambient) === VariableFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
                 this.onEmitVar();
             }
@@ -1500,7 +1500,7 @@ module TypeScript {
                             var argsLen = constructorDecl.arguments.members.length;
                             for (var iArg = 0; iArg < argsLen; iArg++) {
                                 var arg = <BoundDecl>constructorDecl.arguments.members[iArg];
-                                if ((arg.getVarFlags() & VarFlags.Property) != VarFlags.None) {
+                                if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
                                     this.emitIndent();
                                     this.recordSourceMappingStart(arg);
                                     this.recordSourceMappingStart(arg.id);
@@ -1521,7 +1521,7 @@ module TypeScript {
                         for (var iMember = 0; iMember < nProps; iMember++) {
                             if ((<ASTList>this.thisClassNode.members).members[iMember].nodeType === NodeType.VarDecl) {
                                 var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[iMember];
-                                if (!hasFlag(varDecl.getVarFlags(), VarFlags.Static) && varDecl.init) {
+                                if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                                     this.emitIndent();
                                     this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
                                     this.writeLineToOutput("");
@@ -1533,8 +1533,8 @@ module TypeScript {
                     var emitNode = list.members[i];
 
                     var isStaticDecl =
-                                (emitNode.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).getFunctionFlags(), FncFlags.Static)) ||
-                                (emitNode.nodeType === NodeType.VarDecl && hasFlag((<VarDecl>emitNode).getVarFlags(), VarFlags.Static))
+                                (emitNode.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
+                                (emitNode.nodeType === NodeType.VarDecl && hasFlag((<VarDecl>emitNode).getVarFlags(), VariableFlags.Static))
 
                     if (onlyStatics ? !isStaticDecl : isStaticDecl) {
                         continue;
@@ -1555,7 +1555,7 @@ module TypeScript {
                              (emitNode.nodeType != NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType === NodeType.VarDecl) &&
-                                ((((<VarDecl>emitNode).getVarFlags()) & VarFlags.Ambient) === VarFlags.Ambient) &&
+                                ((((<VarDecl>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                                 (((<VarDecl>emitNode).init) === null)) && this.varListCount() >= 0) &&
                              (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
                              (emitNode.nodeType != NodeType.EndCode) &&
@@ -1578,7 +1578,7 @@ module TypeScript {
                 (ast.nodeType != NodeType.Block)) {
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
                     (!((ast.nodeType === NodeType.VarDecl) &&
-                       ((((<VarDecl>ast).getVarFlags()) & VarFlags.Ambient) === VarFlags.Ambient) &&
+                       ((((<VarDecl>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                        (((<VarDecl>ast).init) === null)) && this.varListCount() >= 0) &&
                     (ast.nodeType != NodeType.EndCode) &&
                     ((ast.nodeType != NodeType.FuncDecl) ||
@@ -1591,7 +1591,7 @@ module TypeScript {
         }
 
         public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: bool) {
-            if (!hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor)) {
+            if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                 var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
                 if (accessorSymbol.getGetter()) {
                     return;
@@ -1662,7 +1662,7 @@ module TypeScript {
         }
 
         public emitJavascriptClass(classDecl: ClassDeclaration) {
-            if (!hasFlag(classDecl.getVarFlags(), VarFlags.Ambient)) {
+            if (!hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient)) {
                 var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.locationInfo.fileName);
                 this.pushDecl(pullDecl);
 
@@ -1727,7 +1727,7 @@ module TypeScript {
                         wroteProps++;
                     }
 
-                    if (classDecl.getVarFlags() & VarFlags.MustCaptureThis) {
+                    if (classDecl.getVarFlags() & VariableFlags.MustCaptureThis) {
                         this.writeCaptureThisStatement(classDecl);
                     }
 
@@ -1737,7 +1737,7 @@ module TypeScript {
                     for (i = 0; i < members.length; i++) {
                         if (members[i].nodeType === NodeType.VarDecl) {
                             varDecl = <VarDecl>members[i];
-                            if (!hasFlag(varDecl.getVarFlags(), VarFlags.Static) && varDecl.init) {
+                            if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                                 this.writeLineToOutput("");
                                 this.emitIndent();
                                 this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
@@ -1767,8 +1767,8 @@ module TypeScript {
                     if (memberDecl.nodeType === NodeType.FuncDecl) {
                         var fn = <FuncDecl>memberDecl;
 
-                        if (hasFlag(fn.getFunctionFlags(), FncFlags.Method) && !fn.isSignature()) {
-                            if (!hasFlag(fn.getFunctionFlags(), FncFlags.Static)) {
+                        if (hasFlag(fn.getFunctionFlags(), FunctionFlags.Method) && !fn.isSignature()) {
+                            if (!hasFlag(fn.getFunctionFlags(), FunctionFlags.Static)) {
                                 this.emitPrototypeMember(fn, className);
                             }
                             else { // static functions
@@ -1788,7 +1788,7 @@ module TypeScript {
                     }
                     else if (memberDecl.nodeType === NodeType.VarDecl) {
                         varDecl = <VarDecl>memberDecl;
-                        if (hasFlag(varDecl.getVarFlags(), VarFlags.Static)) {
+                        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static)) {
 
                             if (varDecl.init) {
                                 // EMITREVIEW
@@ -1825,7 +1825,7 @@ module TypeScript {
                 this.writeToOutput(");");
                 this.recordSourceMappingEnd(classDecl);
 
-                if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(classDecl.getVarFlags(), VarFlags.Exported)) {
+                if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(classDecl.getVarFlags(), VariableFlags.Exported)) {
                     this.writeLineToOutput("");
                     this.emitIndent();
                     var modName = temp === EmitContainer.Module ? this.moduleName : "exports";

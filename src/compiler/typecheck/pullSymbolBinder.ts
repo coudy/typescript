@@ -1399,7 +1399,7 @@ module TypeScript {
                 for (var i = 0; i < funcDecl.arguments.members.length; i++) {
                     argDecl = <BoundDecl>funcDecl.arguments.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
-                    isProperty = hasFlag(argDecl.getVarFlags(), VarFlags.Property);
+                    isProperty = hasFlag(argDecl.getVarFlags(), VariableFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.text, PullElementKind.Parameter);
 
                     if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {

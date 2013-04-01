@@ -390,7 +390,7 @@ module TypeScript {
                     // This means its implementation of overload signature. do not emit
                     return false;
                 }
-            } else if (!isInterfaceMember && hasFlag(funcDecl.getFunctionFlags(), FncFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
+            } else if (!isInterfaceMember && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
                 // Print only first overload of private function
                 var callSignatures = funcTypeSymbol.getCallSignatures();
                 Debug.assert(callSignatures && callSignatures.length > 1);
@@ -545,7 +545,7 @@ module TypeScript {
 
         public emitPropertyAccessorSignature(funcDecl: FuncDecl) {
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
-            if (!hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor) && accessorSymbol.getGetter()) {
+            if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) && accessorSymbol.getGetter()) {
                 // Setter is being used to emit the type info. 
                 return false;
             }
@@ -569,7 +569,7 @@ module TypeScript {
 
                 for (var i = 0; i < argsLen; i++) {
                     var argDecl = <ArgDecl>funcDecl.arguments.members[i];
-                    if (hasFlag(argDecl.getVarFlags(), VarFlags.Property)) {
+                    if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
                         this.emitDeclarationComments(argDecl);
                         this.emitDeclFlags(ToDeclFlags(argDecl.getVarFlags()), "var");
                         this.declFile.Write(argDecl.id.text);

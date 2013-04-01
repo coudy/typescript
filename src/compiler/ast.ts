@@ -123,7 +123,7 @@ module TypeScript {
             switch (this.nodeType) {
                 case NodeType.ThisExpression:
                     emitter.recordSourceMappingStart(this);
-                    if (emitter.thisFnc && (hasFlag(emitter.thisFnc.getFunctionFlags(), FncFlags.IsFatArrowFunction))) {
+                    if (emitter.thisFnc && (hasFlag(emitter.thisFnc.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
                         emitter.writeToOutput("_this");
                     }
                     else {
@@ -707,7 +707,7 @@ module TypeScript {
                     case NodeType.Member:
                         if (this.operand2.nodeType === NodeType.FuncDecl && (<FuncDecl>this.operand2).isAccessor()) {
                             var funcDecl = <FuncDecl>this.operand2;
-                            if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor)) {
+                            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                                 emitter.writeToOutput("get ");
                             }
                             else {
@@ -949,7 +949,7 @@ module TypeScript {
     export class BoundDecl extends AST {
         public init: AST = null;
         public typeExpr: AST = null;
-        private _varFlags = VarFlags.None;
+        private _varFlags = VariableFlags.None;
         public sym: Symbol = null;
         public isDeclaration() { return true; }
 
@@ -957,16 +957,16 @@ module TypeScript {
             super(nodeType);
         }
 
-        public getVarFlags(): VarFlags {
+        public getVarFlags(): VariableFlags {
             return this._varFlags;
         }
 
         // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VarFlags): void {
+        public setVarFlags(flags: VariableFlags): void {
             this._varFlags = flags;
         }
 
-        public isProperty() { return hasFlag(this.getVarFlags(), VarFlags.Property); }
+        public isProperty() { return hasFlag(this.getVarFlags(), VariableFlags.Property); }
 
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckBoundDecl(this);
@@ -989,9 +989,9 @@ module TypeScript {
             super(id, NodeType.VarDecl);
         }
 
-        public isExported() { return hasFlag(this.getVarFlags(), VarFlags.Exported); }
+        public isExported() { return hasFlag(this.getVarFlags(), VariableFlags.Exported); }
 
-        public isStatic() { return hasFlag(this.getVarFlags(), VarFlags.Static); }
+        public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitJavascriptVarDecl(this, tokenId);
@@ -1033,7 +1033,7 @@ module TypeScript {
 
     export class FuncDecl extends AST {
         public hint: string = null;
-        private _functionFlags = FncFlags.None;
+        private _functionFlags = FunctionFlags.None;
         public returnTypeAnnotation: AST = null;
         public symbols: IHashTable;
         public variableArgList = false;
@@ -1060,12 +1060,12 @@ module TypeScript {
             super(nodeType);
         }
 
-        public getFunctionFlags(): FncFlags {
+        public getFunctionFlags(): FunctionFlags {
             return this._functionFlags;
         }
 
         // Must only be called from SyntaxTreeVisitor
-        public setFunctionFlags(flags: FncFlags): void {
+        public setFunctionFlags(flags: FunctionFlags): void {
             this._functionFlags = flags;
         }
 
@@ -1081,7 +1081,7 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
-        public hasSelfReference() { return hasFlag(this.getFunctionFlags(), FncFlags.HasSelfReference); }
+        public hasSelfReference() { return hasFlag(this.getFunctionFlags(), FunctionFlags.HasSelfReference); }
         // public setHasSelfReference() { this.getFunctionFlags() |= FncFlags.HasSelfReference; }
 
         public buildControlFlow(): ControlFlowContext {
@@ -1120,17 +1120,17 @@ module TypeScript {
         }
 
         public isMethod() {
-            return (this.getFunctionFlags() & FncFlags.Method) != FncFlags.None;
+            return (this.getFunctionFlags() & FunctionFlags.Method) != FunctionFlags.None;
         }
 
-        public isCallMember() { return hasFlag(this.getFunctionFlags(), FncFlags.CallMember); }
-        public isConstructMember() { return hasFlag(this.getFunctionFlags(), FncFlags.ConstructMember); }
-        public isIndexerMember() { return hasFlag(this.getFunctionFlags(), FncFlags.IndexerMember); }
+        public isCallMember() { return hasFlag(this.getFunctionFlags(), FunctionFlags.CallMember); }
+        public isConstructMember() { return hasFlag(this.getFunctionFlags(), FunctionFlags.ConstructMember); }
+        public isIndexerMember() { return hasFlag(this.getFunctionFlags(), FunctionFlags.IndexerMember); }
         public isSpecialFn() { return this.isCallMember() || this.isIndexerMember() || this.isConstructMember(); }
-        public isAccessor() { return hasFlag(this.getFunctionFlags(), FncFlags.GetAccessor) || hasFlag(this.getFunctionFlags(), FncFlags.SetAccessor); }
-        public isGetAccessor() { return hasFlag(this.getFunctionFlags(), FncFlags.GetAccessor); }
-        public isSetAccessor() { return hasFlag(this.getFunctionFlags(), FncFlags.SetAccessor); }
-        public isStatic() { return hasFlag(this.getFunctionFlags(), FncFlags.Static); }
+        public isAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.GetAccessor) || hasFlag(this.getFunctionFlags(), FunctionFlags.SetAccessor); }
+        public isGetAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.GetAccessor); }
+        public isSetAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.SetAccessor); }
+        public isStatic() { return hasFlag(this.getFunctionFlags(), FunctionFlags.Static); }
 
         public treeViewLabel() {
             if (this.name === null) {
@@ -1141,7 +1141,7 @@ module TypeScript {
             }
         }
 
-        public isSignature() { return (this.getFunctionFlags() & FncFlags.Signature) != FncFlags.None; }
+        public isSignature() { return (this.getFunctionFlags() & FunctionFlags.Signature) != FunctionFlags.None; }
     }
 
     export class LocationInfo {
@@ -1200,12 +1200,12 @@ module TypeScript {
                         }
                     }
                     else if (stmt.nodeType === NodeType.ClassDeclaration) {
-                        if (!hasFlag((<ClassDeclaration>stmt).getVarFlags(), VarFlags.Ambient)) {
+                        if (!hasFlag((<ClassDeclaration>stmt).getVarFlags(), VariableFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType === NodeType.VarDecl) {
-                        if (!hasFlag((<VarDecl>stmt).getVarFlags(), VarFlags.Ambient)) {
+                        if (!hasFlag((<VarDecl>stmt).getVarFlags(), VariableFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
@@ -1324,7 +1324,7 @@ module TypeScript {
     }
 
     export class TypeDeclaration extends NamedDeclaration {
-        private _varFlags = VarFlags.None;
+        private _varFlags = VariableFlags.None;
 
         constructor(nodeType: NodeType,
             name: Identifier,
@@ -1335,12 +1335,12 @@ module TypeScript {
             super(nodeType, name, members);
         }
 
-        public getVarFlags(): VarFlags {
+        public getVarFlags(): VariableFlags {
             return this._varFlags;
         }
 
         // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VarFlags): void {
+        public setVarFlags(flags: VariableFlags): void {
             this._varFlags = flags;
         }
 

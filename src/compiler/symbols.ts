@@ -232,8 +232,8 @@ module TypeScript {
                 // field or method
                 var isFunction = this.declAST && this.declAST.nodeType === NodeType.FuncDecl;
                 var isMethod = isFunction && (<FuncDecl>this.declAST).isMethod();
-                var isStaticFunction = isFunction && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FncFlags.Static)
-                var isPrivateMethod = isMethod && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FncFlags.Private);
+                var isStaticFunction = isFunction && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FunctionFlags.Static)
+                var isPrivateMethod = isMethod && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FunctionFlags.Private);
                 var isAlias = this.isType() && (<TypeSymbol>this).aliasLink;
 
                 if (this.isMember() || isMethod || isStaticFunction || isAlias) {
@@ -335,29 +335,29 @@ module TypeScript {
 
         public typeCheckStatus = TypeCheckStatus.NotStarted;
         public isInferenceSymbol() { return true; }
-        public transferVarFlags(varFlags: VarFlags) {
-            if (hasFlag(varFlags, VarFlags.Ambient)) {
+        public transferVarFlags(varFlags: VariableFlags) {
+            if (hasFlag(varFlags, VariableFlags.Ambient)) {
                 this.flags |= SymbolFlags.Ambient;
             }
-            if (hasFlag(varFlags, VarFlags.Constant)) {
+            if (hasFlag(varFlags, VariableFlags.Constant)) {
                 this.flags |= SymbolFlags.Constant;
             }
-            if (hasFlag(varFlags, VarFlags.Static)) {
+            if (hasFlag(varFlags, VariableFlags.Static)) {
                 this.flags |= SymbolFlags.Static;
             }
-            if (hasFlag(varFlags, VarFlags.Property)) {
+            if (hasFlag(varFlags, VariableFlags.Property)) {
                 this.flags |= SymbolFlags.Property;
             }
-            if (hasFlag(varFlags, VarFlags.Private)) {
+            if (hasFlag(varFlags, VariableFlags.Private)) {
                 this.flags |= SymbolFlags.Private;
             }
-            if (hasFlag(varFlags, VarFlags.Public)) {
+            if (hasFlag(varFlags, VariableFlags.Public)) {
                 this.flags |= SymbolFlags.Public;
             }
-            if (hasFlag(varFlags, VarFlags.Readonly)) {
+            if (hasFlag(varFlags, VariableFlags.Readonly)) {
                 this.flags |= SymbolFlags.Readonly;
             }
-            if (hasFlag(varFlags, VarFlags.Exported)) {
+            if (hasFlag(varFlags, VariableFlags.Exported)) {
                 this.flags |= SymbolFlags.Exported;
             }
         }
