@@ -787,6 +787,9 @@ module TypeScript {
             var callEx = <CallExpression>ast;
             var resultType = this.resolver.resolveAST(callEx, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
 
+            if (callEx.target.nodeType == NodeType.ParenthesizedExpression) {
+                this.typeCheckAST(callEx.target, typeCheckContext);
+            }
 
             var args = callEx.arguments;
 

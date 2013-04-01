@@ -182,7 +182,7 @@ var JSON2: any = {};
 
     if (typeof Date.prototype.toJSON !== 'function') {
 
-        Date.prototype.toJSON = <any>function (key) {
+        (<any>Date.prototype.toJSON) = <any>function (key) {
 
             return isFinite(this.valueOf())
                 ? this.getUTCFullYear() + '-' +
