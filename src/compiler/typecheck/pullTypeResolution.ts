@@ -3266,6 +3266,13 @@ module TypeScript {
 
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, context);
 
+            // Store any additional resolution results if needed before we return
+            if (additionalResults) {
+                additionalResults.targetSymbol = targetSymbol;
+                additionalResults.resolvedSignatures = signatures;
+                additionalResults.candidateSignature = signature;
+            }
+
             if (!signature) {
                 context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for call expression", enclosingDecl);
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -3314,13 +3321,6 @@ module TypeScript {
 
             if (!returnType) {
                 returnType = this.semanticInfoChain.anyTypeSymbol;
-            }
-
-            // Store any additional resolution results if needed
-            if (additionalResults) {
-                additionalResults.targetSymbol = targetSymbol;
-                additionalResults.resolvedSignatures = signatures;
-                additionalResults.candidateSignature = signature;
             }
 
             return returnType;
@@ -3450,6 +3450,13 @@ module TypeScript {
 
                 var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, context);
 
+                // Store any additional resolution results if needed before we return
+                if (additionalResults) {
+                    additionalResults.targetSymbol = targetTypeSymbol;
+                    additionalResults.resolvedSignatures = constructSignatures;
+                    additionalResults.candidateSignature = signature;
+                }
+
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
                     //signature = constructSignatures[0];
@@ -3525,13 +3532,6 @@ module TypeScript {
 
                 if (!returnType) {
                     returnType = this.semanticInfoChain.anyTypeSymbol;
-                }
-
-                // Store any additional resolution results if needed
-                if (additionalResults) {
-                    additionalResults.targetSymbol = targetTypeSymbol;
-                    additionalResults.resolvedSignatures = constructSignatures;
-                    additionalResults.candidateSignature = signature;
                 }
 
                 return returnType;
