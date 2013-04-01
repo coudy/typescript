@@ -46,7 +46,7 @@ module TypeScript {
         export function getAccessorSymbol(getterOrSetter: FuncDecl, semanticInfoChain: SemanticInfoChain, unitPath: string) {
             var getterOrSetterSymbol = semanticInfoChain.getSymbolForAST(getterOrSetter, unitPath);
             var linkKind: SymbolLinkKind;
-            if (hasFlag(getterOrSetter.fncFlags, FncFlags.GetAccessor)) {
+            if (hasFlag(getterOrSetter.getFunctionFlags(), FncFlags.GetAccessor)) {
                 linkKind = SymbolLinkKind.GetterFunction;
             } else {
                 linkKind = SymbolLinkKind.SetterFunction;

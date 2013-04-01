@@ -89,7 +89,7 @@ module TypeScript {
 
     function symbolCanBeUsed(sym: Symbol, publicOnly) {
         return publicOnly ? !(hasFlag(sym.flags, SymbolFlags.Private) ||
-                            (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
+                            (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).getFunctionFlags(), FncFlags.Private)))
                           : true;
     }
 
@@ -182,7 +182,7 @@ module TypeScript {
             if (implCache &&
                 ((sym = implCache.lookup(name)) != null) &&
                 (publicOnly ? !(hasFlag(sym.flags, SymbolFlags.Private) ||
-                                        (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
+                                        (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).getFunctionFlags(), FncFlags.Private)))
                                         : true)) {
                 return sym;
             }
@@ -219,7 +219,7 @@ module TypeScript {
             if (cache &&
                 ((sym = cache.lookup(name)) != null) &&
                 (publicOnly ? !(hasFlag(sym.flags, SymbolFlags.Private) ||
-                                        (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
+                                        (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).getFunctionFlags(), FncFlags.Private)))
                                         : true)) {
                 return sym;
             }

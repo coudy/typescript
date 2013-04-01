@@ -368,10 +368,10 @@ module TypeScript {
 
             var funcDeclAST = <FuncDecl>ast;
 
-            if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.fncFlags, FncFlags.ConstructMember)) {
+            if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.ConstructMember)) {
                 return this.typeCheckConstructor(ast, typeCheckContext, inTypedAssignment);
             }
-            else if (hasFlag(funcDeclAST.fncFlags, FncFlags.IndexerMember)) {
+            else if (hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.IndexerMember)) {
                 return this.typeCheckIndexer(ast, typeCheckContext, inTypedAssignment);
             }
             else if (funcDeclAST.isAccessor()) {
@@ -431,7 +431,7 @@ module TypeScript {
 
             var accessorSymbol = <PullAccessorSymbol>this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
 
-            var isGetter = hasFlag(funcDeclAST.fncFlags, FncFlags.GetAccessor);
+            var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.GetAccessor);
             var isSetter = !isGetter;
 
             var getter = accessorSymbol.getGetter();
@@ -677,7 +677,7 @@ module TypeScript {
                             leftType == this.semanticInfoChain.anyTypeSymbol ||
                             ((!leftExpr.isType() || leftType.isArray()) && 
                                 (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
-                            hasFlag(ast.flags, ASTFlags.EnumInitializer);
+                            hasFlag(ast.getFlags(), ASTFlags.EnumInitializer);
 
             if (!isValidLHS) {
                 this.context.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, "Invalid left-hand side of assignment expression", enclosingDecl);

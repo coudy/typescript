@@ -142,8 +142,8 @@ module TypeScript {
             if (signature.declAST &&
                 !signature.declAST.isOverload &&
                 !signature.declAST.isSignature() && 
-                !hasFlag(signature.declAST.fncFlags, FncFlags.Ambient) &&
-                !hasFlag(signature.declAST.fncFlags, FncFlags.Signature)) {
+                !hasFlag(signature.declAST.getFunctionFlags(), FncFlags.Ambient) &&
+                !hasFlag(signature.declAST.getFunctionFlags(), FncFlags.Signature)) {
                 this.definitionSignature = signature;
             }
         }
@@ -215,7 +215,7 @@ module TypeScript {
                     for (var j = i + 1; j < len; j++) {
                         // next check for equivalence between overloads - no two can be exactly the same                     
                         if (this.signatures[i].declAST && this.signatures[j].declAST &&
-                            (hasFlag(this.signatures[i].declAST.fncFlags, FncFlags.Signature) && hasFlag(this.signatures[j].declAST.fncFlags, FncFlags.Signature)) &&
+                            (hasFlag(this.signatures[i].declAST.getFunctionFlags(), FncFlags.Signature) && hasFlag(this.signatures[j].declAST.getFunctionFlags(), FncFlags.Signature)) &&
                             checker.signaturesAreIdentical(this.signatures[i], this.signatures[j])) {
                             checker.errorReporter.simpleError(this.signatures[i].declAST, (this.signatures[i].declAST && this.signatures[i].declAST.name) ? "Signature for '" + this.signatures[i].declAST.name.actualText + "' is duplicated" :"Signature is duplicated");
                         }
@@ -247,7 +247,7 @@ module TypeScript {
                 // first, typecheck each signature
                 for (var i = 0; i < len; i++) {
 
-                    if (!hasConstruct && !this.definitionSignature && this.signatures[i].declAST && this.signatures[i].declAST.isOverload && !hasFlag(this.signatures[i].declAST.fncFlags, FncFlags.Ambient)) {
+                    if (!hasConstruct && !this.definitionSignature && this.signatures[i].declAST && this.signatures[i].declAST.isOverload && !hasFlag(this.signatures[i].declAST.getFunctionFlags(), FncFlags.Ambient)) {
                         checker.errorReporter.simpleError(this.signatures[i].declAST, "Overload declaration lacks definition");
                     }
 

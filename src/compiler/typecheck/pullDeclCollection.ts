@@ -44,18 +44,18 @@ module TypeScript {
         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>ast;
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).text;
-        var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.modFlags, ModuleFlags.IsDynamic);
+        var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsDynamic);
         var kind: PullElementKind = PullElementKind.Container;
 
-        if (hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {
+        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        if (hasFlag(moduleDecl.modFlags, ModuleFlags.Exported)) {
+        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(moduleDecl.modFlags, ModuleFlags.IsEnum)) {
+        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsEnum)) {
             declFlags |= PullElementFlags.Enum;
             kind = PullElementKind.Enum;
         }
@@ -84,11 +84,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var constructorDeclKind = PullElementKind.Variable;
 
-        if (hasFlag(classDecl.varFlags, VarFlags.Ambient)) {
+        if (hasFlag(classDecl.getVarFlags(), VarFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        if (hasFlag(classDecl.varFlags, VarFlags.Exported)) {
+        if (hasFlag(classDecl.getVarFlags(), VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
             constructorDeclKind = PullElementKind.Property;
         }
@@ -120,7 +120,7 @@ module TypeScript {
     export function createInferfaceDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
-        if (hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
+        if (hasFlag(interfaceDecl.getVarFlags(), VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -147,7 +147,7 @@ module TypeScript {
     export function createObjectTypeDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
-        if (hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
+        if (hasFlag(interfaceDecl.getVarFlags(), VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -181,7 +181,7 @@ module TypeScript {
         //    return createObjectTypeDeclaration(interfaceDecl, context);
         //}
 
-        if (hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
+        if (hasFlag(interfaceDecl.getVarFlags(), VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -209,14 +209,14 @@ module TypeScript {
         var argDecl = <BoundDecl>ast;
         var declFlags = PullElementFlags.None;
 
-        if (hasFlag(argDecl.varFlags, VarFlags.Private)) {
+        if (hasFlag(argDecl.getVarFlags(), VarFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (hasFlag(argDecl.flags, ASTFlags.OptionalName) || hasFlag(argDecl.id.flags, ASTFlags.OptionalName)) {
+        if (hasFlag(argDecl.getFlags(), ASTFlags.OptionalName) || hasFlag(argDecl.id.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
@@ -229,7 +229,7 @@ module TypeScript {
         decl.setParentDecl(parent);
 
         // if it's a property type, we'll need to add it to the parent's parent as well
-        if (hasFlag(argDecl.varFlags, VarFlags.Property)) {
+        if (hasFlag(argDecl.getVarFlags(), VarFlags.Property)) {
             var propDecl = new PullDecl(argDecl.id.text, PullElementKind.Property, declFlags, span, context.scriptName);
             propDecl.setValueDecl(decl);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
@@ -291,11 +291,11 @@ module TypeScript {
         var parent = context.getParent();
         var declType = parent.getKind() == PullElementKind.Enum ? PullElementKind.EnumMember : PullElementKind.Property;
 
-        if (hasFlag(propertyDecl.id.flags, ASTFlags.OptionalName)) {
+        if (hasFlag(propertyDecl.id.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
-        if (hasFlag(propertyDecl.varFlags, VarFlags.Constant)) {
+        if (hasFlag(propertyDecl.getVarFlags(), VarFlags.Constant)) {
             declFlags |= PullElementFlags.Constant;
         }
 
@@ -330,14 +330,14 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Property;
 
-        if (hasFlag(memberDecl.varFlags, VarFlags.Private)) {
+        if (hasFlag(memberDecl.getVarFlags(), VarFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (hasFlag(memberDecl.varFlags, VarFlags.Static)) {
+        if (hasFlag(memberDecl.getVarFlags(), VarFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
@@ -371,11 +371,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
 
-        if (hasFlag(varDecl.varFlags, VarFlags.Ambient)) {
+        if (hasFlag(varDecl.getVarFlags(), VarFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        if (hasFlag(varDecl.varFlags, VarFlags.Exported)) {
+        if (hasFlag(varDecl.getVarFlags(), VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -412,10 +412,10 @@ module TypeScript {
         var isProperty = false;
         var isStatic = false;
 
-        if (hasFlag(varDecl.varFlags, VarFlags.ClassProperty)) {
+        if (hasFlag(varDecl.getVarFlags(), VarFlags.ClassProperty)) {
             return createMemberVariableDeclaration(varDecl, context);
         }
-        else if (hasFlag(varDecl.varFlags, VarFlags.Property)) {
+        else if (hasFlag(varDecl.getVarFlags(), VarFlags.Property)) {
             return createPropertySignature(varDecl, context);
         }
 
@@ -501,11 +501,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Function;
 
-        if (hasFlag(funcDeclAST.fncFlags, FncFlags.Ambient)) {
+        if (hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        if (hasFlag(funcDeclAST.fncFlags, FncFlags.Exported)) {
+        if (hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -549,7 +549,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.FunctionExpression;
 
-        if (hasFlag(functionExpressionDeclAST.fncFlags, FncFlags.IsFatArrowFunction)) {
+        if (hasFlag(functionExpressionDeclAST.getFunctionFlags(), FncFlags.IsFatArrowFunction)) {
             declFlags |= PullElementFlags.FatArrow;
         }
 
@@ -589,11 +589,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Method;
 
-        if (hasFlag(memberFunctionDeclAST.fncFlags, FncFlags.Static)) {
+        if (hasFlag(memberFunctionDeclAST.getFunctionFlags(), FncFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(memberFunctionDeclAST.fncFlags, FncFlags.Private)) {
+        if (hasFlag(memberFunctionDeclAST.getFunctionFlags(), FncFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
@@ -604,7 +604,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Signature;
         }
 
-        if (hasFlag(memberFunctionDeclAST.name.flags, ASTFlags.OptionalName)) {
+        if (hasFlag(memberFunctionDeclAST.name.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
@@ -800,15 +800,15 @@ module TypeScript {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.GetAccessor;
 
-        if (hasFlag(getAccessorDeclAST.fncFlags, FncFlags.Static)) {
+        if (hasFlag(getAccessorDeclAST.getFunctionFlags(), FncFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(getAccessorDeclAST.name.flags, ASTFlags.OptionalName)) {
+        if (hasFlag(getAccessorDeclAST.name.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
-        if (hasFlag(getAccessorDeclAST.fncFlags, FncFlags.Private)) {
+        if (hasFlag(getAccessorDeclAST.getFunctionFlags(), FncFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
@@ -851,15 +851,15 @@ module TypeScript {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.SetAccessor;
 
-        if (hasFlag(setAccessorDeclAST.fncFlags, FncFlags.Static)) {
+        if (hasFlag(setAccessorDeclAST.getFunctionFlags(), FncFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(setAccessorDeclAST.name.flags, ASTFlags.OptionalName)) {
+        if (hasFlag(setAccessorDeclAST.name.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
-        if (hasFlag(setAccessorDeclAST.fncFlags, FncFlags.Private)) {
+        if (hasFlag(setAccessorDeclAST.getFunctionFlags(), FncFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
@@ -890,7 +890,7 @@ module TypeScript {
 
         var funcDecl = <FuncDecl>ast;
 
-        if (hasFlag(funcDecl.fncFlags, (FncFlags.IsFunctionExpression | FncFlags.IsFatArrowFunction))) {
+        if (hasFlag(funcDecl.getFunctionFlags(), (FncFlags.IsFunctionExpression | FncFlags.IsFatArrowFunction))) {
             return createFunctionExpressionDeclaration(funcDecl, context);
         }
         else if (funcDecl.isConstructor) {
@@ -902,22 +902,22 @@ module TypeScript {
         else if (funcDecl.isSetAccessor()) {
             return createSetAccessorDeclaration(funcDecl, context);
         }
-        else if (hasFlag(funcDecl.fncFlags, FncFlags.ConstructMember)) {
-            return hasFlag(funcDecl.flags, ASTFlags.TypeReference) ?
+        else if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.ConstructMember)) {
+            return hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference) ?
                 createConstructorTypeDeclaration(funcDecl, context) :
                 createConstructSignatureDeclaration(funcDecl, context);
         }
-        else if (hasFlag(funcDecl.fncFlags, FncFlags.CallMember)) {
+        else if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.CallMember)) {
             return createCallSignatureDeclaration(funcDecl, context);
         }
-        else if (hasFlag(funcDecl.fncFlags, FncFlags.IndexerMember)) {
+        else if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.IndexerMember)) {
             return createIndexSignatureDeclaration(funcDecl, context);
         }
-        else if (hasFlag(funcDecl.flags, ASTFlags.TypeReference)) {
+        else if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
             return createFunctionTypeDeclaration(funcDecl, context);
         }
-        else if (hasFlag(funcDecl.fncFlags, FncFlags.Method) ||
-                 hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
+        else if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.Method) ||
+                 hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod)) {
             return createMemberFunctionDeclaration(funcDecl, context);
         }
 

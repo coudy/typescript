@@ -1559,7 +1559,7 @@ module TypeScript {
 
             var hadError = false;
 
-            var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.fncFlags, FncFlags.ConstructMember);
+            var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FncFlags.ConstructMember);
 
             if (signature) {
 
@@ -1895,7 +1895,7 @@ module TypeScript {
                     return this.resolveDeclaration(ast, context, enclosingDecl);
 
                 case NodeType.FuncDecl:
-                    if (isTypedAssignment || ((<FuncDecl>ast).fncFlags & FncFlags.IsFunctionExpression)) {
+                    if (isTypedAssignment || ((<FuncDecl>ast).getFunctionFlags() & FncFlags.IsFunctionExpression)) {
                         return this.resolveStatementOrExpression(ast, isTypedAssignment, enclosingDecl, context);
                     }
                     else {

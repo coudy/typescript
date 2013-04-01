@@ -56,10 +56,10 @@ module TypeScript {
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
 
         public type: Type = null;
-        public flags = ASTFlags.Writeable;
+        private _flags = ASTFlags.Writeable;
 
         public typeCheckPhase = -1;
-        
+
         private astID = astID++;
 
         // REVIEW: for diagnostic purposes
@@ -70,6 +70,15 @@ module TypeScript {
         private docComments: Comment[] = null;
 
         constructor(public nodeType: NodeType) {
+        }
+
+        public getFlags(): ASTFlags {
+            return this._flags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setFlags(flags: ASTFlags): void {
+            this._flags = flags;
         }
 
         public getLength() { return this.limChar - this.minChar; }
@@ -114,7 +123,7 @@ module TypeScript {
             switch (this.nodeType) {
                 case NodeType.ThisExpression:
                     emitter.recordSourceMappingStart(this);
-                    if (emitter.thisFnc && (hasFlag(emitter.thisFnc.fncFlags, FncFlags.IsFatArrowFunction))) {
+                    if (emitter.thisFnc && (hasFlag(emitter.thisFnc.getFunctionFlags(), FncFlags.IsFatArrowFunction))) {
                         emitter.writeToOutput("_this");
                     }
                     else {
@@ -433,7 +442,7 @@ module TypeScript {
                 case NodeType.CastExpression:
                     this.castTerm = typeFlow.typeCheck(this.castTerm);
                     var applyTargetType = this.operand.nodeType !== NodeType.ParenthesizedExpression;
-                    
+
                     var targetType = applyTargetType ? this.castTerm.type : null;
 
                     typeFlow.checker.typeCheckWithContextualType(targetType, typeFlow.checker.inProvisionalTypecheckMode(), true, this.operand);
@@ -698,7 +707,7 @@ module TypeScript {
                     case NodeType.Member:
                         if (this.operand2.nodeType === NodeType.FuncDecl && (<FuncDecl>this.operand2).isAccessor()) {
                             var funcDecl = <FuncDecl>this.operand2;
-                            if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor)) {
+                            if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor)) {
                                 emitter.writeToOutput("get ");
                             }
                             else {
@@ -940,7 +949,7 @@ module TypeScript {
     export class BoundDecl extends AST {
         public init: AST = null;
         public typeExpr: AST = null;
-        public varFlags = VarFlags.None;
+        private _varFlags = VarFlags.None;
         public sym: Symbol = null;
         public isDeclaration() { return true; }
 
@@ -948,7 +957,16 @@ module TypeScript {
             super(nodeType);
         }
 
-        public isProperty() { return hasFlag(this.varFlags, VarFlags.Property); }
+        public getVarFlags(): VarFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VarFlags): void {
+            this._varFlags = flags;
+        }
+
+        public isProperty() { return hasFlag(this.getVarFlags(), VarFlags.Property); }
 
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckBoundDecl(this);
@@ -971,9 +989,9 @@ module TypeScript {
             super(id, NodeType.VarDecl);
         }
 
-        public isExported() { return hasFlag(this.varFlags, VarFlags.Exported); }
+        public isExported() { return hasFlag(this.getVarFlags(), VarFlags.Exported); }
 
-        public isStatic() { return hasFlag(this.varFlags, VarFlags.Static); }
+        public isStatic() { return hasFlag(this.getVarFlags(), VarFlags.Static); }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitJavascriptVarDecl(this, tokenId);
@@ -983,7 +1001,7 @@ module TypeScript {
             return "var " + this.id.actualText;
         }
     }
-    
+
     export class ArgDecl extends BoundDecl {
         constructor(id: Identifier) {
             super(id, NodeType.ArgDecl);
@@ -1015,7 +1033,7 @@ module TypeScript {
 
     export class FuncDecl extends AST {
         public hint: string = null;
-        public fncFlags = FncFlags.None;
+        private _functionFlags = FncFlags.None;
         public returnTypeAnnotation: AST = null;
         public symbols: IHashTable;
         public variableArgList = false;
@@ -1037,9 +1055,18 @@ module TypeScript {
                     public isConstructor: bool,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
-                    nodeType: number) {
+            nodeType: number) {
 
             super(nodeType);
+        }
+
+        public getFunctionFlags(): FncFlags {
+            return this._functionFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setFunctionFlags(flags: FncFlags): void {
+            this._functionFlags = flags;
         }
 
         public structuralEquals(ast: FuncDecl, includingPosition: bool): bool {
@@ -1054,11 +1081,11 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
-        public hasSelfReference() { return hasFlag(this.fncFlags, FncFlags.HasSelfReference); }
-        public setHasSelfReference() { this.fncFlags |= FncFlags.HasSelfReference; }
+        public hasSelfReference() { return hasFlag(this.getFunctionFlags(), FncFlags.HasSelfReference); }
+        // public setHasSelfReference() { this.getFunctionFlags() |= FncFlags.HasSelfReference; }
 
-        public hasSuperReferenceInFatArrowFunction() { return hasFlag(this.fncFlags, FncFlags.HasSuperReferenceInFatArrowFunction); }
-        public setHasSuperReferenceInFatArrowFunction() { this.fncFlags |= FncFlags.HasSuperReferenceInFatArrowFunction; }
+        public hasSuperReferenceInFatArrowFunction() { return hasFlag(this.getFunctionFlags(), FncFlags.HasSuperReferenceInFatArrowFunction); }
+        // public setHasSuperReferenceInFatArrowFunction() { this.getFunctionFlags() |= FncFlags.HasSuperReferenceInFatArrowFunction; }
 
         public buildControlFlow(): ControlFlowContext {
             var entry = new BasicBlock();
@@ -1077,7 +1104,7 @@ module TypeScript {
 
             return context;
         }
-        
+
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckFunction(this);
         }
@@ -1096,17 +1123,17 @@ module TypeScript {
         }
 
         public isMethod() {
-            return (this.fncFlags & FncFlags.Method) != FncFlags.None;
+            return (this.getFunctionFlags() & FncFlags.Method) != FncFlags.None;
         }
 
-        public isCallMember() { return hasFlag(this.fncFlags, FncFlags.CallMember); }
-        public isConstructMember() { return hasFlag(this.fncFlags, FncFlags.ConstructMember); }
-        public isIndexerMember() { return hasFlag(this.fncFlags, FncFlags.IndexerMember); }
+        public isCallMember() { return hasFlag(this.getFunctionFlags(), FncFlags.CallMember); }
+        public isConstructMember() { return hasFlag(this.getFunctionFlags(), FncFlags.ConstructMember); }
+        public isIndexerMember() { return hasFlag(this.getFunctionFlags(), FncFlags.IndexerMember); }
         public isSpecialFn() { return this.isCallMember() || this.isIndexerMember() || this.isConstructMember(); }
-        public isAccessor() { return hasFlag(this.fncFlags, FncFlags.GetAccessor) || hasFlag(this.fncFlags, FncFlags.SetAccessor); }
-        public isGetAccessor() { return hasFlag(this.fncFlags, FncFlags.GetAccessor); }
-        public isSetAccessor() { return hasFlag(this.fncFlags, FncFlags.SetAccessor); }
-        public isStatic() { return hasFlag(this.fncFlags, FncFlags.Static); }
+        public isAccessor() { return hasFlag(this.getFunctionFlags(), FncFlags.GetAccessor) || hasFlag(this.getFunctionFlags(), FncFlags.SetAccessor); }
+        public isGetAccessor() { return hasFlag(this.getFunctionFlags(), FncFlags.GetAccessor); }
+        public isSetAccessor() { return hasFlag(this.getFunctionFlags(), FncFlags.SetAccessor); }
+        public isStatic() { return hasFlag(this.getFunctionFlags(), FncFlags.Static); }
 
         public treeViewLabel() {
             if (this.name === null) {
@@ -1117,11 +1144,7 @@ module TypeScript {
             }
         }
 
-        public ClearFlags(): void {
-            this.fncFlags = FncFlags.None;
-        }
-
-        public isSignature() { return (this.fncFlags & FncFlags.Signature) != FncFlags.None; }
+        public isSignature() { return (this.getFunctionFlags() & FncFlags.Signature) != FncFlags.None; }
     }
 
     export class LocationInfo {
@@ -1175,17 +1198,17 @@ module TypeScript {
                 for (var i = 0, len = this.bod.members.length; i < len; i++) {
                     var stmt = this.bod.members[i];
                     if (stmt.nodeType === NodeType.ModuleDeclaration) {
-                        if (!hasFlag((<ModuleDeclaration>stmt).modFlags, ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
+                        if (!hasFlag((<ModuleDeclaration>stmt).getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType === NodeType.ClassDeclaration) {
-                        if (!hasFlag((<ClassDeclaration>stmt).varFlags, VarFlags.Ambient)) {
+                        if (!hasFlag((<ClassDeclaration>stmt).getVarFlags(), VarFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType === NodeType.VarDecl) {
-                        if (!hasFlag((<VarDecl>stmt).varFlags, VarFlags.Ambient)) {
+                        if (!hasFlag((<VarDecl>stmt).getVarFlags(), VarFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
@@ -1260,7 +1283,7 @@ module TypeScript {
     }
 
     export class ModuleDeclaration extends NamedDeclaration {
-        public modFlags = ModuleFlags.ShouldEmitModuleDecl;
+        private _moduleFlags = ModuleFlags.ShouldEmitModuleDecl;
         public mod: ModuleType = null;
         public prettyName: string;
         public amdDependencies: string[] = [];
@@ -1274,11 +1297,20 @@ module TypeScript {
             this.prettyName = this.name.actualText;
         }
 
-        public isEnum() { return hasFlag(this.modFlags, ModuleFlags.IsEnum); }
-        public isWholeFile() { return hasFlag(this.modFlags, ModuleFlags.IsWholeFile); }
+        public getModuleFlags(): ModuleFlags {
+            return this._moduleFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setModuleFlags(flags: ModuleFlags): void {
+            this._moduleFlags = flags;
+        }
+
+        public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
+        public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
 
         public recordNonInterface() {
-            this.modFlags &= ~ModuleFlags.ShouldEmitModuleDecl;
+            this.setModuleFlags(this.getModuleFlags() & ~ModuleFlags.ShouldEmitModuleDecl);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1286,7 +1318,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            if (!hasFlag(this.modFlags, ModuleFlags.ShouldEmitModuleDecl)) {
+            if (!hasFlag(this.getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl)) {
                 emitter.emitComments(this, true);
                 emitter.emitJavascriptModule(this);
                 emitter.emitComments(this, false);
@@ -1295,15 +1327,24 @@ module TypeScript {
     }
 
     export class TypeDeclaration extends NamedDeclaration {
-        public varFlags = VarFlags.None;
+        private _varFlags = VarFlags.None;
 
         constructor(nodeType: NodeType,
-                    name: Identifier,
+            name: Identifier,
                     public typeParameters: ASTList,
                     public extendsList: ASTList,
                     public implementsList: ASTList,
-                    members: ASTList) {
+            members: ASTList) {
             super(nodeType, name, members);
+        }
+
+        public getVarFlags(): VarFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VarFlags): void {
+            this._varFlags = flags;
         }
 
         public structuralEquals(ast: TypeDeclaration, includingPosition: bool): bool {
@@ -1319,10 +1360,10 @@ module TypeScript {
         public endingToken: ASTSpan = null;
 
         constructor(name: Identifier,
-                    typeParameters: ASTList,
-                    members: ASTList,
-                    extendsList: ASTList,
-                    implementsList: ASTList) {
+            typeParameters: ASTList,
+            members: ASTList,
+            extendsList: ASTList,
+            implementsList: ASTList) {
             super(NodeType.ClassDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
@@ -1337,10 +1378,10 @@ module TypeScript {
 
     export class InterfaceDeclaration extends TypeDeclaration {
         constructor(name: Identifier,
-                    typeParameters: ASTList,
-                    members: ASTList,
-                    extendsList: ASTList,
-                    implementsList: ASTList) {
+            typeParameters: ASTList,
+            members: ASTList,
+            extendsList: ASTList,
+            implementsList: ASTList) {
             super(NodeType.InterfaceDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
@@ -1524,7 +1565,7 @@ module TypeScript {
     }
 
     export class WhileStatement extends Statement {
-       constructor(public cond: AST, public body: AST) {
+        constructor(public cond: AST, public body: AST) {
             super(NodeType.WhileStatement);
         }
 
@@ -1780,9 +1821,6 @@ module TypeScript {
     export class ForInStatement extends Statement {
         constructor(public lval: AST, public obj: AST, public body: AST) {
             super(NodeType.ForInStatement);
-            if (this.lval && (this.lval.nodeType === NodeType.VarDecl)) {
-                (<BoundDecl>this.lval).varFlags |= VarFlags.AutoInit;
-            }
         }
 
         public statement: ASTSpan = new ASTSpan();
@@ -2095,7 +2133,7 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }
-        
+
         public typeCheck(typeFlow: TypeFlow) {
             this.expr = typeFlow.typeCheck(this.expr);
             typeFlow.typeCheck(this.body);
@@ -2233,9 +2271,6 @@ module TypeScript {
     export class CatchClause extends AST {
         constructor(public param: VarDecl, public body: AST) {
             super(NodeType.CatchClause);
-            if (this.param) {
-                this.param.varFlags |= VarFlags.AutoInit;
-            }
         }
 
         public statement: ASTSpan = new ASTSpan();

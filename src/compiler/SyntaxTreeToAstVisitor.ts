@@ -200,7 +200,7 @@ module TypeScript {
             }
 
             if (isOptional) {
-                result.flags |= ASTFlags.OptionalName;
+                result.setFlags(result.getFlags() | ASTFlags.OptionalName);
             }
 
             var start = this.position + token.leadingTriviaWidth();
@@ -493,7 +493,7 @@ module TypeScript {
             var bod = this.visitSyntaxList(node.moduleElements);
 
             if (this.hasUseStrictDirective(node.moduleElements)) {
-                bod.flags |= ASTFlags.StrictMode;
+                bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);
             }
 
             var topLevelMod: ModuleDeclaration = null;
@@ -503,12 +503,12 @@ module TypeScript {
                 topLevelMod = new ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
-                topLevelMod.modFlags |= ModuleFlags.IsDynamic;
-                topLevelMod.modFlags |= ModuleFlags.IsWholeFile;
-                topLevelMod.modFlags |= ModuleFlags.Exported;
+                topLevelMod.setModuleFlags(topLevelMod.getModuleFlags() | ModuleFlags.IsDynamic);
+                topLevelMod.setModuleFlags(topLevelMod.getModuleFlags() | ModuleFlags.IsWholeFile);
+                topLevelMod.setModuleFlags(topLevelMod.getModuleFlags() | ModuleFlags.Exported);
 
                 if (this.isParsingDeclareFile) {
-                    topLevelMod.modFlags |= ModuleFlags.Ambient;
+                    topLevelMod.setModuleFlags(topLevelMod.getModuleFlags() | ModuleFlags.Ambient);
                 }
 
                 topLevelMod.prettyName = getPrettyName(correctedFileName);
@@ -592,14 +592,14 @@ module TypeScript {
                 result.postComments = postComments;
 
                 if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    result.varFlags |= VarFlags.Exported;
+                    result.setVarFlags(result.getVarFlags() | VarFlags.Exported);
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                    result.varFlags |= VarFlags.Ambient;
+                    result.setVarFlags(result.getVarFlags() | VarFlags.Ambient);
                 }
 
-                result.varFlags |= VarFlags.Class;
+                result.setVarFlags(result.getVarFlags() | VarFlags.Class);
 
                 for (i = 0; i < members.members.length; i++) {
                     var member = members.members[i];
@@ -660,8 +660,9 @@ module TypeScript {
                 if (members.members) {
                     for (i = 0; i < members.members.length; i++) {
                         if (members.members[i].nodeType === NodeType.FuncDecl) {
-                            (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Method;
-                            (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Signature;
+                            var funcDecl = <FuncDecl>members.members[i];
+                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Method);
+                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Signature);
                         }
                     }
                 }
@@ -674,7 +675,7 @@ module TypeScript {
                 result.postComments = postComments;
 
                 if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    result.varFlags |= VarFlags.Exported;
+                    result.setVarFlags(result.getVarFlags() | VarFlags.Exported);
                 }
             }
 
@@ -788,15 +789,15 @@ module TypeScript {
 
                     // mark the inner module declarations as exported
                     if (i) {
-                        result.modFlags |= ModuleFlags.Exported;
+                        result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Exported);
                     } else if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
                         // outer module is exported if export key word or parsing ambient module
-                        result.modFlags |= ModuleFlags.Exported;
+                        result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Exported);
                     }
 
                     // mark ambient if declare keyword or parsing ambient module or parsing declare file
                     if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                        result.modFlags |= ModuleFlags.Ambient;
+                        result.setModuleFlags( result.getModuleFlags() | ModuleFlags.Ambient);
                     }
 
                     // REVIEW: will also possibly need to re-parent comments as well
@@ -864,7 +865,7 @@ module TypeScript {
 
                 if (node.block) {
                     if (this.hasUseStrictDirective(node.block.statements)) {
-                        bod.flags |= ASTFlags.StrictMode;
+                        bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);
                     }
                 }
 
@@ -878,15 +879,15 @@ module TypeScript {
                 result.returnTypeAnnotation = returnType;
 
                 if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    result.fncFlags |= FncFlags.Exported;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Exported);
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                    result.fncFlags |= FncFlags.Ambient;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Ambient);
                 }
 
                 if (node.semicolonToken) {
-                    result.fncFlags |= FncFlags.Signature;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
                 }
             }
 
@@ -912,11 +913,11 @@ module TypeScript {
 
             var mapDecl = new VarDecl(new Identifier("_map"));
 
-            mapDecl.varFlags |= VarFlags.Exported;
-            mapDecl.varFlags |= VarFlags.Private;
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | VarFlags.Exported);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | VarFlags.Private);
 
             // REVIEW: Is this still necessary?
-            mapDecl.varFlags |= (VarFlags.Property | VarFlags.Public);
+            mapDecl.setVarFlags(mapDecl.getVarFlags() | (VarFlags.Property | VarFlags.Public));
             mapDecl.init = new UnaryExpression(NodeType.ArrayLit, null);
             members.append(mapDecl);
             var lastValue: NumberLiteral = null;
@@ -958,7 +959,7 @@ module TypeScript {
                                               new Identifier("_map"),
                                               memberValue),
                                      new StringLiteral('"' + memberName.actualText + '"'));
-                        map.flags |= ASTFlags.EnumInitializer;
+                        map.setFlags(map.getFlags() | ASTFlags.EnumInitializer);
                         members.append(new ExpressionStatement(map));
                         this.setSpanExplicit(map, memberStart, this.position);
                         this.setSpanExplicit(map.operand1, memberStart, this.position);
@@ -969,18 +970,18 @@ module TypeScript {
                     member.init = memberValue;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                     member.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
-                    member.varFlags |= (VarFlags.Readonly | VarFlags.Property);
+                    member.setVarFlags(member.getVarFlags() | (VarFlags.Readonly | VarFlags.Property));
                     this.setSpanExplicit(member, memberStart, this.position);
 
                     if (memberValue.nodeType === NodeType.NumberLit) {
-                        member.varFlags |= VarFlags.Constant;
+                        member.setVarFlags(member.getVarFlags() | VarFlags.Constant);
                     }
                     else if (memberValue.nodeType === NodeType.Lsh) {
                         // If the initializer is of the form "value << value" then treat it as a constant
                         // as well.
                         var binop = <BinaryExpression>memberValue;
                         if (binop.operand1.nodeType === NodeType.NumberLit && binop.operand2.nodeType === NodeType.NumberLit) {
-                            member.varFlags |= VarFlags.Constant;
+                            member.setVarFlags(member.getVarFlags() | VarFlags.Constant);
                         }
                     }
                     else if (memberValue.nodeType === NodeType.Name) {
@@ -990,7 +991,7 @@ module TypeScript {
                         for (var j = 0; j < memberNames.length; j++) {
                             memberName = memberNames[j];
                             if (memberName.text === nameNode.text) {
-                                member.varFlags |= VarFlags.Constant;
+                                member.setVarFlags(member.getVarFlags() | VarFlags.Constant);
                                 break;
                             }
                         }
@@ -999,7 +1000,7 @@ module TypeScript {
                     members.append(member);
                     memberNames.push(memberName);
                     // all enum members are exported
-                    member.varFlags |= VarFlags.Exported;
+                    member.setVarFlags(member.getVarFlags() | VarFlags.Exported);
                 }
             }
 
@@ -1012,11 +1013,11 @@ module TypeScript {
 
             modDecl.preComments = preComments;
             modDecl.postComments = postComments;
-            modDecl.modFlags |= ModuleFlags.IsEnum;
+            modDecl.setModuleFlags(modDecl.getModuleFlags() | ModuleFlags.IsEnum);
             modDecl.recordNonInterface();
 
             if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                modDecl.modFlags |= ModuleFlags.Exported;
+                modDecl.setModuleFlags(modDecl.getModuleFlags() | ModuleFlags.Exported);
             }
 
             return modDecl;
@@ -1109,11 +1110,11 @@ module TypeScript {
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    varDecl.varFlags |= VarFlags.Exported;
+                    varDecl.setVarFlags(varDecl.getVarFlags() | VarFlags.Exported);
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                    varDecl.varFlags |= VarFlags.Ambient;
+                    varDecl.setVarFlags(varDecl.getVarFlags() | VarFlags.Ambient);
                 }
             }
 
@@ -1332,8 +1333,8 @@ module TypeScript {
                 result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
 
                 result.returnTypeAnnotation = null;
-                result.fncFlags |= FncFlags.IsFunctionExpression;
-                result.fncFlags |= FncFlags.IsFatArrowFunction;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.IsFunctionExpression);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.IsFatArrowFunction);
             }
 
             this.setAST(node, result);
@@ -1363,8 +1364,8 @@ module TypeScript {
 
                 result.preComments = preComments;
                 result.returnTypeAnnotation = returnType;
-                result.fncFlags |= FncFlags.IsFunctionExpression;
-                result.fncFlags |= FncFlags.IsFatArrowFunction;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.IsFunctionExpression);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.IsFatArrowFunction);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             }
 
@@ -1456,11 +1457,11 @@ module TypeScript {
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.returnTypeAnnotation = returnType;
-                funcDecl.fncFlags |= FncFlags.Signature;
+                funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Signature);
                 funcDecl.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
-                funcDecl.fncFlags |= FncFlags.ConstructMember;
-                funcDecl.flags |= ASTFlags.TypeReference;
+                funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.ConstructMember);
+                funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
                 funcDecl.hint = "_construct";
                 funcDecl.classDecl = null;
 
@@ -1491,8 +1492,8 @@ module TypeScript {
 
                 funcDecl.returnTypeAnnotation = returnType;
                 // funcDecl.variableArgList = variableArgList;
-                funcDecl.fncFlags |= FncFlags.Signature;
-                funcDecl.flags |= ASTFlags.TypeReference;
+                funcDecl.setFlags(funcDecl.getFunctionFlags() | FncFlags.Signature);
+                funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
                 funcDecl.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
                 result = new TypeReference(funcDecl, 0);
@@ -1518,8 +1519,9 @@ module TypeScript {
                 if (typeMembers.members) {
                     for (var i = 0; i < typeMembers.members.length; i++) {
                         if (typeMembers.members[i].nodeType === NodeType.FuncDecl) {
-                            (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Method;
-                            (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Signature;
+                            var funcDecl = <FuncDecl>typeMembers.members[i];
+                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Method);
+                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Signature);
                         }
                     }
                 }
@@ -1529,7 +1531,7 @@ module TypeScript {
                     new Identifier("_anonymous"), null, typeMembers, null, null);
                 this.setSpan(interfaceDecl, start, node);
 
-                interfaceDecl.flags |= ASTFlags.TypeReference;
+                interfaceDecl.setFlags(interfaceDecl.getFlags() | ASTFlags.TypeReference);
 
                 result = new TypeReference(interfaceDecl, 0);
             }
@@ -1560,7 +1562,7 @@ module TypeScript {
                     result = new TypeReference(underlying, 1);
                 }
 
-                result.flags |= ASTFlags.TypeReference;
+                result.setFlags(result.getFlags() | ASTFlags.TypeReference);
             }
 
             this.setAST(node, result);
@@ -1587,7 +1589,7 @@ module TypeScript {
                 var genericType = new GenericType(underlying, typeArguments);
                 this.setSpan(genericType, start, node);
 
-                genericType.flags |= ASTFlags.TypeReference;
+                genericType.setFlags(genericType.getFlags() | ASTFlags.TypeReference);
 
                 result = new TypeReference(genericType, 0);
             }
@@ -1650,18 +1652,18 @@ module TypeScript {
                 result.typeExpr = typeExpr;
 
                 if (node.publicOrPrivateKeyword) {
-                    result.varFlags |= VarFlags.Property;
+                    result.setVarFlags(result.getVarFlags() | VarFlags.Property);
 
                     if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PublicKeyword) {
-                        result.varFlags |= VarFlags.Public;
+                        result.setVarFlags(result.getVarFlags() | VarFlags.Public);
                     }
                     else {
-                        result.varFlags |= VarFlags.Private;
+                        result.setVarFlags(result.getVarFlags() | VarFlags.Private);
                     }
                 }
 
                 if (node.equalsValueClause || node.dotDotDotToken) {
-                    result.flags |= ASTFlags.OptionalName;
+                    result.setFlags(result.getFlags() | ASTFlags.OptionalName);
                 }
             }
 
@@ -1892,7 +1894,7 @@ module TypeScript {
                 result.returnTypeAnnotation = returnType;
 
                 result.hint = "_construct";
-                result.fncFlags |= FncFlags.ConstructMember;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.ConstructMember);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             }
 
@@ -1962,7 +1964,7 @@ module TypeScript {
                 result.variableArgList = false;
                 result.returnTypeAnnotation = returnType;
 
-                result.fncFlags |= FncFlags.IndexerMember;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.IndexerMember);
             }
 
             this.setAST(node, result);
@@ -1990,7 +1992,7 @@ module TypeScript {
 
                 result.preComments = preComments;
                 result.typeExpr = typeExpr;
-                result.varFlags |= VarFlags.Property;
+                result.setVarFlags(result.getVarFlags() | VarFlags.Property);
             }
 
             this.setAST(node, result);
@@ -2036,7 +2038,7 @@ module TypeScript {
                 result.returnTypeAnnotation = returnType;
 
                 result.hint = "_call";
-                result.fncFlags |= FncFlags.CallMember;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.CallMember);
             }
 
             this.setAST(node, result);
@@ -2165,11 +2167,11 @@ module TypeScript {
                 result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
                 if (node.semicolonToken) {
-                    result.fncFlags |= FncFlags.Signature;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
                 }
 
                 // REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
-                result.fncFlags |= FncFlags.ClassMethod;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.ClassMethod);
             }
 
             this.setAST(node, result);
@@ -2214,21 +2216,21 @@ module TypeScript {
                 result.returnTypeAnnotation = returnType;
 
                 if (node.semicolonToken) {
-                    result.fncFlags |= FncFlags.Signature;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                    result.fncFlags |= FncFlags.Private;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Private);
                 }
                 else {
-                    result.fncFlags |= FncFlags.Public;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Public);
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                    result.fncFlags |= FncFlags.Static;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Static);
                 }
 
-                result.fncFlags |= FncFlags.Method;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Method);
             }
 
             this.setAST(node, result);
@@ -2267,17 +2269,17 @@ module TypeScript {
                 result.returnTypeAnnotation = returnType;
 
                 if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                    result.fncFlags |= FncFlags.Private;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Private);
                 }
                 else {
-                    result.fncFlags |= FncFlags.Public;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Public);
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                    result.fncFlags |= FncFlags.Static;
+                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Static);
                 }
 
-                result.fncFlags |= FncFlags.Method;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Method);
             }
 
             this.setAST(node, result);
@@ -2290,7 +2292,7 @@ module TypeScript {
 
             var result = this.visitMemberAccessorDeclaration(node, node.typeAnnotation);
 
-            result.fncFlags |= FncFlags.GetAccessor;
+            result.setFunctionFlags(result.getFunctionFlags() | FncFlags.GetAccessor);
             result.hint = "get" + result.name.actualText;
 
             return result;
@@ -2301,7 +2303,7 @@ module TypeScript {
 
             var result = this.visitMemberAccessorDeclaration(node, null);
 
-            result.fncFlags |= FncFlags.SetAccessor;
+            result.setFunctionFlags(result.getFunctionFlags() | FncFlags.SetAccessor);
             result.hint = "set" + result.name.actualText;
 
             return result;
@@ -2336,17 +2338,17 @@ module TypeScript {
                 result.init = init;
 
                 if (this.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                    result.varFlags |= VarFlags.Static;
+                    result.setVarFlags(result.getVarFlags() | VarFlags.Static);
                 }
 
                 if (this.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                    result.varFlags |= VarFlags.Private;
+                    result.setVarFlags(result.getVarFlags() | VarFlags.Private);
                 }
                 else {
-                    result.varFlags |= VarFlags.Public;
+                    result.setVarFlags(result.getVarFlags() | VarFlags.Public);
                 }
 
-                result.varFlags |= VarFlags.ClassProperty;
+                result.setVarFlags(result.getVarFlags() | VarFlags.ClassProperty);
             }
 
             this.setAST(node, result);
@@ -2769,8 +2771,8 @@ module TypeScript {
                 var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, new ASTList(), NodeType.FuncDecl);
                 this.setSpan(funcDecl, start, node);
 
-                funcDecl.fncFlags |= FncFlags.GetAccessor;
-                funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
+                funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.GetAccessor);
+                funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.IsFunctionExpression);
                 funcDecl.hint = "get" + node.propertyName.valueText();
                 funcDecl.returnTypeAnnotation = returnType;
 
@@ -2807,8 +2809,8 @@ module TypeScript {
                 var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
                 this.setSpan(funcDecl, start, node);
 
-                funcDecl.fncFlags |= FncFlags.SetAccessor;
-                funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
+                funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.SetAccessor);
+                funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.IsFunctionExpression);
                 funcDecl.hint = "set" + node.propertyName.valueText();
 
                 result = new BinaryExpression(NodeType.Member, name, funcDecl);
@@ -2846,7 +2848,7 @@ module TypeScript {
 
                 if (node.block) {
                     if (this.hasUseStrictDirective(node.block.statements)) {
-                        bod.flags |= ASTFlags.StrictMode;
+                        bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);
                     }
                 }
 
@@ -2855,7 +2857,7 @@ module TypeScript {
                 result.preComments = preComments;
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
-                result.fncFlags |= FncFlags.IsFunctionExpression;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.IsFunctionExpression);
             }
 
             this.setAST(node, result);

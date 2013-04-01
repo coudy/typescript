@@ -232,8 +232,8 @@ module TypeScript {
                 // field or method
                 var isFunction = this.declAST && this.declAST.nodeType === NodeType.FuncDecl;
                 var isMethod = isFunction && (<FuncDecl>this.declAST).isMethod();
-                var isStaticFunction = isFunction && hasFlag((<FuncDecl>this.declAST).fncFlags, FncFlags.Static)
-                var isPrivateMethod = isMethod && hasFlag((<FuncDecl>this.declAST).fncFlags, FncFlags.Private);
+                var isStaticFunction = isFunction && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FncFlags.Static)
+                var isPrivateMethod = isMethod && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FncFlags.Private);
                 var isAlias = this.isType() && (<TypeSymbol>this).aliasLink;
 
                 if (this.isMember() || isMethod || isStaticFunction || isAlias) {

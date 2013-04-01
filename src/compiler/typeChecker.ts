@@ -444,16 +444,16 @@ module TypeScript {
         //  (E.g., has a function body - function declarations, property declarations, lambdas)
         public createFunctionSignature(funcDecl: FuncDecl, container: Symbol, scope: SymbolScope, overloadGroupSym: Symbol, addToScope: bool): Signature {
 
-            var isExported = hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported) || container === this.gloMod;
-            var isStatic = hasFlag(funcDecl.fncFlags, FncFlags.Static);
-            var isPrivate = hasFlag(funcDecl.fncFlags, FncFlags.Private);
-            var isDefinition = !hasFlag(funcDecl.fncFlags, FncFlags.Signature);
-            var isAmbient = hasFlag(funcDecl.fncFlags, FncFlags.Ambient);
+            var isExported = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Exported | FncFlags.ClassPropertyMethodExported) || container === this.gloMod;
+            var isStatic = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Static);
+            var isPrivate = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Private);
+            var isDefinition = !hasFlag(funcDecl.getFunctionFlags(), FncFlags.Signature);
+            var isAmbient = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Ambient);
             var isConstructor = funcDecl.isConstructMember() || funcDecl.isConstructor;
             var isGlobal = container === this.gloMod;
 
             var signature: Signature = new Signature();
-            var isLambda = funcDecl.fncFlags & FncFlags.IsFunctionExpression;
+            var isLambda = funcDecl.getFunctionFlags() & FncFlags.IsFunctionExpression;
 
             // If a return type has been declared for the signature, set the type link.
             // Otherwise:
@@ -679,8 +679,8 @@ module TypeScript {
             var accessorSym: FieldSymbol = null
             var sig = funcDecl.signature;
             var nameText = funcDecl.name.text;
-            var isStatic = hasFlag(funcDecl.fncFlags, FncFlags.Static);
-            var isPrivate = hasFlag(funcDecl.fncFlags, FncFlags.Private);
+            var isStatic = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Static);
+            var isPrivate = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Private);
 
             if (fgSym === null) {
                 var field = new ValueLocation();
@@ -688,7 +688,7 @@ module TypeScript {
                 field.symbol = accessorSym;
                 accessorSym.declAST = funcDecl; // REVIEW: need to reset for getters and setters
 
-                if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor)) {
+                if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor)) {
                     if (accessorSym.getter) {
                         this.errorReporter.simpleError(funcDecl, "Redeclaration of property getter");
                     }
@@ -741,7 +741,7 @@ module TypeScript {
                     this.errorReporter.simpleError(funcDecl, "Getter and setter accessors do not agree in visibility");
                 }
 
-                if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor)) {
+                if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor)) {
                     if (accessorSym.getter) {
                         this.errorReporter.simpleError(funcDecl, "Redeclaration of property getter");
                     }
@@ -908,7 +908,7 @@ module TypeScript {
                             if (symType && typeSymbol.aliasLink && typeSymbol.onlyReferencedAsTypeRef) {
 
                                 var modDecl = <ModuleDeclaration>symType.symbol.declAST;
-                                if (modDecl && hasFlag(modDecl.modFlags, ModuleFlags.IsDynamic)) {
+                                if (modDecl && hasFlag(modDecl.getModuleFlags(), ModuleFlags.IsDynamic)) {
                                     typeSymbol.onlyReferencedAsTypeRef = !this.resolvingBases;
                                 }
                             }
@@ -991,9 +991,9 @@ module TypeScript {
             var field = new ValueLocation();
             var fieldSymbol =
                 new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.fileName,
-                                (varDecl.varFlags & VarFlags.Readonly) === VarFlags.None,
+                                (varDecl.getVarFlags() & VarFlags.Readonly) === VarFlags.None,
                                 field);
-            fieldSymbol.transferVarFlags(varDecl.varFlags);
+            fieldSymbol.transferVarFlags(varDecl.getVarFlags());
             field.symbol = fieldSymbol;
             fieldSymbol.declAST = varDecl;
             field.typeLink = getTypeLink(varDecl.typeExpr, this, varDecl.init === null);
@@ -1100,7 +1100,7 @@ module TypeScript {
                                     }
 
                                     if (addMember) {
-                                        if (id && hasFlag(id.flags, ASTFlags.OptionalName)) {
+                                        if (id && hasFlag(id.getFlags(), ASTFlags.OptionalName)) {
                                             propSym.flags |= SymbolFlags.Optional;
                                         }
                                         if (!interfaceType.members.allMembers.add(propSym.name, propSym)) {

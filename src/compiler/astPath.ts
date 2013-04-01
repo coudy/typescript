@@ -201,7 +201,7 @@ module TypeScript {
         public isTopLevelImplicitModule() {
             return this.count() >= 1 &&
                 this.asts[this.top].nodeType === TypeScript.NodeType.ModuleDeclaration &&
-                TypeScript.hasFlag((<TypeScript.ModuleDeclaration>this.asts[this.top]).modFlags, TypeScript.ModuleFlags.IsWholeFile);
+                TypeScript.hasFlag((<TypeScript.ModuleDeclaration>this.asts[this.top]).getModuleFlags(), TypeScript.ModuleFlags.IsWholeFile);
         }
 
         public isBodyOfTopLevelImplicitModule() {
@@ -209,7 +209,7 @@ module TypeScript {
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ModuleDeclaration &&
                  (<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0] &&
-                TypeScript.hasFlag((<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).modFlags, TypeScript.ModuleFlags.IsWholeFile);
+                TypeScript.hasFlag((<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).getModuleFlags(), TypeScript.ModuleFlags.IsWholeFile);
         }
 
         public isBodyOfScript(): bool {

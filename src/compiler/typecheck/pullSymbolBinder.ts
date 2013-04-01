@@ -1399,13 +1399,13 @@ module TypeScript {
                 for (var i = 0; i < funcDecl.arguments.members.length; i++) {
                     argDecl = <BoundDecl>funcDecl.arguments.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
-                    isProperty = hasFlag(argDecl.varFlags, VarFlags.Property);
+                    isProperty = hasFlag(argDecl.getVarFlags(), VarFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.text, PullElementKind.Parameter);
 
                     if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {
                         parameterSymbol.setIsVarArg();
 
-                        if (argDecl.init || hasFlag(argDecl.id.flags, ASTFlags.OptionalName)) {
+                        if (argDecl.init || hasFlag(argDecl.id.getFlags(), ASTFlags.OptionalName)) {
                             decl.addDiagnostic(new PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), "Varargs may not be optional or have default parameters"));
                         }
                     }

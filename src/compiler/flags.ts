@@ -143,7 +143,7 @@ module TypeScript {
         IsNumberIndexer = 1 << 2,
     }
 
-    export function ToDeclFlags(fncFlags: FncFlags) : DeclFlags;
+    export function ToDeclFlags(functionFlags: FncFlags) : DeclFlags;
     export function ToDeclFlags(varFlags: VarFlags) : DeclFlags;
     export function ToDeclFlags(symFlags: SymbolFlags): DeclFlags;
     export function ToDeclFlags(moduleFlags: ModuleFlags): DeclFlags;

@@ -723,7 +723,7 @@ module TypeScript {
                                 lastDeclAST = cur;
                             }
 
-                            if (cur.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>cur).fncFlags, FncFlags.IsFunctionExpression)) {
+                            if (cur.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>cur).getFunctionFlags(), FncFlags.IsFunctionExpression)) {
                                 lambdaAST = <FuncDecl>cur;
                             }
                             else if (cur.nodeType === NodeType.VarDecl) {
@@ -987,7 +987,7 @@ module TypeScript {
 
                 switch (current.nodeType) {
                     case NodeType.FuncDecl:
-                        if (hasFlag((<FuncDecl>current).fncFlags, FncFlags.IsFunctionExpression)) {
+                        if (hasFlag((<FuncDecl>current).getFunctionFlags(), FncFlags.IsFunctionExpression)) {
                             this.pullTypeChecker.resolver.resolveAST((<FuncDecl>current), true, enclosingDecl, resolutionContext);
                         }
 

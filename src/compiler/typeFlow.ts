@@ -85,7 +85,7 @@ module TypeScript {
                 }
                 if (cur.nodeType === NodeType.VarDecl) {
                     var varDecl = <BoundDecl>cur;
-                    if (varDecl.init || hasFlag(varDecl.varFlags, VarFlags.AutoInit)) {
+                    if (varDecl.init || hasFlag(varDecl.getVarFlags(), VarFlags.AutoInit)) {
                         defSym(varDecl.sym, context);
                     }
                 }
@@ -816,8 +816,8 @@ module TypeScript {
             var prevMethodStatus = this.enclosingFncIsMethod;
             var prevLocationInfo = this.checker.locationInfo;
             if (sym && sym.container) {
-                var instanceScope = hasFlag(varDecl.varFlags, VarFlags.ClassConstructorProperty) ? sym.container.getType().constructorScope : sym.container.instanceScope();
-                if (hasFlag(varDecl.varFlags, VarFlags.Property) && sym.container.declAST.nodeType === NodeType.FuncDecl) {
+                var instanceScope = hasFlag(varDecl.getVarFlags(), VarFlags.ClassConstructorProperty) ? sym.container.getType().constructorScope : sym.container.instanceScope();
+                if (hasFlag(varDecl.getVarFlags(), VarFlags.Property) && sym.container.declAST.nodeType === NodeType.FuncDecl) {
                     this.thisFnc = <FuncDecl>sym.container.declAST;
                 }
                 if (instanceScope) {
@@ -938,7 +938,7 @@ module TypeScript {
                     if (varDecl.init) {
                         // if the bound decl is a function-local static, we need to set the
                         // encapsulating scope to the function's member scope
-                        var isLocalStatic = hasFlag(varDecl.varFlags, VarFlags.LocalStatic);
+                        var isLocalStatic = hasFlag(varDecl.getVarFlags(), VarFlags.LocalStatic);
                         var prevScope = this.scope;
                         var applyTargetType = varDecl.init.nodeType !== NodeType.ParenthesizedExpression;
                         if (isLocalStatic) {
@@ -946,12 +946,12 @@ module TypeScript {
                         }
 
                         // Mark Lambda expressions with IsPropertyBound flag
-                        if (hasFlag(varDecl.varFlags, VarFlags.Property) && this.thisClassNode) {
+                        if (hasFlag(varDecl.getVarFlags(), VarFlags.Property) && this.thisClassNode) {
                             getAstWalkerFactory().walk(varDecl.init, (ast: AST, parent: AST, walker: IAstWalker) => {
                                 if (ast && ast.nodeType === NodeType.FuncDecl) {
-                                    if (hasFlag((<FuncDecl>ast).fncFlags, FncFlags.IsFatArrowFunction)) {
+                                    if (hasFlag((<FuncDecl>ast).getFunctionFlags(), FncFlags.IsFatArrowFunction)) {
                                         // Found a Lambda, mark it
-                                        (<FuncDecl>ast).fncFlags |= FncFlags.IsPropertyBound;
+                                        //(<FuncDecl>ast).getFunctionFlags() |= FncFlags.IsPropertyBound;
                                     }
                                     // Only mark the top level functions
                                     walker.options.goChildren = false;
@@ -1032,7 +1032,7 @@ module TypeScript {
                 typestring = " has or is using private type '" + typeName + "'";
             }
 
-            if (hasFlag(varDecl.varFlags, VarFlags.Public)) {
+            if (hasFlag(varDecl.getVarFlags(), VarFlags.Public)) {
                 if (varDecl.sym.container.declAST.nodeType === NodeType.InterfaceDeclaration) {
                     this.checker.errorReporter.simpleError(varDecl, "property '" + varDecl.sym.name + "' of exported interface" + typestring);
                 } else {
@@ -1051,10 +1051,10 @@ module TypeScript {
                 // redirect 'super' used within lambdas
                 if (!this.enclosingFncIsMethod &&
                     this.thisType && this.thisType.baseClass() &&
-                    this.thisFnc && hasFlag(this.thisFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
+                    this.thisFnc && hasFlag(this.thisFnc.getFunctionFlags(), FncFlags.IsFatArrowFunction)) {
                     // Find the closest non lambda function
                     var enclosingFnc = null;  //this.thisFnc.enclosingFnc;
-                    while (hasFlag(enclosingFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
+                    while (hasFlag(enclosingFnc.getFunctionFlags(), FncFlags.IsFatArrowFunction)) {
                         enclosingFnc = enclosingFnc.enclosingFnc;
                     }
 
@@ -1090,11 +1090,11 @@ module TypeScript {
                 }
             }
             else {
-                if (this.thisClassNode && (hasFlag(this.thisFnc.fncFlags, FncFlags.IsPropertyBound) || (this.inSuperCall && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor)))) {
+                if (this.thisClassNode && (hasFlag(this.thisFnc.getFunctionFlags(), FncFlags.IsPropertyBound) || (this.inSuperCall && hasFlag((<ClassDeclaration>this.thisClassNode).getVarFlags(), VarFlags.ClassSuperMustBeFirstCallInConstructor)))) {
                     illegalThisRef = true;
                 }
                 if (this.thisFnc.isMethod() || this.thisFnc.isConstructor) {
-                    if (this.thisType && !(this.thisFnc.fncFlags & FncFlags.Static)) {
+                    if (this.thisType && !(this.thisFnc.getFunctionFlags() & FncFlags.Static)) {
                         ast.type = this.thisType;
                     }
                 }
@@ -1103,7 +1103,7 @@ module TypeScript {
             // redirect 'this' used within lambdas
             if (!this.enclosingFncIsMethod &&
                 this.thisFnc &&
-                hasFlag(this.thisFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
+                hasFlag(this.thisFnc.getFunctionFlags(), FncFlags.IsFatArrowFunction)) {
 
                 // if the enclosing function was bound to a property,
                 // checkInitSelf would not have been able to mark the 
@@ -1111,7 +1111,7 @@ module TypeScript {
                 if (false /*this.thisFnc.boundToProperty*/) {
                     var container = null; //this.thisFnc.boundToProperty.sym.container;
                     if (container.declAST.nodeType === NodeType.FuncDecl) {
-                        (<FuncDecl>container.declAST).setHasSelfReference();
+                        // (<FuncDecl>container.declAST).setHasSelfReference();
                     }
                 }
                 else {
@@ -1119,11 +1119,11 @@ module TypeScript {
                     var firstEncFnc = encFnc;
 
                     while (encFnc) {
-                        if (this.thisClassNode && hasFlag(encFnc.fncFlags, FncFlags.IsPropertyBound)) {
+                        if (this.thisClassNode && hasFlag(encFnc.getFunctionFlags(), FncFlags.IsPropertyBound)) {
                             illegalThisRef = true;
                         }
 
-                        if (!hasFlag(encFnc.fncFlags, FncFlags.IsFatArrowFunction) || encFnc.hasSelfReference()) {
+                        if (!hasFlag(encFnc.getFunctionFlags(), FncFlags.IsFatArrowFunction) || encFnc.hasSelfReference()) {
                             encFnc.setHasSelfReference();
                             break;
                         }
@@ -1137,17 +1137,17 @@ module TypeScript {
                     }
                     else if (!encFnc) { // the lambda is bound at the top-level...
                         if (this.thisClassNode) {
-                            (<ClassDeclaration>this.thisClassNode).varFlags |= VarFlags.MustCaptureThis;
+                            //(<ClassDeclaration>this.thisClassNode).getVarFlags() |= VarFlags.MustCaptureThis;
                         }
                         else if (this.checker.currentModDecl) {
-                            this.checker.currentModDecl.modFlags |= ModuleFlags.MustCaptureThis;
+                            //this.checker.currentModDecl.getModuleFlags() |= ModuleFlags.MustCaptureThis;
                         }
                         else {
                             this.checker.mustCaptureGlobalThis = true;
                         }
                     }
 
-                    if (encFnc && (encFnc.isMethod() || encFnc.isConstructor) && this.thisType && !hasFlag(encFnc.fncFlags, FncFlags.Static)) {
+                    if (encFnc && (encFnc.isMethod() || encFnc.isConstructor) && this.thisType && !hasFlag(encFnc.getFunctionFlags(), FncFlags.Static)) {
                         ast.type = this.thisType;
                     }
                 }
@@ -1183,12 +1183,12 @@ module TypeScript {
                 }
                 ast.type = symbol.getType();
                 if (!symbol.writeable()) {
-                    ast.flags = ast.flags & (~(ASTFlags.Writeable));
+                    // ast.flags = ast.flags & (~(ASTFlags.Writeable));
                 }
             }
             else if (symbol.isType()) {
                 ast.type = symbol.getType();
-                ast.flags = ast.flags & (~(ASTFlags.Writeable));
+                // ast.flags = ast.flags & (~(ASTFlags.Writeable));
             }
             else {
                 ast.type = this.anyType;
@@ -1228,7 +1228,7 @@ module TypeScript {
                         if (symType && (<TypeSymbol>symbol).aliasLink && (<TypeSymbol>symbol).onlyReferencedAsTypeRef) {
 
                             var modDecl = <ModuleDeclaration>symType.symbol.declAST;
-                            if (modDecl && hasFlag(modDecl.modFlags, ModuleFlags.IsDynamic)) {
+                            if (modDecl && hasFlag(modDecl.getModuleFlags(), ModuleFlags.IsDynamic)) {
                                 (<TypeSymbol>symbol).onlyReferencedAsTypeRef = this.inTypeRefTypeCheck;
                             }
                         }
@@ -1292,7 +1292,7 @@ module TypeScript {
         }
 
         public astIsWriteable(ast: AST): bool {
-            return hasFlag(ast.flags, ASTFlags.Writeable);
+            return hasFlag(ast.getFlags(), ASTFlags.Writeable);
         }
 
         public typeCheckIncOrDec(ast: AST): AST {
@@ -1728,8 +1728,8 @@ module TypeScript {
                         localVar.typeLink = new TypeLink();
                         var varSym = null;
 
-                        if (hasFlag(local.varFlags, VarFlags.Static)) {
-                            local.varFlags |= VarFlags.LocalStatic;
+                        if (hasFlag(local.getVarFlags(), VarFlags.Static)) {
+                            //local.getVarFlags() |= VarFlags.LocalStatic;
                             varSym = new FieldSymbol(local.id.text, local.minChar,
                                                       this.checker.locationInfo.fileName,
                                                       true, localVar);
@@ -1739,7 +1739,7 @@ module TypeScript {
                                                       this.checker.locationInfo.fileName,
                                                       localVar);
                         }
-                        varSym.transferVarFlags(local.varFlags);
+                        varSym.transferVarFlags(local.getVarFlags());
                         localVar.symbol = varSym;
                         varSym.declAST = local;
                         localVar.typeLink.ast = local.typeExpr;
@@ -2007,7 +2007,7 @@ module TypeScript {
 
             // Interface symbol doesn't reflect correct Exported state so use AST instead
             var interfaceDecl: InterfaceDeclaration = declSymbol.getInterfaceDeclFromSymbol(this.checker);
-            if (interfaceDecl && !hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
+            if (interfaceDecl && !hasFlag(interfaceDecl.getVarFlags(), VarFlags.Exported)) {
                 return;
             }
 
@@ -2015,9 +2015,9 @@ module TypeScript {
             // Var decl symbol doesnt reflect correct exported state so use AST instead
             var varDecl = declSymbol.getVarDeclFromSymbol();
             if (varDecl) {
-                if (hasFlag(varDecl.varFlags, VarFlags.Private)) {
+                if (hasFlag(varDecl.getVarFlags(), VarFlags.Private)) {
                     return;
-                } else if (hasFlag(varDecl.varFlags, VarFlags.Public)) {
+                } else if (hasFlag(varDecl.getVarFlags(), VarFlags.Public)) {
                     // Its a member from class so check visibility of its container
                     checkVisibilitySymbol = declSymbol.container;
                 }
@@ -2103,9 +2103,9 @@ module TypeScript {
         }
 
         private functionArgumentPrivacyErrorReporter(funcDecl: FuncDecl, p: number, paramSymbol: Symbol, typeName: string, isModuleName: bool) {
-            var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor);
-            var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
-            var isPublicFunc = hasFlag(funcDecl.fncFlags, FncFlags.Public);
+            var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor);
+            var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FncFlags.SetAccessor);
+            var isPublicFunc = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Public);
             var isContainerInterface = funcDecl.type.symbol.getInterfaceDeclFromSymbol(this.checker) !== null;
             var typestring = "";
             if (isModuleName) {
@@ -2138,9 +2138,9 @@ module TypeScript {
         }
 
         private returnTypePrivacyError(astError: AST, funcDecl: FuncDecl, typeName: string, isModuleName: bool) {
-            var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor);
-            var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
-            var isPublicFunc = hasFlag(funcDecl.fncFlags, FncFlags.Public);
+            var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor);
+            var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FncFlags.SetAccessor);
+            var isPublicFunc = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Public);
             var isContainerInterface = funcDecl.type.symbol.getInterfaceDeclFromSymbol(this.checker) !== null;
             var typestring = "";
             if (isModuleName) {
@@ -2242,8 +2242,8 @@ module TypeScript {
             var acceptedContextualType = false;
             var targetParams: ParameterSymbol[] = null;
             var targetReturnType: Type = null;
-            var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor);
-            var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
+            var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor);
+            var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FncFlags.SetAccessor);
             var accessorType: Type = (isGetter || isSetter) && funcDecl.accessorSymbol ? funcDecl.accessorSymbol.getType() : null;
             var prevModDecl = this.checker.currentModDecl;
             var ssb: SymbolScopeBuilder;
@@ -2261,11 +2261,11 @@ module TypeScript {
                 ssb = <SymbolScopeBuilder>this.scope;
                 funcTable = ssb.valueMembers.allMembers;
             }
-            else if ((funcDecl.isSpecialFn() && !(funcDecl.fncFlags & FncFlags.Signature)) || funcDecl.isOverload) {
+            else if ((funcDecl.isSpecialFn() && !(funcDecl.getFunctionFlags() & FncFlags.Signature)) || funcDecl.isOverload) {
                 funcTable = funcDecl.symbols;
                 // if the function is static, we just want to use the 
                 // current scope
-                if (!hasFlag(funcDecl.fncFlags, FncFlags.Static) && fnType.containedScope) {
+                if (!hasFlag(funcDecl.getFunctionFlags(), FncFlags.Static) && fnType.containedScope) {
                     this.scope = fnType.containedScope;
                 }
             }
@@ -2294,11 +2294,11 @@ module TypeScript {
             //
             // A super constructor call may not exist if:
             //  - The class has no base type, or inherits directly from 'Object'
-            if (funcDecl.isConstructor && funcDecl.bod && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
+            if (funcDecl.isConstructor && funcDecl.bod && hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod)) {
 
                 var hasBaseType = hasFlag(funcDecl.classDecl.type.instanceType.typeFlags, TypeFlags.HasBaseType);
                 var noSuperCallAllowed = !hasBaseType || hasFlag(funcDecl.classDecl.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
-                var superCallMustBeFirst = hasFlag((<ClassDeclaration>funcDecl.classDecl).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor);
+                var superCallMustBeFirst = hasFlag((<ClassDeclaration>funcDecl.classDecl).getVarFlags(), VarFlags.ClassSuperMustBeFirstCallInConstructor);
 
                 if (noSuperCallAllowed && this.classConstructorHasSuperCall(funcDecl)) {
                     this.checker.errorReporter.simpleError(funcDecl, "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class");
@@ -2308,7 +2308,7 @@ module TypeScript {
                         if (!funcDecl.bod ||
                             !funcDecl.bod.members.length ||
                             !((funcDecl.bod.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[0]).target.nodeType === NodeType.SuperExpression) ||
-                            (hasFlag(funcDecl.bod.flags, ASTFlags.StrictMode) && funcDecl.bod.members.length > 1 &&
+                            (hasFlag(funcDecl.bod.getFlags(), ASTFlags.StrictMode) && funcDecl.bod.members.length > 1 &&
                              funcDecl.bod.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[1]).target.nodeType === NodeType.SuperExpression))) {
                             this.checker.errorReporter.simpleError(funcDecl, "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor");
                         }
@@ -2469,7 +2469,7 @@ module TypeScript {
                     }
                 }
 
-                if ((funcDecl.fncFlags & FncFlags.IndexerMember)) {
+                if ((funcDecl.getFunctionFlags() & FncFlags.IndexerMember)) {
                     if (!paramLen || paramLen > 1) {
                         this.checker.errorReporter.simpleError(funcDecl, "Index signatures may take one and only one parameter");
                     }
@@ -2492,7 +2492,7 @@ module TypeScript {
                     this.addFormals(container, signature, funcTable);
                 }
                 else {
-                    this.addConstructorLocalArgs(funcDecl, funcTable, hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod));
+                    this.addConstructorLocalArgs(funcDecl, funcTable, hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod));
 
                     if (this.thisClassNode && this.thisClassNode.extendsList) {
                         var tmpScope = this.scope;
@@ -2552,7 +2552,7 @@ module TypeScript {
                     for (; j < fnsLen; j++) {
                         var fn = <FuncDecl>fns.members[j];
                         if (!fn.isSignature()) {
-                            if (hasFlag(fn.fncFlags, FncFlags.Method) && (!hasFlag(fn.fncFlags, FncFlags.Static))) {
+                            if (hasFlag(fn.getFunctionFlags(), FncFlags.Method) && (!hasFlag(fn.getFunctionFlags(), FncFlags.Static))) {
                                 this.checkPromoteFreeVars(fn, funcDecl.type.symbol);
                             }
                         }
@@ -2610,7 +2610,7 @@ module TypeScript {
             var onlyHasThrow = false;
 
             if (signature.returnType.type === null) {
-                if (hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
+                if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.HasReturnExpression)) {
                     if (this.checker.styleSettings.implicitAny) {
                         this.checker.errorReporter.styleError(funcDecl, "type implicitly set to 'any'");
                     }
@@ -2627,8 +2627,8 @@ module TypeScript {
                 // the signature declared a non-void type, but there's no return statement
                 if (!funcDecl.isSignature() &&
                     !funcDecl.isConstructor &&
-                    !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression) &&
-                    !hasFlag(funcDecl.fncFlags, FncFlags.IsFatArrowFunction)) {
+                    !hasFlag(funcDecl.getFunctionFlags(), FncFlags.HasReturnExpression) &&
+                    !hasFlag(funcDecl.getFunctionFlags(), FncFlags.IsFatArrowFunction)) {
                     // relax the restriction if the method only contains a single "throw" statement
                     onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === NodeType.ThrowStatement)
 
@@ -2645,17 +2645,17 @@ module TypeScript {
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
             if (funcDecl.accessorSymbol) {
                 accessorType = funcDecl.accessorSymbol.getType();
-                if (!onlyHasThrow && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
+                if (!onlyHasThrow && hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor) && !hasFlag(funcDecl.getFunctionFlags(), FncFlags.HasReturnExpression)) {
                     this.checker.errorReporter.simpleError(funcDecl, "Getters must return a value");
                 }
                 if (accessorType) {
-                    if ((hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && accessorType !== signature.returnType.type) ||
+                    if ((hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor) && accessorType !== signature.returnType.type) ||
                         (funcDecl.arguments.members.length > 0 && accessorType !== funcDecl.arguments.members[0].type)) {
                         this.checker.errorReporter.simpleError(funcDecl, "Getter and setter types do not agree");
                     }
                 }
                 else {
-                    if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor)) {
+                    if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor)) {
                         funcDecl.accessorSymbol.setType(signature.returnType.type);
                     }
                     else {
@@ -2998,13 +2998,13 @@ module TypeScript {
                 (<TypeSymbol>importDecl.id.sym).type = mod;
 
                 if (mod.symbol && mod.symbol.declAST) {
-                    (<ModuleDeclaration>mod.symbol.declAST).modFlags &= ~ModuleFlags.ShouldEmitModuleDecl;
+                    // (<ModuleDeclaration>mod.symbol.declAST).getModuleFlags() &= ~ModuleFlags.ShouldEmitModuleDecl;
                 }
 
                 //importDecl.id.sym = sym;
                 // REVIEW: Uncomment when you can toggle module codegen targets from the language service
                 //else if (typeFlow.checker.currentModDecl === null && 
-                //            hasFlag((<ModuleDecl>sym.declAST).modFlags,ModuleFlags.IsDynamic) &&
+                //            hasFlag((<ModuleDecl>sym.declAST).getModuleFlags(),ModuleFlags.IsDynamic) &&
                 //            moduleGenTarget === ModuleGenTarget.Asynchronous) 
                 //{
                 //    typeFlow.checker.errorReporter.simpleError(alias, "In AMD codegen mode, dynamic modules may not be referenced from global scope.  (Wrap the file in a module declaration.)");
@@ -3145,7 +3145,7 @@ module TypeScript {
                 return null;
             }
 
-            if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor)) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.GetAccessor)) {
                 return funcDecl.type.call.signatures[0].returnType.type;
             }
             else {
@@ -3379,7 +3379,7 @@ module TypeScript {
                 }
 
                 if (returnStmt.returnExpression) {
-                    this.thisFnc.fncFlags |= FncFlags.HasReturnExpression;
+                    // this.thisFnc.getFunctionFlags() |= FncFlags.HasReturnExpression;
 
                     if (targetType === null && this.thisFnc.returnTypeAnnotation && this.thisFnc.returnTypeAnnotation.type && this.thisFnc.returnTypeAnnotation.type !== this.voidType) {
                         targetType = this.thisFnc.returnTypeAnnotation.type;
@@ -3839,7 +3839,7 @@ module TypeScript {
                     if (callEx.target.nodeType === NodeType.SuperExpression &&
                         this.thisFnc &&
                         this.thisFnc.isConstructor &&
-                        hasFlag(this.thisFnc.fncFlags, FncFlags.ClassMethod)) {
+                        hasFlag(this.thisFnc.getFunctionFlags(), FncFlags.ClassMethod)) {
 
                         // Need to use the class type for the construct signature, not the instance type
                         signature = fnType.symbol.type.construct ? this.resolveOverload(callEx, fnType.symbol.type.construct) : null;
@@ -3848,7 +3848,7 @@ module TypeScript {
                             callEx.type = this.anyType;
                         }
                         else {
-                            callEx.flags |= ASTFlags.ClassBaseConstructorCall;
+                            // callEx.flags |= ASTFlags.ClassBaseConstructorCall;
                             callEx.type = signature.returnType.type;
                             callEx.signature = signature;
                         }

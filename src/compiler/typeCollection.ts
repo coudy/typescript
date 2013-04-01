@@ -201,10 +201,10 @@ module TypeScript {
 
         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>ast;
 
-        var isAmbient = hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient);
-        var isEnum = hasFlag(moduleDecl.modFlags, ModuleFlags.IsEnum);
+        var isAmbient = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient);
+        var isEnum = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsEnum);
         var isGlobal = context.scopeChain.container === context.checker.gloMod;
-        var isExported = hasFlag(moduleDecl.modFlags, ModuleFlags.Exported);
+        var isExported = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported);
         var modName = (<Identifier>moduleDecl.name).text;
 
         var isDynamic = isQuoted(modName);
@@ -222,7 +222,7 @@ module TypeScript {
 
         if (symbol) {
             var modDeclAST = <ModuleDeclaration>symbol.declAST;
-            var modDeclASTIsExported = hasFlag(modDeclAST.modFlags, ModuleFlags.Exported);
+            var modDeclASTIsExported = hasFlag(modDeclAST.getModuleFlags(), ModuleFlags.Exported);
             if ((modDeclASTIsExported && !isExported) || (!modDeclASTIsExported && isExported)) {
                 context.checker.errorReporter.simpleError(moduleDecl, 'All contributions to a module must be "export" or none');
             }
@@ -326,8 +326,8 @@ module TypeScript {
         var typeSymbol: TypeSymbol = null;
         var className = (<Identifier>classDecl.name).text;
         var alreadyInScope = false;
-        var isAmbient = hasFlag(classDecl.varFlags, VarFlags.Ambient);
-        var isExported = hasFlag(classDecl.varFlags, VarFlags.Exported);
+        var isAmbient = hasFlag(classDecl.getVarFlags(), VarFlags.Ambient);
+        var isExported = hasFlag(classDecl.getVarFlags(), VarFlags.Exported);
         var isGlobal = context.scopeChain.container === context.checker.gloMod;
         var containerMod = <TypeSymbol>scopeChain.container;
         var foundValSymbol = false;
@@ -452,7 +452,7 @@ module TypeScript {
         var interfaceDecl = <InterfaceDeclaration>ast;
         var interfaceSymbol: TypeSymbol = null;
         var interfaceType: Type = null;
-        var isExported = hasFlag(interfaceDecl.varFlags, VarFlags.Exported);
+        var isExported = hasFlag(interfaceDecl.getVarFlags(), VarFlags.Exported);
         var isGlobal = context.scopeChain.container === context.checker.gloMod;
         var alreadyInScope = true;
 
@@ -505,15 +505,15 @@ module TypeScript {
     export function preCollectArgDeclTypes(ast: AST, parent: AST, context: TypeCollectionContext) {
         var scopeChain = context.scopeChain;
         var argDecl = <ArgDecl>ast;
-        if (hasFlag(argDecl.varFlags, VarFlags.Public | VarFlags.Private)) {
+        if (hasFlag(argDecl.getVarFlags(), VarFlags.Public | VarFlags.Private)) {
             var field = new ValueLocation();
-            var isPrivate = hasFlag(argDecl.varFlags, VarFlags.Private);
+            var isPrivate = hasFlag(argDecl.getVarFlags(), VarFlags.Private);
             var fieldSymbol =
                 new FieldSymbol(argDecl.id.text, argDecl.id.minChar,
                                 context.checker.locationInfo.fileName,
-                                !hasFlag(argDecl.varFlags, VarFlags.Readonly),
+                                !hasFlag(argDecl.getVarFlags(), VarFlags.Readonly),
                                 field);
-            fieldSymbol.transferVarFlags(argDecl.varFlags);
+            fieldSymbol.transferVarFlags(argDecl.getVarFlags());
             field.symbol = fieldSymbol;
             fieldSymbol.declAST = ast;
             argDecl.parameterPropertySym = fieldSymbol;
@@ -530,13 +530,13 @@ module TypeScript {
     export function preCollectVarDeclTypes(ast: AST, parent: AST, context: TypeCollectionContext) {
         var scopeChain = context.scopeChain;
         var varDecl = <VarDecl>ast;
-        var isAmbient = hasFlag(varDecl.varFlags, VarFlags.Ambient);
-        var isExported = hasFlag(varDecl.varFlags, VarFlags.Exported);
+        var isAmbient = hasFlag(varDecl.getVarFlags(), VarFlags.Ambient);
+        var isExported = hasFlag(varDecl.getVarFlags(), VarFlags.Exported);
         var isGlobal = context.scopeChain.container === context.checker.gloMod;
-        var isProperty = hasFlag(varDecl.varFlags, VarFlags.Property);
-        var isStatic = hasFlag(varDecl.varFlags, VarFlags.Static);
-        var isPrivate = hasFlag(varDecl.varFlags, VarFlags.Private);
-        var isOptional = hasFlag(varDecl.id.flags, ASTFlags.OptionalName);
+        var isProperty = hasFlag(varDecl.getVarFlags(), VarFlags.Property);
+        var isStatic = hasFlag(varDecl.getVarFlags(), VarFlags.Static);
+        var isPrivate = hasFlag(varDecl.getVarFlags(), VarFlags.Private);
+        var isOptional = hasFlag(varDecl.id.getFlags(), ASTFlags.OptionalName);
 
         if (context.scopeChain.moduleDecl) {
             context.scopeChain.moduleDecl.recordNonInterface();
@@ -564,9 +564,9 @@ module TypeScript {
             var fieldSymbol =
                 new FieldSymbol(varDecl.id.text, varDecl.id.minChar,
                                 context.checker.locationInfo.fileName,
-                                (varDecl.varFlags & VarFlags.Readonly) === VarFlags.None,
+                                (varDecl.getVarFlags() & VarFlags.Readonly) === VarFlags.None,
                                 field);
-            fieldSymbol.transferVarFlags(varDecl.varFlags);
+            fieldSymbol.transferVarFlags(varDecl.getVarFlags());
             if (isOptional) {
                 fieldSymbol.flags |= SymbolFlags.Optional;
             }
@@ -579,7 +579,7 @@ module TypeScript {
             }
 
             // if it's static, enter it into the class's member list directly
-            if (hasFlag(varDecl.varFlags, VarFlags.Property) && isStatic && context.scopeChain.classType) {
+            if (hasFlag(varDecl.getVarFlags(), VarFlags.Property) && isStatic && context.scopeChain.classType) {
                 if (!context.scopeChain.classType.members.publicMembers.add(varDecl.id.text, fieldSymbol)) {
                     context.checker.errorReporter.duplicateIdentifier(ast, fieldSymbol.name);
                 }
@@ -595,7 +595,7 @@ module TypeScript {
                                                 isAmbient);
             }
 
-            if (hasFlag(varDecl.varFlags, VarFlags.Exported)) {
+            if (hasFlag(varDecl.getVarFlags(), VarFlags.Exported)) {
                 fieldSymbol.flags |= SymbolFlags.Exported;
             }
 
@@ -617,19 +617,19 @@ module TypeScript {
         var funcDecl = <FuncDecl>ast;
         var fgSym: TypeSymbol = null;
         var nameText = funcDecl.getNameText();
-        var isExported = hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported);
-        var isStatic = hasFlag(funcDecl.fncFlags, FncFlags.Static);
-        var isPrivate = hasFlag(funcDecl.fncFlags, FncFlags.Private);
+        var isExported = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Exported | FncFlags.ClassPropertyMethodExported);
+        var isStatic = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Static);
+        var isPrivate = hasFlag(funcDecl.getFunctionFlags(), FncFlags.Private);
         var isConstructor = funcDecl.isConstructMember() || funcDecl.isConstructor;
         var containerSym:TypeSymbol = <TypeSymbol> (((funcDecl.isMethod() && isStatic) || funcDecl.isAccessor()) && context.scopeChain.classType ? context.scopeChain.classType.symbol : context.scopeChain.container);
         var containerScope: SymbolScope = context.scopeChain.scope;
         var isGlobal = containerSym === context.checker.gloMod;
-        var isOptional = funcDecl.name && hasFlag(funcDecl.name.flags, ASTFlags.OptionalName);
+        var isOptional = funcDecl.name && hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName);
         var go = false;
         var foundSymbol = false; 
 
         // If this is a class constructor, the "container" is actually the class declaration
-        if (isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
+        if (isConstructor && hasFlag(funcDecl.getFunctionFlags(), FncFlags.ClassMethod)) {
             containerSym = <TypeSymbol>containerSym.container;
             containerScope = scopeChain.previous.scope;
         }
@@ -649,7 +649,7 @@ module TypeScript {
         }        
 
         // Interfaces and overloads
-        if (hasFlag(funcDecl.fncFlags, FncFlags.Signature)) {
+        if (hasFlag(funcDecl.getFunctionFlags(), FncFlags.Signature)) {
             var instType = context.scopeChain.thisType;                       
 
             // If the function is static, search in the class type's
@@ -675,7 +675,7 @@ module TypeScript {
                     
                     // We'll combine ambient and non-ambient funcdecls during typecheck (for contextual typing).,
                     // So, if they don't agree, don't use the symbol we've found                    
-                    if (!funcDecl.isSignature() && (hasFlag(funcDecl.fncFlags, FncFlags.Ambient) != hasFlag(fgSym.flags, SymbolFlags.Ambient))) {
+                    if (!funcDecl.isSignature() && (hasFlag(funcDecl.getFunctionFlags(), FncFlags.Ambient) != hasFlag(fgSym.flags, SymbolFlags.Ambient))) {
                        fgSym = null;
                     }
                 }                
@@ -753,7 +753,7 @@ module TypeScript {
                 fgSym.type.construct &&
                 fgSym.type.construct.signatures != [] &&
                 (fgSym.type.construct.signatures[0].declAST === null ||
-                    !hasFlag(fgSym.type.construct.signatures[0].declAST.fncFlags, FncFlags.Ambient)) &&
+                    !hasFlag(fgSym.type.construct.signatures[0].declAST.getFunctionFlags(), FncFlags.Ambient)) &&
                 !funcDecl.isConstructor) {
                 context.checker.errorReporter.simpleError(funcDecl, "Functions may not have class overloads");
             }
