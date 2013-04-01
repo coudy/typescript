@@ -1447,13 +1447,14 @@ module TypeScript {
             typeParameterSymbol.startResolving();
 
             if (typeParameterAST.constraint) {
-                var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, this.getEnclosingDecl(typeParameterDecl), context);
+                var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
+                var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
 
                 if (!constraintTypeSymbol) {
-                    context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath, "Could not resolve constraint for type parameter '" + typeParameterDecl.getName() + "'", typeParameterDecl);
+                    context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath, "Could not resolve constraint for type parameter '" + typeParameterDecl.getName() + "'", enclosingDecl);
                 }
-                else if (constraintTypeSymbol.isTypeParameter() || constraintTypeSymbol.isPrimitive()) {
-                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, "Type parameter constraints may not be type parameters or primitive types", typeParameterDecl);
+                else if (constraintTypeSymbol.isPrimitive()) {
+                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, "Type parameter constraints may not be primitive types", enclosingDecl);
                 }
                 else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
@@ -3220,6 +3221,11 @@ module TypeScript {
 
                                 // test specialization type for assignment compatibility with the constraint
                                 if (typeConstraint) {
+                                    if (typeConstraint.isTypeParameter()) {
+                                        context.pushTypeSpecializationCache(typeReplacementMap);
+                                        typeConstraint = specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
+                                        context.popTypeSpecializationCache();
+                                    }
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                         context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[j].toString(true) + "'", enclosingDecl);
                                     }
@@ -3407,9 +3413,17 @@ module TypeScript {
 
                                     // test specialization type for assignment compatibility with the constraint
                                     if (typeConstraint) {
+                                        
+                                        if (typeConstraint.isTypeParameter()) {
+                                            context.pushTypeSpecializationCache(typeReplacementMap);
+                                            typeConstraint = specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
+                                            context.popTypeSpecializationCache();
+                                        }
+
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                             context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[j].toString(true) + "'", enclosingDecl);
                                         }
+
                                     }
                                 }
 
