@@ -656,17 +656,6 @@ module TypeScript {
                 this.movePast(node.body.openBraceToken);
                 var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
 
-                // Fix up interface method flags
-                if (members.members) {
-                    for (i = 0; i < members.members.length; i++) {
-                        if (members.members[i].nodeType === NodeType.FuncDecl) {
-                            var funcDecl = <FuncDecl>members.members[i];
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Method);
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Signature);
-                        }
-                    }
-                }
-
                 this.movePast(node.body.closeBraceToken);
 
                 result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);
@@ -795,16 +784,16 @@ module TypeScript {
                         result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Exported);
                     }
 
-                    // mark ambient if declare keyword or parsing ambient module or parsing declare file
-                    if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                        result.setModuleFlags( result.getModuleFlags() | ModuleFlags.Ambient);
-                    }
-
                     // REVIEW: will also possibly need to re-parent comments as well
 
                     members = new ASTList();
                     members.append(result);
                 }
+            }
+
+            // mark ambient if declare keyword or parsing ambient module or parsing declare file
+            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Ambient);
             }
 
             this.setAST(node, result);
@@ -1515,16 +1504,6 @@ module TypeScript {
             else {
                 this.movePast(node.openBraceToken);
                 var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
-
-                if (typeMembers.members) {
-                    for (var i = 0; i < typeMembers.members.length; i++) {
-                        if (typeMembers.members[i].nodeType === NodeType.FuncDecl) {
-                            var funcDecl = <FuncDecl>typeMembers.members[i];
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Method);
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FncFlags.Signature);
-                        }
-                    }
-                }
                 this.movePast(node.closeBraceToken);
 
                 var interfaceDecl = new InterfaceDeclaration(
@@ -1895,6 +1874,8 @@ module TypeScript {
 
                 result.hint = "_construct";
                 result.setFunctionFlags(result.getFunctionFlags() | FncFlags.ConstructMember);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Method);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             }
 
@@ -1927,6 +1908,8 @@ module TypeScript {
                 result.preComments = preComments;
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Method);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
             }
 
             this.setAST(node, result);
@@ -1965,6 +1948,8 @@ module TypeScript {
                 result.returnTypeAnnotation = returnType;
 
                 result.setFunctionFlags(result.getFunctionFlags() | FncFlags.IndexerMember);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Method);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
             }
 
             this.setAST(node, result);
@@ -2039,6 +2024,8 @@ module TypeScript {
 
                 result.hint = "_call";
                 result.setFunctionFlags(result.getFunctionFlags() | FncFlags.CallMember);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Method);
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
             }
 
             this.setAST(node, result);
