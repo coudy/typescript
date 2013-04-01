@@ -85,6 +85,7 @@ module TypeScript {
         // Scans a token starting at the current position.  Any errors encountered will be added to 
         // 'diagnostics'.
         public scan(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): ISyntaxToken {
+            var diagnosticsLength = diagnostics.length;
             var fullStart = this.slidingWindow.absoluteIndex();
             var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, /*isTrailing: */ false);
 
@@ -94,6 +95,16 @@ module TypeScript {
 
             var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
 
+            var token = this.createToken(fullStart, leadingTriviaInfo, start, kind, end, trailingTriviaInfo);
+
+            // If we produced any diagnostics while creating this token, then realize the token so 
+            // it won't be reused in incremental scenarios.
+            return diagnosticsLength !== diagnostics.length
+                ? Syntax.realizeToken(token)
+                : token;
+        }
+
+        private createToken(fullStart: number, leadingTriviaInfo: number, start: number, kind: SyntaxKind, end: number, trailingTriviaInfo: number): ISyntaxToken {
             if (kind >= SyntaxKind.FirstFixedWidth) {
                 if (leadingTriviaInfo === 0) {
                     if (trailingTriviaInfo === 0) {
