@@ -493,6 +493,12 @@ module TypeScript {
             return this.fileNameToSyntaxTree.lookup(fileName).diagnostics();
         }
 
+
+        /** Used for diagnostics in tests */
+        private getSyntaxTree(fileName: string): SyntaxTree{
+            return this.fileNameToSyntaxTree.lookup(fileName);
+        }
+
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
             var errors: IDiagnostic[] = [];
 
