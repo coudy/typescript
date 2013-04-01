@@ -591,14 +591,6 @@ module TypeScript {
                 result.preComments = preComments;
                 result.postComments = postComments;
 
-                if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    result.setVarFlags(result.getVarFlags() | VarFlags.Exported);
-                }
-
-                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                    result.setVarFlags(result.getVarFlags() | VarFlags.Ambient);
-                }
-
                 result.setVarFlags(result.getVarFlags() | VarFlags.Class);
 
                 for (i = 0; i < members.members.length; i++) {
@@ -617,6 +609,14 @@ module TypeScript {
             }
 
             this.requiresExtendsBlock = this.requiresExtendsBlock || result.extendsList.members.length > 0;
+
+            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
+                result.setVarFlags(result.getVarFlags() | VarFlags.Exported);
+            }
+
+            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                result.setVarFlags(result.getVarFlags() | VarFlags.Ambient);
+            }
 
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -673,10 +673,10 @@ module TypeScript {
 
                 result.preComments = preComments;
                 result.postComments = postComments;
+            }
 
-                if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    result.setVarFlags(result.getVarFlags() | VarFlags.Exported);
-                }
+            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
+                result.setVarFlags(result.getVarFlags() | VarFlags.Exported);
             }
 
             this.setAST(node, result);
@@ -878,17 +878,17 @@ module TypeScript {
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
 
-                if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
-                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Exported);
-                }
-
-                if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                    result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Ambient);
-                }
-
                 if (node.semicolonToken) {
                     result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Signature);
                 }
+            }
+
+            if (this.containsToken(node.modifiers, SyntaxKind.ExportKeyword) || this.isParsingAmbientModule) {
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Exported);
+            }
+
+            if (this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                result.setFunctionFlags(result.getFunctionFlags() | FncFlags.Ambient);
             }
 
             this.setAST(node, result);
