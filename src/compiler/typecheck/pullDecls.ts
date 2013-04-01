@@ -120,18 +120,10 @@ module TypeScript {
 
         // returns 'true' if the child decl was successfully added
         // ('false' is returned if addIfDuplicate is false and there is a collision)
-        public addChildDecl(childDecl: PullDecl, addIfDuplicate = true) {
+        public addChildDecl(childDecl: PullDecl): void {
             // check if decl exists
             // merge if necessary
             var declName = childDecl.getName();
-
-            if (!addIfDuplicate) { // PULLTODO: Check decl type?
-                for (var i = 0; i < this.childDecls.length; i++) {
-                    if (this.childDecls[i].getName() == declName) {
-                        return false;
-                    }
-                }
-            }
 
             if (childDecl.getKind() & PullElementKind.TypeParameter) {
                 this.typeParameters[this.typeParameters.length] = childDecl;
@@ -149,8 +141,6 @@ module TypeScript {
 
             cacheVal[cacheVal.length] = childDecl;
             cache[declName] = cacheVal;
-
-            return true;
         }
 
         public findChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
