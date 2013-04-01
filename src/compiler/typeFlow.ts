@@ -938,12 +938,12 @@ module TypeScript {
                     if (varDecl.init) {
                         // if the bound decl is a function-local static, we need to set the
                         // encapsulating scope to the function's member scope
-                        var isLocalStatic = hasFlag(varDecl.getVarFlags(), VarFlags.LocalStatic);
+                        // var isLocalStatic = hasFlag(varDecl.getVarFlags(), VarFlags.LocalStatic);
                         var prevScope = this.scope;
                         var applyTargetType = varDecl.init.nodeType !== NodeType.ParenthesizedExpression;
-                        if (isLocalStatic) {
-                            this.scope = varDecl.sym.container.getType().memberScope;
-                        }
+                        //if (isLocalStatic) {
+                        //    this.scope = varDecl.sym.container.getType().memberScope;
+                        //}
 
                         // Mark Lambda expressions with IsPropertyBound flag
                         if (hasFlag(varDecl.getVarFlags(), VarFlags.Property) && this.thisClassNode) {
