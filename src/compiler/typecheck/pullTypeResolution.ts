@@ -2314,9 +2314,9 @@ module TypeScript {
             }
 
             if (!genericTypeSymbol.isResolved()) {
-                genericTypeSymbol.startResolving();
+                //genericTypeSymbol.startResolving();
                 this.resolveDeclaredSymbol(genericTypeSymbol, enclosingDecl, context);
-                genericTypeSymbol.setResolved();
+                //genericTypeSymbol.setResolved();
             }
 
             // specialize the type arguments
