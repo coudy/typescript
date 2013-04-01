@@ -95,6 +95,9 @@ module FourSlash {
         public languageServiceShimHost: Harness.TypeScriptLS = null;
         private languageService: Services.ILanguageService = null;
 
+        // A reference to the language service's compiler state's compiler instance
+        private compiler: { getSyntaxTree(filename: string): TypeScript.SyntaxTree; };
+
         // The current caret position in the active file
         public currentCaretPosition = 0;
         public lastKnownMarker: string = "";
@@ -113,8 +116,11 @@ module FourSlash {
                 this.languageServiceShimHost.addScript(testData.files[i].fileName, testData.files[i].content);
             }
 
+            // Sneak into the language service and get its compiler so we can examine the syntax trees
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;
-
+            var compilerState = (<any>this.languageService).compilerState;
+            this.compiler = (<any>compilerState).compiler;
+            
             // Open the first file by default
             this.openFile(0);
         }
@@ -134,9 +140,8 @@ module FourSlash {
             this.currentCaretPosition = marker.position;
         }
 
-        public goToPosition(position: number) {
-            this.currentCaretPosition = position;
-            this.fixCaretPosition();
+        public goToPosition(pos: number) {
+            this.currentCaretPosition = pos;
         }
 
         public moveCaretRight(count = 1) {
@@ -472,13 +477,13 @@ module FourSlash {
             var syntacticErrors = this.languageService.getSyntacticDiagnostics(this.activeFile.fileName);
             var semanticErrors = this.languageService.getSemanticDiagnostics(this.activeFile.fileName);
             var errorList = syntacticErrors.concat(semanticErrors);
-
             IO.printLine('Error list (' + errorList.length + ' errors)');
+
             if (errorList.length) {
                 errorList.forEach(err => {
                     IO.printLine("start: " + err.start() + ", length: " + err.length() +
                     ", message: " + err.message());
-                } )
+                });
             }
         }
 
@@ -564,6 +569,9 @@ module FourSlash {
 
         // Enters lines of text at the current caret position
         public type(text: string) {
+            // TODO: We should actually do this.
+            // this.checkSyntacticErrors();
+
             var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             for (var i = 0; i < text.length; i++) {
@@ -584,6 +592,28 @@ module FourSlash {
             this.currentCaretPosition = offset;
 
             this.fixCaretPosition();
+
+            // TODO: We should actually do this.
+            // this.checkSyntacticErrors();
+        }
+
+        private checkSyntacticErrors() {
+            // Get syntactic errors (to force a refresh)
+            var incrErrs = JSON2.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
+
+            // Check syntactic structure
+            var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
+            var content = snapshot.getText(0, snapshot.getLength());
+            var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), TypeScript.LanguageVersion.EcmaScript5);
+            var fullErrs = JSON2.stringify(refSyntaxTree.diagnostics());
+            
+            if (incrErrs !== fullErrs) {
+                throw new Error('Mismatched incremental/full errors.\n=== Incremental errors ===\n' + incrErrs + '\n=== Full Errors ===\n' + fullErrs);
+            }
+
+            if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
+                throw new Error('Incrementally-parsed and full-parsed trees were not equal');
+            }
         }
 
         private fixCaretPosition() {
@@ -766,7 +796,6 @@ module FourSlash {
             this.verifyIndentationLevelAtPosition(this.currentCaretPosition, numberOfTabs);
         }
 
-
         public verifyTypesAgainstFullCheckAtPositions(positions: number[]) {
             // Create a from-scratch LS to check against
             var referenceLanguageServiceShimHost = new Harness.TypeScriptLS();
@@ -820,9 +849,6 @@ module FourSlash {
                     if (anyFailed) {
                         throw new Error('Exception thrown in language service for ' + positionDescription + '\r\n' + errMsg);
                     } else if (refName !== pullName) {
-                        snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
-                        content = snapshot.getText(0, snapshot.getLength());
-                        textAtPosition = content.substr(positions[i], 10);
                         throw new Error('Pull/Full disagreement failed at ' + positionDescription + ' - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '".');
                     }
                 }
@@ -839,6 +865,7 @@ module FourSlash {
 
         public verifyNavigationItemsListContains(name: string, kind: string, fileName: string, parentName: string) {
             var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
+
             if (!items || items.length === 0) {
                 throw new Error('verifyNavigationItemsListContains failed - found 0 navigation items, expected at least one.');
             }
@@ -1029,7 +1056,10 @@ module FourSlash {
     var fsErrors = new Harness.Compiler.WriterAggregator();
     export function runFourSlashTest(fileName: string) {
         var content = IO.readFile(fileName);
+        runFourSlashTestContent(content, fileName)
+    }
 
+    export function runFourSlashTestContent(content: string, fileName: string) {
         // Parse out the files and their metadata
         var testData = parseTestData(content);
 
@@ -1337,8 +1367,7 @@ module FourSlash {
                 if (currentChar === '\n' && previousChar === '\r') {
                     // Ignore trailing \n after a \r
                     continue;
-                }
-                else if (currentChar === '\n' || currentChar === '\r') {
+                } else if (currentChar === '\n' || currentChar === '\r') {
                     line++;
                     column = 1;
                     continue;
