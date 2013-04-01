@@ -1084,9 +1084,6 @@ module TypeScript {
         public hasSelfReference() { return hasFlag(this.getFunctionFlags(), FncFlags.HasSelfReference); }
         // public setHasSelfReference() { this.getFunctionFlags() |= FncFlags.HasSelfReference; }
 
-        public hasSuperReferenceInFatArrowFunction() { return hasFlag(this.getFunctionFlags(), FncFlags.HasSuperReferenceInFatArrowFunction); }
-        // public setHasSuperReferenceInFatArrowFunction() { this.getFunctionFlags() |= FncFlags.HasSuperReferenceInFatArrowFunction; }
-
         public buildControlFlow(): ControlFlowContext {
             var entry = new BasicBlock();
             var exit = new BasicBlock();

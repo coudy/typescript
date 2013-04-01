@@ -1061,7 +1061,7 @@ module TypeScript {
                     // If the lambda is enclosed is a valid member, use the base type
                     if (enclosingFnc && (enclosingFnc.isMethod() || enclosingFnc.isConstructor) && !enclosingFnc.isStatic()) {
                         ast.type = this.thisType.baseClass();
-                        enclosingFnc.setHasSuperReferenceInFatArrowFunction();
+                        // enclosingFnc.setHasSuperReferenceInFatArrowFunction();
                         return ast;
                     }
                 }
