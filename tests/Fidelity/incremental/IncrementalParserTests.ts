@@ -61,7 +61,7 @@ module TypeScript {
             Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
         }
 
-        Debug.assert(newAST.structuralEquals(incrementalNewAST));
+        Debug.assert(newAST.structuralEquals(incrementalNewAST, true));
     }
 
     export class IncrementalParserTests {

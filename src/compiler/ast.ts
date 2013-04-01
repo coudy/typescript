@@ -28,18 +28,27 @@ module TypeScript {
 
     export var astID = 0;
 
-    export function structuralEquals(ast1: AST, ast2: AST): bool {
+    export function structuralEqualsNotIncludingPosition(ast1: AST, ast2: AST): bool {
+        return structuralEquals(ast1, ast2, false);
+    }
+
+    export function structuralEqualsIncludingPosition(ast1: AST, ast2: AST): bool {
+        return structuralEquals(ast1, ast2, true);
+    }
+
+    function structuralEquals(ast1: AST, ast2: AST, includingPosition: bool): bool {
         if (ast1 === ast2) {
             return true;
         }
 
         return ast1 !== null && ast2 !== null &&
                ast1.nodeType === ast2.nodeType &&
-               ast1.structuralEquals(ast2);
+               ast1.structuralEquals(ast2, includingPosition);
     }
 
-    export function astArrayStructuralEquals(array1: AST[], array2: AST[]): bool {
-        return ArrayUtilities.sequenceEquals(array1, array2, structuralEquals);
+    function astArrayStructuralEquals(array1: AST[], array2: AST[], includingPosition): bool {
+        return ArrayUtilities.sequenceEquals(array1, array2,
+            includingPosition ? structuralEqualsIncludingPosition : structuralEqualsNotIncludingPosition);
     }
 
     export class AST implements IASTSpan {
@@ -202,12 +211,15 @@ module TypeScript {
             return this.docComments;
         }
 
-        public structuralEquals(ast: AST): bool {
-            return this.minChar === ast.minChar &&
-                   this.limChar === ast.limChar &&
-                   // this.flags === ast.flags &&
-                   astArrayStructuralEquals(this.preComments, ast.preComments) &&
-                   astArrayStructuralEquals(this.postComments, ast.postComments)
+        public structuralEquals(ast: AST, includingPosition: bool): bool {
+            if (includingPosition) {
+                if (this.minChar !== ast.minChar || this.limChar !== ast.limChar) {
+                    return false;
+                }
+            }
+
+            return astArrayStructuralEquals(this.preComments, ast.preComments, includingPosition) &&
+                   astArrayStructuralEquals(this.postComments, ast.postComments, includingPosition)
         }
     }
 
@@ -256,9 +268,9 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: ASTList): bool {
-            return super.structuralEquals(ast) &&
-                   astArrayStructuralEquals(this.members, ast.members);
+        public structuralEquals(ast: ASTList, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   astArrayStructuralEquals(this.members, ast.members, includingPosition);
         }
     }
 
@@ -311,8 +323,8 @@ module TypeScript {
             emitter.emitJavascriptName(this, true);
         }
 
-        public structuralEquals(ast: Identifier): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: Identifier, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.text === ast.text &&
                    this.actualText === ast.actualText &&
                    this.isMissing() === ast.isMissing();
@@ -355,9 +367,9 @@ module TypeScript {
         }
 
 
-        public structuralEquals(ast: ParenthesizedExpression): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.expression, ast.expression);
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.expression, ast.expression, includingPosition);
         }
     }
 
@@ -518,10 +530,10 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: UnaryExpression): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.castTerm, ast.castTerm) &&
-                   structuralEquals(this.operand, ast.operand);
+        public structuralEquals(ast: UnaryExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.castTerm, ast.castTerm, includingPosition) &&
+                   structuralEquals(this.operand, ast.operand, includingPosition);
         }
     }
 
@@ -559,11 +571,11 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: CallExpression): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.target, ast.target) &&
-                   structuralEquals(this.typeArguments, ast.typeArguments) &&
-                   structuralEquals(this.arguments, ast.arguments);
+        public structuralEquals(ast: CallExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.target, ast.target, includingPosition) &&
+                   structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) &&
+                   structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
     }
 
@@ -720,10 +732,10 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: BinaryExpression): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.operand1, ast.operand1) &&
-                   structuralEquals(this.operand2, ast.operand2);
+        public structuralEquals(ast: BinaryExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.operand1, ast.operand1, includingPosition) &&
+                   structuralEquals(this.operand2, ast.operand2, includingPosition);
         }
     }
 
@@ -750,11 +762,11 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ConditionalExpression): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.operand1, ast.operand1) &&
-                   structuralEquals(this.operand2, ast.operand2) &&
-                   structuralEquals(this.operand3, ast.operand3);
+        public structuralEquals(ast: ConditionalExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.operand1, ast.operand1, includingPosition) &&
+                   structuralEquals(this.operand2, ast.operand2, includingPosition) &&
+                   structuralEquals(this.operand3, ast.operand3, includingPosition);
         }
     }
 
@@ -784,8 +796,8 @@ module TypeScript {
             return this.text;
         }
 
-        public structuralEquals(ast: NumberLiteral): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: NumberLiteral, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.value === ast.value &&
                    this.text === ast.text;
         }
@@ -809,8 +821,8 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: RegexLiteral): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: RegexLiteral, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.text === ast.text;
         }
     }
@@ -841,8 +853,8 @@ module TypeScript {
             return this.text;
         }
 
-        public structuralEquals(ast: StringLiteral): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: StringLiteral, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.text === ast.text;
         }
     }
@@ -907,10 +919,10 @@ module TypeScript {
             }
         }
 
-        public structuralEquals(ast: ImportDeclaration): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.id, ast.id) &&
-                   structuralEquals(this.alias, ast.alias);
+        public structuralEquals(ast: ImportDeclaration, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.id, ast.id, includingPosition) &&
+                   structuralEquals(this.alias, ast.alias, includingPosition);
         }
     }
 
@@ -919,9 +931,9 @@ module TypeScript {
             super(NodeType.ExportAssignment);
         }
 
-        public structuralEquals(ast: ExportAssignment): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.id, ast.id);
+        public structuralEquals(ast: ExportAssignment, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.id, ast.id, includingPosition);
         }
     }
 
@@ -946,11 +958,11 @@ module TypeScript {
             return this.treeViewLabel();
         }
 
-        public structuralEquals(ast: BoundDecl): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.init, ast.init) &&
-                   structuralEquals(this.typeExpr, ast.typeExpr) &&
-                   structuralEquals(this.id, ast.id);
+        public structuralEquals(ast: BoundDecl, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.init, ast.init, includingPosition) &&
+                   structuralEquals(this.typeExpr, ast.typeExpr, includingPosition) &&
+                   structuralEquals(this.id, ast.id, includingPosition);
         }
     }
 
@@ -995,8 +1007,8 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ArgDecl): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: ArgDecl, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.isOptional === ast.isOptional;
         }
     }
@@ -1030,16 +1042,16 @@ module TypeScript {
             super(nodeType);
         }
 
-        public structuralEquals(ast: FuncDecl): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: FuncDecl, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.hint === ast.hint &&
                    this.variableArgList === ast.variableArgList &&
                    this.isOverload === ast.isOverload &&
-                   structuralEquals(this.name, ast.name) &&
-                   structuralEquals(this.bod, ast.bod) &&
+                   structuralEquals(this.name, ast.name, includingPosition) &&
+                   structuralEquals(this.bod, ast.bod, includingPosition) &&
                    this.isConstructor === ast.isConstructor &&
-                   structuralEquals(this.typeArguments, ast.typeArguments) &&
-                   structuralEquals(this.arguments, ast.arguments);
+                   structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) &&
+                   structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
         public hasSelfReference() { return hasFlag(this.fncFlags, FncFlags.HasSelfReference); }
@@ -1240,10 +1252,10 @@ module TypeScript {
             super(nodeType);
         }
 
-        public structuralEquals(ast: NamedDeclaration): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.name, ast.name) &&
-                   structuralEquals(this.members, ast.members);
+        public structuralEquals(ast: NamedDeclaration, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.name, ast.name, includingPosition) &&
+                   structuralEquals(this.members, ast.members, includingPosition);
         }
     }
 
@@ -1294,11 +1306,11 @@ module TypeScript {
             super(nodeType, name, members);
         }
 
-        public structuralEquals(ast: TypeDeclaration): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.typeParameters, ast.typeParameters) &&
-                   structuralEquals(this.extendsList, ast.extendsList) &&
-                   structuralEquals(this.implementsList, ast.implementsList);
+        public structuralEquals(ast: TypeDeclaration, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
+                   structuralEquals(this.extendsList, ast.extendsList, includingPosition) &&
+                   structuralEquals(this.implementsList, ast.implementsList, includingPosition);
         }
     }
 
@@ -1369,9 +1381,9 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ExpressionStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.expression, ast.expression);
+        public structuralEquals(ast: ExpressionStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.expression, ast.expression, includingPosition);
         }
     }
 
@@ -1406,10 +1418,10 @@ module TypeScript {
             beforeBB.addSuccessor(bb);
         }
 
-        public structuralEquals(ast: LabeledStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.identifier, ast.identifier) &&
-                   structuralEquals(this.statement, ast.statement);
+        public structuralEquals(ast: LabeledStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                   structuralEquals(this.statement, ast.statement, includingPosition);
         }
     }
 
@@ -1467,9 +1479,9 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: Block): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.statements, ast.statements) &&
+        public structuralEquals(ast: Block, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.statements, ast.statements, includingPosition) &&
                    this.isStatementBlock === ast.isStatementBlock;
         }
     }
@@ -1505,8 +1517,8 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: Jump): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: Jump, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.target === ast.target;
         }
     }
@@ -1561,10 +1573,10 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: WhileStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.cond, ast.cond) &&
-                   structuralEquals(this.body, ast.body);
+        public structuralEquals(ast: WhileStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.cond, ast.cond, includingPosition) &&
+                   structuralEquals(this.body, ast.body, includingPosition);
         }
     }
 
@@ -1623,10 +1635,10 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: DoWhileStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.body, ast.body) &&
-                   structuralEquals(this.cond, ast.cond);
+        public structuralEquals(ast: DoWhileStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.body, ast.body, includingPosition) &&
+                   structuralEquals(this.cond, ast.cond, includingPosition);
         }
     }
 
@@ -1714,11 +1726,11 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: IfStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.cond, ast.cond) &&
-                   structuralEquals(this.thenBod, ast.thenBod) &&
-                   structuralEquals(this.elseBod, ast.elseBod);
+        public structuralEquals(ast: IfStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.cond, ast.cond, includingPosition) &&
+                   structuralEquals(this.thenBod, ast.thenBod, includingPosition) &&
+                   structuralEquals(this.elseBod, ast.elseBod, includingPosition);
         }
     }
 
@@ -1753,9 +1765,9 @@ module TypeScript {
             return typeFlow.typeCheckReturn(this);
         }
 
-        public structuralEquals(ast: ReturnStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.returnExpression, ast.returnExpression);
+        public structuralEquals(ast: ReturnStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.returnExpression, ast.returnExpression, includingPosition);
         }
     }
 
@@ -1825,11 +1837,11 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: ForInStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.lval, ast.lval) &&
-                   structuralEquals(this.obj, ast.obj) &&
-                   structuralEquals(this.body, ast.body);
+        public structuralEquals(ast: ForInStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.lval, ast.lval, includingPosition) &&
+                   structuralEquals(this.obj, ast.obj, includingPosition) &&
+                   structuralEquals(this.body, ast.body, includingPosition);
         }
     }
 
@@ -1927,12 +1939,12 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: ForStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.init, ast.init) &&
-                   structuralEquals(this.cond, ast.cond) &&
-                   structuralEquals(this.incr, ast.incr) &&
-                   structuralEquals(this.body, ast.body);
+        public structuralEquals(ast: ForStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.init, ast.init, includingPosition) &&
+                   structuralEquals(this.cond, ast.cond, includingPosition) &&
+                   structuralEquals(this.incr, ast.incr, includingPosition) &&
+                   structuralEquals(this.body, ast.body, includingPosition);
         }
     }
 
@@ -1961,10 +1973,10 @@ module TypeScript {
             return typeFlow.typeCheckWith(this);
         }
 
-        public structuralEquals(ast: WithStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.expr, ast.expr) &&
-                   structuralEquals(this.body, ast.body);
+        public structuralEquals(ast: WithStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.expr, ast.expr, includingPosition) &&
+                   structuralEquals(this.body, ast.body, includingPosition);
         }
     }
 
@@ -2040,10 +2052,10 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: SwitchStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.caseList, ast.caseList) &&
-                   structuralEquals(this.val, ast.val);
+        public structuralEquals(ast: SwitchStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.caseList, ast.caseList, includingPosition) &&
+                   structuralEquals(this.val, ast.val, includingPosition);
         }
     }
 
@@ -2115,10 +2127,10 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: CaseClause): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.expr, ast.expr) &&
-                   structuralEquals(this.body, ast.body);
+        public structuralEquals(ast: CaseClause, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.expr, ast.expr, includingPosition) &&
+                   structuralEquals(this.body, ast.body, includingPosition);
         }
     }
 
@@ -2127,10 +2139,10 @@ module TypeScript {
             super(NodeType.TypeParameter);
         }
 
-        public structuralEquals(ast: TypeParameter): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.name, ast.name) &&
-                   structuralEquals(this.constraint, ast.constraint);
+        public structuralEquals(ast: TypeParameter, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.name, ast.name, includingPosition) &&
+                   structuralEquals(this.constraint, ast.constraint, includingPosition);
         }
     }
 
@@ -2143,10 +2155,10 @@ module TypeScript {
             emitter.emitJavascript(this.name, TokenID.Identifier, false);
         }
 
-        public structuralEquals(ast: GenericType): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.name, ast.name) &&
-                   structuralEquals(this.typeArguments, ast.typeArguments);
+        public structuralEquals(ast: GenericType, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.name, ast.name, includingPosition) &&
+                   structuralEquals(this.typeArguments, ast.typeArguments, includingPosition);
         }
     }
 
@@ -2182,9 +2194,9 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: TypeReference): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.term, ast.term) &&
+        public structuralEquals(ast: TypeReference, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.term, ast.term, includingPosition) &&
                    this.arrayCount === ast.arrayCount;
         }
     }
@@ -2210,11 +2222,11 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: TryStatement): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.tryBody, ast.tryBody) &&
-                   structuralEquals(this.catchClause, ast.catchClause) &&
-                   structuralEquals(this.finallyBody, ast.finallyBody);
+        public structuralEquals(ast: TryStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.tryBody, ast.tryBody, includingPosition) &&
+                   structuralEquals(this.catchClause, ast.catchClause, includingPosition) &&
+                   structuralEquals(this.finallyBody, ast.finallyBody, includingPosition);
         }
     }
 
@@ -2295,10 +2307,10 @@ module TypeScript {
             return this;
         }
 
-        public structuralEquals(ast: CatchClause): bool {
-            return super.structuralEquals(ast) &&
-                   structuralEquals(this.param, ast.param) &&
-                   structuralEquals(this.body, ast.body);
+        public structuralEquals(ast: CatchClause, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.param, ast.param, includingPosition) &&
+                   structuralEquals(this.body, ast.body, includingPosition);
         }
     }
 
@@ -2314,8 +2326,8 @@ module TypeScript {
             super(NodeType.Comment);
         }
 
-        public structuralEquals(ast: Comment): bool {
-            return super.structuralEquals(ast) &&
+        public structuralEquals(ast: Comment, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
                    this.minLine === ast.minLine &&
                    this.content === ast.content &&
                    this.isBlockComment === ast.isBlockComment &&

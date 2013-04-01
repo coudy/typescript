@@ -145,7 +145,7 @@ class Program {
             timer.end();
             totalIncrementalASTTime += timer.time;
 
-            TypeScript.Debug.assert(ast.structuralEquals(ast2));
+            TypeScript.Debug.assert(ast.structuralEquals(ast2, true));
 
             tree = tree2;
             ast = ast2;
