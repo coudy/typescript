@@ -990,8 +990,8 @@ module TypeScript {
         public resolveVarDecl(varDecl: VarDecl, scope: SymbolScope): Symbol {
             var field = new ValueLocation();
             var fieldSymbol =
-                new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.fileName,
-                                (varDecl.getVarFlags() & VariableFlags.Readonly) === VariableFlags.None,
+                new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.fileName, true,
+                                //(varDecl.getVarFlags() & VariableFlags.Readonly) === VariableFlags.None,
                                 field);
             fieldSymbol.transferVarFlags(varDecl.getVarFlags());
             field.symbol = fieldSymbol;

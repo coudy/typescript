@@ -511,7 +511,7 @@ module TypeScript {
             var fieldSymbol =
                 new FieldSymbol(argDecl.id.text, argDecl.id.minChar,
                                 context.checker.locationInfo.fileName,
-                                !hasFlag(argDecl.getVarFlags(), VariableFlags.Readonly),
+                                true, //!hasFlag(argDecl.getVarFlags(), VariableFlags.Readonly),
                                 field);
             fieldSymbol.transferVarFlags(argDecl.getVarFlags());
             field.symbol = fieldSymbol;
@@ -562,10 +562,7 @@ module TypeScript {
 
             var field = new ValueLocation();
             var fieldSymbol =
-                new FieldSymbol(varDecl.id.text, varDecl.id.minChar,
-                                context.checker.locationInfo.fileName,
-                                (varDecl.getVarFlags() & VariableFlags.Readonly) === VariableFlags.None,
-                                field);
+                new FieldSymbol(varDecl.id.text, varDecl.id.minChar, context.checker.locationInfo.fileName, true, field);
             fieldSymbol.transferVarFlags(varDecl.getVarFlags());
             if (isOptional) {
                 fieldSymbol.flags |= SymbolFlags.Optional;

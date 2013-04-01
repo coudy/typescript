@@ -957,7 +957,7 @@ module TypeScript {
                     member.init = memberValue;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                     member.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
-                    member.setVarFlags(member.getVarFlags() | (VariableFlags.Readonly | VariableFlags.Property));
+                    member.setVarFlags(member.getVarFlags() | VariableFlags.Property);
                     this.setSpanExplicit(member, memberStart, this.position);
 
                     if (memberValue.nodeType === NodeType.NumberLit) {

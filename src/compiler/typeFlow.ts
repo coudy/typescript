@@ -85,7 +85,7 @@ module TypeScript {
                 }
                 if (cur.nodeType === NodeType.VarDecl) {
                     var varDecl = <BoundDecl>cur;
-                    if (varDecl.init || hasFlag(varDecl.getVarFlags(), VariableFlags.AutoInit)) {
+                    if (varDecl.init /*|| hasFlag(varDecl.getVarFlags(), VariableFlags.AutoInit)*/) {
                         defSym(varDecl.sym, context);
                     }
                 }
@@ -2611,15 +2611,15 @@ module TypeScript {
             var onlyHasThrow = false;
 
             if (signature.returnType.type === null) {
-                if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression)) {
-                    if (this.checker.styleSettings.implicitAny) {
-                        this.checker.errorReporter.styleError(funcDecl, "type implicitly set to 'any'");
-                    }
-                    signature.returnType.type = this.anyType;
-                }
-                else {
+                //if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression)) {
+                //    if (this.checker.styleSettings.implicitAny) {
+                //        this.checker.errorReporter.styleError(funcDecl, "type implicitly set to 'any'");
+                //    }
+                //    signature.returnType.type = this.anyType;
+                //}
+                //else {
                     signature.returnType.type = this.voidType;
-                }
+                //}
             }
             else if (signature.returnType.type === this.nullType || signature.returnType.type === this.checker.undefinedType) {
                 signature.returnType.type = this.anyType;
@@ -2628,7 +2628,7 @@ module TypeScript {
                 // the signature declared a non-void type, but there's no return statement
                 if (!funcDecl.isSignature() &&
                     !funcDecl.isConstructor &&
-                    !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression) &&
+                    /*!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression) && */
                     !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
                     // relax the restriction if the method only contains a single "throw" statement
                     onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === NodeType.ThrowStatement)
@@ -2646,7 +2646,7 @@ module TypeScript {
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
             if (funcDecl.accessorSymbol) {
                 accessorType = funcDecl.accessorSymbol.getType();
-                if (!onlyHasThrow && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) && !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression)) {
+                if (!onlyHasThrow && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) && true /*!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression)*/) {
                     this.checker.errorReporter.simpleError(funcDecl, "Getters must return a value");
                 }
                 if (accessorType) {

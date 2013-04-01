@@ -354,9 +354,6 @@ module TypeScript {
             if (hasFlag(varFlags, VariableFlags.Public)) {
                 this.flags |= SymbolFlags.Public;
             }
-            if (hasFlag(varFlags, VariableFlags.Readonly)) {
-                this.flags |= SymbolFlags.Readonly;
-            }
             if (hasFlag(varFlags, VariableFlags.Exported)) {
                 this.flags |= SymbolFlags.Exported;
             }
