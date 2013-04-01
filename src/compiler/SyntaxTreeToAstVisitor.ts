@@ -591,8 +591,6 @@ module TypeScript {
                 result.preComments = preComments;
                 result.postComments = postComments;
 
-                result.setVarFlags(result.getVarFlags() | VariableFlags.Class);
-
                 for (i = 0; i < members.members.length; i++) {
                     var member = members.members[i];
                     if (member.nodeType === NodeType.FuncDecl) {

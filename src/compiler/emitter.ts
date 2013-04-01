@@ -34,7 +34,7 @@ module TypeScript {
         public inObjectLiteral: bool;
         public container: EmitContainer;
 
-        constructor () {
+        constructor() {
             this.column = 0;
             this.line = 0;
             this.pretty = false;
@@ -67,8 +67,8 @@ module TypeScript {
     }
 
     export class Indenter {
-        static indentStep : number = 4;
-        static indentStepString : string = "    ";
+        static indentStep: number = 4;
+        static indentStepString: string = "    ";
         static indentStrings: string[] = [];
         public indentAmt: number = 0;
 
@@ -125,7 +125,7 @@ module TypeScript {
             this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
 
-        public diagnostics(): IDiagnostic[]{ return []; }
+        public diagnostics(): IDiagnostic[] { return []; }
 
         private pushDecl(decl: PullDecl) {
             if (decl) {
@@ -433,40 +433,29 @@ module TypeScript {
 
         public emitCall(callNode: CallExpression, target: AST, args: ASTList) {
             if (!this.emitSuperCall(callNode)) {
-                if (!hasFlag(callNode.getFlags(), ASTFlags.ClassBaseConstructorCall)) {
-                    if (target.nodeType === NodeType.FuncDecl) {
-                        this.writeToOutput("(");
-                    }
-                    if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
-                        this.writeToOutput("_super.call");
-                    }
-                    else {
-                        this.emitJavascript(target, TokenID.OpenParen, false);
-                    }
-                    if (target.nodeType === NodeType.FuncDecl) {
-                        this.writeToOutput(")");
-                    }
-                    this.recordSourceMappingStart(args);
+                if (target.nodeType === NodeType.FuncDecl) {
                     this.writeToOutput("(");
-                    if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
-                        this.writeToOutput("this");
-                        if (args && args.members.length) {
-                            this.writeToOutput(", ");
-                        }
-                    }
-                    this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
-                    this.writeToOutput(")");
-                    this.recordSourceMappingEnd(args);
+                }
+                if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
+                    this.writeToOutput("_super.call");
                 }
                 else {
-                    this.indenter.decreaseIndent();
-                    this.indenter.decreaseIndent();
-                    var constructorCall = new ASTList();
-                    constructorCall.members[0] = callNode;
-                    this.emitConstructorCalls(constructorCall, this.thisClassNode);
-                    this.indenter.increaseIndent();
-                    this.indenter.increaseIndent();
+                    this.emitJavascript(target, TokenID.OpenParen, false);
                 }
+                if (target.nodeType === NodeType.FuncDecl) {
+                    this.writeToOutput(")");
+                }
+                this.recordSourceMappingStart(args);
+                this.writeToOutput("(");
+                if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
+                    this.writeToOutput("this");
+                    if (args && args.members.length) {
+                        this.writeToOutput(", ");
+                    }
+                }
+                this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
+                this.writeToOutput(")");
+                this.recordSourceMappingEnd(args);
             }
         }
 
@@ -537,7 +526,7 @@ module TypeScript {
 
             // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
             // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
-            var shouldParenthesize = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon));
+            var shouldParenthesize = false;// hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon));
 
             this.emitComments(funcDecl, true);
             if (shouldParenthesize) {
@@ -724,16 +713,7 @@ module TypeScript {
                 !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) &&
                 (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) || funcDecl.isConstructor)) {
                 this.writeLineToOutput("");
-            } else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                if (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon)) {
-                    // If either of these two flags are set, then the function expression is a statement. Terminate it.
-                    this.writeLineToOutput(";");
-                }
             }
-            /// TODO: See the other part of this at the beginning of function
-            //if (funcDecl.preComments!=null && funcDecl.preComments.length>0) {
-            //    this.decreaseIndent();
-            //}  
 
             this.popDecl(pullDecl);
         }
@@ -1727,9 +1707,11 @@ module TypeScript {
                         wroteProps++;
                     }
 
+                    /*
                     if (classDecl.getVarFlags() & VariableFlags.MustCaptureThis) {
                         this.writeCaptureThisStatement(classDecl);
                     }
+                    */
 
                     var members = (<ASTList>this.thisClassNode.members).members
 

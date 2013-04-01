@@ -23,11 +23,8 @@ module TypeScript {
 
     export enum ASTFlags {
         None = 0,
-        ExplicitSemicolon = 1, // statment terminated by an explicit semicolon
-        AutomaticSemicolon = 1 << 1, // statment terminated by an automatic semicolon
         Writeable = 1 << 2,  // node is lhs that can be modified
         StrictMode = 1 << 7, // node is in the strict mode environment
-        ClassBaseConstructorCall = 1 << 9,
         OptionalName = 1 << 10,
         // REVIEW: This flag is to mark lambda nodes to note that the LParen of an expression has already been matched in the lambda header.
         //         The flag is used to communicate this piece of information to the calling parseTerm, which intern will remove it.
@@ -60,7 +57,6 @@ module TypeScript {
         ShouldEmitModuleDecl = 1 << 8,
         IsWholeFile = 1 << 9,
         IsDynamic = 1 << 10,
-        MustCaptureThis = 1 << 11,
     }
 
     export enum SymbolFlags {
@@ -98,13 +94,8 @@ module TypeScript {
         AutoInit = 1 << 7,
         Property = 1 << 8,
         Readonly = 1 << 9,
-        Class = 1 << 10,
         ClassProperty = 1 << 11,
-        ClassBodyProperty = 1 << 12,
-        ClassConstructorProperty = 1 << 13,
-        ClassSuperMustBeFirstCallInConstructor = 1 << 14,
-        Constant = 1 << 15,
-        MustCaptureThis = 1 << 16,
+        Constant = 1 << 12,
     }
 
     export enum FunctionFlags {
@@ -121,13 +112,11 @@ module TypeScript {
         HasReturnExpression = 1 << 9,
         CallMember = 1 << 10,
         ConstructMember = 1 << 11,
-        HasSelfReference = 1 << 12,
         IsFatArrowFunction = 1 << 13,
         IndexerMember = 1 << 14,
         IsFunctionExpression = 1 << 15,
         ClassMethod = 1 << 16,
         ClassPropertyMethodExported = 1 << 17,
-        IsPropertyBound = 1 << 18,
     }
 
     export enum SignatureFlags {

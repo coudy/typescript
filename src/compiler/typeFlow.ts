@@ -816,7 +816,7 @@ module TypeScript {
             var prevMethodStatus = this.enclosingFncIsMethod;
             var prevLocationInfo = this.checker.locationInfo;
             if (sym && sym.container) {
-                var instanceScope = hasFlag(varDecl.getVarFlags(), VariableFlags.ClassConstructorProperty) ? sym.container.getType().constructorScope : sym.container.instanceScope();
+                var instanceScope = /* hasFlag(varDecl.getVarFlags(), VariableFlags.ClassConstructorProperty) ? sym.container.getType().constructorScope : */ sym.container.instanceScope();
                 if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property) && sym.container.declAST.nodeType === NodeType.FuncDecl) {
                     this.thisFnc = <FuncDecl>sym.container.declAST;
                 }
@@ -1090,7 +1090,8 @@ module TypeScript {
                 }
             }
             else {
-                if (this.thisClassNode && (hasFlag(this.thisFnc.getFunctionFlags(), FunctionFlags.IsPropertyBound) || (this.inSuperCall && hasFlag((<ClassDeclaration>this.thisClassNode).getVarFlags(), VariableFlags.ClassSuperMustBeFirstCallInConstructor)))) {
+                if (this.thisClassNode/* && (hasFlag(this.thisFnc.getFunctionFlags(), FunctionFlags.IsPropertyBound)*/ ||
+                    (this.inSuperCall /*&& hasFlag((<ClassDeclaration>this.thisClassNode).getVarFlags(), VariableFlags.ClassSuperMustBeFirstCallInConstructor)*/)) {
                     illegalThisRef = true;
                 }
                 if (this.thisFnc.isMethod() || this.thisFnc.isConstructor) {
@@ -1119,7 +1120,7 @@ module TypeScript {
                     var firstEncFnc = encFnc;
 
                     while (encFnc) {
-                        if (this.thisClassNode && hasFlag(encFnc.getFunctionFlags(), FunctionFlags.IsPropertyBound)) {
+                        if (this.thisClassNode/* && hasFlag(encFnc.getFunctionFlags(), FunctionFlags.IsPropertyBound)*/) {
                             illegalThisRef = true;
                         }
 
@@ -2298,7 +2299,7 @@ module TypeScript {
 
                 var hasBaseType = hasFlag(funcDecl.classDecl.type.instanceType.typeFlags, TypeFlags.HasBaseType);
                 var noSuperCallAllowed = !hasBaseType || hasFlag(funcDecl.classDecl.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
-                var superCallMustBeFirst = hasFlag((<ClassDeclaration>funcDecl.classDecl).getVarFlags(), VariableFlags.ClassSuperMustBeFirstCallInConstructor);
+                var superCallMustBeFirst = false;  /*hasFlag((<ClassDeclaration>funcDecl.classDecl).getVarFlags(), VariableFlags.ClassSuperMustBeFirstCallInConstructor);*/
 
                 if (noSuperCallAllowed && this.classConstructorHasSuperCall(funcDecl)) {
                     this.checker.errorReporter.simpleError(funcDecl, "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class");

@@ -1081,9 +1081,6 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
-        public hasSelfReference() { return hasFlag(this.getFunctionFlags(), FunctionFlags.HasSelfReference); }
-        // public setHasSelfReference() { this.getFunctionFlags() |= FncFlags.HasSelfReference; }
-
         public buildControlFlow(): ControlFlowContext {
             var entry = new BasicBlock();
             var exit = new BasicBlock();
