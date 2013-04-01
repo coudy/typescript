@@ -3542,6 +3542,7 @@ var TypeScript;
         AstPath.prototype.nodeType = function () {
             if (this.ast() === null) {
                 return 0 /* None */ ;
+
             }
             return this.ast().nodeType;
         };
@@ -3560,36 +3561,42 @@ var TypeScript;
         AstPath.prototype.isNameOfClass = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 92 /* ClassDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfInterface = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 93 /* InterfaceDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfArgument = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 75 /* ArgDecl */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfVariable = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 74 /* VarDecl */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfModule = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 94 /* ModuleDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfFunction = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 72 /* FuncDecl */ ) && ((this.parent()).name === this.ast());
         };
@@ -3715,12 +3722,14 @@ var TypeScript;
         AstPath.prototype.isInClassImplementsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.parent().nodeType === 92 /* ClassDeclaration */ ) && (this.isMemberOfList((this.parent()).implementsList, this.ast()));
         };
         AstPath.prototype.isInInterfaceExtendsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.parent().nodeType === 93 /* InterfaceDeclaration */ ) && (this.isMemberOfList((this.parent()).extendsList, this.ast()));
         };
@@ -3740,9 +3749,11 @@ var TypeScript;
     function isValidAstNode(ast) {
         if (ast === null) {
             return false;
+
         }
         if (ast.minChar === -1 || ast.limChar === -1) {
             return false;
+
         }
         return true;
     }
@@ -5752,6 +5763,7 @@ var TypeScript;
                 this.writeToOutput(")(");
                 if (hasBaseClass) {
                     this.emitJavascript(baseName, 97 /* Tilde */ , false);
+
                 }
                 this.writeToOutput(");");
                 this.recordSourceMappingEnd(classDecl);
@@ -8103,11 +8115,14 @@ var TypeScript;
             mid -= mid % 2;
             if (map[mid] <= code && code <= map[mid + 1]) {
                 return true;
+
             }
             if (code < map[mid]) {
                 hi = mid;
+
             } else {
                 lo = mid + 2;
+
             }
         }
         return false;
@@ -8164,6 +8179,7 @@ var TypeScript;
             return indentAmt - 1;
         } else {
             return indentAmt;
+
         }
     }
     TypeScript.LexAdjustIndent = LexAdjustIndent;
@@ -8182,12 +8198,16 @@ var TypeScript;
     function LexMatchingOpen(code) {
         if (code === TypeScript.LexCodeRBR) {
             return TypeScript.LexCodeLBR;
+
         } else if (code === TypeScript.LexCodeRC) {
             return TypeScript.LexCodeLC;
+
         } else if (code === TypeScript.LexCodeRPR) {
             return TypeScript.LexCodeLPR;
+
         } else {
             return 0;
+
         }
     }
     TypeScript.LexMatchingOpen = LexMatchingOpen;
@@ -13554,7 +13574,7 @@ var TypeScript;
             if (funcDecl.isConstructor) {
                 go = true;
             }
-            ;
+            
         }
         if (isExported) {
             if (funcDecl.type.call) {
@@ -15462,7 +15482,7 @@ var TypeScript;
                 }
             }
             if (fnType.enclosingType) {
-                ;
+                
                 var enclosingSym = fnType.symbol.container;
                 if (enclosingSym && enclosingSym.isType() && enclosingSym.getType().isClass()) {
                     enclosingSym = enclosingSym.container;
@@ -16650,9 +16670,11 @@ var TypeScript;
                 var result = new MemberNameArray();
                 if (arg2) {
                     result.prefix = arg2;
+
                 }
                 if (arg3) {
                     result.suffix = arg3;
+
                 }
                 result.entries.push(arg1);
                 return result;
@@ -47056,9 +47078,7 @@ var TypeScript;
         PullTypeChecker.prototype.typeCheckCall = function (ast, typeCheckContext) {
             var callEx = ast;
             var resultType = this.resolver.resolveAST(callEx, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-            if (callEx.target.nodeType == 71 /* ParenthesizedExpression */ ) {
-                this.typeCheckAST(callEx.target, typeCheckContext);
-            }
+            this.typeCheckAST(callEx.target, typeCheckContext);
             var args = callEx.arguments;
             if (args) {
                 for(var i = 0; i < args.members.length; i++) {
@@ -54178,15 +54198,18 @@ var TypeScript;
             var mid = length >> 1;
             for(i = 0; i < mid; i++) {
                 addChar(i);
+
             }
             result += "(...)";
             for(i = value.length - mid; i < value.length; i++) {
                 addChar(i);
+
             }
         } else {
             length = value.length;
             for(i = 0; i < length; i++) {
                 addChar(i);
+
             }
         }
         return result;
@@ -54247,6 +54270,7 @@ if (!Array.prototype.filter) {
                 var val = t[i];
                 if (fun.call(thisp, val, i, t)) {
                     res.push(val);
+
                 }
             }
         }
@@ -54298,10 +54322,12 @@ if (!Array.prototype.reduce) {
             i = 1;
         } else {
             curr = arguments[1];
+
         }
         while(i < l) {
             if (i in this) {
                 curr = accumulator.call(undefined, curr, this[i], i, this);
+
             }
             ++i;
         }
@@ -54356,6 +54382,7 @@ if (!Array.prototype.some) {
             var idx = i.toString();
             if (idx in t && fun.call(thisp, t[i], i, t)) {
                 return true;
+
             }
         }
         return false;
@@ -54616,6 +54643,7 @@ var Services;
         ReferenceEntry.prototype.equals = function (other) {
             if (other === null || other === undefined) {
                 return false;
+
             }
             return (this.fileName === other.fileName) && (this.ast.minChar === other.ast.minChar) && (this.ast.limChar === other.ast.limChar);
         };
@@ -55212,6 +55240,7 @@ var Services;
         SymbolArraySet.prototype.add = function (sym) {
             if (this.contains(sym)) {
                 return false;
+
             }
             this.values.push(sym);
             return true;
@@ -55333,10 +55362,12 @@ var Services;
             }
             if (members == null) {
                 return null;
+
             }
             var override = members.allMembers.lookup(memberSym.name);
             if (override == null) {
                 return null;
+
             }
             if ((this.isMethod(memberSym) === this.isMethod(override)) && (this.isField(memberSym) === this.isField(override)) && (this.isStatic(memberSym) === this.isStatic(override))) {
                 return override;
@@ -55379,6 +55410,7 @@ var Services;
                     if (type !== null) {
                         if (type.instanceType != null) {
                             type = type.instanceType;
+
                         }
                         _this.addBaseTypes(closure, result, type.implementsList);
                         _this.addBaseTypes(closure, result, type.extendsList);
@@ -55397,6 +55429,7 @@ var Services;
                         if (type !== null) {
                             if (type.instanceType != null) {
                                 type = type.instanceType;
+
                             }
                             var emptySet = new Services.SymbolSet();
                             var baseTypes = new Services.SymbolSet();
@@ -55417,6 +55450,7 @@ var Services;
             var _this = this;
             if (bases == null) {
                 return;
+
             }
             bases.forEach(function (base) {
                 if (base.symbol !== null) {
@@ -55474,6 +55508,7 @@ var Services;
             result.add(memberSym);
             if (memberSym.container === null) {
                 return result;
+
             }
             var baseTypes = (lookInBases ? this.symbolTree.findBaseTypesTransitiveClosure(memberSym.container) : new Services.SymbolSet());
             var derivedTypes = (lookInDerived ? this.symbolTree.findDerivedTypesTransitiveClosure(memberSym.container) : new Services.SymbolSet());
@@ -55675,9 +55710,11 @@ var Services;
         LanguageService.prototype.convertCallExprToActualSignatureInfo = function (ast, caretPosition, atEOF) {
             if (!TypeScript.isValidAstNode(ast)) {
                 return null;
+
             }
             if (!TypeScript.isValidAstNode(ast.arguments)) {
                 return null;
+
             }
             var result = new Services.ActualSignatureInfo();
             result.currentParameter = -1;
@@ -55856,6 +55893,7 @@ var Services;
             var path = this.getAstPathToPosition(script, pos, 1 /* EdgeInclusive */ );
             if (path.count() == 0) {
                 return null;
+
             }
             if (path.nodeType() !== 23 /* Name */ ) {
                 return null;
@@ -56909,6 +56947,7 @@ var Services;
                         var child = list.childAt(i);
                         if (child !== null && child === element) {
                             return Indenter.getListItemIndentation(list, i - 1);
+
                         }
                     }
                     break;
@@ -56975,10 +57014,12 @@ var Services;
             if (typeof dst[e] == "object") {
                 if (!compareDataObjects(dst[e], src[e])) {
                     return false;
+
                 }
             } else if (typeof dst[e] != "function") {
                 if (dst[e] !== src[e]) {
                     return false;
+
                 }
             }
         }
@@ -57765,12 +57806,14 @@ var TypeScript;
             Rules.IsSingleLineBlockContext = function IsSingleLineBlockContext(context) {
                 if (!Rules.IsBlockContext(context)) {
                     return false;
+
                 }
                 return context.ContextNodeAllOnSameLine();
             };
             Rules.IsMultilineBlockContext = function IsMultilineBlockContext(context) {
                 if (!Rules.IsBlockContext(context)) {
                     return false;
+
                 }
                 return !context.ContextNodeAllOnSameLine();
             };
@@ -57933,6 +57976,7 @@ var TypeScript;
                         var rule = bucket.Rules()[i];
                         if (rule.Operation.Context.InContext(context)) {
                             return rule;
+
                         }
                     }
                 }
@@ -58845,6 +58889,7 @@ var TypeScript;
             Formatter.prototype.TrimWhitespace2 = function (token, line) {
                 if ((token.kind() == 6 /* MultiLineCommentTrivia */  || token.kind() == 7 /* SingleLineCommentTrivia */ ) && token.start() <= line.endPosition() && token.end() >= line.endPosition()) {
                     return;
+
                 }
                 var text = line.getText();
                 var index = 0;

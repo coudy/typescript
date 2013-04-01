@@ -3457,6 +3457,7 @@ var TypeScript;
         AstPath.prototype.nodeType = function () {
             if (this.ast() === null) {
                 return 0 /* None */ ;
+
             }
             return this.ast().nodeType;
         };
@@ -3475,36 +3476,42 @@ var TypeScript;
         AstPath.prototype.isNameOfClass = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 92 /* ClassDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfInterface = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 93 /* InterfaceDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfArgument = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 75 /* ArgDecl */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfVariable = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 74 /* VarDecl */ ) && ((this.parent()).id === this.ast());
         };
         AstPath.prototype.isNameOfModule = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 94 /* ModuleDeclaration */ ) && ((this.parent()).name === this.ast());
         };
         AstPath.prototype.isNameOfFunction = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.ast().nodeType === 23 /* Name */ ) && (this.parent().nodeType === 72 /* FuncDecl */ ) && ((this.parent()).name === this.ast());
         };
@@ -3630,12 +3637,14 @@ var TypeScript;
         AstPath.prototype.isInClassImplementsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.parent().nodeType === 92 /* ClassDeclaration */ ) && (this.isMemberOfList((this.parent()).implementsList, this.ast()));
         };
         AstPath.prototype.isInInterfaceExtendsList = function () {
             if (this.ast() === null || this.parent() === null) {
                 return false;
+
             }
             return (this.parent().nodeType === 93 /* InterfaceDeclaration */ ) && (this.isMemberOfList((this.parent()).extendsList, this.ast()));
         };
@@ -3655,9 +3664,11 @@ var TypeScript;
     function isValidAstNode(ast) {
         if (ast === null) {
             return false;
+
         }
         if (ast.minChar === -1 || ast.limChar === -1) {
             return false;
+
         }
         return true;
     }
@@ -5667,6 +5678,7 @@ var TypeScript;
                 this.writeToOutput(")(");
                 if (hasBaseClass) {
                     this.emitJavascript(baseName, 97 /* Tilde */ , false);
+
                 }
                 this.writeToOutput(");");
                 this.recordSourceMappingEnd(classDecl);
@@ -8018,11 +8030,14 @@ var TypeScript;
             mid -= mid % 2;
             if (map[mid] <= code && code <= map[mid + 1]) {
                 return true;
+
             }
             if (code < map[mid]) {
                 hi = mid;
+
             } else {
                 lo = mid + 2;
+
             }
         }
         return false;
@@ -8079,6 +8094,7 @@ var TypeScript;
             return indentAmt - 1;
         } else {
             return indentAmt;
+
         }
     }
     TypeScript.LexAdjustIndent = LexAdjustIndent;
@@ -8097,12 +8113,16 @@ var TypeScript;
     function LexMatchingOpen(code) {
         if (code === TypeScript.LexCodeRBR) {
             return TypeScript.LexCodeLBR;
+
         } else if (code === TypeScript.LexCodeRC) {
             return TypeScript.LexCodeLC;
+
         } else if (code === TypeScript.LexCodeRPR) {
             return TypeScript.LexCodeLPR;
+
         } else {
             return 0;
+
         }
     }
     TypeScript.LexMatchingOpen = LexMatchingOpen;
@@ -13469,7 +13489,7 @@ var TypeScript;
             if (funcDecl.isConstructor) {
                 go = true;
             }
-            ;
+            
         }
         if (isExported) {
             if (funcDecl.type.call) {
@@ -15377,7 +15397,7 @@ var TypeScript;
                 }
             }
             if (fnType.enclosingType) {
-                ;
+                
                 var enclosingSym = fnType.symbol.container;
                 if (enclosingSym && enclosingSym.isType() && enclosingSym.getType().isClass()) {
                     enclosingSym = enclosingSym.container;
@@ -16565,9 +16585,11 @@ var TypeScript;
                 var result = new MemberNameArray();
                 if (arg2) {
                     result.prefix = arg2;
+
                 }
                 if (arg3) {
                     result.suffix = arg3;
+
                 }
                 result.entries.push(arg1);
                 return result;
@@ -46971,9 +46993,7 @@ var TypeScript;
         PullTypeChecker.prototype.typeCheckCall = function (ast, typeCheckContext) {
             var callEx = ast;
             var resultType = this.resolver.resolveAST(callEx, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-            if (callEx.target.nodeType == 71 /* ParenthesizedExpression */ ) {
-                this.typeCheckAST(callEx.target, typeCheckContext);
-            }
+            this.typeCheckAST(callEx.target, typeCheckContext);
             var args = callEx.arguments;
             if (args) {
                 for(var i = 0; i < args.members.length; i++) {
@@ -54093,15 +54113,18 @@ var TypeScript;
             var mid = length >> 1;
             for(i = 0; i < mid; i++) {
                 addChar(i);
+
             }
             result += "(...)";
             for(i = value.length - mid; i < value.length; i++) {
                 addChar(i);
+
             }
         } else {
             length = value.length;
             for(i = 0; i < length; i++) {
                 addChar(i);
+
             }
         }
         return result;
@@ -54340,7 +54363,7 @@ var IO = (function () {
             }
         };
     }
-    ;
+    
     function getNodeIO() {
         var _fs = require('fs');
         var _path = require('path');
@@ -54546,13 +54569,16 @@ var IO = (function () {
             quit: process.exit
         };
     }
-    ;
+    
     if (typeof ActiveXObject === "function") {
         return getWindowsScriptHostIO();
+
     } else if (typeof require === "function") {
         return getNodeIO();
+
     } else {
         return null;
+
     }
 })();
 var OptionsParser = (function () {
@@ -54707,6 +54733,7 @@ var OptionsParser = (function () {
                     } else {
                         if (!option.flag) {
                             value = consume();
+
                         }
                         option.set(value);
                     }
