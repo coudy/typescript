@@ -24,7 +24,6 @@ declare var describe;
 declare var run;
 //declare var IO: IIO;
 declare var __dirname; // Node-specific
-declare var Error; // Node-specific
 
 function switchToForwardSlashes(path: string) {
     return path.replace(/\\/g, "/");
