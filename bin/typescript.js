@@ -51345,15 +51345,6 @@ var TypeScript;
                 }
                 this.movePast(node.body.openBraceToken);
                 var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
-                if (members.members) {
-                    for(i = 0; i < members.members.length; i++) {
-                        if (members.members[i].nodeType === 72 /* FuncDecl */ ) {
-                            var funcDecl = members.members[i];
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 1024 /* Method */ );
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 512 /* Signature */ );
-                        }
-                    }
-                }
                 this.movePast(node.body.closeBraceToken);
                 result = new TypeScript.InterfaceDeclaration(name, typeParameters, members, extendsList, null);
                 result.preComments = preComments;
@@ -51451,12 +51442,12 @@ var TypeScript;
                     } else if (this.containsToken(node.modifiers, 47 /* ExportKeyword */ ) || this.isParsingAmbientModule) {
                         result.setModuleFlags(result.getModuleFlags() | 1 /* Exported */ );
                     }
-                    if (this.containsToken(node.modifiers, 64 /* DeclareKeyword */ ) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
-                        result.setModuleFlags(result.getModuleFlags() | 8 /* Ambient */ );
-                    }
                     members = new TypeScript.ASTList();
                     members.append(result);
                 }
+            }
+            if (this.containsToken(node.modifiers, 64 /* DeclareKeyword */ ) || this.isParsingAmbientModule || this.isParsingDeclareFile) {
+                result.setModuleFlags(result.getModuleFlags() | 8 /* Ambient */ );
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -51982,15 +51973,6 @@ var TypeScript;
             } else {
                 this.movePast(node.openBraceToken);
                 var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
-                if (typeMembers.members) {
-                    for(var i = 0; i < typeMembers.members.length; i++) {
-                        if (typeMembers.members[i].nodeType === 72 /* FuncDecl */ ) {
-                            var funcDecl = typeMembers.members[i];
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 1024 /* Method */ );
-                            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | 512 /* Signature */ );
-                        }
-                    }
-                }
                 this.movePast(node.closeBraceToken);
                 var interfaceDecl = new TypeScript.InterfaceDeclaration(new TypeScript.Identifier("_anonymous"), null, typeMembers, null, null);
                 this.setSpan(interfaceDecl, start, node);
@@ -52312,6 +52294,8 @@ var TypeScript;
                 result.returnTypeAnnotation = returnType;
                 result.hint = "_construct";
                 result.setFunctionFlags(result.getFunctionFlags() | 8192 /* ConstructMember */ );
+                result.setFunctionFlags(result.getFunctionFlags() | 1024 /* Method */ );
+                result.setFunctionFlags(result.getFunctionFlags() | 512 /* Signature */ );
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             }
             this.setAST(node, result);
@@ -52336,6 +52320,8 @@ var TypeScript;
                 result.preComments = preComments;
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
                 result.returnTypeAnnotation = returnType;
+                result.setFunctionFlags(result.getFunctionFlags() | 1024 /* Method */ );
+                result.setFunctionFlags(result.getFunctionFlags() | 512 /* Signature */ );
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -52362,6 +52348,8 @@ var TypeScript;
                 result.variableArgList = false;
                 result.returnTypeAnnotation = returnType;
                 result.setFunctionFlags(result.getFunctionFlags() | 65536 /* IndexerMember */ );
+                result.setFunctionFlags(result.getFunctionFlags() | 1024 /* Method */ );
+                result.setFunctionFlags(result.getFunctionFlags() | 512 /* Signature */ );
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
@@ -52415,6 +52403,8 @@ var TypeScript;
                 result.returnTypeAnnotation = returnType;
                 result.hint = "_call";
                 result.setFunctionFlags(result.getFunctionFlags() | 4096 /* CallMember */ );
+                result.setFunctionFlags(result.getFunctionFlags() | 1024 /* Method */ );
+                result.setFunctionFlags(result.getFunctionFlags() | 512 /* Signature */ );
             }
             this.setAST(node, result);
             this.setSpan(result, start, node);
