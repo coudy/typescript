@@ -27,4 +27,4 @@ edit.insert("var z = new C < I2");
 verify.numberOfErrorsInCurrentFile(2);
 
 edit.insert(",I1>()");
-verify.numberOfErrorsInCurrentFile(0);
+verify.numberOfErrorsInCurrentFile(2);
