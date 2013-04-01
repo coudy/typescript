@@ -500,6 +500,7 @@ module TypeScript {
                 var inclusive =
                     hasFlag(options, GetAstPathOptions.EdgeInclusive) ||
                     cur.nodeType === TypeScript.NodeType.Name ||
+                    cur.nodeType === TypeScript.NodeType.Dot ||
                     cur.nodeType === TypeScript.NodeType.TypeRef ||
                     pos === script.limChar; // Special "EOF" case
 
