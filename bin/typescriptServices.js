@@ -20938,12 +20938,17 @@ var TypeScript;
             this.slidingWindow.setAbsoluteIndex(index);
         };
         Scanner1.prototype.scan = function (diagnostics, allowRegularExpression) {
+            var diagnosticsLength = diagnostics.length;
             var fullStart = this.slidingWindow.absoluteIndex();
             var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
             var start = this.slidingWindow.absoluteIndex();
             var kind = this.scanSyntaxToken(diagnostics, allowRegularExpression);
             var end = this.slidingWindow.absoluteIndex();
             var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
+            var token = this.createToken(fullStart, leadingTriviaInfo, start, kind, end, trailingTriviaInfo);
+            return diagnosticsLength !== diagnostics.length ? TypeScript.Syntax.realizeToken(token) : token;
+        };
+        Scanner1.prototype.createToken = function (fullStart, leadingTriviaInfo, start, kind, end, trailingTriviaInfo) {
             if (kind >= TypeScript.SyntaxKind.FirstFixedWidth) {
                 if (leadingTriviaInfo === 0) {
                     if (trailingTriviaInfo === 0) {
@@ -44067,11 +44072,12 @@ var TypeScript;
             }
             typeParameterSymbol.startResolving();
             if (typeParameterAST.constraint) {
-                var constraintTypeSymbol = this.resolveTypeReference(typeParameterAST.constraint, this.getEnclosingDecl(typeParameterDecl), context);
+                var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
+                var constraintTypeSymbol = this.resolveTypeReference(typeParameterAST.constraint, enclosingDecl, context);
                 if (!constraintTypeSymbol) {
-                    context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath, "Could not resolve constraint for type parameter '" + typeParameterDecl.getName() + "'", typeParameterDecl);
-                } else if (constraintTypeSymbol.isTypeParameter() || constraintTypeSymbol.isPrimitive()) {
-                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, "Type parameter constraints may not be type parameters or primitive types", typeParameterDecl);
+                    context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath, "Could not resolve constraint for type parameter '" + typeParameterDecl.getName() + "'", enclosingDecl);
+                } else if (constraintTypeSymbol.isPrimitive()) {
+                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, "Type parameter constraints may not be primitive types", enclosingDecl);
                 } else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
                 }
@@ -45271,6 +45277,11 @@ var TypeScript;
                                 typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
                                 typeConstraint = typeParameters[j].getConstraint();
                                 if (typeConstraint) {
+                                    if (typeConstraint.isTypeParameter()) {
+                                        context.pushTypeSpecializationCache(typeReplacementMap);
+                                        typeConstraint = TypeScript.specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);
+                                        context.popTypeSpecializationCache();
+                                    }
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                         context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[j].toString(true) + "'", enclosingDecl);
                                     }
@@ -45394,6 +45405,11 @@ var TypeScript;
                                     typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
                                     typeConstraint = typeParameters[j].getConstraint();
                                     if (typeConstraint) {
+                                        if (typeConstraint.isTypeParameter()) {
+                                            context.pushTypeSpecializationCache(typeReplacementMap);
+                                            typeConstraint = TypeScript.specializeType(typeConstraint, inferredTypeArgs, this, enclosingDecl, context);
+                                            context.popTypeSpecializationCache();
+                                        }
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                             context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].toString(true) + "' does not satisfy the constraint '" + typeConstraint.toString(true) + "' for type parameter '" + typeParameters[j].toString(true) + "'", enclosingDecl);
                                         }
@@ -53545,6 +53561,9 @@ var TypeScript;
         };
         TypeScriptCompiler.prototype.getSyntacticDiagnostics = function (fileName) {
             return this.fileNameToSyntaxTree.lookup(fileName).diagnostics();
+        };
+        TypeScriptCompiler.prototype.getSyntaxTree = function (fileName) {
+            return this.fileNameToSyntaxTree.lookup(fileName);
         };
         TypeScriptCompiler.prototype.getSemanticDiagnostics = function (fileName) {
             var errors = [];
