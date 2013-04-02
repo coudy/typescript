@@ -88,7 +88,7 @@ module TypeScript {
 
         SomeAccessor = GetAccessor | SetAccessor,
 
-        SomeLHS = Variable | Property | Parameter | SetAccessor,
+        SomeLHS = Variable | Property | Parameter | SetAccessor | Method,
     }
 
     export enum SymbolLinkKind {
