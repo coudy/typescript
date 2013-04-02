@@ -192,9 +192,22 @@ module TypeScript {
         }
 
         private boundDeclarationIsEquivalent(decl1: BoundDecl, decl2: BoundDecl): bool {
-            return decl1.getVarFlags() === decl2.getVarFlags() &&
-                   structuralEqualsNotIncludingPosition(decl1.init, decl2.init) &&
-                   structuralEqualsNotIncludingPosition(decl1.typeExpr, decl2.typeExpr);
+            if (decl1.getVarFlags() === decl2.getVarFlags() &&
+                structuralEqualsNotIncludingPosition(decl1.typeExpr, decl2.typeExpr)) {
+
+                // So far they're structurally equivalent.  However, in teh case where the decls 
+                // don't have a specified type annotation, we have to look further.  Specifically,
+                // we have to check if the initializers are the same as well. If they're not, 
+                // then the type of the decl may have changed.
+                if (decl1.typeExpr === null) {
+                    return structuralEqualsNotIncludingPosition(decl1.init, decl2.init);
+                }
+                else {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private argumentDeclarationIsEquivalent(decl1: ArgDecl, decl2: ArgDecl): bool {
