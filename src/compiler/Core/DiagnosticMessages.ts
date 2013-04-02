@@ -291,6 +291,13 @@ module TypeScript {
             code: 1045
         },
 
+        _declare__modifier_required_for_top_level_element: {
+            category: DiagnosticCategory.Error,
+            message: "'declare' modifier required for top level element.",
+            code: 1046
+        },
+
+
 
 
 

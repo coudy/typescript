@@ -95,16 +95,13 @@ module TypeScript {
     }
 
     class GrammarCheckerWalker extends PositionTrackingWalker {
-        private inAmbientDeclaration: bool;
+        private inAmbientDeclaration: bool = false;
         private currentConstructor: ConstructorDeclarationSyntax = null;
 
         constructor(private fileName: string,
                     private diagnostics: IDiagnostic[],
                     private isDeclaration: bool) {
             super();
-
-            // Everything in an declaration file is in an ambient declaration
-            this.inAmbientDeclaration = isDeclaration;
         }
 
         private childFullStart(parent: ISyntaxElement, child: ISyntaxElement): number {
@@ -350,6 +347,7 @@ module TypeScript {
 
         private checkForDisallowedDeclareModifier(modifiers: ISyntaxList): bool {
             if (this.inAmbientDeclaration) {
+                // If we're already in an ambient declaration, then 'declare' is not allowed.
                 var declareToken = this.getToken(modifiers, SyntaxKind.DeclareKeyword);
 
                 if (declareToken) {
@@ -358,8 +356,22 @@ module TypeScript {
                     return true;
                 }
             }
-            
+
             return false;
+        }
+
+        private checkForRequiredDeclareModifier(moduleElement: IModuleElementSyntax,
+                                                typeKeyword: ISyntaxElement,
+                                                modifiers: ISyntaxList): bool {
+            if (!this.inAmbientDeclaration && this.isDeclaration) {
+                // We're at the top level in a declaration file, a 'declare' modifiers is required
+                // on most module elements.
+                if (!this.containsToken(modifiers, SyntaxKind.DeclareKeyword)) {
+                    this.pushDiagnostic1(this.childFullStart(moduleElement, typeKeyword), typeKeyword.firstToken(),
+                        DiagnosticCode._declare__modifier_required_for_top_level_element);
+                    return true;
+                }
+            }
         }
 
         private checkClassOverloads(node: ClassDeclarationSyntax): bool {
@@ -431,6 +443,7 @@ module TypeScript {
 
         private visitClassDeclaration(node: ClassDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkForRequiredDeclareModifier(node, node.classKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkClassDeclarationHeritageClauses(node) ||
                 this.checkClassOverloads(node)) {
@@ -440,7 +453,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.isDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitClassDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
@@ -600,6 +613,7 @@ module TypeScript {
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkForRequiredDeclareModifier(node, node.enumKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers) ||
                 this.checkEnumDeclarationElements(node)) {
 
@@ -608,7 +622,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.isDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitEnumDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
@@ -672,6 +686,7 @@ module TypeScript {
 
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers)) {
 
                 this.skip(node);
@@ -687,7 +702,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.isDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitModuleDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
@@ -881,6 +896,7 @@ module TypeScript {
 
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkForRequiredDeclareModifier(node, node.functionKeyword, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers)) {
 
                 this.skip(node);
@@ -888,13 +904,14 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.isDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitFunctionDeclaration(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
         private visitVariableStatement(node: VariableStatementSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
+                this.checkForRequiredDeclareModifier(node, node.variableDeclaration, node.modifiers) ||
                 this.checkModuleElementModifiers(node.modifiers)) {
 
                 this.skip(node);
@@ -902,7 +919,7 @@ module TypeScript {
             }
 
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
-            this.inAmbientDeclaration = this.inAmbientDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
+            this.inAmbientDeclaration = this.inAmbientDeclaration || this.isDeclaration || this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword);
             super.visitVariableStatement(node);
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }

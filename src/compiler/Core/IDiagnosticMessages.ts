@@ -52,6 +52,7 @@ module TypeScript {
         Function_overload_name_must_be__0_: DiagnosticInfo;
         _0__modifier_cannot_appear_on_a_module_element: DiagnosticInfo;
         _declare__modifier_cannot_appear_on_an_interface_declaration: DiagnosticInfo;
+        _declare__modifier_required_for_top_level_element: DiagnosticInfo;
 
 
 
