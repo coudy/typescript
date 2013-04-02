@@ -637,6 +637,9 @@ module TypeScript {
 
         public resolveDeclaration(declAST: AST, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): PullSymbol {
             switch (declAST.nodeType) {
+                case NodeType.Script:
+                    return null;
+
                 case NodeType.ModuleDeclaration:
                     return this.resolveModuleDeclaration(<ModuleDeclaration>declAST, context);
                 case NodeType.InterfaceDeclaration:

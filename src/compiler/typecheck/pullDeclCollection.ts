@@ -27,15 +27,13 @@ module TypeScript {
         var span = TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
 
         var decl = new PullDecl(importDecl.id.text, PullElementKind.TypeAlias, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setASTForDecl(decl, ast);
 
         var parent = context.getParent();
 
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
-
-        context.semanticInfo.setDeclForAST(ast, decl);
-
-        context.semanticInfo.setASTForDecl(decl, ast);
 
         return false;
     }
@@ -66,15 +64,14 @@ module TypeScript {
         var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
 
         var decl = new PullDecl(modName, kind, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setASTForDecl(decl, ast);
+
         var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(ast, decl);
-
-        context.semanticInfo.setASTForDecl(decl, ast);
 
         return true;
     }
@@ -125,6 +122,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
         var decl = new PullDecl(interfaceDecl.name.text, PullElementKind.Interface, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
         var parent = context.getParent();
 
@@ -135,9 +134,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
         return true;
     }
@@ -152,6 +148,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
         var decl = new PullDecl("", PullElementKind.ObjectType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
         var parent = context.getParent();
 
@@ -162,9 +160,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
         return true;
     }
@@ -184,6 +179,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
         var decl = new PullDecl(interfaceDecl.name.text, PullElementKind.Interface, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
         var parent = context.getParent();
 
@@ -194,9 +191,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
         return true;
     }
@@ -229,6 +223,7 @@ module TypeScript {
             propDecl.setValueDecl(decl);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             propDecl.setParentDecl(context.parentChain[context.parentChain.length - 2]);
+            context.semanticInfo.setASTForDecl(decl, argDecl);
             context.semanticInfo.setASTForDecl(propDecl, argDecl);
             context.semanticInfo.setDeclForAST(argDecl, propDecl);
         }
@@ -257,7 +252,6 @@ module TypeScript {
         var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
 
         var decl = new PullDecl(typeParameterDecl.name.text, PullElementKind.TypeParameter, declFlags, span, context.scriptName);
-
         context.semanticInfo.setASTForDecl(decl, typeParameterDecl);
         context.semanticInfo.setDeclForAST(typeParameterDecl, decl);
 
@@ -296,14 +290,11 @@ module TypeScript {
         var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
 
         var decl = new PullDecl(propertyDecl.id.text, declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(propertyDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, propertyDecl);
 
-        
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
-
-        context.semanticInfo.setDeclForAST(propertyDecl, decl);
-
-        context.semanticInfo.setASTForDecl(decl, propertyDecl);
 
         if (propertyDecl.typeExpr &&
             ((<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -338,14 +329,12 @@ module TypeScript {
         var span = TextSpan.fromBounds(memberDecl.minChar, memberDecl.limChar);
 
         var decl = new PullDecl(memberDecl.id.text, declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(memberDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, memberDecl);
 
         var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
-
-        context.semanticInfo.setDeclForAST(memberDecl, decl);
-
-        context.semanticInfo.setASTForDecl(decl, memberDecl);
 
         if (memberDecl.typeExpr &&
             ((<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -376,14 +365,12 @@ module TypeScript {
         var span = TextSpan.fromBounds(varDecl.minChar, varDecl.limChar);
 
         var decl = new PullDecl(varDecl.id.text, declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(varDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, varDecl);
 
         var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
-
-        context.semanticInfo.setDeclForAST(varDecl, decl);
-
-        context.semanticInfo.setASTForDecl(decl, varDecl);
 
         if (varDecl.typeExpr &&
             ((<TypeReference>varDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -424,6 +411,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(functionTypeDeclAST.minChar, functionTypeDeclAST.limChar);
 
         var decl = new PullDecl("", declType, declFlags, span, context.semanticInfo.getPath());
+        context.semanticInfo.setDeclForAST(functionTypeDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, functionTypeDeclAST);
 
         // parent could be null if we're collecting decls for a lambda expression
         var parent = context.getParent();
@@ -434,10 +423,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(functionTypeDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, functionTypeDeclAST);
 
         if (functionTypeDeclAST.returnTypeAnnotation &&
             ((<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -461,6 +446,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(constructorTypeDeclAST.minChar, constructorTypeDeclAST.limChar);
 
         var decl = new PullDecl("{new}", declType, declFlags, span, context.semanticInfo.getPath());
+        context.semanticInfo.setDeclForAST(constructorTypeDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
 
         // parent could be null if we're collecting decls for a lambda expression
         var parent = context.getParent();
@@ -471,10 +458,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(constructorTypeDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
 
         if (constructorTypeDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -510,6 +493,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(funcDeclAST.minChar, funcDeclAST.limChar);
 
         var decl = new PullDecl(funcDeclAST.name.text, declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(funcDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, funcDeclAST);
 
         var parent = context.getParent();
 
@@ -519,10 +504,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(funcDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, funcDeclAST);
 
         if (funcDeclAST.returnTypeAnnotation &&
             ((<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -550,6 +531,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(functionExpressionDeclAST.minChar, functionExpressionDeclAST.limChar);
 
         var decl = new PullDecl("", declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
 
         var parent = context.getParent();
 
@@ -559,10 +542,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
 
         if (functionExpressionDeclAST.returnTypeAnnotation &&
             ((<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -605,6 +584,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(memberFunctionDeclAST.minChar, memberFunctionDeclAST.limChar);
 
         var decl = new PullDecl(memberFunctionDeclAST.name.text, declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(memberFunctionDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, memberFunctionDeclAST);
 
         var parent = context.getParent();
 
@@ -614,10 +595,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(memberFunctionDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, memberFunctionDeclAST);
 
         if (memberFunctionDeclAST.returnTypeAnnotation &&
             ((<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -641,6 +618,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(indexSignatureDeclAST.minChar, indexSignatureDeclAST.limChar);
 
         var decl = new PullDecl("[]", declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
 
         var parent = context.getParent();
 
@@ -650,10 +629,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
 
         if (indexSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -677,6 +652,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(callSignatureDeclAST.minChar, callSignatureDeclAST.limChar);
 
         var decl = new PullDecl("()", declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(callSignatureDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
 
         var parent = context.getParent();
 
@@ -686,10 +663,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(callSignatureDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
 
         if (callSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -713,6 +686,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(constructSignatureDeclAST.minChar, constructSignatureDeclAST.limChar);
 
         var decl = new PullDecl("new", declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(constructSignatureDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
 
         var parent = context.getParent();
 
@@ -722,10 +697,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(constructSignatureDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
 
         if (constructSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -764,6 +735,8 @@ module TypeScript {
         }
 
         var decl = new PullDecl(constructorDeclAST.name.text, declType, declFlags, span, context.scriptName);        
+        context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
 
         if (parent) {
             parent.addChildDecl(decl);
@@ -771,10 +744,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
 
         if (constructorDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -812,6 +781,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
 
         var decl = new PullDecl(getAccessorDeclAST.name.text, declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(getAccessorDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, getAccessorDeclAST);
 
         var parent = context.getParent();
 
@@ -821,10 +792,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(getAccessorDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, getAccessorDeclAST);
 
         if (getAccessorDeclAST.returnTypeAnnotation &&
             ((<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -863,6 +830,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(setAccessorDeclAST.minChar, setAccessorDeclAST.limChar);
 
         var decl = new PullDecl(setAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+        context.semanticInfo.setDeclForAST(setAccessorDeclAST, decl);
+        context.semanticInfo.setASTForDecl(decl, setAccessorDeclAST);
 
         var parent = context.getParent();
 
@@ -872,10 +841,6 @@ module TypeScript {
         }
 
         context.pushParent(decl);
-
-        context.semanticInfo.setDeclForAST(setAccessorDeclAST, decl);
-
-        context.semanticInfo.setASTForDecl(decl, setAccessorDeclAST);
 
         return true;
     }
@@ -927,6 +892,8 @@ module TypeScript {
             var span = TextSpan.fromBounds(script.minChar, script.limChar);
 
             var decl = new PullDecl(context.scriptName, PullElementKind.Script, PullElementFlags.None, span, context.scriptName);
+            context.semanticInfo.setDeclForAST(ast, decl);
+            context.semanticInfo.setASTForDecl(decl, ast);
 
             context.pushParent(decl);
 

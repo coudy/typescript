@@ -38,14 +38,30 @@ module TypeScript {
             Debug.assert(oldDecl.getName() === newDecl.getName());
             Debug.assert(oldDecl.getKind() === newDecl.getKind());
 
-            this.diff1(oldDecl, newDecl, oldDecl.childDeclTypeCache, newDecl.childDeclTypeCache);
-            this.diff1(oldDecl, newDecl, oldDecl.childDeclTypeParameterCache, newDecl.childDeclTypeParameterCache);
-            this.diff1(oldDecl, newDecl, oldDecl.childDeclValueCache, newDecl.childDeclValueCache);
+            var oldAST = this.oldSemanticInfo.getASTForDecl(oldDecl);
+            var newAST = this.newSemanticInfo.getASTForDecl(newDecl);
+            Debug.assert(oldAST !== undefined);
+            Debug.assert(newAST !== undefined);
+
+            // If the AST's are the same, then there's nothing we need to do.
+            if (oldAST === newAST) {
+                return;
+            }
+
+            // Not the same ast, walk this decl and find all the differences.
+            this.diff1(oldDecl, newDecl, oldAST, newAST, oldDecl.childDeclTypeCache, newDecl.childDeclTypeCache);
+            this.diff1(oldDecl, newDecl, oldAST, newAST, oldDecl.childDeclTypeParameterCache, newDecl.childDeclTypeParameterCache);
+            this.diff1(oldDecl, newDecl, oldAST, newAST, oldDecl.childDeclValueCache, newDecl.childDeclValueCache);
         }
 
         private static emptyDeclArray: PullDecl[] = [];
 
-        private diff1(oldDecl: PullDecl, newDecl: PullDecl, oldNameToDecls: any, newNameToDecls: any): void {
+        private diff1(oldDecl: PullDecl,
+                      newDecl: PullDecl,
+                      oldAST: AST,
+                      newAST: AST,
+                      oldNameToDecls: any,
+                      newNameToDecls: any): void {
             var i = 0;
             var n = 0;
             var oldChildrenOfName: PullDecl[];
@@ -125,7 +141,7 @@ module TypeScript {
                 }
             }
 
-            if (!this.isEquivalent(this.oldSemanticInfo.getASTForDecl(oldDecl), this.newSemanticInfo.getASTForDecl(newDecl))) {
+            if (!this.isEquivalent(oldAST, newAST)) {
                 this.differences.push(new PullDeclDiff(oldDecl, newDecl, PullDeclEdit.DeclChanged));
             }
         }
@@ -133,11 +149,12 @@ module TypeScript {
         private isEquivalent(oldAST: AST, newAST: AST): bool {
             Debug.assert(oldAST !== null);
             Debug.assert(newAST !== null);
+            Debug.assert(oldAST !== newAST);
 
-            // If it's the same node then it clearly hasn't changed.
-            if (oldAST === newAST) {
-                return true;
-            }
+            //if (oldAST === undefined || newAST === undefined) {
+            //    Debug.assert(oldAST === newAST);
+            //    return true;
+            //}
 
             if (oldAST.nodeType !== newAST.nodeType ||
                 oldAST.getFlags() !== newAST.getFlags()) {
