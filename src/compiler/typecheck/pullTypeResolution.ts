@@ -1434,7 +1434,8 @@ module TypeScript {
             }
 
             // Check if variable satisfies type privacy
-            if (declSymbol.getKind() != PullElementKind.Parameter) {
+            if (declSymbol.getKind() != PullElementKind.Parameter &&
+                (declSymbol.getKind() != PullElementKind.Property || declSymbol.getContainer().isNamedTypeSymbol())) {
                 this.checkTypePrivacy(declSymbol, declSymbol.getType(), (typeSymbol: PullTypeSymbol) =>
                     this.variablePrivacyErrorReporter(declSymbol, typeSymbol, context));
             }
