@@ -227,7 +227,8 @@ module TypeScript {
                 }
             }
 
-            return astArrayStructuralEquals(this.preComments, ast.preComments, includingPosition) &&
+            return this._flags === ast._flags &&
+                   astArrayStructuralEquals(this.preComments, ast.preComments, includingPosition) &&
                    astArrayStructuralEquals(this.postComments, ast.postComments, includingPosition)
         }
     }
@@ -978,6 +979,7 @@ module TypeScript {
 
         public structuralEquals(ast: BoundDecl, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
+                   this._varFlags === ast._varFlags &&
                    structuralEquals(this.init, ast.init, includingPosition) &&
                    structuralEquals(this.typeExpr, ast.typeExpr, includingPosition) &&
                    structuralEquals(this.id, ast.id, includingPosition);
@@ -1071,6 +1073,7 @@ module TypeScript {
 
         public structuralEquals(ast: FuncDecl, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
+                   this._functionFlags === ast._functionFlags &&
                    this.hint === ast.hint &&
                    this.variableArgList === ast.variableArgList &&
                    this.isOverload === ast.isOverload &&
@@ -1300,6 +1303,11 @@ module TypeScript {
             this._moduleFlags = flags;
         }
 
+        public structuralEquals(ast: ModuleDeclaration, includePosition: bool): bool {
+            return super.structuralEquals(ast, includePosition) &&
+                   this._moduleFlags === ast._moduleFlags;
+        }
+
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
         public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
 
@@ -1343,6 +1351,7 @@ module TypeScript {
 
         public structuralEquals(ast: TypeDeclaration, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
+                   this._varFlags === ast._varFlags &&
                    structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
                    structuralEquals(this.extendsList, ast.extendsList, includingPosition) &&
                    structuralEquals(this.implementsList, ast.implementsList, includingPosition);
