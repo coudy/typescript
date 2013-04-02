@@ -52,6 +52,10 @@ module TypeScript {
             this.diff1(oldDecl, newDecl, oldAST, newAST, oldDecl.childDeclTypeCache, newDecl.childDeclTypeCache);
             this.diff1(oldDecl, newDecl, oldAST, newAST, oldDecl.childDeclTypeParameterCache, newDecl.childDeclTypeParameterCache);
             this.diff1(oldDecl, newDecl, oldAST, newAST, oldDecl.childDeclValueCache, newDecl.childDeclValueCache);
+
+            if (!this.isEquivalent(oldAST, newAST)) {
+                this.differences.push(new PullDeclDiff(oldDecl, newDecl, PullDeclEdit.DeclChanged));
+            }
         }
 
         private static emptyDeclArray: PullDecl[] = [];
@@ -139,10 +143,6 @@ module TypeScript {
                     newChild = newChildrenOfName[i];
                     this.differences.push(new PullDeclDiff(oldDecl, newChild, PullDeclEdit.DeclAdded));
                 }
-            }
-
-            if (!this.isEquivalent(oldAST, newAST)) {
-                this.differences.push(new PullDeclDiff(oldDecl, newDecl, PullDeclEdit.DeclChanged));
             }
         }
 
