@@ -17727,6 +17727,106 @@ var TypeScript;
         DiagnosticCode.Setter__0__already_declared = 64;
         DiagnosticCode._map[65] = "Accessor_may_not_take_type_parameters";
         DiagnosticCode.Accessor_may_not_take_type_parameters = 65;
+        DiagnosticCode._map[66] = "Exported_class__0__extends_private_class__1_";
+        DiagnosticCode.Exported_class__0__extends_private_class__1_ = 66;
+        DiagnosticCode._map[67] = "Exported_class__0__implements_private_interface__1_";
+        DiagnosticCode.Exported_class__0__implements_private_interface__1_ = 67;
+        DiagnosticCode._map[68] = "Exported_interface__0__extends_private_interface__1_";
+        DiagnosticCode.Exported_interface__0__extends_private_interface__1_ = 68;
+        DiagnosticCode._map[69] = "Exported_class__0__extends_class_from_private_module__1_";
+        DiagnosticCode.Exported_class__0__extends_class_from_private_module__1_ = 69;
+        DiagnosticCode._map[70] = "Exported_class__0__implements_interface_from_private_module__1_";
+        DiagnosticCode.Exported_class__0__implements_interface_from_private_module__1_ = 70;
+        DiagnosticCode._map[71] = "Exported_interface__0__extends_interface_from_private_module__1_";
+        DiagnosticCode.Exported_interface__0__extends_interface_from_private_module__1_ = 71;
+        DiagnosticCode._map[72] = "Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ = 72;
+        DiagnosticCode._map[73] = "Public_property__0__of__exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_has_or_is_using_private_type__1_ = 73;
+        DiagnosticCode._map[74] = "Property__0__of__exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Property__0__of__exported_interface_has_or_is_using_private_type__1_ = 74;
+        DiagnosticCode._map[75] = "Exported_variable__0__has_or_is_using_private_type__1_";
+        DiagnosticCode.Exported_variable__0__has_or_is_using_private_type__1_ = 75;
+        DiagnosticCode._map[76] = "Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ = 76;
+        DiagnosticCode._map[77] = "Public_property__0__of__exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Public_property__0__of__exported_class_is_using_inaccessible_module__1_ = 77;
+        DiagnosticCode._map[78] = "Property__0__of__exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Property__0__of__exported_interface_is_using_inaccessible_module__1_ = 78;
+        DiagnosticCode._map[79] = "Exported_variable__0__is_using_inaccessible_module__1_";
+        DiagnosticCode.Exported_variable__0__is_using_inaccessible_module__1_ = 79;
+        DiagnosticCode._map[80] = "Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ = 80;
+        DiagnosticCode._map[81] = "Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 81;
+        DiagnosticCode._map[82] = "Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ = 82;
+        DiagnosticCode._map[83] = "Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ = 83;
+        DiagnosticCode._map[84] = "Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ = 84;
+        DiagnosticCode._map[85] = "Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ = 85;
+        DiagnosticCode._map[86] = "Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ = 86;
+        DiagnosticCode._map[87] = "Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ = 87;
+        DiagnosticCode._map[88] = "Parameter__0__of_exported_function_has_or_is_using_private_type__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_has_or_is_using_private_type__1_ = 88;
+        DiagnosticCode._map[89] = "Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ = 89;
+        DiagnosticCode._map[90] = "Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 90;
+        DiagnosticCode._map[91] = "Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ = 91;
+        DiagnosticCode._map[92] = "Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ = 92;
+        DiagnosticCode._map[93] = "Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ = 93;
+        DiagnosticCode._map[94] = "Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ = 94;
+        DiagnosticCode._map[95] = "Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ = 95;
+        DiagnosticCode._map[96] = "Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ = 96;
+        DiagnosticCode._map[97] = "Parameter__0__of_exported_function_is_using_inaccessible_module__1_";
+        DiagnosticCode.Parameter__0__of_exported_function_is_using_inaccessible_module__1_ = 97;
+        DiagnosticCode._map[98] = "Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 98;
+        DiagnosticCode._map[99] = "Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ = 99;
+        DiagnosticCode._map[100] = "Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ = 100;
+        DiagnosticCode._map[101] = "Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ = 101;
+        DiagnosticCode._map[102] = "Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ = 102;
+        DiagnosticCode._map[103] = "Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ = 103;
+        DiagnosticCode._map[104] = "Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ = 104;
+        DiagnosticCode._map[105] = "Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ = 105;
+        DiagnosticCode._map[106] = "Return_type_of_exported_function_has_or_is_using_private_type__0_";
+        DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type__0_ = 106;
+        DiagnosticCode._map[107] = "Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 107;
+        DiagnosticCode._map[108] = "Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ = 108;
+        DiagnosticCode._map[109] = "Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ = 109;
+        DiagnosticCode._map[110] = "Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ = 110;
+        DiagnosticCode._map[111] = "Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ = 111;
+        DiagnosticCode._map[112] = "Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ = 112;
+        DiagnosticCode._map[113] = "Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ = 113;
+        DiagnosticCode._map[114] = "Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 114;
+        DiagnosticCode._map[115] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
+        DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 115;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -18062,6 +18162,256 @@ var TypeScript;
             category: 1 /* Error */ ,
             message: "Accessors may not take type parameters.",
             code: 2017
+        },
+        Exported_class__0__extends_private_class__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported class '{0}' extends private class '{1}'",
+            code: 2018
+        },
+        Exported_class__0__implements_private_interface__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported class '{0}' implements private interface '{1}'",
+            code: 2019
+        },
+        Exported_interface__0__extends_private_interface__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported interface '{0}' extends private interface '{1}'",
+            code: 2020
+        },
+        Exported_class__0__extends_class_from_private_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported class '{0}' extends class from private module {1}",
+            code: 2021
+        },
+        Exported_class__0__implements_interface_from_private_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported class '{0}' implements interface from private module {1}",
+            code: 2022
+        },
+        Exported_interface__0__extends_interface_from_private_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported interface '{0}' extends interface from private module {1}",
+            code: 2023
+        },
+        Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Public static property '{0}' of exported class has or is using private type '{1}'",
+            code: 2024
+        },
+        Public_property__0__of__exported_class_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Public property '{0}' of exported class has or is using private type '{1}'",
+            code: 2025
+        },
+        Property__0__of__exported_interface_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Property '{0}' of exported interface has or is using private type '{1}'",
+            code: 2026
+        },
+        Exported_variable__0__has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported variable '{0}' has or is using private type '{1}'",
+            code: 2027
+        },
+        Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Public static property '{0}' of exported class is using inaccessible module {1}",
+            code: 2028
+        },
+        Public_property__0__of__exported_class_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Public property '{0}' of exported class is using inaccessible module {1}",
+            code: 2029
+        },
+        Property__0__of__exported_interface_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Property '{0}' of exported interface is using inaccessible module {1}",
+            code: 2030
+        },
+        Exported_variable__0__is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Exported variable '{0}' is using inaccessible module {1}",
+            code: 2031
+        },
+        Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of constructor from exported class has or is using private type '{1}'",
+            code: 2032
+        },
+        Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public static property setter from exported class has or is using private type '{1}'",
+            code: 2033
+        },
+        Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public property setter from exported class has or is using private type '{1}'",
+            code: 2034
+        },
+        Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of constructor signature from exported interface has or is using private type '{1}'",
+            code: 2035
+        },
+        Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of call signature from exported interface has or is using private type '{1}'",
+            code: 2036
+        },
+        Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public static method from exported class has or is using private type '{1}'",
+            code: 2037
+        },
+        Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public method from exported class has or is using private type '{1}'",
+            code: 2038
+        },
+        Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of method from exported interface has or is using private type '{1}'",
+            code: 2039
+        },
+        Parameter__0__of_exported_function_has_or_is_using_private_type__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of exported function has or is using private type '{1}'",
+            code: 2040
+        },
+        Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of constructor from exported class is using inaccessible module {1}",
+            code: 2041
+        },
+        Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public static property setter from exported class is using inaccessible module {1}",
+            code: 2042
+        },
+        Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public property setter from exported class is using inaccessible module {1}",
+            code: 2043
+        },
+        Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of constructor signature from exported interface is using inaccessible module {1}",
+            code: 2044
+        },
+        Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of call signature from exported interface is using inaccessible module {1}",
+            code: 2045
+        },
+        Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public static method from exported class is using inaccessible module {1}",
+            code: 2046
+        },
+        Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of public method from exported class is using inaccessible module {1}",
+            code: 2047
+        },
+        Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of method from exported interface is using inaccessible module {1}",
+            code: 2048
+        },
+        Parameter__0__of_exported_function_is_using_inaccessible_module__1_: {
+            category: 1 /* Error */ ,
+            message: "Parameter '{0}' of exported function is using inaccessible module {1}",
+            code: 2049
+        },
+        Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public static property getter from exported class has or is using private type '{0}'",
+            code: 2050
+        },
+        Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public property getter from exported class has or is using private type '{0}'",
+            code: 2051
+        },
+        Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of constructor signature from exported interface has or is using private type '{0}'",
+            code: 2052
+        },
+        Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of call signature from exported interface has or is using private type '{0}'",
+            code: 2053
+        },
+        Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of index signature from exported interface has or is using private type '{0}'",
+            code: 2054
+        },
+        Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public static method from exported class has or is using private type '{0}'",
+            code: 2055
+        },
+        Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public method from exported class has or is using private type '{0}'",
+            code: 2056
+        },
+        Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of method from exported interface has or is using private type '{0}'",
+            code: 2057
+        },
+        Return_type_of_exported_function_has_or_is_using_private_type__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of exported function has or is using private type '{0}'",
+            code: 2058
+        },
+        Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public static property getter from exported class is using inaccessible module {0}",
+            code: 2059
+        },
+        Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public property getter from exported class is using inaccessible module {0}",
+            code: 2060
+        },
+        Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of constructor signature from exported interface is using inaccessible module {0}",
+            code: 2061
+        },
+        Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of call signature from exported interface is using inaccessible module {0}",
+            code: 2062
+        },
+        Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of index signature from exported interface is using inaccessible module {0}",
+            code: 2063
+        },
+        Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public static method from exported class is using inaccessible module {0}",
+            code: 2064
+        },
+        Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of public method from exported class is using inaccessible module {0}",
+            code: 2065
+        },
+        Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of method from exported interface is using inaccessible module {0}",
+            code: 2066
+        },
+        Return_type_of_exported_function_is_using_inaccessible_module__0_: {
+            category: 1 /* Error */ ,
+            message: "Return type of exported function is using inaccessible module {0}",
+            code: 2067
         }
     };
     var seenCodes = [];
@@ -20255,7 +20605,8 @@ var TypeScript;
         };
         DeclarationEmitter.prototype.ImportDeclarationCallback = function (pre, importDecl) {
             if (pre) {
-                if ((this.declarationContainerStack[0]).isExternallyVisibleSymbol(importDecl.id.sym)) {
+                var importSymbol = this.semanticInfoChain.getSymbolForAST(importDecl, this.locationInfo.fileName);
+                if (importSymbol.getTypeUsedExternally()) {
                     this.emitDeclarationComments(importDecl);
                     this.emitIndent();
                     this.declFile.Write("import ");
@@ -40822,18 +41173,22 @@ var TypeScript;
             var str = this.getNameAndTypeName();
             return str;
         };
+        PullSymbol.prototype.getPrettyNameInScope = function (scopeSymbol) {
+            var scopedName = this.getName(scopeSymbol);
+            if (this.getKind() == 64 /* DynamicModule */ ) {
+                if (!TypeScript.isQuoted(scopedName) && scopedName == this.getName()) {
+                    return null;
+                }
+            }
+            return scopedName;
+        };
         PullSymbol.prototype.fullName = function (scopeSymbol) {
             var path = this.pathToRoot();
             var fullName = "";
             for(var i = 1; i < path.length; i++) {
-                var scopedName = path[i].getName(scopeSymbol);
-                if (path[i].getKind() == 64 /* DynamicModule */ ) {
-                    if (scopeSymbol) {
-                        var scopePath = scopeSymbol.pathToRoot();
-                        if (scopePath.length && scopePath[scopePath.length - 1] == path[i] && !TypeScript.isQuoted(scopedName)) {
-                            break;
-                        }
-                    }
+                var scopedName = path[i].getPrettyNameInScope(scopeSymbol);
+                if (!scopedName) {
+                    break;
                 }
                 fullName = scopedName + "." + fullName;
             }
@@ -40848,7 +41203,10 @@ var TypeScript;
                 if (kind == 8 /* Container */ ) {
                     fullName = path[i].getName() + "." + fullName;
                 } else if (kind == 64 /* DynamicModule */ ) {
-                    fullName = path[i].getName(scopeSymbol) + "." + fullName;
+                    var scopedName = path[i].getPrettyNameInScope(scopeSymbol);
+                    if (scopedName) {
+                        fullName = scopedName + "." + fullName;
+                    }
                     break;
                 } else {
                     break;
@@ -40918,6 +41276,45 @@ var TypeScript;
                 typarString += ">";
             }
             return typarString;
+        };
+        PullSymbol.getIsExternallyVisible = function getIsExternallyVisible(symbol, fromIsExternallyVisibleSymbol, inIsExternallyVisibleSymbols) {
+            if (inIsExternallyVisibleSymbols) {
+                for(var i = 0; i < inIsExternallyVisibleSymbols.length; i++) {
+                    if (inIsExternallyVisibleSymbols[i] == symbol) {
+                        return true;
+                    }
+                }
+            } else {
+                inIsExternallyVisibleSymbols = [];
+            }
+            if (fromIsExternallyVisibleSymbol == symbol) {
+                return true;
+            }
+            inIsExternallyVisibleSymbols = inIsExternallyVisibleSymbols.concat(fromIsExternallyVisibleSymbol);
+            return symbol.isExternallyVisible(inIsExternallyVisibleSymbols);
+        };
+        PullSymbol.prototype.isExternallyVisible = function (inIsExternallyVisibleSymbols) {
+            var kind = this.getKind();
+            if (kind == 4 /* Primitive */ ) {
+                return true;
+            }
+            if (this.isType()) {
+                var associatedContainerSymbol = (this).getAssociatedContainerType();
+                if (associatedContainerSymbol) {
+                    return PullSymbol.getIsExternallyVisible(associatedContainerSymbol, this, inIsExternallyVisibleSymbols);
+                }
+            }
+            if (this.hasFlag(2 /* Private */ )) {
+                return false;
+            }
+            var container = this.getContainer();
+            if (container == null) {
+                return true;
+            }
+            if (!this.hasFlag(1 /* Exported */ ) && kind != 8192 /* Property */  && kind != 131072 /* Method */ ) {
+                return false;
+            }
+            return PullSymbol.getIsExternallyVisible(container, this, inIsExternallyVisibleSymbols);
         };
         return PullSymbol;
     })();
@@ -41910,6 +42307,24 @@ var TypeScript;
             }
             return TypeScript.MemberName.create("{}");
         };
+        PullTypeSymbol.prototype.isExternallyVisible = function (inIsExternallyVisibleSymbols) {
+            var isVisible = _super.prototype.isExternallyVisible.call(this, inIsExternallyVisibleSymbols);
+            if (isVisible) {
+                var typars = this.getTypeArguments();
+                if (!typars || !typars.length) {
+                    typars = this.getTypeParameters();
+                }
+                if (typars) {
+                    for(var i = 0; i < typars.length; i++) {
+                        isVisible = PullSymbol.getIsExternallyVisible(typars[i], this, inIsExternallyVisibleSymbols);
+                        if (!isVisible) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return isVisible;
+        };
         return PullTypeSymbol;
     })(PullSymbol);
     TypeScript.PullTypeSymbol = PullTypeSymbol;    
@@ -41994,15 +42409,20 @@ var TypeScript;
             }
             return null;
         };
+        PullContainerTypeSymbol.prototype.getAliasedSymbol = function (scopeSymbol) {
+            var scopePath = scopeSymbol.pathToRoot();
+            if (scopePath.length && scopePath[scopePath.length - 1].getKind() == 64 /* DynamicModule */ ) {
+                var decls = scopePath[scopePath.length - 1].getDeclarations();
+                var symbol = this.findAliasedType(decls);
+                return symbol;
+            }
+            return null;
+        };
         PullContainerTypeSymbol.prototype.getName = function (scopeSymbol, useConstraintInName) {
             if (scopeSymbol && this.getKind() == 64 /* DynamicModule */ ) {
-                var scopePath = scopeSymbol.pathToRoot();
-                if (scopePath.length && scopePath[scopePath.length - 1].getKind() == 64 /* DynamicModule */ ) {
-                    var decls = scopePath[scopePath.length - 1].getDeclarations();
-                    var symbol = this.findAliasedType(decls);
-                    if (symbol) {
-                        return symbol.getName();
-                    }
+                var symbol = this.getAliasedSymbol(scopeSymbol);
+                if (symbol) {
+                    return symbol.getName();
                 }
             }
             return _super.prototype.getName.call(this);
@@ -42016,6 +42436,7 @@ var TypeScript;
             _super.call(this, name, 512 /* TypeAlias */ );
             this.typeAliasLink = null;
             this.isUsedAsValue = false;
+            this.typeUsedExternally = false;
         }
         PullTypeAliasSymbol.prototype.isAlias = function () {
             return true;
@@ -42040,6 +42461,12 @@ var TypeScript;
         };
         PullTypeAliasSymbol.prototype.getIsUsedAsValue = function () {
             return this.isUsedAsValue;
+        };
+        PullTypeAliasSymbol.prototype.setIsTypeUsedExternally = function () {
+            this.typeUsedExternally = true;
+        };
+        PullTypeAliasSymbol.prototype.getTypeUsedExternally = function () {
+            return this.typeUsedExternally;
         };
         PullTypeAliasSymbol.prototype.getMembers = function () {
             if (this.typeAliasLink) {
@@ -42203,6 +42630,13 @@ var TypeScript;
             }
             this.isPrinting = false;
             return name;
+        };
+        PullTypeParameterSymbol.prototype.isExternallyVisible = function (inIsExternallyVisibleSymbols) {
+            var constraint = this.getConstraint();
+            if (constraint) {
+                return PullSymbol.getIsExternallyVisible(constraint, this, inIsExternallyVisibleSymbols);
+            }
+            return true;
         };
         return PullTypeParameterSymbol;
     })(PullTypeSymbol);
@@ -43574,6 +44008,8 @@ var TypeScript;
                 }
             }
             classDeclSymbol.setResolved();
+            this.checkBaseListPrivacy(classDeclSymbol, true, context);
+            this.checkBaseListPrivacy(classDeclSymbol, false, context);
             var classMembers = classDeclSymbol.getMembers();
             var constructorMethod = classDeclSymbol.getConstructorMethod();
             var classTypeParameters = classDeclSymbol.getTypeParameters();
@@ -43646,6 +44082,7 @@ var TypeScript;
                 context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath, "An interface may not implement other types", enclosingDecl);
             }
             interfaceDeclSymbol.setResolved();
+            this.checkBaseListPrivacy(interfaceDeclSymbol, true, context);
             var interfaceMembers = interfaceDeclSymbol.getMembers();
             var interfaceTypeParameters = interfaceDeclSymbol.getTypeParameters();
             for(i = 0; i < interfaceMembers.length; i++) {
@@ -43898,6 +44335,7 @@ var TypeScript;
             return typeDeclSymbol;
         };
         PullTypeResolver.prototype.resolveVariableDeclaration = function (varDecl, context, enclosingDecl) {
+            var _this = this;
             var decl = this.getDeclForAST(varDecl);
             var declSymbol = decl.getSymbol();
             var declParameterSymbol = decl.getValueDecl() ? decl.getValueDecl().getSymbol() : null;
@@ -43976,6 +44414,11 @@ var TypeScript;
                 if (declParameterSymbol) {
                     declParameterSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                 }
+            }
+            if (declSymbol.getKind() != 4096 /* Parameter */ ) {
+                this.checkTypePrivacy(declSymbol, declSymbol.getType(), function (typeSymbol) {
+                    return _this.variablePrivacyErrorReporter(declSymbol, typeSymbol, context);
+                });
             }
             if (!hadError) {
                 declSymbol.setResolved();
@@ -44067,6 +44510,7 @@ var TypeScript;
             }
         };
         PullTypeResolver.prototype.resolveFunctionDeclaration = function (funcDeclAST, context) {
+            var _this = this;
             var funcDecl = this.getDeclForAST(funcDeclAST);
             var funcSymbol = funcDecl.getSymbol();
             var signature = funcDecl.getSignatureSymbol();
@@ -44139,6 +44583,20 @@ var TypeScript;
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, new TypeScript.PullTypeResolutionContext());
                     }
                 }
+                var symbolForPrivacyCheck = funcSymbol;
+                if (!symbolForPrivacyCheck) {
+                    var parentDecl = funcDecl.getParentDecl();
+                    symbolForPrivacyCheck = parentDecl.getSymbol();
+                }
+                var funcParams = signature.getParameters();
+                for(i = 0; i < funcParams.length; i++) {
+                    this.checkTypePrivacy(symbolForPrivacyCheck, funcParams[i].getType(), function (typeSymbol) {
+                        return _this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, context);
+                    });
+                }
+                this.checkTypePrivacy(symbolForPrivacyCheck, signature.getReturnType(), function (typeSymbol) {
+                    return _this.functionReturnTypePrivacyErrorReporter(funcDeclAST, signature.getReturnType(), typeSymbol, context);
+                });
                 if (!hadError) {
                     signature.setResolved();
                 }
@@ -44146,6 +44604,7 @@ var TypeScript;
             return funcSymbol;
         };
         PullTypeResolver.prototype.resolveGetAccessorDeclaration = function (funcDeclAST, context) {
+            var _this = this;
             var funcDecl = this.getDeclForAST(funcDeclAST);
             var accessorSymbol = funcDecl.getSymbol();
             var getterSymbol = accessorSymbol.getGetter();
@@ -44195,6 +44654,9 @@ var TypeScript;
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, new TypeScript.PullTypeResolutionContext());
                     }
                 }
+                this.checkTypePrivacy(accessorSymbol, signature.getReturnType(), function (typeSymbol) {
+                    return _this.functionReturnTypePrivacyErrorReporter(funcDeclAST, signature.getReturnType(), typeSymbol, context);
+                });
                 if (!hadError) {
                     signature.setResolved();
                 }
@@ -44223,6 +44685,7 @@ var TypeScript;
             return accessorSymbol;
         };
         PullTypeResolver.prototype.resolveSetAccessorDeclaration = function (funcDeclAST, context) {
+            var _this = this;
             var funcDecl = this.getDeclForAST(funcDeclAST);
             var accessorSymbol = funcDecl.getSymbol();
             var setterSymbol = accessorSymbol.getSetter();
@@ -44253,6 +44716,12 @@ var TypeScript;
                 }
                 if (funcDeclAST.returnTypeAnnotation) {
                     context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Setters may not contain return type annotations", this.getEnclosingDecl(funcDecl));
+                }
+                var funcParams = signature.getParameters();
+                for(i = 0; i < funcParams.length; i++) {
+                    this.checkTypePrivacy(accessorSymbol, funcParams[i].getType(), function (typeSymbol) {
+                        return _this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, context);
+                    });
                 }
                 if (!hadError) {
                     signature.setResolved();
@@ -46515,6 +46984,465 @@ var TypeScript;
             }
             return TypeScript.specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, enclosingDecl, context);
         };
+        PullTypeResolver.prototype.functionArgumentTypePrivacyErrorReporter = function (declAST, argIndex, paramSymbol, typeSymbol, context) {
+            var decl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+            var isGetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 32 /* GetAccessor */ );
+            var isSetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 64 /* SetAccessor */ );
+            var isStatic = (decl.getFlags() & 16 /* Static */ ) == 16 /* Static */ ;
+            var isMethod = decl.getKind() == 131072 /* Method */ ;
+            var isMethodOfClass = false;
+            var declParent = decl.getParentDecl();
+            if (declParent && (declParent.getKind() == 16 /* Class */  || declParent.getKind() == 65536 /* ConstructorMethod */ )) {
+                isMethodOfClass = true;
+            }
+            var message = null;
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!TypeScript.isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+                if (declAST.isConstructor) {
+                    message = TypeScript.getDiagnosticMessage(89 /* Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (isSetter) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(90 /* Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(91 /* Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (declAST.isConstructMember()) {
+                    message = TypeScript.getDiagnosticMessage(92 /* Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (declAST.isCallMember()) {
+                    message = TypeScript.getDiagnosticMessage(93 /* Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (isMethod) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(94 /* Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else if (isMethodOfClass) {
+                        message = TypeScript.getDiagnosticMessage(95 /* Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(96 /* Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (!isGetter) {
+                    message = TypeScript.getDiagnosticMessage(97 /* Parameter__0__of_exported_function_is_using_inaccessible_module__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                }
+            } else {
+                if (declAST.isConstructor) {
+                    message = TypeScript.getDiagnosticMessage(80 /* Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (isSetter) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(81 /* Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(82 /* Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (declAST.isConstructMember()) {
+                    message = TypeScript.getDiagnosticMessage(83 /* Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (declAST.isCallMember()) {
+                    message = TypeScript.getDiagnosticMessage(84 /* Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (isMethod) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(85 /* Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else if (isMethodOfClass) {
+                        message = TypeScript.getDiagnosticMessage(86 /* Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(87 /* Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_ */ , [
+                            paramSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (!isGetter && !declAST.isIndexerMember()) {
+                    message = TypeScript.getDiagnosticMessage(88 /* Parameter__0__of_exported_function_has_or_is_using_private_type__1_ */ , [
+                        paramSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                }
+            }
+            if (message) {
+                context.postError(declAST.arguments.members[argIndex].minChar, declAST.arguments.members[argIndex].getLength(), this.unitPath, message, enclosingDecl);
+            }
+        };
+        PullTypeResolver.prototype.functionReturnTypePrivacyErrorReporter = function (declAST, funcReturnType, typeSymbol, context) {
+            var _this = this;
+            var decl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+            var isGetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 32 /* GetAccessor */ );
+            var isSetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 64 /* SetAccessor */ );
+            var isStatic = (decl.getFlags() & 16 /* Static */ ) == 16 /* Static */ ;
+            var isMethod = decl.getKind() == 131072 /* Method */ ;
+            var isMethodOfClass = false;
+            var declParent = decl.getParentDecl();
+            if (declParent && (declParent.getKind() == 16 /* Class */  || declParent.getKind() == 65536 /* ConstructorMethod */ )) {
+                isMethodOfClass = true;
+            }
+            var message = null;
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!TypeScript.isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+                if (isGetter) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(107 /* Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(108 /* Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (declAST.isConstructMember()) {
+                    message = TypeScript.getDiagnosticMessage(109 /* Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_ */ , [
+                        typeSymbolName
+                    ]);
+                } else if (declAST.isCallMember()) {
+                    message = TypeScript.getDiagnosticMessage(110 /* Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_ */ , [
+                        typeSymbolName
+                    ]);
+                } else if (declAST.isIndexerMember()) {
+                    message = TypeScript.getDiagnosticMessage(111 /* Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_ */ , [
+                        typeSymbolName
+                    ]);
+                } else if (isMethod) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(112 /* Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    } else if (isMethodOfClass) {
+                        message = TypeScript.getDiagnosticMessage(113 /* Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(114 /* Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (!isSetter && !declAST.isConstructor) {
+                    message = TypeScript.getDiagnosticMessage(115 /* Return_type_of_exported_function_is_using_inaccessible_module__0_ */ , [
+                        typeSymbolName
+                    ]);
+                }
+            } else {
+                if (isGetter) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(98 /* Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(99 /* Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (declAST.isConstructMember()) {
+                    message = TypeScript.getDiagnosticMessage(100 /* Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_ */ , [
+                        typeSymbolName
+                    ]);
+                } else if (declAST.isCallMember()) {
+                    message = TypeScript.getDiagnosticMessage(101 /* Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_ */ , [
+                        typeSymbolName
+                    ]);
+                } else if (declAST.isIndexerMember()) {
+                    message = TypeScript.getDiagnosticMessage(102 /* Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_ */ , [
+                        typeSymbolName
+                    ]);
+                } else if (isMethod) {
+                    if (isStatic) {
+                        message = TypeScript.getDiagnosticMessage(103 /* Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    } else if (isMethodOfClass) {
+                        message = TypeScript.getDiagnosticMessage(104 /* Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(105 /* Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_ */ , [
+                            typeSymbolName
+                        ]);
+                    }
+                } else if (!isSetter && !declAST.isConstructor) {
+                    message = TypeScript.getDiagnosticMessage(106 /* Return_type_of_exported_function_has_or_is_using_private_type__0_ */ , [
+                        typeSymbolName
+                    ]);
+                }
+            }
+            if (message) {
+                var reportOnFuncDecl = false;
+                var contextForReturnTypeResolution = new TypeScript.PullTypeResolutionContext();
+                var returnExpressionSymbol;
+                if (declAST.returnTypeAnnotation != null) {
+                    var returnTypeRef = declAST.returnTypeAnnotation;
+                    returnExpressionSymbol = this.resolveTypeReference(returnTypeRef, decl, contextForReturnTypeResolution);
+                    if (returnExpressionSymbol == funcReturnType) {
+                        context.postError(declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), this.unitPath, message, enclosingDecl);
+                    }
+                }
+                if (declAST.bod) {
+                    var reportErrorOnReturnExpressions = function (ast, parent, walker) {
+                        var go = true;
+                        switch(ast.nodeType) {
+                            case 72 /* FuncDecl */ :
+                                go = false;
+                                break;
+                            case 76 /* ReturnStatement */ :
+                                var returnStatement = ast;
+                                returnExpressionSymbol = _this.resolveStatementOrExpression(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).getType();
+                                if (returnExpressionSymbol == funcReturnType) {
+                                    context.postError(returnStatement.minChar, returnStatement.getLength(), _this.unitPath, message, enclosingDecl);
+                                } else {
+                                    reportOnFuncDecl = true;
+                                }
+                                go = false;
+                                break;
+                            default:
+                                break;
+                        }
+                        walker.options.goChildren = go;
+                        return ast;
+                    };
+                    TypeScript.getAstWalkerFactory().walk(declAST.bod, reportErrorOnReturnExpressions);
+                }
+                if (reportOnFuncDecl) {
+                    context.postError(declAST.minChar, declAST.getLength(), this.unitPath, message, enclosingDecl);
+                }
+            }
+        };
+        PullTypeResolver.prototype.variablePrivacyErrorReporter = function (declSymbol, typeSymbol, context) {
+            var declAST = this.getASTForSymbol(declSymbol);
+            var decl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+            var isProperty = declSymbol.getKind() == 8192 /* Property */ ;
+            var isPropertyOfClass = false;
+            var declParent = declSymbol.getContainer();
+            if (declParent && (declParent.getKind() == 16 /* Class */  || declParent.getKind() == 65536 /* ConstructorMethod */ )) {
+                isPropertyOfClass = true;
+            }
+            var message;
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!TypeScript.isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+                if (decl.getFlags() & 16 /* Static */ ) {
+                    message = TypeScript.getDiagnosticMessage(76 /* Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_ */ , [
+                        declSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (isProperty) {
+                    if (isPropertyOfClass) {
+                        message = TypeScript.getDiagnosticMessage(77 /* Public_property__0__of__exported_class_is_using_inaccessible_module__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(78 /* Property__0__of__exported_interface_is_using_inaccessible_module__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else {
+                    message = TypeScript.getDiagnosticMessage(79 /* Exported_variable__0__is_using_inaccessible_module__1_ */ , [
+                        declSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                }
+            } else {
+                if (decl.getFlags() & 16 /* Static */ ) {
+                    message = TypeScript.getDiagnosticMessage(72 /* Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_ */ , [
+                        declSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                } else if (isProperty) {
+                    if (isPropertyOfClass) {
+                        message = TypeScript.getDiagnosticMessage(73 /* Public_property__0__of__exported_class_has_or_is_using_private_type__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(74 /* Property__0__of__exported_interface_has_or_is_using_private_type__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else {
+                    message = TypeScript.getDiagnosticMessage(75 /* Exported_variable__0__has_or_is_using_private_type__1_ */ , [
+                        declSymbol.getScopedName(), 
+                        typeSymbolName
+                    ]);
+                }
+            }
+            context.postError(declAST.minChar, declAST.getLength(), this.unitPath, message, enclosingDecl);
+        };
+        PullTypeResolver.prototype.baseListPrivacyErrorReporter = function (declSymbol, extendsList, index, typeSymbol, context) {
+            var declAST = this.getASTForSymbol(declSymbol);
+            var baseList = extendsList ? declAST.extendsList : declAST.implementsList;
+            var decl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+            var message;
+            var typeSymbolName = typeSymbol.getScopedName();
+            if (typeSymbol.isContainer()) {
+                if (!TypeScript.isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+                if (declAST.nodeType == 92 /* ClassDeclaration */ ) {
+                    if (extendsList) {
+                        message = TypeScript.getDiagnosticMessage(69 /* Exported_class__0__extends_class_from_private_module__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(70 /* Exported_class__0__implements_interface_from_private_module__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else {
+                    message = TypeScript.getDiagnosticMessage(71 /* Exported_interface__0__extends_interface_from_private_module__1_ */ , [
+                        declSymbol.getName(), 
+                        typeSymbolName
+                    ]);
+                }
+            } else {
+                if (declAST.nodeType == 92 /* ClassDeclaration */ ) {
+                    if (extendsList) {
+                        message = TypeScript.getDiagnosticMessage(66 /* Exported_class__0__extends_private_class__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    } else {
+                        message = TypeScript.getDiagnosticMessage(67 /* Exported_class__0__implements_private_interface__1_ */ , [
+                            declSymbol.getScopedName(), 
+                            typeSymbolName
+                        ]);
+                    }
+                } else {
+                    message = TypeScript.getDiagnosticMessage(68 /* Exported_interface__0__extends_private_interface__1_ */ , [
+                        declSymbol.getName(), 
+                        typeSymbolName
+                    ]);
+                }
+            }
+            context.postError(baseList.members[index].minChar, baseList.members[index].getLength(), this.unitPath, message, enclosingDecl);
+        };
+        PullTypeResolver.prototype.checkBaseListPrivacy = function (declSymbol, extendsList, context) {
+            var _this = this;
+            var basesList;
+            if (extendsList) {
+                basesList = declSymbol.getExtendedTypes();
+            } else {
+                basesList = declSymbol.getImplementedTypes();
+            }
+            for(var i = 0; i < basesList.length; i++) {
+                this.checkTypePrivacy(declSymbol, basesList[i], function (typeSymbol) {
+                    return _this.baseListPrivacyErrorReporter(declSymbol, extendsList, i, typeSymbol, context);
+                });
+            }
+        };
+        PullTypeResolver.prototype.checkTypePrivacyOfSignatures = function (declSymbol, signatures, privacyErrorReporter) {
+            for(var i = 0; i < signatures.length; i++) {
+                var signature = signatures[i];
+                if (signatures.length && signature.isDefinition()) {
+                    continue;
+                }
+                var typeParams = signature.getTypeParameters();
+                for(var j = 0; j < typeParams.length; j++) {
+                    this.checkTypePrivacy(declSymbol, typeParams[j], privacyErrorReporter);
+                }
+                var params = signature.getParameters();
+                for(j = 0; j < params.length; j++) {
+                    var paramType = params[j].getType();
+                    this.checkTypePrivacy(declSymbol, paramType, privacyErrorReporter);
+                }
+                var returnType = signature.getReturnType();
+                this.checkTypePrivacy(declSymbol, returnType, privacyErrorReporter);
+            }
+        };
+        PullTypeResolver.prototype.checkTypePrivacy = function (declSymbol, typeSymbol, privacyErrorReporter) {
+            if (!typeSymbol || typeSymbol.getKind() == 4 /* Primitive */ ) {
+                return;
+            }
+            if (typeSymbol.isArray()) {
+                this.checkTypePrivacy(declSymbol, (typeSymbol).getElementType(), privacyErrorReporter);
+                return;
+            }
+            if (!typeSymbol.isNamedTypeSymbol()) {
+                var members = typeSymbol.getMembers();
+                for(var i = 0; i < members.length; i++) {
+                    this.checkTypePrivacy(declSymbol, members[i].getType(), privacyErrorReporter);
+                }
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), privacyErrorReporter);
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), privacyErrorReporter);
+                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), privacyErrorReporter);
+                return;
+            }
+            if (declSymbol.isExternallyVisible()) {
+                var typeSymbolIsVisible = typeSymbol.isExternallyVisible();
+                if (typeSymbolIsVisible) {
+                    var typeSymbolPath = typeSymbol.pathToRoot();
+                    if (typeSymbolPath.length && typeSymbolPath[typeSymbolPath.length - 1].getKind() == 64 /* DynamicModule */ ) {
+                        var declSymbolPath = declSymbol.pathToRoot();
+                        if (declSymbolPath.length && declSymbolPath[declSymbolPath.length - 1] != typeSymbolPath[typeSymbolPath.length - 1]) {
+                            var aliasSymbol = (typeSymbolPath[typeSymbolPath.length - 1]).getAliasedSymbol(declSymbol);
+                            if (aliasSymbol) {
+                                TypeScript.CompilerDiagnostics.assert(aliasSymbol.getKind() == 512 /* TypeAlias */ , "dynamic module need to be referenced by type alias");
+                                (aliasSymbol).setIsTypeUsedExternally();
+                                return;
+                            }
+                        } else {
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+                privacyErrorReporter(typeSymbol);
+            }
+        };
         return PullTypeResolver;
     })();
     TypeScript.PullTypeResolver = PullTypeResolver;    
@@ -47421,11 +48349,18 @@ var TypeScript;
         SemanticInfo.prototype.setDeclForAST = function (ast, decl) {
             this.astDeclMap.link(ast.getID().toString(), decl);
         };
+        SemanticInfo.prototype.getDeclKey = function (decl) {
+            var decl1 = decl;
+            if (!decl1.__declKey) {
+                decl1.__declKey = decl.getDeclID().toString() + "-" + decl.getKind().toString();
+            }
+            return decl1.__declKey;
+        };
         SemanticInfo.prototype.getASTForDecl = function (decl) {
-            return this.declASTMap.read(decl.getDeclID().toString() + decl.getKind().toString());
+            return this.declASTMap.read(this.getDeclKey(decl));
         };
         SemanticInfo.prototype.setASTForDecl = function (decl, ast) {
-            this.declASTMap.link(decl.getDeclID().toString() + decl.getKind().toString(), ast);
+            this.declASTMap.link(this.getDeclKey(decl), ast);
         };
         SemanticInfo.prototype.setSymbolForAST = function (ast, symbol) {
             this.astSymbolMap.link(ast.getID().toString(), symbol);
@@ -47438,10 +48373,10 @@ var TypeScript;
             return this.symbolASTMap.read(symbol.getSymbolID().toString());
         };
         SemanticInfo.prototype.getSyntaxElementForDecl = function (decl) {
-            return this.declSyntaxElementMap.read(decl.getDeclID().toString() + decl.getKind().toString());
+            return this.declSyntaxElementMap.read(this.getDeclKey(decl));
         };
         SemanticInfo.prototype.setSyntaxElementForDecl = function (decl, syntaxElement) {
-            this.declSyntaxElementMap.link(decl.getDeclID().toString() + decl.getKind().toString(), syntaxElement);
+            this.declSyntaxElementMap.link(this.getDeclKey(decl), syntaxElement);
         };
         SemanticInfo.prototype.getDeclForSyntaxElement = function (syntaxElement) {
             return this.syntaxElementDeclMap.read(TypeScript.Collections.identityHashCode(syntaxElement).toString());

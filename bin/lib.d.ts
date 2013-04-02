@@ -767,7 +767,7 @@ interface RegExpExecArray {
     toString(): string;
     toLocaleString(): string;
     concat(...items: string[][]): string[];
-    join(seperator?: string): string;
+    join(separator?: string): string;
     pop(): string;
     push(...items: string[]): number;
     reverse(): string[];
@@ -944,7 +944,7 @@ interface Array<T> {
     toLocaleString(): string;
     concat(...items: T[][]): T[]; // Note: This overload needs to be picked for arrays of arrays, even though both are applicable
     concat(...items: T[]): T[];
-    join(seperator?: string): string;
+    join(separator?: string): string;
     pop(): T;
     push(...items: T[]): number;
     reverse(): T[];
@@ -8240,7 +8240,7 @@ var console: Console;
 /////////////////////////////
 /// WorkerGlobalScope APIs 
 /////////////////////////////
-// TODO: These are only available in a Web Worker - should be in a seperate lib file
+// TODO: These are only available in a Web Worker - should be in a separate lib file
 function importScripts(...urls: string[]): void;
 
 
