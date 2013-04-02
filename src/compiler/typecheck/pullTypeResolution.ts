@@ -2603,7 +2603,7 @@ module TypeScript {
         }
 
         // PULLTODO: Optimization: cache this for a given decl path
-        public resolveThisExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveThisExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             if (!enclosingDecl) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }

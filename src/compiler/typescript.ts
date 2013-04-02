@@ -654,7 +654,7 @@ module TypeScript {
                     }
 
                     var traceEndTime = new Date().getTime();
-
+                    
                     // Don't re-typecheck or re-report errors just yet
                     //this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
 
