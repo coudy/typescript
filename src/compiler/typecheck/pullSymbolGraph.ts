@@ -257,6 +257,10 @@ module TypeScript {
         var symbolToRemove = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
+        if (affectedSymbol.removeUpdateVersion == updateVersion) {
+            return;
+        }
+
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
             // no action...
@@ -336,6 +340,10 @@ module TypeScript {
         var symbolToRemove = update.symbolToUpdate;
         var affectedSymbol = link.start;
 
+        if (affectedSymbol.removeUpdateVersion == updateVersion) {
+            return;
+        }
+
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
             update.updater.invalidateType(affectedSymbol);
@@ -412,6 +420,10 @@ module TypeScript {
         var symbolToAdd = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
+        if (affectedSymbol.addUpdateVersion == updateVersion) {
+            return;
+        }
+
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
         }
@@ -483,6 +495,10 @@ module TypeScript {
         var symbolToAdd = update.symbolToUpdate;
         var affectedSymbol = link.start;
 
+        if (affectedSymbol.addUpdateVersion == updateVersion) {
+            return;
+        }
+
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
             update.updater.invalidateType(affectedSymbol);
@@ -553,6 +569,10 @@ module TypeScript {
         var symbolWhoseTypeChanged = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
+        if (affectedSymbol.typeChangeUpdateVersion == updateVersion) {
+            return;
+        }
+
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
             //update.updater.invalidateType(affectedSymbol);
@@ -622,6 +642,10 @@ module TypeScript {
     export function propagateChangedTypeToIncomingLinks(link: PullSymbolLink, update: PullSymbolUpdate) {
         var symbolWhoseTypeChanged = update.symbolToUpdate;
         var affectedSymbol = link.start;
+
+        if (affectedSymbol.typeChangeUpdateVersion == updateVersion) {
+            return;
+        }
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {

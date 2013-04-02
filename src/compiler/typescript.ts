@@ -610,7 +610,8 @@ module TypeScript {
                 // replace the old semantic info
                 this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
 
-                // re-bind
+                // Re-bind - we do this even if there aren't changes in the decls so as to relate the
+                // existing symbols to new decls and ASTs
                 var innerBindStartTime = new Date().getTime();
 
                 var topLevelDecls = newScriptSemanticInfo.getTopLevelDecls();
@@ -648,6 +649,7 @@ module TypeScript {
                         }
                         else {
                             // PULLTODO: Other kinds of edits
+                            graphUpdater.invalidateType(diff.newDecl.getSymbol());
                         }
                     }
 
