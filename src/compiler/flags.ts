@@ -23,14 +23,13 @@ module TypeScript {
 
     export enum ASTFlags {
         None = 0,
-        Writeable = 1 << 2,  // node is lhs that can be modified
-        StrictMode = 1 << 7, // node is in the strict mode environment
-        OptionalName = 1 << 10,
+        StrictMode = 1 << 1, // node is in the strict mode environment
+        OptionalName = 1 << 2,
         // REVIEW: This flag is to mark lambda nodes to note that the LParen of an expression has already been matched in the lambda header.
         //         The flag is used to communicate this piece of information to the calling parseTerm, which intern will remove it.
         //         Once we have a better way to associate information with nodes, this flag should not be used.
-        TypeReference = 1 << 12,
-        EnumInitializer = 1 << 13,
+        TypeReference = 1 << 3,
+        EnumInitializer = 1 << 4,
     }
 
     export enum DeclFlags {

@@ -1292,23 +1292,19 @@ module TypeScript {
             return unex;
         }
 
-        public astIsWriteable(ast: AST): bool {
-            return hasFlag(ast.getFlags(), ASTFlags.Writeable);
-        }
-
         public typeCheckIncOrDec(ast: AST): AST {
             var unex = <UnaryExpression>ast;
             var lval = unex.operand;
-            if (!this.astIsWriteable(unex)) {
-                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(unex);
-                unex.type = this.doubleType;
-            }
-            else {
+            //if (!this.astIsWriteable(unex)) {
+            //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(unex);
+            //    unex.type = this.doubleType;
+            //}
+            //else {
                 unex = <UnaryExpression> this.typeCheckUnaryNumberOperator(ast);
                 if (unex.operand.type !== this.checker.numberType && unex.operand.type !== this.checker.anyType && !(unex.operand.type.typeFlags & TypeFlags.IsEnum)) {
                     this.checker.errorReporter.simpleError(ast, "'++' and '--' may only be applied to operands of type 'number' or 'any'");
                 }
-            }
+            //}
             return unex;
         }
 
@@ -1320,9 +1316,9 @@ module TypeScript {
             var leftType = binex.operand1.type;
             var rightType = binex.operand2.type;
 
-            if (assignment && (!this.astIsWriteable(binex))) {
-                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
-            }
+            //if (assignment && (!this.astIsWriteable(binex))) {
+            //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
+            //}
 
             if (this.checker.styleSettings.bitwise) {
                 this.checker.errorReporter.styleError(ast, "use of " + nodeTypeTable[binex.nodeType]);
@@ -1365,9 +1361,9 @@ module TypeScript {
             var leftType = binex.operand1.type;
             var rightType = binex.operand2.type;
 
-            if (assignment && (!this.astIsWriteable(binex.operand1))) {
-                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
-            }
+            //if (assignment && (!this.astIsWriteable(binex.operand1))) {
+            //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
+            //}
 
             if (this.checker.styleSettings.bitwise &&
                 ((binex.nodeType === NodeType.And) ||
@@ -1569,9 +1565,9 @@ module TypeScript {
             var leftType = binex.operand1.type;
             var rightType = binex.operand2.type;
 
-            if (!(this.astIsWriteable(binex.operand1))) {
-                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
-            }
+            //if (!(this.astIsWriteable(binex.operand1))) {
+            //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
+            //}
             if (binex.operand1.nodeType === NodeType.Call) {
                 var callEx = <CallExpression>binex.operand1;
             }
@@ -1672,9 +1668,9 @@ module TypeScript {
         public typeCheckShift(binex: BinaryExpression, assignment: bool): BinaryExpression {
             binex.operand1 = this.cast(this.typeCheck(binex.operand1), this.doubleType);
             binex.operand2 = this.cast(this.typeCheck(binex.operand2), this.doubleType);
-            if (assignment && (!(this.astIsWriteable(binex.operand1)))) {
-                this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
-            }
+            //if (assignment && (!(this.astIsWriteable(binex.operand1)))) {
+            //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
+            //}
             binex.type = this.doubleType;
             return binex;
         }

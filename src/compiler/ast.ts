@@ -56,7 +56,7 @@ module TypeScript {
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
 
         public type: Type = null;
-        private _flags = ASTFlags.Writeable;
+        private _flags = ASTFlags.None;
 
         public typeCheckPhase = -1;
 
