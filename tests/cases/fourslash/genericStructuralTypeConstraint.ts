@@ -21,21 +21,17 @@
 //// var z = new C<I2, I1>()
 //// /*2*/
 
-// BUG 654459
 goTo.marker("2");
 edit.insertLine("");
+// y fails due to a: string in I1, z fails due to I1 not being assignment compatible to I2
 verify.numberOfErrorsInCurrentFile(4);
 
 goTo.marker("1");
 edit.backspace(10);
-
-// BUG 654459
-goTo.marker("2");
 edit.insertLine("");
 verify.numberOfErrorsInCurrentFile(2);
+// y should be OK now member a is gone, z fails due to I1 not being assignment compatible to I2
 
 edit.insert("a: number;");
-
-goTo.marker("2");
-edit.insertLine("");
+// y should be OK with member a the correct type, z still fails due to I1 not being assignment compatible to I2
 verify.numberOfErrorsInCurrentFile(2);
