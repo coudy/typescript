@@ -40,7 +40,7 @@ module TypeScript {
             var i = 0;
 
             for (i = 0; i < oldDeclChildren.length; i++) {
-                foundDecls = newDecl.findChildDecls(oldDeclChildren[i].getName(), oldDeclChildren[i].getKind());
+                foundDecls = newDecl.lookupChildDecls(oldDeclChildren[i].getName(), oldDeclChildren[i].getKind());
 
                 if (!foundDecls.length) {
                     diffs[diffs.length] = new PullDeclDiff(oldDeclChildren[i], null, PullDeclEdit.DeclRemoved);
@@ -56,7 +56,7 @@ module TypeScript {
             }
 
             for (i = 0; i < newDeclChildren.length; i++) {
-                foundDecls = oldDecl.findChildDecls(newDeclChildren[i].getName(), newDeclChildren[i].getKind());
+                foundDecls = oldDecl.lookupChildDecls(newDeclChildren[i].getName(), newDeclChildren[i].getKind());
 
                 if (!foundDecls.length) {
                     diffs[diffs.length] = new PullDeclDiff(oldDecl, newDeclChildren[i], PullDeclEdit.DeclAdded);

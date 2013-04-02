@@ -118,14 +118,21 @@ module TypeScript {
             this.diagnostics = [];
         }
 
+        private getChildDeclCache(declKind: PullElementKind): any {
+            return declKind === PullElementKind.TypeParameter
+                ? this.childDeclTypeParameterCache
+                : hasFlag(declKind, PullElementKind.SomeType)
+                    ? this.childDeclTypeCache
+                    : this.childDeclValueCache;
+        }
+
         // returns 'true' if the child decl was successfully added
         // ('false' is returned if addIfDuplicate is false and there is a collision)
         public addChildDecl(childDecl: PullDecl): void {
             // check if decl exists
             // merge if necessary
-            var declName = childDecl.getName();
 
-            if (childDecl.getKind() & PullElementKind.TypeParameter) {
+            if (childDecl.getKind() === PullElementKind.TypeParameter) {
                 this.typeParameters[this.typeParameters.length] = childDecl;
             }
             else {
@@ -133,28 +140,43 @@ module TypeScript {
             }
 
             // add to the appropriate cache
-            var cache = (childDecl.getKind() & PullElementKind.SomeType) ? (childDecl.getKind() & PullElementKind.TypeParameter) ? this.childDeclTypeParameterCache : this.childDeclTypeCache : this.childDeclValueCache;
-            var cacheVal = <PullDecl[]>cache[declName];
-            if (!cacheVal) {
-                cacheVal = [];
+            var declName = childDecl.getName();
+            var cache = this.getChildDeclCache(childDecl.getKind());
+            var childrenOfName = <PullDecl[]>cache[declName];
+            if (!childrenOfName) {
+                childrenOfName = [];
             }
 
-            cacheVal[cacheVal.length] = childDecl;
-            cache[declName] = cacheVal;
+            childrenOfName.push(childDecl);
+            cache[declName] = childrenOfName;
         }
 
-        public findChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
+        public lookupChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
             // find the decl with the optional type
             // if necessary, cache the decl
             // may be wise to return a chain of decls, or take a parent decl as a parameter
-            var cache = (declKind & PullElementKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
+            var cache = this.getChildDeclCache(declKind);
+            var childrenOfName = <PullDecl[]>cache[declName];
+
+            return childrenOfName ? childrenOfName : [];
+        }
+
+        // Search for a child decl with the given name.  'isType' is used to specify whether or 
+        // not child types or child values are returned.
+        public searchChildDecls(declName: string, isType: bool): PullDecl[]{
+             // find the decl with the optional type
+             // if necessary, cache the decl
+             // may be wise to return a chain of decls, or take a parent decl as a parameter
+            var cache = isType ? this.childDeclTypeCache : this.childDeclValueCache;
             var cacheVal = <PullDecl[]>cache[declName];
 
             if (cacheVal) {
                 return cacheVal;
             }
             else {
-                if (declKind & PullElementKind.SomeType) {
+                // If we didn't find it, and they were searchign for types, then also check the 
+                // type parameter cache.
+                if (isType) {
                     cacheVal = this.childDeclTypeParameterCache[declName];
 
                     if (cacheVal) {
@@ -164,7 +186,7 @@ module TypeScript {
 
                 return [];
             }
-        }
+         }
 
         public getChildDecls() { return this.childDecls; }
         public getTypeParameters() { return this.typeParameters; }

@@ -319,7 +319,7 @@ module TypeScript {
                 if (pathDeclKind & PullElementKind.Container) {
 
                     // first check locally
-                    childDecls = decl.findChildDecls(symbolName, declSearchKind);
+                    childDecls = decl.searchChildDecls(symbolName, (declSearchKind & PullElementKind.SomeType) !== 0);
 
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
@@ -350,7 +350,7 @@ module TypeScript {
 
                 }
                 else if ((declSearchKind & PullElementKind.SomeType) || !(pathDeclKind & PullElementKind.Class)) {
-                    childDecls = decl.findChildDecls(symbolName, declSearchKind);
+                    childDecls = decl.searchChildDecls(symbolName, (declSearchKind & PullElementKind.SomeType) !== 0);
 
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();

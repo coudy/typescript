@@ -264,7 +264,8 @@ module TypeScript {
                 decls = [];
 
                 for (var j = 0; j < declsToSearch.length; j++) {
-                    foundDecls = declsToSearch[j].findChildDecls(path, (i == declPath.length - 1) ? declKind : PullElementKind.SomeType);
+                    var kind = (i == declPath.length - 1) ? declKind : PullElementKind.SomeType;
+                    foundDecls = declsToSearch[j].searchChildDecls(path, (kind & PullElementKind.SomeType) !== 0);
 
                     for (var k = 0; k < foundDecls.length; k++) {
                         decls[decls.length] = foundDecls[k];
