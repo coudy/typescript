@@ -3018,9 +3018,9 @@ module TypeScript {
                 return moduleDecl;
             }
 
-            if (this.currentScript) {
-                this.currentScript.requiresGlobal = true;
-            }
+            //if (this.currentScript) {
+            //    this.currentScript.requiresGlobal = true;
+            //}
             var mod = moduleDecl.mod;
             var sym: TypeSymbol = null;
 

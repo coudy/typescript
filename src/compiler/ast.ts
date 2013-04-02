@@ -1151,7 +1151,6 @@ module TypeScript {
     export class Script extends FuncDecl {
         public locationInfo: LocationInfo = null;
         public referencedFiles: IFileReference[] = [];
-        public requiresGlobal = false;
         public requiresExtendsBlock = false;
         public isDeclareFile = false;
         public topLevelMod: ModuleDeclaration = null;
