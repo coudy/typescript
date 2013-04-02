@@ -31,25 +31,25 @@ var n4;
 n4 = z2;
 ////[0.d.ts]
 /** Variable comments*/
-var myVariable: number;
+declare var myVariable: number;
 /** This is another variable comment*/
-var anotherVariable: number;
-var aVar: string;
+declare var anotherVariable: number;
+declare var aVar: string;
 /** this is multiline comment
 * All these variables are of number type */
-var anotherAnotherVariable: number;
+declare var anotherAnotherVariable: number;
 /** Triple slash multiline comment*/
 /** another line in the comment*/
 /** comment line 2*/
-var x: number;
+declare var x: number;
 /** triple slash comment1*/
 /** jsdocstyle comment - only this comment should be in .d.ts file*/
-var n: number;
+declare var n: number;
 /** var deckaration with comment on type as well*/
-var y: number;
-var yy: number;
+declare var y: number;
+declare var yy: number;
 /** comment2 */
-var z: (x: number, y: number) => number;
-var z2: (x: number) => string;
-var x2: (x: number) => string;
-var n4: (x: number) => string;
+declare var z: (x: number, y: number) => number;
+declare var z2: (x: number) => string;
+declare var x2: (x: number) => string;
+declare var n4: (x: number) => string;

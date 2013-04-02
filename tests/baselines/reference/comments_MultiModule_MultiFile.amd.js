@@ -47,12 +47,12 @@ var multiM;
 new multiM.d();
 ////[comments_MultiModule_MultiFile_0.d.ts]
 /** this is multi declare module*/
-module multiM {
+declare module multiM {
     class b {
     }
 }
 /** thi is multi module 2*/
-module multiM {
+declare module multiM {
     /** class c comment*/
     class c {
     }
@@ -61,7 +61,7 @@ module multiM {
 }
 ////[comments_MultiModule_MultiFile_1.d.ts]
 /** this is multi module 3 comment*/
-module multiM {
+declare module multiM {
     /** class d comment*/
     class d {
     }

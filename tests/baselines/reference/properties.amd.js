@@ -47,6 +47,6 @@ var MyClass = (function () {
 ////[importInsideModule_file2.js.map]
 {"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
 ////[0.d.ts]
-class MyClass {
+declare class MyClass {
     public Count : number;
 }

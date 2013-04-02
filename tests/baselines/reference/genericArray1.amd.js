@@ -6,4 +6,4 @@ var lengths = [
     return x.length;
 });
 ////[0.d.ts]
-var lengths: number[];
+declare var lengths: number[];

@@ -161,7 +161,7 @@ var m7;
 new m7.m8.m9.c();
 ////[0.d.ts]
 /** Module comment*/
-module m1 {
+declare module m1 {
     /** b's comment*/
     var b: number;
     /** m2 comments*/
@@ -180,21 +180,21 @@ module m1 {
     */
     function foo3Export(): void;
 }
-var myvar: m1.m2.c;
+declare var myvar: m1.m2.c;
 /** module comment of m2.m3*/
-module m2.m3 {
+declare module m2.m3 {
     /** Exported class comment*/
     class c {
     }
 }
 /** module comment of m3.m4.m5*/
-module m3.m4.m5 {
+declare module m3.m4.m5 {
     /** Exported class comment*/
     class c {
     }
 }
 /** module comment of m4.m5.m6*/
-module m4.m5.m6 {
+declare module m4.m5.m6 {
     module m7 {
         /** Exported class comment*/
         class c {
@@ -202,7 +202,7 @@ module m4.m5.m6 {
     }
 }
 /** module comment of m5.m6.m7*/
-module m5.m6.m7 {
+declare module m5.m6.m7 {
     /** module m8 comment*/
     module m8 {
         /** Exported class comment*/
@@ -210,13 +210,13 @@ module m5.m6.m7 {
         }
     }
 }
-module m6.m7.m8 {
+declare module m6.m7.m8 {
     /** Exported class comment*/
     class c {
     }
 }
 /** module m9 comment*/
-module m7.m8.m9 {
+declare module m7.m8.m9 {
     /** Exported class comment*/
     class c {
     }

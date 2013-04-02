@@ -17,8 +17,8 @@ interface G<T, U extends B> {
     x: T;
     y: U;
 }
-var v1: G<A, C>;
-var v2: G<{ a: string; }, C>;
-var v4: G<G<any, any>, C>;
-var v5: G<any, any>;
-var v7: G<any, any>;
+declare var v1: G<A, C>;
+declare var v2: G<{ a: string; }, C>;
+declare var v4: G<G<any, any>, C>;
+declare var v5: G<any, any>;
+declare var v7: G<any, any>;

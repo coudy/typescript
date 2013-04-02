@@ -39,10 +39,10 @@ var m1;
     m1.b = b;    
     })(m1 || (m1 = {}));
 ////[0.d.ts]
-var myVariable: number;
-function foo(p: number): void;
-var fooVar: () => void;
-class c {
+declare var myVariable: number;
+declare function foo(p: number): void;
+declare var fooVar: () => void;
+declare class c {
     constructor();
     public b: number;
     public myFoo(): number;
@@ -50,7 +50,7 @@ class c {
     public foo1(a: number): string;
     public foo1(b: string): string;
 }
-var i: c;
+declare var i: c;
 interface i1 {
     (a: number): number;
     new(b: string);
@@ -58,8 +58,8 @@ interface i1 {
     myFoo(a: number): string;
     prop: string;
 }
-var i1_i: i1;
-module m1 {
+declare var i1_i: i1;
+declare module m1 {
     class b {
         public x: number;
         constructor(x: number);

@@ -56,28 +56,28 @@ exports.eVar3 = 10;
 exports.eVar4;
 exports.eVar5;
 ////[0.d.ts]
-export var exportedSimpleVar;
-export var exportedVarWithInitialValue: number;
-export var exportedWithComplicatedValue: {
+export declare var exportedSimpleVar;
+export declare var exportedVarWithInitialValue: number;
+export declare var exportedWithComplicatedValue: {
     x: number;
     y: number;
     desc: string;
 };
-export var exportedDeclaredVar: number;
-export var exportedArrayVar: {
+export declare var exportedDeclaredVar: number;
+export declare var exportedArrayVar: {
     x: number;
     y: string;
 }[];
-export function exportedFunction(): {
+export declare function exportedFunction(): {
     x: string;
     y: string;
     n: number;
 };
-export module m2 {
+export declare module m2 {
     var a: number;
 }
-export module m3 {
+export declare module m3 {
     function foo(): string;
 }
-export var eVar1, eVar2: number;
-export var eVar3: number, eVar4, eVar5;
+export declare var eVar1, eVar2: number;
+export declare var eVar3: number, eVar4, eVar5;

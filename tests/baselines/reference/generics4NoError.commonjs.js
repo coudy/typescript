@@ -5,7 +5,7 @@ var C = (function () {
 var a;
 var b;
 ////[0.d.ts]
-class C<T> {
+declare class C<T> {
     private x;
 }
 interface X {
@@ -14,5 +14,5 @@ interface X {
 interface Y {
     f(): bool;
 }
-var a: C<X>;
-var b: C<Y>;
+declare var a: C<X>;
+declare var b: C<Y>;

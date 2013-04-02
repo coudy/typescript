@@ -132,7 +132,7 @@ interface i1 {
     nc_f1(): void;
     nc_l1: () => void;
 }
-class c1 implements i1 {
+declare class c1 implements i1 {
     public i1_p1: number;
     public i1_f1(): void;
     public i1_l1: () => void;
@@ -152,9 +152,9 @@ class c1 implements i1 {
     /** c1_nc_l1*/
     public nc_l1: () => void;
 }
-var i1_i: i1;
-var c1_i: c1;
-class c2 {
+declare var i1_i: i1;
+declare var c1_i: c1;
+declare class c2 {
     /** c2 c2_p1*/
     public c2_p1: number;
     /** c2 c2_f1*/
@@ -176,7 +176,7 @@ class c2 {
     /** c2 constructor*/
     constructor(a: number);
 }
-class c3 extends c2 {
+declare class c3 extends c2 {
     constructor();
     /** c3 p1*/
     public p1: number;
@@ -188,11 +188,11 @@ class c3 extends c2 {
     public nc_f1(): void;
     public nc_prop : number;
 }
-var c2_i: c2;
-var c3_i: c3;
-class c4 extends c2 {
+declare var c2_i: c2;
+declare var c3_i: c3;
+declare class c4 extends c2 {
 }
-var c4_i: c4;
+declare var c4_i: c4;
 interface i2 {
     /** i2_p1*/
     i2_p1: number;
@@ -226,5 +226,5 @@ interface i3 extends i2 {
     nc_f1(): void;
     nc_l1: () => void;
 }
-var i2_i: i2;
-var i3_i: i3;
+declare var i2_i: i2;
+declare var i3_i: i3;

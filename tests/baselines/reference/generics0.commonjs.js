@@ -4,5 +4,5 @@ var z = v2.x;
 interface G<T> {
     x: T;
 }
-var v2: G<string>;
-var z: string;
+declare var v2: G<string>;
+declare var z: string;

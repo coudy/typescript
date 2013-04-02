@@ -171,17 +171,17 @@ var m3aVar = mAmbient.m3.aVar;
 var m3bB;
 var m3eVar;
 ////[0.d.ts]
-module a {
+declare module a {
 }
-module b.a {
+declare module b.a {
 }
-module c.a.b {
+declare module c.a.b {
 }
-module mImport {
+declare module mImport {
 }
-module m0 {
+declare module m0 {
 }
-module m1 {
+declare module m1 {
     function f1(): void;
     function f2(s: string);
     class c1 {
@@ -206,7 +206,7 @@ module m1 {
         [n: number]: c1;
     }
 }
-module m {
+declare module m {
     module m2 {
         var b: number;
     }
@@ -214,31 +214,31 @@ module m {
         var c: number;
     }
 }
-module m.m25.m5 {
+declare module m.m25.m5 {
     var c: number;
 }
-module m13.m4 {
+declare module m13.m4 {
     module m2.m3 {
         var c: number;
     }
     function f(): number;
 }
-module m4 {
+declare module m4 {
     var b;
 }
-module m5 {
+declare module m5 {
     var c;
 }
-module m43 {
+declare module m43 {
     var b;
 }
-module m55 {
+declare module m55 {
     var c;
 }
-module "m3" {
+declare module "m3" {
     var b: number;
 }
-module exportTests {
+declare module exportTests {
     class C1_public {
         private f2();
         public f3(): string;
@@ -252,7 +252,7 @@ module exportTests {
         public c1 : C1_public;
     }
 }
-module mAmbient {
+declare module mAmbient {
     class C {
         public myProp: number;
     }
@@ -284,13 +284,13 @@ module mAmbient {
         }
     }
 }
-function foo(): mAmbient.C;
-var cVar: mAmbient.C;
-var aVar: mAmbient.C;
-var bB: mAmbient.B;
-var eVar: mAmbient.e;
-function m3foo(): mAmbient.m3.C;
-var m3cVar: mAmbient.m3.C;
-var m3aVar: mAmbient.m3.C;
-var m3bB: mAmbient.m3.B;
-var m3eVar: mAmbient.m3.e;
+declare function foo(): mAmbient.C;
+declare var cVar: mAmbient.C;
+declare var aVar: mAmbient.C;
+declare var bB: mAmbient.B;
+declare var eVar: mAmbient.e;
+declare function m3foo(): mAmbient.m3.C;
+declare var m3cVar: mAmbient.m3.C;
+declare var m3aVar: mAmbient.m3.C;
+declare var m3bB: mAmbient.m3.B;
+declare var m3eVar: mAmbient.m3.e;

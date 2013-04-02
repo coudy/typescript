@@ -82,17 +82,17 @@ var c5_i_1 = new c5(10);
 var c5_i_2 = new c5("hello");
 ////[0.d.ts]
 /** this is signature 1*/
-function f1(/**param a*/ a: number): number;
-function f1(b: string): number;
-function f2(a: number): number;
+declare function f1(/**param a*/ a: number): number;
+declare function f1(b: string): number;
+declare function f2(a: number): number;
 /** this is signature 2*/
-function f2(b: string): number;
-function f3(a: number): number;
-function f3(b: string): number;
+declare function f2(b: string): number;
+declare function f3(a: number): number;
+declare function f3(b: string): number;
 /** this is signature 4 - with number parameter*/
-function f4(/**param a*/ a: number): number;
+declare function f4(/**param a*/ a: number): number;
 /** this is signature 4 - with string parameter*/
-function f4(b: string): number;
+declare function f4(b: string): number;
 interface i1 {
     /**this signature 1*/
     (/**param a*/ a: number): number;
@@ -119,7 +119,7 @@ interface i1 {
     /** new 1*/
     new(b: number);
 }
-var i1_i: i1;
+declare var i1_i: i1;
 interface i2 {
     new(a: string);
     /** new 2*/
@@ -128,7 +128,7 @@ interface i2 {
     /**this is signature 2*/
     (b: string): number;
 }
-var i2_i: i2;
+declare var i2_i: i2;
 interface i3 {
     /** new 1*/
     new(a: string);
@@ -138,14 +138,14 @@ interface i3 {
     (a: number): number;
     (b: string): number;
 }
-var i3_i: i3;
+declare var i3_i: i3;
 interface i4 {
     new(a: string);
     new(b: number);
     (a: number): number;
     (b: string): number;
 }
-class c {
+declare class c {
     public prop1(a: number): number;
     public prop1(b: string): number;
     /** prop2 1*/
@@ -163,40 +163,40 @@ class c {
     /** prop5 2*/
     public prop5(b: string): number;
 }
-class c1 {
+declare class c1 {
     constructor(a: number);
     constructor(b: string);
 }
-class c2 {
+declare class c2 {
     /** c2 1*/
     constructor(a: number);
     constructor(b: string);
 }
-class c3 {
+declare class c3 {
     constructor(a: number);
     /** c3 2*/
     constructor(b: string);
 }
-class c4 {
+declare class c4 {
     /** c4 1*/
     constructor(a: number);
     /** c4 2*/
     constructor(b: string);
 }
-class c5 {
+declare class c5 {
     /** c5 1*/
     constructor(a: number);
     /** c5 2*/
     constructor(b: string);
 }
-var c_i: c;
-var c1_i_1: c1;
-var c1_i_2: c1;
-var c2_i_1: c2;
-var c2_i_2: c2;
-var c3_i_1: c3;
-var c3_i_2: c3;
-var c4_i_1: c4;
-var c4_i_2: c4;
-var c5_i_1: c5;
-var c5_i_2: c5;
+declare var c_i: c;
+declare var c1_i_1: c1;
+declare var c1_i_2: c1;
+declare var c2_i_1: c2;
+declare var c2_i_2: c2;
+declare var c3_i_1: c3;
+declare var c3_i_2: c3;
+declare var c4_i_1: c4;
+declare var c4_i_2: c4;
+declare var c5_i_1: c5;
+declare var c5_i_2: c5;
