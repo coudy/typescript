@@ -61,12 +61,22 @@ module TypeScript {
             this.astDeclMap.link(ast.getID().toString(), decl);
         }
 
+        private getDeclKey(decl: PullDecl): string {
+            var decl1: any = decl;
+
+            if (!decl1.__declKey) {
+                decl1.__declKey = decl.getDeclID().toString() + "-" + decl.getKind().toString();
+            }
+
+            return decl1.__declKey;
+        }
+
         public getASTForDecl(decl: PullDecl): AST {
-            return <AST>this.declASTMap.read(decl.getDeclID().toString() + decl.getKind().toString());
+            return <AST>this.declASTMap.read(this.getDeclKey(decl));
         }
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
-            this.declASTMap.link(decl.getDeclID().toString() + decl.getKind().toString(), ast);
+            this.declASTMap.link(this.getDeclKey(decl), ast);
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
@@ -83,11 +93,11 @@ module TypeScript {
         }
 
         public getSyntaxElementForDecl(decl: PullDecl): ISyntaxElement {
-            return <ISyntaxElement>this.declSyntaxElementMap.read(decl.getDeclID().toString() + decl.getKind().toString());
+            return <ISyntaxElement>this.declSyntaxElementMap.read(this.getDeclKey(decl));
         }
 
         public setSyntaxElementForDecl(decl: PullDecl, syntaxElement: ISyntaxElement): void {
-            this.declSyntaxElementMap.link(decl.getDeclID().toString() + decl.getKind().toString(), syntaxElement);
+            this.declSyntaxElementMap.link(this.getDeclKey(decl), syntaxElement);
         }
 
         public getDeclForSyntaxElement(syntaxElement: ISyntaxElement): PullDecl {
