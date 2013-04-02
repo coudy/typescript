@@ -82,6 +82,85 @@ class HarnessBatch {
         return this.commandLineHost.resolveCompilationEnvironment(this.compilationEnvironment, resolver, true);
     }
 
+    /// Do the actual compilation reading from input files and
+    /// writing to output file(s).
+    private compile(
+    createEmitFile: (path: string, useUTF8?: bool) => ITextWriter,
+    createDeclareFile: (path: string, useUTF8?: bool) => ITextWriter) {
+        var compiler: TypeScript.TypeScriptCompiler;
+        var _self = this;
+        this.errout.reset();
+
+        //compiler = new TypeScript.TypeScriptCompiler(this.errout, new TypeScript.NullLogger(), this.compilationSettings);
+        compiler = new TypeScript.TypeScriptCompiler();
+
+        function consumeUnit(code: TypeScript.SourceUnit) {
+            try {
+            // if file resolving is disabled, the file's content will not yet be loaded
+                if (!(_self.compilationSettings.resolve)) {
+                    code.content = this.host.readFile(code.path);
+                }
+                if (code.content != null) {
+                    // Log any bugs associated with the test
+                    var bugs = code.content.match(/\bbug (\d+)/i);
+                    if (bugs) {
+                        bugs.forEach(bug => assert.bug(bug));
+                    }
+                    
+                    compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content));
+                }
+            }
+            catch (err) {
+                // This includes syntax errors thrown from error callback if not in recovery mode
+                if (_self.errout != null) {
+                    _self.errout.WriteLine(err.message)
+                } else {
+                    _self.host.stderr.WriteLine(err.message);
+                }
+            }
+        }
+
+        for (var iCode = 0; iCode < this.resolvedEnvironment.code.length; iCode++) {
+            consumeUnit(this.resolvedEnvironment.code[iCode]);
+        }
+
+        compiler.pullTypeCheck();
+
+        var files = compiler.fileNameToLocationInfo.getAllKeys();
+        files.forEach(file => {
+            if (file.indexOf('lib.d.ts') == -1) {
+                var syntacticDiagnostics = compiler.getSyntacticDiagnostics(file);
+                compiler.reportDiagnostics(syntacticDiagnostics, this.errout);
+
+                var semanticDiagnostics = compiler.getSemanticDiagnostics(file);
+                compiler.reportDiagnostics(semanticDiagnostics, this.errout);
+
+                var emitDiagnostics = compiler.emit({
+                    createFile: createEmitFile,
+                    directoryExists: IO.directoryExists,
+                    fileExists: IO.fileExists,
+                    resolvePath: IO.resolvePath
+                });
+                compiler.reportDiagnostics(emitDiagnostics, this.errout);                
+            }
+        }); 
+
+        compiler.emitOptions.ioHost = {
+            createFile: createDeclareFile,
+            directoryExists: IO.directoryExists,
+            fileExists: IO.fileExists,
+            resolvePath: IO.resolvePath
+        };
+
+        var emitDeclarationsDiagnostics = compiler.emitDeclarations();
+        compiler.reportDiagnostics(emitDeclarationsDiagnostics, this.errout);
+
+        if (this.errout) {
+            this.errout.Close();
+        }
+    }
+
+
     // Execute the provided inputs
     private run() {
         for (var i = 0; i < this.resolvedEnvironment.code.length; i++) {
