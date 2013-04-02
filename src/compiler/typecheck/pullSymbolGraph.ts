@@ -257,7 +257,7 @@ module TypeScript {
         var symbolToRemove = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
-        if (affectedSymbol.removeUpdateVersion == updateVersion) {
+        if (affectedSymbol.removeUpdateVersion == updateVersion || affectedSymbol.isPrimitive()) {
             return;
         }
 
@@ -340,7 +340,7 @@ module TypeScript {
         var symbolToRemove = update.symbolToUpdate;
         var affectedSymbol = link.start;
 
-        if (affectedSymbol.removeUpdateVersion == updateVersion) {
+        if (affectedSymbol.removeUpdateVersion == updateVersion || affectedSymbol.isPrimitive()) {
             return;
         }
 
@@ -420,7 +420,7 @@ module TypeScript {
         var symbolToAdd = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
-        if (affectedSymbol.addUpdateVersion == updateVersion) {
+        if (affectedSymbol.addUpdateVersion == updateVersion || affectedSymbol.isPrimitive()) {
             return;
         }
 
@@ -495,7 +495,7 @@ module TypeScript {
         var symbolToAdd = update.symbolToUpdate;
         var affectedSymbol = link.start;
 
-        if (affectedSymbol.addUpdateVersion == updateVersion) {
+        if (affectedSymbol.addUpdateVersion == updateVersion || affectedSymbol.isPrimitive()) {
             return;
         }
 
@@ -569,7 +569,7 @@ module TypeScript {
         var symbolWhoseTypeChanged = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
-        if (affectedSymbol.typeChangeUpdateVersion == updateVersion) {
+        if (affectedSymbol.typeChangeUpdateVersion == updateVersion || affectedSymbol.isPrimitive()) {
             return;
         }
 
@@ -643,7 +643,7 @@ module TypeScript {
         var symbolWhoseTypeChanged = update.symbolToUpdate;
         var affectedSymbol = link.start;
 
-        if (affectedSymbol.typeChangeUpdateVersion == updateVersion) {
+        if (affectedSymbol.typeChangeUpdateVersion == updateVersion || affectedSymbol.isPrimitive()) {
             return;
         }
 
