@@ -978,7 +978,7 @@ module TypeScript {
         }
 
         public emitJavascriptFunction(funcDecl: FuncDecl) {
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) || funcDecl.isOverload) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
             }
             var temp: number;

@@ -431,7 +431,7 @@ module TypeScript {
         // it's base class's signature group
         if (!classDecl.constructorDecl) {
 
-            if (typeSymbol && typeSymbol.declAST && typeSymbol.declAST.type && typeSymbol.declAST.type.call && !(<FuncDecl>typeSymbol.declAST).isOverload) {
+            if (typeSymbol && typeSymbol.declAST && typeSymbol.declAST.type && typeSymbol.declAST.type.call /*&& !(<FuncDecl>typeSymbol.declAST).isOverload*/) {
                 context.checker.errorReporter.duplicateIdentifier(typeSymbol.declAST, typeSymbol.name);
             }
 

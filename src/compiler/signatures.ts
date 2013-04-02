@@ -140,7 +140,7 @@ module TypeScript {
             // REVIEW: duplicates should be found within createFunctionSignature,
             // so we won't check for them here
             if (signature.declAST &&
-                !signature.declAST.isOverload &&
+                //!signature.declAST.isOverload &&
                 !signature.declAST.isSignature() && 
                 !hasFlag(signature.declAST.getFunctionFlags(), FunctionFlags.Ambient) &&
                 !hasFlag(signature.declAST.getFunctionFlags(), FunctionFlags.Signature)) {
@@ -247,7 +247,7 @@ module TypeScript {
                 // first, typecheck each signature
                 for (var i = 0; i < len; i++) {
 
-                    if (!hasConstruct && !this.definitionSignature && this.signatures[i].declAST && this.signatures[i].declAST.isOverload && !hasFlag(this.signatures[i].declAST.getFunctionFlags(), FunctionFlags.Ambient)) {
+                    if (!hasConstruct && !this.definitionSignature && this.signatures[i].declAST && /*this.signatures[i].declAST.isOverload && */!hasFlag(this.signatures[i].declAST.getFunctionFlags(), FunctionFlags.Ambient)) {
                         checker.errorReporter.simpleError(this.signatures[i].declAST, "Overload declaration lacks definition");
                     }
 

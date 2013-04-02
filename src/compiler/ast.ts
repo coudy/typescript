@@ -1044,7 +1044,6 @@ module TypeScript {
         public classDecl: NamedDeclaration = null;
 
         // TODO: Who ever sets this?
-        public isOverload = false;
         public isInlineCallLiteral = false;
         public accessorSymbol: Symbol = null;
         public returnStatementsWithExpressions: ReturnStatement[];
@@ -1076,7 +1075,6 @@ module TypeScript {
                    this._functionFlags === ast._functionFlags &&
                    this.hint === ast.hint &&
                    this.variableArgList === ast.variableArgList &&
-                   this.isOverload === ast.isOverload &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.bod, ast.bod, includingPosition) &&
                    this.isConstructor === ast.isConstructor &&

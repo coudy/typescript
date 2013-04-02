@@ -304,9 +304,9 @@ module TypeScript {
         funcDecl.scopeType = funcDecl.type;
 
         // Overloads have no scope, so bail here
-        if (funcDecl.isOverload) {
-            return;
-        }
+        //if (funcDecl.isOverload) {
+        //    return;
+        //}
 
         var funcTable = new StringHashTable();
         var funcMembers = new ScopedMembers(new DualStringHashTable(funcTable, new StringHashTable()));
@@ -456,7 +456,7 @@ module TypeScript {
             }
             else if (ast.nodeType === NodeType.FuncDecl) {
                 var funcDecl = <FuncDecl>ast;
-                if ((!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) && !funcDecl.isOverload) {
+                if ((!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) /*&& !funcDecl.isOverload*/) {
                     popAssignScope(context);
                 }
             }

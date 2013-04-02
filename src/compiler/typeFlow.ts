@@ -2245,7 +2245,7 @@ module TypeScript {
             var prevModDecl = this.checker.currentModDecl;
             var ssb: SymbolScopeBuilder;
 
-            if (funcDecl.isConstructor && !funcDecl.isOverload) {
+            if (funcDecl.isConstructor/* && !funcDecl.isOverload*/) {
                 if (fnType.instanceType === null) {
                     this.checker.errorReporter.simpleError(funcDecl, "Malformed function body (is this a class named the same as an existing interface?)");
                     return funcDecl;
@@ -2258,7 +2258,7 @@ module TypeScript {
                 ssb = <SymbolScopeBuilder>this.scope;
                 funcTable = ssb.valueMembers.allMembers;
             }
-            else if ((funcDecl.isSpecialFn() && !(funcDecl.getFunctionFlags() & FunctionFlags.Signature)) || funcDecl.isOverload) {
+            else if ((funcDecl.isSpecialFn() && !(funcDecl.getFunctionFlags() & FunctionFlags.Signature))/* || funcDecl.isOverload*/) {
                 funcTable = funcDecl.symbols;
                 // if the function is static, we just want to use the 
                 // current scope

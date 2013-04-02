@@ -596,7 +596,7 @@ module TypeScript {
 
                             groupType.symbol.container = container;
                         } // REVIEW: Another check for overloads...
-                        else if (overloadGroupSym === null || (overloadGroupSym.declAST && !(<FuncDecl>overloadGroupSym.declAST).isOverload && (container.isType()))) {
+                        else if (overloadGroupSym === null || (overloadGroupSym.declAST /*&& !(<FuncDecl>overloadGroupSym.declAST).isOverload*/ && (container.isType()))) {
                             scope.enter(container, funcDecl, groupType.symbol, this.errorReporter, !isPrivate && (isExported || isStatic || isGlobal), false, isAmbient);
                         }
                     }
