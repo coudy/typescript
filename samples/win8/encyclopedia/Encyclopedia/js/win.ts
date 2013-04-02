@@ -1,5 +1,5 @@
-///<reference path='..\..\..\..\..\typings\winrt.d.ts' static='true' />
-///<reference path='..\..\..\..\..\typings\winjs.d.ts' static='true' />
+///<reference path='..\..\..\..\..\typings\winrt.d.ts'/>
+///<reference path='..\..\..\..\..\typings\winjs.d.ts'/>
 
 declare var msSetImmediate: (expression: any) => void;
 
