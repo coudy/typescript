@@ -38,7 +38,7 @@ class BatchCompiler {
     public compile() {
         var settings = new TypeScript.CompilationSettings();
 
-        this.compiler = new TypeScript.TypeScriptCompiler(new StringTextWriter(), new DiagnosticsLogger(), settings);
+        this.compiler = new TypeScript.TypeScriptCompiler(new DiagnosticsLogger(), settings);
 
         this.compiler.addSourceUnit("lib.d.ts", this.libScriptSnapshot, []);
         this.compiler.addSourceUnit("compiler.ts", this.compilerScriptSnapshot, []);
@@ -48,7 +48,7 @@ class BatchCompiler {
 
     // use this to test "clean" re-typecheck speed
     public reTypeCheck() {
-        this.compiler.pullTypeCheck(true, true);
+        this.compiler.pullTypeCheck();
     }
 
     public newParse(): TypeScript.SyntaxTree {
