@@ -883,7 +883,7 @@ module Harness {
                 var thisValName = '__val__' + this.identifier;
                 var otherValName = '__val__' + other.identifier;
                 var testCode = 'module __test1__ {\n';
-                testCode += '    ' + this.code + ';\n';
+                testCode += '    export ' + this.code + ';\n';
                 testCode += '    export var ' + thisValName + ' = ' + this.identifier + ';\n';
                 testCode += '}\n';
 

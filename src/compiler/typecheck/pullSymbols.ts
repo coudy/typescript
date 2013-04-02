@@ -409,21 +409,27 @@ module TypeScript {
             return str;
         }
 
+        private getPrettyNameInScope(scopeSymbol?: PullSymbol) {
+            var scopedName = this.getName(scopeSymbol);
+            if (this.getKind() == PullElementKind.DynamicModule) {
+                if (!isQuoted(scopedName) && scopedName == this.getName()) {
+                    return null;
+                }
+            }
+
+            return scopedName;
+        }
+
         public fullName(scopeSymbol?: PullSymbol) {
             var path = this.pathToRoot();
             var fullName = "";
             for (var i = 1; i < path.length; i++) {
-                var scopedName = path[i].getName(scopeSymbol);
-                if (path[i].getKind() == PullElementKind.DynamicModule) {
-                    if (scopeSymbol) {
-                        var scopePath = scopeSymbol.pathToRoot();
-                        if (scopePath.length && scopePath[scopePath.length - 1] == path[i] && !isQuoted(scopedName)) {
-                            // Same file as dynamic module - do not include this name
-                            break;
-                        }
-                    }
-                    
+                var scopedName = path[i].getPrettyNameInScope(scopeSymbol);
+                if (!scopedName) {
+                    // Same file as dynamic module - do not include this name
+                    break;
                 }
+
                 fullName = scopedName + "." + fullName;
             }
             fullName = fullName + this.getName(scopeSymbol, true);
@@ -438,7 +444,10 @@ module TypeScript {
                 if (kind == PullElementKind.Container) {
                     fullName = path[i].getName() + "." + fullName;
                 } else if (kind == PullElementKind.DynamicModule) {
-                    fullName = path[i].getName(scopeSymbol) + "." + fullName;
+                    var scopedName = path[i].getPrettyNameInScope(scopeSymbol);
+                    if (scopedName) {
+                        fullName = scopedName + "." + fullName;
+                    }
                     break;
                 } else {
                     break;
@@ -517,6 +526,60 @@ module TypeScript {
                 typarString += ">";
             }
             return typarString;
+        }
+
+        static getIsExternallyVisible(symbol: PullSymbol, fromIsExternallyVisibleSymbol: PullSymbol, inIsExternallyVisibleSymbols: PullSymbol[]) {
+            if (inIsExternallyVisibleSymbols) {
+                for (var i = 0; i < inIsExternallyVisibleSymbols.length; i++) {
+                    if (inIsExternallyVisibleSymbols[i] == symbol) {
+                        return true;
+                    }
+                }
+            } else {
+                inIsExternallyVisibleSymbols = [];
+            }
+
+            if (fromIsExternallyVisibleSymbol == symbol) {
+                return true;
+            }
+            inIsExternallyVisibleSymbols = inIsExternallyVisibleSymbols.concat(fromIsExternallyVisibleSymbol);
+
+            return symbol.isExternallyVisible(inIsExternallyVisibleSymbols);
+        }
+
+        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): bool {
+            // Primitive
+            var kind = this.getKind();
+            if (kind == PullElementKind.Primitive) {
+                return true;
+            }
+
+            // Type - use container to determine privacy info
+            if (this.isType()) {
+                var associatedContainerSymbol = (<PullTypeSymbol>this).getAssociatedContainerType();
+                if (associatedContainerSymbol) {
+                    return PullSymbol.getIsExternallyVisible(associatedContainerSymbol, this, inIsExternallyVisibleSymbols);
+                }
+            }
+
+            // Private member
+            if (this.hasFlag(PullElementFlags.Private)) {
+                return false;
+            }
+
+            // If the container for this symbol is null, then this symbol is visible
+            var container = this.getContainer();
+            if (container == null) {
+                return true;
+            }
+
+            // If non exported member and is not class properties and method, it is not visible
+            if (!this.hasFlag(PullElementFlags.Exported) && kind != PullElementKind.Property && kind != PullElementKind.Method) {
+                return false;
+            }
+
+            // Visible if parent is visible
+            return PullSymbol.getIsExternallyVisible(container, this, inIsExternallyVisibleSymbols);
         }
     }
 
@@ -1755,6 +1818,29 @@ module TypeScript {
 
             return MemberName.create("{}");
         }
+
+        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): bool {
+            var isVisible = super.isExternallyVisible(inIsExternallyVisibleSymbols);
+            if (isVisible) {
+                // Get type parameters
+                var typars = this.getTypeArguments();
+                if (!typars || !typars.length) {
+                    typars = this.getTypeParameters();
+                }
+
+                if (typars) {
+                    // If any of the type parameter is not visible the type is invisible
+                    for (var i = 0; i < typars.length; i++) {
+                        isVisible = PullSymbol.getIsExternallyVisible(typars[i], this, inIsExternallyVisibleSymbols);
+                        if (!isVisible) {
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            return isVisible;
+        }
     }
 
     export class PullPrimitiveTypeSymbol extends PullTypeSymbol {
@@ -1852,16 +1938,23 @@ module TypeScript {
 
             return null;
         }
+
+        public getAliasedSymbol(scopeSymbol: PullSymbol) {
+            var scopePath = scopeSymbol.pathToRoot();
+            if (scopePath.length && scopePath[scopePath.length - 1].getKind() == PullElementKind.DynamicModule) {
+                var decls = scopePath[scopePath.length - 1].getDeclarations();
+                var symbol = this.findAliasedType(decls);
+                return symbol;
+            }
+
+            return null;
+        }
         
         public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool): string {
             if (scopeSymbol && this.getKind() == PullElementKind.DynamicModule) {
-                var scopePath = scopeSymbol.pathToRoot();
-                if (scopePath.length && scopePath[scopePath.length - 1].getKind() == PullElementKind.DynamicModule) {
-                    var decls = scopePath[scopePath.length - 1].getDeclarations();
-                    var symbol = this.findAliasedType(decls);
-                    if (symbol) {
-                        return symbol.getName();
-                    }
+                var symbol = this.getAliasedSymbol(scopeSymbol);
+                if (symbol) {
+                    return symbol.getName();
                 }
             }
             return super.getName();
@@ -1872,6 +1965,7 @@ module TypeScript {
 
         private typeAliasLink: PullSymbolLink = null;
         private isUsedAsValue = false;
+        private typeUsedExternally = false;
 
         constructor(name: string) {
             super(name, PullElementKind.TypeAlias);
@@ -1905,6 +1999,14 @@ module TypeScript {
 
         public getIsUsedAsValue() {
             return this.isUsedAsValue;
+        }
+
+        public setIsTypeUsedExternally() {
+            this.typeUsedExternally = true;
+        }
+
+        public getTypeUsedExternally() {
+            return this.typeUsedExternally;
         }
 
         public getMembers(): PullSymbol[] {
@@ -2093,6 +2195,15 @@ module TypeScript {
             this.isPrinting = false;
         
             return name;
+        }
+
+        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): bool {
+            var constraint = this.getConstraint();
+            if (constraint) {
+                return PullSymbol.getIsExternallyVisible(constraint, this, inIsExternallyVisibleSymbols);
+            }
+
+            return true;          
         }
     }
 

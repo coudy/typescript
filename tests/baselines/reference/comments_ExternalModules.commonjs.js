@@ -101,5 +101,7 @@ export module m4 {
     function fooExport(): number;
 }
 ////[comments_ExternalModules_1.d.ts]
+/**This is on import declaration*/
+import extMod = module ("comments_ExternalModules_0");
 export var newVar: extMod.m1.m2.c;
 export var newVar2: extMod.m4.m2.c;

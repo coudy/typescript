@@ -78,5 +78,57 @@ module TypeScript {
         Getter__0__already_declared: DiagnosticInfo;
         Setter__0__already_declared: DiagnosticInfo;
         Accessor_may_not_take_type_parameters: DiagnosticInfo;
+
+        //Privacy error related diagnostics
+        Exported_class__0__extends_private_class__1_: DiagnosticInfo;
+        Exported_class__0__implements_private_interface__1_: DiagnosticInfo;
+        Exported_interface__0__extends_private_interface__1_: DiagnosticInfo;
+        Exported_class__0__extends_class_from_private_module__1_: DiagnosticInfo;
+        Exported_class__0__implements_interface_from_private_module__1_: DiagnosticInfo;
+        Exported_interface__0__extends_interface_from_private_module__1_: DiagnosticInfo;
+        Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Public_property__0__of__exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Property__0__of__exported_interface_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Exported_variable__0__has_or_is_using_private_type__1_: DiagnosticInfo;
+        Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Public_property__0__of__exported_class_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Property__0__of__exported_interface_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Exported_variable__0__is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_exported_function_has_or_is_using_private_type__1_: DiagnosticInfo;
+        Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Parameter__0__of_exported_function_is_using_inaccessible_module__1_: DiagnosticInfo;
+        Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_exported_function_has_or_is_using_private_type__0_: DiagnosticInfo;
+        Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_: DiagnosticInfo;
+        Return_type_of_exported_function_is_using_inaccessible_module__0_: DiagnosticInfo;
     }
 }

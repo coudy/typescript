@@ -671,7 +671,8 @@ module TypeScript {
 
         public ImportDeclarationCallback(pre: bool, importDecl: ImportDeclaration): bool {
             if (pre) {
-                if ((<Script>this.declarationContainerStack[0]).isExternallyVisibleSymbol(importDecl.id.sym)) {
+                var importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.getSymbolForAST(importDecl, this.locationInfo.fileName);
+                if (importSymbol.getTypeUsedExternally()) {
                     this.emitDeclarationComments(importDecl);
                     this.emitIndent();
                     this.declFile.Write("import ");
