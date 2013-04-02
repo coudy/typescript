@@ -23,5 +23,9 @@ module TypeScript {
         public static repeat(value: string, count: number) {
             return Array(count + 1).join(value);
         }
+
+        public static stringEquals(val1: string, val2: string): bool {
+            return val1 === val2;
+        }
     }
 }

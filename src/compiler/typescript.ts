@@ -582,8 +582,6 @@ module TypeScript {
         private pullUpdateScript(oldScript: Script, newScript: Script): void {
             this.timeFunction("pullUpdateScript: ", () => {
 
-                var declDiffer = new PullDeclDiffer();
-
                 // want to name the new script semantic info the same as the old one
                 var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.fileName, newScript.locationInfo);
                 var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldScript.locationInfo.fileName);
@@ -603,10 +601,8 @@ module TypeScript {
 
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
 
-                var diffResults: PullDeclDiff[] = [];
-
                 var diffStartTime = new Date().getTime();
-                declDiffer.diffDecls(oldTopLevelDecl, newTopLevelDecl, diffResults);
+                var diffResults = PullDeclDiffer.diffDecls(oldTopLevelDecl, oldScriptSemanticInfo, newTopLevelDecl, newScriptSemanticInfo);
 
                 var diffEndTime = new Date().getTime();
                 this.logger.log("Update Script - Diff time: " + (diffEndTime - diffStartTime));

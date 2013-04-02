@@ -20,9 +20,10 @@ module TypeScript {
         private childDecls: PullDecl[] = [];
         private typeParameters: PullDecl[] = [];
 
-        private childDeclTypeCache: any = new BlockIntrinsics();
-        private childDeclValueCache: any = new BlockIntrinsics();
-        private childDeclTypeParameterCache: any = new BlockIntrinsics();
+        // Mappings from names to decls.  Public only for diffing purposes.
+        public childDeclTypeCache: any = new BlockIntrinsics();
+        public childDeclValueCache: any = new BlockIntrinsics();
+        public childDeclTypeParameterCache: any = new BlockIntrinsics();
 
         private declID = pullDeclID++;
 
@@ -151,15 +152,15 @@ module TypeScript {
             cache[declName] = childrenOfName;
         }
 
-        public lookupChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
-            // find the decl with the optional type
-            // if necessary, cache the decl
-            // may be wise to return a chain of decls, or take a parent decl as a parameter
-            var cache = this.getChildDeclCache(declKind);
-            var childrenOfName = <PullDecl[]>cache[declName];
+        //public lookupChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
+        //    // find the decl with the optional type
+        //    // if necessary, cache the decl
+        //    // may be wise to return a chain of decls, or take a parent decl as a parameter
+        //    var cache = this.getChildDeclCache(declKind);
+        //    var childrenOfName = <PullDecl[]>cache[declName];
 
-            return childrenOfName ? childrenOfName : [];
-        }
+        //    return childrenOfName ? childrenOfName : [];
+        //}
 
         // Search for a child decl with the given name.  'isType' is used to specify whether or 
         // not child types or child values are returned.

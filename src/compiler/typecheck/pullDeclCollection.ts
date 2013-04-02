@@ -79,8 +79,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectClassDecls(ast: AST, parenAST: AST, context: DeclCollectionContext) {
-        var classDecl = <ClassDeclaration>ast;
+    export function preCollectClassDecls(classDecl: ClassDeclaration, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var constructorDeclKind = PullElementKind.Variable;
 
@@ -109,10 +108,9 @@ module TypeScript {
 
         context.pushParent(decl);
 
-        context.semanticInfo.setDeclForAST(ast, decl);
-
-        context.semanticInfo.setASTForDecl(decl, ast);
-        context.semanticInfo.setASTForDecl(constructorDecl, ast);
+        context.semanticInfo.setDeclForAST(classDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, classDecl);
+        context.semanticInfo.setASTForDecl(constructorDecl, classDecl);
 
         return true;
     }
@@ -171,9 +169,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectInterfaceDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
-
-        var interfaceDecl = <InterfaceDeclaration>ast;
+    export function preCollectInterfaceDecls(interfaceDecl: InterfaceDeclaration, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         // PULLTODO
@@ -199,14 +195,13 @@ module TypeScript {
 
         context.pushParent(decl);
 
-        context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
         return true;
     }
 
-    export function preCollectParameterDecl(ast: AST, parentAST: AST, context: DeclCollectionContext) {
-        var argDecl = <BoundDecl>ast;
+    export function preCollectParameterDecl(argDecl: ArgDecl, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         if (hasFlag(argDecl.getVarFlags(), VariableFlags.Private)) {
@@ -234,12 +229,12 @@ module TypeScript {
             propDecl.setValueDecl(decl);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             propDecl.setParentDecl(context.parentChain[context.parentChain.length - 2]);
-            context.semanticInfo.setASTForDecl(propDecl, ast);
-            context.semanticInfo.setDeclForAST(ast, propDecl);
+            context.semanticInfo.setASTForDecl(propDecl, argDecl);
+            context.semanticInfo.setDeclForAST(argDecl, propDecl);
         }
         else {
-            context.semanticInfo.setASTForDecl(decl, ast);
-            context.semanticInfo.setDeclForAST(ast, decl);
+            context.semanticInfo.setASTForDecl(decl, argDecl);
+            context.semanticInfo.setDeclForAST(argDecl, decl);
         }
 
         if (argDecl.typeExpr &&
@@ -256,16 +251,15 @@ module TypeScript {
         return false;
     }
 
-    export function preCollectTypeParameterDecl(ast: AST, parentAST: AST, context: DeclCollectionContext) {
-        var typeParameterDecl = <TypeParameter>ast;
+    export function preCollectTypeParameterDecl(typeParameterDecl: TypeParameter, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
 
         var decl = new PullDecl(typeParameterDecl.name.text, PullElementKind.TypeParameter, declFlags, span, context.scriptName);
 
-        context.semanticInfo.setASTForDecl(decl, ast);
-        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setASTForDecl(decl, typeParameterDecl);
+        context.semanticInfo.setDeclForAST(typeParameterDecl, decl);
 
         var parent = context.getParent();
         parent.addChildDecl(decl);
@@ -948,13 +942,13 @@ module TypeScript {
             go = preCollectModuleDecls(ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.ClassDeclaration) {
-            go = preCollectClassDecls(ast, parentAST, context);
+            go = preCollectClassDecls(<ClassDeclaration>ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.InterfaceDeclaration) {
-            go = preCollectInterfaceDecls(ast, parentAST, context);
+            go = preCollectInterfaceDecls(<InterfaceDeclaration>ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.ArgDecl) {
-            go = preCollectParameterDecl(ast, parentAST, context);
+            go = preCollectParameterDecl(<ArgDecl>ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.VarDecl) {
             go = preCollectVarDecls(ast, parentAST, context);
@@ -966,7 +960,7 @@ module TypeScript {
             go = preCollectImportDecls(ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.TypeParameter) {
-            go = preCollectTypeParameterDecl(ast, parentAST, context);
+            go = preCollectTypeParameterDecl(<TypeParameter>ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.IfStatement) {
             go = true;

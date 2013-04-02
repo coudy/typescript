@@ -1054,7 +1054,7 @@ module TypeScript {
                     public isConstructor: bool,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
-            nodeType: number) {
+                    nodeType: number) {
 
             super(nodeType);
         }
@@ -1328,11 +1328,11 @@ module TypeScript {
         private _varFlags = VariableFlags.None;
 
         constructor(nodeType: NodeType,
-            name: Identifier,
+                    name: Identifier,
                     public typeParameters: ASTList,
                     public extendsList: ASTList,
                     public implementsList: ASTList,
-            members: ASTList) {
+                    members: ASTList) {
             super(nodeType, name, members);
         }
 
@@ -1359,10 +1359,10 @@ module TypeScript {
         public endingToken: ASTSpan = null;
 
         constructor(name: Identifier,
-            typeParameters: ASTList,
-            members: ASTList,
-            extendsList: ASTList,
-            implementsList: ASTList) {
+                    typeParameters: ASTList,
+                    members: ASTList,
+                    extendsList: ASTList,
+                    implementsList: ASTList) {
             super(NodeType.ClassDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
