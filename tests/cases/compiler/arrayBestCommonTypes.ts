@@ -5,10 +5,10 @@ class derived extends base { }
 
 
 class f {
-    public voidIfAny(x: bool, y?= false): number;
-    public voidIfAny(x: string, y?= false): number;
-    public voidIfAny(x: number, y?= false): number;
-    public voidIfAny(x: any, y?=false): any { return null; }
+    public voidIfAny(x: bool, y = false): number;
+    public voidIfAny(x: string, y = false): number;
+    public voidIfAny(x: number, y = false): number;
+    public voidIfAny(x: any, y =false): any { return null; }
     
     public x() {
         <number>(this.voidIfAny([4, 2][0]));

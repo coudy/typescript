@@ -1,6 +1,6 @@
 ///<reference path='..\..\..\..\src\harness\harness.ts'/>
 
-describe("Assignment compatibility", function() {
+describe("Generic assignment compatibility", function() {
     var typeFactory = new Harness.Compiler.TypeFactory();
 
     var any     = typeFactory.any;
@@ -53,10 +53,9 @@ describe("Assignment compatibility", function() {
         "   }" +    
         "}";    
     
-    assert.bug('QuickInfo for results of generic function calls shows unspecialized type parameters');
-    //describe("Test generic array specialization and contextual typing", () => {
-    //    typeFactory.isOfType(genericMapCode, "Array<number>");
-    //});
+    describe("Test generic array specialization and contextual typing", () => {
+        typeFactory.isOfType(genericMapCode, "number[]");
+    });
 
     describe("Test generic interface in modules (knockout)", () => {
         it("generic type flows through call 1", function () {
@@ -98,4 +97,441 @@ describe("Assignment compatibility", function() {
     //        t2.isAssignmentCompatibleWith(t1);
     //    });
     //});
-});
+} );
+
+describe("Generic assignment compatibility - 2", function () {
+    var typeFactory = new Harness.Compiler.TypeFactory();
+    var any = typeFactory.any;
+    var number = typeFactory.number;
+    var string = typeFactory.string;
+    var bool = typeFactory.bool;
+
+    var nullType = typeFactory.get('var obj = null', 'obj');
+    var undefinedType = typeFactory.get('var obj = undefined', 'obj');
+    var anyArray = typeFactory.get('var arr: Array<any> = []', 'arr');
+    var someFunction = typeFactory.get('function f<T>() {}', 'f');
+
+    var someObject = typeFactory.get('var obj = {one: 1}', 'obj');
+    var someClass = typeFactory.get('class Foo<T> {public p;};', 'Foo');
+    var someInstance = typeFactory.get('class Foo2<T> {public p;}; var f = new Foo2<number>();', 'f');
+
+    var AnythingBasic = [any, number, string, bool, anyArray, someFunction, someObject, someClass, someInstance];
+    function AnythingBasicBut(these: any[]) {
+        return AnythingBasic.filter(x => !these.some(y => x === y));
+    }
+
+    describe("undefined type", function () {
+        it("is assignment compatible with everything", function () {
+            undefinedType.assertAssignmentCompatibleWith(AnythingBasic);
+        } );
+    } );
+
+    describe("null type", function () {
+        var these = [undefinedType];
+        it("is assignment compatible with everything but undefined", function () {
+            nullType.assertAssignmentCompatibleWith(AnythingBasicBut(these));
+        } );
+        // TODO: can't represent void/undefined propertly with this system? TypeFactory makes them any?
+        //it("is not assignment compatible with undefined", function () {
+        //    nullType.assertNotAssignmentCompatibleWith(these);
+        //});
+    } );
+
+    describe("any type", function () {
+        it("is assignment compatible with everything", function () {
+            any.assertAssignmentCompatibleWith(AnythingBasic);
+        } );
+    } );
+
+    describe("number type", function () {
+        var these = [any, number];
+        it("is assignment compatible with any and number", function () {
+            number.assertAssignmentCompatibleWith(these);
+        } );
+
+        it("is not assignment compatible with anything else", function () {
+            number.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
+        } );
+    } );
+
+    describe("bool type", function () {
+        var these = [any, bool];
+        it("is assignment compatible with any and bool", function () {
+            bool.assertAssignmentCompatibleWith(these);
+        } );
+
+        it("is not assignment compatible with anything else", function () {
+            bool.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
+        } );
+    } );
+
+    describe("string type", function () {
+        var these = [any, string];
+        it("is assignment compatible with any and string", function () {
+            string.assertAssignmentCompatibleWith(these);
+        } );
+
+        it("is not assignment compatible with anything else", function () {
+            string.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
+        } );
+    } );
+
+
+    describe("array type", function () {
+        var boolArray = typeFactory.get('var arr_bool : bool[]', 'arr_bool');
+        var numberArray = typeFactory.get('var arr_number : number[]', 'arr_number');
+        var stringArray = typeFactory.get('var arr_string : string[]', 'arr_string');
+        var funcArray = typeFactory.get('var f : <T>() => void = null; var arr_func = [f];', 'arr_func');
+        // generic version would require interface
+        var objectArray = typeFactory.get('var o = {one: 1}; var arr_obj = [o];', 'arr_obj');
+        var instanceArray = typeFactory.get('class Foo<T> { public p: T = null; }; var arr_Foo: Foo[];', 'arr_Foo');
+        var classArray = typeFactory.get('class Foo2<T> { public p: T = null; }; var arr_Foo2 = [new Foo2<any>()];', 'arr_Foo2');
+
+        var AnyArrayType = [anyArray, boolArray, numberArray, stringArray, funcArray, objectArray, instanceArray, classArray];
+        function AnyArrayTypeBut(these: any[]) {
+            return AnyArrayType.filter(x => !these.some(y => x === y));
+        }
+
+        describe("any[]", function () {
+            it("is assignment compatible with any and all arrays", function () {
+                anyArray.assertAssignmentCompatibleWith(AnyArrayType);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                anyArray.assertNotAssignmentCompatibleWith(AnythingBasicBut([any, anyArray]));
+            } );
+        } );
+
+        describe("bool[]", function () {
+            var these = [any, boolArray, anyArray];
+            it("is assignment compatible with any, any arrays, and bool arrays", function () {
+                boolArray.assertAssignmentCompatibleWith(these);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                boolArray.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
+                boolArray.assertNotAssignmentCompatibleWith(AnyArrayTypeBut(these));
+            } );
+        } );
+
+        describe("number[]", function () {
+            var these = [any, numberArray, anyArray];
+            it("is assignment compatible with any, any arrays, and number arrays", function () {
+                numberArray.assertAssignmentCompatibleWith(these);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                numberArray.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
+                numberArray.assertNotAssignmentCompatibleWith(AnyArrayTypeBut(these));
+            } );
+        } );
+
+        describe("string[]", function () {
+            var these = [any, stringArray, anyArray];
+            it("is assignment compatible with any, any arrays, and string arrays", function () {
+                stringArray.assertAssignmentCompatibleWith(these);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                stringArray.assertNotAssignmentCompatibleWith(AnythingBasicBut(these));
+                stringArray.assertNotAssignmentCompatibleWith(AnyArrayTypeBut(these));
+            } );
+        } );
+    } );
+
+    describe("Objects", function () {
+        var emptyObj = typeFactory.get('var a = {};', 'a');
+        var emptySig = typeFactory.get('var a:{};', 'a');
+         
+        var singleNumObj1 = typeFactory.get('var obj = {one: 1}', 'obj');
+        var singleNumObj2 = typeFactory.get('var obj = {two: 1}', 'obj');
+        var singleNumSig = typeFactory.get('var a:{one:number;};', 'a')
+        var singleNumSig2 = typeFactory.get('var a:{two:number;};', 'a')
+
+        var singleStringObj1 = typeFactory.get('var obj = {one: "1"}', 'obj');
+        var singleStringObj2 = typeFactory.get('var obj = {two: "1"}', 'obj');
+        var singleStringSig = typeFactory.get('var a:{one:string;};', 'a');
+        var singleStringSig2 = typeFactory.get('var a:{two:string;};', 'a');
+
+        var singleBoolObj1 = typeFactory.get('var obj = {one: true}', 'obj');
+        var singleBoolObj2 = typeFactory.get('var obj = {two: true}', 'obj');
+        var singleBoolSig = typeFactory.get('var a:{one:bool;};', 'a');
+
+        var singleAnyArrayObj1 = typeFactory.get('var obj = {one: <any[]>[1]}', 'obj');
+        var singleAnyArrayObj2 = typeFactory.get('var obj = {two: <any[]>[1]}', 'obj');
+        var singleAnyArraySig = typeFactory.get('var a:{one:any[];};', 'a');
+
+        var singleNumArrayObj1 = typeFactory.get('var obj = {one: [1]}', 'obj');
+        var singleNumArrayObj2 = typeFactory.get('var obj = {two: [1]}', 'obj');
+        var singleNumArraySig = typeFactory.get('var a:{one:number[];};', 'a');
+
+        var singleStringArrayObj1 = typeFactory.get('var obj = {one: ["1"]}', 'obj');
+        var singleStringArrayObj2 = typeFactory.get('var obj = {two: ["1"]}', 'obj');
+        var singleStringArraySig = typeFactory.get('var a:{one:string[];};', 'a');
+
+        var singleBoolArrayObj1 = typeFactory.get('var obj = {one: [true]}', 'obj');
+        var singleBoolArrayObj2 = typeFactory.get('var obj = {two: [true]}', 'obj');
+        var singleBoolArraySig = typeFactory.get('var a:{one:bool[];};', 'a');
+
+        var callObjString = typeFactory.get('var obj = function f<string>(a: string) { return a; };', 'obj'); // TODO: see 654513
+        var callSigString = typeFactory.get('var obj: { <string>(a: string): string; }', 'obj');
+
+        var callObjNum = typeFactory.get('var obj = function f<number>(a: number) { return a; };', 'obj');
+        var callSigNum = typeFactory.get('var obj: { <number>(a:number):number;}', 'obj');
+
+        var indexerSigNum = typeFactory.get('var a:{[index:number]:number;};', 'a');
+        var indexerSigString = typeFactory.get('var a:{[index:string]:string;};', 'a'); // basically 'any'
+
+        var constructorSigNum = typeFactory.get('var a:{ new <number>(param: number); };', 'a');
+        var constructorSigString = typeFactory.get('var a:{ new <string>(param: string); };', 'a');
+
+        var AnyInstances = [emptyObj, singleNumObj1, singleNumObj2, singleStringObj1, singleStringObj2, singleBoolObj1, singleBoolObj2, singleAnyArrayObj1, singleAnyArrayObj2, singleNumArrayObj1, singleNumArrayObj2, singleStringArrayObj1, singleStringArrayObj2, singleBoolArrayObj1, singleBoolArrayObj2, callObjString];
+        var AnySig = [emptySig, singleNumSig, singleNumSig2, singleStringSig, singleStringSig2, singleBoolSig, singleAnyArraySig, singleNumArraySig, singleStringArraySig, singleBoolArraySig, callSigString, callSigNum, indexerSigNum, indexerSigString, constructorSigNum, constructorSigString];
+        var AnyLiterals = AnyInstances.concat(AnySig);
+
+        function AnyLiteralsBut(these: any[]) {
+            return AnyLiterals.filter(x => !these.some(y => x === y));
+        }
+
+        describe("Object literal with 1 number property", function () {
+            // TODO: see 622966 for why indexerSigString is included here
+            var these = [emptyObj, singleNumObj1, emptySig, singleNumSig, indexerSigString];
+            it("is assignment compatible with", function () {
+                singleNumObj1.assertAssignmentCompatibleWith(these);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                singleNumObj1.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these));
+            } );
+
+            // TODO: see 622966 for why indexerSigString is included here
+            var these2 = [emptyObj, singleNumObj2, emptySig, singleNumSig2, indexerSigString];
+            it("is assignment compatible with", function () {
+                singleNumObj2.assertAssignmentCompatibleWith(these2);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                singleNumObj2.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these2));
+            } );
+        } );
+
+        describe("Object literal with 1 string property", function () {
+            // TODO: see 622966 for why indexerSigString is included here
+            var these = [emptyObj, singleStringObj1, emptySig, singleStringSig, indexerSigString];
+            it("is assignment compatible with", function () {
+                singleStringObj1.assertAssignmentCompatibleWith(these);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                singleStringObj1.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these));
+            } );
+
+            // TODO: see 622966 for why indexerSigString is included here
+            var these2 = [emptyObj, singleStringObj2, emptySig, singleStringSig2, indexerSigString];
+            it("is assignment compatible with", function () {
+                singleStringObj2.assertAssignmentCompatibleWith(these2);
+            } );
+
+            it("is not assignment compatible with anything else", function () {
+                singleStringObj2.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these2));
+            } );
+        } );
+
+        describe("Callable properties", function () {
+            // TODO: see 622966 for why indexerSigString is included here
+            var these = [callObjString, callSigString, emptySig, emptyObj, indexerSigString];
+            //var these = [emptyObj, singleNumObj1, singleNumObj2, indexerNumSig, constructorNumSig];
+            it("Properties assignment compatible types", function () {
+                callSigString.assertAssignmentCompatibleWith(these);
+            } );
+            it("Properties not assignment compatible types", function () {
+                callSigString.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these));
+            } );
+        } );
+
+        var classWithPublic = typeFactory.get('           class Foo1<T> { constructor(public one: T) {} }                        var x1 = new Foo1(1);', 'x1');
+        var classWithTwoPublic = typeFactory.get('        class Foo2<T,U> { constructor(public one: T, public two: U) {} }    var x2 = new Foo2(1, "a");', 'x2');
+        var classWithOptional = typeFactory.get('         class Foo3<T> { constructor(public one?: T) {} }                       var x3 = new Foo3<number>();', 'x3');
+        var classWithPublicAndOptional = typeFactory.get('class Foo4<T,U> { constructor(public one: T, public two?: U) {} }   var x4 = new Foo4<number, string>(1);', 'x4');
+        var classWithPrivate = typeFactory.get('          class Foo5<T> { constructor(private one: T) {} }                       var x5 = new Foo5(1);', 'x5');
+        var classWithTwoPrivate = typeFactory.get('       class Foo6<T,U> { constructor(private one: T, private two: U) {} }  var x6 = new Foo6(1, "a");', 'x6');
+        var classWithPublicPrivate = typeFactory.get('    class Foo7<T,U> { constructor(public one: T, private two: U) {} }   var x7 = new Foo7(1, "a");', 'x7');
+
+        var interfaceOne = typeFactory.get('                  interface I1<T> { one: T; };                var obj1: I1 = { one: 1 };', 'obj1');
+        var interfaceTwo = typeFactory.get('                  interface I2<T,U> { one: T; two: U; };   var obj2: I2 = { one: 1, two: "a" };', 'obj2');
+        var interfaceWithOptional = typeFactory.get('         interface I3<T> { one?: T; };               var obj3: I3 = { };', 'obj3');
+        var interfaceWithPublicAndOptional = typeFactory.get('interface I4<T,U> { one: T; two?: U; };  var obj4: I4 = { one: 1 };', 'obj4');
+
+        var AnyClass = [classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional, classWithPrivate, classWithTwoPrivate, classWithPublicPrivate];
+        var AnyInterface = [interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional];
+        var AnyObject = AnyClass.concat(AnyInterface);
+        function AnyObjectBut(these: any[]) {
+            return AnyObject.filter(x => !these.some(y => x === y));
+        }
+
+        describe("Classes with properties 1", function () {
+            var these = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, classWithPublic, classWithOptional, classWithPublicAndOptional, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional];
+
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+            these = these.concat([classWithPrivate]); // TODO: remove
+
+            it("Class with public property assignable to", function () {
+                classWithPublic.assertAssignmentCompatibleWith(these);
+            } );
+            it("Class with public property not assignable to", function () {
+                classWithPublic.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these));
+                classWithPublic.assertNotAssignmentCompatibleWith(AnyObjectBut(these));
+            } );
+
+            var these2 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, classWithPublic, classWithTwoPublic, classWithPublicAndOptional, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional];
+            it("Class with public properties assignable to", function () {
+                classWithTwoPublic.assertAssignmentCompatibleWith(these2);
+            } );
+            it("Class with public properties not assignable to", function () {
+                var these2_1 = these2.concat([classWithOptional]) // this is not a bug, assignment compat is not always symmetric
+                // TODO: remove
+                assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+                these2_1 = these2_1.concat([classWithPrivate, classWithTwoPrivate, classWithPublicPrivate]);
+
+                classWithTwoPublic.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these2_1));
+                classWithTwoPublic.assertNotAssignmentCompatibleWith(AnyObjectBut(these2_1));
+            } );
+
+            var these3 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional, classWithOptional, classWithPublicAndOptional];
+
+            // TODO: remove
+            assert.bug('Optional property incorrectly matches one of the same name for assignment compat purposes');
+            these3 = these3.concat([classWithPublic]);
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+            these3 = these3.concat([classWithPrivate]);
+
+            it("Class with optional property assignable to", function () {
+                classWithOptional.assertAssignmentCompatibleWith(these3);
+            } );
+            it("Class with optional property not assignable to", function () {
+                classWithOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these3));
+                classWithOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these3));
+            } );
+
+            var these4 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional];
+
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+            these4 = these4.concat([classWithPrivate, classWithTwoPrivate, classWithPublicPrivate]); // TODO: remove
+
+            it("Class with public and optional property assignable to", function () {
+                classWithPublicAndOptional.assertAssignmentCompatibleWith(these4);
+            } );
+            it("Class with public and optional property not assignable to", function () {
+                classWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these4));
+                classWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these4));
+            } );
+
+            // TODO: harness issue makes it claim class with private isn't assignable to itself
+            var these5 = [emptyObj, emptySig, indexerSigString, interfaceWithOptional]; // classWithPrivate
+
+            // TODO: remove
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+            these5 = these5.concat([singleNumObj1, singleNumSig, interfaceOne, interfaceWithPublicAndOptional]);
+
+            it("Class with private property assignable to", function () {
+                classWithPrivate.assertAssignmentCompatibleWith(these5);
+            } );
+            it("Class with private property not assignable to", function () {
+                // TODO: remove
+                assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+                var these5_2 = these5.concat([classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional, classWithPublicPrivate]);
+
+                classWithPrivate.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these5_2));
+                classWithPrivate.assertNotAssignmentCompatibleWith(AnyObjectBut(these5_2));
+            } );
+
+            var these6 = [emptyObj, emptySig, interfaceWithOptional, indexerSigString]; // classWithTwoPrivate TODO: see harness issue above
+
+            // TODO: remove
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+            these6 = these6.concat([classWithPublic, classWithTwoPublic, interfaceOne, interfaceTwo, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, classWithOptional, classWithPublicAndOptional, interfaceWithPublicAndOptional]);
+
+            it("Class with two private properties assignable to", function () {
+                classWithTwoPrivate.assertAssignmentCompatibleWith(these6);
+            } );
+            it("Class with two private properties not assignable to", function () {
+                classWithTwoPrivate.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these6));
+                classWithTwoPrivate.assertNotAssignmentCompatibleWith(AnyObjectBut(these6));
+            } );
+
+            // TODO: see harness issue above for why classWithPublicPrivate not included
+            var these7 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional];
+
+            // TODO: remove
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree');
+            these7 = these7.concat([classWithPrivate, classWithTwoPublic, classWithPublicAndOptional]);
+
+            it("Class with public and private properties assignable to", function () {
+                classWithPublicPrivate.assertAssignmentCompatibleWith(these7);
+            } );
+            it("Class with public and private properties not assignable to", function () {
+                classWithPublicPrivate.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these7));
+                classWithPublicPrivate.assertNotAssignmentCompatibleWith(AnyObjectBut(these7));
+            } );
+        } );
+
+        describe("Interfaces", function () {
+            var these = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceOne, interfaceWithOptional, classWithPublic, classWithOptional, classWithPublicAndOptional, interfaceWithPublicAndOptional];
+
+            // TODO: remove
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');
+            these = these.concat([classWithPrivate]);
+
+            it("Interface with public property assignable to", function () {
+                interfaceOne.assertAssignmentCompatibleWith(these);
+            } );
+            it("Interface with public property not assignable to", function () {
+                interfaceOne.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these));
+                interfaceOne.assertNotAssignmentCompatibleWith(AnyObjectBut(these));
+            } );
+
+            var these2 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithTwoPublic, classWithPublicAndOptional];
+
+            // TODO: remove
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');
+            these2 = these2.concat([classWithPrivate, classWithTwoPrivate, classWithPublicPrivate]);
+
+            it("Interface with public properties assignable to", function () {
+                interfaceTwo.assertAssignmentCompatibleWith(these2);
+            } );
+            it("Interface with public properties not assignable to", function () {
+                interfaceTwo.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these2));
+                interfaceTwo.assertNotAssignmentCompatibleWith(AnyObjectBut(these2));
+            } );
+
+            var these3 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithPublicAndOptional];
+
+            // TODO: remove
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');
+            these3 = these3.concat([classWithPrivate]);
+
+            it("Interface with public property assignable to", function () {
+                interfaceWithOptional.assertAssignmentCompatibleWith(these3);
+            } );
+            it("Interface with public property not assignable to", function () {
+                interfaceWithOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these3));
+                interfaceWithOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these3));
+            } );
+
+            var these4 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional];
+
+            // TODO: remove
+            assert.bug('Assignment compat allows public property to satisfy private property constraints as long as property names agree, and vice versa');
+            these4 = these4.concat([classWithPrivate, classWithTwoPrivate, classWithPublicPrivate]);
+
+            it("Interface with public and optional property assignable to", function () {
+                interfaceWithPublicAndOptional.assertAssignmentCompatibleWith(these4);
+            } );
+            it("Interface with public and optional property not assignable to", function () {
+                interfaceWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these4));
+                interfaceWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these4));
+            } );
+        } );
+    } );
+} );
+

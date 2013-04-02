@@ -3,6 +3,12 @@ var M;
     var A = (function () {
         function A() { }
         return A;
+    })();
+    M.A = A;    
+    var B = (function () {
+        function B() { }
+        return B;
     })();    
 })(M || (M = {}));
-var t = new M.A[]();
+var t = [];
+var t2 = [];

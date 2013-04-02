@@ -25,13 +25,16 @@ var C = (function () {
 string;
  {
 }
-get;
-Baz();
-number;
- {
-    return 0;
-}
-set;
-Baz(n, number);
- {
-}
+var E = (function () {
+    function E() { }
+    Object.defineProperty(E.prototype, "Baz", {
+        get: function () {
+            return 0;
+        },
+        set: function (n) {
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return E;
+})();

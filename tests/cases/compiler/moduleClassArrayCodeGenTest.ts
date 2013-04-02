@@ -2,7 +2,9 @@
 
 module M
 {
-    class A{ }
+    export class A { }
+    class B{ }
 }
 
-var t = new M.A[];
+var t: M.A[] = [];
+var t2: M.B[] = [];

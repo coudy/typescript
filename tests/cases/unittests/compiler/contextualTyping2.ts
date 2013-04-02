@@ -157,7 +157,7 @@ describe('Contextual typing tests', function() {
                 Harness.Compiler.compileString(code, 'Array Literal', function(result) {
                     assert.equal(result.errors.length, 0);
                 });
-            });
+            } );
             assert.bug('[Errors] No error for invalid use of heterogeneous array literals');
             //it("Negative 2", function() {
             //    var code = 'var foo:{id:number;}[] = [{id:1}]; foo = [{id:1}, 1];';
@@ -291,13 +291,12 @@ describe('Contextual typing tests', function() {
                     assert.equal(result.errors.length, 0);
                 });
             });
-            assert.bug('[Errors] No error for impossible to succeed type assertions of primitives and call signatures');
-            //it("Negative", function() {
-            //    var code = 'var foo = <{ (): number; }> function() { return "err"; };';
-            //    Harness.Compiler.compileString(code, 'Array Literal', function(result) {
-            //        assert.equal(result.errors.length, 1);
-            //    });
-            //});
+            it("Negative", function() {
+                var code = 'var foo = <{ (): number; }> function() { return "err"; };';
+                Harness.Compiler.compileString(code, 'Array Literal', function(result) {
+                    assert.equal(result.errors.length, 1);
+                });
+            });
         });
         describe('Regular expression', function() {
             it("Positive", function() {
@@ -306,13 +305,12 @@ describe('Contextual typing tests', function() {
                     assert.equal(result.errors.length, 0);
                 });
             });
-            assert.bug('[Errors] No error for impossible to succeed type assertions of primitives and call signatures');
-            //it("Negative", function() {
-            //    var code = 'var foo = <{():number; (i:number):number; }> (function(){return "err";});';
-            //    Harness.Compiler.compileString(code, 'Array Literal', function(result) {
-            //        assert.equal(result.errors.length, 1);
-            //    });
-            //});
+            it("Negative", function() {
+                var code = 'var foo = <{():number; (i:number):number; }> (function(){return "err";});';
+                Harness.Compiler.compileString(code, 'Array Literal', function(result) {
+                    assert.equal(result.errors.length, 1);
+                });
+            });
         });
     });        
 });

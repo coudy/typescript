@@ -22,7 +22,7 @@ module M {
     }
 
     export function test() {
-        var x:IEye[]=new IEye[];
+        var x:IEye[]= [];
         var result="";
     
         x[0]={ color:Color.Brown };

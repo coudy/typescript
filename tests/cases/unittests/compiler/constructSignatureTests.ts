@@ -10,14 +10,13 @@ describe('Compiling tests\\compiler\\constructSignatureTests.ts', function() {
             assert.equal(result.errors.length, 0);
         });
     });
-    assert.bug('[Errors] No error for constructor signature that returns void');
-    //it("A call signature can have the void return type", function() {
-    //    var code  = 'var foo: {new ():void;};';
-    //        Harness.Compiler.compileString(code, 'call signatures', function(result) {
-    //        assert.equal(result.errors.length, 1);
-    //        assert.compilerWarning(result, 1, 9, "Constructors may not have a return type of 'void'");
-    //    });
-    //});
+    it("A call signature can have the void return type", function() {
+        var code  = 'var foo: {new ():void;};';
+            Harness.Compiler.compileString(code, 'call signatures', function(result) {
+            assert.equal(result.errors.length, 1);
+            assert.compilerWarning(result, 1, 10, "Constructors may not have a return type of 'void'");
+        });
+    });
 
     it("A construct signature can't have the same overload", function() {
         assert.bug('13978: Declaring the same call or construct signature multiple times should be a bug');

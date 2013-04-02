@@ -19,7 +19,7 @@ var M;
     }
     M.CompareYeux = CompareYeux;
     function test() {
-        var x = new IEye[]();
+        var x = [];
         var result = "";
         x[0] = {
             color: Color.Brown

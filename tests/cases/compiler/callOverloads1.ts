@@ -6,7 +6,7 @@ class Foo {
     }
 }
 
-function Foo(); // no error - Foo() becomes the call signature for class Foo
+function Foo(); // error
 function F1(s:string);
 function F1(a:any) { return a;}
 

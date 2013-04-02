@@ -1,4 +1,10 @@
-// static as constructor parameter name should give error
+// static as constructor parameter name should give error if 'use strict'
+
+class test {
+    constructor (static) { }
+}
+
+'use strict'
 
 class test {
     constructor (static) { }
