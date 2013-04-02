@@ -133,37 +133,37 @@ var NoQuickInfoClass = (function () {
     return NoQuickInfoClass;
 })();
 ////[0.d.ts]
-function simple(): void;
-function multiLine(): void;
+declare function simple(): void;
+declare function multiLine(): void;
 /** this is eg of single line jsdoc style comment */
-function jsDocSingleLine(): void;
+declare function jsDocSingleLine(): void;
 /** this is multiple line jsdoc stule comment
 *New line1
 *New Line2*/
-function jsDocMultiLine(): void;
+declare function jsDocMultiLine(): void;
 /** this is multiple line jsdoc stule comment
 *New line1
 *New Line2*/
 /** Shoul mege this line as well
 * and this too*/ /** Another this one too*/
-function jsDocMultiLineMerge(): void;
+declare function jsDocMultiLineMerge(): void;
 /** jsdoc comment */
-function jsDocMixedComments1(): void;
+declare function jsDocMixedComments1(): void;
 /** jsdoc comment */ /*** another jsDocComment*/
-function jsDocMixedComments2(): void;
-function jsDocMixedComments3(): void;
-function jsDocMixedComments4(): void;
-function jsDocMixedComments5(): void;
+declare function jsDocMixedComments2(): void;
+declare function jsDocMixedComments3(): void;
+declare function jsDocMixedComments4(): void;
+declare function jsDocMixedComments5(): void;
 /** jsdoc comment */
-function jsDocMixedComments6(): void;
-function noHelpComment1(): void;
-function noHelpComment2(): void;
-function noHelpComment3(): void;
+declare function jsDocMixedComments6(): void;
+declare function noHelpComment1(): void;
+declare function noHelpComment2(): void;
+declare function noHelpComment3(): void;
 /** Adds two integers and returns the result
 * @param {number} a first number
 * @param b second number
 */
-function sum(a: number, b: number): number;
+declare function sum(a: number, b: number): number;
 /** This is multiplication function*/
 /** @param */
 /** @param a first number*/
@@ -171,12 +171,12 @@ function sum(a: number, b: number): number;
 /** @param c {
 @param d @anotherTag*/
 /** @param e LastParam @anotherTag*/
-function multiply(a: number, b: number, c?: number, d?, e?): void;
+declare function multiply(a: number, b: number, c?: number, d?, e?): void;
 /** fn f1 with number
 * @param { string} b about b
 */
-function f1(a: number);
-function f1(b: string);
+declare function f1(a: number);
+declare function f1(b: string);
 /** This is subtract function
 @param { a
 *@param { number | } b this is about b
@@ -185,23 +185,23 @@ function f1(b: string);
 @param { { () => string; } } e this is optional param e
 @param { { { () => string; } } f this is optional param f
 */
-function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void;
+declare function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void;
 /** this is square function
 @paramTag { number } a this is input number of paramTag
 @param { number } a this is input number
 @returnType { number } it is return type
 */
-function square(a: number): number;
+declare function square(a: number): number;
 /** this is divide function
 @param { number} a this is a
 @paramTag { number } g this is optional param g
 @param { number} b this is b
 */
-function divide(a: number, b: number): void;
+declare function divide(a: number, b: number): void;
 /** this is jsdoc style function with param tag as well as inline parameter help
 *@param a it is first parameter
 *@param c it is third parameter
 */
-function jsDocParamTest(/** this is inline comment for a */ a: number, /** this is inline comment for b*/ b: number, c: number, d: number): number;
-class NoQuickInfoClass {
+declare function jsDocParamTest(/** this is inline comment for a */ a: number, /** this is inline comment for b*/ b: number, c: number, d: number): number;
+declare class NoQuickInfoClass {
 }

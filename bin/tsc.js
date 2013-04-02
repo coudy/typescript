@@ -20058,10 +20058,6 @@ var TypeScript;
         };
         DeclarationEmitter.prototype.getDeclFlagsString = function (declFlags, typeString) {
             var result = this.getIndentString();
-            var container = this.getAstDeclarationContainer();
-            if (container.nodeType === 94 /* ModuleDeclaration */  && TypeScript.hasFlag((container).getModuleFlags(), 512 /* IsWholeFile */ ) && TypeScript.hasFlag(declFlags, 1 /* Exported */ )) {
-                result += "export ";
-            }
             if (TypeScript.hasFlag(declFlags, 16 /* Static */ )) {
                 if (TypeScript.hasFlag(declFlags, 2 /* Private */ )) {
                     result += "private ";
@@ -20073,6 +20069,15 @@ var TypeScript;
                 } else if (TypeScript.hasFlag(declFlags, 4 /* Public */ )) {
                     result += "public ";
                 } else {
+                    var emitDeclare = !TypeScript.hasFlag(declFlags, 1 /* Exported */ );
+                    var container = this.getAstDeclarationContainer();
+                    if (container.nodeType === 94 /* ModuleDeclaration */  && TypeScript.hasFlag((container).getModuleFlags(), 512 /* IsWholeFile */ ) && TypeScript.hasFlag(declFlags, 1 /* Exported */ )) {
+                        result += "export ";
+                        emitDeclare = true;
+                    }
+                    if (emitDeclare && typeString != "interface") {
+                        result += "declare ";
+                    }
                     result += typeString + " ";
                 }
             }
@@ -48042,7 +48047,7 @@ var TypeScript;
         };
         PullTypeChecker.prototype.typeCheckInstanceOfExpression = function (ast, typeCheckContext) {
             var binex = ast;
-            var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
+            var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
             var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
             var isValidLHS = lhsType && (lhsType == this.semanticInfoChain.anyTypeSymbol || !lhsType.isPrimitive());
             var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context));

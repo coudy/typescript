@@ -540,9 +540,9 @@ exports.eaF = eaF;
 
 
 ////[0.d.ts]
-export var eV;
-export function eF(): void;
-export class eC {
+export declare var eV;
+export declare function eF(): void;
+export declare class eC {
     constructor();
     public pV;
     private rV;
@@ -593,7 +593,7 @@ export interface eI {
     p7(pa1, pa2): void;
     p7? (pa1, pa2): void;
 }
-export module eM {
+export declare module eM {
     var eV;
     function eF(): void;
     class eC {
@@ -705,9 +705,9 @@ export module eM {
         }
     }
 }
-export var eaV;
-export function eaF(): void;
-export class eaC {
+export declare var eaV;
+export declare function eaF(): void;
+export declare class eaC {
     constructor();
     public pV;
     private rV;
@@ -728,7 +728,7 @@ export class eaC {
     static tgF(): void;
     static tgF : void;
 }
-export module eaM {
+export declare module eaM {
     var V;
     function F(): void;
     class C {

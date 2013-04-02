@@ -54,13 +54,13 @@ var m1;
     })(m1 || (m1 = {}));
 ////[0.d.ts]
 /** Variable comments*/
-var myVariable: number;
+declare var myVariable: number;
 /** function comments*/
-function foo(/** parameter comment*/ p: number): void;
+declare function foo(/** parameter comment*/ p: number): void;
 /** variable with function type comment*/
-var fooVar: () => void;
+declare var fooVar: () => void;
 /**class comment*/
-class c {
+declare class c {
     /** constructor comment*/
     constructor();
     /** property comment */
@@ -76,7 +76,7 @@ class c {
     public foo1(b: string): string;
 }
 /**instance comment*/
-var i: c;
+declare var i: c;
 /** interface comments*/
 interface i1 {
     /** caller comments*/
@@ -91,9 +91,9 @@ interface i1 {
     prop: string;
 }
 /**interface instance comments*/
-var i1_i: i1;
+declare var i1_i: i1;
 /** this is module comment*/
-module m1 {
+declare module m1 {
     /** class b */
     class b {
         public x: number;

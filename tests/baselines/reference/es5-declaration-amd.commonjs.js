@@ -7,7 +7,7 @@ var A = (function () {
     return A;
 })();
 ////[0.d.ts]
-class A {
+declare class A {
     constructor();
     public B(): number;
 }

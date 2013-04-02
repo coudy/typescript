@@ -109,7 +109,7 @@ var e = (function () {
     return e;
 })();
 ////[0.d.ts]
-class a {
+declare class a {
     constructor(n: number);
     constructor(s: string);
     public pgF(): void;
@@ -124,25 +124,25 @@ class a {
     private pv3;
     private foo(n);
 }
-class b extends a {
+declare class b extends a {
 }
-module m1 {
+declare module m1 {
     class b {
     }
     interface ib {
     }
 }
-module m2.m3 {
+declare module m2.m3 {
     class c extends b {
     }
     class ib2 implements m1.ib {
     }
 }
-class c extends m1.b {
+declare class c extends m1.b {
 }
-class ib2 implements m1.ib {
+declare class ib2 implements m1.ib {
 }
-class aAmbient {
+declare class aAmbient {
     constructor(n: number);
     constructor(s: string);
     public pgF(): void;
@@ -157,9 +157,9 @@ class aAmbient {
     private pv3;
     private foo(s);
 }
-class d {
+declare class d {
     private foo(n);
 }
-class e {
+declare class e {
     private foo(s);
 }

@@ -60,61 +60,61 @@ var i8 = new c8();
 var i8_c = c8;
 ////[0.d.ts]
 /** This is class c2 without constuctor*/
-class c2 {
+declare class c2 {
 }
-var i2: c2;
-var i2_c: new() => c2;
-class c3 {
+declare var i2: c2;
+declare var i2_c: new() => c2;
+declare class c3 {
     /** Constructor comment*/
     constructor();
 }
-var i3: c3;
-var i3_c: new() => c3;
+declare var i3: c3;
+declare var i3_c: new() => c3;
 /** Class comment*/
-class c4 {
+declare class c4 {
     /** Constructor comment*/
     constructor();
 }
-var i4: c4;
-var i4_c: new() => c4;
+declare var i4: c4;
+declare var i4_c: new() => c4;
 /** Class with statics*/
-class c5 {
+declare class c5 {
     static s1: number;
 }
-var i5: c5;
-var i5_c: {
+declare var i5: c5;
+declare var i5_c: {
     s1: number;
     new(): c5;
 };
-class c6 {
+declare class c6 {
     static s1: number;
     constructor();
 }
-var i6: c6;
-var i6_c: {
+declare var i6: c6;
+declare var i6_c: {
     s1: number;
     new(): c6;
 };
-class c7 {
+declare class c7 {
     static s1: number;
     constructor();
 }
-var i7: c7;
-var i7_c: {
+declare var i7: c7;
+declare var i7_c: {
     s1: number;
     new(): c7;
 };
 /** class with statics and constructor
 */
-class c8 {
+declare class c8 {
     /** s1 comment */
     static s1: number;
     /** constructor comment
     */
     constructor();
 }
-var i8: c8;
-var i8_c: {
+declare var i8: c8;
+declare var i8_c: {
     s1: number;
     new(): c8;
 };

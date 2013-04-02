@@ -21,7 +21,7 @@ var bar = (function () {
 ////[0.d.ts]
 interface bar {
 }
-class bar {
+declare class bar {
     public f(): string;
     public g(): {
         a: bar;

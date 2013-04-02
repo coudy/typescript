@@ -20,14 +20,14 @@ var y = v2.x;
 var u = v2.a;
 var z = v2.b;
 ////[0.d.ts]
-class B<T> {
+declare class B<T> {
     public a: T;
     public b: T;
 }
-class C<T> extends B<T> {
+declare class C<T> extends B<T> {
     public x: T;
 }
-var v2: C<string>;
-var y: string;
-var u: string;
-var z: string;
+declare var v2: C<string>;
+declare var y: string;
+declare var u: string;
+declare var z: string;

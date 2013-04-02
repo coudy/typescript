@@ -140,14 +140,6 @@ module TypeScript {
         private getDeclFlagsString(declFlags: DeclFlags, typeString: string) {
             var result = this.getIndentString();
 
-            // Emit export only for global export statements. The container for this would be dynamic module which is whole file
-            var container = this.getAstDeclarationContainer();
-            if (container.nodeType === NodeType.ModuleDeclaration &&
-                hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsWholeFile) &&
-                hasFlag(declFlags, DeclFlags.Exported)) {
-                result += "export ";
-            }
-
             // Static/public/private/global declare
             if (hasFlag(declFlags, DeclFlags.Static)) {
                 if (hasFlag(declFlags, DeclFlags.Private)) {
@@ -163,6 +155,23 @@ module TypeScript {
                     result += "public ";
                 }
                 else {
+                    var emitDeclare = !hasFlag(declFlags, DeclFlags.Exported);
+
+                    // Emit export only for global export statements. 
+                    // The container for this would be dynamic module which is whole file
+                    var container = this.getAstDeclarationContainer();
+                    if (container.nodeType === NodeType.ModuleDeclaration &&
+                        hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsWholeFile) &&
+                        hasFlag(declFlags, DeclFlags.Exported)) {
+                        result += "export ";
+                        emitDeclare = true;
+                    }
+
+                    // Emit declare if not interface declaration && is not from module
+                    if (emitDeclare && typeString != "interface") {
+                        result += "declare ";
+                    }
+
                     result += typeString + " ";
                 }
             }

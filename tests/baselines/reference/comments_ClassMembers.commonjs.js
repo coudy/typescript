@@ -252,7 +252,7 @@ cProperties_i.p2 = cProperties_i.p1;
 cProperties_i.nc_p2 = cProperties_i.nc_p1;
 ////[0.d.ts]
 /** This is comment for c1*/
-class c1 {
+declare class c1 {
     /** p1 is property of c1*/
     public p1: number;
     /** sum with property*/
@@ -318,24 +318,24 @@ class c1 {
     */
     static b_s3 : number;
 }
-var i1: c1;
-var i1_p: number;
-var i1_f: (b: number) => number;
-var i1_r: number;
-var i1_prop: number;
-var i1_nc_p: number;
-var i1_ncf: (b: number) => number;
-var i1_ncr: number;
-var i1_ncprop: number;
-var i1_s_p: number;
-var i1_s_f: (b: number) => number;
-var i1_s_r: number;
-var i1_s_prop: number;
-var i1_s_nc_p: number;
-var i1_s_ncf: (b: number) => number;
-var i1_s_ncr: number;
-var i1_s_ncprop: number;
-var i1_c: {
+declare var i1: c1;
+declare var i1_p: number;
+declare var i1_f: (b: number) => number;
+declare var i1_r: number;
+declare var i1_prop: number;
+declare var i1_nc_p: number;
+declare var i1_ncf: (b: number) => number;
+declare var i1_ncr: number;
+declare var i1_ncprop: number;
+declare var i1_s_p: number;
+declare var i1_s_f: (b: number) => number;
+declare var i1_s_r: number;
+declare var i1_s_prop: number;
+declare var i1_s_nc_p: number;
+declare var i1_s_ncf: (b: number) => number;
+declare var i1_s_ncr: number;
+declare var i1_s_ncprop: number;
+declare var i1_c: {
     s1: number;
     s2(b: number): number;
     s3: number;
@@ -350,7 +350,7 @@ var i1_c: {
     b_s3: number;
     new(): c1;
 };
-class cProperties {
+declare class cProperties {
     private val;
     /** getter only property*/
     public p1 : number;
@@ -359,4 +359,4 @@ class cProperties {
     public p2 : number;
     public nc_p2 : number;
 }
-var cProperties_i: cProperties;
+declare var cProperties_i: cProperties;

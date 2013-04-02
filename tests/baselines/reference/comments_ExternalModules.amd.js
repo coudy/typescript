@@ -75,7 +75,7 @@ define(["require", "exports", "comments_ExternalModules_0"], function(require, e
 })
 ////[comments_ExternalModules_0.d.ts]
 /** Module comment*/
-export module m1 {
+export declare module m1 {
     /** b's comment*/
     var b: number;
     /** m2 comments*/
@@ -90,7 +90,7 @@ export module m1 {
     function fooExport(): number;
 }
 /** Module comment */
-export module m4 {
+export declare module m4 {
     /** b's comment */
     var b: number;
     /** m2 comments
@@ -108,5 +108,5 @@ export module m4 {
 ////[comments_ExternalModules_1.d.ts]
 /**This is on import declaration*/
 import extMod = module ("comments_ExternalModules_0");
-export var newVar: extMod.m1.m2.c;
-export var newVar2: extMod.m4.m2.c;
+export declare var newVar: extMod.m1.m2.c;
+export declare var newVar2: extMod.m4.m2.c;

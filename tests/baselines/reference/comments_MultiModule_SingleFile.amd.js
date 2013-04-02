@@ -34,14 +34,14 @@ new multiM.b();
 new multiM.c();
 ////[0.d.ts]
 /** this is multi declare module*/
-module multiM {
+declare module multiM {
     /** class b*/
     class b {
     }
     class d {
     }
 }
-module multiM {
+declare module multiM {
     /** class c comment*/
     class c {
     }

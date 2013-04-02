@@ -637,6 +637,9 @@ module TypeScript {
 
         public resolveDeclaration(declAST: AST, context: PullTypeResolutionContext, enclosingDecl?: PullDecl): PullSymbol {
             switch (declAST.nodeType) {
+                case NodeType.Script:
+                    return null;
+
                 case NodeType.ModuleDeclaration:
                     return this.resolveModuleDeclaration(<ModuleDeclaration>declAST, context);
                 case NodeType.InterfaceDeclaration:
@@ -1431,7 +1434,8 @@ module TypeScript {
             }
 
             // Check if variable satisfies type privacy
-            if (declSymbol.getKind() != PullElementKind.Parameter) {
+            if (declSymbol.getKind() != PullElementKind.Parameter &&
+                (declSymbol.getKind() != PullElementKind.Property || declSymbol.getContainer().isNamedTypeSymbol())) {
                 this.checkTypePrivacy(declSymbol, declSymbol.getType(), (typeSymbol: PullTypeSymbol) =>
                     this.variablePrivacyErrorReporter(declSymbol, typeSymbol, context));
             }

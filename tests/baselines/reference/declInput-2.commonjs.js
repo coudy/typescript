@@ -32,7 +32,7 @@ var M;
     M.D = D;    
 })(M || (M = {}));
 ////[0.d.ts]
-module M {
+declare module M {
     class E {
     }
     interface I1 {

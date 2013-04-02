@@ -10,12 +10,12 @@ var z = v1.z.a;
 interface Foo<T> {
     a: T;
 }
-class C<T> {
+declare class C<T> {
     public x: T;
     public y: Foo<T>;
     public z: Foo<number>;
 }
-var v1: C<string>;
-var y: string;
-var w: string;
-var z: number;
+declare var v1: C<string>;
+declare var y: string;
+declare var w: string;
+declare var z: number;

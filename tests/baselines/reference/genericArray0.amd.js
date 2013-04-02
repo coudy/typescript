@@ -1,5 +1,5 @@
 var x;
 var y = x;
 ////[0.d.ts]
-var x: number[];
-var y: number[];
+declare var x: number[];
+declare var y: number[];

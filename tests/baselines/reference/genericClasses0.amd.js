@@ -5,8 +5,8 @@ var C = (function () {
 var v1;
 var y = v1.x;
 ////[0.d.ts]
-class C<T> {
+declare class C<T> {
     public x: T;
 }
-var v1: C<string>;
-var y: string;
+declare var v1: C<string>;
+declare var y: string;

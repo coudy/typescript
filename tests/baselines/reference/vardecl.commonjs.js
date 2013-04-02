@@ -68,46 +68,46 @@ for(var k = 0; k < 30; k++) {
 }
 var b = 10;
 ////[0.d.ts]
-var simpleVar;
-var anotherVar: any;
-var varWithSimpleType: number;
-var varWithArrayType: number[];
-var varWithInitialValue: number;
-var withComplicatedValue: {
+declare var simpleVar;
+declare var anotherVar: any;
+declare var varWithSimpleType: number;
+declare var varWithArrayType: number[];
+declare var varWithInitialValue: number;
+declare var withComplicatedValue: {
     x: number;
     y: number;
     desc: string;
 };
-var arrayVar: string[];
-var complicatedArrayVar: {
+declare var arrayVar: string[];
+declare var complicatedArrayVar: {
     x: number;
     y: string;
 }[];
-var n1: {
+declare var n1: {
     [s: string]: number;
 };
-var c: {
+declare var c: {
     new(): any;
 };
-var d: {
+declare var d: {
     foo(): {
         x: number;
     };
 };
-var d3: {
+declare var d3: {
     foo(): {
         x: number;
         y: number;
     };
 };
-var d2: {
+declare var d2: {
     foo(): {
         x: number;
     };
 };
-var n2: () => void;
-var n4: () => void[];
-var d4: {
+declare var n2: () => void;
+declare var n4: () => void[];
+declare var d4: {
     foo(n: string, x: {
         x: number;
         y: number;
@@ -116,7 +116,7 @@ var d4: {
         y: number;
     };
 };
-module m2 {
+declare module m2 {
     var a, b2: number, b;
     class C2 {
         public b;
@@ -127,11 +127,11 @@ module m2 {
     var b2E;
     var v1E;
 }
-var a22, b22: number, c22: number;
-var nn;
-var normalVar;
-var xl;
-var x;
-var z;
-function foo(a2): void;
-var b: number;
+declare var a22, b22: number, c22: number;
+declare var nn;
+declare var normalVar;
+declare var xl;
+declare var x;
+declare var z;
+declare function foo(a2): void;
+declare var b: number;

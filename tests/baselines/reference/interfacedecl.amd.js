@@ -35,6 +35,6 @@ interface c extends a, b {
 }
 interface d extends a {
 }
-class c1 implements a {
+declare class c1 implements a {
 }
-var instance2: c1;
+declare var instance2: c1;
