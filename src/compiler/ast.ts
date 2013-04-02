@@ -2397,7 +2397,7 @@ module TypeScript {
             return false;
         }
 
-        public getDocCommentText() {
+        public getDocCommentTextValue() {
             if (this.docCommentText === null) {
                 this.docCommentText = Comment.cleanJSDocComment(this.content);
             }
@@ -2526,7 +2526,7 @@ module TypeScript {
         static getDocCommentText(comments: Comment[]) {
             var docCommentText: string[] = [];
             for (var c = 0 ; c < comments.length; c++) {
-                var commentText = comments[c].getDocCommentText();
+                var commentText = comments[c].getDocCommentTextValue();
                 if (commentText != "") {
                     docCommentText.push(commentText);
                 }

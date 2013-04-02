@@ -2216,15 +2216,22 @@ module TypeScript {
             }
 
             // now for the name...
-            nameSymbol = lhsType.findMember(rhsName);
+            // For classes, check the statics first below
+            if (!(lhs.isType() && lhs.isClass()) && !nameSymbol) {
+                nameSymbol = lhsType.findMember(rhsName);
+            }
 
             if (!nameSymbol) {
 
                 // could be a static
                 if (lhsType.isClass()) {
-                    lhsType = (<PullClassTypeSymbol>lhsType).getConstructorMethod().getType();
+                    var staticType = (<PullClassTypeSymbol>lhsType).getConstructorMethod().getType();
 
-                    nameSymbol = lhsType.findMember(rhsName);
+                    nameSymbol = staticType.findMember(rhsName);
+
+                    if (!nameSymbol) {
+                        nameSymbol = lhsType.findMember(rhsName);
+                    }
                 }
                     // could be an enum
                 else if ((lhsType.getKind() == PullElementKind.Enum) && this.cachedNumberInterfaceType) {
