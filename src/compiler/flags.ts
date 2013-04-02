@@ -17,8 +17,12 @@
 
 module TypeScript {
 
-    export function hasFlag(val: number, flag: number) {
+    export function hasFlag(val: number, flag: number): bool {
         return (val & flag) !== 0;
+    }
+
+    export function withoutFlag(val: number, flag: number): number {
+        return val & ~flag;
     }
 
     export enum ASTFlags {

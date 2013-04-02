@@ -1299,8 +1299,14 @@ module TypeScript {
         }
 
         public structuralEquals(ast: ModuleDeclaration, includePosition: bool): bool {
-            return super.structuralEquals(ast, includePosition) &&
-                   this._moduleFlags === ast._moduleFlags;
+            if (super.structuralEquals(ast, includePosition)) {
+                // TODO: We don't need the 'withoutFlag' calls here once we get rid of 
+                // ShouldEmitModuleDecl.
+                return withoutFlag(this._moduleFlags, ModuleFlags.ShouldEmitModuleDecl) ===
+                       withoutFlag(ast._moduleFlags, ModuleFlags.ShouldEmitModuleDecl);
+            }
+
+            return false;
         }
 
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
