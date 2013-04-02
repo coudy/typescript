@@ -278,9 +278,10 @@ class BatchCompiler {
             }
         }
 
-        if (anySyntacticErrors) {
-            return true;
-        }
+        //if (anySyntacticErrors) {
+        //    return true;
+        //}
+
         this.ioHost.stdout.WriteLine("Initial type check errors:");
         compiler.pullTypeCheck();
 

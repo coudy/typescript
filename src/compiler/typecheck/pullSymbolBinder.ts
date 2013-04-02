@@ -557,7 +557,8 @@ module TypeScript {
                 }
 
                 if (constructorSymbol.getIsSynthesized()) {
-                    constructorSymbol.addDeclaration(classDecl);
+                    //constructorSymbol.addDeclaration(classDecl);
+                    classSymbol.setConstructorMethod(null);
                 }
 
                 if (classSymbol.isGeneric()) {
@@ -629,41 +630,6 @@ module TypeScript {
                         this.cleanClassSignatures(<PullClassTypeSymbol>specializations[i]);
                     }                 
                 }
-
-                // var callSigs = classSymbol.getCallSignatures();
-                // var constructSigs = classSymbol.getConstructSignatures();
-                // var indexSigs = classSymbol.getIndexSignatures();
-
-                // for (i = 0; i < callSigs.length; i++) {
-                //     classSymbol.removeCallSignature(callSigs[i], false);
-                // }
-                // for (i = 0; i < constructSigs.length; i++) {
-                //     classSymbol.removeConstructSignature(constructSigs[i], false);
-                // }
-                // for (i = 0; i < indexSigs.length; i++) {
-                //     classSymbol.removeIndexSignature(indexSigs[i], false);
-                // }
-
-                // classSymbol.recomputeCallSignatures();
-                // classSymbol.recomputeConstructSignatures();
-                // classSymbol.recomputeIndexSignatures();
-
-                // constructorSymbol = classSymbol.getConstructorMethod();
-                // constructorTypeSymbol = <PullConstructorTypeSymbol>(constructorSymbol ? constructorSymbol.getType() : null);
-
-                // if (constructorTypeSymbol) {
-                //     constructSigs = constructorTypeSymbol.getConstructSignatures();
-
-                //     for (i = 0; i < constructSigs.length; i++) {
-                //         constructorTypeSymbol.removeConstructSignature(constructSigs[i], false);
-                //     }
-
-                //     constructorTypeSymbol.recomputeConstructSignatures();
-                // }
-
-                // // just invalidate this once, so we don't pay the cost of rebuilding caches
-                // // for each signature removed
-                // classSymbol.invalidate();
             }
 
             this.pushParent(classSymbol, classDecl);
