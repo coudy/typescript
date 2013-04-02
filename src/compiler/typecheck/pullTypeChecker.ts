@@ -1122,7 +1122,7 @@ module TypeScript {
         public typeCheckInstanceOfExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
 
-            var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext)
+            var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
             var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
 
             var isValidLHS = lhsType && (lhsType == this.semanticInfoChain.anyTypeSymbol || !lhsType.isPrimitive());

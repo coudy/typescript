@@ -1498,8 +1498,6 @@ var TypeScript;
             this.variableArgList = false;
             this.freeVariables = [];
             this.classDecl = null;
-            this.isOverload = false;
-            this.isInlineCallLiteral = false;
             this.accessorSymbol = null;
             this.scopeType = null;
             this.endingToken = null;
@@ -1514,7 +1512,7 @@ var TypeScript;
             this._functionFlags = flags;
         };
         FuncDecl.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this._functionFlags === ast._functionFlags && this.hint === ast.hint && this.variableArgList === ast.variableArgList && this.isOverload === ast.isOverload && structuralEquals(this.name, ast.name, includingPosition) && structuralEquals(this.bod, ast.bod, includingPosition) && this.isConstructor === ast.isConstructor && structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) && structuralEquals(this.arguments, ast.arguments, includingPosition);
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this._functionFlags === ast._functionFlags && this.hint === ast.hint && this.variableArgList === ast.variableArgList && structuralEquals(this.name, ast.name, includingPosition) && structuralEquals(this.bod, ast.bod, includingPosition) && this.isConstructor === ast.isConstructor && structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) && structuralEquals(this.arguments, ast.arguments, includingPosition);
         };
         FuncDecl.prototype.buildControlFlow = function () {
             var entry = new TypeScript.BasicBlock();
@@ -1597,7 +1595,6 @@ var TypeScript;
             _super.call(this, new Identifier("script"), null, false, null, null, 91 /* Script */ );
             this.locationInfo = null;
             this.referencedFiles = [];
-            this.requiresGlobal = false;
             this.requiresExtendsBlock = false;
             this.isDeclareFile = false;
             this.topLevelMod = null;
@@ -5029,7 +5026,7 @@ var TypeScript;
             this.writeToOutput(text);
         };
         Emitter.prototype.emitJavascriptFunction = function (funcDecl) {
-            if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), 128 /* Signature */ ) || funcDecl.isOverload) {
+            if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), 128 /* Signature */ )) {
                 return;
             }
             var temp;
@@ -9201,9 +9198,6 @@ var TypeScript;
             funcDecl.name.sym = funcDecl.type.symbol;
         }
         funcDecl.scopeType = funcDecl.type;
-        if (funcDecl.isOverload) {
-            return;
-        }
         var funcTable = new TypeScript.StringHashTable();
         var funcMembers = new TypeScript.ScopedMembers(new TypeScript.DualStringHashTable(funcTable, new TypeScript.StringHashTable()));
         var ambientFuncTable = new TypeScript.StringHashTable();
@@ -9308,7 +9302,7 @@ var TypeScript;
                 popAssignScope(context);
             } else if (ast.nodeType === 72 /* FuncDecl */ ) {
                 var funcDecl = ast;
-                if ((!funcDecl.isConstructor || TypeScript.hasFlag(funcDecl.getFunctionFlags(), 16384 /* ClassMethod */ )) && !funcDecl.isOverload) {
+                if ((!funcDecl.isConstructor || TypeScript.hasFlag(funcDecl.getFunctionFlags(), 16384 /* ClassMethod */ ))) {
                     popAssignScope(context);
                 }
             } else if (ast.nodeType === 89 /* CatchClause */ ) {
@@ -9456,7 +9450,7 @@ var TypeScript;
                 this.signatures = [];
             }
             this.signatures[this.signatures.length] = signature;
-            if (signature.declAST && !signature.declAST.isOverload && !signature.declAST.isSignature() && !TypeScript.hasFlag(signature.declAST.getFunctionFlags(), 8 /* Ambient */ ) && !TypeScript.hasFlag(signature.declAST.getFunctionFlags(), 128 /* Signature */ )) {
+            if (signature.declAST && !signature.declAST.isSignature() && !TypeScript.hasFlag(signature.declAST.getFunctionFlags(), 8 /* Ambient */ ) && !TypeScript.hasFlag(signature.declAST.getFunctionFlags(), 128 /* Signature */ )) {
                 this.definitionSignature = signature;
             }
         };
@@ -9531,7 +9525,7 @@ var TypeScript;
             var len = 0;
             if (this.signatures && ((len = this.signatures.length) > 0)) {
                 for(var i = 0; i < len; i++) {
-                    if (!hasConstruct && !this.definitionSignature && this.signatures[i].declAST && this.signatures[i].declAST.isOverload && !TypeScript.hasFlag(this.signatures[i].declAST.getFunctionFlags(), 8 /* Ambient */ )) {
+                    if (!hasConstruct && !this.definitionSignature && this.signatures[i].declAST && !TypeScript.hasFlag(this.signatures[i].declAST.getFunctionFlags(), 8 /* Ambient */ )) {
                         checker.errorReporter.simpleError(this.signatures[i].declAST, "Overload declaration lacks definition");
                     }
                     if (this.signatures[i].declAST && this.signatures[i].declAST.isConstructor && this.signatures[i].declAST.classDecl && this.signatures[i].declAST.classDecl.type.symbol.typeCheckStatus == 0 /* NotStarted */ ) {
@@ -11793,7 +11787,7 @@ var TypeScript;
                                 this.errorReporter.duplicateIdentifier(funcDecl, funcName);
                             }
                             groupType.symbol.container = container;
-                        } else if (overloadGroupSym === null || (overloadGroupSym.declAST && !(overloadGroupSym.declAST).isOverload && (container.isType()))) {
+                        } else if (overloadGroupSym === null || (overloadGroupSym.declAST && (container.isType()))) {
                             scope.enter(container, funcDecl, groupType.symbol, this.errorReporter, !isPrivate && (isExported || isStatic || isGlobal), false, isAmbient);
                         }
                     } else if (!funcDecl.isSpecialFn()) {
@@ -12381,7 +12375,7 @@ var TypeScript;
             return applicableSigs;
         };
         TypeChecker.prototype.canContextuallyTypeFunction = function (candidateType, funcDecl, beStringent) {
-            if (funcDecl.isMethod() || beStringent && funcDecl.returnTypeAnnotation || funcDecl.isInlineCallLiteral) {
+            if (funcDecl.isMethod() || beStringent && funcDecl.returnTypeAnnotation) {
                 return false;
             }
             beStringent = beStringent || (this.typeFlow.functionInterfaceType === candidateType);
@@ -13235,7 +13229,7 @@ var TypeScript;
             ast.type = classType;
         }
         if (!classDecl.constructorDecl) {
-            if (typeSymbol && typeSymbol.declAST && typeSymbol.declAST.type && typeSymbol.declAST.type.call && !(typeSymbol.declAST).isOverload) {
+            if (typeSymbol && typeSymbol.declAST && typeSymbol.declAST.type && typeSymbol.declAST.type.call) {
                 context.checker.errorReporter.duplicateIdentifier(typeSymbol.declAST, typeSymbol.name);
             }
             createNewConstructGroupForType(classDecl.type);
@@ -15284,7 +15278,7 @@ var TypeScript;
             var accessorType = (isGetter || isSetter) && funcDecl.accessorSymbol ? funcDecl.accessorSymbol.getType() : null;
             var prevModDecl = this.checker.currentModDecl;
             var ssb;
-            if (funcDecl.isConstructor && !funcDecl.isOverload) {
+            if (funcDecl.isConstructor) {
                 if (fnType.instanceType === null) {
                     this.checker.errorReporter.simpleError(funcDecl, "Malformed function body (is this a class named the same as an existing interface?)");
                     return funcDecl;
@@ -15296,7 +15290,7 @@ var TypeScript;
                 this.scope = fnType.instanceType.constructorScope;
                 ssb = this.scope;
                 funcTable = ssb.valueMembers.allMembers;
-            } else if ((funcDecl.isSpecialFn() && !(funcDecl.getFunctionFlags() & 128 /* Signature */ )) || funcDecl.isOverload) {
+            } else if ((funcDecl.isSpecialFn() && !(funcDecl.getFunctionFlags() & 128 /* Signature */ ))) {
                 funcTable = funcDecl.symbols;
                 if (!TypeScript.hasFlag(funcDecl.getFunctionFlags(), 16 /* Static */ ) && fnType.containedScope) {
                     this.scope = fnType.containedScope;
@@ -15811,9 +15805,6 @@ var TypeScript;
         TypeFlow.prototype.typeCheckModule = function (moduleDecl) {
             if (!moduleDecl.mod) {
                 return moduleDecl;
-            }
-            if (this.currentScript) {
-                this.currentScript.requiresGlobal = true;
             }
             var mod = moduleDecl.mod;
             var sym = null;
@@ -16411,9 +16402,6 @@ var TypeScript;
                 if ((callEx.target.nodeType === 23 /* Name */ ) && ((callEx.target).text === "eval")) {
                     this.checker.errorReporter.styleError(callEx, "eval not permitted");
                 }
-            }
-            if (callEx.target.nodeType === 72 /* FuncDecl */ ) {
-                (callEx.target).isInlineCallLiteral = true;
             }
             var prevInSuperCall = this.inSuperCall;
             if (callEx.target.nodeType === 6 /* SuperExpression */ ) {
@@ -18838,6 +18826,9 @@ var TypeScript;
         };
         StringUtilities.repeat = function repeat(value, count) {
             return Array(count + 1).join(value);
+        };
+        StringUtilities.stringEquals = function stringEquals(val1, val2) {
+            return val1 === val2;
         };
         return StringUtilities;
     })();
@@ -40696,28 +40687,31 @@ var TypeScript;
         PullDecl.prototype.resetErrors = function () {
             this.diagnostics = [];
         };
+        PullDecl.prototype.getChildDeclCache = function (declKind) {
+            return declKind === 16384 /* TypeParameter */  ? this.childDeclTypeParameterCache : TypeScript.hasFlag(declKind, TypeScript.PullElementKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
+        };
         PullDecl.prototype.addChildDecl = function (childDecl) {
-            var declName = childDecl.getName();
-            if (childDecl.getKind() & 16384 /* TypeParameter */ ) {
+            if (childDecl.getKind() === 16384 /* TypeParameter */ ) {
                 this.typeParameters[this.typeParameters.length] = childDecl;
             } else {
                 this.childDecls[this.childDecls.length] = childDecl;
             }
-            var cache = (childDecl.getKind() & TypeScript.PullElementKind.SomeType) ? (childDecl.getKind() & 16384 /* TypeParameter */ ) ? this.childDeclTypeParameterCache : this.childDeclTypeCache : this.childDeclValueCache;
-            var cacheVal = cache[declName];
-            if (!cacheVal) {
-                cacheVal = [];
+            var declName = childDecl.getName();
+            var cache = this.getChildDeclCache(childDecl.getKind());
+            var childrenOfName = cache[declName];
+            if (!childrenOfName) {
+                childrenOfName = [];
             }
-            cacheVal[cacheVal.length] = childDecl;
-            cache[declName] = cacheVal;
+            childrenOfName.push(childDecl);
+            cache[declName] = childrenOfName;
         };
-        PullDecl.prototype.findChildDecls = function (declName, declKind) {
-            var cache = (declKind & TypeScript.PullElementKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
+        PullDecl.prototype.searchChildDecls = function (declName, isType) {
+            var cache = isType ? this.childDeclTypeCache : this.childDeclValueCache;
             var cacheVal = cache[declName];
             if (cacheVal) {
                 return cacheVal;
             } else {
-                if (declKind & TypeScript.PullElementKind.SomeType) {
+                if (isType) {
                     cacheVal = this.childDeclTypeParameterCache[declName];
                     if (cacheVal) {
                         return cacheVal;
@@ -43588,7 +43582,7 @@ var TypeScript;
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
                 if (pathDeclKind & 8 /* Container */ ) {
-                    childDecls = decl.findChildDecls(symbolName, declSearchKind);
+                    childDecls = decl.searchChildDecls(symbolName, (declSearchKind & TypeScript.PullElementKind.SomeType) !== 0);
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
                     }
@@ -43609,7 +43603,7 @@ var TypeScript;
                         }
                     }
                 } else if ((declSearchKind & TypeScript.PullElementKind.SomeType) || !(pathDeclKind & 16 /* Class */ )) {
-                    childDecls = decl.findChildDecls(symbolName, declSearchKind);
+                    childDecls = decl.searchChildDecls(symbolName, (declSearchKind & TypeScript.PullElementKind.SomeType) !== 0);
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
                     }
@@ -46708,7 +46702,7 @@ var TypeScript;
             };
         };
         PullTypeResolver.prototype.canApplyContextualTypeToFunction = function (candidateType, funcDecl, beStringent) {
-            if (funcDecl.isMethod() || beStringent && funcDecl.returnTypeAnnotation || funcDecl.isInlineCallLiteral) {
+            if (funcDecl.isMethod() || beStringent && funcDecl.returnTypeAnnotation) {
                 return false;
             }
             beStringent = beStringent || (this.cachedFunctionInterfaceType == candidateType);
@@ -48193,34 +48187,143 @@ var TypeScript;
     })();
     TypeScript.PullDeclDiff = PullDeclDiff;    
     var PullDeclDiffer = (function () {
-        function PullDeclDiffer() { }
-        PullDeclDiffer.prototype.diffDecls = function (oldDecl, newDecl, diffs) {
-            var oldDeclChildren = oldDecl.getChildDecls();
-            var newDeclChildren = newDecl.getChildDecls();
-            var foundDecls;
-            var foundDiff = false;
-            var childFoundDiff = true;
+        function PullDeclDiffer(oldSemanticInfo, newSemanticInfo) {
+            this.oldSemanticInfo = oldSemanticInfo;
+            this.newSemanticInfo = newSemanticInfo;
+            this.differences = [];
+        }
+        PullDeclDiffer.diffDecls = function diffDecls(oldDecl, oldSemanticInfo, newDecl, newSemanticInfo) {
+            var declDiffer = new PullDeclDiffer(oldSemanticInfo, newSemanticInfo);
+            declDiffer.diff(oldDecl, newDecl);
+            return declDiffer.differences;
+        };
+        PullDeclDiffer.prototype.diff = function (oldDecl, newDecl) {
+            TypeScript.Debug.assert(oldDecl.getName() === newDecl.getName());
+            TypeScript.Debug.assert(oldDecl.getKind() === newDecl.getKind());
+            this.diff1(oldDecl, newDecl, oldDecl.childDeclTypeCache, newDecl.childDeclTypeCache);
+            this.diff1(oldDecl, newDecl, oldDecl.childDeclTypeParameterCache, newDecl.childDeclTypeParameterCache);
+            this.diff1(oldDecl, newDecl, oldDecl.childDeclValueCache, newDecl.childDeclValueCache);
+        };
+        PullDeclDiffer.emptyDeclArray = [];
+        PullDeclDiffer.prototype.diff1 = function (oldDecl, newDecl, oldNameToDecls, newNameToDecls) {
             var i = 0;
-            for(i = 0; i < oldDeclChildren.length; i++) {
-                foundDecls = newDecl.findChildDecls(oldDeclChildren[i].getName(), oldDeclChildren[i].getKind());
-                if (!foundDecls.length) {
-                    diffs[diffs.length] = new PullDeclDiff(oldDeclChildren[i], null, 2 /* DeclRemoved */ );
-                    foundDiff = true;
-                } else if (foundDecls.length == 1) {
-                    childFoundDiff = this.diffDecls(oldDeclChildren[i], foundDecls[0], diffs);
-                    if (childFoundDiff) {
-                        foundDiff = true;
+            var n = 0;
+            var oldChildrenOfName;
+            var newChildrenOfName;
+            var oldChild;
+            var newChild;
+            var name;
+            for(name in oldNameToDecls) {
+                oldChildrenOfName = oldNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
+                newChildrenOfName = newNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
+                for(i = 0, n = oldChildrenOfName.length; i < n; i++) {
+                    oldChild = oldChildrenOfName[i];
+                    if (i < newChildrenOfName.length) {
+                        newChild = newChildrenOfName[i];
+                        if (oldChild.getKind() === newChild.getKind()) {
+                            this.diff(oldChild, newChildrenOfName[i]);
+                        } else {
+                            this.differences.push(new PullDeclDiff(oldChild, null, 2 /* DeclRemoved */ ));
+                            this.differences.push(new PullDeclDiff(oldDecl, newChild, 1 /* DeclAdded */ ));
+                        }
+                    } else {
+                        this.differences.push(new PullDeclDiff(oldChild, null, 2 /* DeclRemoved */ ));
                     }
                 }
             }
-            for(i = 0; i < newDeclChildren.length; i++) {
-                foundDecls = oldDecl.findChildDecls(newDeclChildren[i].getName(), newDeclChildren[i].getKind());
-                if (!foundDecls.length) {
-                    diffs[diffs.length] = new PullDeclDiff(oldDecl, newDeclChildren[i], 1 /* DeclAdded */ );
-                    foundDiff = true;
+            for(name in newNameToDecls) {
+                oldChildrenOfName = oldNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
+                newChildrenOfName = newNameToDecls[name] || PullDeclDiffer.emptyDeclArray;
+                for(i = oldChildrenOfName.length, n = newChildrenOfName.length; i < n; i++) {
+                    newChild = newChildrenOfName[i];
+                    this.differences.push(new PullDeclDiff(oldDecl, newChild, 1 /* DeclAdded */ ));
                 }
             }
-            return foundDiff;
+            if (!this.isEquivalent(this.oldSemanticInfo.getASTForDecl(oldDecl), this.newSemanticInfo.getASTForDecl(newDecl))) {
+                this.differences.push(new PullDeclDiff(oldDecl, newDecl, 3 /* DeclChanged */ ));
+            }
+        };
+        PullDeclDiffer.prototype.isEquivalent = function (oldAST, newAST) {
+            TypeScript.Debug.assert(oldAST !== null);
+            TypeScript.Debug.assert(newAST !== null);
+            if (oldAST === newAST) {
+                return true;
+            }
+            if (oldAST.nodeType !== newAST.nodeType || oldAST.getFlags() !== newAST.getFlags()) {
+                return false;
+            }
+            switch(oldAST.nodeType) {
+                case 95 /* ImportDeclaration */ :
+                    return this.importDeclarationIsEquivalent(oldAST, newAST);
+                case 94 /* ModuleDeclaration */ :
+                    return this.moduleDeclarationIsEquivalent(oldAST, newAST);
+                case 92 /* ClassDeclaration */ :
+                    return this.classDeclarationIsEquivalent(oldAST, newAST);
+                case 93 /* InterfaceDeclaration */ :
+                    return this.interfaceDeclarationIsEquivalent(oldAST, newAST);
+                case 75 /* ArgDecl */ :
+                    return this.argumentDeclarationIsEquivalent(oldAST, newAST);
+                case 74 /* VarDecl */ :
+                    return this.variableDeclarationIsEquivalent(oldAST, newAST);
+                case 24 /* TypeParameter */ :
+                    return this.typeParameterIsEquivalent(oldAST, newAST);
+                case 72 /* FuncDecl */ :
+                    return this.functionDeclarationIsEquivalent(oldAST, newAST);
+                case 91 /* Script */ :
+                    return this.scriptIsEquivalent(oldAST, newAST);
+                default:
+                    throw TypeScript.Errors.invalidOperation();
+            }
+        };
+        PullDeclDiffer.prototype.importDeclarationIsEquivalent = function (decl1, decl2) {
+            return TypeScript.structuralEqualsNotIncludingPosition(decl1.alias, decl2.alias);
+        };
+        PullDeclDiffer.prototype.typeDeclarationIsEquivalent = function (decl1, decl2) {
+            return decl1.getVarFlags() === decl2.getVarFlags() && TypeScript.structuralEqualsNotIncludingPosition(decl1.typeParameters, decl2.typeParameters) && TypeScript.structuralEqualsNotIncludingPosition(decl1.extendsList, decl2.extendsList) && TypeScript.structuralEqualsNotIncludingPosition(decl1.implementsList, decl2.implementsList);
+        };
+        PullDeclDiffer.prototype.classDeclarationIsEquivalent = function (decl1, decl2) {
+            return this.typeDeclarationIsEquivalent(decl1, decl2);
+        };
+        PullDeclDiffer.prototype.interfaceDeclarationIsEquivalent = function (decl1, decl2) {
+            return this.typeDeclarationIsEquivalent(decl1, decl2);
+        };
+        PullDeclDiffer.prototype.typeParameterIsEquivalent = function (decl1, decl2) {
+            return TypeScript.structuralEqualsNotIncludingPosition(decl1.constraint, decl2.constraint);
+        };
+        PullDeclDiffer.prototype.boundDeclarationIsEquivalent = function (decl1, decl2) {
+            if (decl1.getVarFlags() === decl2.getVarFlags() && TypeScript.structuralEqualsNotIncludingPosition(decl1.typeExpr, decl2.typeExpr)) {
+                if (decl1.typeExpr === null) {
+                    return TypeScript.structuralEqualsNotIncludingPosition(decl1.init, decl2.init);
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        };
+        PullDeclDiffer.prototype.argumentDeclarationIsEquivalent = function (decl1, decl2) {
+            return this.boundDeclarationIsEquivalent(decl1, decl2) && decl1.isOptional === decl2.isOptional;
+        };
+        PullDeclDiffer.prototype.variableDeclarationIsEquivalent = function (decl1, decl2) {
+            return this.boundDeclarationIsEquivalent(decl1, decl2);
+        };
+        PullDeclDiffer.prototype.baseFunctionDeclarationIsEquivalent = function (decl1, decl2, ignoreReturnType) {
+            if (decl1.hint === decl2.hint && decl1.getFunctionFlags() === decl2.getFunctionFlags() && decl1.variableArgList === decl2.variableArgList && decl1.isConstructor === decl2.isConstructor && TypeScript.structuralEqualsNotIncludingPosition(decl1.returnTypeAnnotation, decl2.returnTypeAnnotation) && TypeScript.structuralEqualsNotIncludingPosition(decl1.typeArguments, decl2.typeArguments) && TypeScript.structuralEqualsNotIncludingPosition(decl1.arguments, decl2.arguments)) {
+                if (!ignoreReturnType && decl1.returnTypeAnnotation === null) {
+                    return TypeScript.structuralEqualsNotIncludingPosition(decl1.bod, decl2.bod);
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        };
+        PullDeclDiffer.prototype.functionDeclarationIsEquivalent = function (decl1, decl2) {
+            return this.baseFunctionDeclarationIsEquivalent(decl1, decl2, false);
+        };
+        PullDeclDiffer.prototype.scriptIsEquivalent = function (decl1, decl2) {
+            return this.baseFunctionDeclarationIsEquivalent(decl1, decl2, true);
+        };
+        PullDeclDiffer.prototype.moduleDeclarationIsEquivalent = function (decl1, decl2) {
+            return decl1.getModuleFlags() === decl2.getModuleFlags() && decl2.prettyName === decl2.prettyName && TypeScript.ArrayUtilities.sequenceEquals(decl1.amdDependencies, decl2.amdDependencies, TypeScript.StringUtilities.stringEquals);
         };
         return PullDeclDiffer;
     })();
@@ -48420,7 +48523,8 @@ var TypeScript;
                 path = declPath[i];
                 decls = [];
                 for(var j = 0; j < declsToSearch.length; j++) {
-                    foundDecls = declsToSearch[j].findChildDecls(path, (i == declPath.length - 1) ? declKind : TypeScript.PullElementKind.SomeType);
+                    var kind = (i == declPath.length - 1) ? declKind : TypeScript.PullElementKind.SomeType;
+                    foundDecls = declsToSearch[j].searchChildDecls(path, (kind & TypeScript.PullElementKind.SomeType) !== 0);
                     for(var k = 0; k < foundDecls.length; k++) {
                         decls[decls.length] = foundDecls[k];
                     }
@@ -48584,8 +48688,7 @@ var TypeScript;
         return true;
     }
     TypeScript.preCollectModuleDecls = preCollectModuleDecls;
-    function preCollectClassDecls(ast, parenAST, context) {
-        var classDecl = ast;
+    function preCollectClassDecls(classDecl, parentAST, context) {
         var declFlags = 0 /* None */ ;
         var constructorDeclKind = 2048 /* Variable */ ;
         if (TypeScript.hasFlag(classDecl.getVarFlags(), 8 /* Ambient */ )) {
@@ -48605,9 +48708,9 @@ var TypeScript;
         decl.setParentDecl(parent);
         constructorDecl.setParentDecl(parent);
         context.pushParent(decl);
-        context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setASTForDecl(decl, ast);
-        context.semanticInfo.setASTForDecl(constructorDecl, ast);
+        context.semanticInfo.setDeclForAST(classDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, classDecl);
+        context.semanticInfo.setASTForDecl(constructorDecl, classDecl);
         return true;
     }
     TypeScript.preCollectClassDecls = preCollectClassDecls;
@@ -48647,8 +48750,7 @@ var TypeScript;
         return true;
     }
     TypeScript.createObjectTypeDeclaration = createObjectTypeDeclaration;
-    function preCollectInterfaceDecls(ast, parentAST, context) {
-        var interfaceDecl = ast;
+    function preCollectInterfaceDecls(interfaceDecl, parentAST, context) {
         var declFlags = 0 /* None */ ;
         if (TypeScript.hasFlag(interfaceDecl.getVarFlags(), 1 /* Exported */ )) {
             declFlags |= 1 /* Exported */ ;
@@ -48661,13 +48763,12 @@ var TypeScript;
             decl.setParentDecl(parent);
         }
         context.pushParent(decl);
-        context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
         return true;
     }
     TypeScript.preCollectInterfaceDecls = preCollectInterfaceDecls;
-    function preCollectParameterDecl(ast, parentAST, context) {
-        var argDecl = ast;
+    function preCollectParameterDecl(argDecl, parentAST, context) {
         var declFlags = 0 /* None */ ;
         if (TypeScript.hasFlag(argDecl.getVarFlags(), 2 /* Private */ )) {
             declFlags |= 2 /* Private */ ;
@@ -48687,11 +48788,11 @@ var TypeScript;
             propDecl.setValueDecl(decl);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             propDecl.setParentDecl(context.parentChain[context.parentChain.length - 2]);
-            context.semanticInfo.setASTForDecl(propDecl, ast);
-            context.semanticInfo.setDeclForAST(ast, propDecl);
+            context.semanticInfo.setASTForDecl(propDecl, argDecl);
+            context.semanticInfo.setDeclForAST(argDecl, propDecl);
         } else {
-            context.semanticInfo.setASTForDecl(decl, ast);
-            context.semanticInfo.setDeclForAST(ast, decl);
+            context.semanticInfo.setASTForDecl(decl, argDecl);
+            context.semanticInfo.setDeclForAST(argDecl, decl);
         }
         if (argDecl.typeExpr && ((argDecl.typeExpr).term.nodeType == 93 /* InterfaceDeclaration */  || (argDecl.typeExpr).term.nodeType == 72 /* FuncDecl */ )) {
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
@@ -48701,13 +48802,12 @@ var TypeScript;
         return false;
     }
     TypeScript.preCollectParameterDecl = preCollectParameterDecl;
-    function preCollectTypeParameterDecl(ast, parentAST, context) {
-        var typeParameterDecl = ast;
+    function preCollectTypeParameterDecl(typeParameterDecl, parentAST, context) {
         var declFlags = 0 /* None */ ;
         var span = TypeScript.TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
         var decl = new TypeScript.PullDecl(typeParameterDecl.name.text, 16384 /* TypeParameter */ , declFlags, span, context.scriptName);
-        context.semanticInfo.setASTForDecl(decl, ast);
-        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setASTForDecl(decl, typeParameterDecl);
+        context.semanticInfo.setDeclForAST(typeParameterDecl, decl);
         var parent = context.getParent();
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
@@ -49634,7 +49734,7 @@ var TypeScript;
                     }
                 }
                 if (constructorSymbol.getIsSynthesized()) {
-                    constructorSymbol.addDeclaration(classDecl);
+                    classSymbol.setConstructorMethod(null);
                 }
                 if (classSymbol.isGeneric()) {
                     isGeneric = true;
@@ -54381,7 +54481,6 @@ var TypeScript;
         TypeScriptCompiler.prototype.pullUpdateScript = function (oldScript, newScript) {
             var _this = this;
             this.timeFunction("pullUpdateScript: ", function () {
-                var declDiffer = new TypeScript.PullDeclDiffer();
                 var newScriptSemanticInfo = new TypeScript.SemanticInfo(oldScript.locationInfo.fileName, newScript.locationInfo);
                 var oldScriptSemanticInfo = _this.semanticInfoChain.getUnit(oldScript.locationInfo.fileName);
                 TypeScript.lastBoundPullDeclId = TypeScript.pullDeclID;
@@ -54392,9 +54491,8 @@ var TypeScript;
                 var oldTopLevelDecl = oldScriptSemanticInfo.getTopLevelDecls()[0];
                 var newTopLevelDecl = declCollectionContext.getParent();
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
-                var diffResults = [];
                 var diffStartTime = new Date().getTime();
-                declDiffer.diffDecls(oldTopLevelDecl, newTopLevelDecl, diffResults);
+                var diffResults = TypeScript.PullDeclDiffer.diffDecls(oldTopLevelDecl, oldScriptSemanticInfo, newTopLevelDecl, newScriptSemanticInfo);
                 var diffEndTime = new Date().getTime();
                 _this.logger.log("Update Script - Diff time: " + (diffEndTime - diffStartTime));
                 _this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
