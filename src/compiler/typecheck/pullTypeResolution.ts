@@ -4832,8 +4832,7 @@ module TypeScript {
             //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type
             //  to its body - instead, it should be applied to its return type
             if (funcDecl.isMethod() ||
-                beStringent && funcDecl.returnTypeAnnotation ||
-                funcDecl.isInlineCallLiteral) {
+                beStringent && funcDecl.returnTypeAnnotation) {
                 return false;
             }
 

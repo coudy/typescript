@@ -1043,8 +1043,6 @@ module TypeScript {
         public freeVariables: Symbol[] = [];
         public classDecl: NamedDeclaration = null;
 
-        // TODO: Who ever sets this?
-        public isInlineCallLiteral = false;
         public accessorSymbol: Symbol = null;
         public returnStatementsWithExpressions: ReturnStatement[];
         public scopeType: Type = null; // Type of the FuncDecl, before target typing

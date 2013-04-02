@@ -3800,9 +3800,9 @@ module TypeScript {
                 }
             }
 
-            if (callEx.target.nodeType === NodeType.FuncDecl) {
-                (<FuncDecl>callEx.target).isInlineCallLiteral = true;
-            }
+            //if (callEx.target.nodeType === NodeType.FuncDecl) {
+            //    (<FuncDecl>callEx.target).isInlineCallLiteral = true;
+            //}
 
             var prevInSuperCall = this.inSuperCall;
 
