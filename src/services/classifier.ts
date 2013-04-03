@@ -41,7 +41,7 @@ module Services {
         /// COLORIZATION
         public getClassificationsForLine(text: string, lexState: TypeScript.LexState): ClassificationResult {
             var result = new ClassificationResult();
-            var scanner = new TypeScript.Scanner1("", TypeScript.SimpleText.fromString(text), TypeScript.LanguageVersion.EcmaScript5, this.characterWindow);
+            this.scanner = new TypeScript.Scanner1("", TypeScript.SimpleText.fromString(text), TypeScript.LanguageVersion.EcmaScript5, this.characterWindow);
 
             if (this.checkForContinuedToken(text, lexState, result)) {
                 return result;
@@ -49,9 +49,9 @@ module Services {
 
             var lastTokenKind = TypeScript.SyntaxKind.None;
 
-            while (true) {
+            while (this.scanner.absoluteIndex() < text.length) {
                 this.diagnostics.length = 0;
-                var token = scanner.scan(this.diagnostics, !noRegexTable[lastTokenKind]);
+                var token = this.scanner.scan(this.diagnostics, !noRegexTable[lastTokenKind]);
                 lastTokenKind = token.tokenKind;
 
                 this.processToken(text, token, result);
@@ -65,19 +65,23 @@ module Services {
             this.addResult(text, result, token.width(), token.tokenKind);
             this.processTriviaList(text, token.trailingTrivia(), result);
 
-            if (this.scanner.absoluteIndex() === text.length) {
+            if (this.scanner.absoluteIndex() >= text.length) {
                 // We're at the end.
                 if (this.diagnostics.length > 0) {
                     if (this.diagnostics[this.diagnostics.length - 1].diagnosticCode() === TypeScript.DiagnosticCode._StarSlash__expected) {
                         result.finalLexState = TypeScript.LexState.InMultilineComment;
                         return;
                     }
+                }
 
-                    if (this.diagnostics[this.diagnostics.length - 1].diagnosticCode() === TypeScript.DiagnosticCode.Missing_closing_quote_character) {
-                        var quoteChar = token.text().charCodeAt(0);
+                if (token.tokenKind === TypeScript.SyntaxKind.StringLiteral) {
+                    var tokenText = token.text();
+                    if (tokenText.length > 0 && tokenText.charCodeAt(tokenText.length - 1) === TypeScript.CharacterCodes.backslash) {
+                        var quoteChar = tokenText.charCodeAt(0);
                         result.finalLexState = quoteChar === TypeScript.CharacterCodes.doubleQuote
                             ? TypeScript.LexState.InMultilineDoubleQuoteString
-                            : TypeScript.LexState.InMultilineSingleQuoteString;
+                            : TypeScript.LexState.InMultilineSingleQuoteString;   
+                        return;
                     }
                 }
             }
