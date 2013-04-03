@@ -1227,35 +1227,6 @@ module TypeScript {
                 emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresExtendsBlock);
             }
         }
-
-        public externallyVisibleImportedSymbols: Symbol[] = [];
-
-        public AddExternallyVisibleImportedSymbol(symbol: Symbol, checker: TypeChecker) {
-            if (this.isExternallyVisibleSymbol(symbol)) {
-                return;
-            }
-
-            // Before adding check if the external symbol is also marked for visibility
-            if (!symbol.getType().symbol.isExternallyVisible(checker)) {
-                // Report error
-                var quotes = "";
-                var moduleName = symbol.getType().symbol.prettyName;
-                if (!isQuoted(moduleName)) {
-                    quotes = "'";
-                }
-                checker.errorReporter.simpleError(symbol.declAST, "Externally visible import statement uses non exported module " + quotes + moduleName + quotes);
-            }
-            this.externallyVisibleImportedSymbols.push(symbol);
-        }
-
-        public isExternallyVisibleSymbol(symbol: Symbol) {
-            for (var i = 0 ; i < this.externallyVisibleImportedSymbols.length; i++) {
-                if (this.externallyVisibleImportedSymbols[i] === symbol) {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 
     export class NamedDeclaration extends AST {

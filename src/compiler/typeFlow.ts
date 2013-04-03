@@ -2028,7 +2028,7 @@ module TypeScript {
                 if (externalModuleSymbol !== null) {
                     var prettyName = externalModuleSymbol.getPrettyNameOfDynamicModule(declSymbolPath);
                     if (prettyName !== null) {
-                        this.currentScript.AddExternallyVisibleImportedSymbol(prettyName.symbol, this.checker);
+                        //this.currentScript.AddExternallyVisibleImportedSymbol(prettyName.symbol, this.checker);
                         return;
                     } else {
                         privateSymbolName = externalModuleSymbol.prettyName;
