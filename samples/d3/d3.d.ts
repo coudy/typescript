@@ -274,4 +274,4 @@ interface ID3Random {
     normal(mean?: number, deviation?: number): () => number;
 }
 
-var d3: ID3Base;
+declare var d3: ID3Base;

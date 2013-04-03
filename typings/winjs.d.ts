@@ -13,7 +13,7 @@ See the Apache Version 2.0 License for specific language governing permissions
 and limitations under the License.
 ***************************************************************************** */
 
-module WinJS {
+declare module WinJS {
     export function strictProcessing(): void;
     export module Binding {
         export function as(data: any): any;
