@@ -812,7 +812,7 @@ module FourSlash {
             referenceLanguageServiceShim.refresh(true);
             
             for (i = 0; i < positions.length; i++) {
-                var nameOf = (type: Services.DefinitionInfo) => type ? type.name : '(none)';
+                var nameOf = (type: Services.TypeInfo) => type ? type.fullSymbolName : '(none)';
 
                 var pullName: string, refName: string;
                 var anyFailed = false;
