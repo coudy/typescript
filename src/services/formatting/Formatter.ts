@@ -80,7 +80,7 @@ module TypeScript.Formatting {
             // Push the token
             if (token.kind() !== SyntaxKind.EndOfFileToken) {
                 var currentTokenSpan = new TokenSpan(token.kind(), position, token.width());
-                if (this.previousTokenSpan) {
+                if (this.previousTokenSpan && !this.parent().hasSkippedOrMissingTokenChild()) {
                     this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
                 }
                 this.previousTokenSpan = currentTokenSpan;
@@ -103,9 +103,10 @@ module TypeScript.Formatting {
 
             for (var i = 0, n = triviaList.count(); i < n ; i++) {
                 var trivia = triviaList.syntaxTriviaAt(i);
-                if (trivia.isComment()) {
+                // For a comment, format it like it is a token. For skipped text, eat it up as a token, but skip the formatting
+                if (trivia.isComment() || trivia.isSkippedText()) {
                     var currentTokenSpan = new TokenSpan(trivia.kind(), position, trivia.fullWidth());
-                    if (this.previousTokenSpan) {
+                    if (this.previousTokenSpan && trivia.isComment()) {
                         this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
                     }
                     this.previousTokenSpan = currentTokenSpan;

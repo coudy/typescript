@@ -23,6 +23,8 @@ module TypeScript.Formatting {
         private _indentationLevel: number;
         private _childIndentationLevelDelta: number;
         private _depth: number;
+        private _hasSkippedTokenChild: bool;
+        private _hasSkippedOrMissingTokenChild: bool;
 
         constructor(parent: IndentationNodeContext, node: SyntaxNode, fullStart: number, indentationLevel: number, childIndentationLevelDelta: number) {
             this.update(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
@@ -68,6 +70,20 @@ module TypeScript.Formatting {
             return this._node.kind();
         }
 
+        public hasSkippedTokenChild(): bool {
+            if (this._hasSkippedTokenChild === null) {
+                this._hasSkippedTokenChild = Syntax.nodeHasSkippedOrMissingTokens(this._node, false);
+            }
+            return this._hasSkippedTokenChild;
+        }
+
+        public hasSkippedOrMissingTokenChild(): bool {
+            if (this._hasSkippedOrMissingTokenChild === null) {
+                this._hasSkippedOrMissingTokenChild = Syntax.nodeHasSkippedOrMissingTokens(this._node, true);
+            }
+            return this._hasSkippedOrMissingTokenChild;
+        }
+
         public clone(pool: IndentationNodeContextPool): IndentationNodeContext {
             var parent: IndentationNodeContext = null;
             if (this._parent) {
@@ -82,6 +98,8 @@ module TypeScript.Formatting {
             this._fullStart = fullStart;
             this._indentationLevel = indentationLevel;
             this._childIndentationLevelDelta = childIndentationLevelDelta;
+            this._hasSkippedTokenChild = null;
+            this._hasSkippedOrMissingTokenChild = null;
 
             if (parent) {
                 this._depth = parent.depth() + 1;

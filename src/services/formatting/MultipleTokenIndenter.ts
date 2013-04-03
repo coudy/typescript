@@ -32,6 +32,11 @@ module TypeScript.Formatting {
                 return;
             }
 
+            // If we have any skipped tokens as children, do not process this node for indentation or formatting
+            if (this.parent().hasSkippedOrMissingTokenChild()) {
+                return;
+            }
+
             // Be strict, and only consider nodes that fall inside the span. This avoids indenting a multiline string
             // on enter at the end of, as the whole token was not included in the span
             var tokenSpan = new TextSpan(this.position() + token.leadingTriviaWidth(), token.width());
