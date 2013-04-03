@@ -659,19 +659,19 @@ module TypeScript {
                         return;
                     }
 
-                    if (seenExportModifier) {
-                        this.pushDiagnostic1(modifierFullStart, modifier,
-                            DiagnosticCode._0__modifier_must_precede__1__modifier,
-                            [SyntaxFacts.getText(SyntaxKind.DeclareKeyword), SyntaxFacts.getText(SyntaxKind.ExportKeyword)]);
-                        return;
-                    }
-
                     seenDeclareModifier = true;
                 }
                 else if (modifier.tokenKind === SyntaxKind.ExportKeyword) {
                     if (seenExportModifier) {
                         this.pushDiagnostic1(modifierFullStart, modifier,
                             DiagnosticCode._0__modifier_already_seen, [modifier.text()]);
+                        return;
+                    }
+
+                    if (seenDeclareModifier) {
+                        this.pushDiagnostic1(modifierFullStart, modifier,
+                            DiagnosticCode._0__modifier_must_precede__1__modifier,
+                            [SyntaxFacts.getText(SyntaxKind.ExportKeyword), SyntaxFacts.getText(SyntaxKind.DeclareKeyword)]);
                         return;
                     }
 
