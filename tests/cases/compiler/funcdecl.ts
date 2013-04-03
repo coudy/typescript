@@ -31,7 +31,7 @@ function withInitializedParams(a: string, b0, b = 30, c = "string value") {
 }
 var withInitializedParamsVar = withInitializedParams;
 
-function withOptionalInitializedParams(a: string, c? : string = "hello string") {
+function withOptionalInitializedParams(a: string, c: string = "hello string") {
 }
 var withOptionalInitializedParamsVar = withOptionalInitializedParams;
 

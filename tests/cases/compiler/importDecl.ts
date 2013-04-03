@@ -1,7 +1,7 @@
 // @declaration: true
 declare module "m4" {
     export class d {
-    };
+    }
     var x: d;
     export function foo(): d;
 }
@@ -24,7 +24,7 @@ export module m1 {
 //Emit global only usage
 declare module "glo_m4" {
     export class d {
-    };
+    }
     var x: d;
     export function foo(): d;
 }
@@ -36,7 +36,7 @@ export var useGlo_m4_f4 = glo_m4.foo();
 //Emit even when used just in function type
 declare module "fncOnly_m4" {
     export class d {
-    };
+    }
     var x: d;
     export function foo(): d;
 }
@@ -45,7 +45,7 @@ export var useFncOnly_m4_f4 = fncOnly_m4.foo();
 
 declare module "private_m4" {
     class d {
-    };
+    }
     export var x: d;
     export function foo(): d;
 }
