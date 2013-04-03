@@ -498,22 +498,24 @@ module TypeScript {
             return this.fileNameToSyntaxTree.lookup(fileName);
         }
 
-        public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
-            var errors: IDiagnostic[] = [];
+        public getSemanticDiagnostics(fileName: string): IDiagnostic[]{
+            return this.timeFunction("getSemanticDiagnostics - " + fileName +": ", () => {
+                var errors: IDiagnostic[] = [];
 
-            var unit = this.semanticInfoChain.getUnit(fileName);
+                var unit = this.semanticInfoChain.getUnit(fileName);
 
-            if (unit) {
-                var script: Script = this.fileNameToScript.lookup(fileName);
+                if (unit) {
+                    var script: Script = this.fileNameToScript.lookup(fileName);
 
-                if (script) {
-                    this.pullTypeChecker.typeCheckScript(script, fileName, this);
+                    if (script) {
+                        this.pullTypeChecker.typeCheckScript(script, fileName, this);
 
-                    unit.getDiagnostics(errors);
+                        unit.getDiagnostics(errors);
+                    }
                 }
-            }
 
-            return errors;
+                return errors;
+            });
         }
 
         public pullTypeCheck() {
@@ -564,8 +566,10 @@ module TypeScript {
                 for (i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
 
-                    this.logger.log("Type checking " + fileName);
-                    this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
+                    this.logger.log("Resolving " + fileName);
+                    this.pullResolveFile(fileName);
+                    //this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
+
                 }
 
                 var findErrorsEndTime = new Date().getTime();

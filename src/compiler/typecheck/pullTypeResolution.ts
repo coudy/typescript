@@ -134,12 +134,22 @@ module TypeScript {
             return this.semanticInfoChain.getDeclForAST(ast, unitPath ? unitPath : this.unitPath);
         }
 
-        public getSymbolForAST(ast: AST, unitPath?: string) {
+        public getSymbolForAST(ast: AST, context: PullTypeResolutionContext, unitPath?: string) {
+
+            if (context && (context.inProvisionalResolution() || context.inSpecialization)) {
+                return null;
+            }
+
             return this.semanticInfoChain.getSymbolForAST(ast, unitPath ? unitPath : this.unitPath);
         }
 
-        public setSymbolForAST(ast: AST, typeSymbol: PullSymbol, unitPath?: string) {
-            return this.semanticInfoChain.setSymbolForAST(ast, typeSymbol, unitPath ? unitPath : this.unitPath);
+        public setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext, unitPath?: string): void {
+
+            if (context.inProvisionalResolution() || context.inSpecialization) {
+                return;
+            }
+
+            this.semanticInfoChain.setSymbolForAST(ast, symbol, unitPath ? unitPath : this.unitPath);
         }
 
         public getASTForSymbol(symbol: PullSymbol, unitPath?: string) {
@@ -152,6 +162,10 @@ module TypeScript {
 
         public getCachedArrayType() {
             return this.cachedArrayInterfaceType;
+        }
+
+        private getNewErrorTypeSymbol(diagnostic: PullDiagnostic): PullErrorTypeSymbol {
+            return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol);
         }
 
         // returns a list of decls leading up to decl, inclusive
@@ -751,7 +765,7 @@ module TypeScript {
         // The module and its members are pre-bound, so no further resolution is necessary
         //
         public resolveModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var declSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
+            var declSymbol = <PullTypeSymbol>this.getSymbolForAST(ast, context, this.unitPath);
 
             return declSymbol;
         }
@@ -989,14 +1003,14 @@ module TypeScript {
                 importDeclSymbol.setAliasedType(aliasedType);
                 importDeclSymbol.setResolved();
 
-                this.setSymbolForAST(importStatementAST.alias, aliasedType);
+                this.setSymbolForAST(importStatementAST.alias, aliasedType, context);
             }
          
             return importDeclSymbol;
         }
 
         public resolveFunctionTypeSignature(funcDeclAST: FuncDecl, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var funcDeclSymbol = <PullFunctionTypeSymbol>this.semanticInfoChain.getSymbolForAST(funcDeclAST, this.unitPath);
+            var funcDeclSymbol = <PullFunctionTypeSymbol>this.getSymbolForAST(funcDeclAST, context, this.unitPath);
 
             if (!funcDeclSymbol) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -1066,7 +1080,7 @@ module TypeScript {
 
         public resolveFunctionTypeSignatureParameter(argDeclAST: ArgDecl, contextParam: PullSymbol, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
-            var paramSymbol = this.semanticInfoChain.getSymbolForAST(argDeclAST, this.unitPath);
+            var paramSymbol = this.getSymbolForAST(argDeclAST, context, this.unitPath);
 
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
@@ -1092,7 +1106,7 @@ module TypeScript {
 
         public resolveFunctionExpressionParameter(argDeclAST: ArgDecl, contextParam: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
-            var paramSymbol = this.getSymbolForAST(argDeclAST);
+            var paramSymbol = this.getSymbolForAST(argDeclAST, context);
 
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
@@ -1114,7 +1128,7 @@ module TypeScript {
 
         public resolveInterfaceTypeReference(interfaceDeclAST: NamedDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
 
-            var interfaceSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(interfaceDeclAST, this.unitPath);//new PullTypeSymbol("", PullElementKind.Interface);
+            var interfaceSymbol = <PullTypeSymbol>this.getSymbolForAST(interfaceDeclAST, context, this.unitPath);//new PullTypeSymbol("", PullElementKind.Interface);
 
             if (!interfaceSymbol) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -1144,7 +1158,7 @@ module TypeScript {
                 var typeMembers = <ASTList> interfaceDeclAST.members;
 
                 for (var i = 0; i < typeMembers.members.length; i++) {
-                    memberSymbol = this.semanticInfoChain.getSymbolForAST(typeMembers.members[i], this.unitPath);
+                    memberSymbol = this.getSymbolForAST(typeMembers.members[i], context, this.unitPath);
 
                     this.resolveDeclaredSymbol(memberSymbol, enclosingDecl, context);
                 }
@@ -1169,6 +1183,7 @@ module TypeScript {
 
             var typeDeclSymbol: PullTypeSymbol = null;
             var prevResolvingTypeReference = context.resolvingTypeReference;
+            var diagnostic: PullDiagnostic = null;
 
             // a name
             if (typeRef.term.nodeType == NodeType.Name) {
@@ -1208,8 +1223,8 @@ module TypeScript {
                 }
 
                 if (!typeDeclSymbol) {
-                    context.postError(typeName.minChar, typeName.getLength(), this.unitPath, "Could not find type '" + typeName.actualText + "'", enclosingDecl);
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    diagnostic = context.postError(typeName.minChar, typeName.getLength(), this.unitPath, "Could not find type '" + typeName.actualText + "'", enclosingDecl);
+                    return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
 
@@ -1243,14 +1258,14 @@ module TypeScript {
                 context.resolvingTypeReference = prevResolvingTypeReference;
 
                 if (!typeDeclSymbol) {
-                    context.postError(dottedName.operand2.minChar, dottedName.operand2.getLength(), this.unitPath, "Could not find dotted type '" + (<Identifier>dottedName.operand2).actualText + "'", enclosingDecl);
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    diagnostic = context.postError(dottedName.operand2.minChar, dottedName.operand2.getLength(), this.unitPath, "Could not find dotted type '" + (<Identifier>dottedName.operand2).actualText + "'", enclosingDecl);
+                    return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
 
             if (!typeDeclSymbol) {
-                context.postError(typeRef.term.minChar, typeRef.term.getLength(), this.unitPath, "Could not resolve type reference", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(typeRef.term.minChar, typeRef.term.getLength(), this.unitPath, "Could not resolve type reference", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             // an array of any of the above
@@ -1299,7 +1314,7 @@ module TypeScript {
                 typeDeclSymbol = arraySymbol;
             }
 
-            this.setSymbolForAST(typeRef, typeDeclSymbol);
+            this.setSymbolForAST(typeRef, typeDeclSymbol, context);
 
             return typeDeclSymbol;
         }
@@ -1329,17 +1344,18 @@ module TypeScript {
             var wrapperDecl = this.getEnclosingDecl(decl);
             wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
 
+            var diagnostic: PullDiagnostic = null;
+
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
                 var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context);
 
                 if (!typeExprSymbol) {
-                    context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type expression for variable '" + varDecl.id.actualText + "'", decl);
-
-                    declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type expression for variable '" + varDecl.id.actualText + "'", decl);
+                    declSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
 
                     if (declParameterSymbol) {
-                        declParameterSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                        context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
                     }
 
                     hadError = true;
@@ -1355,8 +1371,8 @@ module TypeScript {
                         var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol()
 
                         if (!instanceSymbol) {
-                            context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", decl);
-                            typeExprSymbol = this.semanticInfoChain.anyTypeSymbol;
+                            diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", decl);
+                            typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
                         }
                         else {
                             typeExprSymbol = instanceSymbol.getType();
@@ -1387,9 +1403,9 @@ module TypeScript {
                 var initExprSymbol = this.resolveStatementOrExpression(varDecl.init, false, wrapperDecl, context);
 
                 if (!initExprSymbol) {
-                    context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'", decl);
+                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'", decl);
 
-                    context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
+                    context.setTypeInContext(declSymbol, this.getNewErrorTypeSymbol(diagnostic));
 
                     if (declParameterSymbol) {
                         context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
@@ -1570,6 +1586,8 @@ module TypeScript {
                     return funcSymbol;
                 }
 
+                var diagnostic: PullDiagnostic;
+
                 if (signature.isResolving()) {
                     
                     // try to set the return type, even though we may be lacking in some information
@@ -1577,8 +1595,8 @@ module TypeScript {
                         var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
                         var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
                         if (!returnTypeSymbol) {
-                            context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
-                            signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                            diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
+                            signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
                             hadError = true;
                         } else {
                             if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
@@ -1627,8 +1645,8 @@ module TypeScript {
                     returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
-                        signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
+                        signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
 
                         hadError = true;
                     }
@@ -1682,6 +1700,7 @@ module TypeScript {
             var signature: PullSignatureSymbol = getterTypeSymbol.getCallSignatures()[0];
 
             var hadError = false;
+            var diagnostic: PullDiagnostic;
 
             if (signature) {
 
@@ -1722,8 +1741,8 @@ module TypeScript {
                     var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
-                        signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                        diagnostic = context.postError(funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), this.unitPath, "Could not resolve return type reference for some reason...", funcDecl);
+                        signature.setReturnType(this.getNewErrorTypeSymbol(diagnostic));
 
                         hadError = true;
                     }
@@ -1776,8 +1795,8 @@ module TypeScript {
                         var setterParameterType = setterParameter.getType();
 
                         if (!this.typesAreIdentical(accessorType, setterParameterType)) {
-                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", this.getEnclosingDecl(funcDecl));
-                            accessorSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                            diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", this.getEnclosingDecl(funcDecl));
+                            accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
                         }
                     }
                 }
@@ -1869,8 +1888,8 @@ module TypeScript {
                                 accessorSymbol.setType(getterReturnType);
                             }
                             else {
-                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", this.getEnclosingDecl(funcDecl));
-                                accessorSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                                var diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", this.getEnclosingDecl(funcDecl));
+                                accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
                             }
                         }
                     }
@@ -2070,7 +2089,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var nameSymbol: PullSymbol = this.getSymbolForAST(nameAST);
+            var nameSymbol: PullSymbol = this.getSymbolForAST(nameAST, context);
 
             if (nameSymbol /*&& nameSymbol.isResolved()*/) {
                 return nameSymbol;
@@ -2100,15 +2119,15 @@ module TypeScript {
             }            
 
             if (!nameSymbol) {
-                context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find symbol '" + id + "'", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                var diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find symbol '" + id + "'", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             if (!nameSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(nameAST, nameSymbol);
+            this.setSymbolForAST(nameAST, nameSymbol, context);
 
             return nameSymbol;
         }
@@ -2119,7 +2138,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }            
 
-            var nameSymbol: PullSymbol = this.getSymbolForAST(dottedNameAST);
+            var nameSymbol: PullSymbol = this.getSymbolForAST(dottedNameAST, context);
 
             if (nameSymbol /*&& nameSymbol.isResolved()*/) {
                 return nameSymbol;
@@ -2130,6 +2149,7 @@ module TypeScript {
 
             var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
             var lhsType = lhs.getType();
+            var diagnostic: PullDiagnostic;
 
             if (lhs.isAlias()) {
                 (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
@@ -2140,8 +2160,8 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find enclosing symbol for dotted name '" + rhsName + "'", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find enclosing symbol for dotted name '" + rhsName + "'", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             // if we're resolving a type reference, we really only want to check the constructor type
@@ -2243,8 +2263,8 @@ module TypeScript {
                 }                
 
                 if (!nameSymbol) {
-                    context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted symbol name '" + rhsName + "'", enclosingDecl);
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted symbol name '" + rhsName + "'", enclosingDecl);
+                    return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
 
@@ -2252,8 +2272,8 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(dottedNameAST, nameSymbol);
-            this.setSymbolForAST(dottedNameAST.operand2, nameSymbol);
+            this.setSymbolForAST(dottedNameAST, nameSymbol, context);
+            this.setSymbolForAST(dottedNameAST.operand2, nameSymbol, context);
 
             return nameSymbol;
         }
@@ -2264,7 +2284,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST);
+            var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST, context);
 
             if (typeNameSymbol /*&& typeNameSymbol.isResolved()*/) {
                 return typeNameSymbol;
@@ -2273,6 +2293,7 @@ module TypeScript {
             var id = nameAST.text;
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+            var diagnostic: PullDiagnostic;
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -2281,8 +2302,8 @@ module TypeScript {
             typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
             if (!typeNameSymbol) {
-                context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find type '" + id + "'", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find type '" + id + "'", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
@@ -2291,7 +2312,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(nameAST, typeNameSymbol);
+            this.setSymbolForAST(nameAST, typeNameSymbol, context);
 
             return typeNameSymbol;
         }
@@ -2308,6 +2329,8 @@ module TypeScript {
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
+            var diagnostic: PullDiagnostic;
+
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
@@ -2317,8 +2340,8 @@ module TypeScript {
             genericTypeSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
             if (!genericTypeSymbol) {
-                context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find generic type '" + id + "'", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find generic type '" + id + "'", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             if (genericTypeSymbol.isResolving()) {
@@ -2352,9 +2375,9 @@ module TypeScript {
             var typeParameters = genericTypeSymbol.getTypeParameters();
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
-                context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, "Generic type '" + genericTypeSymbol.toString() + "' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied", enclosingDecl);
+                diagnostic = context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, "Generic type '" + genericTypeSymbol.toString() + "' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied", enclosingDecl);
 
-                return this.semanticInfoChain.anyTypeSymbol;
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
@@ -2394,11 +2417,13 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }  
 
-            var childTypeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST);
+            var childTypeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST, context);
 
             if (childTypeSymbol /*&& childTypeSymbol.isResolved()*/) {
                 return childTypeSymbol;
             }
+
+            var diagnostic: PullDiagnostic;
 
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).text;
@@ -2417,8 +2442,8 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find enclosing type for dotted type name '" + rhsName + "'", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find enclosing type for dotted type name '" + rhsName + "'", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
 
@@ -2426,15 +2451,15 @@ module TypeScript {
             childTypeSymbol = lhsType.findNestedType(rhsName);
 
             if (!childTypeSymbol) {
-                context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted type name '" + rhsName + "'", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted type name '" + rhsName + "'", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             if (!childTypeSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(childTypeSymbol, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(dottedNameAST, childTypeSymbol);
+            this.setSymbolForAST(dottedNameAST, childTypeSymbol, context);
 
             return childTypeSymbol;
         }
@@ -2733,7 +2758,7 @@ module TypeScript {
         // in the object literal
         public resolveObjectLiteralExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
-            var typeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(expressionAST);
+            var typeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(expressionAST, context);
             var span: TextSpan;
 
             if (typeSymbol && typeSymbol.isResolved()) {
@@ -2866,7 +2891,7 @@ module TypeScript {
 
                     memberSymbol.setResolved();
 
-                    this.setSymbolForAST(binex.operand1, memberSymbol);
+                    this.setSymbolForAST(binex.operand1, memberSymbol, context);
 
                     typeSymbol.addMember(memberSymbol, SymbolLinkKind.PublicMember);
                 }
@@ -2874,7 +2899,7 @@ module TypeScript {
 
             typeSymbol.setResolved();
 
-            this.setSymbolForAST(expressionAST, typeSymbol);
+            this.setSymbolForAST(expressionAST, typeSymbol, context);
 
             return typeSymbol;
         }
@@ -2932,9 +2957,9 @@ module TypeScript {
                 }
             }
             if (!elementType) {
-                context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Incompatible types in array literal expression", enclosingDecl);
+                var diagnostic = context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Incompatible types in array literal expression", enclosingDecl);
 
-                elementType = this.semanticInfoChain.anyTypeSymbol;
+                elementType = this.getNewErrorTypeSymbol(diagnostic);
             }
             else if (targetElementType) {
                 // for the case of zero-length 'any' arrays, we still want to set the contextual type, if
@@ -3137,9 +3162,9 @@ module TypeScript {
                 return bct;
             }
 
-            context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(), "Conditional expression types do not agree", enclosingDecl);
+            var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(), "Conditional expression types do not agree", enclosingDecl);
 
-            return this.semanticInfoChain.anyTypeSymbol;
+            return this.getNewErrorTypeSymbol(diagnostic);
         }
 
         public resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
@@ -3160,6 +3185,7 @@ module TypeScript {
             }
 
             var isSuperCall = false;
+            var diagnostic: PullDiagnostic;
 
             if (callEx.target.nodeType == NodeType.SuperExpression) {
                 isSuperCall = true;
@@ -3168,8 +3194,8 @@ module TypeScript {
                     targetSymbol = (<PullClassTypeSymbol>targetSymbol).getConstructorMethod().getType();
                 }
                 else {
-                    context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid super call on non-class type '"+ targetSymbol.toString() + "'", enclosingDecl);
-                    return this.semanticInfoChain.anyTypeSymbol;                    
+                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid super call on non-class type '"+ targetSymbol.toString() + "'", enclosingDecl);
+                    return this.getNewErrorTypeSymbol(diagnostic);                    
                 }
             }
 
@@ -3271,8 +3297,8 @@ module TypeScript {
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Attempting to call on a type with no call signatures", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Attempting to call on a type with no call signatures", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, context);
@@ -3285,8 +3311,8 @@ module TypeScript {
             }
 
             if (!signature) {
-                context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for call expression", enclosingDecl);
-                return this.semanticInfoChain.anyTypeSymbol;
+                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for call expression", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
             }
 
             var returnType = signature.getReturnType();
@@ -3364,6 +3390,8 @@ module TypeScript {
             if (targetTypeSymbol == this.semanticInfoChain.anyTypeSymbol) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }            
+
+            var diagnostic: PullDiagnostic;
 
             if (!constructSignatures.length) {
                 constructSignatures = targetTypeSymbol.getCallSignatures();
@@ -3471,8 +3499,8 @@ module TypeScript {
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
                     //signature = constructSignatures[0];
-                    context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for 'new' expression", enclosingDecl);
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for 'new' expression", enclosingDecl);
+                    return this.getNewErrorTypeSymbol(diagnostic);
                 }
 
                 returnType = signature.getReturnType();
@@ -3489,8 +3517,8 @@ module TypeScript {
 
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
-                        context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Call signatures used in a 'new' expression must have a return type of 'void'", enclosingDecl);
-                        return this.semanticInfoChain.anyTypeSymbol;                        
+                        diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Call signatures used in a 'new' expression must have a return type of 'void'", enclosingDecl);
+                        return this.getNewErrorTypeSymbol(diagnostic);                        
                     }
                 }
 
@@ -3553,9 +3581,9 @@ module TypeScript {
                 return returnType;
             }
 
-            context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid 'new' expression", enclosingDecl);
+            diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid 'new' expression", enclosingDecl);
 
-            return this.semanticInfoChain.anyTypeSymbol;
+            return this.getNewErrorTypeSymbol(diagnostic);
 
         }
 
@@ -3645,7 +3673,7 @@ module TypeScript {
         // type relationships
 
         public mergeOrdered(a: PullTypeSymbol, b: PullTypeSymbol, acceptVoid: bool, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
-            if ((a == this.semanticInfoChain.anyTypeSymbol) || (b == this.semanticInfoChain.anyTypeSymbol)) {
+            if ((a == this.semanticInfoChain.anyTypeSymbol) || (b == this.semanticInfoChain.anyTypeSymbol) || a.isError() || b.isError()) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
             else if (a == b) {
@@ -3703,7 +3731,8 @@ module TypeScript {
 
         public widenType(type: PullTypeSymbol): PullTypeSymbol {
             if (type == this.semanticInfoChain.undefinedTypeSymbol ||
-                type == this.semanticInfoChain.nullTypeSymbol) {
+                type == this.semanticInfoChain.nullTypeSymbol ||
+                type.isError()) {
 
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -3785,6 +3814,10 @@ module TypeScript {
 
             if (t1.isClass()) {
                 return false;
+            }
+
+            if (t1.isError() && t2.isError()) {
+                return true;
             }
 
             var comboId = (t2.getSymbolID() << 16) | t1.getSymbolID();
@@ -4030,10 +4063,14 @@ module TypeScript {
                 if (source == this.semanticInfoChain.anyTypeSymbol || target == this.semanticInfoChain.anyTypeSymbol) {
                     return true;
                 }
+
+                if (source.isError() || target.isError()) {
+                    return true;
+                }
             }
             else {
                 // This is one difference between assignment compatibility and subtyping
-                if (target == this.semanticInfoChain.anyTypeSymbol) {
+                if (target == this.semanticInfoChain.anyTypeSymbol || target.isError()) {
                     return true;
                 }
             }
@@ -4822,7 +4859,7 @@ module TypeScript {
                 return true;
             }
 
-            var signature = this.getSymbolForAST(funcDecl).getType().getCallSignatures()[0];
+            var signature = this.getSymbolForAST(funcDecl, null).getType().getCallSignatures()[0];
             var parameters = signature.getParameters();
             var paramLen = parameters.length;
 

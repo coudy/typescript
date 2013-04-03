@@ -57,6 +57,16 @@ module TypeScript {
             return this.semanticInfoChain.getUnit(fileName).getTopLevelDecls()[0];
         }
 
+        public checkForResolutionError(typeSymbol: PullTypeSymbol, decl: PullDecl): void {
+            if (typeSymbol && typeSymbol.isError()) {
+                decl.addDiagnostic((<PullErrorTypeSymbol>typeSymbol).getDiagnostic());
+            }
+        }
+
+        public postError(offset: number, length: number, fileName: string, message: string, enclosingDecl: PullDecl) {
+            enclosingDecl.addDiagnostic(new PullDiagnostic(offset, length, fileName, message));
+        }
+
         // declarations
 
         public typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
@@ -327,6 +337,8 @@ module TypeScript {
 
             var varTypeSymbol = this.resolver.resolveAST(boundDeclAST, false, enclosingDecl, this.context).getType();
 
+            this.checkForResolutionError(varTypeSymbol, enclosingDecl);
+
             // if there's a type expr and an initializer, resolve the initializer
             if (boundDeclAST.init) {
                 this.context.pushContextualType(varTypeSymbol, this.context.inProvisionalResolution(), null);
@@ -346,7 +358,7 @@ module TypeScript {
                     // ignore comparison info for now
                     var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
 
-                    this.context.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                    this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                 }
             }
 
@@ -409,25 +421,29 @@ module TypeScript {
                 var lastWasOptional = false;
 
                 for (var i = 0; i < parameters.length; i++) {
-
+                    this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
                     if (parameters[i].getIsOptional()) {
                         lastWasOptional = true;
                     }
                     else if (lastWasOptional) {
-                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
+                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
                     }
-
                 }
             }
 
+
+            var returnType = functionSignature.getReturnType();
+
+            this.checkForResolutionError(returnType, enclosingDecl);
+
             if (funcDeclAST.bod && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
-                var returnType = functionSignature.getReturnType();
                 var isVoidOrAny = returnType == this.semanticInfoChain.anyTypeSymbol || returnType == this.semanticInfoChain.voidTypeSymbol;
 
                 if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.ThrowStatement)) {
                     var funcName = functionDecl.getName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
-                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Function " + funcName + " declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
+
+                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Function "+ funcName +" declared a non-void return type, but has no return expression", typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -465,31 +481,36 @@ module TypeScript {
             if (parameters.length) {
 
                 if (isGetter) {
-                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters may not take arguments", typeCheckContext.getEnclosingDecl()); ''
+                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters may not take arguments", typeCheckContext.getEnclosingDecl());''
                 }
                 else {
 
                     if (parameters.length > 1) {
-                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may have one and only one argument", typeCheckContext.getEnclosingDecl()); ''
+                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may have one and only one argument", typeCheckContext.getEnclosingDecl());''
                     }
 
                     for (var i = 0; i < parameters.length; i++) {
+                        this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
                         if (parameters[i].getIsOptional()) {
-                            this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not take optional parameters", typeCheckContext.getEnclosingDecl());
+                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not take optional parameters", typeCheckContext.getEnclosingDecl());
                             break;
                         }
                     }
                 }
             }
 
+            var returnType = functionSignature.getReturnType();
+
+            this.checkForResolutionError(returnType, enclosingDecl);
+
             // PULLREVIEW: Should we also raise an error if the setter returns a value?
             if (isGetter && !hasReturn) {
                 if (!(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.ThrowStatement)) {
-                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
                 }
             }
             else if (isSetter && hasReturn) {
-                this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not return a value", typeCheckContext.getEnclosingDecl());
+                this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not return a value", typeCheckContext.getEnclosingDecl());
             }
 
             if (getter && setter) {
@@ -500,7 +521,7 @@ module TypeScript {
                 var setterIsPrivate = setterDecl.getFlags() & PullElementFlags.Private;
 
                 if (getterIsPrivate != setterIsPrivate) {
-                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getter and setter accessors do not agree in visibility", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getter and setter accessors do not agree in visibility", typeCheckContext.getEnclosingDecl());
                 }
             }
 
@@ -538,18 +559,20 @@ module TypeScript {
                 var lastWasOptional = false;
 
                 for (var i = 0; i < parameters.length; i++) {
-
+                    this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
                     if (parameters[i].getIsOptional()) {
                         lastWasOptional = true;
                     }
                     else if (lastWasOptional) {
-                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
+                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Optional parameters may only be followed by other optional parameters", typeCheckContext.getEnclosingDecl());
                     }
 
                 }
             }
 
             this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
+
+            this.checkForResolutionError(constructorSignature.getReturnType(), enclosingDecl);
 
             return functionSymbol ? functionSymbol.getType() : null;
         }
@@ -577,29 +600,29 @@ module TypeScript {
             if (parameters.length) {
 
                 if (parameters.length > 1) {
-                    this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
+                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
                 }
 
                 var parameterType: PullTypeSymbol = null;
 
                 for (var i = 0; i < parameters.length; i++) {
-
+                    this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
                     if (parameters[i].getIsOptional() || parameters[i].getIsVarArg()) {
-                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
+                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
                     }
 
                     parameterType = parameters[i].getType();
 
                     if (parameterType != this.semanticInfoChain.stringTypeSymbol && parameterType != this.semanticInfoChain.numberTypeSymbol) {
-                        this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
+                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may not have optional parameters", typeCheckContext.getEnclosingDecl());
                     }
                 }
             }
             else {
-                this.context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
+                this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Index signatures may take one and only one parameter", typeCheckContext.getEnclosingDecl());
             }
 
-            this.checkFunctionTypePrivacy(funcDeclAST, inTypedAssignment, typeCheckContext);
+            this.checkForResolutionError(indexSignature.getReturnType(), enclosingDecl);
 
             return null;
         }
@@ -622,6 +645,9 @@ module TypeScript {
             this.checkBaseListTypePrivacy(classAST, classSymbol, true, typeCheckContext);
             this.checkBaseListTypePrivacy(classAST, classSymbol, false, typeCheckContext);
 
+            
+            this.checkForResolutionError(classSymbol, typeCheckContext.getEnclosingDecl());
+            
             if (classAST.members) {
                 for (var i = 0; i < classAST.members.members.length; i++) {
                     this.typeCheckAST(classAST.members.members[i], typeCheckContext);
@@ -645,6 +671,8 @@ module TypeScript {
             var interfaceType = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             this.checkBaseListTypePrivacy(interfaceAST, interfaceType, true, typeCheckContext);
 
+            this.checkForResolutionError(interfaceType, typeCheckContext.getEnclosingDecl());
+
             if (interfaceAST.members) {
                 for (var i = 0; i < interfaceAST.members.members.length; i++) {
                     this.typeCheckAST(interfaceAST.members.members[i], typeCheckContext);
@@ -662,7 +690,9 @@ module TypeScript {
             // we resolve here because resolving a module *does not* resolve its MemberScopeContext
             // PULLREVIEW: Perhaps it should?
             var moduleDeclAST = <ModuleDeclaration>ast;
-            this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context);
+            var moduleType = <PullTypeSymbol>this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context);
+
+            this.checkForResolutionError(moduleType, typeCheckContext.getEnclosingDecl());
 
             var moduleDecl = typeCheckContext.semanticInfo.getDeclForAST(moduleDeclAST);
             typeCheckContext.pushEnclosingDecl(moduleDecl);
@@ -673,7 +703,7 @@ module TypeScript {
 
             typeCheckContext.popEnclosingDecl();
 
-            return moduleDecl.getSymbol().getType();
+            return moduleType;
         }
 
         // expressions
@@ -690,6 +720,8 @@ module TypeScript {
             var leftExpr = this.resolver.resolveAST(assignmentAST.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
             var leftType = this.resolver.widenType(leftExpr.getType()); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
 
+            this.checkForResolutionError(leftType, enclosingDecl);
+
             this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
             var rightType = this.resolver.widenType(this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true));
             this.context.popContextualType();
@@ -701,7 +733,7 @@ module TypeScript {
                             hasFlag(ast.getFlags(), ASTFlags.EnumInitializer);
 
             if (!isValidLHS) {
-                this.context.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, "Invalid left-hand side of assignment expression", enclosingDecl);
+                this.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, "Invalid left-hand side of assignment expression", enclosingDecl);
             }
 
             var comparisonInfo = new TypeComparisonInfo();
@@ -714,7 +746,7 @@ module TypeScript {
                 // ignore comparison info for now
                 var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [rightType.toString(), leftType.toString()]);
 
-                this.context.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                this.postError(assignmentAST.operand1.minChar, assignmentAST.operand1.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
             }
 
             return leftType;
@@ -726,7 +758,11 @@ module TypeScript {
         public typeCheckGenericType(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // validate:
             //  - mutually recursive type parameters and constraints
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var genericType = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(genericType, enclosingDecl);
+
+            return genericType;
         }
 
         // Object literals
@@ -740,6 +776,8 @@ module TypeScript {
             var memberDecls = <ASTList>objectLitAST.operand;
 
             var contextualType = this.context.getContextualType();
+            var memberType: PullTypeSymbol;
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             // PULLTODO: Contextually type the members
             if (memberDecls) {
@@ -767,7 +805,7 @@ module TypeScript {
                     }
 
                     this.typeCheckAST(binex.operand2, typeCheckContext, member != null);
-
+                    
                     if (member) {
                         this.context.popContextualType();
                         member = null;
@@ -775,7 +813,8 @@ module TypeScript {
                 }
             }
 
-
+            this.checkForResolutionError(objectLitType, enclosingDecl);
+            
             return objectLitType;
         }
 
@@ -843,12 +882,15 @@ module TypeScript {
         // validate:
         //  - the type assertion and the expression it's applied to are assignment compatible
         public typeCheckTypeAssertion(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var returnType = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var returnType = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            this.checkForResolutionError(returnType, enclosingDecl);
 
             this.context.pushContextualType(returnType, this.context.inProvisionalResolution(), null);
             var exprType = this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext);
             this.context.popContextualType();
-
 
             var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, exprType, this.context, comparisonInfo) ||
                                 this.resolver.sourceIsAssignableToTarget(exprType, returnType, this.context, comparisonInfo);
@@ -860,7 +902,7 @@ module TypeScript {
                 // ignore comparison info for now
                 var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [exprType.toString(), returnType.toString()]);
 
-                this.context.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
+                this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, typeCheckContext.getEnclosingDecl());
             }
 
             return returnType;
@@ -871,7 +913,11 @@ module TypeScript {
         //  - lhs and rhs are compatible
         public typeCheckLogicalOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            
             var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.checkForResolutionError(type, enclosingDecl);
 
             this.typeCheckAST(binex.operand1, typeCheckContext);
             this.typeCheckAST(binex.operand2, typeCheckContext);
@@ -884,7 +930,11 @@ module TypeScript {
         // - lhs and rhs are compatible
         public typeCheckLogicalAndOrExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            this.checkForResolutionError(type, enclosingDecl);
 
             this.typeCheckAST(binex.operand1, typeCheckContext);
             this.typeCheckAST(binex.operand2, typeCheckContext);
@@ -894,7 +944,10 @@ module TypeScript {
 
         public typeCheckBinaryAdditionOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            this.checkForResolutionError(type, enclosingDecl);
 
             var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
             var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
@@ -936,7 +989,7 @@ module TypeScript {
             }
 
             if (!exprType) {
-                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "Invalid '+' expression - types do not agree", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "Invalid '+' expression - types do not agree", typeCheckContext.getEnclosingDecl());
                 exprType = this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -948,7 +1001,10 @@ module TypeScript {
         //  - lhs and rhs are compatible
         public typeCheckBinaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var binex = <BinaryExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            this.checkForResolutionError(type, enclosingDecl);
 
             var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
             var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
@@ -957,11 +1013,11 @@ module TypeScript {
             var rhsIsFit = rhsType == this.semanticInfoChain.anyTypeSymbol || rhsType == this.semanticInfoChain.numberTypeSymbol || rhsType.getKind() == PullElementKind.Enum;
 
             if (!rhsIsFit) {
-                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
             }
 
             if (!lhsIsFit) {
-                this.context.postError(binex.operand2.minChar, binex.operand2.getLength(), typeCheckContext.scriptName, "The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand2.minChar, binex.operand2.getLength(), typeCheckContext.scriptName, "The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
             }
 
             // check for assignment compatibility
@@ -1004,12 +1060,12 @@ module TypeScript {
         public typeCheckUnaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var unex = <UnaryExpression>ast;
             var lhsType = this.typeCheckAST(unex.operand, typeCheckContext);
-
+                        
             var lhsIsFit = lhsType == this.semanticInfoChain.anyTypeSymbol || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
 
             if (!lhsIsFit) {
-                this.context.postError(unex.operand.minChar, unex.operand.getLength(), typeCheckContext.scriptName, "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
-            }
+                this.postError(unex.operand.minChar, unex.operand.getLength(), typeCheckContext.scriptName, "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
+            }           
 
             return lhsType;
         }
@@ -1018,7 +1074,9 @@ module TypeScript {
         // validate:
         //  -
         public typeCheckIndex(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
+            return type;
         }
 
         // 'typeof' expression 
@@ -1034,7 +1092,9 @@ module TypeScript {
         // validate:
         //  -
         public typeCheckTypeReference(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
+            return type;
         }
 
         // Conditional expressions
@@ -1043,7 +1103,11 @@ module TypeScript {
         public typeCheckConditionalExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
 
             var condAST = <ConditionalExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+
+            this.checkForResolutionError(type, enclosingDecl);
 
             this.typeCheckAST(condAST.operand1, typeCheckContext);
             this.typeCheckAST(condAST.operand2, typeCheckContext);
@@ -1054,14 +1118,16 @@ module TypeScript {
 
         // new expression types
         public typeCheckThrowExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
+            var type = this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckDeleteExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var unex = <UnaryExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
             this.typeCheckAST(unex.operand, typeCheckContext);
 
             return type;
@@ -1069,15 +1135,18 @@ module TypeScript {
 
         public typeCheckVoidExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var unex = <UnaryExpression>ast;
-            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
-
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
             this.typeCheckAST(unex.operand, typeCheckContext);
 
             return type;
         }
 
         public typeCheckRegExpExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveStatementOrExpression(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var type = this.resolver.resolveStatementOrExpression(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            this.checkForResolutionError(type, typeCheckContext.getEnclosingDecl());
+            return type;
         }
 
         // statements
@@ -1101,20 +1170,21 @@ module TypeScript {
             var varDecl = <VarDecl>forInStatement.lval;
 
             if (varDecl.typeExpr) {
-                this.context.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may not contain a type annotation", typeCheckContext.getEnclosingDecl());
+                this.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may not contain a type annotation", typeCheckContext.getEnclosingDecl());
             }
 
             var varSym = this.resolver.resolveAST(varDecl, false, typeCheckContext.getEnclosingDecl(), this.context);
+            this.checkForResolutionError(varSym.getType(), typeCheckContext.getEnclosingDecl());
 
             var isStringOrAny = varSym.getType() == this.semanticInfoChain.stringTypeSymbol || varSym.getType() == this.semanticInfoChain.anyTypeSymbol;
             var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
-                this.context.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
+                this.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.context.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, "The right operand of a for/in expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+                this.postError(forInStatement.obj.minChar, forInStatement.obj.getLength(), typeCheckContext.scriptName, "The right operand of a for/in expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.voidTypeSymbol;
@@ -1130,12 +1200,13 @@ module TypeScript {
             var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
-                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'in' expression may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'in' expression may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
-            }
+
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'in' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+            }        
 
             return this.semanticInfoChain.boolTypeSymbol;
         }
@@ -1150,11 +1221,11 @@ module TypeScript {
             var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
 
             if (!isValidLHS) {
-                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
-                this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'instanceOf' expression must be of type Any or a subtype of the 'Function' interface type", typeCheckContext.getEnclosingDecl());
+                this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an 'instanceOf' expression must be of type Any or a subtype of the 'Function' interface type", typeCheckContext.getEnclosingDecl());
             }
 
             return this.semanticInfoChain.boolTypeSymbol;
@@ -1270,7 +1341,7 @@ module TypeScript {
                         // ignore comparison info for now
                         var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [returnType.toString(), sigReturnType.toString()]);
 
-                        this.context.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                        this.postError(ast.minChar, ast.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                     }
                 }
             }
@@ -1279,11 +1350,17 @@ module TypeScript {
         }
 
         public typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveNameExpression(<Identifier>ast, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveNameExpression(<Identifier>ast, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
+            return type;
         }
 
         public typeCheckDottedNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveDottedNameExpression(<BinaryExpression>ast, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
+            return type;
         }
 
         public typeCheckSwitchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {

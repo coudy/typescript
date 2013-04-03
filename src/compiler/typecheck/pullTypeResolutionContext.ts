@@ -213,6 +213,8 @@ module TypeScript {
             return (!this.contextStack.length ? false : this.contextStack[this.contextStack.length - 1].provisional);
         }
 
+        public inSpecialization = false;
+
         public setTypeInContext(symbol: PullSymbol, type: PullTypeSymbol) {
             var substitution: PullTypeSymbol = this.findSubstitution(type);
 
@@ -253,14 +255,16 @@ module TypeScript {
                 return;
             }
             
-            var error = new PullDiagnostic(offset, length, fileName, message);
+            var diagnostic = new PullDiagnostic(offset, length, fileName, message);
 
             if (this.inProvisionalResolution()) {
-                (this.contextStack[this.contextStack.length - 1]).postDiagnostic(error);
+                (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
             }
-            else if (enclosingDecl) {
-                enclosingDecl.addDiagnostic(error);
-            }
+            //else if (enclosingDecl) {
+            //    enclosingDecl.addDiagnostic(error);
+            //}
+
+            return diagnostic;
         }
     }
 }

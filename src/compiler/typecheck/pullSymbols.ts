@@ -971,6 +971,7 @@ module TypeScript {
         public isFunction() { return false; }
         public isTypeParameter() { return false; }
         public isTypeVariable() { return false; }
+        public isError() { return false; }
 
         public setHasGenericSignature() { this.hasGenericSignature = true; }
 
@@ -1855,6 +1856,24 @@ module TypeScript {
         }
     }
 
+    export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
+        constructor(public diagnostic: PullDiagnostic, public delegateType: PullTypeSymbol) {
+            super("error");
+        }
+
+        public isError() {
+            return true;
+        }
+
+        public getDiagnostic() {
+            return this.diagnostic;
+        }
+
+        public toString() {
+            return this.delegateType.toString();
+        }
+    }
+
     // PULLTODO: Unify concepts of constructor method and container
     // type instance types
     export class PullClassTypeSymbol extends PullTypeSymbol {
@@ -2509,6 +2528,8 @@ module TypeScript {
         }
 
         var newTypeDecl = typeToSpecialize.getDeclarations()[0];
+        
+        var prevInSpecialization = context.inSpecialization;
 
         newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) :
                     isArray ? new PullArrayTypeSymbol() :
@@ -2637,6 +2658,7 @@ module TypeScript {
             context.popTypeSpecializationCache();
 
             if (!newSignature) {
+                context.inSpecialization = prevInSpecialization;
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }            
 
@@ -2692,6 +2714,7 @@ module TypeScript {
             context.popTypeSpecializationCache();
 
             if (!newSignature) {
+                context.inSpecialization = prevInSpecialization;
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -2747,6 +2770,7 @@ module TypeScript {
             context.popTypeSpecializationCache();
 
             if (!newSignature) {
+                context.inSpecialization = prevInSpecialization;
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
             
@@ -2793,8 +2817,6 @@ module TypeScript {
                 fieldType = new PullTypeVariableSymbol("tyvar" + globalTyvarID);
             }
 
-            //newField.setType(fieldType);
-
             replacementType = <PullTypeSymbol>typeReplacementMap[fieldType.getSymbolID().toString()];
 
             if (replacementType) {
@@ -2808,33 +2830,10 @@ module TypeScript {
             else {
                 // re-resolve all field decls using the current replacements
                 if (fieldType.isGeneric()) {
-                    // field.invalidate();
-                    // if (fieldType.isFunction()) {
-                    //     fieldType.invalidate();
-                    // }
-
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(decls[0].getScriptName());
 
                     context.pushTypeSpecializationCache(typeReplacementMap);
-
-                    // for (j = 0; j < decls.length; j++) {
-                    //     decl = decls[j];
-
-                    //     newField.addDeclaration(decl);
-
-                    //     if (fieldType.getCallSignatures().length) {
-                    //         fieldSignatureSymbol = decl.getSignatureSymbol();
-                    //         fieldSignatureSymbol.invalidate();
-                    //     }
-
-                    //     declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
-                    //     fieldType = (resolver.resolveAST(declAST, false, newTypeDecl, context)).getType();
-                        
-                    //     if (fieldType.isFunction()) {
-                    //         fieldType.addDeclaration(decl);
-                    //     }
-                    // }
 
                     newFieldType = specializeType(fieldType, typeArguments, resolver, newTypeDecl, context, ast);
 
@@ -2874,6 +2873,7 @@ module TypeScript {
 
         newType.setResolved();
 
+        context.inSpecialization = prevInSpecialization;
         return newType;
     }
 
@@ -2899,6 +2899,9 @@ module TypeScript {
         }
 
         signature.setIsBeingSpecialized();
+
+        var prevInSpecialization = context.inSpecialization;
+        context.inSpecialization = true;
 
         newSignature = new PullSignatureSymbol(signature.getKind());
         newSignature.addDeclaration(signature.getDeclarations()[0]);
@@ -2980,6 +2983,8 @@ module TypeScript {
         }
 
         signature.setIsSpecialized();
+
+        context.inSpecialization = prevInSpecialization;
 
         return newSignature;
     }
