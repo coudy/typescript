@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "10.1.1-8gs.ts";
+    // "FunctionDeclaration3.ts";
     undefined;
 
 var generate = false;
@@ -38,17 +38,18 @@ class Program {
         }
 
         if (specificFile === undefined) {
-            Environment.standardOut.WriteLine("Testing Incremental 2.");
-            TypeScript.IncrementalParserTests.runAllTests();
-        }
-
-        if (specificFile === undefined) {
+            // TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
             this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         }
 
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+
+        if (specificFile === undefined) {
+            Environment.standardOut.WriteLine("Testing Incremental 2.");
+            TypeScript.IncrementalParserTests.runAllTests();
+        }
 
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\emitter\\ecmascript5",

@@ -20,7 +20,9 @@ module TypeScript {
                     this.position += element.fullWidth();
                 }
                 else {
-                    if (element.isNode()) {
+                    if (element.isNode() ||
+                        (element.isList() && (<ISyntaxList>element).childCount() > 0) ||
+                        (element.isSeparatedList() && (<ISeparatedSyntaxList>element).childCount() > 0)) {
                         this.elementToPosition.add(element, this.position);
                     }
 

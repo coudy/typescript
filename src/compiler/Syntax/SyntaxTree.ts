@@ -374,6 +374,58 @@ module TypeScript {
             }
         }
 
+        private checkFunctionOverloads(node: ISyntaxElement, moduleElements: ISyntaxList): bool {
+            if (!this.inAmbientDeclaration && !this.isDeclaration) {
+                var moduleElementFullStart = this.childFullStart(node, moduleElements);
+
+                var inFunctionOverloadChain = false;
+                var functionOverloadChainName: string = null;
+
+                for (var i = 0, n = moduleElements.childCount(); i < n; i++) {
+                    var moduleElement = <IModuleElementSyntax>moduleElements.childAt(i);
+                    var lastElement = i === (n - 1);
+
+                    if (inFunctionOverloadChain) {
+                        if (moduleElement.kind() !== SyntaxKind.FunctionDeclaration) {
+                            this.pushDiagnostic1(moduleElementFullStart, moduleElement.firstToken(),
+                                DiagnosticCode.Function_implementation_expected);
+                            return true;
+                        }
+
+                        var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
+                        if (functionDeclaration.identifier.valueText() !== functionOverloadChainName) {
+                            var identifierFullStart = moduleElementFullStart + Syntax.childOffset(moduleElement, functionDeclaration.identifier);
+                            this.pushDiagnostic1(identifierFullStart, functionDeclaration.identifier,
+                                DiagnosticCode.Function_overload_name_must_be__0_, [functionOverloadChainName]);
+                            return true;
+                        }
+                    }
+
+                    if (moduleElement.kind() === SyntaxKind.FunctionDeclaration) {
+                        functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
+                        if (!this.containsToken(functionDeclaration.modifiers, SyntaxKind.DeclareKeyword)) {
+                            inFunctionOverloadChain = functionDeclaration.block === null;
+                            functionOverloadChainName = functionDeclaration.identifier.valueText();
+
+                            if (lastElement && inFunctionOverloadChain) {
+                                this.pushDiagnostic1(moduleElementFullStart, moduleElement.firstToken(),
+                                    DiagnosticCode.Function_implementation_expected);
+                                return true;
+                            }
+                        }
+                        else {
+                            inFunctionOverloadChain = false;
+                            functionOverloadChainName = "";
+                        }
+                    }
+
+                    moduleElementFullStart += moduleElement.fullWidth();
+                }
+            }
+
+            return false;
+        }
+
         private checkClassOverloads(node: ClassDeclarationSyntax): bool {
             if (!this.inAmbientDeclaration && !this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
                 var classElementFullStart = this.childFullStart(node, node.classElements);
@@ -687,7 +739,8 @@ module TypeScript {
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) ||
                 this.checkForRequiredDeclareModifier(node, node.moduleKeyword, node.modifiers) ||
-                this.checkModuleElementModifiers(node.modifiers)) {
+                this.checkModuleElementModifiers(node.modifiers) ||
+                (!this.containsToken(node.modifiers, SyntaxKind.DeclareKeyword) && this.checkFunctionOverloads(node, node.moduleElements))) {
 
                 this.skip(node);
                 return;
@@ -708,9 +761,14 @@ module TypeScript {
         }
 
         private visitBlock(node: BlockSyntax): void {
-            if (this.inAmbientDeclaration) {
+            if (this.inAmbientDeclaration || this.isDeclaration) {
                 this.pushDiagnostic1(this.position(), node.firstToken(),
                     DiagnosticCode.Implementations_are_not_allowed_in_ambient_contexts);
+                this.skip(node);
+                return;
+            }
+
+            if (this.checkFunctionOverloads(node, node.statements)) {
                 this.skip(node);
                 return;
             }
@@ -718,10 +776,18 @@ module TypeScript {
             super.visitBlock(node);
         }
 
-        private visitBreakStatement(node: BreakStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node,
+        private checkForStatementInAmbientContxt(node: IStatementSyntax): bool {
+            if (this.inAmbientDeclaration || this.isDeclaration) {
+                this.pushDiagnostic1(this.position(), node.firstToken(),
                     DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+                return true;
+            }
+
+            return false
+        }
+
+        private visitBreakStatement(node: BreakStatementSyntax): void {
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -730,9 +796,7 @@ module TypeScript {
         }
 
         private visitContinueStatement(node: ContinueStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -741,9 +805,7 @@ module TypeScript {
         }
 
         private visitDebuggerStatement(node: DebuggerStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -752,9 +814,7 @@ module TypeScript {
         }
 
         private visitDoStatement(node: DoStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -763,9 +823,7 @@ module TypeScript {
         }
 
         private visitEmptyStatement(node: EmptyStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -774,9 +832,7 @@ module TypeScript {
         }
 
         private visitExpressionStatement(node: ExpressionStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -785,9 +841,7 @@ module TypeScript {
         }
 
         private visitForInStatement(node: ForInStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -796,9 +850,7 @@ module TypeScript {
         }
 
         private visitForStatement(node: ForStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -807,9 +859,7 @@ module TypeScript {
         }
 
         private visitIfStatement(node: IfStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -818,9 +868,7 @@ module TypeScript {
         }
 
         private visitLabeledStatement(node: LabeledStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -829,9 +877,7 @@ module TypeScript {
         }
 
         private visitReturnStatement(node: ReturnStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -840,9 +886,7 @@ module TypeScript {
         }
 
         private visitSwitchStatement(node: SwitchStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -851,9 +895,7 @@ module TypeScript {
         }
 
         private visitThrowStatement(node: ThrowStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -862,9 +904,7 @@ module TypeScript {
         }
 
         private visitTryStatement(node: TryStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -873,9 +913,7 @@ module TypeScript {
         }
 
         private visitWhileStatement(node: WhileStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -884,9 +922,7 @@ module TypeScript {
         }
 
         private visitWithStatement(node: WithStatementSyntax): void {
-            if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node.firstToken(),
-                    DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+            if (this.checkForStatementInAmbientContxt(node)) {
                 this.skip(node);
                 return;
             }
@@ -972,6 +1008,15 @@ module TypeScript {
             this.currentConstructor = node;
             super.visitConstructorDeclaration(node);
             this.currentConstructor = savedCurrentConstructor;
+        }
+
+        private visitSourceUnit(node: SourceUnitSyntax): void {
+            if (this.checkFunctionOverloads(node, node.moduleElements)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitSourceUnit(node);
         }
     }
 }
