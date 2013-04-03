@@ -820,7 +820,7 @@ module FourSlash {
                 var errMsg = '';
 
                 try {
-                    var pullType = this.languageService.getDefinitionAtPosition(this.activeFile.fileName, positions[i]);
+                    var pullType = this.languageService.getTypeAtPosition(this.activeFile.fileName, positions[i]);
                     pullName = nameOf(pullType);
                 } catch (err1) {
                     errMsg = 'Failed to get pull type check. Exception: ' + err1 + '\r\n';
@@ -830,7 +830,7 @@ module FourSlash {
                 }
 
                 try {
-                    var referenceType = referenceLanguageService.getDefinitionAtPosition(this.activeFile.fileName, positions[i]);
+                    var referenceType = referenceLanguageService.getTypeAtPosition(this.activeFile.fileName, positions[i]);
                     refName = nameOf(referenceType);
                 } catch (err2) {
                     errMsg = 'Failed to get full type check. Exception: ' + err2 + '\r\n';
