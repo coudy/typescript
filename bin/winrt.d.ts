@@ -13,7 +13,7 @@ See the Apache Version 2.0 License for specific language governing permissions
 and limitations under the License.
 ***************************************************************************** */
 
-module Windows {
+declare module Windows {
     export module Foundation {
         export module Collections {
             export enum CollectionChange {
@@ -42,7 +42,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Foundation {
         export interface IUriRuntimeClass {
              absoluteUri: string;
@@ -371,7 +371,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Foundation {
         export module Metadata {
             export class WebHostHiddenAttribute {
@@ -472,7 +472,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Foundation {
         export module Diagnostics {
             export enum ErrorOptions {
@@ -493,7 +493,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Background {
             export enum BackgroundAccessStatus {
@@ -697,7 +697,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Contacts {
             export enum ContactFieldType {
@@ -864,7 +864,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Contacts {
             export module Provider {
@@ -899,7 +899,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module DataTransfer {
             export interface IStandardDataFormatsStatics {
@@ -1131,7 +1131,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Search {
             export interface ISearchPaneQueryLinguisticDetails {
@@ -1268,7 +1268,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module DataTransfer {
             export module ShareTarget {
@@ -1312,7 +1312,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Activation {
             export interface ISplashScreen {
@@ -1470,7 +1470,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Core {
             export class CoreApplication {
@@ -1536,7 +1536,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export class SuspendingEventArgs implements Windows.ApplicationModel.ISuspendingEventArgs {
             suspendingOperation: Windows.ApplicationModel.SuspendingOperation;
@@ -1608,7 +1608,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Resources {
             export interface IResourceLoader {
@@ -1629,7 +1629,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Resources {
             export module Core {
@@ -1896,7 +1896,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Resources {
             export module Management {
@@ -1944,7 +1944,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module ApplicationModel {
         export module Store {
             export interface LicenseChangedEventHandler {
@@ -2045,7 +2045,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Data {
         export module Html {
             export interface IHtmlUtilities {
@@ -2057,7 +2057,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Data {
         export module Json {
             export enum JsonValueType {
@@ -2225,7 +2225,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Data {
         export module Xml {
             export module Dom {
@@ -2911,7 +2911,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Data {
         export module Xml {
             export module Xsl {
@@ -2929,7 +2929,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Sms {
             export enum SmsMessageClass {
@@ -3212,7 +3212,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Enumeration {
             export enum DeviceClass {
@@ -3379,7 +3379,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Enumeration {
             export module Pnp {
@@ -3487,7 +3487,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Geolocation {
             export enum PositionAccuracy {
@@ -3579,7 +3579,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Input {
             export enum PointerDeviceType {
@@ -3670,7 +3670,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Portable {
             export enum ServiceDeviceType {
@@ -3701,7 +3701,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Printers {
             export module Extensions {
@@ -3755,7 +3755,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Devices {
         export module Sensors {
             export interface IAccelerometerStatics {
@@ -4027,7 +4027,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Globalization {
         export module Fonts {
             export interface ILanguageFontGroup {
@@ -4077,7 +4077,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Globalization {
         export enum DayOfWeek {
             sunday,
@@ -4368,7 +4368,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Globalization {
         export module DateTimeFormatting {
             export enum YearFormat {
@@ -4473,7 +4473,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Globalization {
         export module NumberFormatting {
             export interface INumberFormatter {
@@ -4603,7 +4603,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Globalization {
         export module Collation {
             export interface ICharacterGrouping {
@@ -4660,7 +4660,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Graphics {
         export module Display {
             export interface DisplayPropertiesEventHandler {
@@ -4710,7 +4710,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Graphics {
         export module Imaging {
             export enum BitmapPixelFormat {
@@ -4996,7 +4996,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Graphics {
         export module Printing {
             export module OptionDetails {
@@ -5197,7 +5197,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Graphics {
         export module Printing {
             export interface PrintPageDescription {
@@ -5665,7 +5665,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Management {
         export module Deployment {
             export enum DeploymentProgressState {
@@ -5749,7 +5749,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Management {
         export module Core {
             export interface IApplicationDataManagerStatics {
@@ -5763,7 +5763,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export module Capture {
             export enum CameraCaptureUIMode {
@@ -5975,7 +5975,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export module Devices {
             export enum TelephonyKey {
@@ -6182,7 +6182,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export enum SoundLevel {
             muted,
@@ -6266,7 +6266,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export module Playlists {
             export enum PlaylistFormat {
@@ -6293,7 +6293,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export module PlayTo {
             export interface IPlayToSource {
@@ -6518,7 +6518,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export module MediaProperties {
             export interface IMediaRatio {
@@ -6647,7 +6647,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export module Protection {
             export class MediaProtectionManager implements Windows.Media.Protection.IMediaProtectionManager {
@@ -6750,7 +6750,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Media {
         export module Transcoding {
             export enum TranscodeFailureReason {
@@ -6798,7 +6798,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Networking {
         export module NetworkOperators {
             export enum DataClasses {
@@ -7111,7 +7111,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Networking {
         export module BackgroundTransfer {
             export enum BackgroundTransferStatus {
@@ -7291,7 +7291,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Networking {
         export module Proximity {
             export interface IProximityMessage {
@@ -7426,7 +7426,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Networking {
         export module Sockets {
             export enum ControlChannelTriggerStatus {
@@ -7830,7 +7830,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Networking {
         export enum HostNameSortOptions {
             none,
@@ -7884,7 +7884,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Networking {
         export module Connectivity {
             export class IPInformation implements Windows.Networking.Connectivity.IIPInformation {
@@ -8089,7 +8089,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Networking {
         export module PushNotifications {
             export enum PushNotificationType {
@@ -8145,7 +8145,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Authentication {
             export module OnlineId {
@@ -8254,7 +8254,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Authentication {
             export module Web {
@@ -8294,7 +8294,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Credentials {
             export module UI {
@@ -8368,7 +8368,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Credentials {
             export interface IPasswordCredential {
@@ -8420,7 +8420,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Cryptography {
             export module Certificates {
@@ -8515,7 +8515,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Cryptography {
             export module Core {
@@ -8821,7 +8821,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Cryptography {
             export module DataProtection {
@@ -8846,7 +8846,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module Cryptography {
             export enum BinaryStringEncoding {
@@ -8883,7 +8883,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Security {
         export module ExchangeActiveSyncProvisioning {
             export enum EasRequireEncryptionResult {
@@ -9037,7 +9037,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module Streams {
             export enum ByteOrder {
@@ -9346,7 +9346,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module Pickers {
             export module Provider {
@@ -9459,7 +9459,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module Provider {
             export enum CachedFileTarget {
@@ -9544,7 +9544,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module FileProperties {
             export enum PropertyPrefetchOptions {
@@ -9776,7 +9776,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export interface IKnownFoldersStatics {
              documentsLibrary: Windows.Storage.StorageFolder;
@@ -10187,7 +10187,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module Search {
             export interface SortEntry {
@@ -10398,7 +10398,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module AccessCache {
             export interface AccessListEntry {
@@ -10526,7 +10526,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module BulkAccess {
             export interface IStorageItemInformation {
@@ -10669,7 +10669,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module Pickers {
             export enum PickerViewMode {
@@ -10839,7 +10839,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Storage {
         export module Compression {
             export enum CompressAlgorithm {
@@ -10884,7 +10884,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module System {
         export module Profile {
             export interface IHardwareToken {
@@ -10906,7 +10906,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module System {
         export module Threading {
             export enum WorkItemPriority {
@@ -10960,7 +10960,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module System {
         export module Threading {
             export module Core {
@@ -11003,7 +11003,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module System {
         export module UserProfile {
             export enum AccountPictureKind {
@@ -11082,7 +11082,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module System {
         export interface ILauncherUIOptions {
              invocationPoint: Windows.Foundation.Point;
@@ -11273,7 +11273,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module System {
         export module Display {
             export interface IDisplayRequest {
@@ -11287,7 +11287,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module System {
         export module RemoteDesktop {
             export interface IInteractiveSessionStatics {
@@ -11299,7 +11299,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module ApplicationSettings {
             export interface ISettingsCommandFactory {
@@ -11344,7 +11344,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module ViewManagement {
             export enum ApplicationViewState {
@@ -11445,7 +11445,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module Input {
             export enum EdgeGestureKind {
@@ -11825,7 +11825,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module Popups {
             export enum MessageDialogOptions {
@@ -11905,7 +11905,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module StartScreen {
             export enum TileOptions {
@@ -11987,7 +11987,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module Text {
             export enum CaretType {
@@ -12505,7 +12505,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module Core {
             export module AnimationMetrics {
@@ -12649,7 +12649,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module Core {
             export enum CoreWindowActivationState {
@@ -13010,7 +13010,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module Input {
             export module Inking {
@@ -13185,7 +13185,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module WebUI {
             export interface IActivatedDeferral {
@@ -13366,7 +13366,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export interface IColors {
         }
@@ -13672,7 +13672,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module UI {
         export module Notifications {
             export enum NotificationSetting {
@@ -13945,7 +13945,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Web {
         export enum WebErrorStatus {
             unknown,
@@ -14010,7 +14010,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Web {
         export module Syndication {
             export interface RetrievalProgress {
@@ -14383,7 +14383,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Web {
         export module AtomPub {
             export interface IResourceCollection extends Windows.Web.Syndication.ISyndicationNode {
@@ -14477,7 +14477,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Foundation {
         export module Collections {
             export interface IObservableMap__string_any extends Windows.Foundation.Collections.IMap__string_any, Windows.Foundation.Collections.IIterable__IKeyValuePair__string_any {
@@ -17704,7 +17704,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Foundation {
         export interface IAsyncOperation__BackgroundAccessStatus {
             then(): Windows.Foundation.IPromise;
@@ -18705,7 +18705,7 @@ module Windows {
         }
     }
 }
-module Windows {
+declare module Windows {
     export module Foundation {
         export module Collections {
             export interface IIterator__IStorageItem {
@@ -18756,7 +18756,7 @@ module Windows {
         }
     }
 }
-module Windows.Foundation {
+declare module Windows.Foundation {
     export interface IPromise {
         then(): Windows.Foundation.IPromise;
         then(c: any): Windows.Foundation.IPromise;
