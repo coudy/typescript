@@ -1505,7 +1505,7 @@ module TypeScript {
                 this.movePast(node.closeBraceToken);
 
                 var interfaceDecl = new InterfaceDeclaration(
-                    new Identifier("_anonymous"), null, typeMembers, null, null);
+                    new Identifier("__anonymous"), null, typeMembers, null, null);
                 this.setSpan(interfaceDecl, start, node);
 
                 interfaceDecl.setFlags(interfaceDecl.getFlags() | ASTFlags.TypeReference);

@@ -110,6 +110,19 @@ module TypeScript {
                 for (i = 0, n = oldChildrenOfName.length; i < n; i++) {
                     oldChild = oldChildrenOfName[i];
 
+                    switch (oldChild.getKind()) {
+                        // These are decls created for ephemeral expressions.  The new decl tree
+                        // won't have them yet.  So we don't want to find diffs here.  The 
+                        // compiler already knows to remove these decls and compute new ones
+                        // later.
+                        case PullElementKind.FunctionExpression:
+                        case PullElementKind.ObjectLiteral:
+                        case PullElementKind.ObjectType:
+                        case PullElementKind.FunctionType:
+                        case PullElementKind.ConstructorType:
+                            continue;
+                    }
+
                     if (i < newChildrenOfName.length) {
                         // Both the old decl and new decl have a child of this name.  If they're
                         // the same type, check them for differences.  Otherwise, consider this

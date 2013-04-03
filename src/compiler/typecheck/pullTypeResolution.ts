@@ -3607,6 +3607,7 @@ module TypeScript {
                     this.resolveModuleDeclaration(moduleDecl, context);
                     break;
                 case PullElementKind.Interface:
+                // case PullElementKind.ObjectType:
                     var interfaceDecl = <TypeDeclaration>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
                     this.resolveInterfaceDeclaration(interfaceDecl, context);
                     break;

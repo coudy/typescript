@@ -112,38 +112,8 @@ module TypeScript {
         return true;
     }
 
-    export function createInferfaceDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
-        var declFlags = PullElementFlags.None;
-
-        if (hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported)) {
-            declFlags |= PullElementFlags.Exported;
-        }
-
-        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
-
-        var decl = new PullDecl(interfaceDecl.name.text, PullElementKind.Interface, declFlags, span, context.scriptName);
-        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
-
-        var parent = context.getParent();
-
-        // if we're collecting a decl for a type annotation, we don't want to add the decl to the parent scope
-        if (parent) {
-            parent.addChildDecl(decl);
-            decl.setParentDecl(parent);
-        }
-
-        context.pushParent(decl);
-
-        return true;
-    }
-
     export function createObjectTypeDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
-
-        if (hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported)) {
-            declFlags |= PullElementFlags.Exported;
-        }
 
         var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
@@ -168,9 +138,9 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
 
         // PULLTODO
-        //if (ast.flags & ASTFlags.TypeReference) {
-        //    return createObjectTypeDeclaration(interfaceDecl, context);
-        //}
+        if (interfaceDecl.getFlags() & ASTFlags.TypeReference) {
+            return createObjectTypeDeclaration(interfaceDecl, context);
+        }
 
         if (hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
@@ -522,7 +492,6 @@ module TypeScript {
     // function expression
     export function createFunctionExpressionDeclaration(functionExpressionDeclAST: FuncDecl, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
-        var declType = PullElementKind.FunctionExpression;
 
         if (hasFlag(functionExpressionDeclAST.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
             declFlags |= PullElementFlags.FatArrow;
@@ -530,7 +499,7 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(functionExpressionDeclAST.minChar, functionExpressionDeclAST.limChar);
 
-        var decl = new PullDecl("", declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl("", PullElementKind.FunctionExpression, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
 
