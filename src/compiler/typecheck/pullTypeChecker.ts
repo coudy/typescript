@@ -240,7 +240,10 @@ module TypeScript {
                     return this.typeCheckIfStatement(ast, typeCheckContext);
 
                 case NodeType.Block:
-                    return this.typeCheckBlockStatement(ast, typeCheckContext);
+                    return this.typeCheckBlock(<Block>ast, typeCheckContext);
+
+                case NodeType.VariableDeclaration:
+                    return this.typeCheckVariableDeclaration(<VariableDeclaration>ast, typeCheckContext);
 
                 case NodeType.WithStatement:
                     return this.typeCheckWithStatement(ast, typeCheckContext);
@@ -1320,10 +1323,14 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckBlockStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var blockStatement = <Block>ast;
+        public typeCheckBlock(block: Block, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(block.statements, typeCheckContext);
 
-            this.typeCheckAST(blockStatement.statements, typeCheckContext);
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        public typeCheckVariableDeclaration(variableDeclaration: VariableDeclaration, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(variableDeclaration.declarators, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }

@@ -1053,10 +1053,10 @@ module TypeScript {
                     }
                 }
                 else if (parentKind == PullElementKind.Enum ||
-                parentKind == PullElementKind.DynamicModule ||
-                associatedParentSymbolKind == PullElementKind.Container ||
-                associatedParentSymbolKind == PullElementKind.DynamicModule ||
-                associatedParentSymbolKind == PullElementKind.Enum) {
+                         parentKind == PullElementKind.DynamicModule ||
+                         associatedParentSymbolKind == PullElementKind.Container ||
+                         associatedParentSymbolKind == PullElementKind.DynamicModule ||
+                         associatedParentSymbolKind == PullElementKind.Enum) {
                     // module
                     if (!varDecl.isExported() && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
@@ -1458,7 +1458,7 @@ module TypeScript {
                              (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
                              ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                              (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0) &&
-                             (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
+                             (emitNode.nodeType != NodeType.VariableDeclaration) &&
                              (emitNode.nodeType != NodeType.FunctionDeclaration)) {
                         this.writeLineToOutput("");
                     }
@@ -1479,7 +1479,12 @@ module TypeScript {
             }
 
             // REVIEW: simplify rules for indenting
-            if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) && (ast.nodeType != NodeType.Block)) {
+            if (startLine &&
+                this.indenter.indentAmt > 0 &&
+                ast.nodeType !== NodeType.List &&
+                ast.nodeType !== NodeType.Block &&
+                ast.nodeType !== NodeType.VariableDeclaration) {
+
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
                     (!((ast.nodeType === NodeType.VariableDeclarator) &&
                     ((((<VariableDeclarator>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&

@@ -92,6 +92,7 @@ module TypeScript {
         FunctionDeclaration,
         Member,
         VariableDeclarator,
+        VariableDeclaration,
         ArgDecl,
         ReturnStatement,
         BreakStatement,

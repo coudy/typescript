@@ -349,15 +349,16 @@ module TypeScript {
         }
 
         public BlockCallback(pre: bool, block: Block): bool {
-            if (!block.isStatementBlock) {
-                if (pre) {
-                    this.varListCount = block.statements.members.length;
-                } else {
-                    this.varListCount = 0;
-                }
-                return true;
-            }
             return false;
+        }
+
+        public VariableDeclarationCallback(pre: bool, variableDeclaration: VariableDeclaration): bool {
+            if (pre) {
+                this.varListCount = variableDeclaration.declarators.members.length;
+            } else {
+                this.varListCount = 0;
+            }
+            return true;
         }
 
         private emitArgDecl(argDecl: ArgDecl, funcDecl: FunctionDeclaration) {

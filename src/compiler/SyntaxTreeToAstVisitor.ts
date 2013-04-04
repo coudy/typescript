@@ -1095,7 +1095,7 @@ module TypeScript {
                 return varList.members[0];
             }
             else {
-                var result = new Block(varList, /*isStatementBlock:*/ false);
+                var result = new VariableDeclaration(varList);
                 this.setSpan(result, start, node);
 
                 return result;
@@ -1269,7 +1269,7 @@ module TypeScript {
                 var statements = new ASTList();
                 statements.append(new ReturnStatement(body.accept(this)));
 
-                return new Block(statements, /*isStatementBlock:*/ true);
+                return new Block(statements);
             }
         }
 
@@ -1574,7 +1574,7 @@ module TypeScript {
                 var statements = this.visitSyntaxList(node.statements);
                 this.movePast(node.closeBraceToken);
 
-                result = new Block(statements, /*isStatementBlock:*/ true);
+                result = new Block(statements);
             }
 
             this.setAST(node, result);

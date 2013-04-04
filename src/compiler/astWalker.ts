@@ -168,6 +168,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.FunctionDeclaration] = ChildrenWalkers.walkFuncDeclChildren;
             this.childrenWalkers[NodeType.Member] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.VariableDeclarator] = ChildrenWalkers.walkBoundDeclChildren;
+            this.childrenWalkers[NodeType.VariableDeclaration] = ChildrenWalkers.walkVariableDeclarationChildren;
             this.childrenWalkers[NodeType.ArgDecl] = ChildrenWalkers.walkBoundDeclChildren;
             this.childrenWalkers[NodeType.ReturnStatement] = ChildrenWalkers.walkReturnStatementChildren;
             this.childrenWalkers[NodeType.BreakStatement] = ChildrenWalkers.walkNone;
@@ -387,6 +388,12 @@ module TypeScript {
         export function walkBlockChildren(preAst: Block, parent: AST, walker: IAstWalker): void {
             if (preAst.statements) {
                 preAst.statements = <ASTList>walker.walk(preAst.statements, preAst);
+            }
+        }
+
+        export function walkVariableDeclarationChildren(preAst: VariableDeclaration, parent: AST, walker: IAstWalker): void {
+            if (preAst.declarators) {
+                preAst.declarators = <ASTList>walker.walk(preAst.declarators, preAst);
             }
         }
 

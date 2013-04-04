@@ -1483,30 +1483,47 @@ module TypeScript {
         }
     }
 
+    export class VariableDeclaration extends AST {
+        constructor(public declarators: ASTList) {
+            super(NodeType.VariableDeclaration);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            emitter.setInVarBlock(this.declarators.members.length);
+            var temp = emitter.setInObjectLiteral(false);
+            if (this.declarators) {
+                emitter.emitJavascriptList(this.declarators, null, SyntaxKind.SemicolonToken, true, false, false);
+            }
+            emitter.setInObjectLiteral(temp);
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitComments(this, false);
+        }
+
+        public structuralEquals(ast: VariableDeclaration, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.declarators, ast.declarators, includingPosition);
+        }
+    }
+
     export class Block extends Statement {
-        constructor(public statements: ASTList,
-                    public isStatementBlock: bool) {
+        constructor(public statements: ASTList) {
             super(NodeType.Block);
         }
 
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.isStatementBlock) {
-                emitter.writeLineToOutput(" {");
-                emitter.indenter.increaseIndent();
-            } else {
-                emitter.setInVarBlock(this.statements.members.length);
-            }
+            emitter.writeLineToOutput(" {");
+            emitter.indenter.increaseIndent();
             var temp = emitter.setInObjectLiteral(false);
             if (this.statements) {
                 emitter.emitJavascriptList(this.statements, null, SyntaxKind.SemicolonToken, true, false, false);
             }
-            if (this.isStatementBlock) {
-                emitter.indenter.decreaseIndent();
-                emitter.emitIndent();
-                emitter.writeToOutput("}");
-            }
+            emitter.indenter.decreaseIndent();
+            emitter.emitIndent();
+            emitter.writeToOutput("}");
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
@@ -1539,8 +1556,7 @@ module TypeScript {
 
         public structuralEquals(ast: Block, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.statements, ast.statements, includingPosition) &&
-                   this.isStatementBlock === ast.isStatementBlock;
+                   structuralEquals(this.statements, ast.statements, includingPosition);
         }
     }
 
