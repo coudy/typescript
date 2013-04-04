@@ -683,7 +683,7 @@ module TypeScript {
                 case NodeType.ImportDeclaration:
                     return this.resolveImportDeclaration(<ImportDeclaration>declAST, context);
                 
-                case NodeType.ObjectLit:
+                case NodeType.ObjectLiteralExpression:
                     return this.resolveObjectLiteralExpression(declAST, false, enclosingDecl, context);
 
                 default:
