@@ -263,7 +263,7 @@ module TypeScript {
                 // further.  Specifically, we have to check if the bodies are the same as well.
                 // If they're not, then the return type of the function may have changed.
                 if (decl1.returnTypeAnnotation === null) {
-                    return structuralEqualsNotIncludingPosition(decl1.bod, decl2.bod);
+                    return structuralEqualsNotIncludingPosition(decl1.block, decl2.block);
                 }
                 else {
                     return true;

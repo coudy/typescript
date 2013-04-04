@@ -687,7 +687,7 @@ module TypeScript {
                 //this.writeLineToOutput("");
             }
 
-            this.emitBareJavascriptStatements(funcDecl.bod, classPropertiesMustComeAfterSuperCall);
+            this.emitBareJavascriptStatements(funcDecl.block, classPropertiesMustComeAfterSuperCall);
 
             this.indenter.decreaseIndent();
             this.emitIndent();

@@ -1541,7 +1541,7 @@ module TypeScript {
                 return ast;
             }
 
-            getAstWalkerFactory().walk(funcDeclAST.bod, preFindReturnExpressionTypes);
+            getAstWalkerFactory().walk(funcDeclAST.block, preFindReturnExpressionTypes);
 
             if (!returnStatements.length) {
                 if (useContextualType) {

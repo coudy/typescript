@@ -443,7 +443,7 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
+            this.typeCheckAST(funcDeclAST.block, typeCheckContext);
             var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
             typeCheckContext.popEnclosingDecl();
 
@@ -471,10 +471,10 @@ module TypeScript {
 
             this.checkForResolutionError(returnType, enclosingDecl);
 
-            if (funcDeclAST.bod && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
+            if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
                 var isVoidOrAny = this.resolver.isAnyOrEquivalent(returnType) || returnType == this.semanticInfoChain.voidTypeSymbol;
 
-                if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.ThrowStatement)) {
+                if (!isVoidOrAny && !(funcDeclAST.block.members.length > 0 && funcDeclAST.block.members[0].nodeType === NodeType.ThrowStatement)) {
                     var funcName = functionDecl.getName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
 
@@ -505,7 +505,7 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
+            this.typeCheckAST(funcDeclAST.block, typeCheckContext);
             var hasReturn = typeCheckContext.getEnclosingDeclHasReturn();
             typeCheckContext.popEnclosingDecl();
 
@@ -541,7 +541,7 @@ module TypeScript {
 
             // PULLREVIEW: Should we also raise an error if the setter returns a value?
             if (isGetter && !hasReturn) {
-                if (!(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.ThrowStatement)) {
+                if (!(funcDeclAST.block.members.length > 0 && funcDeclAST.block.members[0].nodeType === NodeType.ThrowStatement)) {
                     this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
                 }
             }
@@ -582,7 +582,7 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
+            this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -626,7 +626,7 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
+            this.typeCheckAST(funcDeclAST.block, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -1824,7 +1824,7 @@ module TypeScript {
                     }
                 }
 
-                if (declAST.bod) {
+                if (declAST.block) {
                     var reportErrorOnReturnExpressions = (ast: AST, parent: AST, walker: IAstWalker) => {
                         var go = true;
                         switch (ast.nodeType) {
@@ -1854,7 +1854,7 @@ module TypeScript {
                         return ast;
                     }
 
-                    getAstWalkerFactory().walk(declAST.bod, reportErrorOnReturnExpressions);
+                    getAstWalkerFactory().walk(declAST.block, reportErrorOnReturnExpressions);
                 }
 
                 if (reportOnFuncDecl) {

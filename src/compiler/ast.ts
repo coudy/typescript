@@ -1091,7 +1091,7 @@ module TypeScript {
         public isDeclaration() { return true; }
 
         constructor(public name: Identifier,
-                    public bod: ASTList,
+                    public block: ASTList,
                     public isConstructor: bool,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
@@ -1115,7 +1115,7 @@ module TypeScript {
                    this.hint === ast.hint &&
                    this.variableArgList === ast.variableArgList &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
-                   structuralEquals(this.bod, ast.bod, includingPosition) &&
+                   structuralEquals(this.block, ast.block, includingPosition) &&
                    this.isConstructor === ast.isConstructor &&
                    structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) &&
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
@@ -1134,7 +1134,7 @@ module TypeScript {
 
             var walker = getAstWalkerFactory().getWalker(controlFlowPrefix, null, null, context);
             context.walker = walker;
-            walker.walk(this.bod, this);
+            walker.walk(this.block, this);
 
             return context;
         }

@@ -310,8 +310,8 @@ module TypeScript {
             if (preAst.returnTypeAnnotation) {
                 preAst.returnTypeAnnotation = walker.walk(preAst.returnTypeAnnotation, preAst);
             }
-            if (preAst.bod) {
-                preAst.bod = <ASTList>walker.walk(preAst.bod, preAst);
+            if (preAst.block) {
+                preAst.block = <ASTList>walker.walk(preAst.block, preAst);
             }
         }
 

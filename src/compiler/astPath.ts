@@ -239,7 +239,7 @@ module TypeScript {
         public isBodyOfFunction(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
-                 (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).bod === this.asts[this.top - 0];
+                 (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).block === this.asts[this.top - 0];
         }
 
         public isBodyOfInterface(): bool {

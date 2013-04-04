@@ -456,7 +456,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (!funcDeclAST.bod) {
+        if (!funcDeclAST.block) {
             declFlags |= PullElementFlags.Signature;
         }
 
@@ -542,7 +542,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (!memberFunctionDeclAST.bod || !memberFunctionDeclAST.bod.members.length) {
+        if (!memberFunctionDeclAST.block || !memberFunctionDeclAST.block.members.length) {
             declFlags |= PullElementFlags.Signature;
         }
 
@@ -686,7 +686,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Constructor;
         var declType = PullElementKind.ConstructorMethod;
 
-        if (!constructorDeclAST.bod) {
+        if (!constructorDeclAST.block) {
             declFlags |= PullElementFlags.Signature;
         }
 

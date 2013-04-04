@@ -1894,7 +1894,7 @@ module TypeScript {
                     return ast;
                 }
 
-                getAstWalkerFactory().walk(funcDecl.bod, preFindReturnExpressionTypes);
+                getAstWalkerFactory().walk(funcDecl.block, preFindReturnExpressionTypes);
             }
 
             return allReturnsAreVoid;
@@ -1927,7 +1927,7 @@ module TypeScript {
                 return ast;
             }
 
-            getAstWalkerFactory().walk(funcDecl.bod, preFindSuperCall);
+            getAstWalkerFactory().walk(funcDecl.block, preFindSuperCall);
 
             return foundSuper;
         }
@@ -2204,7 +2204,7 @@ module TypeScript {
             }
             else if (signature.typeCheckStatus === TypeCheckStatus.Started) {
                 if (!funcDecl.returnTypeAnnotation &&
-                    funcDecl.bod &&
+                    funcDecl.block &&
                        !funcDecl.isSignature() &&
                        !(funcDecl.isConstructor) &&
                        this.allReturnsAreVoid(funcDecl)) {
@@ -2267,7 +2267,7 @@ module TypeScript {
                 }
             }
             else {
-                if (funcDecl.bod) {
+                if (funcDecl.block) {
                     this.scope = fnType.containedScope;
                 }
                 ssb = <SymbolScopeBuilder>this.scope;
@@ -2291,7 +2291,7 @@ module TypeScript {
             //
             // A super constructor call may not exist if:
             //  - The class has no base type, or inherits directly from 'Object'
-            if (funcDecl.isConstructor && funcDecl.bod && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) {
+            if (funcDecl.isConstructor && funcDecl.block && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) {
 
                 var hasBaseType = hasFlag(funcDecl.classDecl.type.instanceType.typeFlags, TypeFlags.HasBaseType);
                 var noSuperCallAllowed = !hasBaseType || hasFlag(funcDecl.classDecl.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
@@ -2302,11 +2302,11 @@ module TypeScript {
                 }
                 else if (hasBaseType) {
                     if (superCallMustBeFirst) {
-                        if (!funcDecl.bod ||
-                            !funcDecl.bod.members.length ||
-                            !((funcDecl.bod.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[0]).target.nodeType === NodeType.SuperExpression) ||
-                            (hasFlag(funcDecl.bod.getFlags(), ASTFlags.StrictMode) && funcDecl.bod.members.length > 1 &&
-                             funcDecl.bod.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.bod.members[1]).target.nodeType === NodeType.SuperExpression))) {
+                        if (!funcDecl.block ||
+                            !funcDecl.block.members.length ||
+                            !((funcDecl.block.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.members[0]).target.nodeType === NodeType.SuperExpression) ||
+                            (hasFlag(funcDecl.block.getFlags(), ASTFlags.StrictMode) && funcDecl.block.members.length > 1 &&
+                             funcDecl.block.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.members[1]).target.nodeType === NodeType.SuperExpression))) {
                             this.checker.errorReporter.simpleError(funcDecl, "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor");
                         }
                     }
@@ -2370,7 +2370,7 @@ module TypeScript {
             var candidateTypeContext: ContextualTypeContext;
             var p = 0;
 
-            if (!funcDecl.isConstructor && funcDecl.bod && !funcDecl.isSignature()) {
+            if (!funcDecl.isConstructor && funcDecl.block && !funcDecl.isSignature()) {
                 var tmpParamScope = this.scope;
                 ssb = <SymbolScopeBuilder>this.scope;
 
@@ -2484,7 +2484,7 @@ module TypeScript {
             }
 
             // typecheck body
-            if (funcDecl.bod && (!funcDecl.isSignature())) {
+            if (funcDecl.block && (!funcDecl.isSignature())) {
                 if (!(funcDecl.isConstructor)) {
                     this.addFormals(container, signature, funcTable);
                 }
@@ -2520,7 +2520,7 @@ module TypeScript {
                     this.checker.setContextualType(null, this.checker.inProvisionalTypecheckMode());
                 }
 
-                this.typeCheck(funcDecl.bod);
+                this.typeCheck(funcDecl.block);
 
                 if (acceptedContextualType) {
                     this.checker.unsetContextualType();
@@ -2627,7 +2627,7 @@ module TypeScript {
                     /*!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression) && */
                     !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
                     // relax the restriction if the method only contains a single "throw" statement
-                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType === NodeType.ThrowStatement)
+                    onlyHasThrow = (funcDecl.block.members.length > 0) && (funcDecl.block.members[0].nodeType === NodeType.ThrowStatement)
 
                     if (!onlyHasThrow) {
                         this.checker.errorReporter.simpleError(funcDecl.returnTypeAnnotation || funcDecl,
