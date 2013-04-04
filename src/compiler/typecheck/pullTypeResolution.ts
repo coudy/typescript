@@ -3080,6 +3080,11 @@ module TypeScript {
             }   
 
             var indexType = <PullTypeSymbol>this.resolveStatementOrExpression((<BinaryExpression>expressionAST).operand1, isTypedAssignment, enclosingDecl, context).getType();
+
+            if (indexType.isError()) {
+                return indexType;
+            }
+
             var elementType = indexType.getElementType();
 
             if (elementType) {
@@ -3284,12 +3289,11 @@ module TypeScript {
             // resolve the target
             var target = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
             
-
             // don't be fooled
-            if (target == this.semanticInfoChain.anyTypeSymbol) {
-                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid call expression", enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic); 
-            }
+            //if (target == this.semanticInfoChain.anyTypeSymbol) {
+            //    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid call expression", enclosingDecl);
+            //    return this.getNewErrorTypeSymbol(diagnostic); 
+            //}
 
             var targetSymbol = target.getType();
 
@@ -3497,10 +3501,10 @@ module TypeScript {
             var diagnostic: PullDiagnostic;
 
             // don't be fooled
-            if (targetSymbol == this.semanticInfoChain.anyTypeSymbol) {
-                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Cannot invoke 'new' on this expression", enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
-            }
+            //if (targetSymbol == this.semanticInfoChain.anyTypeSymbol) {
+            //    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Cannot invoke 'new' on this expression", enclosingDecl);
+            //    return this.getNewErrorTypeSymbol(diagnostic);
+            //}
 
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.getType();
 
