@@ -2478,6 +2478,29 @@ module TypeScript {
             // now for the name...
             childTypeSymbol = lhsType.findNestedType(rhsName);
 
+            // If the name is expressed as a dotted name within the parent type,
+            // then it will be considered a contained member, so back up to the nearest
+            // enclosing symbol and look there
+            if (!childTypeSymbol && enclosingDecl) {
+                var parentDecl = enclosingDecl;
+
+                while (parentDecl) {
+                    if (parentDecl.getKind() & PullElementKind.SomeContainer) {
+                        break;
+                    }
+
+                    parentDecl = parentDecl.getParentDecl();
+                }
+
+                if (parentDecl) {                    
+                    var enclosingSymbolType = parentDecl.getSymbol().getType();
+
+                    if (enclosingSymbolType == lhsType) {
+                        childTypeSymbol = <PullTypeSymbol>lhsType.findContainedMember(rhsName);
+                    }                    
+                }
+            }
+
             if (!childTypeSymbol) {
                 diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted type name '" + rhsName + "'", enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
