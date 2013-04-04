@@ -27,7 +27,6 @@
 ///<reference path='emitter.ts' />
 ///<reference path='errorReporter.ts' />
 ///<reference path='printContext.ts' />
-///<reference path='scanner.ts' />
 ///<reference path='scopeAssignment.ts' />
 ///<reference path='scopeWalk.ts' />
 ///<reference path='signatures.ts' />

@@ -16,6 +16,13 @@
 ///<reference path='typescriptServices.ts' />
 
 module Services {
+    export enum EndOfLineState {
+        Start,
+        InMultiLineCommentTrivia,
+        InSingleQuoteStringLiteral,
+        InDoubleQuoteStringLiteral,
+    }
+
     var noRegexTable: bool[] = [];
     noRegexTable[TypeScript.SyntaxKind.IdentifierName] = true;
     noRegexTable[TypeScript.SyntaxKind.StringLiteral] = true;
@@ -39,7 +46,7 @@ module Services {
         }
 
         /// COLORIZATION
-        public getClassificationsForLine(text: string, lexState: TypeScript.LexState): ClassificationResult {
+        public getClassificationsForLine(text: string, lexState: EndOfLineState): ClassificationResult {
             var result = new ClassificationResult();
             this.scanner = new TypeScript.Scanner1("", TypeScript.SimpleText.fromString(text), TypeScript.LanguageVersion.EcmaScript5, this.characterWindow);
 
@@ -69,7 +76,7 @@ module Services {
                 // We're at the end.
                 if (this.diagnostics.length > 0) {
                     if (this.diagnostics[this.diagnostics.length - 1].diagnosticCode() === TypeScript.DiagnosticCode._StarSlash__expected) {
-                        result.finalLexState = TypeScript.LexState.InMultilineComment;
+                        result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
                         return;
                     }
                 }
@@ -79,8 +86,8 @@ module Services {
                     if (tokenText.length > 0 && tokenText.charCodeAt(tokenText.length - 1) === TypeScript.CharacterCodes.backslash) {
                         var quoteChar = tokenText.charCodeAt(0);
                         result.finalLexState = quoteChar === TypeScript.CharacterCodes.doubleQuote
-                            ? TypeScript.LexState.InMultilineDoubleQuoteString
-                            : TypeScript.LexState.InMultilineSingleQuoteString;   
+                        ? EndOfLineState.InDoubleQuoteStringLiteral
+                        : EndOfLineState.InSingleQuoteStringLiteral;
                         return;
                     }
                 }
@@ -130,12 +137,12 @@ module Services {
             }
         }
 
-        private checkForContinuedToken(text: string, lexState: TypeScript.LexState, result: ClassificationResult): bool {
-            if (lexState === TypeScript.LexState.InMultilineComment) {
+        private checkForContinuedToken(text: string, lexState: EndOfLineState, result: ClassificationResult): bool {
+            if (lexState === EndOfLineState.InMultiLineCommentTrivia) {
                 return this.handleMultilineComment(text, lexState, result);
             }
-            else if (lexState === TypeScript.LexState.InMultilineDoubleQuoteString ||
-                     lexState === TypeScript.LexState.InMultilineSingleQuoteString) {
+            else if (lexState === EndOfLineState.InDoubleQuoteStringLiteral ||
+                     lexState === EndOfLineState.InSingleQuoteStringLiteral) {
                 return this.handleMultilineString(text, lexState, result);
             }
             else {
@@ -143,7 +150,7 @@ module Services {
             }
         }
 
-        private handleMultilineComment(text: string, lexState: TypeScript.LexState, result: ClassificationResult): bool {
+        private handleMultilineComment(text: string, lexState: EndOfLineState, result: ClassificationResult): bool {
             var index = text.indexOf("*/");
             if (index >= 0) {
                 var commentEnd = index + "*/".length;
@@ -154,13 +161,13 @@ module Services {
             else {
                 // Comment didn't end.
                 result.entries.push(new ClassificationInfo(text.length, TypeScript.TokenClass.Comment));
-                result.finalLexState = TypeScript.LexState.InMultilineComment;
+                result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
                 return true;
             }
         }
 
-        private handleMultilineString(text: string, lexState: TypeScript.LexState, result: ClassificationResult): bool {
-            var endChar = lexState === TypeScript.LexState.InMultilineDoubleQuoteString
+        private handleMultilineString(text: string, lexState: EndOfLineState, result: ClassificationResult): bool {
+            var endChar = lexState === EndOfLineState.InDoubleQuoteStringLiteral
                 ? TypeScript.CharacterCodes.doubleQuote
                 : TypeScript.CharacterCodes.singleQuote;
 
@@ -197,7 +204,7 @@ module Services {
                 result.finalLexState = lexState;
             }
             else {
-                result.finalLexState = TypeScript.LexState.Start;
+                result.finalLexState = EndOfLineState.Start;
             }
 
             return true;
@@ -208,7 +215,7 @@ module Services {
     }
 
     export class ClassificationResult {
-        public finalLexState: TypeScript.LexState = TypeScript.LexState.Start;
+        public finalLexState: EndOfLineState = EndOfLineState.Start;
         public entries: ClassificationInfo[] = [];
 
         constructor() {

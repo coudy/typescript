@@ -610,7 +610,7 @@ module Services {
         }
 
         /// COLORIZATION
-        public getClassificationsForLine(text: string, lexState: TypeScript.LexState): string {
+        public getClassificationsForLine(text: string, lexState: EndOfLineState): string {
             var classification = this.classifier.getClassificationsForLine(text, lexState);
             var items = classification.entries;
             var result = "";
