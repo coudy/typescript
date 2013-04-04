@@ -78,6 +78,7 @@ module TypeScript {
 
     export interface PullAdditionalCallResolutionData {
         targetSymbol: PullSymbol;
+        targetTypeSymbol: PullTypeSymbol;
         resolvedSignatures: PullSignatureSymbol[];
         candidateSignature: PullSignatureSymbol;
     }
@@ -3287,19 +3288,19 @@ module TypeScript {
             var diagnostic: PullDiagnostic;
 
             // resolve the target
-            var target = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
-            
+            var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
+
             // don't be fooled
             //if (target == this.semanticInfoChain.anyTypeSymbol) {
             //    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid call expression", enclosingDecl);
             //    return this.getNewErrorTypeSymbol(diagnostic); 
             //}
 
-            var targetSymbol = target.getType();
+            var targetTypeSymbol = targetSymbol.getType();
 
-            if (this.isAnyOrEquivalent(targetSymbol)) {
+            if (this.isAnyOrEquivalent(targetTypeSymbol)) {
                 this.setSymbolForAST(callEx, this.semanticInfoChain.anyTypeSymbol, context);
-                return targetSymbol;
+                return targetTypeSymbol;
             }
 
             var isSuperCall = false;
@@ -3307,16 +3308,17 @@ module TypeScript {
             if (callEx.target.nodeType == NodeType.SuperExpression) {
                 isSuperCall = true;
 
-                if (targetSymbol.isClass()) { 
-                    targetSymbol = (<PullClassTypeSymbol>targetSymbol).getConstructorMethod().getType();
+                if (targetTypeSymbol.isClass()) { 
+                    targetSymbol = (<PullClassTypeSymbol>targetTypeSymbol).getConstructorMethod();
+                    targetTypeSymbol = targetSymbol.getType();
                 }
                 else {
-                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid super call on non-class type '"+ targetSymbol.toString() + "'", enclosingDecl);
+                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid super call on non-class type '"+ targetTypeSymbol.toString() + "'", enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);                    
                 }
             }
 
-            var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
+            var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetTypeSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetTypeSymbol).getCallSignatures();
 
             var typeArgs: PullTypeSymbol[] = null;
             var typeReplacementMap: any = null;
@@ -3340,7 +3342,7 @@ module TypeScript {
             // next, walk the available signatures
             // if any are generic, and we don't have type arguments, try to infer
             // otherwise, try to specialize to the type arguments above
-            if (targetSymbol.isGeneric()) {
+            if (targetTypeSymbol.isGeneric()) {
 
                 var resolvedSignatures: PullSignatureSymbol[] = [];
                 var inferredTypeArgs: PullTypeSymbol[];
@@ -3402,7 +3404,7 @@ module TypeScript {
             }
 
             // the target should be a function
-            //if (!targetSymbol.isType()) {
+            //if (!targetTypeSymbol.isType()) {
             //    this.log("Attempting to call a non-function symbol");
             //    return this.semanticInfoChain.anyTypeSymbol;
             //}
@@ -3410,7 +3412,7 @@ module TypeScript {
             if (!signatures.length) {
 
                 // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
-                if (this.cachedFunctionInterfaceType && this.sourceIsSubtypeOfTarget(targetSymbol, this.cachedFunctionInterfaceType, context)) {
+                if (this.cachedFunctionInterfaceType && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType, context)) {
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
@@ -3423,6 +3425,7 @@ module TypeScript {
             // Store any additional resolution results if needed before we return
             if (additionalResults) {
                 additionalResults.targetSymbol = targetSymbol;
+                additionalResults.targetTypeSymbol = targetTypeSymbol;
                 additionalResults.resolvedSignatures = signatures;
                 additionalResults.candidateSignature = signature;
             }
@@ -3626,7 +3629,8 @@ module TypeScript {
 
                 // Store any additional resolution results if needed before we return
                 if (additionalResults) {
-                    additionalResults.targetSymbol = targetTypeSymbol;
+                    additionalResults.targetSymbol = targetSymbol;
+                    additionalResults.targetTypeSymbol = targetTypeSymbol;
                     additionalResults.resolvedSignatures = constructSignatures;
                     additionalResults.candidateSignature = signature;
                 }

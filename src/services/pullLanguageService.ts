@@ -503,48 +503,160 @@ module Services {
         //
         // New Pull stuff
         //
-        public getTypeAtPosition(fileName: string, pos: number): TypeInfo {
+
+        public getTypeAtPosition(fileName: string, position: number): TypeInfo {
             this.refresh();
 
             var script = this.compilerState.getScriptAST(fileName);
 
-            var typeInfoAtPosition = this.compilerState.getPullTypeInfoAtPosition(pos, script);
-            if (!typeInfoAtPosition.symbol) {
+            var path = this.getAstPathToPosition(script, position);
+            if (path.count() == 0) {
                 return null;
             }
 
-            if (typeInfoAtPosition.callSignatures &&
-                (!typeInfoAtPosition.candidateSignature || typeInfoAtPosition.candidateSignature.isDefinition())) {
-                var len = typeInfoAtPosition.callSignatures.length;
-                for (var i = 0; i < len; i++) {
-                    if (len > 1 && typeInfoAtPosition.callSignatures[i].isDefinition()) {
+            if (this.isGetTypeBlocker(position, path)) {
+                return null;
+            }
+
+            var ast: TypeScript.AST;
+            var symbol: TypeScript.PullSymbol;
+            var typeSymbol: TypeScript.PullTypeSymbol;
+            var enclosingScopeSymbol: TypeScript.PullSymbol;
+            var isCallExpression: bool = false;
+            var resolvedSignatures: TypeScript.PullSignatureSymbol[];
+            var candidateSignature: TypeScript.PullSignatureSymbol;
+            var isConstructorCall: bool;
+
+            if (path.isNameOfClass() || path.isNameOfInterface() || path.isNameOfFunction() || path.isNameOfVariable()) {
+                // Skip the name and get to the declaration
+                path.pop();
+            }
+
+            if (path.isDeclaration()) {
+                var declarationInformation = this.compilerState.getDeclarationSymbolInformation(path, script);
+
+                ast = declarationInformation.ast;
+                symbol = declarationInformation.symbol;
+                enclosingScopeSymbol = declarationInformation.enclosingScopeSymbol;
+
+                if (path.ast().nodeType === TypeScript.NodeType.FunctionDeclaration) {
+                    var funcDecl = <TypeScript.FunctionDeclaration>(path.ast());
+                    if (symbol && symbol.getKind() != TypeScript.PullElementKind.Property) {
+                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain(), fileName);
+                        isCallExpression = true;
+                        candidateSignature = signatureInfo.signature;
+                        resolvedSignatures = signatureInfo.allSignatures;
+                    }
+                }
+            }
+            else if (path.isCallExpression() || path.isCallExpressionTarget()) {
+                // If this is a call we need to get the call singuatures as well
+                // Move the cursor to point to the call expression
+                while (!path.isCallExpression()) {
+                    path.pop();
+                }
+
+                // Get the call expression symbol
+                var callExpressionInformation = this.compilerState.getCallInformationFromPath(path, script);
+
+                if (!callExpressionInformation.targetSymbol) {
+                    return null;
+                }
+
+                ast = callExpressionInformation.ast;
+                symbol = callExpressionInformation.targetSymbol;
+                enclosingScopeSymbol = callExpressionInformation.enclosingScopeSymbol;
+
+                // Check if this is a property or a variable, if so do not treat it as a fuction, but rather as a variable with function type
+                var isPropertyOrVar = symbol.getKind() == TypeScript.PullElementKind.Property || symbol.getKind() == TypeScript.PullElementKind.Variable;
+                typeSymbol = symbol.getType();
+                if (isPropertyOrVar) {
+                    if (typeSymbol.getName() != "") {
+                        symbol = typeSymbol;
+                    }
+                    isPropertyOrVar = (typeSymbol.getKind() != TypeScript.PullElementKind.Interface && typeSymbol.getKind() != TypeScript.PullElementKind.ObjectType) || typeSymbol.getName() == "";
+                }
+
+                if (!isPropertyOrVar) {
+                    isCallExpression = true;
+                    resolvedSignatures = callExpressionInformation.resolvedSignatures;
+                    candidateSignature = callExpressionInformation.candidateSignature;
+                    isConstructorCall = callExpressionInformation.isConstructorCall;
+                }
+            }
+            else {
+                var symbolInformation = this.compilerState.getSymbolInformationFromPath(path, script);
+
+                if (!symbolInformation.symbol) {
+                    return null;
+                }
+
+                ast = symbolInformation.ast;
+                symbol = symbolInformation.symbol;
+                enclosingScopeSymbol = symbolInformation.enclosingScopeSymbol;
+
+               
+                if (symbol.getKind() === TypeScript.PullElementKind.Method || symbol.getKind() == TypeScript.PullElementKind.Function) {
+                    typeSymbol = symbol.getType()
+                    if (typeSymbol) {
+                        isCallExpression = true;
+                        resolvedSignatures = typeSymbol.getCallSignatures();
+                    }
+                }
+            }
+
+            if (resolvedSignatures && (!candidateSignature || candidateSignature.isDefinition())) {
+                for (var i = 0, len = resolvedSignatures.length; i < len; i++) {
+                    if (len > 1 && resolvedSignatures[i].isDefinition()) {
                         continue;
                     }
 
-                    typeInfoAtPosition.candidateSignature = typeInfoAtPosition.callSignatures[i];
+                    candidateSignature = resolvedSignatures[i];
                     break;
                 }
             }
 
-            var memberName = typeInfoAtPosition.callSignatures ?
-                TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(typeInfoAtPosition.candidateSignature,
-                    typeInfoAtPosition.callSignatures, typeInfoAtPosition.enclosingScopeSymbol) :
-                typeInfoAtPosition.symbol.getTypeNameEx(typeInfoAtPosition.enclosingScopeSymbol, true);
-            var minChar = -1;
-            var limChar = -1;
-            var kind = this.mapPullElementKind(typeInfoAtPosition.symbol.getKind(), typeInfoAtPosition.symbol, !typeInfoAtPosition.callSignatures,
-                !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.isConstructorCall);
-
-            var symbolForDocComment = typeInfoAtPosition.candidateSignature ? typeInfoAtPosition.candidateSignature : typeInfoAtPosition.symbol;
-            var docComment = this.compilerState.getDocComments(symbolForDocComment, !typeInfoAtPosition.callSignatures);
-            var symbolName = this.getFullNameOfSymbol(typeInfoAtPosition.symbol, typeInfoAtPosition.enclosingScopeSymbol);
-
-            if (typeInfoAtPosition.ast) {
-                minChar = typeInfoAtPosition.ast.minChar;
-                limChar = typeInfoAtPosition.ast.limChar;
-            }
+            var memberName = isCallExpression ?
+            TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, enclosingScopeSymbol) :
+            symbol.getTypeNameEx(enclosingScopeSymbol, true);
+            var kind = this.mapPullElementKind(symbol.getKind(), symbol, !isCallExpression, isCallExpression, isConstructorCall);
+            var docComment = this.compilerState.getDocComments(candidateSignature || symbol, !isCallExpression);
+            var symbolName = this.getFullNameOfSymbol(symbol, enclosingScopeSymbol);
+            var minChar = ast ? ast.minChar : -1;
+            var limChar = ast ? ast.limChar : -1;
 
             return new TypeInfo(memberName, docComment, symbolName, kind, minChar, limChar);
+        }
+
+        private isGetTypeBlocker(position: number, path: TypeScript.AstPath): bool {
+            switch (path.ast().nodeType) {
+                case TypeScript.NodeType.TrueLiteral:
+                case TypeScript.NodeType.FalseLiteral:
+                case TypeScript.NodeType.StringLiteral:
+                case TypeScript.NodeType.RegularExpressionLiteral:
+                case TypeScript.NodeType.NumericLiteral:
+                case TypeScript.NodeType.Null:
+                case TypeScript.NodeType.Name:
+                case TypeScript.NodeType.ThisExpression:
+                case TypeScript.NodeType.SuperExpression:
+                case TypeScript.NodeType.Dot:
+                    return false;
+                case TypeScript.NodeType.FunctionDeclaration:
+                    var funcDecl = <TypeScript.FunctionDeclaration>path.ast();
+	if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.ConstructMember) ||
+	TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.IndexerMember)) {
+                        // constructor and index signatures
+                        return false;
+                    }
+                    else if (funcDecl.isConstructor)
+                    {
+                        // constructor keyword
+                        return !(position >= funcDecl.minChar && position <= funcDecl.minChar + 11 /*constructor*/);
+                    }
+                    break;
+            }
+
+            return true;
         }
 
         public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: bool): CompletionInfo {

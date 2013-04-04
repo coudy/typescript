@@ -159,6 +159,10 @@ module FourSlashInterface {
         public quickInfoIs(typeName: string, docComment?: string, symbolName?: string, kind?: string) {
             FourSlash.currentTestState.verifyQuickInfo(typeName, this.negative, docComment, symbolName, kind);
         }
+
+        public quickInfoExists() {
+            FourSlash.currentTestState.verifyQuickInfoExists(this.negative);
+        }
     }
 
     export class verify extends verifyNegatable {

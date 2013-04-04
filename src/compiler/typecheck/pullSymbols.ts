@@ -430,8 +430,14 @@ module TypeScript {
                     break;
                 }
 
+                if (scopedName === "") {
+                    // If the item does not have a name, stop enumarting them, e.g. Object literal
+                    break;
+                }
+
                 fullName = scopedName + "." + fullName;
             }
+
             fullName = fullName + this.getName(scopeSymbol, true);
             return fullName;
         }

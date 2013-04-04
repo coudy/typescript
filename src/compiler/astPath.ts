@@ -192,6 +192,55 @@ module TypeScript {
                 (this.isMemberOfList((<TypeScript.InterfaceDeclaration>this.parent()).extendsList, this.ast()));
         }
 
+        public isCallExpression(): bool {
+            return this.count() >= 1 &&
+            (this.asts[this.top - 0].nodeType === TypeScript.NodeType.Call || this.asts[this.top - 0].nodeType === TypeScript.NodeType.New);
+        }
+
+        public isCallExpressionTarget(): bool {
+            if (this.count() < 2) {
+                return false;
+            }
+
+            var current = this.top;
+            
+            var nodeType = this.asts[current].nodeType;
+            if (nodeType === TypeScript.NodeType.ThisExpression || nodeType === TypeScript.NodeType.SuperExpression || nodeType === TypeScript.NodeType.Name) {
+                current--;
+            }
+
+            while (current >= 0) {
+                // if this is a dot, then skip to find the outter most qualifed name
+                if (current < this.top && this.asts[current].nodeType === TypeScript.NodeType.Dot &&
+                    (<TypeScript.BinaryExpression>this.asts[current]).operand2 === this.asts[current + 1]) {
+                    current--;
+                    continue;
+                }
+
+                break;
+            }
+
+            return current < this.top &&
+                (this.asts[current].nodeType === TypeScript.NodeType.Call || this.asts[current].nodeType === TypeScript.NodeType.New) &&
+                this.asts[current + 1] === (<TypeScript.CallExpression>this.asts[current]).target;
+        }
+
+
+        public isDeclaration(): bool {
+            if (this.ast() !== null) {
+                switch (this.ast().nodeType) {
+                    case TypeScript.NodeType.ClassDeclaration:
+                    case TypeScript.NodeType.InterfaceDeclaration:
+                    case TypeScript.NodeType.ModuleDeclaration:
+                    case TypeScript.NodeType.FunctionDeclaration:
+                    case TypeScript.NodeType.VarDecl:
+                       return true;
+                }
+            }
+
+            return false;
+        }
+
         private isMemberOfList(list: ASTList, item: AST): bool {
             if (list && list.members) {
                 for (var i = 0, n = list.members.length; i < n; i++) {

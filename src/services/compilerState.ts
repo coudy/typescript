@@ -125,6 +125,10 @@ module Services {
             return this.hostCache.getVersion(fileName);
         }
 
+        public getSemanticInfoChain() {
+            return this.compiler.semanticInfoChain;
+        }
+
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
             // Keep track of the version of script we're adding to the compiler.
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
@@ -297,12 +301,8 @@ module Services {
         //
         // New Pull stuff
         //
-        public getPullTypeInfoAtPosition(pos: number, script: TypeScript.Script) {
-            return this.compiler.pullGetTypeInfoAtPosition(pos, script);
-        }
-
-        public getPullSymbolAtPosition(pos: number, script: TypeScript.Script) {
-            return this.compiler.resolvePosition(pos, script);
+        public getDeclarationSymbolInformation(path: TypeScript.AstPath, script: TypeScript.Script) {
+            return this.compiler.pullGetDeclarationSymbolInfromation(path, script);
         }
 
         public getSymbolInformationFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {

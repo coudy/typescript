@@ -88,6 +88,21 @@ module TypeScript {
         isConstructorCall: bool;
     }
 
+    export interface PullSymbolInfo {
+        symbol: PullSymbol;
+        ast: AST;
+        enclosingScopeSymbol: PullSymbol;
+    }
+
+    export interface PullCallSymbolInfo {
+        targetSymbol: PullSymbol;
+        resolvedSignatures: TypeScript.PullSignatureSymbol[];
+        candidateSignature: TypeScript.PullSignatureSymbol;
+        isConstructorCall: bool;
+        ast: AST;
+        enclosingScopeSymbol: PullSymbol;
+    }
+
     export interface PullVisibleSymbolsInfo {
         symbols: PullSymbol[];
         enclosingScopeSymbol: PullSymbol;
@@ -905,6 +920,7 @@ module TypeScript {
                             }
                             var callResolutionResults: PullAdditionalCallResolutionData = {
                                 targetSymbol: null,
+                                targetTypeSymbol:null,
                                 resolvedSignatures: null,
                                 candidateSignature: null
                             };
@@ -1057,7 +1073,7 @@ module TypeScript {
             };
         }
 
-        public pullGetSymbolInformationFromPath(path: AstPath, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; } {
+        public pullGetSymbolInformationFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbolInfo {
             var context = this.extractResolutionContextFromPath(path, script, scriptName);
             if (!context) {
                 return null;
@@ -1065,10 +1081,42 @@ module TypeScript {
 
             var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext);
 
-            return { symbol: symbol, ast: path.ast() };
+            return {
+                symbol: symbol,
+                ast: path.ast(),
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
+            };
         }
 
-        public pullGetCallInformationFromPath(path: AstPath, script: Script, scriptName?: string): { targetSymbol: PullSymbol; resolvedSignatures: PullSignatureSymbol[]; candidateSignature: PullSignatureSymbol; ast: AST; enclosingScopeSymbol: PullSymbol; } {
+        public pullGetDeclarationSymbolInfromation(path: AstPath, script: Script, scriptName?: string): PullSymbolInfo {
+            if (!scriptName) {
+                scriptName = script.locationInfo.fileName;
+            }
+
+            var ast = path.ast();
+
+            if (ast.nodeType !== NodeType.ClassDeclaration && ast.nodeType !== NodeType.InterfaceDeclaration && ast.nodeType !== NodeType.ModuleDeclaration && ast.nodeType !== NodeType.FunctionDeclaration && ast.nodeType !== NodeType.VarDecl) {
+                return null;
+            }
+
+            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+            if (!context) {
+                return null;
+            }
+
+            var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
+            var decl = semanticInfo.getDeclForAST(ast);
+            var symbol = decl.getSymbol();
+            this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, context.resolutionContext);
+
+            return {
+                symbol: symbol,
+                ast: path.ast(),
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
+            };
+        }
+
+        public pullGetCallInformationFromPath(path: AstPath, script: Script, scriptName?: string): PullCallSymbolInfo {
             // AST has to be a call expression
             if (path.ast().nodeType !== NodeType.Call && path.ast().nodeType !== NodeType.New) {
                 return null;
@@ -1083,10 +1131,12 @@ module TypeScript {
 
             var callResolutionResults = {
                 targetSymbol: null,
+                targetTypeSymbol: null,
                 resolvedSignatures: null,
                 candidateSignature: null,
                 ast: path.ast(),
-                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl),
+                isConstructorCall: isNew
             };
 
             if (isNew) {

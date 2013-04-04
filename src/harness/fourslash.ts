@@ -361,6 +361,21 @@ module FourSlash {
             }
         }
 
+        public verifyQuickInfoExists(negative: number) {
+            var actualQuickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
+            if (negative) {
+                if (actualQuickInfo) {
+	throw new Error('verifyQuickInfoExists failed. Expected quick info NOT to exist');
+                }
+            }
+            else
+            {
+                if (!actualQuickInfo) {
+	throw new Error('verifyQuickInfoExists failed. Expected quick info to exist');
+                }
+            }
+        }
+        
         public verifyCurrentParameterIsVariable(isVariable: bool) {
             assert.equal(isVariable, this.getActiveParameter().isVariable);
         }
