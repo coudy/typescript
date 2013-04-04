@@ -2303,10 +2303,10 @@ module TypeScript {
                 else if (hasBaseType) {
                     if (superCallMustBeFirst) {
                         if (!funcDecl.block ||
-                            !funcDecl.block.members.length ||
-                            !((funcDecl.block.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.members[0]).target.nodeType === NodeType.SuperExpression) ||
-                            (hasFlag(funcDecl.block.getFlags(), ASTFlags.StrictMode) && funcDecl.block.members.length > 1 &&
-                             funcDecl.block.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.members[1]).target.nodeType === NodeType.SuperExpression))) {
+                            !funcDecl.block.statements.members.length ||
+                            !((funcDecl.block.statements.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.statements.members[0]).target.nodeType === NodeType.SuperExpression) ||
+                            (hasFlag(funcDecl.block.getFlags(), ASTFlags.StrictMode) && funcDecl.block.statements.members.length > 1 &&
+                             funcDecl.block.statements.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.statements.members[1]).target.nodeType === NodeType.SuperExpression))) {
                             this.checker.errorReporter.simpleError(funcDecl, "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor");
                         }
                     }
@@ -2627,7 +2627,7 @@ module TypeScript {
                     /*!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.HasReturnExpression) && */
                     !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
                     // relax the restriction if the method only contains a single "throw" statement
-                    onlyHasThrow = (funcDecl.block.members.length > 0) && (funcDecl.block.members[0].nodeType === NodeType.ThrowStatement)
+                    onlyHasThrow = (funcDecl.block.statements.members.length > 0) && (funcDecl.block.statements.members[0].nodeType === NodeType.ThrowStatement)
 
                     if (!onlyHasThrow) {
                         this.checker.errorReporter.simpleError(funcDecl.returnTypeAnnotation || funcDecl,

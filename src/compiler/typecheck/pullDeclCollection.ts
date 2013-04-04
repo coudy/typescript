@@ -542,7 +542,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (!memberFunctionDeclAST.block || !memberFunctionDeclAST.block.members.length) {
+        if (!memberFunctionDeclAST.block || !memberFunctionDeclAST.block.statements.members.length) {
             declFlags |= PullElementFlags.Signature;
         }
 

@@ -502,7 +502,7 @@ module TypeScript {
         }
 
         public emitInnerFunction(funcDecl: FunctionDeclaration, printName: bool, isMember: bool,
-        hasSelfRef: bool, classDecl: TypeDeclaration) {
+                                 hasSelfRef: bool, classDecl: TypeDeclaration) {
 
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
             /// such as: 
@@ -687,7 +687,7 @@ module TypeScript {
                 //this.writeLineToOutput("");
             }
 
-            this.emitBareJavascriptStatements(funcDecl.block, classPropertiesMustComeAfterSuperCall);
+            this.emitJavascriptList(funcDecl.block.statements, null, SyntaxKind.SemicolonToken, true, false, classPropertiesMustComeAfterSuperCall);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -1344,29 +1344,20 @@ module TypeScript {
             }
         }
 
-        public emitBareJavascriptStatements(stmts: AST, emitClassPropertiesAfterSuperCall: bool = false) {
-            // just the statements without enclosing curly braces
-            if (stmts.nodeType != NodeType.Block) {
-                if (stmts.nodeType === NodeType.List) {
-                    var stmtList = <ASTList>stmts;
-                    if ((stmtList.members.length === 1) &&
-                        (stmtList.members[0].nodeType === NodeType.Block) &&
-                        !emitClassPropertiesAfterSuperCall) {
-                        this.emitJavascript(stmtList.members[0], SyntaxKind.SemicolonToken, true);
-                        this.writeLineToOutput("");
-                    }
-                    else {
-                        this.emitJavascriptList(stmts, null, SyntaxKind.SemicolonToken, true, false, emitClassPropertiesAfterSuperCall);
-                    }
-                }
-                else {
-                    this.emitJavascript(stmts, SyntaxKind.SemicolonToken, true);
-                }
-            }
-            else {
-                this.emitJavascript(stmts, SyntaxKind.SemicolonToken, true);
-            }
-        }
+        // just the statements without enclosing curly braces
+        //public emitBareJavascriptStatements(stmts: AST, emitClassPropertiesAfterSuperCall: bool = false) {
+        //    if (stmts.nodeType === NodeType.List) {
+        //        var stmtList = <ASTList>stmts;
+        //        if ((stmtList.members.length === 1) &&
+        //            (stmtList.members[0].nodeType === NodeType.Block) &&
+        //            !emitClassPropertiesAfterSuperCall) {
+        //            this.emitJavascript(stmtList.members[0], SyntaxKind.SemicolonToken, true);
+        //            this.writeLineToOutput("");
+        //        }
+        //        else {
+        //        }
+        //    }
+        //}
 
         public recordSourceMappingNameStart(name: string) {
             if (this.sourceMapper) {

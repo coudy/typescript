@@ -474,7 +474,7 @@ module TypeScript {
             if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
                 var isVoidOrAny = this.resolver.isAnyOrEquivalent(returnType) || returnType == this.semanticInfoChain.voidTypeSymbol;
 
-                if (!isVoidOrAny && !(funcDeclAST.block.members.length > 0 && funcDeclAST.block.members[0].nodeType === NodeType.ThrowStatement)) {
+                if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType === NodeType.ThrowStatement)) {
                     var funcName = functionDecl.getName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
 
@@ -541,7 +541,7 @@ module TypeScript {
 
             // PULLREVIEW: Should we also raise an error if the setter returns a value?
             if (isGetter && !hasReturn) {
-                if (!(funcDeclAST.block.members.length > 0 && funcDeclAST.block.members[0].nodeType === NodeType.ThrowStatement)) {
+                if (!(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType === NodeType.ThrowStatement)) {
                     this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters must return a value", typeCheckContext.getEnclosingDecl());
                 }
             }

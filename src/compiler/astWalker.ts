@@ -311,7 +311,7 @@ module TypeScript {
                 preAst.returnTypeAnnotation = walker.walk(preAst.returnTypeAnnotation, preAst);
             }
             if (preAst.block) {
-                preAst.block = <ASTList>walker.walk(preAst.block, preAst);
+                preAst.block = <Block>walker.walk(preAst.block, preAst);
             }
         }
 

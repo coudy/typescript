@@ -1091,7 +1091,7 @@ module TypeScript {
         public isDeclaration() { return true; }
 
         constructor(public name: Identifier,
-                    public block: ASTList,
+                    public block: Block,
                     public isConstructor: bool,
                     public typeArguments: ASTList,
                     public arguments: ASTList,

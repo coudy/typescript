@@ -811,18 +811,6 @@ module TypeScript {
             return false;
         }
 
-        private convertBlock(node: BlockSyntax): ASTList {
-            if (!node) {
-                return null;
-            }
-
-            this.movePast(node.openBraceToken);
-            var statements = this.visitSyntaxList(node.statements);
-            this.movePast(node.closeBraceToken);
-
-            return statements;
-        }
-
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
             this.assertElementAtPosition(node);
 
@@ -847,16 +835,16 @@ module TypeScript {
                     ? node.callSignature.typeAnnotation.accept(this)
                     : null;
 
-                var bod = this.convertBlock(node.block);
+                var block = node.block ? node.block.accept(this) : null;
                 if (node.block) {
                     if (this.hasUseStrictDirective(node.block.statements)) {
-                        bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);
+                        block.setFlags(block.getFlags() | ASTFlags.StrictMode);
                     }
                 }
 
                 this.movePast(node.semicolonToken);
 
-                result = new FunctionDeclaration(name, bod, false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, block, false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -1273,22 +1261,16 @@ module TypeScript {
             return result;
         }
 
-        private getArrowFunctionStatements(body: ISyntaxNodeOrToken): ASTList {
-            var statements: ASTList = null;
-
+        private getArrowFunctionStatements(body: ISyntaxNodeOrToken): Block {
             if (body.kind() === SyntaxKind.Block) {
-                var block = <BlockSyntax>body;
-
-                statements = this.convertBlock(block);
+                return body.accept(this);
             }
             else {
-                statements = new ASTList();
+                var statements = new ASTList();
+                statements.append(new ReturnStatement(body.accept(this)));
 
-                var retStmt = new ReturnStatement(body.accept(this));
-                statements.append(retStmt);
+                return new Block(statements, /*isStatementBlock:*/ true);
             }
-
-            return statements;
         }
 
         private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionDeclaration {
@@ -1341,9 +1323,9 @@ module TypeScript {
                 var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
                 this.movePast(node.equalsGreaterThanToken);
 
-                var statements = this.getArrowFunctionStatements(node.body);
+                var block = this.getArrowFunctionStatements(node.body);
 
-                result = new FunctionDeclaration(null, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(null, block, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
                 result.preComments = preComments;
                 result.returnTypeAnnotation = returnType;
@@ -1588,7 +1570,10 @@ module TypeScript {
                 this.movePast(node);
             }
             else {
-                var statements = this.convertBlock(node);
+                this.movePast(node.openBraceToken);
+                var statements = this.visitSyntaxList(node.statements);
+                this.movePast(node.closeBraceToken);
+
                 result = new Block(statements, /*isStatementBlock:*/ true);
             }
 
@@ -2135,10 +2120,10 @@ module TypeScript {
                 this.moveTo(node, node.parameterList);
                 var parameters = node.parameterList.accept(this);
 
-                var statements = this.convertBlock(node.block);
+                var block = node.block ? node.block.accept(this) : null;
                 this.movePast(node.semicolonToken);
 
-                result = new FunctionDeclaration(null, statements, /*isConstructor:*/ true, null, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters, NodeType.FunctionDeclaration);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -2180,10 +2165,10 @@ module TypeScript {
                     ? node.callSignature.typeAnnotation.accept(this)
                     : null;
 
-                var statements = this.convertBlock(node.block);
+                var block = node.block ? node.block.accept(this) : null;
                 this.movePast(node.semicolonToken);
 
-                result = new FunctionDeclaration(name, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -2231,8 +2216,8 @@ module TypeScript {
                 var parameters = node.parameterList.accept(this);
                 var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
 
-                var statements = this.convertBlock(node.block);
-                result = new FunctionDeclaration(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
+                var block = node.block ? node.block.accept(this) : null;
+                result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -2736,9 +2721,9 @@ module TypeScript {
                     ? node.typeAnnotation.accept(this)
                     : null;
 
-                var statements = this.convertBlock(node.block);
+                var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new FunctionDeclaration(name, statements, /*isConstructor:*/ false, null, new ASTList(), NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, new ASTList(), NodeType.FunctionDeclaration);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor);
@@ -2773,9 +2758,9 @@ module TypeScript {
                 var parameters = new ASTList();
                 parameters.append(parameter);
 
-                var statements = this.convertBlock(node.block);
+                var block = node.block ? node.block.accept(this) : null;
 
-                var funcDecl = new FunctionDeclaration(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
+                var funcDecl = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, NodeType.FunctionDeclaration);
                 this.setSpan(funcDecl, start, node);
 
                 funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor);
@@ -2810,14 +2795,14 @@ module TypeScript {
                     ? node.callSignature.typeAnnotation.accept(this)
                     : null;
 
-                var bod = this.convertBlock(node.block);
+                var block = node.block ? node.block.accept(this) : null;
                 if (node.block) {
                     if (this.hasUseStrictDirective(node.block.statements)) {
-                        bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);
+                        block.setFlags(block.getFlags() | ASTFlags.StrictMode);
                     }
                 }
 
-                result = new FunctionDeclaration(name, bod, false, typeParameters, parameters, NodeType.FunctionDeclaration);
+                result = new FunctionDeclaration(name, block, false, typeParameters, parameters, NodeType.FunctionDeclaration);
 
                 result.preComments = preComments;
                 result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
