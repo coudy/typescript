@@ -27,7 +27,6 @@ var compilerSources = [
 	"typeCollection.ts",
 	"scopeAssignment.ts",
 	"binder.ts",
-	"tokens.ts",
 	"ast.ts",
 	"astWalker.ts",
 	"astWalkerCallback.ts",

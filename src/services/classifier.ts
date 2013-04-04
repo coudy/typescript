@@ -23,6 +23,18 @@ module Services {
         InDoubleQuoteStringLiteral,
     }
 
+    export enum TokenClass {
+        Punctuation,
+        Keyword,
+        Operator,
+        Comment,
+        Whitespace,
+        Identifier,
+        NumberLiteral,
+        StringLiteral,
+        RegExpLiteral,
+    }
+
     var noRegexTable: bool[] = [];
     noRegexTable[TypeScript.SyntaxKind.IdentifierName] = true;
     noRegexTable[TypeScript.SyntaxKind.StringLiteral] = true;
@@ -109,31 +121,31 @@ module Services {
 
         private classFromKind(kind: TypeScript.SyntaxKind) {
             if (TypeScript.SyntaxFacts.isAnyKeyword(kind)) {
-                return TypeScript.TokenClass.Keyword;
+                return TokenClass.Keyword;
             }
             else if (TypeScript.SyntaxFacts.isBinaryExpressionOperatorToken(kind) ||
                      TypeScript.SyntaxFacts.isPrefixUnaryExpressionOperatorToken(kind)) {
-                return TypeScript.TokenClass.Operator;
+                return TokenClass.Operator;
             }
             else if (TypeScript.SyntaxFacts.isAnyPunctuation(kind)) {
-                return TypeScript.TokenClass.Punctuation;
+                return TokenClass.Punctuation;
             }
 
             switch (kind) {
                 case TypeScript.SyntaxKind.WhitespaceTrivia:
-                    return TypeScript.TokenClass.Whitespace;
+                    return TokenClass.Whitespace;
                 case TypeScript.SyntaxKind.MultiLineCommentTrivia:
                 case TypeScript.SyntaxKind.SingleLineCommentTrivia:
-                    return TypeScript.TokenClass.Comment;
+                    return TokenClass.Comment;
                 case TypeScript.SyntaxKind.NumericLiteral:
-                    return TypeScript.TokenClass.NumberLiteral;
+                    return TokenClass.NumberLiteral;
                 case TypeScript.SyntaxKind.StringLiteral:
-                    return TypeScript.TokenClass.StringLiteral;
+                    return TokenClass.StringLiteral;
                 case TypeScript.SyntaxKind.RegularExpressionLiteral:
-                    return TypeScript.TokenClass.RegExpLiteral;
+                    return TokenClass.RegExpLiteral;
                 case TypeScript.SyntaxKind.IdentifierName:
                 default:
-                    return TypeScript.TokenClass.Identifier;
+                    return TokenClass.Identifier;
             }
         }
 
@@ -155,12 +167,12 @@ module Services {
             if (index >= 0) {
                 var commentEnd = index + "*/".length;
                 this.scanner.setAbsoluteIndex(commentEnd);
-                result.entries.push(new ClassificationInfo(commentEnd, TypeScript.TokenClass.Comment));
+                result.entries.push(new ClassificationInfo(commentEnd, TokenClass.Comment));
                 return false;
             }
             else {
                 // Comment didn't end.
-                result.entries.push(new ClassificationInfo(text.length, TypeScript.TokenClass.Comment));
+                result.entries.push(new ClassificationInfo(text.length, TokenClass.Comment));
                 result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
                 return true;
             }
@@ -188,15 +200,14 @@ module Services {
                 if (ch === endChar) {
                     var stringEnd = i + 1;
                     this.scanner.setAbsoluteIndex(stringEnd);
-                    result.entries.push(new ClassificationInfo(stringEnd, TypeScript.TokenClass.StringLiteral));
+                    result.entries.push(new ClassificationInfo(stringEnd, TokenClass.StringLiteral));
                     return false;
                 }
             }
 
             this.scanner.setAbsoluteIndex(text.length);
             result.entries.push(new ClassificationInfo(
-                text.length,
-                TypeScript.TokenClass.StringLiteral));
+                text.length, TokenClass.StringLiteral));
 
             // We didn't see an terminator.  If the line ends with \ then we're still in 
             // teh string literal.  Otherwise, we're done.
@@ -223,7 +234,7 @@ module Services {
     }
 
     export class ClassificationInfo {
-        constructor(public length: number, public classification: TypeScript.TokenClass) {
+        constructor(public length: number, public classification: TokenClass) {
         }
     }
 }
