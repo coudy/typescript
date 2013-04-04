@@ -107,7 +107,6 @@ module TypeScript {
         public moduleName = "";
         public emitState = new EmitState();
         public indenter = new Indenter();
-        public ambientModule = false;
         public modAliasId: string = null;
         public firstModAlias: string = null;
         public allSourceMappers: SourceMapper[] = [];
@@ -119,13 +118,11 @@ module TypeScript {
         private declStack: PullDecl[] = [];
 
         constructor(public emittingFileName: string,
-        public outfile: ITextWriter,
-        public emitOptions: EmitOptions,
-        private semanticInfoChain: SemanticInfoChain) {
+                    public outfile: ITextWriter,
+                    public emitOptions: EmitOptions,
+                    private semanticInfoChain: SemanticInfoChain) {
             this.pullTypeChecker = new PullTypeChecker(emitOptions.compilationSettings, semanticInfoChain);
         }
-
-        public diagnostics(): IDiagnostic[] { return []; }
 
         private pushDecl(decl: PullDecl) {
             if (decl) {
@@ -291,7 +288,6 @@ module TypeScript {
             }
         }
 
-        // TODO: emit accessor pattern
         public emitObjectLiteral(content: ASTList) {
             if (content.members.length === 0) {
                 this.writeToOutput("{}");
@@ -457,48 +453,6 @@ module TypeScript {
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(args);
             }
-        }
-
-        public emitConstructorCalls(bases: ASTList, classDecl: TypeDeclaration) {
-            if (bases === null) {
-                return;
-            }
-            var basesLen = bases.members.length;
-            this.recordSourceMappingStart(classDecl);
-            for (var i = 0; i < basesLen; i++) {
-                var baseExpr = bases.members[i];
-                var baseSymbol: Symbol = null;
-                if (baseExpr.nodeType === NodeType.Call) {
-                    baseSymbol = (<CallExpression>baseExpr).target.type.symbol;
-                }
-                else {
-                    baseSymbol = baseExpr.type.symbol;
-                }
-                var baseName = baseSymbol.name;
-                if (baseSymbol.declModule != classDecl.type.symbol.declModule) {
-                    baseName = baseSymbol.fullName();
-                }
-                if (baseExpr.nodeType === NodeType.Call) {
-                    this.emitIndent();
-                    this.writeToOutput("_super.call(this");
-                    var args = (<CallExpression>baseExpr).arguments;
-                    if (args && (args.members.length > 0)) {
-                        this.writeToOutput(", ");
-                        this.emitJavascriptList(args, ", ", SyntaxKind.CommaToken, false, false, false);
-                    }
-                    this.writeToOutput(")");
-                }
-                else {
-                    if (baseExpr.type && (baseExpr.type.isClassInstance())) {
-                        // parameterless constructor call;
-                        this.emitIndent();
-                        this.writeToOutput(classDecl.name.actualText + "._super.constructor");
-                        //emitJavascript(baseExpr,SyntaxKind.LParen,false);
-                        this.writeToOutput(".call(this)");
-                    }
-                }
-            }
-            this.recordSourceMappingEnd(classDecl);
         }
 
         public emitInnerFunction(funcDecl: FunctionDeclaration, printName: bool, isMember: bool,
@@ -1148,18 +1102,6 @@ module TypeScript {
                 this.emitComments(varDecl, false);
             }
             this.popDecl(pullDecl);
-        }
-
-        public declEnclosed(moduleDecl: ModuleDeclaration): bool {
-            if (moduleDecl === null) {
-                return true;
-            }
-            for (var i = 0, len = this.moduleDeclList.length; i < len; i++) {
-                if (this.moduleDeclList[i] === moduleDecl) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private symbolIsUsedInItsEnclosingContainer(symbol: PullSymbol, dynamic = false) {
