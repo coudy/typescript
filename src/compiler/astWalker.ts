@@ -193,7 +193,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.WithStatement] = ChildrenWalkers.walkWithStatementChildren;
             this.childrenWalkers[NodeType.ExpressionStatement] = ChildrenWalkers.walkExpressionStatementChildren;
             this.childrenWalkers[NodeType.LabeledStatement] = ChildrenWalkers.walkLabeledStatementChildren;
-            this.childrenWalkers[NodeType.EndCode] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.DebuggerStatement] = ChildrenWalkers.walkNone;
 

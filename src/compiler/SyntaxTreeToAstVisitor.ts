@@ -848,10 +848,6 @@ module TypeScript {
                     : null;
 
                 var bod = this.convertBlock(node.block);
-                if (bod) {
-                    bod.append(new EndCode());
-                }
-
                 if (node.block) {
                     if (this.hasUseStrictDirective(node.block.statements)) {
                         bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);
@@ -1291,8 +1287,6 @@ module TypeScript {
                 var retStmt = new ReturnStatement(body.accept(this));
                 statements.append(retStmt);
             }
-
-            statements.append(new EndCode());
 
             return statements;
         }
@@ -2142,9 +2136,6 @@ module TypeScript {
                 var parameters = node.parameterList.accept(this);
 
                 var statements = this.convertBlock(node.block);
-                if (statements) {
-                    statements.append(new EndCode());
-                }
                 this.movePast(node.semicolonToken);
 
                 result = new FuncDecl(null, statements, /*isConstructor:*/ true, null, parameters, NodeType.FuncDecl);
@@ -2190,9 +2181,6 @@ module TypeScript {
                     : null;
 
                 var statements = this.convertBlock(node.block);
-                if (statements) {
-                    statements.append(new EndCode());
-                }
                 this.movePast(node.semicolonToken);
 
                 result = new FuncDecl(name, statements, /*isConstructor:*/ false, typeParameters, parameters, NodeType.FuncDecl);
@@ -2244,10 +2232,6 @@ module TypeScript {
                 var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
 
                 var statements = this.convertBlock(node.block);
-                if (statements) {
-                    statements.append(new EndCode());
-                }
-
                 result = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
 
                 result.preComments = preComments;
@@ -2753,7 +2737,6 @@ module TypeScript {
                     : null;
 
                 var statements = this.convertBlock(node.block);
-                statements.append(new EndCode());
 
                 var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, new ASTList(), NodeType.FuncDecl);
                 this.setSpan(funcDecl, start, node);
@@ -2791,7 +2774,6 @@ module TypeScript {
                 parameters.append(parameter);
 
                 var statements = this.convertBlock(node.block);
-                statements.append(new EndCode());
 
                 var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, NodeType.FuncDecl);
                 this.setSpan(funcDecl, start, node);
@@ -2829,10 +2811,6 @@ module TypeScript {
                     : null;
 
                 var bod = this.convertBlock(node.block);
-                if (bod) {
-                    bod.append(new EndCode());
-                }
-
                 if (node.block) {
                     if (this.hasUseStrictDirective(node.block.statements)) {
                         bod.setFlags(bod.getFlags() | ASTFlags.StrictMode);

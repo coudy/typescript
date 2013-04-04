@@ -107,7 +107,6 @@ module TypeScript {
                     break;
                 case NodeType.SuperExpression:
                     return typeFlow.typeCheckSuper(this);
-                case NodeType.EndCode:
                 case NodeType.Empty:
                 case NodeType.VoidExpression:
                     this.type = typeFlow.voidType;
@@ -151,7 +150,6 @@ module TypeScript {
                     emitter.emitSuperReference();
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.EndCode:
                 case NodeType.EmptyExpr:
                     break;
                 case NodeType.Empty:
@@ -1827,12 +1825,6 @@ module TypeScript {
         public structuralEquals(ast: ReturnStatement, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.returnExpression, ast.returnExpression, includingPosition);
-        }
-    }
-
-    export class EndCode extends AST {
-        constructor() {
-            super(NodeType.EndCode);
         }
     }
 

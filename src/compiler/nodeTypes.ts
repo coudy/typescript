@@ -117,7 +117,6 @@ module TypeScript {
         WithStatement,
         ExpressionStatement,
         LabeledStatement,
-        EndCode,
         Comment,
         DebuggerStatement,
         LastAsg = AsgRs2,

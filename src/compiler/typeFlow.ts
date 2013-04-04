@@ -383,9 +383,9 @@ module TypeScript {
                 var len = this.unreachable.length;
                 for (var i = 0; i < len; i++) {
                     var unreachableAST = this.unreachable[i];
-                    if (unreachableAST.nodeType !== NodeType.EndCode) {
-                        er.simpleError(unreachableAST, "unreachable code");
-                    }
+                    //if (unreachableAST.nodeType !== NodeType.EndCode) {
+                    //    er.simpleError(unreachableAST, "unreachable code");
+                    //}
                 }
             }
         }

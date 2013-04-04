@@ -1349,9 +1349,9 @@ module TypeScript {
             if (stmts.nodeType != NodeType.Block) {
                 if (stmts.nodeType === NodeType.List) {
                     var stmtList = <ASTList>stmts;
-                    if ((stmtList.members.length === 2) &&
-                    (stmtList.members[0].nodeType === NodeType.Block) &&
-                    (stmtList.members[1].nodeType === NodeType.EndCode)) {
+                    if ((stmtList.members.length === 1) &&
+                        (stmtList.members[0].nodeType === NodeType.Block) &&
+                        !emitClassPropertiesAfterSuperCall) {
                         this.emitJavascript(stmtList.members[0], SyntaxKind.SemicolonToken, true);
                         this.writeLineToOutput("");
                     }
@@ -1442,7 +1442,45 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptList(ast: AST, delimiter: string, tokenId: SyntaxKind, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue = false, requiresExtendsBlock?: bool) {
+        private emitConstructorPropertyAssignments(): void {
+            // emit any parameter properties first
+            var constructorDecl = (<ClassDeclaration>this.thisClassNode).constructorDecl;
+
+            if (constructorDecl && constructorDecl.arguments) {
+                var argsLen = constructorDecl.arguments.members.length;
+                for (var iArg = 0; iArg < argsLen; iArg++) {
+                    var arg = <BoundDecl>constructorDecl.arguments.members[iArg];
+                    if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
+                        this.emitIndent();
+                        this.recordSourceMappingStart(arg);
+                        this.recordSourceMappingStart(arg.id);
+                        this.writeToOutput("this." + arg.id.actualText);
+                        this.recordSourceMappingEnd(arg.id);
+                        this.writeToOutput(" = ");
+                        this.recordSourceMappingStart(arg.id);
+                        this.writeToOutput(arg.id.actualText);
+                        this.recordSourceMappingEnd(arg.id);
+                        this.writeLineToOutput(";");
+                        this.recordSourceMappingEnd(arg);
+                    }
+                }
+            }
+
+            var nProps = (<ASTList>this.thisClassNode.members).members.length;
+
+            for (var iMember = 0; iMember < nProps; iMember++) {
+                if ((<ASTList>this.thisClassNode.members).members[iMember].nodeType === NodeType.VarDecl) {
+                    var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[iMember];
+                    if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
+                        this.emitIndent();
+                        this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
+                        this.writeLineToOutput("");
+                    }
+                }
+            }
+        }
+        
+        public emitJavascriptList(ast: AST, delimiter: string, tokenId: SyntaxKind, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool, emitPrologue = false, requiresExtendsBlock?: bool) {
             if (ast === null) {
                 return;
             }
@@ -1472,49 +1510,14 @@ module TypeScript {
                     // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
                     // call which, in these cases, must be the first statement in the constructor body
                     if (i === 1 && emitClassPropertiesAfterSuperCall) {
-
-                        // emit any parameter properties first
-                        var constructorDecl = (<ClassDeclaration>this.thisClassNode).constructorDecl;
-
-                        if (constructorDecl && constructorDecl.arguments) {
-                            var argsLen = constructorDecl.arguments.members.length;
-                            for (var iArg = 0; iArg < argsLen; iArg++) {
-                                var arg = <BoundDecl>constructorDecl.arguments.members[iArg];
-                                if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
-                                    this.emitIndent();
-                                    this.recordSourceMappingStart(arg);
-                                    this.recordSourceMappingStart(arg.id);
-                                    this.writeToOutput("this." + arg.id.actualText);
-                                    this.recordSourceMappingEnd(arg.id);
-                                    this.writeToOutput(" = ");
-                                    this.recordSourceMappingStart(arg.id);
-                                    this.writeToOutput(arg.id.actualText);
-                                    this.recordSourceMappingEnd(arg.id);
-                                    this.writeLineToOutput(";");
-                                    this.recordSourceMappingEnd(arg);
-                                }
-                            }
-                        }
-
-                        var nProps = (<ASTList>this.thisClassNode.members).members.length;
-
-                        for (var iMember = 0; iMember < nProps; iMember++) {
-                            if ((<ASTList>this.thisClassNode.members).members[iMember].nodeType === NodeType.VarDecl) {
-                                var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[iMember];
-                                if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
-                                    this.emitIndent();
-                                    this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
-                                    this.writeLineToOutput("");
-                                }
-                            }
-                        }
+                        this.emitConstructorPropertyAssignments();
                     }
 
                     var emitNode = list.members[i];
 
                     var isStaticDecl =
-                    (emitNode.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
-                    (emitNode.nodeType === NodeType.VarDecl && hasFlag((<VarDecl>emitNode).getVarFlags(), VariableFlags.Static))
+                        (emitNode.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
+                        (emitNode.nodeType === NodeType.VarDecl && hasFlag((<VarDecl>emitNode).getVarFlags(), VariableFlags.Static))
 
                     if (onlyStatics ? !isStaticDecl : isStaticDecl) {
                         continue;
@@ -1530,19 +1533,23 @@ module TypeScript {
                         }
                     }
                     else if (startLine &&
-                    (emitNode.nodeType !== NodeType.ExpressionStatement) &&
-                    (emitNode.nodeType !== NodeType.ReturnStatement) &&
-                    (emitNode.nodeType != NodeType.ModuleDeclaration) &&
-                    (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
-                    (!((emitNode.nodeType === NodeType.VarDecl) &&
-                    ((((<VarDecl>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                    (((<VarDecl>emitNode).init) === null)) && this.varListCount() >= 0) &&
-                    (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
-                    (emitNode.nodeType != NodeType.EndCode) &&
-                    (emitNode.nodeType != NodeType.FuncDecl)) {
+                             (emitNode.nodeType !== NodeType.ExpressionStatement) &&
+                             (emitNode.nodeType !== NodeType.ReturnStatement) &&
+                             (emitNode.nodeType != NodeType.ModuleDeclaration) &&
+                             (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
+                             (!((emitNode.nodeType === NodeType.VarDecl) &&
+                             ((((<VarDecl>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
+                             (((<VarDecl>emitNode).init) === null)) && this.varListCount() >= 0) &&
+                             (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
+                             (emitNode.nodeType != NodeType.FuncDecl)) {
                         this.writeLineToOutput("");
                     }
                 }
+
+                if (i === 1 && emitClassPropertiesAfterSuperCall) {
+                    this.emitConstructorPropertyAssignments();
+                }
+
                 this.emitComments(ast, false);
             }
         }
@@ -1554,15 +1561,14 @@ module TypeScript {
             }
 
             // REVIEW: simplify rules for indenting
-            if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) &&
-            (ast.nodeType != NodeType.Block)) {
+            if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) && (ast.nodeType != NodeType.Block)) {
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
-                (!((ast.nodeType === NodeType.VarDecl) &&
-                ((((<VarDecl>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                (((<VarDecl>ast).init) === null)) && this.varListCount() >= 0) &&
-                (ast.nodeType != NodeType.EndCode) &&
-                ((ast.nodeType != NodeType.FuncDecl) ||
-                (this.emitState.container != EmitContainer.Constructor))) {
+                    (!((ast.nodeType === NodeType.VarDecl) &&
+                    ((((<VarDecl>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
+                    (((<VarDecl>ast).init) === null)) && this.varListCount() >= 0) &&
+                    ((ast.nodeType != NodeType.FuncDecl) ||
+                    (this.emitState.container != EmitContainer.Constructor))) {
+
                     this.emitIndent();
                 }
             }
