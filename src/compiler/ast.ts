@@ -1189,7 +1189,8 @@ module TypeScript {
 
     export var unknownLocationInfo = new LocationInfo("unknown", null);
 
-    export class Script extends FuncDecl {
+    export class Script extends AST {
+        public bod: ASTList = null;
         public locationInfo: LocationInfo = null;
         public referencedFiles: IFileReference[] = [];
         public requiresExtendsBlock = false;
@@ -1206,7 +1207,8 @@ module TypeScript {
         }
 
         constructor() {
-            super(new Identifier("script"), null, false, null, null, NodeType.Script);
+            // new Identifier("script")
+            super(NodeType.Script);
         }
 
         public typeCheck(typeFlow: TypeFlow) {

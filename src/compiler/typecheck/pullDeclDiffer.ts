@@ -249,7 +249,7 @@ module TypeScript {
             return this.boundDeclarationIsEquivalent(decl1, decl2);
         }
 
-        private baseFunctionDeclarationIsEquivalent(decl1: FuncDecl, decl2: FuncDecl, ignoreReturnType: bool): bool {
+        private functionDeclarationIsEquivalent(decl1: FuncDecl, decl2: FuncDecl): bool {
             if (decl1.hint === decl2.hint &&
                 decl1.getFunctionFlags() === decl2.getFunctionFlags() &&
                 decl1.variableArgList === decl2.variableArgList &&
@@ -262,7 +262,7 @@ module TypeScript {
                 // functions don't have a specified return type annotation, we have to look
                 // further.  Specifically, we have to check if the bodies are the same as well.
                 // If they're not, then the return type of the function may have changed.
-                if (!ignoreReturnType && decl1.returnTypeAnnotation === null) {
+                if (decl1.returnTypeAnnotation === null) {
                     return structuralEqualsNotIncludingPosition(decl1.bod, decl2.bod);
                 }
                 else {
@@ -273,15 +273,11 @@ module TypeScript {
             return false;
         }
 
-        private functionDeclarationIsEquivalent(decl1: FuncDecl, decl2: FuncDecl): bool {
-            return this.baseFunctionDeclarationIsEquivalent(decl1, decl2, /*ignoreReturnType:*/ false);
-        }
-
         private scriptIsEquivalent(decl1: Script, decl2: Script): bool {
             // TODO: should we check Script.referencedFiles here?  I don't think we need to.  
             // After all, if that changes, then the LS will just tear us down and start over again,
             // so we won't be comparing decls anyways.
-            return this.baseFunctionDeclarationIsEquivalent(decl1, decl2, /*ignoreReturnType:*/ true);
+            return true;
         }
 
         private moduleDeclarationIsEquivalent(decl1: ModuleDeclaration, decl2: ModuleDeclaration): bool {
