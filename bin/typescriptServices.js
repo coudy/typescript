@@ -2768,7 +2768,7 @@ var TypeScript;
             }
             for(; startIndex < endIndex; startIndex++) {
                 var charCode = line.charCodeAt(startIndex);
-                if (charCode != TypeScript.LexCodeSpace && charCode != TypeScript.LexCodeTAB) {
+                if (charCode !== 32 /* space */  && charCode !== 9 /* tab */ ) {
                     return startIndex;
                 }
             }
@@ -2781,7 +2781,7 @@ var TypeScript;
             var length = line.length;
             if (index < length) {
                 var charCode = line.charCodeAt(index);
-                return charCode === TypeScript.LexCodeSpace || charCode === TypeScript.LexCodeTAB;
+                return charCode === 32 /* space */  || charCode === 9 /* tab */ ;
             }
             return index === length;
         };
@@ -2873,16 +2873,16 @@ var TypeScript;
                     if (j === -1) {
                         break;
                     }
-                    if (commentContents.charCodeAt(j) === TypeScript.LexCodeLC) {
+                    if (commentContents.charCodeAt(j) === 123 /* openBrace */ ) {
                         j++;
                         var charCode = 0;
                         for(var curlies = 1; j < commentContents.length; j++) {
                             charCode = commentContents.charCodeAt(j);
-                            if (charCode === TypeScript.LexCodeLC) {
+                            if (charCode === 123 /* openBrace */ ) {
                                 curlies++;
                                 continue;
                             }
-                            if (charCode === TypeScript.LexCodeRC) {
+                            if (charCode === 125 /* closeBrace */ ) {
                                 curlies--;
                                 if (curlies === 0) {
                                     break;
@@ -2890,14 +2890,14 @@ var TypeScript;
                                     continue;
                                 }
                             }
-                            if (charCode === TypeScript.LexCodeAtSign) {
+                            if (charCode === 64 /* at */ ) {
                                 break;
                             }
                         }
                         if (j === commentContents.length) {
                             break;
                         }
-                        if (charCode === TypeScript.LexCodeAtSign) {
+                        if (charCode === 64 /* at */ ) {
                             continue;
                         }
                         j = Comment.consumeLeadingSpace(commentContents, j + 1);
@@ -4444,7 +4444,7 @@ var TypeScript;
             if (this.emitOptions.compilationSettings.minWhitespace) {
                 this.writeToOutput(s);
                 var c = s.charCodeAt(s.length - 1);
-                if (!((c === TypeScript.LexCodeSpace) || (c === TypeScript.LexCodeSMC) || (c === TypeScript.LexCodeLBR))) {
+                if (!((c === LexCodeSpace) || (c === LexCodeSMC) || (c === LexCodeLBR))) {
                     this.writeToOutput(' ');
                 }
             } else {
@@ -6012,118 +6012,6 @@ var TypeScript;
         return ast;
     }
     TypeScript.postPrintAST = postPrintAST;
-})(TypeScript || (TypeScript = {}));
-var JSON = (typeof JSON === "undefined") ? JSON2 : JSON;
-((function () {
-    'use strict';
-    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
-    if (typeof JSON2.parse !== 'function') {
-        JSON2.parse = function (text, reviver) {
-            var j;
-            function walk(holder, key) {
-                var k = null, v, value = holder[key];
-                if (value && typeof value === 'object') {
-                    for(k in value) {
-                        if (Object.prototype.hasOwnProperty.call(value, k)) {
-                            v = walk(value, k);
-                            if (v !== undefined) {
-                                value[k] = v;
-                            } else {
-                                delete value[k];
-                            }
-                        }
-                    }
-                }
-                return reviver.call(holder, key, value);
-            }
-            text = String(text);
-            cx.lastIndex = 0;
-            if (cx.test(text)) {
-                text = text.replace(cx, function (a) {
-                    return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-                });
-            }
-            if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-                j = eval('(' + text + ')');
-                return typeof reviver === 'function' ? walk({
-                    '': j
-                }, '') : j;
-            }
-            throw new SyntaxError('JSON.parse');
-        };
-    }
-})());
-var TypeScript;
-(function (TypeScript) {
-    TypeScript.LexEOF = (-1);
-    TypeScript.LexCodeNWL = 0x0A;
-    TypeScript.LexCodeRET = 0x0D;
-    TypeScript.LexCodeLS = 0x2028;
-    TypeScript.LexCodePS = 0x2029;
-    TypeScript.LexCodeTAB = 0x09;
-    TypeScript.LexCodeVTAB = 0x0B;
-    TypeScript.LexCode_e = 'e'.charCodeAt(0);
-    TypeScript.LexCode_E = 'E'.charCodeAt(0);
-    TypeScript.LexCode_x = 'x'.charCodeAt(0);
-    TypeScript.LexCode_X = 'X'.charCodeAt(0);
-    TypeScript.LexCode_a = 'a'.charCodeAt(0);
-    TypeScript.LexCode_A = 'A'.charCodeAt(0);
-    TypeScript.LexCode_f = 'f'.charCodeAt(0);
-    TypeScript.LexCode_F = 'F'.charCodeAt(0);
-    TypeScript.LexCode_g = 'g'.charCodeAt(0);
-    TypeScript.LexCode_m = 'm'.charCodeAt(0);
-    TypeScript.LexCode_i = 'i'.charCodeAt(0);
-    TypeScript.LexCode_u = 'u'.charCodeAt(0);
-    TypeScript.LexCode_0 = '0'.charCodeAt(0);
-    TypeScript.LexCode_9 = '9'.charCodeAt(0);
-    TypeScript.LexCode_8 = '8'.charCodeAt(0);
-    TypeScript.LexCode_7 = '7'.charCodeAt(0);
-    TypeScript.LexCodeBSL = '\\'.charCodeAt(0);
-    TypeScript.LexCodeSHP = '#'.charCodeAt(0);
-    TypeScript.LexCodeBNG = '!'.charCodeAt(0);
-    TypeScript.LexCodeQUO = '"'.charCodeAt(0);
-    TypeScript.LexCodeAPO = '\''.charCodeAt(0);
-    TypeScript.LexCodePCT = '%'.charCodeAt(0);
-    TypeScript.LexCodeAMP = '&'.charCodeAt(0);
-    TypeScript.LexCodeLPR = '('.charCodeAt(0);
-    TypeScript.LexCodeRPR = ')'.charCodeAt(0);
-    TypeScript.LexCodePLS = '+'.charCodeAt(0);
-    TypeScript.LexCodeMIN = '-'.charCodeAt(0);
-    TypeScript.LexCodeMUL = '*'.charCodeAt(0);
-    TypeScript.LexCodeSLH = '/'.charCodeAt(0);
-    TypeScript.LexCodeXOR = '^'.charCodeAt(0);
-    TypeScript.LexCodeCMA = ','.charCodeAt(0);
-    TypeScript.LexCodeDOT = '.'.charCodeAt(0);
-    TypeScript.LexCodeLT = '<'.charCodeAt(0);
-    TypeScript.LexCodeEQ = '='.charCodeAt(0);
-    TypeScript.LexCodeGT = '>'.charCodeAt(0);
-    TypeScript.LexCodeQUE = '?'.charCodeAt(0);
-    TypeScript.LexCodeLBR = '['.charCodeAt(0);
-    TypeScript.LexCodeRBR = ']'.charCodeAt(0);
-    TypeScript.LexCodeUSC = '_'.charCodeAt(0);
-    TypeScript.LexCodeLC = '{'.charCodeAt(0);
-    TypeScript.LexCodeRC = '}'.charCodeAt(0);
-    TypeScript.LexCodeBAR = '|'.charCodeAt(0);
-    TypeScript.LexCodeTIL = '~'.charCodeAt(0);
-    TypeScript.LexCodeCOL = ':'.charCodeAt(0);
-    TypeScript.LexCodeSMC = ';'.charCodeAt(0);
-    TypeScript.LexCodeUnderscore = '_'.charCodeAt(0);
-    TypeScript.LexCodeDollar = '$'.charCodeAt(0);
-    TypeScript.LexCodeSpace = 32;
-    TypeScript.LexCodeAtSign = '@'.charCodeAt(0);
-    TypeScript.LexCodeASCIIChars = 128;
-    (function (LexState) {
-        LexState._map = [];
-        LexState._map[0] = "Start";
-        LexState.Start = 0;
-        LexState._map[1] = "InMultilineComment";
-        LexState.InMultilineComment = 1;
-        LexState._map[2] = "InMultilineSingleQuoteString";
-        LexState.InMultilineSingleQuoteString = 2;
-        LexState._map[3] = "InMultilineDoubleQuoteString";
-        LexState.InMultilineDoubleQuoteString = 3;
-    })(TypeScript.LexState || (TypeScript.LexState = {}));
-    var LexState = TypeScript.LexState;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -16071,6 +15959,7 @@ var TypeScript;
         CharacterCodes.Z = 90;
         CharacterCodes.ampersand = 38;
         CharacterCodes.asterisk = 42;
+        CharacterCodes.at = 64;
         CharacterCodes.backslash = 92;
         CharacterCodes.bar = 124;
         CharacterCodes.caret = 94;
@@ -52518,6 +52407,18 @@ if (!Array.prototype.some) {
 }
 var Services;
 (function (Services) {
+    (function (EndOfLineState) {
+        EndOfLineState._map = [];
+        EndOfLineState._map[0] = "Start";
+        EndOfLineState.Start = 0;
+        EndOfLineState._map[1] = "InMultiLineCommentTrivia";
+        EndOfLineState.InMultiLineCommentTrivia = 1;
+        EndOfLineState._map[2] = "InSingleQuoteStringLiteral";
+        EndOfLineState.InSingleQuoteStringLiteral = 2;
+        EndOfLineState._map[3] = "InDoubleQuoteStringLiteral";
+        EndOfLineState.InDoubleQuoteStringLiteral = 3;
+    })(Services.EndOfLineState || (Services.EndOfLineState = {}));
+    var EndOfLineState = Services.EndOfLineState;
     var noRegexTable = [];
     noRegexTable[11 /* IdentifierName */ ] = true;
     noRegexTable[14 /* StringLiteral */ ] = true;
@@ -52559,7 +52460,7 @@ var Services;
             if (this.scanner.absoluteIndex() >= text.length) {
                 if (this.diagnostics.length > 0) {
                     if (this.diagnostics[this.diagnostics.length - 1].diagnosticCode() === 12 /* _StarSlash__expected */ ) {
-                        result.finalLexState = 1 /* InMultilineComment */ ;
+                        result.finalLexState = 1 /* InMultiLineCommentTrivia */ ;
                         return;
                     }
                 }
@@ -52567,7 +52468,7 @@ var Services;
                     var tokenText = token.text();
                     if (tokenText.length > 0 && tokenText.charCodeAt(tokenText.length - 1) === 92 /* backslash */ ) {
                         var quoteChar = tokenText.charCodeAt(0);
-                        result.finalLexState = quoteChar === 34 /* doubleQuote */  ? 3 /* InMultilineDoubleQuoteString */  : 2 /* InMultilineSingleQuoteString */ ;
+                        result.finalLexState = quoteChar === 34 /* doubleQuote */  ? 3 /* InDoubleQuoteStringLiteral */  : 2 /* InSingleQuoteStringLiteral */ ;
                         return;
                     }
                 }
@@ -52610,9 +52511,9 @@ var Services;
             }
         };
         Classifier.prototype.checkForContinuedToken = function (text, lexState, result) {
-            if (lexState === 1 /* InMultilineComment */ ) {
+            if (lexState === 1 /* InMultiLineCommentTrivia */ ) {
                 return this.handleMultilineComment(text, lexState, result);
-            } else if (lexState === 3 /* InMultilineDoubleQuoteString */  || lexState === 2 /* InMultilineSingleQuoteString */ ) {
+            } else if (lexState === 3 /* InDoubleQuoteStringLiteral */  || lexState === 2 /* InSingleQuoteStringLiteral */ ) {
                 return this.handleMultilineString(text, lexState, result);
             } else {
                 return false;
@@ -52627,12 +52528,12 @@ var Services;
                 return false;
             } else {
                 result.entries.push(new ClassificationInfo(text.length, 3 /* Comment */ ));
-                result.finalLexState = 1 /* InMultilineComment */ ;
+                result.finalLexState = 1 /* InMultiLineCommentTrivia */ ;
                 return true;
             }
         };
         Classifier.prototype.handleMultilineString = function (text, lexState, result) {
-            var endChar = lexState === 3 /* InMultilineDoubleQuoteString */  ? 34 /* doubleQuote */  : 39 /* singleQuote */ ;
+            var endChar = lexState === 3 /* InDoubleQuoteStringLiteral */  ? 34 /* doubleQuote */  : 39 /* singleQuote */ ;
             var seenBackslash = true;
             for(var i = 0, n = text.length; i < n; i++) {
                 if (seenBackslash) {
