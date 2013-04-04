@@ -1344,21 +1344,6 @@ module TypeScript {
             }
         }
 
-        // just the statements without enclosing curly braces
-        //public emitBareJavascriptStatements(stmts: AST, emitClassPropertiesAfterSuperCall: bool = false) {
-        //    if (stmts.nodeType === NodeType.List) {
-        //        var stmtList = <ASTList>stmts;
-        //        if ((stmtList.members.length === 1) &&
-        //            (stmtList.members[0].nodeType === NodeType.Block) &&
-        //            !emitClassPropertiesAfterSuperCall) {
-        //            this.emitJavascript(stmtList.members[0], SyntaxKind.SemicolonToken, true);
-        //            this.writeLineToOutput("");
-        //        }
-        //        else {
-        //        }
-        //    }
-        //}
-
         public recordSourceMappingNameStart(name: string) {
             if (this.sourceMapper) {
                 var finalName = name;
