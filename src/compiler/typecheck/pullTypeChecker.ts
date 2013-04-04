@@ -295,6 +295,13 @@ module TypeScript {
 
         // scripts
         public typeCheckScript(script: Script, scriptName: string, compiler: TypeScriptCompiler) {
+
+            var unit = this.semanticInfoChain.getUnit(scriptName);
+
+            if (unit.getTypeChecked()) {
+                return;
+            }
+
             var typeCheckContext = new PullTypeCheckContext(compiler, script, scriptName);
 
             this.setUnit(scriptName);
@@ -312,6 +319,8 @@ module TypeScript {
             }
 
             typeCheckContext.popEnclosingDecl();
+
+            unit.setTypeChecked();
         }
 
         // lists
@@ -335,32 +344,58 @@ module TypeScript {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var varTypeSymbol = this.resolver.resolveAST(boundDeclAST, false, enclosingDecl, this.context).getType();
+            var typeExprSymbol: PullTypeSymbol = null;
 
-            this.checkForResolutionError(varTypeSymbol, enclosingDecl);
+            if (boundDeclAST.typeExpr) {
+                typeExprSymbol = this.typeCheckAST(boundDeclAST.typeExpr, typeCheckContext);
+            }
 
             // if there's a type expr and an initializer, resolve the initializer
             if (boundDeclAST.init) {
-                this.context.pushContextualType(varTypeSymbol, this.context.inProvisionalResolution(), null);
-                //var initTypeSymbol = this.resolver.resolveAST(boundDeclAST.init, true, enclosingDecl, this.context).getType();
-                var initTypeSymbol = this.typeCheckAST(boundDeclAST.init, typeCheckContext, true);
-                this.context.popContextualType();
+                if (typeExprSymbol) {
+                    this.context.pushContextualType(typeExprSymbol, this.context.inProvisionalResolution(), null);
+                }
+                
+                var initTypeSymbol = this.typeCheckAST(boundDeclAST.init, typeCheckContext, !!typeExprSymbol);
+                
+                if (typeExprSymbol) {
+                    this.context.popContextualType();
+                }
 
-                //getAstWalkerFactory().walk(boundDeclAST.init, prePullTypeCheck, postPullTypeCheck, null, typeCheckContext);
+                if (typeExprSymbol && typeExprSymbol.isContainer()) {
+                    var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
 
-                var comparisonInfo = new TypeComparisonInfo();
+                    if (!instanceTypeSymbol) {
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.toString() + "'", enclosingDecl);
+                        typeExprSymbol = null;
+                    }
+                    else {
+                        typeExprSymbol = instanceTypeSymbol.getType();
+                    }
+                }
 
-                var isAssignable = this.resolver.sourceIsAssignableToTarget(initTypeSymbol, varTypeSymbol, this.context, comparisonInfo);
+                if (initTypeSymbol && typeExprSymbol) {
 
-                if (!isAssignable) {
-                    var errorMessage = comparisonInfo.message;
+                    var comparisonInfo = new TypeComparisonInfo();
 
-                    // ignore comparison info for now
-                    var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
+                    var isAssignable = this.resolver.sourceIsAssignableToTarget(initTypeSymbol, typeExprSymbol, this.context, comparisonInfo);
 
-                    this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                    if (!isAssignable) {
+                        var errorMessage = comparisonInfo.message;
+
+                        // ignore comparison info for now
+                        var message = getDiagnosticMessage(DiagnosticCode.Cannot_convert__0__to__1_, [initTypeSymbol.toString(), typeExprSymbol.toString()]);
+
+                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                    }
                 }
             }
+
+            // now resolve the actual symbol, but supress the errors since we've already surfaced them above
+            var prevSupressErrors = this.context.suppressErrors;
+            this.context.suppressErrors = true;
+            var varTypeSymbol = this.resolver.resolveAST(boundDeclAST, false, enclosingDecl, this.context).getType();
+            this.context.suppressErrors = prevSupressErrors;
 
             var decl: PullDecl = this.resolver.getDeclForAST(boundDeclAST);
             var declSymbol = decl.getSymbol();
@@ -437,7 +472,7 @@ module TypeScript {
             this.checkForResolutionError(returnType, enclosingDecl);
 
             if (funcDeclAST.bod && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
-                var isVoidOrAny = returnType == this.semanticInfoChain.anyTypeSymbol || returnType == this.semanticInfoChain.voidTypeSymbol;
+                var isVoidOrAny = this.resolver.isAnyOrEquivalent(returnType) || returnType == this.semanticInfoChain.voidTypeSymbol;
 
                 if (!isVoidOrAny && !(funcDeclAST.bod.members.length > 0 && funcDeclAST.bod.members[0].nodeType === NodeType.ThrowStatement)) {
                     var funcName = functionDecl.getName();
@@ -458,6 +493,7 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var accessorSymbol = <PullAccessorSymbol>this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
+            this.checkForResolutionError(accessorSymbol.getType(), enclosingDecl);
 
             var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = !isGetter;
@@ -645,14 +681,18 @@ module TypeScript {
             this.checkBaseListTypePrivacy(classAST, classSymbol, true, typeCheckContext);
             this.checkBaseListTypePrivacy(classAST, classSymbol, false, typeCheckContext);
 
-            
             this.checkForResolutionError(classSymbol, typeCheckContext.getEnclosingDecl());
             
+            var classDecl = typeCheckContext.semanticInfo.getDeclForAST(classAST);
+            typeCheckContext.pushEnclosingDecl(classDecl);
+                        
             if (classAST.members) {
                 for (var i = 0; i < classAST.members.members.length; i++) {
                     this.typeCheckAST(classAST.members.members[i], typeCheckContext);
                 }
             }
+
+            typeCheckContext.popEnclosingDecl();
 
             return classSymbol;
         }
@@ -673,11 +713,16 @@ module TypeScript {
 
             this.checkForResolutionError(interfaceType, typeCheckContext.getEnclosingDecl());
 
+            var interfaceDecl = typeCheckContext.semanticInfo.getDeclForAST(interfaceAST);
+            typeCheckContext.pushEnclosingDecl(interfaceDecl);
+
             if (interfaceAST.members) {
                 for (var i = 0; i < interfaceAST.members.members.length; i++) {
                     this.typeCheckAST(interfaceAST.members.members[i], typeCheckContext);
                 }
             }
+
+            typeCheckContext.popEnclosingDecl();
 
             return interfaceType;
         }
@@ -718,16 +763,16 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var leftExpr = this.resolver.resolveAST(assignmentAST.operand1, false, typeCheckContext.getEnclosingDecl(), this.context);
-            var leftType = this.resolver.widenType(leftExpr.getType()); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
-
+            var leftType = leftExpr.getType();
             this.checkForResolutionError(leftType, enclosingDecl);
+            leftType = this.resolver.widenType(leftExpr.getType()); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
 
             this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
             var rightType = this.resolver.widenType(this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true));
             this.context.popContextualType();
 
             var isValidLHS = assignmentAST.operand1.nodeType == NodeType.Index ||
-                            leftType == this.semanticInfoChain.anyTypeSymbol ||
+                            this.resolver.isAnyOrEquivalent(leftType) ||
                             ((!leftExpr.isType() || leftType.isArray()) &&
                                 (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
                             hasFlag(ast.getFlags(), ASTFlags.EnumInitializer);
@@ -822,21 +867,30 @@ module TypeScript {
         // validate:
         //  - incompatible types in expression
         public typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
+            return type;
         }
 
         // 'This' expressions 
         // validate:
         //
         public typeCheckThis(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
+            return type;
         }
 
         // 'Super' expressions 
         // validate:
         //
         public typeCheckSuper(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var type = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(type, enclosingDecl);
+            return type;
         }
 
         // Call expressions 
@@ -845,9 +899,13 @@ module TypeScript {
         public typeCheckCall(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // "use of new expression as a statement"
             var callEx = <CallExpression>ast;
-            var resultType = this.resolver.resolveAST(callEx, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var resultType = this.resolver.resolveAST(callEx, false, enclosingDecl, this.context).getType();
+            this.checkForResolutionError(resultType, enclosingDecl);
 
-            this.typeCheckAST(callEx.target, typeCheckContext);
+            if (callEx.target.nodeType != NodeType.Name && callEx.target.nodeType != NodeType.Dot) {
+                this.typeCheckAST(callEx.target, typeCheckContext);
+            }
 
             var args = callEx.arguments;
 
@@ -865,7 +923,10 @@ module TypeScript {
         //
         public typeCheckNew(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var callEx = <CallExpression>ast;
-            var resultType = this.resolver.resolveAST(callEx, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            var resultType = this.resolver.resolveAST(callEx, false, enclosingDecl, this.context).getType();
+
+            this.checkForResolutionError(resultType, enclosingDecl);
 
             var args = callEx.arguments;
 
@@ -981,7 +1042,7 @@ module TypeScript {
             if (lhsType == this.semanticInfoChain.stringTypeSymbol || rhsType == this.semanticInfoChain.stringTypeSymbol) {
                 exprType = this.semanticInfoChain.stringTypeSymbol;
             }
-            else if (lhsType == this.semanticInfoChain.anyTypeSymbol || rhsType == this.semanticInfoChain.anyTypeSymbol) {
+            else if (this.resolver.isAnyOrEquivalent(lhsType) || this.resolver.isAnyOrEquivalent(rhsType)) {
                 exprType = this.semanticInfoChain.anyTypeSymbol;
             }
             else if (rhsType == this.semanticInfoChain.numberTypeSymbol && lhsType == this.semanticInfoChain.numberTypeSymbol) {
@@ -1009,8 +1070,8 @@ module TypeScript {
             var lhsType = this.typeCheckAST(binex.operand1, typeCheckContext);
             var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
 
-            var lhsIsFit = lhsType == this.semanticInfoChain.anyTypeSymbol || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
-            var rhsIsFit = rhsType == this.semanticInfoChain.anyTypeSymbol || rhsType == this.semanticInfoChain.numberTypeSymbol || rhsType.getKind() == PullElementKind.Enum;
+            var lhsIsFit = this.resolver.isAnyOrEquivalent(lhsType) || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
+            var rhsIsFit = this.resolver.isAnyOrEquivalent(rhsType) || rhsType == this.semanticInfoChain.numberTypeSymbol || rhsType.getKind() == PullElementKind.Enum;
 
             if (!rhsIsFit) {
                 this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
@@ -1061,7 +1122,7 @@ module TypeScript {
             var unex = <UnaryExpression>ast;
             var lhsType = this.typeCheckAST(unex.operand, typeCheckContext);
                         
-            var lhsIsFit = lhsType == this.semanticInfoChain.anyTypeSymbol || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
+            var lhsIsFit = this.resolver.isAnyOrEquivalent(lhsType) || lhsType == this.semanticInfoChain.numberTypeSymbol || lhsType.getKind() == PullElementKind.Enum;
 
             if (!lhsIsFit) {
                 this.postError(unex.operand.minChar, unex.operand.getLength(), typeCheckContext.scriptName, "The type of a unary arithmetic operation operand must be of type 'any', 'number' or an enum type", typeCheckContext.getEnclosingDecl());
@@ -1176,8 +1237,8 @@ module TypeScript {
             var varSym = this.resolver.resolveAST(varDecl, false, typeCheckContext.getEnclosingDecl(), this.context);
             this.checkForResolutionError(varSym.getType(), typeCheckContext.getEnclosingDecl());
 
-            var isStringOrAny = varSym.getType() == this.semanticInfoChain.stringTypeSymbol || varSym.getType() == this.semanticInfoChain.anyTypeSymbol;
-            var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || !rhsType.isPrimitive());
+            var isStringOrAny = varSym.getType() == this.semanticInfoChain.stringTypeSymbol || this.resolver.isAnyOrEquivalent(varSym.getType());
+            var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
                 this.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
@@ -1196,8 +1257,8 @@ module TypeScript {
             var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
             var rhsType = this.resolver.widenType(this.typeCheckAST(binex.operand2, typeCheckContext));
 
-            var isStringOrAny = lhsType.getType() == this.semanticInfoChain.stringTypeSymbol || lhsType.getType() == this.semanticInfoChain.anyTypeSymbol;
-            var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || !rhsType.isPrimitive());
+            var isStringOrAny = lhsType.getType() == this.semanticInfoChain.stringTypeSymbol || this.resolver.isAnyOrEquivalent(lhsType.getType());
+            var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
                 this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'in' expression may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
@@ -1217,8 +1278,8 @@ module TypeScript {
             var lhsType = this.resolver.widenType(this.typeCheckAST(binex.operand1, typeCheckContext));
             var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
 
-            var isValidLHS = lhsType && (lhsType == this.semanticInfoChain.anyTypeSymbol || !lhsType.isPrimitive());
-            var isValidRHS = rhsType && (rhsType == this.semanticInfoChain.anyTypeSymbol || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
+            var isValidLHS = lhsType && (this.resolver.isAnyOrEquivalent(lhsType) || !lhsType.isPrimitive());
+            var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
 
             if (!isValidLHS) {
                 this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
@@ -1517,7 +1578,7 @@ module TypeScript {
                 }
             }
 
-            this.context.postError(baseList.members[index].minChar, baseList.members[index].getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+            this.context.postError(baseList.members[index].minChar, baseList.members[index].getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
         }
 
         private variablePrivacyErrorReporter(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
@@ -1564,7 +1625,7 @@ module TypeScript {
                 }
             }
 
-            this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+            this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
         }
 
         private checkFunctionTypePrivacy(funcDeclAST: FuncDecl, inTypedAssignment: bool, typeCheckContext: PullTypeCheckContext) {
@@ -1681,7 +1742,7 @@ module TypeScript {
             }
 
             if (message) {
-                this.context.postError(declAST.arguments.members[argIndex].minChar, declAST.arguments.members[argIndex].getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                this.context.postError(declAST.arguments.members[argIndex].minChar, declAST.arguments.members[argIndex].getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
             }
         }
 
@@ -1764,7 +1825,7 @@ module TypeScript {
                     returnExpressionSymbol = this.resolver.resolveTypeReference(returnTypeRef, decl, contextForReturnTypeResolution);
                     if (returnExpressionSymbol == funcReturnType) {
                         // Error coming from return annotation
-                        this.context.postError(declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                        this.context.postError(declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
                     }
                 }
 
@@ -1783,7 +1844,7 @@ module TypeScript {
                                 returnExpressionSymbol = this.resolver.resolveStatementOrExpression(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).getType();
                                 // Check if return statement's type matches the one that we concluded
                                 if (returnExpressionSymbol == funcReturnType) {
-                                    this.context.postError(returnStatement.minChar, returnStatement.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                                    this.context.postError(returnStatement.minChar, returnStatement.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
                                 } else {
                                     reportOnFuncDecl = true;
                                 }
@@ -1803,7 +1864,7 @@ module TypeScript {
 
                 if (reportOnFuncDecl) {
                     // Show on function decl
-                    this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
+                    this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
                 }
             }
         }

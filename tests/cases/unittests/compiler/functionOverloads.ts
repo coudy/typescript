@@ -22,7 +22,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += 'var x = foo(5);'
         Harness.Compiler.compileString(code, 'functionOverload', function(result) {
             assert.compilerWarning(result, 1, 105, 'Supplied parameters do not match any signature of call target');
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -33,7 +33,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += 'var x = foo(true);'
         Harness.Compiler.compileString(code, 'functionOverload', function(result) {
             assert.compilerWarning(result, 1, 112, 'Supplied parameters do not match any signature of call target');
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -75,7 +75,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += '   static test(name?:any){ }';
             code += '}';
         Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-            assert.arrayLengthIs(result.errors, 13);
+            assert.arrayLengthIs(result.errors, 10);
         });
     });
 
@@ -293,7 +293,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(bar?:any):any{ return '' };";
             code += "var x = foo(5);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -313,7 +313,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo();";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
             assert.compilerWarning(result, 1, 112, 'Supplied parameters do not match any signature of call target'); 
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -342,7 +342,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo(true);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
             assert.compilerWarning(result, 1, 112, 'Supplied parameters do not match any signature of call target'); 
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -371,7 +371,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo();";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
             assert.compilerWarning(result, 1, 125, 'Supplied parameters do not match any signature of call target'); 
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -400,7 +400,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(bar:{a:any;}):any{ return bar };";
             code += "var x = foo({a:true});";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -411,7 +411,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(bar:{a:any;}):any{ return bar };";
             code += "var x = foo({});";
         Harness.Compiler.compileString(code, 'overload', function (result) {
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
             //assert.compilerWarning(result, 1, 125, "Supplied parameters do not match any signature of call target:\n\tCould not apply type '{ a: bool; }' to argument 1, which is of type '{}'");
         }
     });    
@@ -432,7 +432,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo();";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
             assert.compilerWarning(result, 1, 131, 'Supplied parameters do not match any signature of call target'); 
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
 
@@ -463,7 +463,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo([{a:'bar'}]);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
             //assert.compilerWarning(result, 1, 131, 'Supplied parameters do not match any signature of call target'); 
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
     
@@ -477,7 +477,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo([{}]);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
             //assert.compilerWarning(result, 1, 131, 'Supplied parameters do not match any signature of call target'); 
-            assert.equal(result.errors.length, 4);
+            assert.equal(result.errors.length, 2);
         });
     });
     

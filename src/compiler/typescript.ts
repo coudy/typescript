@@ -561,15 +561,13 @@ module TypeScript {
 
                 var findErrorsStartTime = new Date().getTime();
 
-                // type check
+                //// type check
                 fileNames = this.fileNameToScript.getAllKeys();
                 for (i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
 
-                    this.logger.log("Resolving " + fileName);
-                    this.pullResolveFile(fileName);
-                    //this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
-
+                    this.logger.log("Type checking " + fileName);
+                    this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
                 }
 
                 var findErrorsEndTime = new Date().getTime();
@@ -975,7 +973,7 @@ module TypeScript {
             var i = 0;
             var n = 0;
 
-            this.pullTypeChecker.resolver.setUnitPath(semanticInfo.getPath());
+            this.pullTypeChecker.setUnit(semanticInfo.getPath());
 
             // Extract infromation from path
             for (i = 0, n = path.count(); i < n; i++) {

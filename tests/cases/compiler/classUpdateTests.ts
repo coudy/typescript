@@ -12,7 +12,7 @@ class B {
 	private p2 = 0;
 	p3;
 
-	constructor {}
+	constructor() {}
 }
 
 class C {

@@ -75,6 +75,8 @@ module TypeScript {
         EnumMember = 1 << 27,
         ErrorType = 1 << 28,
 
+        Expression = 1 << 29,
+
         SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature,
 
         // Warning: SomeValue and SomeType (along with their constituents) must be disjoint
@@ -125,6 +127,8 @@ module TypeScript {
         SpecializedTo,
 
         TypeConstraint,
+
+        ContributesToExpression,
 
         GetterFunction,
         SetterFunction,

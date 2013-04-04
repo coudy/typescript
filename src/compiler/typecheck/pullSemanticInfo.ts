@@ -39,12 +39,24 @@ module TypeScript {
 
         private dynamicModuleImports: PullTypeAliasSymbol[] = [];
 
+        private hasBeenTypeChecked = false;
+
         constructor(compilationUnitPath: string, public locationInfo: LocationInfo = null) {
             this.compilationUnitPath = compilationUnitPath;
         }
 
         public addTopLevelDecl(decl: PullDecl) {
             this.topLevelDecls[this.topLevelDecls.length] = decl;
+        }
+
+        public setTypeChecked() {
+            this.hasBeenTypeChecked = true;
+        }
+        public getTypeChecked() {
+            return this.hasBeenTypeChecked;
+        }
+        public invalidate() {
+            this.hasBeenTypeChecked = false;
         }
 
         public getTopLevelDecls() { return this.topLevelDecls; }
@@ -330,7 +342,17 @@ module TypeScript {
             // PULLTODO: Be less aggressive about clearing the cache
             this.declCache = <any>new BlockIntrinsics();
             //this.symbolCache = <any>{};
-            //this.unitCache[compilationUnitPath] = undefined;
+            var unit = this.unitCache[compilationUnitPath];
+            if (unit) {
+                unit.invalidate();
+            }
+        }
+
+        public invalidateUnit(compilationUnitPath: string) {
+            var unit = this.unitCache[compilationUnitPath];
+            if (unit) {
+                unit.invalidate();
+            }
         }
 
         public getDeclForAST(ast: AST, unitPath: string): PullDecl {

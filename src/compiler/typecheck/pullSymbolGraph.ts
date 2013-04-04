@@ -248,7 +248,15 @@ module TypeScript {
 
 
             symbolWhoseTypeChanged.invalidate();
+            this.invalidateUnitsForSymbol(symbolWhoseTypeChanged);
+        }
 
+        public invalidateUnitsForSymbol(symbol: PullSymbol) {
+            var declarations = symbol.getDeclarations();
+
+            for (var i = 0; i < declarations.length; i++) {
+                this.semanticInfoChain.invalidateUnit(declarations[i].getScriptName());
+            }
         }
     }
 

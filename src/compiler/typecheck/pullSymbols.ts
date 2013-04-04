@@ -583,6 +583,24 @@ module TypeScript {
         }
     }
 
+    export class PullExpressionSymbol extends PullSymbol {
+        contributingSymbols: PullSymbol[] = [];
+
+        constructor() {
+            super("", PullElementKind.Expression);
+        }
+
+        public addContributingSymbol(symbol: PullSymbol) {
+            var link = this.addOutgoingLink(symbol, SymbolLinkKind.ContributesToExpression);
+
+            this.contributingSymbols[this.contributingSymbols.length] = symbol;
+        }
+
+        public getContributingSymbols() {
+            return this.contributingSymbols;
+        }
+    }
+
     export class PullSignatureSymbol extends PullSymbol {
         private parameterLinks: PullSymbolLink[] = null;
         private typeParameterLinks: PullSymbolLink[] = null;
@@ -1867,6 +1885,10 @@ module TypeScript {
 
         public getDiagnostic() {
             return this.diagnostic;
+        }
+
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: bool): string {
+            return this.delegateType.getName(scopeSymbol, useConstraintInName);
         }
 
         public toString() {

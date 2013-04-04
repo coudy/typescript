@@ -214,6 +214,7 @@ module TypeScript {
         }
 
         public inSpecialization = false;
+        public suppressErrors = false;
 
         public setTypeInContext(symbol: PullSymbol, type: PullTypeSymbol) {
             var substitution: PullTypeSymbol = this.findSubstitution(type);
@@ -249,7 +250,7 @@ module TypeScript {
             return type;
         }
 
-        public postError(offset: number, length: number, fileName: string, message: string, enclosingDecl: PullDecl) {
+        public postError(offset: number, length: number, fileName: string, message: string, enclosingDecl: PullDecl, addToDecl = false) {
 
             if (this.emitting) {
                 return;
@@ -260,9 +261,9 @@ module TypeScript {
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
             }
-            //else if (enclosingDecl) {
-            //    enclosingDecl.addDiagnostic(error);
-            //}
+            else if (!this.suppressErrors && enclosingDecl && addToDecl) {
+                enclosingDecl.addDiagnostic(diagnostic);
+            }
 
             return diagnostic;
         }
