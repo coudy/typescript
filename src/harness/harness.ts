@@ -1226,6 +1226,39 @@ module Harness {
             return compiler.emit(ioHost);
         }
 
+        export function reportCompilationErrors(uNames?: string[], errAggregator?: WriterAggregator) {
+            var us = [];
+            if (uNames && uNames.length > 0) {
+                us = uNames;
+            }
+            else {
+                var files = compiler.fileNameToLocationInfo.getAllKeys();
+                files.forEach(file => {
+                    if (file !== 'lib.d.ts') {
+                        us.push(file);
+                    }
+                } );
+            }
+
+            var errs = (typeof errAggregator == "undefined") ? stderr : errAggregator;
+            us.forEach(u => {
+                var syntacticDiagnostics = compiler.getSyntacticDiagnostics(u);
+                compiler.reportDiagnostics(syntacticDiagnostics, errs);
+
+                var semanticDiagnostics = compiler.getSemanticDiagnostics(u);
+                compiler.reportDiagnostics(semanticDiagnostics, errs);
+
+                var emitDiagnostics = emit(stdout);
+                compiler.reportDiagnostics(emitDiagnostics, errs);
+
+                // TODO: should this be outside the loop? are we emitting the .d.ts code twice for a multi-file test?
+                var emitDeclarationsDiagnostics = compiler.emitDeclarations();
+                compiler.reportDiagnostics(emitDeclarationsDiagnostics, errs);
+            } );
+
+            return errs.lines;
+        }
+
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             var scripts: TypeScript.Script[] = [];
 
@@ -1241,17 +1274,7 @@ module Harness {
             scripts.push(addUnit(code, uName, isDeclareFile, references));
             compile(code, uName);
 
-            var syntacticDiagnostics = compiler.getSyntacticDiagnostics(uName);
-            compiler.reportDiagnostics(syntacticDiagnostics, stderr);
-
-            var semanticDiagnostics = compiler.getSemanticDiagnostics(uName);
-            compiler.reportDiagnostics(semanticDiagnostics, stderr);
-
-            var emitDiagnostics = emit(stdout);
-            compiler.reportDiagnostics(emitDiagnostics, stderr);
-
-            var emitDeclarationsDiagnostics = compiler.emitDeclarations();
-            compiler.reportDiagnostics(emitDeclarationsDiagnostics, stderr);
+            reportCompilationErrors([uName]);
 
             if (context) {
                 context.postCompile();

@@ -1,10 +1,4 @@
-// static as constructor parameter name should give error if 'use strict'
-
-class test {
-    constructor (static) { }
-}
-
-'use strict'
+// static as constructor parameter name should only give error if 'use strict'
 
 class test {
     constructor (static) { }

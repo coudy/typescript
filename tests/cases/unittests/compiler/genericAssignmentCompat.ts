@@ -89,14 +89,14 @@ describe("Generic assignment compatibility", function() {
         });
     });
 
-    //describe("Test re-specialization of Arrays", () => {
-    //    it("re-specialization of Arrays 1", function() {
-    //        var t1 = typeFactory.get(respecializeCode, respecializeCode.indexOf("val"));
-    //        var t2 = typeFactory.get(respecializeCode, respecializeCode.indexOf("shipVar"));
-    //        t1.isAssignmentCompatibleWith(t2);
-    //        t2.isAssignmentCompatibleWith(t1);
-    //    });
-    //});
+    describe("Test re-specialization of Arrays", () => {
+        it("re-specialization of Arrays 1", function() {
+            var t1 = typeFactory.get(respecializeCode, respecializeCode.indexOf("val"));
+            var t2 = typeFactory.get(respecializeCode, respecializeCode.indexOf("shipVar"));
+            t1.isAssignmentCompatibleWith(t2);
+            t2.isAssignmentCompatibleWith(t1);
+        });
+    });
 } );
 
 describe("Generic assignment compatibility - 2", function () {
@@ -357,10 +357,10 @@ describe("Generic assignment compatibility - 2", function () {
         var classWithTwoPrivate = typeFactory.get('       class Foo6<T,U> { constructor(private one: T, private two: U) {} }  var x6 = new Foo6(1, "a");', 'x6');
         var classWithPublicPrivate = typeFactory.get('    class Foo7<T,U> { constructor(public one: T, private two: U) {} }   var x7 = new Foo7(1, "a");', 'x7');
 
-        var interfaceOne = typeFactory.get('                  interface I1<T> { one: T; };                var obj1: I1 = { one: 1 };', 'obj1');
-        var interfaceTwo = typeFactory.get('                  interface I2<T,U> { one: T; two: U; };   var obj2: I2 = { one: 1, two: "a" };', 'obj2');
-        var interfaceWithOptional = typeFactory.get('         interface I3<T> { one?: T; };               var obj3: I3 = { };', 'obj3');
-        var interfaceWithPublicAndOptional = typeFactory.get('interface I4<T,U> { one: T; two?: U; };  var obj4: I4 = { one: 1 };', 'obj4');
+        var interfaceOne = typeFactory.get('                  interface I1<T> { one: T; };                var obj1: I1<number> = { one: 1 };', 'obj1');
+        var interfaceTwo = typeFactory.get('                  interface I2<T,U> { one: T; two: U; };   var obj2: I2<number,string> = { one: 1, two: "a" };', 'obj2');
+        var interfaceWithOptional = typeFactory.get('         interface I3<T> { one?: T; };               var obj3: I3<number> = { };', 'obj3');
+        var interfaceWithPublicAndOptional = typeFactory.get('interface I4<T,U> { one: T; two?: U; };  var obj4: I4<number,string> = { one: 1 };', 'obj4');
 
         var AnyClass = [classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional, classWithPrivate, classWithTwoPrivate, classWithPublicPrivate];
         var AnyInterface = [interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional];
@@ -485,10 +485,10 @@ describe("Generic assignment compatibility - 2", function () {
             it("Interface with public property assignable to", function () {
                 interfaceOne.assertAssignmentCompatibleWith(these);
             } );
-            // it("Interface with public property not assignable to", function () {
-            //     interfaceOne.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these));
-            //     interfaceOne.assertNotAssignmentCompatibleWith(AnyObjectBut(these));
-            // } );
+             it("Interface with public property not assignable to", function () {
+                 interfaceOne.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these));
+                 interfaceOne.assertNotAssignmentCompatibleWith(AnyObjectBut(these));
+             } );
 
             var these2 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithTwoPublic, classWithPublicAndOptional];
 
@@ -499,10 +499,10 @@ describe("Generic assignment compatibility - 2", function () {
             it("Interface with public properties assignable to", function () {
                 interfaceTwo.assertAssignmentCompatibleWith(these2);
             } );
-            // it("Interface with public properties not assignable to", function () {
-            //     interfaceTwo.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these2));
-            //     interfaceTwo.assertNotAssignmentCompatibleWith(AnyObjectBut(these2));
-            // } );
+             it("Interface with public properties not assignable to", function () {
+                 interfaceTwo.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these2));
+                 interfaceTwo.assertNotAssignmentCompatibleWith(AnyObjectBut(these2));
+             } );
 
             var these3 = [emptyObj, emptySig, singleNumObj1, singleNumSig, indexerSigString, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithOptional, classWithPublicAndOptional];
 
@@ -513,10 +513,10 @@ describe("Generic assignment compatibility - 2", function () {
             it("Interface with public property assignable to", function () {
                 interfaceWithOptional.assertAssignmentCompatibleWith(these3);
             } );
-            // it("Interface with public property not assignable to", function () {
-            //     interfaceWithOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these3));
-            //     interfaceWithOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these3));
-            // } );
+             it("Interface with public property not assignable to", function () {
+                 interfaceWithOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these3));
+                 interfaceWithOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these3));
+             } );
 
             var these4 = [emptyObj, emptySig, singleNumObj1, singleNumSig, singleStringObj2, singleStringSig2, indexerSigString, interfaceOne, interfaceTwo, interfaceWithOptional, interfaceWithPublicAndOptional, classWithPublic, classWithTwoPublic, classWithOptional, classWithPublicAndOptional];
 
@@ -527,10 +527,10 @@ describe("Generic assignment compatibility - 2", function () {
             it("Interface with public and optional property assignable to", function () {
                 interfaceWithPublicAndOptional.assertAssignmentCompatibleWith(these4);
             } );
-            // it("Interface with public and optional property not assignable to", function () {
-            //     interfaceWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these4));
-            //     interfaceWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these4));
-            // } );
+             it("Interface with public and optional property not assignable to", function () {
+                 interfaceWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyLiteralsBut(these4));
+                 interfaceWithPublicAndOptional.assertNotAssignmentCompatibleWith(AnyObjectBut(these4));
+             } );
         } );
     } );
 } );
