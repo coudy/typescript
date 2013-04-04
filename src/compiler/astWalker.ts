@@ -113,7 +113,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.Delete] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.In] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.Dot] = ChildrenWalkers.walkBinaryExpressionChildren;
-            this.childrenWalkers[NodeType.Is] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.InstOf] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.Typeof] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.NumberLit] = ChildrenWalkers.walkNone;

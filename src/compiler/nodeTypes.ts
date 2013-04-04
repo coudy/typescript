@@ -37,7 +37,6 @@ module TypeScript {
         Delete,
         In,
         Dot,
-        Is,
         InstOf,
         Typeof,
         NumberLit,

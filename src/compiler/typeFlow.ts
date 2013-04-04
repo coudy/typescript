@@ -1320,9 +1320,9 @@ module TypeScript {
             //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
             //}
 
-            if (this.checker.styleSettings.bitwise) {
-                this.checker.errorReporter.styleError(ast, "use of " + nodeTypeTable[binex.nodeType]);
-            }
+            //if (this.checker.styleSettings.bitwise) {
+            //    this.checker.errorReporter.styleError(ast, "use of " + nodeTypeTable[binex.nodeType]);
+            //}
 
             if (this.checker.sourceIsSubtypeOfTarget(leftType, this.doubleType) && (this.checker.sourceIsSubtypeOfTarget(rightType, this.doubleType))) {
                 resultType = this.doubleType;
@@ -1365,13 +1365,13 @@ module TypeScript {
             //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
             //}
 
-            if (this.checker.styleSettings.bitwise &&
-                ((binex.nodeType === NodeType.And) ||
-                (binex.nodeType === NodeType.Or) ||
-                (binex.nodeType === NodeType.AsgAnd) ||
-                (binex.nodeType === NodeType.AsgOr))) {
-                this.checker.errorReporter.styleError(ast, "use of " + nodeTypeTable[binex.nodeType]);
-            }
+            //if (this.checker.styleSettings.bitwise &&
+            //    ((binex.nodeType === NodeType.And) ||
+            //    (binex.nodeType === NodeType.Or) ||
+            //    (binex.nodeType === NodeType.AsgAnd) ||
+            //    (binex.nodeType === NodeType.AsgOr))) {
+            //    this.checker.errorReporter.styleError(ast, "use of " + nodeTypeTable[binex.nodeType]);
+            //}
 
             var nodeType = binex.nodeType;
 

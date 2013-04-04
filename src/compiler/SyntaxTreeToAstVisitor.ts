@@ -944,10 +944,10 @@ module TypeScript {
                         }
                         var map: BinaryExpression =
                             new BinaryExpression(NodeType.Asg,
-                                     new BinaryExpression(NodeType.Index,
-                                              new Identifier("_map"),
-                                              memberValue),
-                                     new StringLiteral('"' + memberName.actualText + '"'));
+                                new BinaryExpression(NodeType.Index,
+                                    new Identifier("_map"),
+                                    memberValue),
+                                new StringLiteral('"' + memberName.actualText + '"'));
                         map.setFlags(map.getFlags() | ASTFlags.EnumInitializer);
                         members.append(new ExpressionStatement(map));
                         this.setSpanExplicit(map, memberStart, this.position);

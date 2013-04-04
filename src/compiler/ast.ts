@@ -175,12 +175,15 @@ module TypeScript {
         }
 
         public printLabel() {
+            return "";
+            /*
             if (nodeTypeTable[this.nodeType] !== undefined) {
                 return nodeTypeTable[this.nodeType];
             }
             else {
                 return (<any>NodeType)._map[this.nodeType];
             }
+            */
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
@@ -189,7 +192,7 @@ module TypeScript {
             context.addContent(this);
         }
 
-        public treeViewLabel() {
+        public treeViewLabel(): string {
             return (<any>NodeType)._map[this.nodeType];
         }
 
@@ -614,6 +617,7 @@ module TypeScript {
                     return typeFlow.typeCheckBitwiseOperator(this, false);
                 case NodeType.Ne:
                 case NodeType.Eq:
+                    /*
                     var text: string;
                     if (typeFlow.checker.styleSettings.eqeqeq) {
                         text = nodeTypeTable[this.nodeType];
@@ -625,6 +629,7 @@ module TypeScript {
                             typeFlow.checker.errorReporter.styleError(this, "use of " + text + " to compare with null");
                         }
                     }
+                    */
                 case NodeType.Eqv:
                 case NodeType.NEqv:
                 case NodeType.Lt:
@@ -672,72 +677,110 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
-            var binTokenId = nodeTypeToTokTable[this.nodeType];
+        private static getTextForBinaryToken(nodeType: NodeType): string {
+            switch (nodeType) {
+                case NodeType.Comma: return ",";
+                case NodeType.Asg: return "=";
+                case NodeType.AsgAdd: return "+=";
+                case NodeType.AsgSub: return "-=";
+                case NodeType.AsgMul: return "*=";
+                case NodeType.AsgDiv: return "/=";
+                case NodeType.AsgMod: return "%=";
+                case NodeType.AsgAnd: return "&=";
+                case NodeType.AsgXor: return "^=";
+                case NodeType.AsgOr: return "|=";
+                case NodeType.AsgLsh: return "<<=";
+                case NodeType.AsgRsh: return ">>=";
+                case NodeType.AsgRs2: return ">>>=";
+                case NodeType.LogOr: return "||";
+                case NodeType.LogAnd: return "&&";
+                case NodeType.Or: return "|";
+                case NodeType.Xor: return "^";
+                case NodeType.And: return "&";
+                case NodeType.Eq: return "==";
+                case NodeType.Ne: return "!=";
+                case NodeType.Eqv: return "===";
+                case NodeType.NEqv: return "!==";
+                case NodeType.Lt: return "<";
+                case NodeType.Gt: return ">";
+                case NodeType.Le: return "<="
+                case NodeType.Ge: return ">="
+                case NodeType.InstOf: return "instanceof";
+                case NodeType.In: return "in";
+                case NodeType.Lsh: return "<<";
+                case NodeType.Rsh: return ">>"
+                case NodeType.Rs2: return ">>>"
+                case NodeType.Mul: return "*"
+                case NodeType.Div: return "/"
+                case NodeType.Mod: return "%"
+                case NodeType.Add: return "+"
+                case NodeType.Sub: return "-";
+            }
 
+            throw Errors.invalidOperation();
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.nodeType != NodeType.Comma && binTokenId != undefined) {
-                emitter.emitJavascript(this.operand1, binTokenId, false);
 
-                if (tokenTable[binTokenId].text === "instanceof") {
-                    emitter.writeToOutput(" instanceof ");
-                }
-                else if (tokenTable[binTokenId].text === "in") {
-                    emitter.writeToOutput(" in ");
-                }
-                else {
-                    emitter.writeToOutputTrimmable(" " + tokenTable[binTokenId].text + " ");
-                }
+            switch (this.nodeType) {
+                case NodeType.Dot:
+                    if (!emitter.tryEmitConstant(this)) {
+                        emitter.emitJavascript(this.operand1, SyntaxKind.DotToken, false);
+                        emitter.writeToOutput(".");
+                        emitter.emitJavascriptName(<Identifier>this.operand2, false);
+                    }
+                    break;
+                case NodeType.Index:
+                    emitter.emitIndex(this.operand1, this.operand2);
+                    break;
 
-                emitter.emitJavascript(this.operand2, binTokenId, false);
-            }
-            else {
-                switch (this.nodeType) {
-                    case NodeType.Dot:
-                        if (!emitter.tryEmitConstant(this)) {
-                            emitter.emitJavascript(this.operand1, SyntaxKind.DotToken, false);
-                            emitter.writeToOutput(".");
-                            emitter.emitJavascriptName(<Identifier>this.operand2, false);
-                        }
-                        break;
-                    case NodeType.Index:
-                        emitter.emitIndex(this.operand1, this.operand2);
-                        break;
-
-                    case NodeType.Member:
-                        if (this.operand2.nodeType === NodeType.FuncDecl && (<FuncDecl>this.operand2).isAccessor()) {
-                            var funcDecl = <FuncDecl>this.operand2;
-                            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
-                                emitter.writeToOutput("get ");
-                            }
-                            else {
-                                emitter.writeToOutput("set ");
-                            }
-                            emitter.emitJavascript(this.operand1, SyntaxKind.ColonToken, false);
+                case NodeType.Member:
+                    if (this.operand2.nodeType === NodeType.FuncDecl && (<FuncDecl>this.operand2).isAccessor()) {
+                        var funcDecl = <FuncDecl>this.operand2;
+                        if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
+                            emitter.writeToOutput("get ");
                         }
                         else {
-                            emitter.emitJavascript(this.operand1, SyntaxKind.ColonToken, false);
-                            emitter.writeToOutputTrimmable(": ");
+                            emitter.writeToOutput("set ");
                         }
-                        emitter.emitJavascript(this.operand2, SyntaxKind.CommaToken, false);
-                        break;
-                    case NodeType.Comma:
-                        emitter.emitJavascript(this.operand1, SyntaxKind.CommaToken, false);
-                        if (emitter.emitState.inObjectLiteral) {
-                            emitter.writeLineToOutput(", ");
+                        emitter.emitJavascript(this.operand1, SyntaxKind.ColonToken, false);
+                    }
+                    else {
+                        emitter.emitJavascript(this.operand1, SyntaxKind.ColonToken, false);
+                        emitter.writeToOutputTrimmable(": ");
+                    }
+                    emitter.emitJavascript(this.operand2, SyntaxKind.CommaToken, false);
+                    break;
+                case NodeType.Comma:
+                    emitter.emitJavascript(this.operand1, SyntaxKind.CommaToken, false);
+                    if (emitter.emitState.inObjectLiteral) {
+                        emitter.writeLineToOutput(", ");
+                    }
+                    else {
+                        emitter.writeToOutput(", ");
+                    }
+                    emitter.emitJavascript(this.operand2, SyntaxKind.CommaToken, false);
+                    break;
+                default:
+                    {
+                        emitter.emitJavascript(this.operand1, SyntaxKind.DotToken, false);
+                        var binOp = BinaryExpression.getTextForBinaryToken(this.nodeType);
+                        if (binOp === "instanceof") {
+                            emitter.writeToOutput(" instanceof ");
+                        }
+                        else if (binOp === "in") {
+                            emitter.writeToOutput(" in ");
                         }
                         else {
-                            emitter.writeToOutput(", ");
+                            emitter.writeToOutputTrimmable(" " + binOp + " ");
                         }
-                        emitter.emitJavascript(this.operand2, SyntaxKind.CommaToken, false);
-                        break;
-                    case NodeType.Is:
-                        throw new Error("should be de-sugared during type check");
-                    default:
-                        throw new Error("please implement in derived class");
-                }
+
+                        emitter.emitJavascript(this.operand2, SyntaxKind.DotToken, false);
+                    }
             }
+
             emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }
