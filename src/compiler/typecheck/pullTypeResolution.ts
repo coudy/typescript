@@ -1009,6 +1009,10 @@ module TypeScript {
                     if (aliasedType) {
                         this.currentUnit.addDynamicModuleImport(importDeclSymbol);
                     }
+                    else {
+                        importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), "Could not resolve external module " + modPath));
+                        aliasedType = this.semanticInfoChain.anyTypeSymbol;
+                    }
                 }
             }
 
@@ -2113,6 +2117,9 @@ module TypeScript {
             var nameSymbol: PullSymbol = this.getSymbolForAST(nameAST, context);
 
             if (nameSymbol /*&& nameSymbol.isResolved()*/) {
+                if (!nameSymbol.isResolved()) {
+                    this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+                }
                 return nameSymbol;
             }
 
@@ -2162,6 +2169,9 @@ module TypeScript {
             var nameSymbol: PullSymbol = this.getSymbolForAST(dottedNameAST, context);
 
             if (nameSymbol /*&& nameSymbol.isResolved()*/) {
+                if (!nameSymbol.isResolved()) {
+                    this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+                }
                 return nameSymbol;
             }
 
@@ -2308,6 +2318,9 @@ module TypeScript {
             var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST, context);
 
             if (typeNameSymbol /*&& typeNameSymbol.isResolved()*/) {
+                if (!typeNameSymbol.isResolved()) {
+                    this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
+                }
                 return typeNameSymbol;
             }
 
@@ -2441,6 +2454,9 @@ module TypeScript {
             var childTypeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST, context);
 
             if (childTypeSymbol /*&& childTypeSymbol.isResolved()*/) {
+                if (!childTypeSymbol.isResolved()) {
+                    this.resolveDeclaredSymbol(childTypeSymbol, enclosingDecl, context);
+                }
                 return childTypeSymbol;
             }
 
