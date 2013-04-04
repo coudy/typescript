@@ -508,7 +508,7 @@ module TypeScript.Parser {
             this.rewindPointPoolCount++;
         }
 
-        private fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
+        public fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
             // Assert disabled because it is actually expensive enugh to affect perf.
             // Debug.assert(spaceAvailable > 0);
             window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);

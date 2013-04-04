@@ -1777,6 +1777,7 @@ module TypeScript {
 
             var isPrivate = (declFlags & PullElementFlags.Private) != 0;
             var isStatic = (declFlags & PullElementFlags.Static) != 0;
+            var isOptional = (declFlags & PullElementFlags.Optional) != 0;
 
             var methodName = methodDeclaration.getName();
 
@@ -1880,6 +1881,10 @@ module TypeScript {
             methodTypeSymbol.addDeclaration(methodDeclaration);
             this.semanticInfo.setSymbolForAST(methodAST.name, methodSymbol);
             this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
+
+            if (isOptional) {
+                methodSymbol.setIsOptional();
+            }
 
             if (!parentHadSymbol) {
 

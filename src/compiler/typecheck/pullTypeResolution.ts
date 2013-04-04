@@ -2958,7 +2958,7 @@ module TypeScript {
                         acceptedContextualType = false;
                     }
 
-                    context.setTypeInContext(memberSymbol, memberExprType.getType());
+                    context.setTypeInContext(memberSymbol, this.widenType(memberExprType.getType()));
 
                     memberSymbol.setResolved();
 
@@ -4319,7 +4319,7 @@ module TypeScript {
             }
 
             if (target.hasMembers()) {
-                var mProps = target.getMembers();
+                var mProps = target.getAllMembers(PullElementKind.SomeValue, true);
                 var mProp: PullSymbol = null;
                 var nProp: PullSymbol = null;
                 var mPropType: PullTypeSymbol = null;
@@ -4329,16 +4329,6 @@ module TypeScript {
 
                     mProp = mProps[iMProp];
                     nProp = source.findMember(mProp.getName());
-
-                    // PULLTODO:
-                    // methods do not have the "arguments" field
-                    //if (mProp.getName() == "arguments" &&
-                    //    this.cachedIArgumentsInterfaceType &&
-                    //    (this.typeFlow.iargumentsInterfaceType.symbol.flags & SymbolFlags.CompilerGenerated) &&
-                    //    mProp.kind() == SymbolKind.Variable &&
-                    //    (<VariableSymbol>mProp).variable.typeLink.type == this.typeFlow.iargumentsInterfaceType) {
-                    //    continue;
-                    //}
 
                     if (!mProp.isResolved()) {
                         this.resolveDeclaredSymbol(mProp, null, context);
@@ -4376,12 +4366,22 @@ module TypeScript {
                         }
                     }
 
+                    var mPropIsPrivate = mProp.hasFlag(PullElementFlags.Private);
+                    var nPropIsPrivate = nProp.hasFlag(PullElementFlags.Private);
+
+                    // if visibility doesn't match, the types don't match
+                    if (mPropIsPrivate != nPropIsPrivate) {
+                        comparisonCache[comboId] = undefined;
+                        return false;
+                    }
+
                     // if both are private members, test to ensure that they share a declaration
-                    if (nProp.hasFlag(PullElementFlags.Private) && mProp.hasFlag(PullElementFlags.Private)) {
+                    else if (nPropIsPrivate && mPropIsPrivate) {
                         var mDecl = mProp.getDeclarations()[0];
                         var nDecl = nProp.getDeclarations()[0];
 
                         if (!mDecl.isEqual(nDecl)) {
+                            comparisonCache[comboId] = undefined;
                             return false;
                         }
                     }
@@ -4389,7 +4389,6 @@ module TypeScript {
                     if (!nProp.isResolved()) {
                         this.resolveDeclaredSymbol(nProp, null, context);
                     }
-
 
                     nPropType = nProp.getType();
 

@@ -4,7 +4,6 @@
 0.ts line 70 col 15: error TS1005: ']' expected.
 0.ts line 70 col 27: error TS1005: ';' expected.
 0.ts line 70 col 28: error TS1008: Unexpected token; 'call, construct, index, property or function signature' expected.
-0.ts line 89 col 4: error TS2011: Cannot convert '{ p: null; p3: () => any; p6: (pa1: any) => any; p7: (pa1: any, pa2: any) => any; }' to 'i1'.
 0.ts line 95 col 4: error TS2011: Cannot convert 'Object' to 'i1'.
 0.ts line 96 col 15: Invalid 'new' expression
 0.ts line 97 col 4: error TS2011: Cannot convert 'HTMLImageElement' to 'i1'.
@@ -29,16 +28,29 @@
 0.ts line 141 col 4: error TS2011: Cannot convert '() => void' to 'i4'.
 0.ts line 144 col 16: Invalid 'new' expression
 0.ts line 145 col 16: Invalid 'new' expression
+0.ts line 150 col 4: error TS2011: Cannot convert '{}' to 'i5'.
+0.ts line 151 col 4: error TS2011: Cannot convert 'Object' to 'i5'.
 0.ts line 152 col 16: Invalid 'new' expression
+0.ts line 153 col 4: error TS2011: Cannot convert 'HTMLImageElement' to 'i5'.
+0.ts line 155 col 4: error TS2011: Cannot convert '() => void' to 'i5'.
 0.ts line 158 col 16: Invalid 'new' expression
 0.ts line 159 col 16: Invalid 'new' expression
-0.ts line 166 col 16: Invalid 'new' expression
-0.ts line 172 col 16: Invalid 'new' expression
+0.ts line 164 col 4: error TS2011: Cannot convert '{}' to 'i6'.
+0.ts line 165 col 4: error TS2011: Cannot convert 'Object' to 'i6'.
+0.ts line 166 col 16: Call signatures used in a 'new' expression must have a return type of 'void'
+0.ts line 167 col 4: error TS2011: Cannot convert 'HTMLImageElement' to 'i6'.
+0.ts line 172 col 16: Call signatures used in a 'new' expression must have a return type of 'void'
 0.ts line 173 col 16: Invalid 'new' expression
-0.ts line 180 col 16: Invalid 'new' expression
-0.ts line 186 col 16: Invalid 'new' expression
+0.ts line 178 col 4: error TS2011: Cannot convert '{}' to 'i7'.
+0.ts line 179 col 4: error TS2011: Cannot convert 'Object' to 'i7'.
+0.ts line 181 col 16: error TS2011: Cannot convert 'HTMLImageElement' to 'i7'.
+0.ts line 183 col 4: error TS2011: Cannot convert '() => void' to 'i7'.
 0.ts line 187 col 16: Invalid 'new' expression
+0.ts line 192 col 4: error TS2011: Cannot convert '{}' to 'i8'.
+0.ts line 193 col 4: error TS2011: Cannot convert 'Object' to 'i8'.
 0.ts line 194 col 16: Invalid 'new' expression
+0.ts line 195 col 4: error TS2011: Cannot convert 'HTMLImageElement' to 'i8'.
+0.ts line 197 col 4: error TS2011: Cannot convert '() => void' to 'i8'.
 0.ts line 200 col 16: Invalid 'new' expression
 0.ts line 201 col 16: Invalid 'new' expression
 0.ts line 35 col 4: Index signatures may not have optional parameters

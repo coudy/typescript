@@ -991,7 +991,23 @@ module TypeScript {
 
         public isType() { return true; }
         public isClass() { return false; }
-        public hasMembers() { return this.memberLinks && this.memberLinks.length != 0; }
+        public hasMembers() {
+            var thisHasMembers = this.memberLinks && this.memberLinks.length != 0;
+            
+            if (thisHasMembers) {
+                return true;
+            }
+
+            var parents = this.getExtendedTypes();
+
+            for (var i = 0; i < parents.length; i++) {
+                if (parents[i].hasMembers()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         public isFunction() { return false; }
         public isTypeParameter() { return false; }
         public isTypeVariable() { return false; }
@@ -1316,6 +1332,17 @@ module TypeScript {
                     members[members.length] = this.callSignatureLinks[i].end;
                 }
             }
+            else {
+                var extendedTypes = this.getExtendedTypes();
+
+                for (i = 0; i < extendedTypes.length; i++) {
+                    members = extendedTypes[i].getCallSignatures();
+
+                    if (members.length) {
+                        break;
+                    }
+                }
+            }
 
             return <PullSignatureSymbol[]>members;
         }
@@ -1328,6 +1355,17 @@ module TypeScript {
                     members[members.length] = this.constructSignatureLinks[i].end;
                 }
             }
+            else {
+                var extendedTypes = this.getExtendedTypes();
+
+                for (i = 0; i < extendedTypes.length; i++) {
+                    members = extendedTypes[i].getConstructSignatures();
+
+                    if (members.length) {
+                        break;
+                    }
+                }
+            }
 
             return <PullSignatureSymbol[]>members;
         }
@@ -1338,6 +1376,17 @@ module TypeScript {
             if (this.indexSignatureLinks) {
                 for (var i = 0; i < this.indexSignatureLinks.length; i++) {
                     members[members.length] = this.indexSignatureLinks[i].end;
+                }
+            }
+            else {
+                var extendedTypes = this.getExtendedTypes();
+
+                for (i = 0; i < extendedTypes.length; i++) {
+                    members = extendedTypes[i].getIndexSignatures();
+
+                    if (members.length) {
+                        break;
+                    }
                 }
             }
 
@@ -1630,6 +1679,10 @@ module TypeScript {
             // Update the cache id needed
             if (!this.memberTypeNameCache) {
                 this.populateMemberTypeCache();
+            }
+
+            if (!this.memberNameCache) {
+                this.memberNameCache = new BlockIntrinsics();
             }
 
             // Add members

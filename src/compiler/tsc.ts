@@ -291,6 +291,13 @@ class BatchCompiler {
         this.ioHost.stdout.WriteLine("Initial type check errors:");
         compiler.pullTypeCheck();
 
+        var semanticDiagnostics: TypeScript.IDiagnostic[];
+
+        for (var i = 0; i < iCode; i++) {
+            semanticDiagnostics = compiler.getSemanticDiagnostics(this.resolvedEnvironment.code[i].path);
+            compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
+        }
+
         // Note: we continue even if there were type check warnings.
 
         // ok, now we got through the remaining files, 1-by-1, substituting the new code in for the old
@@ -304,7 +311,7 @@ class BatchCompiler {
                 snapshot = TypeScript.ScriptSnapshot.fromString(text);
 
                 compiler.updateSourceUnit(lastTypecheckedFileName, snapshot, null);
-                var semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
+                semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
                 compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
             }
         }
