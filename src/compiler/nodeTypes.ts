@@ -89,7 +89,7 @@ module TypeScript {
         DecPost,
         CastExpression,
         ParenthesizedExpression,
-        FuncDecl,
+        FunctionDeclaration,
         Member,
         VarDecl,
         ArgDecl,

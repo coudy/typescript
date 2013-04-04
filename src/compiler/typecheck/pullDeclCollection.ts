@@ -204,7 +204,7 @@ module TypeScript {
 
         if (argDecl.typeExpr &&
             ((<TypeReference>argDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>argDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>argDecl.typeExpr).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -231,7 +231,7 @@ module TypeScript {
 
         if (typeParameterDecl.constraint &&
             ((<TypeReference>typeParameterDecl.constraint).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>typeParameterDecl.constraint).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>typeParameterDecl.constraint).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -268,7 +268,7 @@ module TypeScript {
 
         if (propertyDecl.typeExpr &&
             ((<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -308,7 +308,7 @@ module TypeScript {
 
         if (memberDecl.typeExpr &&
             ((<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -344,7 +344,7 @@ module TypeScript {
 
         if (varDecl.typeExpr &&
             ((<TypeReference>varDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>varDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>varDecl.typeExpr).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -374,7 +374,7 @@ module TypeScript {
     }
 
     // function type expressions
-    export function createFunctionTypeDeclaration(functionTypeDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createFunctionTypeDeclaration(functionTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.FunctionType;
 
@@ -396,7 +396,7 @@ module TypeScript {
 
         if (functionTypeDeclAST.returnTypeAnnotation &&
             ((<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -409,7 +409,7 @@ module TypeScript {
     }
 
     // constructor types
-    export function createConstructorTypeDeclaration(constructorTypeDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createConstructorTypeDeclaration(constructorTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.ConstructorType;
 
@@ -431,7 +431,7 @@ module TypeScript {
 
         if (constructorTypeDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -444,7 +444,7 @@ module TypeScript {
     }
 
     // function declaration
-    export function createFunctionDeclaration(funcDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Function;
 
@@ -477,7 +477,7 @@ module TypeScript {
 
         if (funcDeclAST.returnTypeAnnotation &&
             ((<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -490,7 +490,7 @@ module TypeScript {
     }
 
     // function expression
-    export function createFunctionExpressionDeclaration(functionExpressionDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createFunctionExpressionDeclaration(functionExpressionDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         if (hasFlag(functionExpressionDeclAST.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
@@ -514,7 +514,7 @@ module TypeScript {
 
         if (functionExpressionDeclAST.returnTypeAnnotation &&
             ((<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -527,7 +527,7 @@ module TypeScript {
     }
 
     // methods
-    export function createMemberFunctionDeclaration(memberFunctionDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createMemberFunctionDeclaration(memberFunctionDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Method;
 
@@ -567,7 +567,7 @@ module TypeScript {
 
         if (memberFunctionDeclAST.returnTypeAnnotation &&
             ((<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -580,7 +580,7 @@ module TypeScript {
     }
 
     // index signatures
-    export function createIndexSignatureDeclaration(indexSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createIndexSignatureDeclaration(indexSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Index;
         var declType = PullElementKind.IndexSignature;
 
@@ -601,7 +601,7 @@ module TypeScript {
 
         if (indexSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -614,7 +614,7 @@ module TypeScript {
     }
 
     // call signatures
-    export function createCallSignatureDeclaration(callSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createCallSignatureDeclaration(callSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
         var declType = PullElementKind.CallSignature;
 
@@ -635,7 +635,7 @@ module TypeScript {
 
         if (callSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -648,7 +648,7 @@ module TypeScript {
     }
 
     // construct signatures
-    export function createConstructSignatureDeclaration(constructSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createConstructSignatureDeclaration(constructSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
         var declType = PullElementKind.ConstructSignature;
 
@@ -669,7 +669,7 @@ module TypeScript {
 
         if (constructSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -682,7 +682,7 @@ module TypeScript {
     }
 
     // class constructors
-    export function createClassConstructorDeclaration(constructorDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createClassConstructorDeclaration(constructorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Constructor;
         var declType = PullElementKind.ConstructorMethod;
 
@@ -716,7 +716,7 @@ module TypeScript {
 
         if (constructorDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -728,7 +728,7 @@ module TypeScript {
         return true;
     }
 
-    export function createGetAccessorDeclaration(getAccessorDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createGetAccessorDeclaration(getAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.GetAccessor;
 
@@ -764,7 +764,7 @@ module TypeScript {
 
         if (getAccessorDeclAST.returnTypeAnnotation &&
             ((<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+            (<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
@@ -777,7 +777,7 @@ module TypeScript {
     }
 
     // set accessors
-    export function createSetAccessorDeclaration(setAccessorDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createSetAccessorDeclaration(setAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.SetAccessor;
 
@@ -816,7 +816,7 @@ module TypeScript {
 
     export function preCollectFuncDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
 
-        var funcDecl = <FuncDecl>ast;
+        var funcDecl = <FunctionDeclaration>ast;
 
         if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction))) {
             return createFunctionExpressionDeclaration(funcDecl, context);
@@ -889,7 +889,7 @@ module TypeScript {
         else if (ast.nodeType == NodeType.VarDecl) {
             go = preCollectVarDecls(ast, parentAST, context);
         }
-        else if (ast.nodeType == NodeType.FuncDecl) {
+        else if (ast.nodeType == NodeType.FunctionDeclaration) {
             go = preCollectFuncDecls(ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.ImportDeclaration) {
@@ -1018,7 +1018,7 @@ module TypeScript {
         else if (ast.nodeType == NodeType.InterfaceDeclaration) {
             context.popParent();
         }
-        else if (ast.nodeType == NodeType.FuncDecl) {
+        else if (ast.nodeType == NodeType.FunctionDeclaration) {
             context.popParent();
 
             parentDecl = context.getParent();

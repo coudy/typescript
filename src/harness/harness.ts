@@ -1053,8 +1053,8 @@ module Harness {
                     case TypeScript.NodeType.ClassDeclaration:
                         name = (<TypeScript.ClassDeclaration>ast).name.actualText;
                         break;
-                    case TypeScript.NodeType.FuncDecl:
-                        name = !(<TypeScript.FuncDecl>ast).name ? "" : (<TypeScript.FuncDecl>ast).name.actualText; // name === null for lambdas
+                    case TypeScript.NodeType.FunctionDeclaration:
+                        name = !(<TypeScript.FunctionDeclaration>ast).name ? "" : (<TypeScript.FunctionDeclaration>ast).name.actualText; // name === null for lambdas
                         break;
                     default:
                         // TODO: is there a reason to mess with all the special cases above and not just do this (ie take whatever property is there and works?)

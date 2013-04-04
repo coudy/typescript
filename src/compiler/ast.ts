@@ -735,8 +735,8 @@ module TypeScript {
                     break;
 
                 case NodeType.Member:
-                    if (this.operand2.nodeType === NodeType.FuncDecl && (<FuncDecl>this.operand2).isAccessor()) {
-                        var funcDecl = <FuncDecl>this.operand2;
+                    if (this.operand2.nodeType === NodeType.FunctionDeclaration && (<FunctionDeclaration>this.operand2).isAccessor()) {
+                        var funcDecl = <FunctionDeclaration>this.operand2;
                         if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                             emitter.writeToOutput("get ");
                         }
@@ -1074,7 +1074,7 @@ module TypeScript {
         }
     }
 
-    export class FuncDecl extends AST {
+    export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
         public returnTypeAnnotation: AST = null;
@@ -1109,7 +1109,7 @@ module TypeScript {
             this._functionFlags = flags;
         }
 
-        public structuralEquals(ast: FuncDecl, includingPosition: bool): bool {
+        public structuralEquals(ast: FunctionDeclaration, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
                    this._functionFlags === ast._functionFlags &&
                    this.hint === ast.hint &&
@@ -1246,8 +1246,8 @@ module TypeScript {
                             return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType === NodeType.FuncDecl) {
-                        if (!(<FuncDecl>stmt).isSignature()) {
+                    else if (stmt.nodeType === NodeType.FunctionDeclaration) {
+                        if (!(<FunctionDeclaration>stmt).isSignature()) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
@@ -1373,7 +1373,7 @@ module TypeScript {
     }
 
     export class ClassDeclaration extends TypeDeclaration {
-        public constructorDecl: FuncDecl = null;
+        public constructorDecl: FunctionDeclaration = null;
         public endingToken: ASTSpan = null;
 
         constructor(name: Identifier,

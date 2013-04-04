@@ -19,7 +19,7 @@ module TypeScript {
     export class ScopeChain {
         public thisType: Type;
         public classType: Type;
-        public fnc: FuncDecl;
+        public fnc: FunctionDeclaration;
         public moduleDecl: ModuleDeclaration;
 
         constructor(public container: Symbol, public previous: ScopeChain,
@@ -116,7 +116,7 @@ module TypeScript {
                         defSym(id.sym, context);
                     }
                 }
-                else if (cur.nodeType === NodeType.FuncDecl) {
+                else if (cur.nodeType === NodeType.FunctionDeclaration) {
                     walker.options.goChildren = false;
                 }
 
@@ -630,7 +630,7 @@ module TypeScript {
         public globalScope: SymbolScope;
 
         public thisType: Type;
-        public thisFnc: FuncDecl = null;
+        public thisFnc: FunctionDeclaration = null;
         public thisClassNode: TypeDeclaration = null;
         public enclosingFncIsMethod = false;
 
@@ -744,7 +744,7 @@ module TypeScript {
             var svCurrentModDecl = this.checker.currentModDecl;
             var prevMethodStatus = this.enclosingFncIsMethod;
             var container = this.scope.container;
-            var fnc: FuncDecl = null;
+            var fnc: FunctionDeclaration = null;
             while (container) {
                 if (container.kind() === SymbolKind.Type) {
                     var typeSym = <TypeSymbol>container;
@@ -753,7 +753,7 @@ module TypeScript {
                         if (fnc === null) {
                             // use innermost function
                             this.enclosingFncIsMethod = typeSym.isMethod;
-                            fnc = <FuncDecl>container.declAST;
+                            fnc = <FunctionDeclaration>container.declAST;
                         }
                     }
                     if (type.isClass()) {
@@ -799,9 +799,9 @@ module TypeScript {
             if (ast.nodeType === NodeType.VarDecl || ast.nodeType === NodeType.ArgDecl) {
                 this.inScopeTypeCheckBoundDecl(<BoundDecl>ast);
             }
-            else if (ast.nodeType === NodeType.FuncDecl) {
+            else if (ast.nodeType === NodeType.FunctionDeclaration) {
 
-                var funcDecl = <FuncDecl>ast;
+                var funcDecl = <FunctionDeclaration>ast;
 
                 if (funcDecl.isAccessor()) {
                     this.typeCheckFunction(funcDecl);
@@ -817,8 +817,8 @@ module TypeScript {
             var prevLocationInfo = this.checker.locationInfo;
             if (sym && sym.container) {
                 var instanceScope = /* hasFlag(varDecl.getVarFlags(), VariableFlags.ClassConstructorProperty) ? sym.container.getType().constructorScope : */ sym.container.instanceScope();
-                if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property) && sym.container.declAST.nodeType === NodeType.FuncDecl) {
-                    this.thisFnc = <FuncDecl>sym.container.declAST;
+                if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property) && sym.container.declAST.nodeType === NodeType.FunctionDeclaration) {
+                    this.thisFnc = <FunctionDeclaration>sym.container.declAST;
                 }
                 if (instanceScope) {
                     var prevScope = this.scope;
@@ -948,8 +948,8 @@ module TypeScript {
                         // Mark Lambda expressions with IsPropertyBound flag
                         if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property) && this.thisClassNode) {
                             getAstWalkerFactory().walk(varDecl.init, (ast: AST, parent: AST, walker: IAstWalker) => {
-                                if (ast && ast.nodeType === NodeType.FuncDecl) {
-                                    if (hasFlag((<FuncDecl>ast).getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
+                                if (ast && ast.nodeType === NodeType.FunctionDeclaration) {
+                                    if (hasFlag((<FunctionDeclaration>ast).getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
                                         // Found a Lambda, mark it
                                         //(<FuncDecl>ast).getFunctionFlags() |= FncFlags.IsPropertyBound;
                                     }
@@ -1111,7 +1111,7 @@ module TypeScript {
                 // function for a self init
                 if (false /*this.thisFnc.boundToProperty*/) {
                     var container = null; //this.thisFnc.boundToProperty.sym.container;
-                    if (container.declAST.nodeType === NodeType.FuncDecl) {
+                    if (container.declAST.nodeType === NodeType.FunctionDeclaration) {
                         // (<FuncDecl>container.declAST).setHasSelfReference();
                     }
                 }
@@ -1236,11 +1236,11 @@ module TypeScript {
                     }
 
                     if (symbol.declAST &&
-                        symbol.declAST.nodeType === NodeType.FuncDecl &&
-                        !(<FuncDecl>symbol.declAST).returnTypeAnnotation &&
-                        (<FuncDecl>symbol.declAST).signature.typeCheckStatus === TypeCheckStatus.Started) {
-                        (<FuncDecl>symbol.declAST).type.symbol.flags |= SymbolFlags.RecursivelyReferenced;
-                        (<FuncDecl>symbol.declAST).signature.returnType.type = this.anyType;
+                        symbol.declAST.nodeType === NodeType.FunctionDeclaration &&
+                        !(<FunctionDeclaration>symbol.declAST).returnTypeAnnotation &&
+                        (<FunctionDeclaration>symbol.declAST).signature.typeCheckStatus === TypeCheckStatus.Started) {
+                        (<FunctionDeclaration>symbol.declAST).type.symbol.flags |= SymbolFlags.RecursivelyReferenced;
+                        (<FunctionDeclaration>symbol.declAST).signature.returnType.type = this.anyType;
                     }
 
                     this.setTypeFromSymbol(ast, symbol);
@@ -1786,7 +1786,7 @@ module TypeScript {
         }
 
         // REVIEW: isClass param may now be redundant
-        public addConstructorLocalArgs(constructorDecl: FuncDecl, table: IHashTable, isClass: bool): void {
+        public addConstructorLocalArgs(constructorDecl: FunctionDeclaration, table: IHashTable, isClass: bool): void {
             var container = constructorDecl.type.symbol;
             var args = constructorDecl.arguments;
             if (args) {
@@ -1820,7 +1820,7 @@ module TypeScript {
             }
         }
 
-        public checkInitSelf(funcDecl: FuncDecl): bool {
+        public checkInitSelf(funcDecl: FunctionDeclaration): bool {
             if (!funcDecl.isMethod()) {
                 var freeVars = funcDecl.freeVariables;
                 for (var k = 0, len = freeVars.length; k < len; k++) {
@@ -1844,7 +1844,7 @@ module TypeScript {
             return false;
         }
 
-        public checkPromoteFreeVars(funcDecl: FuncDecl, constructorSym: Symbol): void {
+        public checkPromoteFreeVars(funcDecl: FunctionDeclaration, constructorSym: Symbol): void {
             var freeVars = funcDecl.freeVariables;
             for (var k = 0, len = freeVars.length; k < len; k++) {
                 var sym = freeVars[k];
@@ -1859,7 +1859,7 @@ module TypeScript {
             }
         }
 
-        public allReturnsAreVoid(funcDecl: FuncDecl) {
+        public allReturnsAreVoid(funcDecl: FunctionDeclaration) {
             // in the case of a function or method with no declared return type, walk the body to 
             // pre-emptively determine if the function has a return type of void
             //
@@ -1873,7 +1873,7 @@ module TypeScript {
                 var preFindReturnExpressionTypes = function (ast: AST, parent: AST, walker: IAstWalker) {
                     var go = true;
                     switch (ast.nodeType) {
-                        case NodeType.FuncDecl:
+                        case NodeType.FunctionDeclaration:
                             // don't recurse into a function decl - we don't want to confuse a nested
                             // return type with the top-level function's return type
                             go = false;
@@ -1900,7 +1900,7 @@ module TypeScript {
             return allReturnsAreVoid;
         }
 
-        public classConstructorHasSuperCall(funcDecl: FuncDecl) {
+        public classConstructorHasSuperCall(funcDecl: FunctionDeclaration) {
             var foundSuper = false;
 
             var preFindSuperCall = function (ast: AST, parent: AST, walker: IAstWalker) {
@@ -1908,7 +1908,7 @@ module TypeScript {
                 var go = true;
 
                 switch (ast.nodeType) {
-                    case NodeType.FuncDecl:
+                    case NodeType.FunctionDeclaration:
                         go = false;
                         break;
                     case NodeType.Call:
@@ -2099,7 +2099,7 @@ module TypeScript {
             }
         }
 
-        private functionArgumentPrivacyErrorReporter(funcDecl: FuncDecl, p: number, paramSymbol: Symbol, typeName: string, isModuleName: bool) {
+        private functionArgumentPrivacyErrorReporter(funcDecl: FunctionDeclaration, p: number, paramSymbol: Symbol, typeName: string, isModuleName: bool) {
             var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.SetAccessor);
             var isPublicFunc = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Public);
@@ -2134,7 +2134,7 @@ module TypeScript {
             }
         }
 
-        private returnTypePrivacyError(astError: AST, funcDecl: FuncDecl, typeName: string, isModuleName: bool) {
+        private returnTypePrivacyError(astError: AST, funcDecl: FunctionDeclaration, typeName: string, isModuleName: bool) {
             var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor);
             var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.SetAccessor);
             var isPublicFunc = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Public);
@@ -2168,7 +2168,7 @@ module TypeScript {
             }
         }
 
-        private functionReturnTypePrivacyErrorReporter(funcDecl: FuncDecl, signature: Signature, typeName: string, isModuleName: bool) {
+        private functionReturnTypePrivacyErrorReporter(funcDecl: FunctionDeclaration, signature: Signature, typeName: string, isModuleName: bool) {
             var reportOnFuncDecl = false;
 
             // Error coming from return annotation
@@ -2192,7 +2192,7 @@ module TypeScript {
             }
         }
 
-        public typeCheckFunction(funcDecl: FuncDecl): FuncDecl {
+        public typeCheckFunction(funcDecl: FunctionDeclaration): FunctionDeclaration {
             this.nestingLevel = 0;
             var fnType = funcDecl.type;
 
@@ -2322,8 +2322,8 @@ module TypeScript {
 
                 var enclosingClassNode: TypeDeclaration = null;
 
-                if (funcDecl.type.enclosingType.symbol.declAST.nodeType === NodeType.FuncDecl) {
-                    enclosingClassNode = <TypeDeclaration>(<FuncDecl>funcDecl.type.enclosingType.symbol.declAST).classDecl;
+                if (funcDecl.type.enclosingType.symbol.declAST.nodeType === NodeType.FunctionDeclaration) {
+                    enclosingClassNode = <TypeDeclaration>(<FunctionDeclaration>funcDecl.type.enclosingType.symbol.declAST).classDecl;
                 }
                 else if (funcDecl.type.enclosingType.symbol.declAST.nodeType === NodeType.ClassDeclaration) {
                     enclosingClassNode = <TypeDeclaration>funcDecl.type.enclosingType.symbol.declAST;
@@ -3137,7 +3137,7 @@ module TypeScript {
             return ifStmt;
         }
 
-        public typeFromAccessorFuncDecl(funcDecl: FuncDecl) {
+        public typeFromAccessorFuncDecl(funcDecl: FunctionDeclaration) {
             if (!funcDecl.isAccessor()) {
                 return null;
             }
@@ -3211,9 +3211,9 @@ module TypeScript {
                     }
 
                     // before typechecking an accessor function member, we need to initialize its accessor symbol
-                    if (binex.operand2.nodeType === NodeType.FuncDecl && (<FuncDecl>binex.operand2).isAccessor()) {
+                    if (binex.operand2.nodeType === NodeType.FunctionDeclaration && (<FunctionDeclaration>binex.operand2).isAccessor()) {
 
-                        var funcDecl = <FuncDecl>binex.operand2;
+                        var funcDecl = <FunctionDeclaration>binex.operand2;
                         var accessorSym: FieldSymbol = resultType.members.publicMembers.lookup(text);
 
                         accessorSym = this.checker.createAccessorSymbol(funcDecl, accessorSym, resultType, true, false, resultType.memberScope, null);
@@ -3229,9 +3229,9 @@ module TypeScript {
                     if (acceptTargetType && targetMember) {
                         // Note that we accept 'any' in place of a valid subtype                     
                         if ((binex.operand2.type === this.anyType || this.checker.sourceIsAssignableToTarget(binex.operand2.type, targetMember.getType())) ||
-                            (binex.operand2.nodeType === NodeType.FuncDecl &&
-                            (<FuncDecl>binex.operand2).isAccessor() &&
-                                this.typeFromAccessorFuncDecl(<FuncDecl>binex.operand2) === targetMember.getType())) {
+                            (binex.operand2.nodeType === NodeType.FunctionDeclaration &&
+                            (<FunctionDeclaration>binex.operand2).isAccessor() &&
+                                this.typeFromAccessorFuncDecl(<FunctionDeclaration>binex.operand2) === targetMember.getType())) {
                             // set the field type to the proper contextual type
                             // this is especially important in the 'any' case, so that
                             // fields typed to 'any' aren't accepted for contextual typing,
@@ -3710,7 +3710,7 @@ module TypeScript {
 
             for (var i = 0; i < args.members.length; i++) {
                 switch (args.members[i].nodeType) {
-                    case NodeType.FuncDecl:
+                    case NodeType.FunctionDeclaration:
                     case NodeType.ObjectLiteralExpression:
                     case NodeType.ArrayLiteralExpression:
                         continue;
@@ -3741,7 +3741,7 @@ module TypeScript {
                     for (i = 0; i < nonVarArgActualParamLength; i++) {
                         targetType = sig.parameters[i].getType();
                         switch (callEx.arguments.members[i].nodeType) {
-                            case NodeType.FuncDecl:
+                            case NodeType.FunctionDeclaration:
                             case NodeType.ObjectLiteralExpression:
                             case NodeType.ArrayLiteralExpression:
                                 this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(),
@@ -3759,7 +3759,7 @@ module TypeScript {
                         var isParenthesized = sig.parameters[varArgParamIndex].declAST.nodeType !== NodeType.ParenthesizedExpression;
                         for (i = nonVarArgActualParamLength; i < callEx.arguments.members.length; i++) {
                             switch (callEx.arguments.members[i].nodeType) {
-                                case NodeType.FuncDecl:
+                                case NodeType.FunctionDeclaration:
                                 case NodeType.ObjectLiteralExpression:
                                 case NodeType.ArrayLiteralExpression:
                                     this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(), isParenthesized, callEx.arguments.members[i]);
@@ -3775,7 +3775,7 @@ module TypeScript {
 
                 for (i = 0; i < callEx.arguments.members.length; i++) {
                     switch (callEx.arguments.members[i].nodeType) {
-                        case NodeType.FuncDecl:
+                        case NodeType.FunctionDeclaration:
                         case NodeType.ObjectLiteralExpression:
                         case NodeType.ArrayLiteralExpression:
                             this.typeCheck(callEx.arguments.members[i]);

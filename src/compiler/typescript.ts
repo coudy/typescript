@@ -696,7 +696,7 @@ module TypeScript {
             var callSignatures: PullSignatureSymbol[] = null;
 
             // these are used to track intermediate nodes so that we can properly apply contextual types
-            var lambdaAST: FuncDecl = null;
+            var lambdaAST: FunctionDeclaration = null;
             var declarationInitASTs: VarDecl[] = [];
             var objectLitAST: UnaryExpression = null;
             var asgAST: BinaryExpression = null;
@@ -721,8 +721,8 @@ module TypeScript {
                                 lastDeclAST = cur;
                             }
 
-                            if (cur.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>cur).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                                lambdaAST = <FuncDecl>cur;
+                            if (cur.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>cur).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
+                                lambdaAST = <FunctionDeclaration>cur;
                             }
                             else if (cur.nodeType === NodeType.VarDecl) {
                                 declarationInitASTs[declarationInitASTs.length] = <VarDecl>cur;
@@ -772,8 +772,8 @@ module TypeScript {
                             }
                             break;
 
-                        case NodeType.FuncDecl:
-                            if (foundAST === (<FuncDecl>previousAST).name) {
+                        case NodeType.FunctionDeclaration:
+                            if (foundAST === (<FunctionDeclaration>previousAST).name) {
                                 foundAST = previousAST;
                             }
                             break;
@@ -781,13 +781,13 @@ module TypeScript {
                 }
 
                 // are we within a decl?  if so, just grab its symbol
-                var funcDecl: FuncDecl = null;
+                var funcDecl: FunctionDeclaration = null;
                 if (lastDeclAST === foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
                     this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, resolutionContext);
                     enclosingDecl = declStack[declStack.length - 1].getParentDecl();
-                    if (foundAST.nodeType === NodeType.FuncDecl) {
-                        funcDecl = <FuncDecl>foundAST;
+                    if (foundAST.nodeType === NodeType.FunctionDeclaration) {
+                        funcDecl = <FunctionDeclaration>foundAST;
                     }
                 }
                 else {
@@ -819,8 +819,8 @@ module TypeScript {
                             (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
                                 callExpression = <CallExpression>resultASTs[i];
                                 break;
-                            } else if (resultASTs[i].nodeType === NodeType.FuncDecl && (<FuncDecl>resultASTs[i]).name === resultASTs[i + 1]) {
-                                funcDecl = <FuncDecl>resultASTs[i];
+                            } else if (resultASTs[i].nodeType === NodeType.FunctionDeclaration && (<FunctionDeclaration>resultASTs[i]).name === resultASTs[i + 1]) {
+                                funcDecl = <FunctionDeclaration>resultASTs[i];
                                 break;
                             } else {
                                 break;
@@ -984,9 +984,9 @@ module TypeScript {
                 }
 
                 switch (current.nodeType) {
-                    case NodeType.FuncDecl:
-                        if (hasFlag((<FuncDecl>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                            this.pullTypeChecker.resolver.resolveAST((<FuncDecl>current), true, enclosingDecl, resolutionContext);
+                    case NodeType.FunctionDeclaration:
+                        if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
+                            this.pullTypeChecker.resolver.resolveAST((<FunctionDeclaration>current), true, enclosingDecl, resolutionContext);
                         }
 
                         break;

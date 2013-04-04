@@ -13,7 +13,7 @@ module TypeScript {
             allSignatures: PullSignatureSymbol[];
         }
 
-        export function getSignatureForFuncDecl(funcDecl: FuncDecl, semanticInfoChain: SemanticInfoChain, unitPath: string) {
+        export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
             var funcSymbol = semanticInfoChain.getSymbolForAST(funcDecl, unitPath);
             var result: SignatureInfoForFuncDecl = { signature: null, allSignatures: null };
             if (funcSymbol.isSignature()) {
@@ -43,7 +43,7 @@ module TypeScript {
             return null;
         }
 
-        export function getAccessorSymbol(getterOrSetter: FuncDecl, semanticInfoChain: SemanticInfoChain, unitPath: string) {
+        export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string) {
             var getterOrSetterSymbol = semanticInfoChain.getSymbolForAST(getterOrSetter, unitPath);
             var linkKind: SymbolLinkKind;
             if (hasFlag(getterOrSetter.getFunctionFlags(), FunctionFlags.GetAccessor)) {
@@ -64,21 +64,21 @@ module TypeScript {
             return semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
         }
         
-        export function getGetterAndSetterFunction(funcDecl: FuncDecl, semanticInfoChain: SemanticInfoChain, unitPath: string): { getter: FuncDecl; setter: FuncDecl; } {
+        export function getGetterAndSetterFunction(funcDecl: FunctionDeclaration, semanticInfoChain: SemanticInfoChain, unitPath: string): { getter: FunctionDeclaration; setter: FunctionDeclaration; } {
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, semanticInfoChain, unitPath);
-            var result: { getter: FuncDecl; setter: FuncDecl; } = {
+            var result: { getter: FunctionDeclaration; setter: FunctionDeclaration; } = {
                 getter: null,
                 setter: null
             };
             var getter = accessorSymbol.getGetter();
             if (getter) {
                 var getterDecl = getter.getDeclarations()[0];
-                result.getter = <FuncDecl>PullHelpers.getASTForDecl(getterDecl, semanticInfoChain);
+                result.getter = <FunctionDeclaration>PullHelpers.getASTForDecl(getterDecl, semanticInfoChain);
             }
             var setter = accessorSymbol.getSetter();
             if (setter) {
                 var setterDecl = setter.getDeclarations()[0];
-                result.setter = <FuncDecl>PullHelpers.getASTForDecl(setterDecl, semanticInfoChain);
+                result.setter = <FunctionDeclaration>PullHelpers.getASTForDecl(setterDecl, semanticInfoChain);
             }
 
             return result;

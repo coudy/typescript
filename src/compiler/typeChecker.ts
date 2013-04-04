@@ -407,7 +407,7 @@ module TypeScript {
             return type.arrayCache.arrayType;
         }
 
-        public getParameterList(funcDecl: FuncDecl, container: Symbol): SignatureData {
+        public getParameterList(funcDecl: FunctionDeclaration, container: Symbol): SignatureData {
             var args = funcDecl.arguments;
             var parameterTable = null;
             var parameterBuilder = null;
@@ -442,7 +442,7 @@ module TypeScript {
 
         // Create a signature for a function definition
         //  (E.g., has a function body - function declarations, property declarations, lambdas)
-        public createFunctionSignature(funcDecl: FuncDecl, container: Symbol, scope: SymbolScope, overloadGroupSym: Symbol, addToScope: bool): Signature {
+        public createFunctionSignature(funcDecl: FunctionDeclaration, container: Symbol, scope: SymbolScope, overloadGroupSym: Symbol, addToScope: bool): Signature {
 
             var isExported = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Exported | FunctionFlags.ClassPropertyMethodExported) || container === this.gloMod;
             var isStatic = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static);
@@ -675,7 +675,7 @@ module TypeScript {
 
         // Creates a new symbol for an accessor property
         // Note that funcDecl.type.symbol and fgSym may not be the same (E.g., in the case of type collection)
-        public createAccessorSymbol(funcDecl: FuncDecl, fgSym: Symbol, enclosingClass: Type, addToMembers: bool, isClassProperty: bool, scope: SymbolScope, container: Symbol) {
+        public createAccessorSymbol(funcDecl: FunctionDeclaration, fgSym: Symbol, enclosingClass: Type, addToMembers: bool, isClassProperty: bool, scope: SymbolScope, container: Symbol) {
             var accessorSym: FieldSymbol = null
             var sig = funcDecl.signature;
             var nameText = funcDecl.name.text;
@@ -954,7 +954,7 @@ module TypeScript {
             return resultType;
         }
 
-        public resolveFuncDecl(funcDecl: FuncDecl, scope: SymbolScope,
+        public resolveFuncDecl(funcDecl: FunctionDeclaration, scope: SymbolScope,
             fgSym: TypeSymbol): Symbol {
             var functionGroupSymbol = this.createFunctionSignature(funcDecl, scope.container, scope, fgSym, false).declAST.type.symbol;
             var signatures: Signature[];
@@ -1075,8 +1075,8 @@ module TypeScript {
                                     var propSym: Symbol = null;
                                     var addMember = true;
                                     var id: Identifier = null;
-                                    if (propDecl.nodeType === NodeType.FuncDecl) {
-                                        var funcDecl = <FuncDecl>propDecl;
+                                    if (propDecl.nodeType === NodeType.FunctionDeclaration) {
+                                        var funcDecl = <FunctionDeclaration>propDecl;
                                         id = funcDecl.name;
                                         propSym = interfaceType.members.allMembers.lookup(funcDecl.getNameText());
                                         addMember = (propSym === null);
@@ -1113,8 +1113,8 @@ module TypeScript {
                                 typeLink.type = interfaceType;
 
                                 break;
-                            case NodeType.FuncDecl:
-                                var tsym = <TypeSymbol>this.resolveFuncDecl(<FuncDecl>ast, scope, null);
+                            case NodeType.FunctionDeclaration:
+                                var tsym = <TypeSymbol>this.resolveFuncDecl(<FunctionDeclaration>ast, scope, null);
                                 typeLink.type = tsym.type;
                                 break;
                             default:
@@ -1243,13 +1243,13 @@ module TypeScript {
                     if (memberType === this.anyType) {
                         continue;
                     }
-                    else if (args.members[j].nodeType === NodeType.FuncDecl) {
+                    else if (args.members[j].nodeType === NodeType.FunctionDeclaration) {
                         if (this.typeFlow.functionInterfaceType && memberType === this.typeFlow.functionInterfaceType) {
                             continue;
                         }
-                        if (!this.canContextuallyTypeFunction(memberType, <FuncDecl>args.members[j], true)) {
+                        if (!this.canContextuallyTypeFunction(memberType, <FunctionDeclaration>args.members[j], true)) {
                             // if it's just annotations that are blocking us, typecheck the function and add it to the list
-                            if (this.canContextuallyTypeFunction(memberType, <FuncDecl>args.members[j], false)) {
+                            if (this.canContextuallyTypeFunction(memberType, <FunctionDeclaration>args.members[j], false)) {
                                 this.typeFlow.typeCheck(args.members[j]);
                                 if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType, comparisonInfo)) {
                                     break;
@@ -1365,7 +1365,7 @@ module TypeScript {
             return applicableSigs;
         }
 
-        public canContextuallyTypeFunction(candidateType: Type, funcDecl: FuncDecl, beStringent: bool): bool {
+        public canContextuallyTypeFunction(candidateType: Type, funcDecl: FunctionDeclaration, beStringent: bool): bool {
 
             // in these cases, we do not attempt to apply a contextual type
             //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type

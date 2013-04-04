@@ -20,7 +20,7 @@ module TypeScript {
         public hasVariableArgList = false;
         public returnType: TypeLink;
         public parameters: ParameterSymbol[] = null;
-        public declAST: FuncDecl = null;
+        public declAST: FunctionDeclaration = null;
         public typeCheckStatus = TypeCheckStatus.NotStarted;
         public nonOptionalParameterCount = 0;
 

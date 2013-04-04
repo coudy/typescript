@@ -342,8 +342,8 @@ module TypeScript {
             if (valTypeSymbol &&
                 valTypeSymbol.isType() &&
                 valTypeSymbol.declAST &&
-                valTypeSymbol.declAST.nodeType === NodeType.FuncDecl &&
-                (<FuncDecl>valTypeSymbol.declAST).isSignature()) {
+                valTypeSymbol.declAST.nodeType === NodeType.FunctionDeclaration &&
+                (<FunctionDeclaration>valTypeSymbol.declAST).isSignature()) {
                 
                 typeSymbol = <TypeSymbol>valTypeSymbol;
                 foundValSymbol = true;
@@ -611,7 +611,7 @@ module TypeScript {
             context.scopeChain.moduleDecl.recordNonInterface();
         }
 
-        var funcDecl = <FuncDecl>ast;
+        var funcDecl = <FunctionDeclaration>ast;
         var fgSym: TypeSymbol = null;
         var nameText = funcDecl.getNameText();
         var isExported = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Exported | FunctionFlags.ClassPropertyMethodExported);
@@ -639,8 +639,8 @@ module TypeScript {
         if (!funcDecl.isConstructor &&
             containerSym &&
             containerSym.declAST &&
-            containerSym.declAST.nodeType === NodeType.FuncDecl &&
-            (<FuncDecl>containerSym.declAST).isConstructor &&
+            containerSym.declAST.nodeType === NodeType.FunctionDeclaration &&
+            (<FunctionDeclaration>containerSym.declAST).isConstructor &&
             !funcDecl.isMethod()) {
             return go;
         }        
@@ -736,7 +736,7 @@ module TypeScript {
                 if (fgSym) {
                     foundSymbol = true;
                     
-                    if (!isConstructor && fgSym.declAST.nodeType === NodeType.FuncDecl && !(<FuncDecl>fgSym.declAST).isAccessor() && !(<FuncDecl>fgSym.declAST).isSignature()) {
+                    if (!isConstructor && fgSym.declAST.nodeType === NodeType.FunctionDeclaration && !(<FunctionDeclaration>fgSym.declAST).isAccessor() && !(<FunctionDeclaration>fgSym.declAST).isSignature()) {
                         fgSym = null;
                         foundSymbol = false;
                     }
@@ -767,7 +767,7 @@ module TypeScript {
             var sig = context.checker.createFunctionSignature(funcDecl, containerSym, containerScope, fgSym, !foundSymbol);
 
             // it's a getter or setter function                                   
-            if (((!fgSym || fgSym.declAST.nodeType != NodeType.FuncDecl) && funcDecl.isAccessor()) || (fgSym && fgSym.isAccessor())) {
+            if (((!fgSym || fgSym.declAST.nodeType != NodeType.FunctionDeclaration) && funcDecl.isAccessor()) || (fgSym && fgSym.isAccessor())) {
                 funcDecl.accessorSymbol = context.checker.createAccessorSymbol(funcDecl, fgSym, containerSym.type, (funcDecl.isMethod() && isStatic), true, containerScope, containerSym);
             }
 
@@ -837,7 +837,7 @@ module TypeScript {
         else if (ast.nodeType === NodeType.VarDecl) {
             go = preCollectVarDeclTypes(ast, parent, context);
         }
-        else if (ast.nodeType === NodeType.FuncDecl) {
+        else if (ast.nodeType === NodeType.FunctionDeclaration) {
             go = preCollectFuncDeclTypes(ast, parent, context);
         }
         else {

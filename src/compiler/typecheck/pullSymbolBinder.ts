@@ -939,7 +939,7 @@ module TypeScript {
             signature.addDeclaration(constructorTypeDeclaration);
             constructorTypeDeclaration.setSignatureSymbol(signature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(constructorTypeDeclaration), constructorTypeSymbol, signature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(constructorTypeDeclaration), constructorTypeSymbol, signature);
 
             // add the implicit construct member for this function type
             constructorTypeSymbol.addSignature(signature);
@@ -1350,7 +1350,7 @@ module TypeScript {
         }
 
         // parameters
-        public bindParameterSymbols(funcDecl: FuncDecl, funcType: PullTypeSymbol, signatureSymbol: PullSignatureSymbol) {
+        public bindParameterSymbols(funcDecl: FunctionDeclaration, funcType: PullTypeSymbol, signatureSymbol: PullSignatureSymbol) {
             // create a symbol for each ast
             // if it's a property, add the symbol to the enclosing type's member list
             var parameters: PullSymbol[] = [];
@@ -1435,7 +1435,7 @@ module TypeScript {
         public bindFunctionDeclarationToPullSymbol(functionDeclaration: PullDecl) {
             var declKind = functionDeclaration.getKind();
             var declFlags = functionDeclaration.getFlags();
-            var funcDeclAST = <FuncDecl>this.semanticInfo.getASTForDecl(functionDeclaration);
+            var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) != 0;
 
@@ -1588,7 +1588,7 @@ module TypeScript {
                 signature.setHasVariableParamList();
             }
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(functionDeclaration), functionTypeSymbol, signature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(functionDeclaration), functionTypeSymbol, signature);
 
             var typeParameters = functionDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
@@ -1637,7 +1637,7 @@ module TypeScript {
         public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
             var declKind = functionExpressionDeclaration.getKind();
             var declFlags = functionExpressionDeclaration.getFlags();
-            var funcExpAST = <FuncDecl>this.semanticInfo.getASTForDecl(functionExpressionDeclaration);
+            var funcExpAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionExpressionDeclaration);
 
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
@@ -1694,7 +1694,7 @@ module TypeScript {
             signature.addDeclaration(functionExpressionDeclaration);
             functionExpressionDeclaration.setSignatureSymbol(signature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(functionExpressionDeclaration), functionTypeSymbol, signature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(functionExpressionDeclaration), functionTypeSymbol, signature);
 
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
@@ -1711,7 +1711,7 @@ module TypeScript {
         public bindFunctionTypeDeclarationToPullSymbol(functionTypeDeclaration: PullDecl) {
             var declKind = functionTypeDeclaration.getKind();
             var declFlags = functionTypeDeclaration.getFlags();
-            var funcTypeAST = <FuncDecl>this.semanticInfo.getASTForDecl(functionTypeDeclaration);
+            var funcTypeAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionTypeDeclaration);
 
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
@@ -1761,7 +1761,7 @@ module TypeScript {
             signature.addDeclaration(functionTypeDeclaration);
             functionTypeDeclaration.setSignatureSymbol(signature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(functionTypeDeclaration), functionTypeSymbol, signature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(functionTypeDeclaration), functionTypeSymbol, signature);
 
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
@@ -1773,7 +1773,7 @@ module TypeScript {
         public bindMethodDeclarationToPullSymbol(methodDeclaration: PullDecl) {
             var declKind = methodDeclaration.getKind();
             var declFlags = methodDeclaration.getFlags();
-            var methodAST = <FuncDecl>this.semanticInfo.getASTForDecl(methodDeclaration);
+            var methodAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(methodDeclaration);
 
             var isPrivate = (declFlags & PullElementFlags.Private) != 0;
             var isStatic = (declFlags & PullElementFlags.Static) != 0;
@@ -1956,7 +1956,7 @@ module TypeScript {
             signature.addDeclaration(methodDeclaration);
             methodDeclaration.setSignatureSymbol(signature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(methodDeclaration), methodTypeSymbol, signature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(methodDeclaration), methodTypeSymbol, signature);
 
             // add the implicit call member for this function type
             methodTypeSymbol.addSignature(signature);
@@ -1978,7 +1978,7 @@ module TypeScript {
         public bindConstructorDeclarationToPullSymbol(constructorDeclaration: PullDecl) {
             var declKind = constructorDeclaration.getKind();
             var declFlags = constructorDeclaration.getFlags();
-            var constructorAST = <FuncDecl>this.semanticInfo.getASTForDecl(constructorDeclaration);
+            var constructorAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(constructorDeclaration);
 
             var constructorName = constructorDeclaration.getName();
 
@@ -2115,7 +2115,7 @@ module TypeScript {
 
         public bindConstructSignatureDeclarationToPullSymbol(constructSignatureDeclaration: PullDecl) {
             var parent = this.getParent(true);
-            var constructorAST = <FuncDecl>this.semanticInfo.getASTForDecl(constructSignatureDeclaration);
+            var constructorAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(constructSignatureDeclaration);
 
             var constructSigs = parent.getConstructSignatures();
 
@@ -2166,7 +2166,7 @@ module TypeScript {
             constructSignature.addDeclaration(constructSignatureDeclaration);
             constructSignatureDeclaration.setSignatureSymbol(constructSignature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(constructSignatureDeclaration), null, constructSignature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(constructSignatureDeclaration), null, constructSignature);
 
             this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(constructSignatureDeclaration), constructSignature);
 
@@ -2175,7 +2175,7 @@ module TypeScript {
 
         public bindCallSignatureDeclarationToPullSymbol(callSignatureDeclaration: PullDecl) {
             var parent = this.getParent(true);
-            var callSignatureAST = <FuncDecl>this.semanticInfo.getASTForDecl(callSignatureDeclaration);
+            var callSignatureAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(callSignatureDeclaration);
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
             // incremental parsing comes online
@@ -2229,7 +2229,7 @@ module TypeScript {
             callSignature.addDeclaration(callSignatureDeclaration);
             callSignatureDeclaration.setSignatureSymbol(callSignature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(callSignatureDeclaration), null, callSignature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(callSignatureDeclaration), null, callSignature);
 
             this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(callSignatureDeclaration), callSignature);
 
@@ -2285,7 +2285,7 @@ module TypeScript {
             indexSignature.addDeclaration(indexSignatureDeclaration);
             indexSignatureDeclaration.setSignatureSymbol(indexSignature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(indexSignatureDeclaration), null, indexSignature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(indexSignatureDeclaration), null, indexSignature);
 
             this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(indexSignatureDeclaration), indexSignature);
 
@@ -2297,7 +2297,7 @@ module TypeScript {
         public bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) {
             var declKind = getAccessorDeclaration.getKind();
             var declFlags = getAccessorDeclaration.getFlags();
-            var funcDeclAST = <FuncDecl>this.semanticInfo.getASTForDecl(getAccessorDeclaration);
+            var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(getAccessorDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) != 0;
 
@@ -2460,7 +2460,7 @@ module TypeScript {
             signature.addDeclaration(getAccessorDeclaration);
             getAccessorDeclaration.setSignatureSymbol(signature);
 
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(getAccessorDeclaration), getterTypeSymbol, signature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(getAccessorDeclaration), getterTypeSymbol, signature);
 
             var typeParameters = getAccessorDeclaration.getTypeParameters();
 
@@ -2488,7 +2488,7 @@ module TypeScript {
         public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
             var declKind = setAccessorDeclaration.getKind();
             var declFlags = setAccessorDeclaration.getFlags();
-            var funcDeclAST = <FuncDecl>this.semanticInfo.getASTForDecl(setAccessorDeclaration);
+            var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(setAccessorDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) != 0;
 
@@ -2653,7 +2653,7 @@ module TypeScript {
             setAccessorDeclaration.setSignatureSymbol(signature);
 
             // PULLTODO: setter should not have a parameters
-            this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(setAccessorDeclaration), setterTypeSymbol, signature);
+            this.bindParameterSymbols(<FunctionDeclaration>this.semanticInfo.getASTForDecl(setAccessorDeclaration), setterTypeSymbol, signature);
 
             var typeParameters = setAccessorDeclaration.getTypeParameters();
 

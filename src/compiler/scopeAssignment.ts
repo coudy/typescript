@@ -28,7 +28,7 @@ module TypeScript {
         context: AssignScopeContext,
         type: Type,
         classType: Type,
-        fnc: FuncDecl) {
+        fnc: FunctionDeclaration) {
 
         var chain = new ScopeChain(null, context.scopeChain, scope);
         chain.thisType = type;
@@ -186,7 +186,7 @@ module TypeScript {
     }
 
     export function preAssignFuncDeclScopes(ast: AST, context: AssignScopeContext) {
-        var funcDecl = <FuncDecl>ast;
+        var funcDecl = <FunctionDeclaration>ast;
 
         var container: Symbol = null;
         var localContainer: Symbol = null;
@@ -219,8 +219,8 @@ module TypeScript {
             else {
                 if (context.scopeChain.previous.scope.container &&
                     context.scopeChain.previous.scope.container.declAST &&
-                    context.scopeChain.previous.scope.container.declAST.nodeType === NodeType.FuncDecl &&
-                    (<FuncDecl>context.scopeChain.previous.scope.container.declAST).isConstructor) {
+                    context.scopeChain.previous.scope.container.declAST.nodeType === NodeType.FunctionDeclaration &&
+                    (<FunctionDeclaration>context.scopeChain.previous.scope.container.declAST).isConstructor) {
 
                         // if the parent is the class constructor, use the constructor scope
                     parentScope = instType.constructorScope;
@@ -248,7 +248,7 @@ module TypeScript {
             }
 
             var funcScope = null;
-            var outerFnc: FuncDecl = context.scopeChain.fnc;
+            var outerFnc: FunctionDeclaration = context.scopeChain.fnc;
             var nameText = funcDecl.name ? funcDecl.name.text : null;
 
             if (isStatic) {
@@ -285,7 +285,7 @@ module TypeScript {
             if (!funcDecl.accessorSymbol && 
                 (funcDecl.getFunctionFlags() & FunctionFlags.ClassMethod) &&
                 container && 
-                ((!fgSym || fgSym.declAST.nodeType != NodeType.FuncDecl) && funcDecl.isAccessor()) || 
+                ((!fgSym || fgSym.declAST.nodeType != NodeType.FunctionDeclaration) && funcDecl.isAccessor()) || 
                     (fgSym && fgSym.isAccessor())) 
             {
                 funcDecl.accessorSymbol = context.typeFlow.checker.createAccessorSymbol(funcDecl, fgSym, container.getType(), (funcDecl.isMethod() && isStatic), true, funcScope, container);
@@ -417,7 +417,7 @@ module TypeScript {
             else if (ast.nodeType === NodeType.WithStatement) {
                 preAssignWithScopes(ast, context);
             }
-            else if (ast.nodeType === NodeType.FuncDecl) {
+            else if (ast.nodeType === NodeType.FunctionDeclaration) {
                 preAssignFuncDeclScopes(ast, context);
             }
             else if (ast.nodeType === NodeType.CatchClause) {
@@ -454,8 +454,8 @@ module TypeScript {
             else if (ast.nodeType === NodeType.WithStatement) {
                 popAssignScope(context);
             }
-            else if (ast.nodeType === NodeType.FuncDecl) {
-                var funcDecl = <FuncDecl>ast;
+            else if (ast.nodeType === NodeType.FunctionDeclaration) {
+                var funcDecl = <FunctionDeclaration>ast;
                 if ((!funcDecl.isConstructor || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod)) /*&& !funcDecl.isOverload*/) {
                     popAssignScope(context);
                 }

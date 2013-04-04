@@ -102,7 +102,7 @@ module TypeScript {
         public globalThisCapturePrologueEmitted = false;
         public extendsPrologueEmitted = false;
         public thisClassNode: TypeDeclaration = null;
-        public thisFnc: FuncDecl = null;
+        public thisFnc: FunctionDeclaration = null;
         public moduleDeclList: ModuleDeclaration[] = [];
         public moduleName = "";
         public emitState = new EmitState();
@@ -433,7 +433,7 @@ module TypeScript {
 
         public emitCall(callNode: CallExpression, target: AST, args: ASTList) {
             if (!this.emitSuperCall(callNode)) {
-                if (target.nodeType === NodeType.FuncDecl) {
+                if (target.nodeType === NodeType.FunctionDeclaration) {
                     this.writeToOutput("(");
                 }
                 if (callNode.target.nodeType === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
@@ -442,7 +442,7 @@ module TypeScript {
                 else {
                     this.emitJavascript(target, SyntaxKind.OpenParenToken, false);
                 }
-                if (target.nodeType === NodeType.FuncDecl) {
+                if (target.nodeType === NodeType.FunctionDeclaration) {
                     this.writeToOutput(")");
                 }
                 this.recordSourceMappingStart(args);
@@ -501,7 +501,7 @@ module TypeScript {
             this.recordSourceMappingEnd(classDecl);
         }
 
-        public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
+        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: bool, isMember: bool,
         hasSelfRef: bool, classDecl: TypeDeclaration) {
 
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
@@ -977,7 +977,7 @@ module TypeScript {
             this.writeToOutput(text);
         }
 
-        public emitJavascriptFunction(funcDecl: FuncDecl) {
+        public emitJavascriptFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
             }
@@ -1516,7 +1516,7 @@ module TypeScript {
                     var emitNode = list.members[i];
 
                     var isStaticDecl =
-                        (emitNode.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
+                        (emitNode.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
                         (emitNode.nodeType === NodeType.VarDecl && hasFlag((<VarDecl>emitNode).getVarFlags(), VariableFlags.Static))
 
                     if (onlyStatics ? !isStaticDecl : isStaticDecl) {
@@ -1541,7 +1541,7 @@ module TypeScript {
                              ((((<VarDecl>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                              (((<VarDecl>emitNode).init) === null)) && this.varListCount() >= 0) &&
                              (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
-                             (emitNode.nodeType != NodeType.FuncDecl)) {
+                             (emitNode.nodeType != NodeType.FunctionDeclaration)) {
                         this.writeLineToOutput("");
                     }
                 }
@@ -1566,7 +1566,7 @@ module TypeScript {
                     (!((ast.nodeType === NodeType.VarDecl) &&
                     ((((<VarDecl>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                     (((<VarDecl>ast).init) === null)) && this.varListCount() >= 0) &&
-                    ((ast.nodeType != NodeType.FuncDecl) ||
+                    ((ast.nodeType != NodeType.FunctionDeclaration) ||
                     (this.emitState.container != EmitContainer.Constructor))) {
 
                     this.emitIndent();
@@ -1576,7 +1576,7 @@ module TypeScript {
             ast.emit(this, tokenId, startLine);
         }
 
-        public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: bool) {
+        public emitPropertyAccessor(funcDecl: FunctionDeclaration, className: string, isProto: bool) {
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                 var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
                 if (accessorSymbol.getGetter()) {
@@ -1617,8 +1617,8 @@ module TypeScript {
         }
 
         public emitPrototypeMember(member: AST, className: string) {
-            if (member.nodeType === NodeType.FuncDecl) {
-                var funcDecl = <FuncDecl>member;
+            if (member.nodeType === NodeType.FunctionDeclaration) {
+                var funcDecl = <FunctionDeclaration>member;
                 if (funcDecl.isAccessor()) {
                     this.emitPropertyAccessor(funcDecl, className, true);
                 }
@@ -1752,8 +1752,8 @@ module TypeScript {
 
                     var memberDecl: AST = classDecl.members.members[j];
 
-                    if (memberDecl.nodeType === NodeType.FuncDecl) {
-                        var fn = <FuncDecl>memberDecl;
+                    if (memberDecl.nodeType === NodeType.FunctionDeclaration) {
+                        var fn = <FunctionDeclaration>memberDecl;
 
                         if (hasFlag(fn.getFunctionFlags(), FunctionFlags.Method) && !fn.isSignature()) {
                             if (!hasFlag(fn.getFunctionFlags(), FunctionFlags.Static)) {

@@ -25,7 +25,7 @@ module TypeScript {
 
     // For lexically-scoped constructs
     export function aLexicallyEnclosesB(a: Symbol, b: Symbol) {
-        if (a.declAST && b && b.declAST && a.declAST.nodeType === NodeType.FuncDecl) {
+        if (a.declAST && b && b.declAST && a.declAST.nodeType === NodeType.FunctionDeclaration) {
             return a.declAST.minChar <= b.declAST.minChar && a.declAST.limChar >= b.declAST.limChar;
         }
         else {
@@ -230,10 +230,10 @@ module TypeScript {
             }
             else {
                 // field or method
-                var isFunction = this.declAST && this.declAST.nodeType === NodeType.FuncDecl;
-                var isMethod = isFunction && (<FuncDecl>this.declAST).isMethod();
-                var isStaticFunction = isFunction && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FunctionFlags.Static)
-                var isPrivateMethod = isMethod && hasFlag((<FuncDecl>this.declAST).getFunctionFlags(), FunctionFlags.Private);
+                var isFunction = this.declAST && this.declAST.nodeType === NodeType.FunctionDeclaration;
+                var isMethod = isFunction && (<FunctionDeclaration>this.declAST).isMethod();
+                var isStaticFunction = isFunction && hasFlag((<FunctionDeclaration>this.declAST).getFunctionFlags(), FunctionFlags.Static)
+                var isPrivateMethod = isMethod && hasFlag((<FunctionDeclaration>this.declAST).getFunctionFlags(), FunctionFlags.Private);
                 var isAlias = this.isType() && (<TypeSymbol>this).aliasLink;
 
                 if (this.isMember() || isMethod || isStaticFunction || isAlias) {
@@ -411,7 +411,7 @@ module TypeScript {
         }
 
         public isClass() { return this.instanceType != null; }
-        public isFunction() { return this.declAST != null && this.declAST.nodeType === NodeType.FuncDecl; }
+        public isFunction() { return this.declAST != null && this.declAST.nodeType === NodeType.FunctionDeclaration; }
 
         public specializeType(pattern: Type, replacement: Type, checker: TypeChecker): Symbol {
             if (this.type === pattern) {

@@ -659,9 +659,9 @@ module TypeScript {
                     return this.resolveInterfaceDeclaration(<TypeDeclaration>declAST, context);
                 case NodeType.ClassDeclaration:
                     return this.resolveClassDeclaration(<ClassDeclaration>declAST, context);
-                case NodeType.FuncDecl:
+                case NodeType.FunctionDeclaration:
                     {
-                        var funcDecl = <FuncDecl>declAST;
+                        var funcDecl = <FunctionDeclaration>declAST;
 
                         if (funcDecl.isGetAccessor()) {
                             return this.resolveGetAccessorDeclaration(funcDecl, context);
@@ -670,7 +670,7 @@ module TypeScript {
                             return this.resolveSetAccessorDeclaration(funcDecl, context);
                         }
                         else {
-                            return this.resolveFunctionDeclaration(<FuncDecl>declAST, context);
+                            return this.resolveFunctionDeclaration(<FunctionDeclaration>declAST, context);
                         }
                     }
                 case NodeType.VarDecl:
@@ -1034,7 +1034,7 @@ module TypeScript {
             return importDeclSymbol;
         }
 
-        public resolveFunctionTypeSignature(funcDeclAST: FuncDecl, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var funcDeclSymbol = <PullFunctionTypeSymbol>this.getSymbolForAST(funcDeclAST, context, this.unitPath);
 
             if (!funcDeclSymbol) {
@@ -1260,9 +1260,9 @@ module TypeScript {
             }
 
                 // a function
-            else if (typeRef.term.nodeType == NodeType.FuncDecl) {
+            else if (typeRef.term.nodeType == NodeType.FunctionDeclaration) {
 
-                typeDeclSymbol = this.resolveFunctionTypeSignature(<FuncDecl>typeRef.term, enclosingDecl, context);
+                typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>typeRef.term, enclosingDecl, context);
             }
 
                 // an interface
@@ -1513,14 +1513,14 @@ module TypeScript {
             return typeParameterSymbol;
         }
 
-        public resolveFunctionBodyReturnTypes(funcDeclAST: FuncDecl, signature: PullSignatureSymbol, useContextualType: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveFunctionBodyReturnTypes(funcDeclAST: FunctionDeclaration, signature: PullSignatureSymbol, useContextualType: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var returnStatements: ReturnStatement[] = [];
 
             var preFindReturnExpressionTypes = function (ast: AST, parent: AST, walker: IAstWalker) {
                 var go = true;
 
                 switch (ast.nodeType) {
-                    case NodeType.FuncDecl:
+                    case NodeType.FunctionDeclaration:
                         // don't recurse into a function decl - we don't want to confuse a nested
                         // return type with the top-level function's return type
                         go = false;
@@ -1596,7 +1596,7 @@ module TypeScript {
             }
         }
 
-        public resolveFunctionDeclaration(funcDeclAST: FuncDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
             var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
 
@@ -1717,7 +1717,7 @@ module TypeScript {
             return funcSymbol;
         }
 
-        public resolveGetAccessorDeclaration(funcDeclAST: FuncDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveGetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
             var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
@@ -1840,7 +1840,7 @@ module TypeScript {
             return accessorSymbol;
         }
 
-        public resolveSetAccessorDeclaration(funcDeclAST: FuncDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveSetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
             var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
@@ -1948,8 +1948,8 @@ module TypeScript {
                 case NodeType.ArgDecl:
                     return this.resolveDeclaration(ast, context, enclosingDecl);
 
-                case NodeType.FuncDecl:
-                    if (isTypedAssignment || ((<FuncDecl>ast).getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
+                case NodeType.FunctionDeclaration:
+                    if (isTypedAssignment || ((<FunctionDeclaration>ast).getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
                         return this.resolveStatementOrExpression(ast, isTypedAssignment, enclosingDecl, context);
                     }
                     else {
@@ -1980,9 +1980,9 @@ module TypeScript {
                         return this.resolveDottedNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
                     }
 
-                case NodeType.FuncDecl:
+                case NodeType.FunctionDeclaration:
                     {
-                        var funcDecl = <FuncDecl>expressionAST;
+                        var funcDecl = <FunctionDeclaration>expressionAST;
 
                         if (funcDecl.isGetAccessor()) {
                             return this.resolveGetAccessorDeclaration(funcDecl, context);
@@ -2515,7 +2515,7 @@ module TypeScript {
             return childTypeSymbol;
         }
 
-        public resolveFunctionExpression(funcDeclAST: FuncDecl, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveFunctionExpression(funcDeclAST: FunctionDeclaration, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var functionDecl = this.getDeclForAST(funcDeclAST);
             var funcDeclSymbol: PullSymbol = null;
@@ -2922,8 +2922,8 @@ module TypeScript {
                     }
 
                     // if operand 2 is a getter or a setter, we need to resolve it properly
-                    if (binex.operand2.nodeType == NodeType.FuncDecl) {
-                        var funcDeclAST = <FuncDecl>binex.operand2;
+                    if (binex.operand2.nodeType == NodeType.FunctionDeclaration) {
+                        var funcDeclAST = <FunctionDeclaration>binex.operand2;
 
                         if (funcDeclAST.isAccessor()) {
                             var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -3771,15 +3771,15 @@ module TypeScript {
                     break;
                 case PullElementKind.Method:
                 case PullElementKind.Function:
-                    var funcDecl = <FuncDecl>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
+                    var funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
                     this.resolveFunctionDeclaration(funcDecl, context);
                     break;
                 case PullElementKind.GetAccessor:
-                    funcDecl = <FuncDecl>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
+                    funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
                     this.resolveGetAccessorDeclaration(funcDecl, context);
                     break;
                 case PullElementKind.SetAccessor:
-                    funcDecl = <FuncDecl>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
+                    funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
                     this.resolveSetAccessorDeclaration(funcDecl, context);
                     break;
                 case PullElementKind.Property:
@@ -4774,17 +4774,17 @@ module TypeScript {
                     if (this.isAnyOrEquivalent(memberType)) {
                         continue;
                     }
-                    else if (args.members[j].nodeType == NodeType.FuncDecl) {
+                    else if (args.members[j].nodeType == NodeType.FunctionDeclaration) {
 
                         if (this.cachedFunctionInterfaceType && memberType == this.cachedFunctionInterfaceType) {
                             continue;
                         }
 
-                        argSym = this.resolveFunctionExpression(<FuncDecl>args.members[j], false, enclosingDecl, context);
+                        argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], false, enclosingDecl, context);
 
-                        if (!this.canApplyContextualTypeToFunction(memberType, <FuncDecl>args.members[j], true)) {
+                        if (!this.canApplyContextualTypeToFunction(memberType, <FunctionDeclaration>args.members[j], true)) {
                             // if it's just annotations that are blocking us, typecheck the function and add it to the list
-                            if (this.canApplyContextualTypeToFunction(memberType, <FuncDecl>args.members[j], false)) {
+                            if (this.canApplyContextualTypeToFunction(memberType, <FunctionDeclaration>args.members[j], false)) {
                                 if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                     break;
                                 }
@@ -4797,7 +4797,7 @@ module TypeScript {
                             //argSym.invalidate();
                             context.pushContextualType(memberType, true, null);
 
-                            argSym = this.resolveFunctionExpression(<FuncDecl>args.members[j], true, enclosingDecl, context);
+                            argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], true, enclosingDecl, context);
 
                             if (!this.sourceIsAssignableToTarget(argSym.getType(), memberType, context, comparisonInfo)) {
                                 if (comparisonInfo) {
@@ -4963,7 +4963,7 @@ module TypeScript {
             return { sig: best.signature, ambiguous: ambiguous };
         }
 
-        public canApplyContextualTypeToFunction(candidateType: PullTypeSymbol, funcDecl: FuncDecl, beStringent: bool): bool {
+        public canApplyContextualTypeToFunction(candidateType: PullTypeSymbol, funcDecl: FunctionDeclaration, beStringent: bool): bool {
 
             // in these cases, we do not attempt to apply a contextual type
             //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type

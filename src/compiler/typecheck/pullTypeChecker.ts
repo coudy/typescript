@@ -94,7 +94,7 @@ module TypeScript {
                 case NodeType.ArgDecl:
                     return this.typeCheckBoundDecl(ast, typeCheckContext);
 
-                case NodeType.FuncDecl:
+                case NodeType.FunctionDeclaration:
                     return this.typeCheckFunction(ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ClassDeclaration:
@@ -423,7 +423,7 @@ module TypeScript {
         // PULLTODO: split up into separate functions for constructors, indexers, expressions, signatures, etc.
         public typeCheckFunction(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
 
-            var funcDeclAST = <FuncDecl>ast;
+            var funcDeclAST = <FunctionDeclaration>ast;
 
             if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
                 return this.typeCheckConstructor(ast, typeCheckContext, inTypedAssignment);
@@ -488,7 +488,7 @@ module TypeScript {
         }
 
         public typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
-            var funcDeclAST = <FuncDecl>ast;
+            var funcDeclAST = <FunctionDeclaration>ast;
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -576,7 +576,7 @@ module TypeScript {
 
             var functionSymbol = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
 
-            var funcDeclAST = <FuncDecl>ast;
+            var funcDeclAST = <FunctionDeclaration>ast;
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
@@ -620,7 +620,7 @@ module TypeScript {
             // resolve the index signature, even though we won't be needing its type
             this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context);
 
-            var funcDeclAST = <FuncDecl>ast;
+            var funcDeclAST = <FunctionDeclaration>ast;
 
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
 
@@ -1623,7 +1623,7 @@ module TypeScript {
             this.context.postError(declAST.minChar, declAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl, true);
         }
 
-        private checkFunctionTypePrivacy(funcDeclAST: FuncDecl, inTypedAssignment: bool, typeCheckContext: PullTypeCheckContext) {
+        private checkFunctionTypePrivacy(funcDeclAST: FunctionDeclaration, inTypedAssignment: bool, typeCheckContext: PullTypeCheckContext) {
             if (inTypedAssignment || (funcDeclAST.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
                 return;
             }
@@ -1666,7 +1666,7 @@ module TypeScript {
             }
         }
 
-        private functionArgumentTypePrivacyErrorReporter(declAST: FuncDecl, argIndex: number, paramSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
+        private functionArgumentTypePrivacyErrorReporter(declAST: FunctionDeclaration, argIndex: number, paramSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
             var decl: PullDecl = this.resolver.getDeclForAST(declAST);
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -1741,7 +1741,7 @@ module TypeScript {
             }
         }
 
-        private functionReturnTypePrivacyErrorReporter(declAST: FuncDecl, funcReturnType: PullTypeSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
+        private functionReturnTypePrivacyErrorReporter(declAST: FunctionDeclaration, funcReturnType: PullTypeSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
             var decl: PullDecl = this.resolver.getDeclForAST(declAST);
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -1828,7 +1828,7 @@ module TypeScript {
                     var reportErrorOnReturnExpressions = (ast: AST, parent: AST, walker: IAstWalker) => {
                         var go = true;
                         switch (ast.nodeType) {
-                            case NodeType.FuncDecl:
+                            case NodeType.FunctionDeclaration:
                                 // don't recurse into a function decl - we don't want to confuse a nested
                                 // return type with the top-level function's return type
                                 go = false;

@@ -496,9 +496,9 @@ module TypeScript {
             }
 
             if (this.isClassInstance() || this.isClass()) {
-                if (this.symbol.declAST.nodeType === NodeType.FuncDecl) {
+                if (this.symbol.declAST.nodeType === NodeType.FunctionDeclaration) {
                     // Its a constructor - use the class declaration instead
-                    return (<FuncDecl>this.symbol.declAST).classDecl.getDocComments();
+                    return (<FunctionDeclaration>this.symbol.declAST).classDecl.getDocComments();
                 } else {
                     // Its a class without constructor
                     return this.symbol.getDocComments();

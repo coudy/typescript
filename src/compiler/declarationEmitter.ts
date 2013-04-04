@@ -360,7 +360,7 @@ module TypeScript {
             return false;
         }
 
-        private emitArgDecl(argDecl: ArgDecl, funcDecl: FuncDecl) {
+        private emitArgDecl(argDecl: ArgDecl, funcDecl: FunctionDeclaration) {
             this.emitDeclarationComments(argDecl, false);
             this.declFile.Write(argDecl.id.text);
             if (argDecl.isOptionalArg()) {
@@ -371,14 +371,14 @@ module TypeScript {
             }
         }
 
-        public isOverloadedCallSignature(funcDecl: FuncDecl) {
+        public isOverloadedCallSignature(funcDecl: FunctionDeclaration) {
             var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.fileName);
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getCallSignatures();
             return signatures && signatures.length > 1;
         }
 
-        public FuncDeclCallback(pre: bool, funcDecl: FuncDecl): bool {
+        public FunctionDeclarationCallback(pre: bool, funcDecl: FunctionDeclaration): bool {
             if (!pre) {
                 return false;
             }
@@ -405,7 +405,7 @@ module TypeScript {
                 Debug.assert(callSignatures && callSignatures.length > 1);
                 var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
                 var firstSignatureDecl = firstSignature.getDeclarations()[0];
-                var firstFuncDecl = <FuncDecl>PullHelpers.getASTForDecl(firstSignatureDecl, this.semanticInfoChain);
+                var firstFuncDecl = <FunctionDeclaration>PullHelpers.getASTForDecl(firstSignatureDecl, this.semanticInfoChain);
                 if (firstFuncDecl != funcDecl) {
                     return false;
                 }
@@ -536,7 +536,7 @@ module TypeScript {
             }
         }
 
-        private emitAccessorDeclarationComments(funcDecl: FuncDecl) {
+        private emitAccessorDeclarationComments(funcDecl: FunctionDeclaration) {
             if (!this.emitOptions.compilationSettings.emitComments) {
                 return;
             }
@@ -552,7 +552,7 @@ module TypeScript {
             this.writeDeclarationComments(comments);
         }
 
-        public emitPropertyAccessorSignature(funcDecl: FuncDecl) {
+        public emitPropertyAccessorSignature(funcDecl: FunctionDeclaration) {
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) && accessorSymbol.getGetter()) {
                 // Setter is being used to emit the type info. 
@@ -572,7 +572,7 @@ module TypeScript {
             return false;
         }
 
-        private emitClassMembersFromConstructorDefinition(funcDecl: FuncDecl) {
+        private emitClassMembersFromConstructorDefinition(funcDecl: FunctionDeclaration) {
             if (funcDecl.arguments) {
                 var argsLen = funcDecl.arguments.members.length; if (funcDecl.variableArgList) { argsLen--; }
 

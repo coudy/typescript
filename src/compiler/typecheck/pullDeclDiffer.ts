@@ -189,8 +189,8 @@ module TypeScript {
                     return this.variableDeclarationIsEquivalent(<VarDecl>oldAST, <VarDecl>newAST);
                 case NodeType.TypeParameter:
                     return this.typeParameterIsEquivalent(<TypeParameter>oldAST, <TypeParameter>newAST);
-                case NodeType.FuncDecl:
-                    return this.functionDeclarationIsEquivalent(<FuncDecl>oldAST, <FuncDecl>newAST);
+                case NodeType.FunctionDeclaration:
+                    return this.functionDeclarationIsEquivalent(<FunctionDeclaration>oldAST, <FunctionDeclaration>newAST);
                 case NodeType.Script:
                     return this.scriptIsEquivalent(<Script>oldAST, <Script>newAST);
                 default:
@@ -249,7 +249,7 @@ module TypeScript {
             return this.boundDeclarationIsEquivalent(decl1, decl2);
         }
 
-        private functionDeclarationIsEquivalent(decl1: FuncDecl, decl2: FuncDecl): bool {
+        private functionDeclarationIsEquivalent(decl1: FunctionDeclaration, decl2: FunctionDeclaration): bool {
             if (decl1.hint === decl2.hint &&
                 decl1.getFunctionFlags() === decl2.getFunctionFlags() &&
                 decl1.variableArgList === decl2.variableArgList &&
