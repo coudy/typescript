@@ -1266,7 +1266,7 @@ module TypeScript {
             }
 
             this.currentScript = script;
-            script.bod = <ASTList>this.typeCheck(script.bod);
+            script.moduleElements = <ASTList>this.typeCheck(script.moduleElements);
             this.currentScript = null;
             return script;
         }

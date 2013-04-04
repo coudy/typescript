@@ -460,8 +460,8 @@ module TypeScript {
         }
 
         export function walkScriptChildren(preAst: Script, parent: AST, walker: IAstWalker): void {
-            if (preAst.bod) {
-                preAst.bod = <ASTList>walker.walk(preAst.bod, preAst);
+            if (preAst.moduleElements) {
+                preAst.moduleElements = <ASTList>walker.walk(preAst.moduleElements, preAst);
             }
         }
 

@@ -215,7 +215,7 @@ module TypeScript {
         public isBodyOfScript(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Script &&
-                 (<TypeScript.Script>this.asts[this.top - 1]).bod === this.asts[this.top - 0];
+                 (<TypeScript.Script>this.asts[this.top - 1]).moduleElements === this.asts[this.top - 0];
         }
 
         public isBodyOfSwitch(): bool {

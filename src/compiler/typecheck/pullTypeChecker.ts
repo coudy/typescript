@@ -312,9 +312,9 @@ module TypeScript {
 
             PullTypeChecker.globalPullTypeCheckPhase++;
 
-            if (script.bod.members) {
-                for (var i = 0; i < script.bod.members.length; i++) {
-                    this.typeCheckAST(script.bod.members[i], typeCheckContext);
+            if (script.moduleElements.members) {
+                for (var i = 0; i < script.moduleElements.members.length; i++) {
+                    this.typeCheckAST(script.moduleElements.members[i], typeCheckContext);
                 }
             }
 

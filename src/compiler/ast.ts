@@ -1190,7 +1190,7 @@ module TypeScript {
     export var unknownLocationInfo = new LocationInfo("unknown", null);
 
     export class Script extends AST {
-        public bod: ASTList = null;
+        public moduleElements: ASTList = null;
         public locationInfo: LocationInfo = null;
         public referencedFiles: IFileReference[] = [];
         public requiresExtendsBlock = false;
@@ -1207,7 +1207,6 @@ module TypeScript {
         }
 
         constructor() {
-            // new Identifier("script")
             super(NodeType.Script);
         }
 
@@ -1224,14 +1223,14 @@ module TypeScript {
                 return this.cachedEmitRequired;
             }
 
-            if (!this.isDeclareFile && this.bod) {
-                if (this.bod.members.length === 0) {
+            if (!this.isDeclareFile && this.moduleElements) {
+                if (this.moduleElements.members.length === 0) {
                     // allow empty files that are not declare files 
                     return this.setCachedEmitRequired(true);
                 }
 
-                for (var i = 0, len = this.bod.members.length; i < len; i++) {
-                    var stmt = this.bod.members[i];
+                for (var i = 0, len = this.moduleElements.members.length; i < len; i++) {
+                    var stmt = this.moduleElements.members[i];
                     if (stmt.nodeType === NodeType.ModuleDeclaration) {
                         if (!hasFlag((<ModuleDeclaration>stmt).getModuleFlags(), ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
@@ -1258,7 +1257,7 @@ module TypeScript {
                 }
 
                 if (emitOptions.compilationSettings.emitComments &&
-                    ((this.bod.preComments && this.bod.preComments.length > 0) || (this.bod.postComments && this.bod.postComments.length > 0))) {
+                    ((this.moduleElements.preComments && this.moduleElements.preComments.length > 0) || (this.moduleElements.postComments && this.moduleElements.postComments.length > 0))) {
                     return this.setCachedEmitRequired(true);
                 }
             }
@@ -1267,7 +1266,7 @@ module TypeScript {
 
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
             if (this.emitRequired(emitter.emitOptions)) {
-                emitter.emitJavascriptList(this.bod, null, SyntaxKind.SemicolonToken, true, false, false, true, this.requiresExtendsBlock);
+                emitter.emitJavascriptList(this.moduleElements, null, SyntaxKind.SemicolonToken, true, false, false, true, this.requiresExtendsBlock);
             }
         }
     }

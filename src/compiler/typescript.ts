@@ -277,7 +277,7 @@ module TypeScript {
             }
 
             // If its already a declare file or is resident or does not contain body 
-            if (!!script && (script.isDeclareFile || script.bod === null)) {
+            if (!!script && (script.isDeclareFile || script.moduleElements === null)) {
                 return false;
             }
 
