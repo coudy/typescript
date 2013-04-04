@@ -116,6 +116,8 @@ module TypeScript {
 
         public updateTC = false;
 
+        public parseOnly = false;
+
         public setStyleOptions(str: string) {
             this.styleSettings.parseOptions(str);
         }

@@ -184,7 +184,7 @@ class BatchCompiler {
             }
         }
 
-        if (anySyntacticErrors) {
+        if (anySyntacticErrors || this.compilationSettings.parseOnly) {
             return true;
         }
 
@@ -497,6 +497,14 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.updateTC = true;
+            }
+        });
+
+        opts.flag('parseonly', {
+            usage: 'Parse the source and then exit',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.parseOnly = true;
             }
         });
 

@@ -3031,13 +3031,13 @@ module TypeScript {
             var elements = <ASTList>arrayLit.operand;
             var elementType = this.semanticInfoChain.anyTypeSymbol;
             var elementTypes: PullTypeSymbol[] = [];
-            var targetElementType: PullTypeSymbol = null;
             var comparisonInfo = new TypeComparisonInfo();
+            var contextualType: PullTypeSymbol = null;
             comparisonInfo.onlyCaptureFirstError = true;
 
             // if the target type is an array type, extract the element type
             if (isTypedAssignment) {
-                var contextualType = context.getContextualType();
+                contextualType = context.getContextualType();
 
                 this.resolveDeclaredSymbol(contextualType, enclosingDecl, context);
 
@@ -3068,7 +3068,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => { return elementTypes[index]; }
                 }
 
-                elementType = this.findBestCommonType(elementType, targetElementType, collection, false, context, comparisonInfo);
+                elementType = this.findBestCommonType(elementType, contextualType, collection, false, context, comparisonInfo);
 
                 // if the array type is the undefined type, we should widen it to any
                 // if it's of the null type, only widen it if it's not in a nested array element, so as not to 
@@ -3082,11 +3082,11 @@ module TypeScript {
 
                 elementType = this.semanticInfoChain.anyTypeSymbol;
             }
-            else if (targetElementType) {
+            else if (contextualType) {
                 // for the case of zero-length 'any' arrays, we still want to set the contextual type, if
                 // need be
-                if (this.sourceIsAssignableToTarget(elementType, targetElementType, context)) {
-                    elementType = targetElementType;
+                if (this.sourceIsAssignableToTarget(elementType, contextualType, context)) {
+                    elementType = contextualType;
                 }
             }
 

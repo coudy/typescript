@@ -823,9 +823,11 @@ module TypeScript {
             var objectLitType = this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
             var memberDecls = <ASTList>objectLitAST.operand;
 
+            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+
             var contextualType = this.context.getContextualType();
             var memberType: PullTypeSymbol;
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
+            
 
             // PULLTODO: Contextually type the members
             if (memberDecls) {
@@ -953,7 +955,7 @@ module TypeScript {
             this.checkForResolutionError(returnType, enclosingDecl);
 
             this.context.pushContextualType(returnType, this.context.inProvisionalResolution(), null);
-            var exprType = this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext);
+            var exprType = this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext, true);
             this.context.popContextualType();
 
             var isAssignable = this.resolver.sourceIsAssignableToTarget(returnType, exprType, this.context, comparisonInfo) ||
