@@ -244,7 +244,7 @@ module TypeScript {
     }
 
     // interface properties
-    export function createPropertySignature(propertyDecl: VarDecl, context: DeclCollectionContext) {
+    export function createPropertySignature(propertyDecl: VariableDeclarator, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Public;
         var parent = context.getParent();
         var declType = parent.getKind() == PullElementKind.Enum ? PullElementKind.EnumMember : PullElementKind.Property;
@@ -281,7 +281,7 @@ module TypeScript {
     }
 
     // class member variables
-    export function createMemberVariableDeclaration(memberDecl: VarDecl, context: DeclCollectionContext) {
+    export function createMemberVariableDeclaration(memberDecl: VariableDeclarator, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Property;
 
@@ -320,7 +320,7 @@ module TypeScript {
         return false;
     }
 
-    export function createVariableDeclaration(varDecl: VarDecl, context: DeclCollectionContext) {
+    export function createVariableDeclaration(varDecl: VariableDeclarator, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
 
@@ -357,7 +357,7 @@ module TypeScript {
     }
 
     export function preCollectVarDecls(ast: AST, parentAST: AST, context: DeclCollectionContext) {
-        var varDecl = <VarDecl>ast;
+        var varDecl = <VariableDeclarator>ast;
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
         var isProperty = false;
@@ -886,7 +886,7 @@ module TypeScript {
         else if (ast.nodeType == NodeType.ArgDecl) {
             go = preCollectParameterDecl(<ArgDecl>ast, parentAST, context);
         }
-        else if (ast.nodeType == NodeType.VarDecl) {
+        else if (ast.nodeType == NodeType.VariableDeclarator) {
             go = preCollectVarDecls(ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.FunctionDeclaration) {
@@ -1028,7 +1028,7 @@ module TypeScript {
                 parentDecl.setFlags(parentDecl.getFlags() | initFlag);
             }
         }
-        else if (ast.nodeType == NodeType.VarDecl) { // PULLREVIEW: What if we just have a for loop in a module body?
+        else if (ast.nodeType == NodeType.VariableDeclarator) { // PULLREVIEW: What if we just have a for loop in a module body?
             parentDecl = context.getParent();
 
             if (parentDecl && isContainer(parentDecl)) {

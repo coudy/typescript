@@ -303,8 +303,8 @@ module TypeScript {
         }
 
         public getVarDeclFromSymbol() {
-            if (this.declAST != null && this.declAST.nodeType === NodeType.VarDecl) {
-                return <VarDecl>this.declAST;
+            if (this.declAST != null && this.declAST.nodeType === NodeType.VariableDeclarator) {
+                return <VariableDeclarator>this.declAST;
             }
 
             return null;

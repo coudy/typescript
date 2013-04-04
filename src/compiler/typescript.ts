@@ -712,7 +712,7 @@ module TypeScript {
 
             // these are used to track intermediate nodes so that we can properly apply contextual types
             var lambdaAST: FunctionDeclaration = null;
-            var declarationInitASTs: VarDecl[] = [];
+            var declarationInitASTs: VariableDeclarator[] = [];
             var objectLitAST: UnaryExpression = null;
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: UnaryExpression[] = [];
@@ -739,8 +739,8 @@ module TypeScript {
                             if (cur.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>cur).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
                                 lambdaAST = <FunctionDeclaration>cur;
                             }
-                            else if (cur.nodeType === NodeType.VarDecl) {
-                                declarationInitASTs[declarationInitASTs.length] = <VarDecl>cur;
+                            else if (cur.nodeType === NodeType.VariableDeclarator) {
+                                declarationInitASTs[declarationInitASTs.length] = <VariableDeclarator>cur;
                             }
                             else if (cur.nodeType === NodeType.ObjectLiteralExpression) {
                                 objectLitAST = <UnaryExpression>cur;
@@ -781,8 +781,8 @@ module TypeScript {
                             }
                             break;
 
-                        case NodeType.VarDecl:
-                            if (foundAST === (<VarDecl>previousAST).id) {
+                        case NodeType.VariableDeclarator:
+                            if (foundAST === (<VariableDeclarator>previousAST).id) {
                                 foundAST = previousAST;
                             }
                             break;
@@ -859,7 +859,7 @@ module TypeScript {
                     var isTypedAssignment = false;
 
                     if (declarationInitASTs.length) {
-                        var assigningAST: VarDecl;
+                        var assigningAST: VariableDeclarator;
                         var varSymbol: PullSymbol;
 
                         for (i = 0; i < declarationInitASTs.length; i++) {
@@ -1007,8 +1007,8 @@ module TypeScript {
 
                         break;
 
-                    case NodeType.VarDecl:
-                        var assigningAST = <VarDecl> current;
+                    case NodeType.VariableDeclarator:
+                        var assigningAST = <VariableDeclarator> current;
                         isTypedAssignment = (assigningAST.typeExpr != null);
 
                         this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
@@ -1095,7 +1095,7 @@ module TypeScript {
 
             var ast = path.ast();
 
-            if (ast.nodeType !== NodeType.ClassDeclaration && ast.nodeType !== NodeType.InterfaceDeclaration && ast.nodeType !== NodeType.ModuleDeclaration && ast.nodeType !== NodeType.FunctionDeclaration && ast.nodeType !== NodeType.VarDecl) {
+            if (ast.nodeType !== NodeType.ClassDeclaration && ast.nodeType !== NodeType.InterfaceDeclaration && ast.nodeType !== NodeType.ModuleDeclaration && ast.nodeType !== NodeType.FunctionDeclaration && ast.nodeType !== NodeType.VariableDeclarator) {
                 return null;
             }
 

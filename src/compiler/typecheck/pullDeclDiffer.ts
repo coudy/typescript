@@ -185,8 +185,8 @@ module TypeScript {
                     return this.interfaceDeclarationIsEquivalent(<InterfaceDeclaration>oldAST, <InterfaceDeclaration>newAST);
                 case NodeType.ArgDecl:
                     return this.argumentDeclarationIsEquivalent(<ArgDecl>oldAST, <ArgDecl>newAST);
-                case NodeType.VarDecl:
-                    return this.variableDeclarationIsEquivalent(<VarDecl>oldAST, <VarDecl>newAST);
+                case NodeType.VariableDeclarator:
+                    return this.variableDeclarationIsEquivalent(<VariableDeclarator>oldAST, <VariableDeclarator>newAST);
                 case NodeType.TypeParameter:
                     return this.typeParameterIsEquivalent(<TypeParameter>oldAST, <TypeParameter>newAST);
                 case NodeType.FunctionDeclaration:
@@ -245,7 +245,7 @@ module TypeScript {
                    decl1.isOptional === decl2.isOptional;
         }
 
-        private variableDeclarationIsEquivalent(decl1: VarDecl, decl2: VarDecl): bool {
+        private variableDeclarationIsEquivalent(decl1: VariableDeclarator, decl2: VariableDeclarator): bool {
             return this.boundDeclarationIsEquivalent(decl1, decl2);
         }
 

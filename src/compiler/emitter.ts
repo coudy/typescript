@@ -354,8 +354,8 @@ module TypeScript {
                 if (pullDecls.length == 1) {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
-                    if (ast && ast.nodeType == NodeType.VarDecl) {
-                        return { boundDecl: <VarDecl>ast, pullDecl: pullDecl };
+                    if (ast && ast.nodeType == NodeType.VariableDeclarator) {
+                        return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
                     }
                 }
             }
@@ -397,8 +397,8 @@ module TypeScript {
                 if (pullDecls.length == 1) {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
-                    if (ast && ast.nodeType == NodeType.VarDecl) {
-                        return { boundDecl: <VarDecl>ast, pullDecl: pullDecl };
+                    if (ast && ast.nodeType == NodeType.VariableDeclarator) {
+                        return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
                     }
                 }
             }
@@ -629,8 +629,8 @@ module TypeScript {
                 var nProps = this.thisClassNode.members.members.length;
 
                 for (i = 0; i < nProps; i++) {
-                    if (this.thisClassNode.members.members[i].nodeType === NodeType.VarDecl) {
-                        var varDecl = <VarDecl>this.thisClassNode.members.members[i];
+                    if (this.thisClassNode.members.members[i].nodeType === NodeType.VariableDeclarator) {
+                        var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
                         if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                             this.emitIndent();
                             this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
@@ -986,7 +986,7 @@ module TypeScript {
             }
         }
 
-        public emitAmbientVarDecl(varDecl: VarDecl) {
+        public emitAmbientVarDecl(varDecl: VariableDeclarator) {
             if (varDecl.init) {
                 this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
@@ -1025,7 +1025,7 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: SyntaxKind) {
+        public emitJavascriptVarDecl(varDecl: VariableDeclarator, tokenId: SyntaxKind) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.locationInfo.fileName);
             this.pushDecl(pullDecl);
             if ((varDecl.getVarFlags() & VariableFlags.Ambient) === VariableFlags.Ambient) {
@@ -1387,8 +1387,8 @@ module TypeScript {
             var nProps = this.thisClassNode.members.members.length;
 
             for (var iMember = 0; iMember < nProps; iMember++) {
-                if (this.thisClassNode.members.members[iMember].nodeType === NodeType.VarDecl) {
-                    var varDecl = <VarDecl>this.thisClassNode.members.members[iMember];
+                if (this.thisClassNode.members.members[iMember].nodeType === NodeType.VariableDeclarator) {
+                    var varDecl = <VariableDeclarator>this.thisClassNode.members.members[iMember];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
                         this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
@@ -1435,7 +1435,7 @@ module TypeScript {
 
                     var isStaticDecl =
                         (emitNode.nodeType === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>emitNode).getFunctionFlags(), FunctionFlags.Static)) ||
-                        (emitNode.nodeType === NodeType.VarDecl && hasFlag((<VarDecl>emitNode).getVarFlags(), VariableFlags.Static))
+                        (emitNode.nodeType === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>emitNode).getVarFlags(), VariableFlags.Static))
 
                     if (onlyStatics ? !isStaticDecl : isStaticDecl) {
                         continue;
@@ -1455,9 +1455,9 @@ module TypeScript {
                              (emitNode.nodeType !== NodeType.ReturnStatement) &&
                              (emitNode.nodeType != NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
-                             (!((emitNode.nodeType === NodeType.VarDecl) &&
-                             ((((<VarDecl>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                             (((<VarDecl>emitNode).init) === null)) && this.varListCount() >= 0) &&
+                             (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
+                             ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
+                             (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0) &&
                              (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
                              (emitNode.nodeType != NodeType.FunctionDeclaration)) {
                         this.writeLineToOutput("");
@@ -1481,9 +1481,9 @@ module TypeScript {
             // REVIEW: simplify rules for indenting
             if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) && (ast.nodeType != NodeType.Block)) {
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
-                    (!((ast.nodeType === NodeType.VarDecl) &&
-                    ((((<VarDecl>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
-                    (((<VarDecl>ast).init) === null)) && this.varListCount() >= 0) &&
+                    (!((ast.nodeType === NodeType.VariableDeclarator) &&
+                    ((((<VariableDeclarator>ast).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
+                    (((<VariableDeclarator>ast).init) === null)) && this.varListCount() >= 0) &&
                     ((ast.nodeType != NodeType.FunctionDeclaration) ||
                     (this.emitState.container != EmitContainer.Constructor))) {
 
@@ -1548,8 +1548,8 @@ module TypeScript {
                     this.writeLineToOutput(";");
                 }
             }
-            else if (member.nodeType === NodeType.VarDecl) {
-                var varDecl = <VarDecl>member;
+            else if (member.nodeType === NodeType.VariableDeclarator) {
+                var varDecl = <VariableDeclarator>member;
 
                 if (varDecl.init) {
                     this.emitIndent();
@@ -1588,7 +1588,7 @@ module TypeScript {
                 var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
                 var baseNameDecl: AST = null;
                 var baseName: AST = null;
-                var varDecl: VarDecl = null;
+                var varDecl: VariableDeclarator = null;
 
                 if (hasBaseClass) {
                     this.writeLineToOutput(" = (function (_super) {");
@@ -1641,8 +1641,8 @@ module TypeScript {
 
                     // output initialized properties
                     for (i = 0; i < members.length; i++) {
-                        if (members[i].nodeType === NodeType.VarDecl) {
-                            varDecl = <VarDecl>members[i];
+                        if (members[i].nodeType === NodeType.VariableDeclarator) {
+                            varDecl = <VariableDeclarator>members[i];
                             if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                                 this.writeLineToOutput("");
                                 this.emitIndent();
@@ -1692,8 +1692,8 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (memberDecl.nodeType === NodeType.VarDecl) {
-                        varDecl = <VarDecl>memberDecl;
+                    else if (memberDecl.nodeType === NodeType.VariableDeclarator) {
+                        varDecl = <VariableDeclarator>memberDecl;
                         if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static)) {
 
                             if (varDecl.init) {

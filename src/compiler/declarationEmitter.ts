@@ -311,7 +311,7 @@ module TypeScript {
             }
         }
 
-        public VarDeclCallback(pre: bool, varDecl: VarDecl): bool {
+        public VariableDeclaratorCallback(pre: bool, varDecl: VariableDeclarator): bool {
             if (pre && this.canEmitSignature(ToDeclFlags(varDecl.getVarFlags()), false)) {
                 var interfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
@@ -711,10 +711,10 @@ module TypeScript {
             var membersLen = moduleDecl.members.members.length;
             for (var j = 1; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.members.members[j];
-                if (memberDecl.nodeType === NodeType.VarDecl) {
+                if (memberDecl.nodeType === NodeType.VariableDeclarator) {
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
-                    this.declFile.WriteLine((<VarDecl>memberDecl).id.text + ",");
+                    this.declFile.WriteLine((<VariableDeclarator>memberDecl).id.text + ",");
                 } else {
                     CompilerDiagnostics.assert(memberDecl.nodeType != NodeType.Asg, "We want to catch this");
                 }

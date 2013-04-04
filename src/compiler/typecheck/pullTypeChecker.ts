@@ -90,7 +90,7 @@ module TypeScript {
 
                 // decarations
 
-                case NodeType.VarDecl:
+                case NodeType.VariableDeclarator:
                 case NodeType.ArgDecl:
                     return this.typeCheckBoundDecl(ast, typeCheckContext);
 
@@ -1223,7 +1223,7 @@ module TypeScript {
 
             var rhsType = this.resolver.widenType(this.typeCheckAST(forInStatement.obj, typeCheckContext));
 
-            var varDecl = <VarDecl>forInStatement.lval;
+            var varDecl = <VariableDeclarator>forInStatement.lval;
 
             if (varDecl.typeExpr) {
                 this.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may not contain a type annotation", typeCheckContext.getEnclosingDecl());
@@ -1577,7 +1577,7 @@ module TypeScript {
         }
 
         private variablePrivacyErrorReporter(declSymbol: PullSymbol, typeSymbol: PullTypeSymbol, typeCheckContext: PullTypeCheckContext) {
-            var declAST = <VarDecl>this.resolver.getASTForSymbol(declSymbol);
+            var declAST = <VariableDeclarator>this.resolver.getASTForSymbol(declSymbol);
             var decl: PullDecl = this.resolver.getDeclForAST(declAST);
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 

@@ -529,7 +529,7 @@ module TypeScript {
 
     export function preCollectVarDeclTypes(ast: AST, parent: AST, context: TypeCollectionContext) {
         var scopeChain = context.scopeChain;
-        var varDecl = <VarDecl>ast;
+        var varDecl = <VariableDeclarator>ast;
         var isAmbient = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient);
         var isExported = hasFlag(varDecl.getVarFlags(), VariableFlags.Exported);
         var isGlobal = context.scopeChain.container === context.checker.gloMod;
@@ -834,7 +834,7 @@ module TypeScript {
         else if (ast.nodeType === NodeType.ArgDecl) {
             go = preCollectArgDeclTypes(ast, parent, context);
         }
-        else if (ast.nodeType === NodeType.VarDecl) {
+        else if (ast.nodeType === NodeType.VariableDeclarator) {
             go = preCollectVarDeclTypes(ast, parent, context);
         }
         else if (ast.nodeType === NodeType.FunctionDeclaration) {

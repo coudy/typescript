@@ -167,7 +167,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ParenthesizedExpression] = ChildrenWalkers.walkParenthesizedExpressionChildren;
             this.childrenWalkers[NodeType.FunctionDeclaration] = ChildrenWalkers.walkFuncDeclChildren;
             this.childrenWalkers[NodeType.Member] = ChildrenWalkers.walkBinaryExpressionChildren;
-            this.childrenWalkers[NodeType.VarDecl] = ChildrenWalkers.walkBoundDeclChildren;
+            this.childrenWalkers[NodeType.VariableDeclarator] = ChildrenWalkers.walkBoundDeclChildren;
             this.childrenWalkers[NodeType.ArgDecl] = ChildrenWalkers.walkBoundDeclChildren;
             this.childrenWalkers[NodeType.ReturnStatement] = ChildrenWalkers.walkReturnStatementChildren;
             this.childrenWalkers[NodeType.BreakStatement] = ChildrenWalkers.walkNone;
@@ -424,7 +424,7 @@ module TypeScript {
 
         export function walkCatchClauseChildren(preAst: CatchClause, parent: AST, walker: IAstWalker): void {
             if (preAst.param) {
-                preAst.param = <VarDecl>walker.walk(preAst.param, preAst);
+                preAst.param = <VariableDeclarator>walker.walk(preAst.param, preAst);
             }
 
             if (preAst.body) {

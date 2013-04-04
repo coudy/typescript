@@ -298,7 +298,7 @@ module TypeScript {
         public bindImportDeclaration(importDeclaration: PullDecl) {
             var declFlags = importDeclaration.getFlags();
             var declKind = importDeclaration.getKind();
-            var importDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(importDeclaration);
+            var importDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(importDeclaration);
 
             var isExported = false;
             var linkKind = SymbolLinkKind.PrivateMember;
@@ -977,7 +977,7 @@ module TypeScript {
         public bindVariableDeclarationToPullSymbol(variableDeclaration: PullDecl) {
             var declFlags = variableDeclaration.getFlags();
             var declKind = variableDeclaration.getKind();
-            var varDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(variableDeclaration);
+            var varDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(variableDeclaration);
 
             var isExported = false;
 
@@ -1203,7 +1203,7 @@ module TypeScript {
         public bindPropertyDeclarationToPullSymbol(propertyDeclaration: PullDecl) {
             var declFlags = propertyDeclaration.getFlags();
             var declKind = propertyDeclaration.getKind();
-            var propDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(propertyDeclaration);
+            var propDeclAST = <VariableDeclarator>this.semanticInfo.getASTForDecl(propertyDeclaration);
 
             var isStatic = false;
             var isOptional = false;

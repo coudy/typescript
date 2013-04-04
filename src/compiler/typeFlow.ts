@@ -83,7 +83,7 @@ module TypeScript {
                 if (cur === null) {
                     cur = null;
                 }
-                if (cur.nodeType === NodeType.VarDecl) {
+                if (cur.nodeType === NodeType.VariableDeclarator) {
                     var varDecl = <BoundDecl>cur;
                     if (varDecl.init /*|| hasFlag(varDecl.getVarFlags(), VariableFlags.AutoInit)*/) {
                         defSym(varDecl.sym, context);
@@ -98,7 +98,7 @@ module TypeScript {
                                 return cur;
                             }
                         }
-                        else if (parent.nodeType === NodeType.VarDecl) {
+                        else if (parent.nodeType === NodeType.VariableDeclarator) {
                             var parentDecl = <BoundDecl>parent;
                             if (parentDecl.id === cur) {
                                 return cur;
@@ -796,7 +796,7 @@ module TypeScript {
         }
 
         public inScopeTypeCheckDecl(ast: AST) {
-            if (ast.nodeType === NodeType.VarDecl || ast.nodeType === NodeType.ArgDecl) {
+            if (ast.nodeType === NodeType.VariableDeclarator || ast.nodeType === NodeType.ArgDecl) {
                 this.inScopeTypeCheckBoundDecl(<BoundDecl>ast);
             }
             else if (ast.nodeType === NodeType.FunctionDeclaration) {
@@ -898,7 +898,7 @@ module TypeScript {
             }
         }
 
-        public typeCheckBoundDecl(varDecl: BoundDecl): VarDecl {
+        public typeCheckBoundDecl(varDecl: BoundDecl): VariableDeclarator {
             // symbol has already been added to the scope
             var infSym = <InferenceSymbol>varDecl.sym;
             if (infSym === null) {
@@ -1017,7 +1017,7 @@ module TypeScript {
             if (varDecl.sym && varDecl.sym.container) {
                 this.checkTypePrivacy(varDecl.sym.getType(), varDecl.sym, (typeName: string, isModuleName: bool) => this.varPrivacyErrorReporter(varDecl, typeName, isModuleName));
             }
-            return <VarDecl>varDecl;
+            return <VariableDeclarator>varDecl;
         }
 
         private varPrivacyErrorReporter(varDecl: BoundDecl, typeName: string, isModuleName: bool) {
@@ -1175,7 +1175,7 @@ module TypeScript {
                         }
                     }
                     if (!this.checker.styleSettings.innerScopeDeclEscape) {
-                        if (infSym.declAST && (infSym.declAST.nodeType === NodeType.VarDecl)) {
+                        if (infSym.declAST && (infSym.declAST.nodeType === NodeType.VariableDeclarator)) {
                             //if (this.nestingLevel < (<VarDecl>infSym.declAST).nestingLevel) {
                             //    this.checker.errorReporter.styleError(ast, "Illegal reference to a variable defined in more nested scope");
                             //}
@@ -1717,7 +1717,7 @@ module TypeScript {
             var len = vars.members.length;
             var hasArgsDef = false;
             for (var i = 0; i < len; i++) {
-                var local = <VarDecl>vars.members[i];
+                var local = <VariableDeclarator>vars.members[i];
                 if (((local.sym === null) || (local.sym.kind() !== SymbolKind.Field))) {
                     var result: Symbol = null;
                     if ((result = table.lookup(local.id.text)) === null) {
@@ -3074,9 +3074,9 @@ module TypeScript {
         public typeCheckForIn(forInStmt: ForInStatement): ForInStatement {
             forInStmt.obj = this.typeCheck(forInStmt.obj);
             forInStmt.lval = this.cast(this.typeCheck(forInStmt.lval), this.checker.stringType);
-            if (forInStmt.lval.nodeType === NodeType.VarDecl) {
+            if (forInStmt.lval.nodeType === NodeType.VariableDeclarator) {
 
-                var varDecl = <VarDecl>forInStmt.lval;
+                var varDecl = <VariableDeclarator>forInStmt.lval;
                 if (varDecl.typeExpr) {
                     this.checker.errorReporter.simpleError(varDecl, "Variable declarations for for/in expressions may not contain a type annotation");
                 }

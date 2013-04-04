@@ -1027,9 +1027,9 @@ module TypeScript {
         }
     }
 
-    export class VarDecl extends BoundDecl {
+    export class VariableDeclarator extends BoundDecl {
         constructor(id: Identifier) {
-            super(id, NodeType.VarDecl);
+            super(id, NodeType.VariableDeclarator);
         }
 
         public isExported() { return hasFlag(this.getVarFlags(), VariableFlags.Exported); }
@@ -1241,8 +1241,8 @@ module TypeScript {
                             return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType === NodeType.VarDecl) {
-                        if (!hasFlag((<VarDecl>stmt).getVarFlags(), VariableFlags.Ambient)) {
+                    else if (stmt.nodeType === NodeType.VariableDeclarator) {
+                        if (!hasFlag((<VariableDeclarator>stmt).getVarFlags(), VariableFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
@@ -2280,7 +2280,7 @@ module TypeScript {
     }
 
     export class CatchClause extends AST {
-        constructor(public param: VarDecl, public body: AST) {
+        constructor(public param: VariableDeclarator, public body: AST) {
             super(NodeType.CatchClause);
         }
 
@@ -2318,9 +2318,9 @@ module TypeScript {
         public typeCheck(typeFlow: TypeFlow) {
             var prevScope = typeFlow.scope;
             typeFlow.scope = this.containedScope;
-            this.param = <VarDecl>typeFlow.typeCheck(this.param);
+            this.param = <VariableDeclarator>typeFlow.typeCheck(this.param);
             var exceptVar = new ValueLocation();
-            var varSym = new VariableSymbol((<VarDecl>this.param).id.text,
+            var varSym = new VariableSymbol((<VariableDeclarator>this.param).id.text,
                                           this.param.minChar,
                                           typeFlow.checker.locationInfo.fileName,
                                           exceptVar);

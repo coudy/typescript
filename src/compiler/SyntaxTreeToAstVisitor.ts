@@ -884,7 +884,7 @@ module TypeScript {
             this.movePast(node.openBraceToken);
             var members = new ASTList();
 
-            var mapDecl = new VarDecl(new Identifier("_map"));
+            var mapDecl = new VariableDeclarator(new Identifier("_map"));
 
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Exported);
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Private);
@@ -939,7 +939,7 @@ module TypeScript {
                         this.setSpanExplicit(map.operand2, memberStart, this.position);
                     }
 
-                    var member = new VarDecl(memberName);
+                    var member = new VariableDeclarator(memberName);
                     member.init = memberValue;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                     member.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
@@ -1069,14 +1069,14 @@ module TypeScript {
             var varList = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
 
-            if (varList.nodeType === NodeType.VarDecl) {
-                varDecl = <VarDecl>varList;
+            if (varList.nodeType === NodeType.VariableDeclarator) {
+                varDecl = <VariableDeclarator>varList;
                 varList = new ASTList();
                 varList.append(varDecl);
             }
 
             for (var i = 0, n = varList.members.length; i < n; i++) {
-                var varDecl = <VarDecl>varList.members[i];
+                var varDecl = <VariableDeclarator>varList.members[i];
 
                 if (i === 0) {
                     varDecl.preComments = this.mergeComments(preComments, varDecl.preComments);
@@ -1127,7 +1127,7 @@ module TypeScript {
             return variableDecls;
         }
 
-        private visitVariableDeclarator(node: VariableDeclaratorSyntax): VarDecl {
+        private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1136,7 +1136,7 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            var result = new VarDecl(name);
+            var result = new VariableDeclarator(name);
             this.setSpan(result, start, node);
 
             result.typeExpr = typeExpr;
@@ -1936,11 +1936,11 @@ module TypeScript {
             return result;
         }
 
-        private visitPropertySignature(node: PropertySignatureSyntax): VarDecl {
+        private visitPropertySignature(node: PropertySignatureSyntax): VariableDeclarator {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: VarDecl = this.getAST(node);
+            var result: VariableDeclarator = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -1952,7 +1952,7 @@ module TypeScript {
                 this.movePast(node.questionToken);
                 var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-                result = new VarDecl(name);
+                result = new VariableDeclarator(name);
 
                 result.preComments = preComments;
                 result.typeExpr = typeExpr;
@@ -2265,11 +2265,11 @@ module TypeScript {
             return result;
         }
 
-        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VarDecl {
+        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: VarDecl = this.getAST(node);
+            var result: VariableDeclarator = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2286,7 +2286,7 @@ module TypeScript {
                 var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
                 this.movePast(node.semicolonToken);
 
-                result = new VarDecl(name);
+                result = new VariableDeclarator(name);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -2885,7 +2885,7 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 var block = node.block.accept(this);
 
-                var varDecl = new VarDecl(identifier);
+                var varDecl = new VariableDeclarator(identifier);
                 this.setSpanExplicit(varDecl, identifier.minChar, identifier.limChar);
 
                 varDecl.typeExpr = typeExpr;

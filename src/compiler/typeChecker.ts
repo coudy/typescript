@@ -987,7 +987,7 @@ module TypeScript {
             return functionGroupSymbol;
         }
 
-        public resolveVarDecl(varDecl: VarDecl, scope: SymbolScope): Symbol {
+        public resolveVarDecl(varDecl: VariableDeclarator, scope: SymbolScope): Symbol {
             var field = new ValueLocation();
             var fieldSymbol =
                 new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.fileName, true,
@@ -1090,8 +1090,8 @@ module TypeScript {
                                         funcDecl.type = (<TypeSymbol>propSym).type;
                                     }
                                     else {
-                                        id = (<VarDecl>propDecl).id;
-                                        propSym = this.resolveVarDecl(<VarDecl>propDecl, scope);
+                                        id = (<VariableDeclarator>propDecl).id;
+                                        propSym = this.resolveVarDecl(<VariableDeclarator>propDecl, scope);
 
                                         // Don't add the member if it was missing a name.  This 
                                         // generally just leads to cascading errors that make things

@@ -91,7 +91,7 @@ module TypeScript {
         ParenthesizedExpression,
         FunctionDeclaration,
         Member,
-        VarDecl,
+        VariableDeclarator,
         ArgDecl,
         ReturnStatement,
         BreakStatement,

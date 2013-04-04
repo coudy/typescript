@@ -674,7 +674,7 @@ module TypeScript {
                             return this.resolveFunctionDeclaration(<FunctionDeclaration>declAST, context);
                         }
                     }
-                case NodeType.VarDecl:
+                case NodeType.VariableDeclarator:
                 case NodeType.ArgDecl:
                     return this.resolveVariableDeclaration(<BoundDecl>declAST, context, enclosingDecl);
 
@@ -1945,7 +1945,7 @@ module TypeScript {
                 case NodeType.ModuleDeclaration:
                 case NodeType.InterfaceDeclaration:
                 case NodeType.ClassDeclaration:
-                case NodeType.VarDecl:
+                case NodeType.VariableDeclarator:
                 case NodeType.ArgDecl:
                     return this.resolveDeclaration(ast, context, enclosingDecl);
 

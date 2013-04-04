@@ -127,8 +127,8 @@ module TypeScript {
                 return false;
 
             return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.VarDecl) &&
-                ((<TypeScript.VarDecl>this.parent()).id === this.ast());
+                (this.parent().nodeType === TypeScript.NodeType.VariableDeclarator) &&
+                ((<TypeScript.VariableDeclarator>this.parent()).id === this.ast());
         }
 
         public isNameOfModule(): bool {
@@ -233,7 +233,7 @@ module TypeScript {
                     case TypeScript.NodeType.InterfaceDeclaration:
                     case TypeScript.NodeType.ModuleDeclaration:
                     case TypeScript.NodeType.FunctionDeclaration:
-                    case TypeScript.NodeType.VarDecl:
+                    case TypeScript.NodeType.VariableDeclarator:
                        return true;
                 }
             }
