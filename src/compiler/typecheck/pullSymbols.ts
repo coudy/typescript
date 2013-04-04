@@ -1175,7 +1175,11 @@ module TypeScript {
             return members;
         }
 
-        public isGeneric(): bool { return (this.typeParameterLinks && this.typeParameterLinks.length != 0) || this.hasGenericSignature; }
+        public isGeneric(): bool {
+            return (this.typeParameterLinks && this.typeParameterLinks.length != 0) ||
+                    this.hasGenericSignature ||
+                    (this.typeArguments && this.typeArguments.length);
+        }
 
         public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
 

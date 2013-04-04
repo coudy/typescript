@@ -4283,10 +4283,7 @@ module TypeScript {
                 return false;
             }
 
-            if (source.isArray() || target.isArray()) {
-                if (!(source.isArray() && target.isArray())) {
-                    return false;
-                }
+            if (source.isArray() && target.isArray()) {
                 comparisonCache[comboId] = false;
                 var ret = this.sourceIsRelatableToTarget(source.getElementType(), target.getElementType(), assignableTo, comparisonCache, context, comparisonInfo);
                 if (ret) {
