@@ -2240,7 +2240,7 @@ module TypeScript {
 
             // now for the name...
             // For classes, check the statics first below
-            if (!(lhs.isType() && lhs.isClass()) && !nameSymbol) {
+            if (!(lhs.isType() && (<PullTypeSymbol>lhs).isClass()) && !nameSymbol) {
                 nameSymbol = lhsType.findMember(rhsName);
             }
 
@@ -3279,8 +3279,19 @@ module TypeScript {
                 }
             }
 
+            var diagnostic: PullDiagnostic;
+
             // resolve the target
-            var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context).getType();
+            var target = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
+            
+
+            // don't be fooled
+            if (target == this.semanticInfoChain.anyTypeSymbol) {
+                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid call expression", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic); 
+            }
+
+            var targetSymbol = target.getType();
 
             if (this.isAnyOrEquivalent(targetSymbol)) {
                 this.setSymbolForAST(callEx, this.semanticInfoChain.anyTypeSymbol, context);
@@ -3288,7 +3299,6 @@ module TypeScript {
             }
 
             var isSuperCall = false;
-            var diagnostic: PullDiagnostic;
 
             if (callEx.target.nodeType == NodeType.SuperExpression) {
                 isSuperCall = true;
@@ -3484,6 +3494,14 @@ module TypeScript {
             // resolve the target
             var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
 
+            var diagnostic: PullDiagnostic;
+
+            // don't be fooled
+            if (targetSymbol == this.semanticInfoChain.anyTypeSymbol) {
+                diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Cannot invoke 'new' on this expression", enclosingDecl);
+                return this.getNewErrorTypeSymbol(diagnostic);
+            }
+
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.getType();
 
             var i = 0;
@@ -3505,8 +3523,6 @@ module TypeScript {
                 this.setSymbolForAST(callEx, targetTypeSymbol, context);
                 return targetTypeSymbol;
             }            
-
-            var diagnostic: PullDiagnostic;
 
             if (!constructSignatures.length) {
                 constructSignatures = targetTypeSymbol.getCallSignatures();
