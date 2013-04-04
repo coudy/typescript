@@ -2357,31 +2357,17 @@ module TypeScript {
             return typeNameSymbol;
         }
 
-        public resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {          
-
-            var nameAST = <Identifier> genericTypeAST.name;
-
-            if (nameAST.isMissing()) {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }  
-
-            var id = nameAST.text;
-
-            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
-
+        public resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            var genericTypeSymbol: PullTypeSymbol = null
             var diagnostic: PullDiagnostic;
 
-            if (enclosingDecl && !declPath.length) {
-                declPath = [enclosingDecl];
-            }
+            var prevSearchTypeSpace = context.searchTypeSpace;
+            context.searchTypeSpace = true;
+            genericTypeSymbol = this.resolveStatementOrExpression(genericTypeAST.name, false, enclosingDecl, context).getType();
+            context.searchTypeSpace = prevSearchTypeSpace;
 
-            var genericTypeSymbol: PullTypeSymbol = null
-
-            genericTypeSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
-
-            if (!genericTypeSymbol) {
-                diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find generic type '" + id + "'", enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
+            if (genericTypeSymbol.isError()) {
+                return genericTypeSymbol;
             }
 
             if (genericTypeSymbol.isResolving()) {
