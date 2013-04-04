@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
- 
+
 ///<reference path='diagnostics.ts' />
 ///<reference path='flags.ts' />
 ///<reference path='nodeTypes.ts' />
@@ -105,8 +105,8 @@ module TypeScript {
         public fileNameToSyntaxTree = new TypeScript.StringHashTable();
 
         constructor(public logger: ILogger = new NullLogger(),
-                    public settings: CompilationSettings = new CompilationSettings(),
-                    public diagnosticMessages: IDiagnosticMessages = null) {
+        public settings: CompilationSettings = new CompilationSettings(),
+        public diagnosticMessages: IDiagnosticMessages = null) {
             this.emitOptions = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
@@ -118,7 +118,7 @@ module TypeScript {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
-        public addSourceUnit(fileName: string, sourceText: IScriptSnapshot, referencedFiles: IFileReference[] = []): Script {
+        public addSourceUnit(fileName: string, sourceText: IScriptSnapshot, referencedFiles: IFileReference[]= []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
                 var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
                 var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
@@ -129,7 +129,7 @@ module TypeScript {
                 this.fileNameToScript.addOrUpdate(fileName, script);
 
                 return script;
-            });
+            } );
         }
 
         public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): void {
@@ -140,8 +140,8 @@ module TypeScript {
                 var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
 
                 var syntaxTree = textChangeRange === null
-                    ? TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName))
-                    : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
+                ? TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName))
+                : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
                 var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
 
@@ -150,7 +150,7 @@ module TypeScript {
                 this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
 
                 this.pullUpdateScript(oldScript, newScript);
-            });
+            } );
         }
 
         private isDynamicModuleCompilation() {
@@ -291,7 +291,7 @@ module TypeScript {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                     declarationEmitter = new DeclarationEmitter(
-                        declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
+                    declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
                 }
 
                 declarationEmitter.emitDeclarations(script);
@@ -360,8 +360,8 @@ module TypeScript {
         // Caller is responsible for closing the returned emitter.
         // May throw exceptions.
         private emitUnit(script: Script,
-                         inputOutputMapper?: (inputName: string, outputName: string) => void,
-                         emitter?: Emitter): Emitter {
+        inputOutputMapper?: (inputName: string, outputName: string) => void ,
+        emitter?: Emitter): Emitter {
 
             if (script.emitRequired(this.emitOptions)) {
                 var typeScriptFileName = script.locationInfo.fileName;
@@ -374,7 +374,7 @@ module TypeScript {
                     if (this.settings.mapSourceFiles) {
                         var sourceMapFileName = javaScriptFileName + SourceMapper.MapFileExtension;
                         emitter.setSourceMappings(new SourceMapper(typeScriptFileName, javaScriptFileName, sourceMapFileName, outFile,
-                            this.createFile(sourceMapFileName, /*isUTF8:*/ false), this.settings.emitFullSourceMapPath));
+                        this.createFile(sourceMapFileName, /*isUTF8:*/ false), this.settings.emitFullSourceMapPath));
                     }
 
                     if (inputOutputMapper) {
@@ -384,12 +384,12 @@ module TypeScript {
                 }
                 else if (this.settings.mapSourceFiles) {
                     emitter.setSourceMappings(new SourceMapper(typeScriptFileName, emitter.emittingFileName, emitter.sourceMapper.sourceMapFileName, emitter.outfile,
-                        emitter.sourceMapper.sourceMapOut, this.settings.emitFullSourceMapPath));
+                    emitter.sourceMapper.sourceMapOut, this.settings.emitFullSourceMapPath));
                 }
 
                 // Set location info
                 emitter.setUnit(script.locationInfo);
-                emitter.emitJavascript(script, TokenID.Comma, false);
+                emitter.emitJavascript(script, SyntaxKind.CommaToken, false);
             }
 
             return emitter;
@@ -488,18 +488,18 @@ module TypeScript {
             return true;
         }
 
-        public getSyntacticDiagnostics(fileName: string): IDiagnostic[]{
+        public getSyntacticDiagnostics(fileName: string): IDiagnostic[] {
             return this.fileNameToSyntaxTree.lookup(fileName).diagnostics();
         }
 
 
         /** Used for diagnostics in tests */
-        private getSyntaxTree(fileName: string): SyntaxTree{
+        private getSyntaxTree(fileName: string): SyntaxTree {
             return this.fileNameToSyntaxTree.lookup(fileName);
         }
 
-        public getSemanticDiagnostics(fileName: string): IDiagnostic[]{
-            return this.timeFunction("getSemanticDiagnostics - " + fileName +": ", () => {
+        public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
+            return this.timeFunction("getSemanticDiagnostics - " + fileName + ": ", () => {
                 var errors: IDiagnostic[] = [];
 
                 var unit = this.semanticInfoChain.getUnit(fileName);
@@ -515,7 +515,7 @@ module TypeScript {
                 }
 
                 return errors;
-            });
+            } );
         }
 
         public pullTypeCheck() {
@@ -576,7 +576,7 @@ module TypeScript {
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
-            });
+            } );
         }
 
         // returns 'true' if diffs were detected
@@ -655,14 +655,14 @@ module TypeScript {
                     }
 
                     var traceEndTime = new Date().getTime();
-                    
+
                     // Don't re-typecheck or re-report errors just yet
                     //this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
 
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
                 }
-            });
+            } );
         }
 
         public getSymbolOfDeclaration(decl: PullDecl) {
@@ -810,14 +810,14 @@ module TypeScript {
                     // since those will give us the right typing
                     var callExpression: CallExpression = null;
                     if ((foundAST.nodeType == NodeType.SuperExpression || foundAST.nodeType == NodeType.ThisExpression || foundAST.nodeType == NodeType.Name) &&
-                        resultASTs.length > 1) {
+                    resultASTs.length > 1) {
                         for (i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType === NodeType.Dot &&
-                                (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
+                            (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
                                 foundAST = resultASTs[i];
                             }
                             else if ((resultASTs[i].nodeType === NodeType.Call || resultASTs[i].nodeType === NodeType.New) &&
-                                (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
+                            (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
                                 callExpression = <CallExpression>resultASTs[i];
                                 break;
                             } else if (resultASTs[i].nodeType === NodeType.FuncDecl && (<FuncDecl>resultASTs[i]).name === resultASTs[i + 1]) {
@@ -934,7 +934,7 @@ module TypeScript {
                         callSignatures = signatureInfo.allSignatures;
                     }
                 } else if (!callSignatures && symbol &&
-                    (symbol.getKind() === PullElementKind.Method || symbol.getKind() == PullElementKind.Function)) {
+                (symbol.getKind() === PullElementKind.Method || symbol.getKind() == PullElementKind.Function)) {
                     var typeSym = symbol.getType()
                     if (typeSym) {
                         callSignatures = typeSym.getCallSignatures();
@@ -976,7 +976,7 @@ module TypeScript {
             this.pullTypeChecker.setUnit(semanticInfo.getPath());
 
             // Extract infromation from path
-            for (i = 0, n = path.count(); i < n; i++) {
+            for (i = 0 , n = path.count(); i < n; i++) {
                 var current = path.asts[i];
                 var decl = semanticInfo.getDeclForAST(current);
 
@@ -1041,7 +1041,7 @@ module TypeScript {
             if (path.ast().nodeType === NodeType.Name && path.count() > 1) {
                 for (i = path.count() - 1; i >= 0; i--) {
                     if (path.asts[path.top - 1].nodeType === NodeType.Dot &&
-                        (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
+                    (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
                         path.pop();
                     }
                     else {
@@ -1138,7 +1138,7 @@ module TypeScript {
 
                 var info = this.resolvePosition(pos, script, scriptName);
                 return info;
-            });
+            } );
         }
 
         public getTopLevelDeclarations(scriptName: string): PullDecl[] {

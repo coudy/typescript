@@ -301,7 +301,7 @@ module TypeScript {
             this.writeLineToOutput("{");
             this.indenter.increaseIndent();
             var inObjectLiteral = this.setInObjectLiteral(true);
-            this.emitJavascriptList(content, ",", TokenID.Comma, true, false, false);
+            this.emitJavascriptList(content, ",", SyntaxKind.CommaToken, true, false, false);
             this.setInObjectLiteral(inObjectLiteral);
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -313,7 +313,7 @@ module TypeScript {
             if (content && content.members.length > 0) {
                 this.writeLineToOutput("");
                 this.indenter.increaseIndent();
-                this.emitJavascriptList(content, ", ", TokenID.Comma, true, false, false);
+                this.emitJavascriptList(content, ", ", SyntaxKind.CommaToken, true, false, false);
                 this.indenter.decreaseIndent();
                 this.emitIndent();
             }
@@ -328,15 +328,15 @@ module TypeScript {
                     this.writeToOutput("Array()");
                 }
                 else {
-                    this.emitJavascript(typeRef.term, TokenID.Tilde, false);
+                    this.emitJavascript(typeRef.term, SyntaxKind.TildeToken, false);
                     this.writeToOutput("()");
                 }
             }
             else {
-                this.emitJavascript(target, TokenID.Tilde, false);
+                this.emitJavascript(target, SyntaxKind.TildeToken, false);
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
-                this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
+                this.emitJavascriptList(args, ", ", SyntaxKind.CommaToken, false, false, false);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(args);
             }
@@ -440,7 +440,7 @@ module TypeScript {
                     this.writeToOutput("_super.call");
                 }
                 else {
-                    this.emitJavascript(target, TokenID.OpenParen, false);
+                    this.emitJavascript(target, SyntaxKind.OpenParenToken, false);
                 }
                 if (target.nodeType === NodeType.FuncDecl) {
                     this.writeToOutput(")");
@@ -453,7 +453,7 @@ module TypeScript {
                         this.writeToOutput(", ");
                     }
                 }
-                this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
+                this.emitJavascriptList(args, ", ", SyntaxKind.CommaToken, false, false, false);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(args);
             }
@@ -484,7 +484,7 @@ module TypeScript {
                     var args = (<CallExpression>baseExpr).arguments;
                     if (args && (args.members.length > 0)) {
                         this.writeToOutput(", ");
-                        this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
+                        this.emitJavascriptList(args, ", ", SyntaxKind.CommaToken, false, false, false);
                     }
                     this.writeToOutput(")");
                 }
@@ -493,7 +493,7 @@ module TypeScript {
                         // parameterless constructor call;
                         this.emitIndent();
                         this.writeToOutput(classDecl.name.actualText + "._super.constructor");
-                        //emitJavascript(baseExpr,TokenID.LParen,false);
+                        //emitJavascript(baseExpr,SyntaxKind.LParen,false);
                         this.writeToOutput(".call(this)");
                     }
                 }
@@ -569,7 +569,7 @@ module TypeScript {
                     if (arg.init) {
                         defaultArgs.push(arg);
                     }
-                    this.emitJavascript(arg, TokenID.OpenParen, false);
+                    this.emitJavascript(arg, SyntaxKind.OpenParenToken, false);
                     if (i < (printLen - 1)) {
                         this.writeToOutput(", ");
                     }
@@ -599,7 +599,7 @@ module TypeScript {
                 this.writeToOutput(arg.id.actualText);
                 this.recordSourceMappingEnd(arg.id);
                 this.writeToOutput(" = ");
-                this.emitJavascript(arg.init, TokenID.OpenParen, false);
+                this.emitJavascript(arg.init, SyntaxKind.OpenParenToken, false);
                 this.writeLineToOutput("; }")
                 this.recordSourceMappingEnd(arg);
             }
@@ -679,7 +679,7 @@ module TypeScript {
                         var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[i];
                         if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                             this.emitIndent();
-                            this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
+                            this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
                             this.writeLineToOutput("");
                         }
                     }
@@ -874,7 +874,7 @@ module TypeScript {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
-                this.emitJavascriptList(moduleDecl.members, null, TokenID.Semicolon, true, false, false);
+                this.emitJavascriptList(moduleDecl.members, null, SyntaxKind.SemicolonToken, true, false, false);
                 if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
@@ -964,9 +964,9 @@ module TypeScript {
 
         public emitIndex(operand1: AST, operand2: AST) {
             var temp = this.setInObjectLiteral(false);
-            this.emitJavascript(operand1, TokenID.Tilde, false);
+            this.emitJavascript(operand1, SyntaxKind.TildeToken, false);
             this.writeToOutput("[");
-            this.emitJavascriptList(operand2, ", ", TokenID.Comma, false, false, false);
+            this.emitJavascriptList(operand2, ", ", SyntaxKind.CommaToken, false, false, false);
             this.writeToOutput("]");
             this.setInObjectLiteral(temp);
         }
@@ -1040,7 +1040,7 @@ module TypeScript {
                 this.writeToOutput(varDecl.id.actualText);
                 this.recordSourceMappingEnd(varDecl.id);
                 this.writeToOutput(" = ");
-                this.emitJavascript(varDecl.init, TokenID.Comma, false);
+                this.emitJavascript(varDecl.init, SyntaxKind.CommaToken, false);
                 this.recordSourceMappingEnd(varDecl);
                 this.writeToOutput(";");
                 this.emitComments(varDecl, false);
@@ -1071,7 +1071,7 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
+        public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: SyntaxKind) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.locationInfo.fileName);
             this.pushDecl(pullDecl);
             if ((varDecl.getVarFlags() & VariableFlags.Ambient) === VariableFlags.Ambient) {
@@ -1118,7 +1118,7 @@ module TypeScript {
                 }
                 else {
                     // function, constructor, method etc.
-                    if (tokenId != TokenID.OpenParen) {
+                    if (tokenId != SyntaxKind.OpenParenToken) {
                         this.emitVarDeclVar();
                     }
                 }
@@ -1133,14 +1133,14 @@ module TypeScript {
                     // initializer.  We don't want our current list of variables to affect how we
                     // emit nested variable lists.
                     this.varListCountStack.push(0);
-                    this.emitJavascript(varDecl.init, TokenID.Comma, false);
+                    this.emitJavascript(varDecl.init, SyntaxKind.CommaToken, false);
                     this.varListCountStack.pop();
                 }
                 this.onEmitVar();
-                if ((tokenId != TokenID.OpenParen)) {
+                if ((tokenId != SyntaxKind.OpenParenToken)) {
                     if (this.varListCount() < 0) {
                         this.writeToOutput(", ");
-                    } else if (tokenId != TokenID.For) {
+                    } else if (tokenId != SyntaxKind.ForKeyword) {
                         this.writeToOutputTrimmable(";");
                     }
                 }
@@ -1325,7 +1325,7 @@ module TypeScript {
                             this.writeLineToOutput(" {");
                             this.indenter.increaseIndent();
                         }
-                        this.emitJavascriptList(stmts, null, TokenID.Semicolon, true, false, false);
+                        this.emitJavascriptList(stmts, null, SyntaxKind.SemicolonToken, true, false, false);
                         if (!hasOnlyBlockStatement) {
                             this.writeLineToOutput("");
                             this.indenter.decreaseIndent();
@@ -1336,7 +1336,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    this.emitJavascript(stmts, TokenID.Semicolon, true);
+                    this.emitJavascript(stmts, SyntaxKind.SemicolonToken, true);
                 }
             }
             else if (emitEmptyBod) {
@@ -1352,19 +1352,19 @@ module TypeScript {
                     if ((stmtList.members.length === 2) &&
                         (stmtList.members[0].nodeType === NodeType.Block) &&
                         (stmtList.members[1].nodeType === NodeType.EndCode)) {
-                        this.emitJavascript(stmtList.members[0], TokenID.Semicolon, true);
+                        this.emitJavascript(stmtList.members[0], SyntaxKind.SemicolonToken, true);
                         this.writeLineToOutput("");
                     }
                     else {
-                        this.emitJavascriptList(stmts, null, TokenID.Semicolon, true, false, emitClassPropertiesAfterSuperCall);
+                        this.emitJavascriptList(stmts, null, SyntaxKind.SemicolonToken, true, false, emitClassPropertiesAfterSuperCall);
                     }
                 }
                 else {
-                    this.emitJavascript(stmts, TokenID.Semicolon, true);
+                    this.emitJavascript(stmts, SyntaxKind.SemicolonToken, true);
                 }
             }
             else {
-                this.emitJavascript(stmts, TokenID.Semicolon, true);
+                this.emitJavascript(stmts, SyntaxKind.SemicolonToken, true);
             }
         }
 
@@ -1442,7 +1442,7 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue = false, requiresExtendsBlock?: bool) {
+        public emitJavascriptList(ast: AST, delimiter: string, tokenId: SyntaxKind, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue = false, requiresExtendsBlock?: bool) {
             if (ast === null) {
                 return;
             }
@@ -1503,7 +1503,7 @@ module TypeScript {
                                 var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[iMember];
                                 if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                                     this.emitIndent();
-                                    this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
+                                    this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
                                     this.writeLineToOutput("");
                                 }
                             }
@@ -1548,7 +1548,7 @@ module TypeScript {
         }
 
         // tokenId is the id the preceding token
-        public emitJavascript(ast: AST, tokenId: TokenID, startLine: bool) {
+        public emitJavascript(ast: AST, tokenId: SyntaxKind, startLine: bool) {
             if (ast === null) {
                 return;
             }
@@ -1634,7 +1634,7 @@ module TypeScript {
                     this.writeToOutput(className + ".prototype." + varDecl.id.actualText);
                     this.recordSourceMappingEnd(varDecl.id);
                     this.writeToOutput(" = ");
-                    this.emitJavascript(varDecl.init, TokenID.Equals, false);
+                    this.emitJavascript(varDecl.init, SyntaxKind.EqualsToken, false);
                     this.recordSourceMappingEnd(varDecl);
                     this.writeLineToOutput(";");
                 }
@@ -1689,7 +1689,7 @@ module TypeScript {
                 // output constructor
                 if (constrDecl) {
                     // declared constructor
-                    this.emitJavascript(classDecl.constructorDecl, TokenID.OpenParen, false);
+                    this.emitJavascript(classDecl.constructorDecl, SyntaxKind.OpenParenToken, false);
 
                 }
                 else {
@@ -1722,7 +1722,7 @@ module TypeScript {
                             if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                                 this.writeLineToOutput("");
                                 this.emitIndent();
-                                this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
+                                this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
                                 wroteProps++;
                             }
                         }
@@ -1777,7 +1777,7 @@ module TypeScript {
                                 this.emitIndent();
                                 this.recordSourceMappingStart(varDecl);
                                 this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
-                                this.emitJavascript(varDecl.init, TokenID.Equals, false);
+                                this.emitJavascript(varDecl.init, SyntaxKind.EqualsToken, false);
                                 // EMITREVIEW
 
                                 this.writeLineToOutput(";");
@@ -1803,7 +1803,7 @@ module TypeScript {
                 this.recordSourceMappingStart(classDecl);
                 this.writeToOutput(")(");
                 if (hasBaseClass)
-                    this.emitJavascript(baseName, TokenID.Tilde, false);
+                    this.emitJavascript(baseName, SyntaxKind.TildeToken, false);
                 this.writeToOutput(");");
                 this.recordSourceMappingEnd(classDecl);
 
@@ -1854,12 +1854,12 @@ module TypeScript {
             if (callEx.target.nodeType === NodeType.Dot) {
                 var dotNode = <BinaryExpression>callEx.target;
                 if (dotNode.operand1.nodeType === NodeType.SuperExpression) {
-                    this.emitJavascript(dotNode, TokenID.OpenParen, false);
+                    this.emitJavascript(dotNode, SyntaxKind.OpenParenToken, false);
                     this.writeToOutput(".call(");
                     this.emitThis();
                     if (callEx.arguments && callEx.arguments.members.length > 0) {
                         this.writeToOutput(", ");
-                        this.emitJavascriptList(callEx.arguments, ", ", TokenID.Comma, false, false, false);
+                        this.emitJavascriptList(callEx.arguments, ", ", SyntaxKind.CommaToken, false, false, false);
                     }
                     this.writeToOutput(")");
                     return true;
