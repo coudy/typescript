@@ -37,6 +37,10 @@ class Program {
             // return;
         }
 
+        //Environment.standardOut.WriteLine("Testing Monoco.");
+        //this.runTests(Environment.currentDirectory() + "c:\\temp\\monoco",
+        //    fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, false, /*generateBaselines:*/ generate, /*allowErrors:*/ false));
+
         if (specificFile === undefined) {
             // TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
             this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
@@ -391,9 +395,10 @@ class Program {
     }
 
     runParser(fileName: string,
-        languageVersion: TypeScript.LanguageVersion,
-        verify: bool,
-              generateBaseline: bool = false): void {
+              languageVersion: TypeScript.LanguageVersion,
+              verify: bool,
+              generateBaseline: bool,
+              allowErrors = true): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
@@ -412,13 +417,21 @@ class Program {
         timer.start();
         var tree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName), languageVersion);
         timer.end();
+        
+        if (!allowErrors) {
+            var diagnostics = tree.diagnostics();
+            if (diagnostics.length > 0) {
+                Environment.standardOut.WriteLine(fileName);
+                Environment.standardOut.WriteLine("\t" + diagnostics[0].message());
+            }
+        }
 
         TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
 
         TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
         TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", new TypeScript.CompilationSettings());
 
-        this.checkResult(fileName, tree, verify, generateBaseline, false);
+        this.checkResult(fileName, tree, verify, generateBaseline, /*justText:*/ false);
 
         totalTime += timer.time;
     }
@@ -586,7 +599,7 @@ class Program {
                 continue;
             }
 
-            this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false);
+            this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false, /*generate:*/ false, /*allowErrors:*/ false);
         }
     }
 
