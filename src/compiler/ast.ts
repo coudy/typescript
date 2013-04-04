@@ -2145,7 +2145,7 @@ module TypeScript {
                 // No curly braces. Format in the expected way
                 emitter.writeLineToOutput("");
                 emitter.indenter.increaseIndent();
-                emitter.emitBareJavascriptStatements(this.body);
+                emitter.emitJavascript(this.body, SyntaxKind.SemicolonToken, true);
                 emitter.indenter.decreaseIndent();
             }
             emitter.recordSourceMappingEnd(this);
