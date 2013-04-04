@@ -195,7 +195,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.LabeledStatement] = ChildrenWalkers.walkLabeledStatementChildren;
             this.childrenWalkers[NodeType.EndCode] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.Debugger] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.DebuggerStatement] = ChildrenWalkers.walkNone;
 
             // Verify the code is up to date with the enum
             for (var e in (<any>NodeType)._map) {

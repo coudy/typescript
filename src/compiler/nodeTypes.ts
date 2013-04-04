@@ -119,7 +119,7 @@ module TypeScript {
         LabeledStatement,
         EndCode,
         Comment,
-        Debugger,
+        DebuggerStatement,
         LastAsg = AsgRs2,
     }
 }

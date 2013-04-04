@@ -2669,7 +2669,7 @@ module TypeScript {
 
     export class DebuggerStatement extends Statement {
         constructor() {
-            super(NodeType.Debugger);
+            super(NodeType.DebuggerStatement);
         }
 
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
