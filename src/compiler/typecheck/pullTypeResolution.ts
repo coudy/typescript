@@ -682,6 +682,9 @@ module TypeScript {
 
                 case NodeType.ImportDeclaration:
                     return this.resolveImportDeclaration(<ImportDeclaration>declAST, context);
+                
+                case NodeType.ObjectLit:
+                    return this.resolveObjectLiteralExpression(declAST, false, enclosingDecl, context);
 
                 default:
                     throw new Error("Invalid declaration type");
