@@ -907,7 +907,7 @@ module TypeScript {
 
             // REVIEW: Is this still necessary?
             mapDecl.setVarFlags(mapDecl.getVarFlags() | (VariableFlags.Property | VariableFlags.Public));
-            mapDecl.init = new UnaryExpression(NodeType.ArrayLit, null);
+            mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, null);
             members.append(mapDecl);
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
@@ -962,14 +962,14 @@ module TypeScript {
                     member.setVarFlags(member.getVarFlags() | VariableFlags.Property);
                     this.setSpanExplicit(member, memberStart, this.position);
 
-                    if (memberValue.nodeType === NodeType.NumberLit) {
+                    if (memberValue.nodeType === NodeType.NumericLiteral) {
                         member.setVarFlags(member.getVarFlags() | VariableFlags.Constant);
                     }
                     else if (memberValue.nodeType === NodeType.Lsh) {
                         // If the initializer is of the form "value << value" then treat it as a constant
                         // as well.
                         var binop = <BinaryExpression>memberValue;
-                        if (binop.operand1.nodeType === NodeType.NumberLit && binop.operand2.nodeType === NodeType.NumberLit) {
+                        if (binop.operand1.nodeType === NodeType.NumericLiteral && binop.operand2.nodeType === NodeType.NumericLiteral) {
                             member.setVarFlags(member.getVarFlags() | VariableFlags.Constant);
                         }
                     }
@@ -1182,8 +1182,8 @@ module TypeScript {
 
         private getUnaryExpressionNodeType(kind: SyntaxKind): NodeType {
             switch (kind) {
-                case SyntaxKind.PlusExpression: return NodeType.Pos;
-                case SyntaxKind.NegateExpression: return NodeType.Neg;
+                case SyntaxKind.PlusExpression: return NodeType.PlusExpression;
+                case SyntaxKind.NegateExpression: return NodeType.NegateExpression;
                 case SyntaxKind.BitwiseNotExpression: return NodeType.Not;
                 case SyntaxKind.LogicalNotExpression: return NodeType.LogNot;
                 case SyntaxKind.PreIncrementExpression: return NodeType.IncPre;
@@ -1230,7 +1230,7 @@ module TypeScript {
                     expressions.append(new AST(NodeType.EmptyExpr));
                 }
 
-                result = new UnaryExpression(NodeType.ArrayLit, expressions);
+                result = new UnaryExpression(NodeType.ArrayLiteralExpression, expressions);
             }
 
             this.setAST(node, result);
@@ -1757,7 +1757,7 @@ module TypeScript {
 
         private getBinaryExpressionNodeType(node: BinaryExpressionSyntax): NodeType {
             switch (node.kind()) {
-                case SyntaxKind.CommaExpression: return NodeType.Comma;
+                case SyntaxKind.CommaExpression: return NodeType.CommaExpression;
                 case SyntaxKind.AssignmentExpression: return NodeType.Asg;
                 case SyntaxKind.AddAssignmentExpression: return NodeType.AsgAdd;
                 case SyntaxKind.SubtractAssignmentExpression: return NodeType.AsgSub;
@@ -2693,7 +2693,7 @@ module TypeScript {
                 var propertyAssignments = this.visitSeparatedSyntaxList(node.propertyAssignments);
                 this.movePast(node.closeBraceToken);
 
-                result = new UnaryExpression(NodeType.ObjectLit, propertyAssignments);
+                result = new UnaryExpression(NodeType.ObjectLiteralExpression, propertyAssignments);
             }
 
             this.setAST(node, result);
@@ -3023,7 +3023,7 @@ module TypeScript {
                 this.movePast(node.deleteKeyword);
                 var expression = node.expression.accept(this);
 
-                result = new UnaryExpression(NodeType.Delete, expression);
+                result = new UnaryExpression(NodeType.DeleteExpression, expression);
             }
 
             this.setAST(node, result);
@@ -3043,7 +3043,7 @@ module TypeScript {
                 this.movePast(node.voidKeyword);
                 var expression = node.expression.accept(this);
 
-                result = new UnaryExpression(NodeType.Void, expression);
+                result = new UnaryExpression(NodeType.VoidExpression, expression);
             }
 
             this.setAST(node, result);

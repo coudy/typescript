@@ -370,14 +370,14 @@ module TypeScript {
         private getConstantValue(boundDeclInfo: BoundDeclInfo): number {
             var init = boundDeclInfo.boundDecl.init;
             if (init) {
-                if (init.nodeType === NodeType.NumberLit) {
+                if (init.nodeType === NodeType.NumericLiteral) {
                     var numLit = <NumberLiteral>init;
                     return numLit.value;
                 }
                 else if (init.nodeType === NodeType.Lsh) {
                     var binop = <BinaryExpression>init;
-                    if (binop.operand1.nodeType === NodeType.NumberLit &&
-                    binop.operand2.nodeType === NodeType.NumberLit) {
+                    if (binop.operand1.nodeType === NodeType.NumericLiteral &&
+                    binop.operand2.nodeType === NodeType.NumericLiteral) {
                         return (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
                     }
                 }

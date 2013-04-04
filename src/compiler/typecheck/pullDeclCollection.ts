@@ -913,7 +913,7 @@ module TypeScript {
         else if (ast.nodeType == NodeType.DoStatement) {
             go = true;
         }
-        else if (ast.nodeType == NodeType.Comma) {
+        else if (ast.nodeType == NodeType.CommaExpression) {
             go = true;
         }
         else if (ast.nodeType == NodeType.ReturnStatement) {

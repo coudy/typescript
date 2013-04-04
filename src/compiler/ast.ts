@@ -109,7 +109,7 @@ module TypeScript {
                     return typeFlow.typeCheckSuper(this);
                 case NodeType.EndCode:
                 case NodeType.Empty:
-                case NodeType.Void:
+                case NodeType.VoidExpression:
                     this.type = typeFlow.voidType;
                     break;
                 default:
@@ -158,7 +158,7 @@ module TypeScript {
                     emitter.recordSourceMappingStart(this);
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.Void:
+                case NodeType.VoidExpression:
                     emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("void ");
                     emitter.recordSourceMappingEnd(this);
@@ -410,8 +410,8 @@ module TypeScript {
                 case NodeType.LogNot:
                     return typeFlow.typeCheckLogNot(this);
 
-                case NodeType.Pos:
-                case NodeType.Neg:
+                case NodeType.PlusExpression:
+                case NodeType.NegateExpression:
                     return typeFlow.typeCheckUnaryNumberOperator(this);
 
                 case NodeType.IncPost:
@@ -420,11 +420,11 @@ module TypeScript {
                 case NodeType.DecPre:
                     return typeFlow.typeCheckIncOrDec(this);
 
-                case NodeType.ArrayLit:
+                case NodeType.ArrayLiteralExpression:
                     typeFlow.typeCheckArrayLit(this);
                     return this;
 
-                case NodeType.ObjectLit:
+                case NodeType.ObjectLiteralExpression:
                     typeFlow.typeCheckObjectLit(this);
                     return this;
 
@@ -438,7 +438,7 @@ module TypeScript {
                     this.type = typeFlow.stringType;
                     return this;
 
-                case NodeType.Delete:
+                case NodeType.DeleteExpression:
                     this.operand = typeFlow.typeCheck(this.operand);
                     this.type = typeFlow.booleanType;
                     break;
@@ -454,7 +454,7 @@ module TypeScript {
                     this.type = this.castTerm.type;
                     return this;
 
-                case NodeType.Void:
+                case NodeType.VoidExpression:
                     // REVIEW - Although this is good to do for completeness's sake,
                     // this shouldn't be strictly necessary from the void operator's
                     // point of view
@@ -484,26 +484,26 @@ module TypeScript {
                     emitter.emitJavascript(this.operand, SyntaxKind.MinusMinusToken, false);
                     emitter.writeToOutput("--");
                     break;
-                case NodeType.ObjectLit:
+                case NodeType.ObjectLiteralExpression:
                     emitter.emitObjectLiteral(<ASTList>this.operand);
                     break;
-                case NodeType.ArrayLit:
+                case NodeType.ArrayLiteralExpression:
                     emitter.emitArrayLiteral(<ASTList>this.operand);
                     break;
                 case NodeType.Not:
                     emitter.writeToOutput("~");
                     emitter.emitJavascript(this.operand, SyntaxKind.TildeToken, false);
                     break;
-                case NodeType.Neg:
+                case NodeType.NegateExpression:
                     emitter.writeToOutput("-");
-                    if (this.operand.nodeType === NodeType.Neg || this.operand.nodeType === NodeType.DecPre) {
+                    if (this.operand.nodeType === NodeType.NegateExpression || this.operand.nodeType === NodeType.DecPre) {
                         emitter.writeToOutput(" ");
                     }
                     emitter.emitJavascript(this.operand, SyntaxKind.MinusToken, false);
                     break;
-                case NodeType.Pos:
+                case NodeType.PlusExpression:
                     emitter.writeToOutput("+");
-                    if (this.operand.nodeType === NodeType.Pos || this.operand.nodeType === NodeType.IncPre) {
+                    if (this.operand.nodeType === NodeType.PlusExpression || this.operand.nodeType === NodeType.IncPre) {
                         emitter.writeToOutput(" ");
                     }
                     emitter.emitJavascript(this.operand, SyntaxKind.PlusToken, false);
@@ -525,11 +525,11 @@ module TypeScript {
                     emitter.writeToOutput("typeof ");
                     emitter.emitJavascript(this.operand, SyntaxKind.TildeToken, false);
                     break;
-                case NodeType.Delete:
+                case NodeType.DeleteExpression:
                     emitter.writeToOutput("delete ");
                     emitter.emitJavascript(this.operand, SyntaxKind.TildeToken, false);
                     break;
-                case NodeType.Void:
+                case NodeType.VoidExpression:
                     emitter.writeToOutput("void ");
                     emitter.emitJavascript(this.operand, SyntaxKind.TildeToken, false);
                     break;
@@ -664,7 +664,7 @@ module TypeScript {
                 case NodeType.AsgRsh:
                 case NodeType.AsgRs2:
                     return typeFlow.typeCheckShift(this, true);
-                case NodeType.Comma:
+                case NodeType.CommaExpression:
                     return typeFlow.typeCheckCommaOperator(this);
                 case NodeType.InstOf:
                     return typeFlow.typeCheckInstOf(this);
@@ -679,7 +679,7 @@ module TypeScript {
 
         private static getTextForBinaryToken(nodeType: NodeType): string {
             switch (nodeType) {
-                case NodeType.Comma: return ",";
+                case NodeType.CommaExpression: return ",";
                 case NodeType.Asg: return "=";
                 case NodeType.AsgAdd: return "+=";
                 case NodeType.AsgSub: return "-=";
@@ -753,7 +753,7 @@ module TypeScript {
                     }
                     emitter.emitJavascript(this.operand2, SyntaxKind.CommaToken, false);
                     break;
-                case NodeType.Comma:
+                case NodeType.CommaExpression:
                     emitter.emitJavascript(this.operand1, SyntaxKind.CommaToken, false);
                     if (emitter.emitState.inObjectLiteral) {
                         emitter.writeLineToOutput(", ");
@@ -825,7 +825,7 @@ module TypeScript {
 
     export class NumberLiteral extends Expression {
         constructor(public value: number, public text: string) {
-            super(NodeType.NumberLit);
+            super(NodeType.NumericLiteral);
         }
 
         public typeCheck(typeFlow: TypeFlow) {

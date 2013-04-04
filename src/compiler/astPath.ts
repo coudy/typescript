@@ -301,7 +301,7 @@ module TypeScript {
 
         public isListOfObjectLit(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLit &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0];
         }
@@ -312,7 +312,7 @@ module TypeScript {
 
         public isEmptyListOfObjectLit(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLit &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0] &&
                 (<TypeScript.ASTList>this.asts[this.top - 0]).members.length === 0;
@@ -320,7 +320,7 @@ module TypeScript {
 
         public isMemberOfObjectLit(): bool {
             return this.count() >= 3 &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.ObjectLit &&
+                this.asts[this.top - 2].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.Member &&
                 (<TypeScript.UnaryExpression>this.asts[this.top - 2]).operand === this.asts[this.top - 1];
@@ -328,7 +328,7 @@ module TypeScript {
 
         public isNameOfMemberOfObjectLit(): bool {
             return this.count() >= 4 &&
-                this.asts[this.top - 3].nodeType === TypeScript.NodeType.ObjectLit &&
+                this.asts[this.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
                 this.asts[this.top - 2].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Member &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.Name &&
@@ -337,7 +337,7 @@ module TypeScript {
 
         public isListOfArrayLit(): bool {
             return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ArrayLit &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ArrayLiteralExpression &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0];
         }

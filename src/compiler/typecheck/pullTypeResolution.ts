@@ -1995,10 +1995,10 @@ module TypeScript {
                         }
                     }
 
-                case NodeType.ObjectLit:
+                case NodeType.ObjectLiteralExpression:
                     return this.resolveObjectLiteralExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
-                case NodeType.ArrayLit:
+                case NodeType.ArrayLiteralExpression:
                     return this.resolveArrayLiteralExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ThisExpression:
@@ -2019,7 +2019,7 @@ module TypeScript {
                     return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
 
                 // primitives
-                case NodeType.NumberLit:
+                case NodeType.NumericLiteral:
                     return this.semanticInfoChain.numberTypeSymbol;
                 case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
@@ -2028,7 +2028,7 @@ module TypeScript {
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
                     return this.semanticInfoChain.boolTypeSymbol;
-                case NodeType.Void:
+                case NodeType.VoidExpression:
                     return this.semanticInfoChain.voidTypeSymbol;
 
                 // assignment
@@ -2065,8 +2065,8 @@ module TypeScript {
                 case NodeType.Mod:
                 case NodeType.Or:
                 case NodeType.And:
-                case NodeType.Pos:
-                case NodeType.Neg:
+                case NodeType.PlusExpression:
+                case NodeType.NegateExpression:
                 case NodeType.IncPost:
                 case NodeType.IncPre:
                 case NodeType.DecPost:
@@ -2095,7 +2095,7 @@ module TypeScript {
                 case NodeType.ThrowStatement:
                     return this.semanticInfoChain.voidTypeSymbol;
 
-                case NodeType.Delete:
+                case NodeType.DeleteExpression:
                     return this.semanticInfoChain.boolTypeSymbol;
 
                 case NodeType.ConditionalExpression:
@@ -4808,7 +4808,7 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (args.members[j].nodeType == NodeType.ObjectLit) {
+                    else if (args.members[j].nodeType == NodeType.ObjectLiteralExpression) {
                         // now actually attempt to typecheck as the contextual type
                         if (this.cachedObjectInterfaceType && memberType == this.cachedObjectInterfaceType) {
                             continue;
@@ -4834,7 +4834,7 @@ module TypeScript {
                             break;
                         }
                     }
-                    else if (args.members[j].nodeType == NodeType.ArrayLit) {
+                    else if (args.members[j].nodeType == NodeType.ArrayLiteralExpression) {
                         // attempt to contextually type the array literal
                         if (this.cachedArrayInterfaceType && memberType == this.cachedArrayInterfaceType) {
                             continue;

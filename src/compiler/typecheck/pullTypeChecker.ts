@@ -115,10 +115,10 @@ module TypeScript {
                 case GenericType:
                     return this.typeCheckGenericType(ast, typeCheckContext);
 
-                case NodeType.ObjectLit:
+                case NodeType.ObjectLiteralExpression:
                     return this.typeCheckObjectLiteral(ast, typeCheckContext, inTypedAssignment);
 
-                case NodeType.ArrayLit:
+                case NodeType.ArrayLiteralExpression:
                     return this.typeCheckArrayLiteral(ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ThisExpression:
@@ -175,8 +175,8 @@ module TypeScript {
                 case NodeType.AsgAnd:
                     return this.typeCheckBinaryArithmeticOperation(ast, typeCheckContext);
 
-                case NodeType.Pos:
-                case NodeType.Neg:
+                case NodeType.PlusExpression:
+                case NodeType.NegateExpression:
                 case NodeType.Not:
                     return this.semanticInfoChain.numberTypeSymbol;
 
@@ -202,13 +202,13 @@ module TypeScript {
                 case NodeType.ConditionalExpression:
                     return this.typeCheckConditionalExpression(ast, typeCheckContext);
 
-                case NodeType.Void:
+                case NodeType.VoidExpression:
                     return this.typeCheckVoidExpression(ast, typeCheckContext);
 
                 case NodeType.ThrowStatement:
                     return this.typeCheckThrowExpression(ast, typeCheckContext);
 
-                case NodeType.Delete:
+                case NodeType.DeleteExpression:
                     return this.typeCheckDeleteExpression(ast, typeCheckContext);
 
                 case NodeType.RegularExpressionLiteral:
@@ -270,7 +270,7 @@ module TypeScript {
                     return this.typeCheckCaseClause(ast, typeCheckContext);
 
                 // primitives
-                case NodeType.NumberLit:
+                case NodeType.NumericLiteral:
                     return this.semanticInfoChain.numberTypeSymbol;
                 case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
@@ -279,7 +279,7 @@ module TypeScript {
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
                     return this.semanticInfoChain.boolTypeSymbol;
-                case NodeType.Void:
+                case NodeType.VoidExpression:
                     return this.semanticInfoChain.voidTypeSymbol;
 
                 default:

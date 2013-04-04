@@ -3711,8 +3711,8 @@ module TypeScript {
             for (var i = 0; i < args.members.length; i++) {
                 switch (args.members[i].nodeType) {
                     case NodeType.FuncDecl:
-                    case NodeType.ObjectLit:
-                    case NodeType.ArrayLit:
+                    case NodeType.ObjectLiteralExpression:
+                    case NodeType.ArrayLiteralExpression:
                         continue;
                     default:
                         this.typeCheck(args.members[i]);
@@ -3742,8 +3742,8 @@ module TypeScript {
                         targetType = sig.parameters[i].getType();
                         switch (callEx.arguments.members[i].nodeType) {
                             case NodeType.FuncDecl:
-                            case NodeType.ObjectLit:
-                            case NodeType.ArrayLit:
+                            case NodeType.ObjectLiteralExpression:
+                            case NodeType.ArrayLiteralExpression:
                                 this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(),
                                     sig.parameters[i].declAST.nodeType !== NodeType.ParenthesizedExpression, callEx.arguments.members[i]);
                                 break;
@@ -3760,8 +3760,8 @@ module TypeScript {
                         for (i = nonVarArgActualParamLength; i < callEx.arguments.members.length; i++) {
                             switch (callEx.arguments.members[i].nodeType) {
                                 case NodeType.FuncDecl:
-                                case NodeType.ObjectLit:
-                                case NodeType.ArrayLit:
+                                case NodeType.ObjectLiteralExpression:
+                                case NodeType.ArrayLiteralExpression:
                                     this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(), isParenthesized, callEx.arguments.members[i]);
                                     break;
                             }
@@ -3776,8 +3776,8 @@ module TypeScript {
                 for (i = 0; i < callEx.arguments.members.length; i++) {
                     switch (callEx.arguments.members[i].nodeType) {
                         case NodeType.FuncDecl:
-                        case NodeType.ObjectLit:
-                        case NodeType.ArrayLit:
+                        case NodeType.ObjectLiteralExpression:
+                        case NodeType.ArrayLiteralExpression:
                             this.typeCheck(callEx.arguments.members[i]);
                             break;
                         default:

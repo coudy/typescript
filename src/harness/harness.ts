@@ -1026,7 +1026,7 @@ module Harness {
                     case TypeScript.NodeType.Asg:
                     case TypeScript.NodeType.TrueLiteral:
                     case TypeScript.NodeType.FalseLiteral:
-                    case TypeScript.NodeType.ArrayLit:
+                    case TypeScript.NodeType.ArrayLiteralExpression:
                     case TypeScript.NodeType.TypeRef:
                         break;
                     case TypeScript.NodeType.SuperExpression:
@@ -1038,7 +1038,7 @@ module Harness {
                     case TypeScript.NodeType.StringLiteral:
                         name = (<any>ast).text;
                         break;
-                    case TypeScript.NodeType.NumberLit:
+                    case TypeScript.NodeType.NumericLiteral:
                         name = (<TypeScript.NumberLiteral>ast).text;
                         break;
                     case TypeScript.NodeType.ReturnStatement:

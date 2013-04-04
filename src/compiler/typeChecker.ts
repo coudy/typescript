@@ -1288,7 +1288,7 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (args.members[j].nodeType === NodeType.ObjectLit) {
+                    else if (args.members[j].nodeType === NodeType.ObjectLiteralExpression) {
                         // now actually attempt to typecheck as the contextual type
                         if (this.typeFlow.objectInterfaceType && memberType === this.typeFlow.objectInterfaceType) {
                             continue;
@@ -1322,7 +1322,7 @@ module TypeScript {
                             break;
                         }
                     }
-                    else if (args.members[j].nodeType === NodeType.ArrayLit) {
+                    else if (args.members[j].nodeType === NodeType.ArrayLiteralExpression) {
                         // attempt to contextually type the array literal
                         if (this.typeFlow.arrayInterfaceType && memberType === this.typeFlow.arrayInterfaceType) {
                             continue;

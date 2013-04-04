@@ -727,7 +727,7 @@ module TypeScript {
                             else if (cur.nodeType === NodeType.VarDecl) {
                                 declarationInitASTs[declarationInitASTs.length] = <VarDecl>cur;
                             }
-                            else if (cur.nodeType === NodeType.ObjectLit) {
+                            else if (cur.nodeType === NodeType.ObjectLiteralExpression) {
                                 objectLitAST = <UnaryExpression>cur;
                             }
                             else if (cur.nodeType === NodeType.CastExpression) {
@@ -1009,7 +1009,7 @@ module TypeScript {
 
                         break;
 
-                    case NodeType.ObjectLit:
+                    case NodeType.ObjectLiteralExpression:
                         this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
                         break;
 
