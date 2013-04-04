@@ -4,7 +4,6 @@
 /////*2*/function Foo      () #   { }
 /////*3*/4+:5
 /////*4*/var x       =
-debugger;
 format.document();
 goTo.marker('1');
 verify.currentLineContentIs('foo(): Bar { }');

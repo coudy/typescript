@@ -153,7 +153,7 @@ module TypeScript.Formatting {
             var position = fullStart;
             var segments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
 
-            for (var i = 1; i < segments.length; i++) {
+            for (var i = 0; i < segments.length; i++) {
                 var segment = segments[i];
                 this.recordIndentationEditsForSegment(segment, position, indentationString);
                 position += segment.length;
