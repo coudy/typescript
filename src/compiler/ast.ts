@@ -2384,7 +2384,7 @@ module TypeScript {
 
             for (; startIndex < endIndex; startIndex++) {
                 var charCode = line.charCodeAt(startIndex);
-                if (charCode != LexCodeSpace && charCode != LexCodeTAB) {
+                if (charCode !== CharacterCodes.space && charCode !== CharacterCodes.tab) {
                     return startIndex;
                 }
             }
@@ -2401,7 +2401,7 @@ module TypeScript {
             if (index < length) {
                 var charCode = line.charCodeAt(index);
                 // If the character is space
-                return charCode === LexCodeSpace || charCode === LexCodeTAB;
+                return charCode === CharacterCodes.space || charCode === CharacterCodes.tab;
             }
 
             // If the index is end of the line it is space
@@ -2528,20 +2528,20 @@ module TypeScript {
                     }
 
                     // Ignore the type expression
-                    if (commentContents.charCodeAt(j) === LexCodeLC) {
+                    if (commentContents.charCodeAt(j) === CharacterCodes.openBrace) {
                         j++;
                         // Consume the type
                         var charCode = 0;
                         for (var curlies = 1; j < commentContents.length; j++) {
                             charCode = commentContents.charCodeAt(j);
                             // { character means we need to find another } to match the found one
-                            if (charCode === LexCodeLC) {
+                            if (charCode === CharacterCodes.openBrace) {
                                 curlies++;
                                 continue;
                             }
 
                             // } char
-                            if (charCode === LexCodeRC) {
+                            if (charCode === CharacterCodes.closeBrace) {
                                 curlies--;
                                 if (curlies === 0) {
                                     // We do not have any more } to match the type expression is ignored completely
@@ -2553,7 +2553,7 @@ module TypeScript {
                             }
 
                             // Found start of another tag
-                            if (charCode === LexCodeAtSign) {
+                            if (charCode === CharacterCodes.at) {
                                 break;
                             }
                         }
@@ -2564,7 +2564,7 @@ module TypeScript {
                         }
 
                         // End of the tag, go onto looking for next tag
-                        if (charCode === LexCodeAtSign) {
+                        if (charCode === CharacterCodes.at) {
                             continue;
                         }
 

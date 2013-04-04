@@ -5346,7 +5346,7 @@ interface SVGAnimatedPathData {
 }
 
 interface Position {
-    timestamp: Date;
+    timestamp: number;
     coords: Coordinates;
 }
 declare var Position: {
