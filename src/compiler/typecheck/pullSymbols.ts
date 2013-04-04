@@ -1014,6 +1014,7 @@ module TypeScript {
         public isError() { return false; }
 
         public setHasGenericSignature() { this.hasGenericSignature = true; }
+        public getHasGenericSignature() { return this.hasGenericSignature; }
 
         public setAssociatedContainerType(type: PullTypeSymbol) {
             this.associatedContainerTypeSymbol = type;
