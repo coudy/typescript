@@ -229,7 +229,7 @@ module TypeScript {
     var scannerWindow = ArrayUtilities.createArray(2048, 0);
     var scannerDiagnostics = [];
 
-    function processImports(lineMap: LineMap, scanner: Scanner1, token: ISyntaxToken, importedFiles: IFileReference[]): void {
+    function processImports(lineMap: LineMap, scanner: Scanner, token: ISyntaxToken, importedFiles: IFileReference[]): void {
         var position = 0;
         var lineChar = { line: -1, character: -1 };
 
@@ -319,7 +319,7 @@ module TypeScript {
 
     export function preProcessFile(fileName: string, sourceText: IScriptSnapshot, settings: CompilationSettings = new CompilationSettings(), readImportFiles = true): IPreProcessedFileInfo {
         var text = SimpleText.fromScriptSnapshot(sourceText);
-        var scanner = new Scanner1(fileName, text, LanguageVersion.EcmaScript5, scannerWindow);
+        var scanner = new Scanner(fileName, text, LanguageVersion.EcmaScript5, scannerWindow);
 
         var firstToken = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);
 

@@ -412,7 +412,7 @@ module TypeScript.Parser {
         private slidingWindow: SlidingWindow;
 
         // The scanner we're pulling tokens from.
-        private scanner: Scanner1;
+        private scanner: Scanner;
 
         // The previous token to the current token.  Set when we advance to the next token.
         private _previousToken: ISyntaxToken = null;
@@ -434,7 +434,7 @@ module TypeScript.Parser {
                     text: ISimpleText,
                     languageVersion: LanguageVersion) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
-            this.scanner = new Scanner1(fileName, text, languageVersion);
+            this.scanner = new Scanner(fileName, text, languageVersion);
         }
 
         public languageVersion(): LanguageVersion {

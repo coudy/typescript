@@ -50,7 +50,7 @@ module Services {
     noRegexTable[TypeScript.SyntaxKind.FalseKeyword] = true;
 
     export class Classifier {
-        private scanner: TypeScript.Scanner1;
+        private scanner: TypeScript.Scanner;
         private characterWindow: number[] = TypeScript.ArrayUtilities.createArray(2048, 0);
         private diagnostics: TypeScript.SyntaxDiagnostic[] = [];
 
@@ -60,7 +60,7 @@ module Services {
         /// COLORIZATION
         public getClassificationsForLine(text: string, lexState: EndOfLineState): ClassificationResult {
             var result = new ClassificationResult();
-            this.scanner = new TypeScript.Scanner1("", TypeScript.SimpleText.fromString(text), TypeScript.LanguageVersion.EcmaScript5, this.characterWindow);
+            this.scanner = new TypeScript.Scanner("", TypeScript.SimpleText.fromString(text), TypeScript.LanguageVersion.EcmaScript5, this.characterWindow);
 
             if (this.checkForContinuedToken(text, lexState, result)) {
                 return result;

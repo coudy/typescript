@@ -521,7 +521,7 @@ class Program {
         var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var scanner = new TypeScript.Scanner1(fileName, text, languageVersion);
+        var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
 
         var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
@@ -547,7 +547,7 @@ class Program {
         var contents = Environment.readFile(fileName, /*useUTF8:*/ true);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var scanner = new TypeScript.Scanner1(fileName, text, languageVersion);
+        var scanner = new TypeScript.Scanner(fileName, text, languageVersion);
 
         var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
