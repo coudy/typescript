@@ -1082,35 +1082,30 @@ module TypeScript {
             }
 
             // check for assignment compatibility
-            // PULLREVIEW: given the errors above, is this really necessary?
-            // switch (ast.nodeType) {
-            //     case NodeType.AsgLsh:
-            //     case NodeType.AsgRsh:
-            //     case NodeType.AsgRs2:
-            //     case NodeType.AsgSub:
-            //     case NodeType.AsgMul:
-            //     case NodeType.AsgDiv:
-            //     case NodeType.AsgMod:
-            //     case NodeType.AsgOr:
-            //     case NodeType.AsgAnd:
-            //         var comparisonInfo = new TypeComparisonInfo();
+//             switch (ast.nodeType) {
+//                 case NodeType.AsgLsh:
+//                 case NodeType.AsgRsh:
+//                 case NodeType.AsgRs2:
+//                 case NodeType.AsgSub:
+//                 case NodeType.AsgMul:
+//                 case NodeType.AsgDiv:
+//                 case NodeType.AsgMod:
+//                 case NodeType.AsgOr:
+//                 case NodeType.AsgAnd:
 
-            //         var isAssignable = this.resolver.sourceIsAssignableToTarget(rhsType, lhsType, this.context, comparisonInfo);
+//                    var isValidLHS = 0;
+//                    /*
+//                    assignmentAST.operand1.nodeType == NodeType.Index ||
+//                    this.resolver.isAnyOrEquivalent(leftType) ||
+//                    ((!leftExpr.isType() || leftType.isArray()) &&
+//                    (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
+//                    hasFlag(ast.getFlags(), ASTFlags.EnumInitializer);
+//*/
+//                     }
 
-            //         if (!isAssignable) {
-            //             var errorMessage = comparisonInfo.message;
-            //             var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            //             var span = enclosingDecl.getSpan();
-
-            //             // ignore comparison info for now
-            //             var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [rhsType.toString(), lhsType.toString()]);
-
-            //             this.context.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
-            //         }
-
-            //     default:
-            //         break;
-            // }
+//                 default:
+//                     break;
+//             }
 
             return this.semanticInfoChain.numberTypeSymbol;
         }

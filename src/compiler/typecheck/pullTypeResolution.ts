@@ -794,12 +794,12 @@ module TypeScript {
                 for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
 
-                    if ((parentType.getKind() & (PullElementKind.Interface | PullElementKind.Class)) == 0) {
+                    if (parentType.getKind() != PullElementKind.Class) {
                         if (parentType.isError()) {
                             context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, (<PullErrorTypeSymbol>parentType).getDiagnostic().message(), enclosingDecl, true);
                         }
                         else {
-                            context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class or interface types", enclosingDecl, true);
+                            context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class types", enclosingDecl, true);
                         }
                     }
                     else {
@@ -1914,6 +1914,9 @@ module TypeScript {
 
                             if (this.isAnyOrEquivalent(accessorType)) {
                                 accessorSymbol.setType(getterReturnType);
+                                if (!accessorType.isError()) {
+                                    parameters[0].setType(getterReturnType);
+                                }
                             }
                             else {
                                 var diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", this.getEnclosingDecl(funcDecl));
@@ -2140,9 +2143,9 @@ module TypeScript {
             if (!nameSymbol) {
                 nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
-                //if (nameSymbol && nameSymbol.getKind() == PullElementKind.Interface) {
-                //    nameSymbol = null;
-                //}
+                if (nameSymbol && (nameSymbol.isPrimitive() && nameSymbol != this.semanticInfoChain.undefinedTypeSymbol && nameSymbol != this.semanticInfoChain.nullTypeSymbol)) {
+                    nameSymbol = null;
+                }
             }
 
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
