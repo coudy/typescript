@@ -251,13 +251,13 @@ module TypeScript.Syntax {
         return Syntax.normalModeFactory.binaryExpression(SyntaxKind.AssignmentExpression, left, token, right);
     }
 
-    export function nodeHasSkippedOrMissingTokens(node: SyntaxNode, checkForMissingTokens = true): bool {
+    export function nodeHasSkippedOrMissingTokens(node: SyntaxNode): bool {
         for (var i = 0; i < node.childCount(); i++) {
             var child = node.childAt(i);
             if (child != null && child.isToken()) {
                 var token = <ISyntaxToken>child;
                 // If a token is skipped, return true. Or if it is a missing token. The only empty token that is not missing is EOF
-                if (token.hasSkippedText() || (checkForMissingTokens && token.width() == 0 && token.kind() != SyntaxKind.EndOfFileToken)) {
+                if (token.hasSkippedText() || (token.width() == 0 && token.kind() != SyntaxKind.EndOfFileToken)) {
                     return true;
                 }
             }
