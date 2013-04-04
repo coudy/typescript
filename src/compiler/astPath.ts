@@ -16,10 +16,6 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export function lastOf(items: any[]): any {
-        return (items === null || items.length === 0) ? null : items[items.length - 1];
-    }
-
     export function max(a: number, b: number): number {
         return a >= b ? a : b;
     }
@@ -153,229 +149,10 @@ module TypeScript {
                 ((<TypeScript.FunctionDeclaration>this.parent()).name === this.ast());
         }
 
-        public isChildOfScript(): bool {
-            var ast = lastOf(this.asts);
-            return this.count() >= 3 &&
-                this.asts[this.top] === ast &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.Script;
-        }
-
-        public isChildOfModule(): bool {
-            var ast = lastOf(this.asts);
-            return this.count() >= 3 &&
-                this.asts[this.top] === ast &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.ModuleDeclaration;
-        }
-
-        public isChildOfClass(): bool {
-            var ast = lastOf(this.asts);
-            return this.count() >= 3 &&
-                this.asts[this.top] === ast &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.ClassDeclaration;
-        }
-
-        public isArgumentOfClassConstructor(): bool {
-            var ast = lastOf(this.asts);
-            return this.count() >= 5 &&
-                this.asts[this.top] === ast &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.FunctionDeclaration &&
-                this.asts[this.top - 3].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 4].nodeType === TypeScript.NodeType.ClassDeclaration &&
-                ((<TypeScript.FunctionDeclaration>this.asts[this.top - 2]).isConstructor) &&
-                ((<TypeScript.FunctionDeclaration>this.asts[this.top - 2]).arguments === this.asts[this.top - 1]) &&
-                ((<TypeScript.ClassDeclaration>this.asts[this.top - 4]).constructorDecl === this.asts[this.top - 2]);
-        }
-
-        public isChildOfInterface(): bool {
-            var ast = lastOf(this.asts);
-            return this.count() >= 3 &&
-                this.asts[this.top] === ast &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.InterfaceDeclaration;
-        }
-
-        public isTopLevelImplicitModule() {
-            return this.count() >= 1 &&
-                this.asts[this.top].nodeType === TypeScript.NodeType.ModuleDeclaration &&
-                TypeScript.hasFlag((<TypeScript.ModuleDeclaration>this.asts[this.top]).getModuleFlags(), TypeScript.ModuleFlags.IsWholeFile);
-        }
-
-        public isBodyOfTopLevelImplicitModule() {
-            return this.count() >= 2 &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ModuleDeclaration &&
-                 (<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0] &&
-                TypeScript.hasFlag((<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).getModuleFlags(), TypeScript.ModuleFlags.IsWholeFile);
-        }
-
-        public isBodyOfScript(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Script &&
-                 (<TypeScript.Script>this.asts[this.top - 1]).moduleElements === this.asts[this.top - 0];
-        }
-
-        public isBodyOfSwitch(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.SwitchStatement &&
-                 (<TypeScript.SwitchStatement>this.asts[this.top - 1]).caseList === this.asts[this.top - 0];
-        }
-
-        public isBodyOfModule(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ModuleDeclaration &&
-                 (<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0];
-        }
-
-        public isBodyOfClass(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ClassDeclaration &&
-                 (<TypeScript.ClassDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0];
-        }
-
         public isBodyOfFunction(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
                  (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).block === this.asts[this.top - 0];
-        }
-
-        public isBodyOfInterface(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.InterfaceDeclaration &&
-                 (<TypeScript.InterfaceDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0];
-        }
-
-        public isBodyOfBlock(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Block &&
-                (<TypeScript.Block>this.asts[this.top - 1]).statements === this.asts[this.top - 0];
-        }
-
-        public isBodyOfFor(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ForStatement &&
-                (<TypeScript.ForStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
-        public isBodyOfDoWhile(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.DoStatement &&
-                (<TypeScript.DoWhileStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
-        public isBodyOfWhile(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.WhileStatement &&
-                (<TypeScript.WhileStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
-        public isBodyOfForIn(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ForInStatement &&
-                (<TypeScript.ForInStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
-        public isBodyOfWith(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.WithStatement &&
-                (<TypeScript.WithStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
-        }
-
-        public isCaseOfSwitch(): bool {
-            return this.count() >= 3 &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.SwitchStatement &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList === this.asts[this.top - 1];
-        }
-
-        public isDefaultCaseOfSwitch(): bool {
-            return this.count() >= 3 &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.SwitchStatement &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList === this.asts[this.top - 1] &&
-                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).defaultCase === this.asts[this.top - 0];
-        }
-
-        public isListOfObjectLit(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0];
-        }
-
-        public isBodyOfObjectLit(): bool {
-            return this.isListOfObjectLit();
-        }
-
-        public isEmptyListOfObjectLit(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0] &&
-                (<TypeScript.ASTList>this.asts[this.top - 0]).members.length === 0;
-        }
-
-        public isMemberOfObjectLit(): bool {
-            return this.count() >= 3 &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.Member &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 2]).operand === this.asts[this.top - 1];
-        }
-
-        public isNameOfMemberOfObjectLit(): bool {
-            return this.count() >= 4 &&
-                this.asts[this.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Member &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.Name &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 3]).operand === this.asts[this.top - 2];
-        }
-
-        public isListOfArrayLit(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ArrayLiteralExpression &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0];
-        }
-
-        public isTargetOfMember(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Member &&
-                (<TypeScript.BinaryExpression>this.asts[this.top - 1]).operand1 === this.asts[this.top - 0];
-        }
-
-        public isMemberOfMember(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Member &&
-                (<TypeScript.BinaryExpression>this.asts[this.top - 1]).operand2 === this.asts[this.top - 0];
-        }
-
-        public isItemOfList(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List;
-            //(<Tools.ASTList>this.asts[this.top - 1]).operand2 === this.asts[this.top - 0];
-        }
-
-        public isThenOfIf(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.IfStatement &&
-                (<TypeScript.IfStatement>this.asts[this.top - 1]).thenBod === this.asts[this.top - 0];
-        }
-
-        public isElseOfIf(): bool {
-            return this.count() >= 2 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.IfStatement &&
-                (<TypeScript.IfStatement>this.asts[this.top - 1]).elseBod === this.asts[this.top - 0];
-        }
-
-        public isSingleStatementList(): bool {
-            return this.count() >= 1 &&
-                this.asts[this.top].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.ASTList>this.asts[this.top]).members.length === 1;
         }
 
         public isArgumentListOfFunction(): bool {
@@ -383,13 +160,6 @@ module TypeScript {
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.FunctionDeclaration &&
                 (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
-        }
-
-        public isArgumentOfFunction(): bool {
-            return this.count() >= 3 &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 2].nodeType === TypeScript.NodeType.FunctionDeclaration &&
-                (<TypeScript.FunctionDeclaration>this.asts[this.top - 2]).arguments === this.asts[this.top - 1];
         }
 
         public isArgumentListOfCall(): bool {
@@ -404,12 +174,6 @@ module TypeScript {
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.New &&
                 (<TypeScript.CallExpression>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
-        }
-
-        public isSynthesizedBlock(): bool {
-            return this.count() >= 1 &&
-                this.asts[this.top - 0].nodeType === TypeScript.NodeType.Block &&
-                (<TypeScript.Block>this.asts[this.top - 0]).isStatementBlock === false;
         }
 
         public isInClassImplementsList(): bool {

@@ -672,11 +672,11 @@ module TypeScript {
             // if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
             if (funcDecl.isConstructor && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ClassMethod) && !classPropertiesMustComeAfterSuperCall) {
 
-                var nProps = (<ASTList>this.thisClassNode.members).members.length;
+                var nProps = this.thisClassNode.members.members.length;
 
                 for (i = 0; i < nProps; i++) {
-                    if ((<ASTList>this.thisClassNode.members).members[i].nodeType === NodeType.VarDecl) {
-                        var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[i];
+                    if (this.thisClassNode.members.members[i].nodeType === NodeType.VarDecl) {
+                        var varDecl = <VarDecl>this.thisClassNode.members.members[i];
                         if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                             this.emitIndent();
                             this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
@@ -708,10 +708,10 @@ module TypeScript {
             this.emitComments(funcDecl, false);
 
             if (!isMember &&
-            !funcDecl.isAccessor() &&
-                //funcDecl.name != null &&
-            !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) &&
-            (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) || funcDecl.isConstructor)) {
+                !funcDecl.isAccessor() &&
+                !hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) &&
+                (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) || funcDecl.isConstructor)) {
+
                 this.writeLineToOutput("");
             }
 
@@ -1442,11 +1442,11 @@ module TypeScript {
                 }
             }
 
-            var nProps = (<ASTList>this.thisClassNode.members).members.length;
+            var nProps = this.thisClassNode.members.members.length;
 
             for (var iMember = 0; iMember < nProps; iMember++) {
-                if ((<ASTList>this.thisClassNode.members).members[iMember].nodeType === NodeType.VarDecl) {
-                    var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[iMember];
+                if (this.thisClassNode.members.members[iMember].nodeType === NodeType.VarDecl) {
+                    var varDecl = <VarDecl>this.thisClassNode.members.members[iMember];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
                         this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
@@ -1695,7 +1695,7 @@ module TypeScript {
                     }
                     */
 
-                    var members = (<ASTList>this.thisClassNode.members).members
+                    var members = this.thisClassNode.members.members
 
                     // output initialized properties
                     for (i = 0; i < members.length; i++) {
