@@ -131,10 +131,10 @@ module TypeScript {
         Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_: DiagnosticInfo;
         Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_: DiagnosticInfo;
         Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_: DiagnosticInfo;
-        Return_type_of_exported_function_is_using_inaccessible_module__0_: DiagnosticInfo;
 
 
 
         _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: DiagnosticInfo;
+        A_parameter_list_must_follow_a_generic_type_argument_list______expected: DiagnosticInfo;
     }
 }

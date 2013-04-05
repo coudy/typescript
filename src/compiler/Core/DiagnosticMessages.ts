@@ -669,6 +669,11 @@ module TypeScript {
             message: "'new T[]' cannot be used to create an array. Use 'new Array<T>()' instead.",
             code: 2068
         },
+        A_parameter_list_must_follow_a_generic_type_argument_list______expected: {
+            category: DiagnosticCategory.Error,
+            message: "A parameter list must follow a generic type argument list. '(' expected.",
+            code: 2069
+        },
     };
 
     var seenCodes = [];

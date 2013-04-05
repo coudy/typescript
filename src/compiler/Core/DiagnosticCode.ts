@@ -132,5 +132,6 @@ module TypeScript {
 
 
         _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead,
+        A_parameter_list_must_follow_a_generic_type_argument_list______expected,
     }
 }

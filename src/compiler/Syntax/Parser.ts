@@ -3726,9 +3726,30 @@ module TypeScript.Parser {
                 var rewindPoint = this.getRewindPoint();
                 try {
                     typeArgumentList = this.tryParseTypeArgumentList(/*inExpression:*/ true);
-                    if (typeArgumentList === null || this.currentToken().tokenKind !== SyntaxKind.OpenParenToken) {
+                    var token0 = this.currentToken();
+
+                    var isOpenParen = token0.tokenKind === SyntaxKind.OpenParenToken;
+                    var isDot = token0.tokenKind === SyntaxKind.DotToken;
+                    var isOpenParenOrDot = isOpenParen || isDot;
+                    if (typeArgumentList === null || !isOpenParenOrDot) {
                         this.rewind(rewindPoint);
                         return null;
+                    }
+
+                    // It's not uncommon for a user to type: "Foo<T>."
+                    //
+                    // This is not legal in typescript (as an parameter list must follow the type
+                    // arguments).  We want to give a good error message for this as otherwise
+                    // we'll bail out here and give a poor error message when we try to parse this
+                    // as an arithmetic expression.
+                    if (isDot) {
+                        // A parameter list must follow a generic type argument list.
+                        var diagnostic = new SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(),
+                            DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected, null);
+                        this.addDiagnostic(diagnostic);
+
+                        return this.factory.argumentList(typeArgumentList,
+                            Syntax.emptyToken(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.emptyToken(SyntaxKind.CloseParenToken));
                     }
                 }
                 finally {

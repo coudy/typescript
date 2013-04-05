@@ -8,12 +8,12 @@
         {
             "_position": 32,
             "_width": 1,
-            "_diagnosticCode": "Identifier_expected"
+            "_diagnosticCode": "A_parameter_list_must_follow_a_generic_type_argument_list______expected"
         },
         {
             "_position": 47,
             "_width": 1,
-            "_diagnosticCode": "Identifier_expected"
+            "_diagnosticCode": "A_parameter_list_must_follow_a_generic_type_argument_list______expected"
         }
     ],
     "sourceUnit": {
@@ -195,77 +195,85 @@
             },
             {
                 "kind": "ExpressionStatement",
-                "fullWidth": 7,
+                "fullWidth": 15,
                 "isIncrementallyUnusable": true,
                 "expression": {
-                    "kind": "GreaterThanExpression",
-                    "fullWidth": 7,
+                    "kind": "InvocationExpression",
+                    "fullWidth": 12,
                     "isIncrementallyUnusable": true,
-                    "left": {
-                        "kind": "LessThanExpression",
-                        "fullWidth": 5,
-                        "left": {
+                    "expression": {
+                        "kind": "MemberAccessExpression",
+                        "fullWidth": 10,
+                        "isIncrementallyUnusable": true,
+                        "expression": {
+                            "kind": "InvocationExpression",
+                            "fullWidth": 6,
+                            "isIncrementallyUnusable": true,
+                            "expression": {
+                                "kind": "IdentifierName",
+                                "width": 3,
+                                "text": "Foo",
+                                "value": "Foo",
+                                "valueText": "Foo"
+                            },
+                            "argumentList": {
+                                "kind": "ArgumentList",
+                                "fullWidth": 3,
+                                "isIncrementallyUnusable": true,
+                                "typeArgumentList": {
+                                    "kind": "TypeArgumentList",
+                                    "fullWidth": 3,
+                                    "lessThanToken": {
+                                        "kind": "LessThanToken",
+                                        "width": 1,
+                                        "text": "<",
+                                        "value": "<",
+                                        "valueText": "<"
+                                    },
+                                    "typeArguments": [
+                                        {
+                                            "kind": "IdentifierName",
+                                            "width": 1,
+                                            "text": "T",
+                                            "value": "T",
+                                            "valueText": "T"
+                                        }
+                                    ],
+                                    "greaterThanToken": {
+                                        "kind": "GreaterThanToken",
+                                        "width": 1,
+                                        "text": ">",
+                                        "value": ">",
+                                        "valueText": ">"
+                                    }
+                                },
+                                "openParenToken": {
+                                    "kind": "OpenParenToken",
+                                    "width": 0,
+                                    "text": ""
+                                },
+                                "arguments": [],
+                                "closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "width": 0,
+                                    "text": ""
+                                }
+                            }
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 1,
+                            "text": ".",
+                            "value": ".",
+                            "valueText": "."
+                        },
+                        "name": {
                             "kind": "IdentifierName",
                             "width": 3,
-                            "text": "Foo",
-                            "value": "Foo",
-                            "valueText": "Foo"
-                        },
-                        "operatorToken": {
-                            "kind": "LessThanToken",
-                            "width": 1,
-                            "text": "<",
-                            "value": "<",
-                            "valueText": "<"
-                        },
-                        "right": {
-                            "kind": "IdentifierName",
-                            "width": 1,
-                            "text": "T",
-                            "value": "T",
-                            "valueText": "T"
+                            "text": "Bar",
+                            "value": "Bar",
+                            "valueText": "Bar"
                         }
-                    },
-                    "operatorToken": {
-                        "kind": "GreaterThanToken",
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ">",
-                        "value": ">",
-                        "valueText": ">",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingSkippedText": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "."
-                            }
-                        ]
-                    },
-                    "right": {
-                        "kind": "IdentifierName",
-                        "width": 0,
-                        "text": ""
-                    }
-                },
-                "semicolonToken": {
-                    "kind": "SemicolonToken",
-                    "width": 0,
-                    "text": ""
-                }
-            },
-            {
-                "kind": "ExpressionStatement",
-                "fullWidth": 8,
-                "expression": {
-                    "kind": "InvocationExpression",
-                    "fullWidth": 5,
-                    "expression": {
-                        "kind": "IdentifierName",
-                        "width": 3,
-                        "text": "Bar",
-                        "value": "Bar",
-                        "valueText": "Bar"
                     },
                     "argumentList": {
                         "kind": "ArgumentList",
@@ -306,77 +314,85 @@
             },
             {
                 "kind": "ExpressionStatement",
-                "fullWidth": 7,
+                "fullWidth": 18,
                 "isIncrementallyUnusable": true,
                 "expression": {
-                    "kind": "GreaterThanExpression",
-                    "fullWidth": 7,
+                    "kind": "InvocationExpression",
+                    "fullWidth": 15,
                     "isIncrementallyUnusable": true,
-                    "left": {
-                        "kind": "LessThanExpression",
-                        "fullWidth": 5,
-                        "left": {
+                    "expression": {
+                        "kind": "MemberAccessExpression",
+                        "fullWidth": 10,
+                        "isIncrementallyUnusable": true,
+                        "expression": {
+                            "kind": "InvocationExpression",
+                            "fullWidth": 6,
+                            "isIncrementallyUnusable": true,
+                            "expression": {
+                                "kind": "IdentifierName",
+                                "width": 3,
+                                "text": "Foo",
+                                "value": "Foo",
+                                "valueText": "Foo"
+                            },
+                            "argumentList": {
+                                "kind": "ArgumentList",
+                                "fullWidth": 3,
+                                "isIncrementallyUnusable": true,
+                                "typeArgumentList": {
+                                    "kind": "TypeArgumentList",
+                                    "fullWidth": 3,
+                                    "lessThanToken": {
+                                        "kind": "LessThanToken",
+                                        "width": 1,
+                                        "text": "<",
+                                        "value": "<",
+                                        "valueText": "<"
+                                    },
+                                    "typeArguments": [
+                                        {
+                                            "kind": "IdentifierName",
+                                            "width": 1,
+                                            "text": "T",
+                                            "value": "T",
+                                            "valueText": "T"
+                                        }
+                                    ],
+                                    "greaterThanToken": {
+                                        "kind": "GreaterThanToken",
+                                        "width": 1,
+                                        "text": ">",
+                                        "value": ">",
+                                        "valueText": ">"
+                                    }
+                                },
+                                "openParenToken": {
+                                    "kind": "OpenParenToken",
+                                    "width": 0,
+                                    "text": ""
+                                },
+                                "arguments": [],
+                                "closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "width": 0,
+                                    "text": ""
+                                }
+                            }
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 1,
+                            "text": ".",
+                            "value": ".",
+                            "valueText": "."
+                        },
+                        "name": {
                             "kind": "IdentifierName",
                             "width": 3,
-                            "text": "Foo",
-                            "value": "Foo",
-                            "valueText": "Foo"
-                        },
-                        "operatorToken": {
-                            "kind": "LessThanToken",
-                            "width": 1,
-                            "text": "<",
-                            "value": "<",
-                            "valueText": "<"
-                        },
-                        "right": {
-                            "kind": "IdentifierName",
-                            "width": 1,
-                            "text": "T",
-                            "value": "T",
-                            "valueText": "T"
+                            "text": "Bar",
+                            "value": "Bar",
+                            "valueText": "Bar"
                         }
-                    },
-                    "operatorToken": {
-                        "kind": "GreaterThanToken",
-                        "width": 1,
-                        "fullWidth": 2,
-                        "text": ">",
-                        "value": ">",
-                        "valueText": ">",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingSkippedText": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "."
-                            }
-                        ]
-                    },
-                    "right": {
-                        "kind": "IdentifierName",
-                        "width": 0,
-                        "text": ""
-                    }
-                },
-                "semicolonToken": {
-                    "kind": "SemicolonToken",
-                    "width": 0,
-                    "text": ""
-                }
-            },
-            {
-                "kind": "ExpressionStatement",
-                "fullWidth": 11,
-                "expression": {
-                    "kind": "InvocationExpression",
-                    "fullWidth": 8,
-                    "expression": {
-                        "kind": "IdentifierName",
-                        "width": 3,
-                        "text": "Bar",
-                        "value": "Bar",
-                        "valueText": "Bar"
                     },
                     "argumentList": {
                         "kind": "ArgumentList",

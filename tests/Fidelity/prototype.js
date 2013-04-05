@@ -631,6 +631,8 @@ var TypeScript;
         DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 116;
         DiagnosticCode._map[117] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
         DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 117;
+        DiagnosticCode._map[118] = "A_parameter_list_must_follow_a_generic_type_argument_list______expected";
+        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list______expected = 118;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1226,6 +1228,11 @@ var TypeScript;
             category: 1 /* Error */ ,
             message: "'new T[]' cannot be used to create an array. Use 'new Array<T>()' instead.",
             code: 2068
+        },
+        A_parameter_list_must_follow_a_generic_type_argument_list______expected: {
+            category: 1 /* Error */ ,
+            message: "A parameter list must follow a generic type argument list. '(' expected.",
+            code: 2069
         }
     };
     var seenCodes = [];
@@ -18630,9 +18637,18 @@ var TypeScript;
                     var rewindPoint = this.getRewindPoint();
                     try  {
                         typeArgumentList = this.tryParseTypeArgumentList(true);
-                        if (typeArgumentList === null || this.currentToken().tokenKind !== 72 /* OpenParenToken */ ) {
+                        var token0 = this.currentToken();
+                        var isOpenParen = token0.tokenKind === 72 /* OpenParenToken */ ;
+                        var isDot = token0.tokenKind === 76 /* DotToken */ ;
+                        var isOpenParenOrDot = isOpenParen || isDot;
+                        if (typeArgumentList === null || !isOpenParenOrDot) {
                             this.rewind(rewindPoint);
                             return null;
+                        }
+                        if (isDot) {
+                            var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, this.currentTokenStart(), token0.width(), 118 /* A_parameter_list_must_follow_a_generic_type_argument_list______expected */ , null);
+                            this.addDiagnostic(diagnostic);
+                            return this.factory.argumentList(typeArgumentList, TypeScript.Syntax.emptyToken(72 /* OpenParenToken */ ), TypeScript.Syntax.emptySeparatedList, TypeScript.Syntax.emptyToken(73 /* CloseParenToken */ ));
                         }
                     } finally {
                         this.releaseRewindPoint(rewindPoint);
