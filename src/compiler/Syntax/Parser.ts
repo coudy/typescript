@@ -4719,7 +4719,6 @@ module TypeScript.Parser {
 
         // Returns true if we should abort parsing.
         private abortParsingListOrMoveToNextToken(currentListType: ListParsingState,
-                                                  itemCount: number,
                                                   items: ISyntaxNodeOrToken[],
                                                   skippedTokens: ISyntaxToken[]): bool {
             // Ok.  We're at a token that is not a terminator for the list and wasn't the start of 
@@ -4735,7 +4734,7 @@ module TypeScript.Parser {
                  state >>= 1) {
 
                 if ((this.listParsingState & state) !== 0) {
-                    if (this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, /*inErrorRecovery:*/ true)) {
+                    if (this.isExpectedListTerminator(state) || this.isExpectedListItem(state, /*inErrorRecovery:*/ true)) {
                         // Abort parsing this list.
                         return true;
                     }
@@ -4789,8 +4788,8 @@ module TypeScript.Parser {
             }
         }
 
-        private listIsTerminated(currentListType: ListParsingState, itemCount: number): bool {
-            return this.isExpectedListTerminator(currentListType, itemCount) ||
+        private listIsTerminated(currentListType: ListParsingState): bool {
+            return this.isExpectedListTerminator(currentListType) ||
                    this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
         }
 
@@ -4831,13 +4830,13 @@ module TypeScript.Parser {
 
                     // That may have been because the list is complete.  In that case, break out 
                     // and return the items we were able parse.
-                    if (this.listIsTerminated(currentListType, newItemsCount)) {
+                    if (this.listIsTerminated(currentListType)) {
                         break
                     }
 
                     // List wasn't complete and we didn't get an item.  Figure out if we should bail out
                     // or skip a token and continue.
-                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, newItemsCount, items, skippedTokens);
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, items, skippedTokens);
                     if (abort) {
                         break;
                     }
@@ -4882,14 +4881,14 @@ module TypeScript.Parser {
                     
                     // That may have been because the list is complete.  In that case, break out 
                     // and return the items we were able parse.
-                    if (this.listIsTerminated(currentListType, newItemsCount)) {
+                    if (this.listIsTerminated(currentListType)) {
                         listWasTerminated = true;
                         break;
                     }
                     
                     // List wasn't complete and we didn't get an item.  Figure out if we should bail out
                     // or skip a token and continue.
-                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount, items, skippedTokens);
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, items, skippedTokens);
                     if (abort) {
                         break;
                     }
@@ -4917,7 +4916,7 @@ module TypeScript.Parser {
                 // We didn't see the expected separator.  There are two reasons this might happen.
                 // First, we may actually be at the end of the list.  If we are, then we're done
                 // parsing list elements.  
-                if (this.listIsTerminated(currentListType, newItemsCount)) {
+                if (this.listIsTerminated(currentListType)) {
                     listWasTerminated = true;
                     break;
                 }
@@ -5133,7 +5132,7 @@ module TypeScript.Parser {
             this.diagnostics.push(diagnostic);
         }
 
-        private isExpectedListTerminator(currentListType: ListParsingState, itemCount: number): bool {
+        private isExpectedListTerminator(currentListType: ListParsingState): bool {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
                     return this.isExpectedSourceUnit_ModuleElementsTerminator();
@@ -5175,7 +5174,7 @@ module TypeScript.Parser {
                     return this.isExpectedHeritageClause_TypeNameListTerminator();
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                    return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount);
+                    return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator();
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                     return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
@@ -5293,7 +5292,7 @@ module TypeScript.Parser {
             return false;
         }
 
-        private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount: number): bool {
+        private isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(): bool {
             //// This is the case when we're parsing variable declarations in a variable statement.
 
             // If we just parsed a comma, then we can't terminate this list.  i.e.:
@@ -5312,7 +5311,7 @@ module TypeScript.Parser {
             }
 
             // We're done when we can eat a semicolon and we've parsed at least one item.
-            return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
+            return this.canEatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
         }
 
         private isExpectedClassOrInterfaceDeclaration_HeritageClausesTerminator(): bool {

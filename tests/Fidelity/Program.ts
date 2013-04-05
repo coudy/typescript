@@ -12,7 +12,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "FunctionDeclaration3.ts";
+    // "InvalidIdentifiersInVariableStatements1.ts";
     undefined;
 
 var generate = false;
@@ -41,11 +41,6 @@ class Program {
         //this.runTests(Environment.currentDirectory() + "c:\\temp\\monoco",
         //    fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, false, /*generateBaselines:*/ generate, /*allowErrors:*/ false));
 
-        if (specificFile === undefined) {
-            // TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
-            this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
-        }
-
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
@@ -53,6 +48,11 @@ class Program {
         if (specificFile === undefined) {
             Environment.standardOut.WriteLine("Testing Incremental 2.");
             TypeScript.IncrementalParserTests.runAllTests();
+        }
+
+        if (specificFile === undefined) {
+            // TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
+            this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         }
 
         Environment.standardOut.WriteLine("Testing emitter 1.");
