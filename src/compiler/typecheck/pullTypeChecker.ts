@@ -91,7 +91,7 @@ module TypeScript {
                 // decarations
 
                 case NodeType.VariableDeclarator:
-                case NodeType.ArgDecl:
+                case NodeType.Parameter:
                     return this.typeCheckBoundDecl(ast, typeCheckContext);
 
                 case NodeType.FunctionDeclaration:
@@ -127,10 +127,10 @@ module TypeScript {
                 case NodeType.SuperExpression:
                     return this.typeCheckSuper(ast, typeCheckContext);
 
-                case NodeType.Call:
+                case NodeType.InvocationExpression:
                     return this.typeCheckCall(ast, typeCheckContext);
 
-                case NodeType.New:
+                case NodeType.ObjectCreationExpression:
                     return this.typeCheckNew(ast, typeCheckContext);
 
                 case NodeType.CastExpression:
@@ -186,7 +186,7 @@ module TypeScript {
                 case NodeType.DecPre:
                     return this.typeCheckUnaryArithmeticOperation(ast, typeCheckContext);
 
-                case NodeType.Index:
+                case NodeType.ElementAccessExpression:
                     return this.typeCheckIndex(ast, typeCheckContext);
 
                 case NodeType.LogNot:
@@ -196,7 +196,7 @@ module TypeScript {
                 case NodeType.LogAnd:
                     return this.typeCheckLogicalAndOrExpression(ast, typeCheckContext);
 
-                case NodeType.Typeof:
+                case NodeType.TypeOfExpression:
                     return this.typeCheckTypeOf(ast, typeCheckContext);
 
                 case NodeType.ConditionalExpression:
@@ -214,10 +214,10 @@ module TypeScript {
                 case NodeType.RegularExpressionLiteral:
                     return this.typeCheckRegExpExpression(ast, typeCheckContext);
 
-                case NodeType.In:
+                case NodeType.InExpression:
                     return this.typeCheckInExpression(ast, typeCheckContext);
 
-                case NodeType.InstOf:
+                case NodeType.InstanceOfExpression:
                     return this.typeCheckInstanceOfExpression(ast, typeCheckContext);
 
                 case NodeType.ParenthesizedExpression:
@@ -263,7 +263,7 @@ module TypeScript {
                 case NodeType.Name:
                     return this.typeCheckNameExpression(ast, typeCheckContext);
 
-                case NodeType.Dot:
+                case NodeType.MemberAccessExpression:
                     return this.typeCheckDottedNameExpression(ast, typeCheckContext);
 
                 case NodeType.SwitchStatement:
@@ -280,7 +280,7 @@ module TypeScript {
                     return this.semanticInfoChain.numberTypeSymbol;
                 case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
-                case NodeType.Null:
+                case NodeType.NullLiteral:
                     return this.semanticInfoChain.nullTypeSymbol;
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
@@ -777,7 +777,7 @@ module TypeScript {
             var rightType = this.resolver.widenType(this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true));
             this.context.popContextualType();
 
-            var isValidLHS = assignmentAST.operand1.nodeType == NodeType.Index ||
+            var isValidLHS = assignmentAST.operand1.nodeType == NodeType.ElementAccessExpression ||
                             this.resolver.isAnyOrEquivalent(leftType) ||
                             ((!leftExpr.isType() || leftType.isArray()) &&
                                 (leftExpr.getKind() & PullElementKind.SomeLHS) != 0) ||
@@ -911,7 +911,7 @@ module TypeScript {
             var resultType = this.resolver.resolveAST(callEx, false, enclosingDecl, this.context).getType();
             this.checkForResolutionError(resultType, enclosingDecl);
 
-            if (callEx.target.nodeType != NodeType.Name && callEx.target.nodeType != NodeType.Dot) {
+            if (callEx.target.nodeType != NodeType.Name && callEx.target.nodeType != NodeType.MemberAccessExpression) {
                 this.typeCheckAST(callEx.target, typeCheckContext);
             }
 

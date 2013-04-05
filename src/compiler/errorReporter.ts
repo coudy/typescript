@@ -142,10 +142,10 @@ module TypeScript {
         public invalidCall(ast: CallExpression, nodeType: number, scope: SymbolScope): void {
             var targetType = ast.target.type;
             var typeName = targetType.getScopedTypeName(scope);
-            if (targetType.construct && (nodeType == NodeType.Call)) {
+            if (targetType.construct && (nodeType == NodeType.InvocationExpression)) {
                 this.reportError(ast, "Value of type '" + typeName + "' is not callable.  Did you mean to include 'new'?");
             } else {
-                var catString = (nodeType == NodeType.Call) ? "callable" : "newable";
+                var catString = (nodeType == NodeType.InvocationExpression) ? "callable" : "newable";
 
                 this.reportError(ast, "Value of type '" + typeName + "' is not " + catString);
             }

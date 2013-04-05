@@ -393,7 +393,7 @@ module TypeScript {
                     result = new AST(NodeType.FalseLiteral);
                 }
                 else if (token.kind() === SyntaxKind.NullKeyword) {
-                    result = new AST(NodeType.Null);
+                    result = new AST(NodeType.NullLiteral);
                 }
                 else if (token.kind() === SyntaxKind.StringLiteral) {
                     result = new StringLiteral(token.text());
@@ -932,7 +932,7 @@ module TypeScript {
                         }
                         var map: BinaryExpression =
                             new BinaryExpression(NodeType.Asg,
-                                new BinaryExpression(NodeType.Index,
+                                new BinaryExpression(NodeType.ElementAccessExpression,
                                     new Identifier("_map"),
                                     memberValue),
                                 new StringLiteral('"' + memberName.actualText + '"'));
@@ -1287,7 +1287,7 @@ module TypeScript {
 
                 var parameters = new ASTList();
 
-                var parameter = new ArgDecl(identifier);
+                var parameter = new Parameter(identifier);
                 this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
 
                 parameters.append(parameter);
@@ -1372,7 +1372,7 @@ module TypeScript {
                     left = (<TypeReference>left).term;
                 }
 
-                var term = new BinaryExpression(NodeType.Dot, left, right);
+                var term = new BinaryExpression(NodeType.MemberAccessExpression, left, right);
                 this.setSpan(term, start, node);
 
                 result = new TypeReference(term, 0);
@@ -1581,11 +1581,11 @@ module TypeScript {
             return result;
         }
 
-        private visitParameter(node: ParameterSyntax): ArgDecl {
+        private visitParameter(node: ParameterSyntax): Parameter {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: ArgDecl = this.getAST(node);
+            var result: Parameter = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -1600,7 +1600,7 @@ module TypeScript {
                 var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
                 var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-                result = new ArgDecl(identifier);
+                result = new Parameter(identifier);
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -1643,7 +1643,7 @@ module TypeScript {
                 var name = this.identifierFromToken(node.name, /*isOptional:*/ false, /*useValueText:*/ true);
                 this.movePast(node.name);
 
-                result = new BinaryExpression(NodeType.Dot, expression, name);
+                result = new BinaryExpression(NodeType.MemberAccessExpression, expression, name);
             }
 
             this.setAST(node, result);
@@ -1685,7 +1685,7 @@ module TypeScript {
                 var argumentExpression = node.argumentExpression.accept(this);
                 this.movePast(node.closeBracketToken);
 
-                result = new BinaryExpression(NodeType.Index, expression, argumentExpression);
+                result = new BinaryExpression(NodeType.ElementAccessExpression, expression, argumentExpression);
             }
 
             this.setAST(node, result);
@@ -1719,7 +1719,7 @@ module TypeScript {
                     : null;
                 var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-                result = new CallExpression(NodeType.Call, expression, typeArguments, argumentList);
+                result = new CallExpression(NodeType.InvocationExpression, expression, typeArguments, argumentList);
             }
 
             this.setAST(node, result);
@@ -1761,8 +1761,8 @@ module TypeScript {
                 case SyntaxKind.GreaterThanExpression: return NodeType.Gt;
                 case SyntaxKind.LessThanOrEqualExpression: return NodeType.Le;
                 case SyntaxKind.GreaterThanOrEqualExpression: return NodeType.Ge;
-                case SyntaxKind.InstanceOfExpression: return NodeType.InstOf;
-                case SyntaxKind.InExpression: return NodeType.In;
+                case SyntaxKind.InstanceOfExpression: return NodeType.InstanceOfExpression;
+                case SyntaxKind.InExpression: return NodeType.InExpression;
                 case SyntaxKind.LeftShiftExpression: return NodeType.Lsh;
                 case SyntaxKind.SignedRightShiftExpression: return NodeType.Rsh;
                 case SyntaxKind.UnsignedRightShiftExpression: return NodeType.Rs2;
@@ -1793,7 +1793,7 @@ module TypeScript {
                 result = new BinaryExpression(nodeType, left, right);
 
                 if (right.nodeType === NodeType.FunctionDeclaration) {
-                    var id = left.nodeType === NodeType.Dot ? (<BinaryExpression>left).operand2 : left;
+                    var id = left.nodeType === NodeType.MemberAccessExpression ? (<BinaryExpression>left).operand2 : left;
                     var idHint: string = id.nodeType === NodeType.Name ? id.actualText : null;
 
                     var funcDecl = <FunctionDeclaration>right;
@@ -2375,14 +2375,14 @@ module TypeScript {
                 var typeArgumentList = node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this);
                 var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-                result = new CallExpression(NodeType.New, expression, typeArgumentList, argumentList);
+                result = new CallExpression(NodeType.ObjectCreationExpression, expression, typeArgumentList, argumentList);
 
                 if (expression.nodeType === NodeType.TypeRef) {
                     var typeRef = <TypeReference>expression;
 
                     if (typeRef.arrayCount === 0) {
                         var term = typeRef.term;
-                        if (term.nodeType === NodeType.Dot || term.nodeType === NodeType.Name) {
+                        if (term.nodeType === NodeType.MemberAccessExpression || term.nodeType === NodeType.Name) {
                             expression = term;
                         }
                     }
@@ -2973,7 +2973,7 @@ module TypeScript {
                 this.movePast(node.typeOfKeyword);
                 var expression = node.expression.accept(this);
 
-                result = new UnaryExpression(NodeType.Typeof, expression);
+                result = new UnaryExpression(NodeType.TypeOfExpression, expression);
             }
 
             this.setAST(node, result);

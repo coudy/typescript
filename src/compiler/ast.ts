@@ -98,7 +98,7 @@ module TypeScript {
                     break;
                 case NodeType.ThisExpression:
                     return typeFlow.typeCheckThis(this);
-                case NodeType.Null:
+                case NodeType.NullLiteral:
                     this.type = typeFlow.nullType;
                     break;
                 case NodeType.FalseLiteral:
@@ -130,7 +130,7 @@ module TypeScript {
                     }
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.Null:
+                case NodeType.NullLiteral:
                     emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("null");
                     emitter.recordSourceMappingEnd(this);
@@ -427,7 +427,7 @@ module TypeScript {
                     this.type = typeFlow.voidType;
                     return this;
 
-                case NodeType.Typeof:
+                case NodeType.TypeOfExpression:
                     this.operand = typeFlow.typeCheck(this.operand);
                     this.type = typeFlow.stringType;
                     return this;
@@ -515,7 +515,7 @@ module TypeScript {
                     emitter.emitJavascript(this.operand, SyntaxKind.TildeToken, false);
                     emitter.writeToOutput(";");
                     break;
-                case NodeType.Typeof:
+                case NodeType.TypeOfExpression:
                     emitter.writeToOutput("typeof ");
                     emitter.emitJavascript(this.operand, SyntaxKind.TildeToken, false);
                     break;
@@ -555,7 +555,7 @@ module TypeScript {
         public signature: Signature = null;
 
         public typeCheck(typeFlow: TypeFlow) {
-            if (this.nodeType === NodeType.New) {
+            if (this.nodeType === NodeType.ObjectCreationExpression) {
                 return typeFlow.typeCheckNew(this);
             }
             else {
@@ -567,7 +567,7 @@ module TypeScript {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
 
-            if (this.nodeType === NodeType.New) {
+            if (this.nodeType === NodeType.ObjectCreationExpression) {
                 emitter.emitNew(this.target, this.arguments);
             }
             else {
@@ -595,7 +595,7 @@ module TypeScript {
 
         public typeCheck(typeFlow: TypeFlow) {
             switch (this.nodeType) {
-                case NodeType.Dot:
+                case NodeType.MemberAccessExpression:
                     return typeFlow.typeCheckDotOperator(this);
                 case NodeType.Asg:
                     return typeFlow.typeCheckAsgOperator(this);
@@ -631,7 +631,7 @@ module TypeScript {
                 case NodeType.Ge:
                 case NodeType.Gt:
                     return typeFlow.typeCheckBooleanOperator(this);
-                case NodeType.Index:
+                case NodeType.ElementAccessExpression:
                     return typeFlow.typeCheckIndex(this);
                 case NodeType.Member:
                     this.type = typeFlow.voidType;
@@ -660,9 +660,9 @@ module TypeScript {
                     return typeFlow.typeCheckShift(this, true);
                 case NodeType.CommaExpression:
                     return typeFlow.typeCheckCommaOperator(this);
-                case NodeType.InstOf:
+                case NodeType.InstanceOfExpression:
                     return typeFlow.typeCheckInstOf(this);
-                case NodeType.In:
+                case NodeType.InExpression:
                     return typeFlow.typeCheckInOperator(this);
                     break;
                 default:
@@ -699,8 +699,8 @@ module TypeScript {
                 case NodeType.Gt: return ">";
                 case NodeType.Le: return "<="
                 case NodeType.Ge: return ">="
-                case NodeType.InstOf: return "instanceof";
-                case NodeType.In: return "in";
+                case NodeType.InstanceOfExpression: return "instanceof";
+                case NodeType.InExpression: return "in";
                 case NodeType.Lsh: return "<<";
                 case NodeType.Rsh: return ">>"
                 case NodeType.Rs2: return ">>>"
@@ -719,14 +719,14 @@ module TypeScript {
             emitter.recordSourceMappingStart(this);
 
             switch (this.nodeType) {
-                case NodeType.Dot:
+                case NodeType.MemberAccessExpression:
                     if (!emitter.tryEmitConstant(this)) {
                         emitter.emitJavascript(this.operand1, SyntaxKind.DotToken, false);
                         emitter.writeToOutput(".");
                         emitter.emitJavascriptName(<Identifier>this.operand2, false);
                     }
                     break;
-                case NodeType.Index:
+                case NodeType.ElementAccessExpression:
                     emitter.emitIndex(this.operand1, this.operand2);
                     break;
 
@@ -1041,9 +1041,9 @@ module TypeScript {
         }
     }
 
-    export class ArgDecl extends BoundDecl {
+    export class Parameter extends BoundDecl {
         constructor(id: Identifier) {
-            super(id, NodeType.ArgDecl);
+            super(id, NodeType.Parameter);
         }
 
         public isOptional = false;
@@ -1064,7 +1064,7 @@ module TypeScript {
             emitter.emitComments(this, false);
         }
 
-        public structuralEquals(ast: ArgDecl, includingPosition: bool): bool {
+        public structuralEquals(ast: Parameter, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
                    this.isOptional === ast.isOptional;
         }

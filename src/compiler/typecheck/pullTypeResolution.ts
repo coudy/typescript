@@ -718,7 +718,7 @@ module TypeScript {
                         }
                     }
                 case NodeType.VariableDeclarator:
-                case NodeType.ArgDecl:
+                case NodeType.Parameter:
                     return this.resolveVariableDeclaration(<BoundDecl>declAST, context, enclosingDecl);
 
                 case NodeType.TypeParameter:
@@ -1131,7 +1131,7 @@ module TypeScript {
             // link parameters and resolve their annotations
             if (funcDeclAST.arguments) {
                 for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    this.resolveFunctionTypeSignatureParameter(<ArgDecl>funcDeclAST.arguments.members[i], null, signature, enclosingDecl, context);
+                    this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.arguments.members[i], null, signature, enclosingDecl, context);
                 }
             }
 
@@ -1147,7 +1147,7 @@ module TypeScript {
             return funcDeclSymbol;
         }
 
-        public resolveFunctionTypeSignatureParameter(argDeclAST: ArgDecl, contextParam: PullSymbol, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveFunctionTypeSignatureParameter(argDeclAST: Parameter, contextParam: PullSymbol, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
             var paramSymbol = this.getSymbolForAST(argDeclAST, context, this.unitPath);
 
@@ -1173,7 +1173,7 @@ module TypeScript {
             paramSymbol.setResolved();
         }
 
-        public resolveFunctionExpressionParameter(argDeclAST: ArgDecl, contextParam: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public resolveFunctionExpressionParameter(argDeclAST: Parameter, contextParam: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
             var paramSymbol = this.getSymbolForAST(argDeclAST, context);
 
@@ -1318,7 +1318,7 @@ module TypeScript {
                 typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
             }
                 // a dotted name
-            else if (typeRef.term.nodeType == NodeType.Dot) {
+            else if (typeRef.term.nodeType == NodeType.MemberAccessExpression) {
 
                 // assemble the dotted name path
                 var dottedName = <BinaryExpression> typeRef.term;
@@ -1459,7 +1459,7 @@ module TypeScript {
 
                     // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
                     // we filter out arrays, since for those we just want to know if their element type is a type parameter...
-                    if ((varDecl.nodeType == NodeType.ArgDecl) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
+                    if ((varDecl.nodeType == NodeType.Parameter) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
                         var signature = enclosingDecl.getSignatureSymbol();
 
                         if (signature) {
@@ -1989,7 +1989,7 @@ module TypeScript {
                 case NodeType.InterfaceDeclaration:
                 case NodeType.ClassDeclaration:
                 case NodeType.VariableDeclarator:
-                case NodeType.ArgDecl:
+                case NodeType.Parameter:
                     return this.resolveDeclaration(ast, context, enclosingDecl);
 
                 case NodeType.FunctionDeclaration:
@@ -2016,7 +2016,7 @@ module TypeScript {
                     }
                 case GenericType:
                     return this.resolveGenericTypeReference(<GenericType>expressionAST, enclosingDecl, context);
-                case NodeType.Dot:
+                case NodeType.MemberAccessExpression:
                     if (context.searchTypeSpace) {
                         return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
                     }
@@ -2050,10 +2050,10 @@ module TypeScript {
                 case NodeType.SuperExpression:
                     return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
 
-                case NodeType.Call:
+                case NodeType.InvocationExpression:
                     return this.resolveCallExpression(<CallExpression>expressionAST, isTypedAssignment, enclosingDecl, context);
 
-                case NodeType.New:
+                case NodeType.ObjectCreationExpression:
                     return this.resolveNewExpression(<CallExpression>expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 case NodeType.CastExpression:
@@ -2067,7 +2067,7 @@ module TypeScript {
                     return this.semanticInfoChain.numberTypeSymbol;
                 case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
-                case NodeType.Null:
+                case NodeType.NullLiteral:
                     return this.semanticInfoChain.nullTypeSymbol;
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
@@ -2125,7 +2125,7 @@ module TypeScript {
                 case NodeType.AsgRs2:
                     return this.semanticInfoChain.numberTypeSymbol;
 
-                case NodeType.Index:
+                case NodeType.ElementAccessExpression:
                     return this.resolveIndexExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 case NodeType.LogOr:
@@ -2133,7 +2133,7 @@ module TypeScript {
                 case NodeType.LogAnd:
                     return this.resolveLogicalAndExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
-                case NodeType.Typeof:
+                case NodeType.TypeOfExpression:
                     return this.semanticInfoChain.stringTypeSymbol;
 
                 case NodeType.ThrowStatement:
@@ -2588,7 +2588,7 @@ module TypeScript {
             if (shouldContextuallyType && funcDeclAST.arguments) {
 
                 for (i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    if ((<ArgDecl>funcDeclAST.arguments.members[i]).typeExpr) {
+                    if ((<Parameter>funcDeclAST.arguments.members[i]).typeExpr) {
                         shouldContextuallyType = false;
                         break;
                     }
@@ -2649,7 +2649,7 @@ module TypeScript {
                         contextParam = contextParams[i];
                     }
 
-                    this.resolveFunctionExpressionParameter(<ArgDecl>funcDeclAST.arguments.members[i], contextParam, enclosingDecl, context);
+                    this.resolveFunctionExpressionParameter(<Parameter>funcDeclAST.arguments.members[i], contextParam, enclosingDecl, context);
                 }
             }
 
@@ -4643,7 +4643,7 @@ module TypeScript {
             var argSym: PullSymbol;
             var i = 0;
 
-            if (application.nodeType == NodeType.Call || application.nodeType == NodeType.New) {
+            if (application.nodeType == NodeType.InvocationExpression || application.nodeType == NodeType.ObjectCreationExpression) {
                 var callEx = <CallExpression>application;
 
                 args = callEx.arguments;
@@ -4658,7 +4658,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (application.nodeType == NodeType.Index) {
+            else if (application.nodeType == NodeType.ElementAccessExpression) {
                 var binExp = <BinaryExpression>application;
                 target = binExp.operand1;
                 args = new ASTList();
@@ -5051,7 +5051,7 @@ module TypeScript {
             // Check that the argument declarations have no type annotations
             for (var i = 0; i < paramLen; i++) {
                 var param = parameters[i];
-                var argDecl = <ArgDecl>this.getASTForSymbol(param);
+                var argDecl = <Parameter>this.getASTForSymbol(param);
 
                 // REVIEW: a valid typeExpr is a requirement for varargs,
                 // so we may want to revise our invariant

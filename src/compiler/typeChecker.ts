@@ -420,7 +420,7 @@ module TypeScript {
                 parameterBuilder = new SymbolScopeBuilder(parameterTable, null, null, null, null, container);
 
                 for (var i = 0; i < len; i++) {
-                    var parameter = <ArgDecl>args.members[i];
+                    var parameter = <Parameter>args.members[i];
                     var paramDef = new ValueLocation();
                     var parameterSymbol = new ParameterSymbol(parameter.id.text, parameter.minChar,
                                                             this.locationInfo.fileName, paramDef);
@@ -880,7 +880,7 @@ module TypeScript {
             var lhsType = this.anyType;
 
             if (lhs && rhs && (rhs.nodeType === NodeType.Name)) {
-                if (lhs.nodeType === NodeType.Dot) {
+                if (lhs.nodeType === NodeType.MemberAccessExpression) {
                     lhsType = this.resolveTypeMember(scope, <BinaryExpression>lhs);
                 }
                 else if (lhs.nodeType === NodeType.Name) {
@@ -1037,7 +1037,7 @@ module TypeScript {
                                     this.errorReporter.simpleError(ast, "Expected type");
                                 }
                                 break;
-                            case NodeType.Dot:
+                            case NodeType.MemberAccessExpression:
                                 typeLink.type = this.resolveTypeMember(scope, <BinaryExpression>ast);
                                 break;
                             case NodeType.TypeRef:
@@ -1397,7 +1397,7 @@ module TypeScript {
             for (var i = 0; i < paramLen; i++) {
                 var param = signature.parameters[i];
                 var symbol = <ParameterSymbol>param;
-                var argDecl = <ArgDecl>symbol.declAST;
+                var argDecl = <Parameter>symbol.declAST;
 
                 // REVIEW: a valid typeExpr is a requirement for varargs,
                 // so we may want to revise our invariant

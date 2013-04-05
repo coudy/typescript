@@ -826,11 +826,11 @@ module TypeScript {
                     if ((foundAST.nodeType == NodeType.SuperExpression || foundAST.nodeType == NodeType.ThisExpression || foundAST.nodeType == NodeType.Name) &&
                     resultASTs.length > 1) {
                         for (i = resultASTs.length - 2; i >= 0; i--) {
-                            if (resultASTs[i].nodeType === NodeType.Dot &&
+                            if (resultASTs[i].nodeType === NodeType.MemberAccessExpression &&
                             (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
                                 foundAST = resultASTs[i];
                             }
-                            else if ((resultASTs[i].nodeType === NodeType.Call || resultASTs[i].nodeType === NodeType.New) &&
+                            else if ((resultASTs[i].nodeType === NodeType.InvocationExpression || resultASTs[i].nodeType === NodeType.ObjectCreationExpression) &&
                             (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
                                 callExpression = <CallExpression>resultASTs[i];
                                 break;
@@ -909,14 +909,14 @@ module TypeScript {
                         }
 
                         if (!isPropertyOrVar) {
-                            isConstructorCall = foundAST.nodeType == NodeType.SuperExpression || callExpression.nodeType === NodeType.New;
+                            isConstructorCall = foundAST.nodeType == NodeType.SuperExpression || callExpression.nodeType === NodeType.ObjectCreationExpression;
 
                             if (foundAST.nodeType == NodeType.SuperExpression) {
                                 if (symbol.getKind() == PullElementKind.Class) {
                                     callSignatures = (<PullClassTypeSymbol>symbol).getConstructorMethod().getType().getConstructSignatures();
                                 }
                             } else {
-                                callSignatures = callExpression.nodeType === NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
+                                callSignatures = callExpression.nodeType === NodeType.InvocationExpression ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
                             }
                             var callResolutionResults: PullAdditionalCallResolutionData = {
                                 targetSymbol: null,
@@ -925,7 +925,7 @@ module TypeScript {
                                 candidateSignature: null
                             };
 
-                            if (callExpression.nodeType === NodeType.Call) {
+                            if (callExpression.nodeType === NodeType.InvocationExpression) {
                                 this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             } else {
                                 this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
@@ -1055,7 +1055,7 @@ module TypeScript {
             // since those will give us the right typing
             if (path.ast().nodeType === NodeType.Name && path.count() > 1) {
                 for (i = path.count() - 1; i >= 0; i--) {
-                    if (path.asts[path.top - 1].nodeType === NodeType.Dot &&
+                    if (path.asts[path.top - 1].nodeType === NodeType.MemberAccessExpression &&
                     (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
                         path.pop();
                     }
@@ -1118,11 +1118,11 @@ module TypeScript {
 
         public pullGetCallInformationFromPath(path: AstPath, script: Script, scriptName?: string): PullCallSymbolInfo {
             // AST has to be a call expression
-            if (path.ast().nodeType !== NodeType.Call && path.ast().nodeType !== NodeType.New) {
+            if (path.ast().nodeType !== NodeType.InvocationExpression && path.ast().nodeType !== NodeType.ObjectCreationExpression) {
                 return null;
             }
 
-            var isNew = (path.ast().nodeType === NodeType.New);
+            var isNew = (path.ast().nodeType === NodeType.ObjectCreationExpression);
 
             var context = this.extractResolutionContextFromPath(path, script, scriptName);
             if (!context) {

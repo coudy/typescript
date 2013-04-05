@@ -509,8 +509,8 @@ module TypeScript {
             this.writeToOutput("(");
             var argsLen = 0;
             var i = 0;
-            var arg: ArgDecl;
-            var defaultArgs: ArgDecl[] = [];
+            var arg: Parameter;
+            var defaultArgs: Parameter[] = [];
             if (funcDecl.arguments) {
                 var tempContainer = this.setContainer(EmitContainer.Args);
                 argsLen = funcDecl.arguments.members.length;
@@ -519,7 +519,7 @@ module TypeScript {
                     printLen--;
                 }
                 for (i = 0; i < printLen; i++) {
-                    arg = <ArgDecl>funcDecl.arguments.members[i];
+                    arg = <Parameter>funcDecl.arguments.members[i];
                     if (arg.init) {
                         defaultArgs.push(arg);
                     }
@@ -566,7 +566,7 @@ module TypeScript {
                 if (funcDecl.arguments) {
                     argsLen = funcDecl.arguments.members.length;
                     for (i = 0; i < argsLen; i++) {
-                        arg = <ArgDecl>funcDecl.arguments.members[i];
+                        arg = <Parameter>funcDecl.arguments.members[i];
                         if ((arg.getVarFlags() & VariableFlags.Property) != VariableFlags.None) {
                             this.emitIndent();
                             this.recordSourceMappingStart(arg);
@@ -588,7 +588,7 @@ module TypeScript {
             }
             if (funcDecl.variableArgList) {
                 argsLen = funcDecl.arguments.members.length;
-                var lastArg = <ArgDecl>funcDecl.arguments.members[argsLen - 1];
+                var lastArg = <Parameter>funcDecl.arguments.members[argsLen - 1];
                 this.emitIndent();
                 this.recordSourceMappingStart(lastArg);
                 this.writeToOutput("var ");
@@ -1650,7 +1650,7 @@ module TypeScript {
 
                 if (hasBaseClass) {
                     baseNameDecl = classDecl.extendsList.members[0];
-                    baseName = baseNameDecl.nodeType === NodeType.Call ? (<CallExpression>baseNameDecl).target : baseNameDecl;
+                    baseName = baseNameDecl.nodeType === NodeType.InvocationExpression ? (<CallExpression>baseNameDecl).target : baseNameDecl;
                     this.emitIndent();
                     this.writeLineToOutput("__extends(" + className + ", _super);");
                 }
@@ -1824,7 +1824,7 @@ module TypeScript {
         }
 
         public emitSuperCall(callEx: CallExpression): bool {
-            if (callEx.target.nodeType === NodeType.Dot) {
+            if (callEx.target.nodeType === NodeType.MemberAccessExpression) {
                 var dotNode = <BinaryExpression>callEx.target;
                 if (dotNode.operand1.nodeType === NodeType.SuperExpression) {
                     this.emitJavascript(dotNode, SyntaxKind.OpenParenToken, false);

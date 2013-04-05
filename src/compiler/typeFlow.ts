@@ -796,7 +796,7 @@ module TypeScript {
         }
 
         public inScopeTypeCheckDecl(ast: AST) {
-            if (ast.nodeType === NodeType.VariableDeclarator || ast.nodeType === NodeType.ArgDecl) {
+            if (ast.nodeType === NodeType.VariableDeclarator || ast.nodeType === NodeType.Parameter) {
                 this.inScopeTypeCheckBoundDecl(<BoundDecl>ast);
             }
             else if (ast.nodeType === NodeType.FunctionDeclaration) {
@@ -1568,7 +1568,7 @@ module TypeScript {
             //if (!(this.astIsWriteable(binex.operand1))) {
             //    this.checker.errorReporter.The_left_hand_side_of_an_assignment_expression_must_be_a_variable__property_or_indexer(binex);
             //}
-            if (binex.operand1.nodeType === NodeType.Call) {
+            if (binex.operand1.nodeType === NodeType.InvocationExpression) {
                 var callEx = <CallExpression>binex.operand1;
             }
             var preserveScope = false;
@@ -1792,7 +1792,7 @@ module TypeScript {
             if (args) {
                 var len = args.members.length;
                 for (var i = 0; i < len; i++) {
-                    var local = <ArgDecl>args.members[i];
+                    var local = <Parameter>args.members[i];
                     if ((local.sym === null) ||
                         (isClass || (local.sym.kind() !== SymbolKind.Field))) {
                         var result: Symbol = null;
@@ -1911,7 +1911,7 @@ module TypeScript {
                     case NodeType.FunctionDeclaration:
                         go = false;
                         break;
-                    case NodeType.Call:
+                    case NodeType.InvocationExpression:
                         var call = <CallExpression>ast;
 
                         if (call.target.nodeType === NodeType.SuperExpression) {
@@ -2304,9 +2304,9 @@ module TypeScript {
                     if (superCallMustBeFirst) {
                         if (!funcDecl.block ||
                             !funcDecl.block.statements.members.length ||
-                            !((funcDecl.block.statements.members[0].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.statements.members[0]).target.nodeType === NodeType.SuperExpression) ||
+                            !((funcDecl.block.statements.members[0].nodeType === NodeType.InvocationExpression && (<CallExpression>funcDecl.block.statements.members[0]).target.nodeType === NodeType.SuperExpression) ||
                             (hasFlag(funcDecl.block.getFlags(), ASTFlags.StrictMode) && funcDecl.block.statements.members.length > 1 &&
-                             funcDecl.block.statements.members[1].nodeType === NodeType.Call && (<CallExpression>funcDecl.block.statements.members[1]).target.nodeType === NodeType.SuperExpression))) {
+                             funcDecl.block.statements.members[1].nodeType === NodeType.InvocationExpression && (<CallExpression>funcDecl.block.statements.members[1]).target.nodeType === NodeType.SuperExpression))) {
                             this.checker.errorReporter.simpleError(funcDecl, "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor");
                         }
                     }
@@ -2427,7 +2427,7 @@ module TypeScript {
 
                 for (p = 0; p < paramLen; p++) {
                     var symbol = signature.parameters[p];
-                    var ast = <ArgDecl>symbol.declAST
+                    var ast = <Parameter>symbol.declAST
 
                     if (this.checker.hasTargetType() && (targetParams && (this.checker.getTargetTypeContext().targetSig.hasVariableArgList || p < targetParams.length))) {
                         candidateTypeContext = this.checker.getTargetTypeContext();
@@ -2442,7 +2442,7 @@ module TypeScript {
 
                     // infer the setter type, if necessary
                     if (isSetter && accessorType) {
-                        ast = <ArgDecl>this.cast(ast, accessorType);
+                        ast = <Parameter>this.cast(ast, accessorType);
                     }
 
                     symbol.container = container;
@@ -2461,8 +2461,8 @@ module TypeScript {
                     signature.parameters[p].parameter.typeLink.type = funcDecl.arguments.members[p].type;
                     // Verify the parameter for the privacy
                     this.checkTypePrivacy(signature.parameters[p].getType(), container, (typeName: string, isModuleName: bool) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, signature.parameters[p], typeName, isModuleName));
-                    if ((<ArgDecl>funcDecl.arguments.members[p]).parameterPropertySym) {
-                        (<ArgDecl>funcDecl.arguments.members[p]).parameterPropertySym.setType(funcDecl.arguments.members[p].type);
+                    if ((<Parameter>funcDecl.arguments.members[p]).parameterPropertySym) {
+                        (<Parameter>funcDecl.arguments.members[p]).parameterPropertySym.setType(funcDecl.arguments.members[p].type);
                     }
                 }
 
@@ -2767,7 +2767,7 @@ module TypeScript {
             for (var i = 0; i < basesLen; i++) {
                 var baseExpr = bases.members[i];
                 var baseSymbol: Symbol = null;
-                if (baseExpr.nodeType === NodeType.Call) {
+                if (baseExpr.nodeType === NodeType.InvocationExpression) {
                     this.typeCheckNew(baseExpr);
                 }
             }
@@ -3566,7 +3566,7 @@ module TypeScript {
             var target: AST = null;
             var i = 0;
 
-            if (application.nodeType === NodeType.Call || application.nodeType === NodeType.New) {
+            if (application.nodeType === NodeType.InvocationExpression || application.nodeType === NodeType.ObjectCreationExpression) {
                 var callEx = <CallExpression>application;
                 args = callEx.arguments;
                 target = callEx.target;
@@ -3577,7 +3577,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (application.nodeType === NodeType.Index) {
+            else if (application.nodeType === NodeType.ElementAccessExpression) {
                 var binExp = <BinaryExpression>application;
                 target = binExp.operand1;
                 args = new ASTList();
@@ -3599,7 +3599,7 @@ module TypeScript {
 
             // For error reporting, we want to use the span of just the function's name if it is a method or a field of some object, so go to the right child if the node is a dot.
             // No need to recurse since dots are left associative
-            var apparentTarget = target.nodeType === NodeType.Dot ? (<BinaryExpression> target).operand2 : target;
+            var apparentTarget = target.nodeType === NodeType.MemberAccessExpression ? (<BinaryExpression> target).operand2 : target;
             if (exactCandidates.length === 0) {
                 var candidateInfo: { sig: Signature; ambiguous: bool; };
                 var applicableCandidates = this.checker.getApplicableSignatures(conversionCandidates, args, comparisonInfo);
@@ -3789,12 +3789,12 @@ module TypeScript {
 
         public typeCheckCall(ast: AST): AST {
             var callEx = <CallExpression>ast;
-            if (this.checker.styleSettings.newMustBeUsed && (ast.nodeType === NodeType.New)) {
+            if (this.checker.styleSettings.newMustBeUsed && (ast.nodeType === NodeType.ObjectCreationExpression)) {
                 //if (hasFlag(ast.flags, ASTFlags.IsStatement)) {
                 //    this.checker.errorReporter.styleError(ast, "use of new expression as a statement");
                 //}
             }
-            else if ((!this.checker.styleSettings.evalOK) && (ast.nodeType === NodeType.Call)) {
+            else if ((!this.checker.styleSettings.evalOK) && (ast.nodeType === NodeType.InvocationExpression)) {
                 if ((callEx.target.nodeType === NodeType.Name) && ((<Identifier>callEx.target).text === "eval")) {
                     this.checker.errorReporter.styleError(callEx, "eval not permitted");
                 }

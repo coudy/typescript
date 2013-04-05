@@ -586,7 +586,7 @@ module TypeScript {
         public argsOffset = (-1);
         public isOptional() {
             if (this.parameter && this.parameter.symbol && this.parameter.symbol.declAST) {
-                return (<ArgDecl>this.parameter.symbol.declAST).isOptional;
+                return (<Parameter>this.parameter.symbol.declAST).isOptional;
             }
             else {
                 return false;

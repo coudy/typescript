@@ -118,8 +118,8 @@ module TypeScript {
                 return false;
 
             return (this.ast().nodeType === TypeScript.NodeType.Name) &&
-                (this.parent().nodeType === TypeScript.NodeType.ArgDecl) &&
-                ((<TypeScript.ArgDecl>this.parent()).id === this.ast());
+                (this.parent().nodeType === TypeScript.NodeType.Parameter) &&
+                ((<TypeScript.Parameter>this.parent()).id === this.ast());
         }
 
         public isNameOfVariable(): bool {
@@ -165,14 +165,14 @@ module TypeScript {
         public isArgumentListOfCall(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.Call &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.InvocationExpression &&
                 (<TypeScript.CallExpression>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         }
 
         public isArgumentListOfNew(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                this.asts[this.top - 1].nodeType === TypeScript.NodeType.New &&
+                this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectCreationExpression &&
                 (<TypeScript.CallExpression>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
         }
 
@@ -194,7 +194,7 @@ module TypeScript {
 
         public isCallExpression(): bool {
             return this.count() >= 1 &&
-            (this.asts[this.top - 0].nodeType === TypeScript.NodeType.Call || this.asts[this.top - 0].nodeType === TypeScript.NodeType.New);
+            (this.asts[this.top - 0].nodeType === TypeScript.NodeType.InvocationExpression || this.asts[this.top - 0].nodeType === TypeScript.NodeType.ObjectCreationExpression);
         }
 
         public isCallExpressionTarget(): bool {
@@ -211,7 +211,7 @@ module TypeScript {
 
             while (current >= 0) {
                 // if this is a dot, then skip to find the outter most qualifed name
-                if (current < this.top && this.asts[current].nodeType === TypeScript.NodeType.Dot &&
+                if (current < this.top && this.asts[current].nodeType === TypeScript.NodeType.MemberAccessExpression &&
                     (<TypeScript.BinaryExpression>this.asts[current]).operand2 === this.asts[current + 1]) {
                     current--;
                     continue;
@@ -221,7 +221,7 @@ module TypeScript {
             }
 
             return current < this.top &&
-                (this.asts[current].nodeType === TypeScript.NodeType.Call || this.asts[current].nodeType === TypeScript.NodeType.New) &&
+                (this.asts[current].nodeType === TypeScript.NodeType.InvocationExpression || this.asts[current].nodeType === TypeScript.NodeType.ObjectCreationExpression) &&
                 this.asts[current + 1] === (<TypeScript.CallExpression>this.asts[current]).target;
         }
 
@@ -313,7 +313,7 @@ module TypeScript {
                 var inclusive =
                     hasFlag(options, GetAstPathOptions.EdgeInclusive) ||
                     cur.nodeType === TypeScript.NodeType.Name ||
-                    cur.nodeType === TypeScript.NodeType.Dot ||
+                    cur.nodeType === TypeScript.NodeType.MemberAccessExpression ||
                     cur.nodeType === TypeScript.NodeType.TypeRef ||
                     pos === script.limChar; // Special "EOF" case
 

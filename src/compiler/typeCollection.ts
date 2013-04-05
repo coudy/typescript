@@ -132,7 +132,7 @@ module TypeScript {
 
                 break;
 
-            case NodeType.Dot:
+            case NodeType.MemberAccessExpression:
                 var dottedExpr = <BinaryExpression>alias;
                 var op1Sym = findSymbolFromAlias(dottedExpr.operand1, context);
 
@@ -504,7 +504,7 @@ module TypeScript {
 
     export function preCollectArgDeclTypes(ast: AST, parent: AST, context: TypeCollectionContext) {
         var scopeChain = context.scopeChain;
-        var argDecl = <ArgDecl>ast;
+        var argDecl = <Parameter>ast;
         if (hasFlag(argDecl.getVarFlags(), VariableFlags.Public | VariableFlags.Private)) {
             var field = new ValueLocation();
             var isPrivate = hasFlag(argDecl.getVarFlags(), VariableFlags.Private);
@@ -831,7 +831,7 @@ module TypeScript {
         }
         // This will be a constructor arg because this pass only traverses
         // constructor arg lists
-        else if (ast.nodeType === NodeType.ArgDecl) {
+        else if (ast.nodeType === NodeType.Parameter) {
             go = preCollectArgDeclTypes(ast, parent, context);
         }
         else if (ast.nodeType === NodeType.VariableDeclarator) {

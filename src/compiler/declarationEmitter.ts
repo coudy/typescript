@@ -365,7 +365,7 @@ module TypeScript {
             return true;
         }
 
-        private emitArgDecl(argDecl: ArgDecl, funcDecl: FunctionDeclaration) {
+        private emitArgDecl(argDecl: Parameter, funcDecl: FunctionDeclaration) {
             this.emitDeclarationComments(argDecl, false);
             this.declFile.Write(argDecl.id.text);
             if (argDecl.isOptionalArg()) {
@@ -469,7 +469,7 @@ module TypeScript {
                     argsLen--;
                 }
                 for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <ArgDecl>funcDecl.arguments.members[i];
+                    var argDecl = <Parameter>funcDecl.arguments.members[i];
                     this.emitArgDecl(argDecl, funcDecl);
                     if (i < (argsLen - 1)) {
                         this.declFile.Write(", ");
@@ -478,7 +478,7 @@ module TypeScript {
             }
 
             if (funcDecl.variableArgList) {
-                var lastArg = <ArgDecl>funcDecl.arguments.members[funcDecl.arguments.members.length - 1];
+                var lastArg = <Parameter>funcDecl.arguments.members[funcDecl.arguments.members.length - 1];
                 if (funcDecl.arguments.members.length > 1) {
                     this.declFile.Write(", ...");
                 }
@@ -582,7 +582,7 @@ module TypeScript {
                 var argsLen = funcDecl.arguments.members.length; if (funcDecl.variableArgList) { argsLen--; }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <ArgDecl>funcDecl.arguments.members[i];
+                    var argDecl = <Parameter>funcDecl.arguments.members[i];
                     if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
                         this.emitDeclarationComments(argDecl);
                         this.emitDeclFlags(ToDeclFlags(argDecl.getVarFlags()), "var");

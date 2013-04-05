@@ -165,7 +165,7 @@ module TypeScript {
         return true;
     }
 
-    export function preCollectParameterDecl(argDecl: ArgDecl, parentAST: AST, context: DeclCollectionContext) {
+    export function preCollectParameterDecl(argDecl: Parameter, parentAST: AST, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
 
         if (hasFlag(argDecl.getVarFlags(), VariableFlags.Private)) {
@@ -889,8 +889,8 @@ module TypeScript {
         else if (ast.nodeType == NodeType.InterfaceDeclaration) {
             go = preCollectInterfaceDecls(<InterfaceDeclaration>ast, parentAST, context);
         }
-        else if (ast.nodeType == NodeType.ArgDecl) {
-            go = preCollectParameterDecl(<ArgDecl>ast, parentAST, context);
+        else if (ast.nodeType == NodeType.Parameter) {
+            go = preCollectParameterDecl(<Parameter>ast, parentAST, context);
         }
         else if (ast.nodeType == NodeType.VariableDeclarator) {
             go = preCollectVarDecls(ast, parentAST, context);
@@ -931,11 +931,11 @@ module TypeScript {
         }
 
             // call and 'new' expressions may contain lambdas with bindings...
-        else if (ast.nodeType == NodeType.Call) {
+        else if (ast.nodeType == NodeType.InvocationExpression) {
             // want to be able to bind lambdas in return positions
             go = true;
         }
-        else if (ast.nodeType == NodeType.New) {
+        else if (ast.nodeType == NodeType.ObjectCreationExpression) {
             // want to be able to bind lambdas in return positions
             go = true;
         }

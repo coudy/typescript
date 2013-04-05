@@ -1019,7 +1019,7 @@ module Harness {
                 var name = '';
                 switch (ast.nodeType) {
                     case TypeScript.NodeType.Name: // Type Name?
-                    case TypeScript.NodeType.Null:
+                    case TypeScript.NodeType.NullLiteral:
                     case TypeScript.NodeType.List:
                     case TypeScript.NodeType.OmittedExpression:
                     case TypeScript.NodeType.EmptyStatement:

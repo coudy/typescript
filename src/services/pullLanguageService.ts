@@ -171,7 +171,7 @@ module Services {
                         path.pop();
                     }
                     break;
-                } else if (path.ast().nodeType === TypeScript.NodeType.Call || path.ast().nodeType === TypeScript.NodeType.New) {
+                } else if (path.ast().nodeType === TypeScript.NodeType.InvocationExpression || path.ast().nodeType === TypeScript.NodeType.ObjectCreationExpression) {
                     break;
                 }
 
@@ -184,13 +184,13 @@ module Services {
                 path.pop();
             }
 
-            if (path.ast().nodeType !== TypeScript.NodeType.Call && path.ast().nodeType !== TypeScript.NodeType.New) {
+            if (path.ast().nodeType !== TypeScript.NodeType.InvocationExpression && path.ast().nodeType !== TypeScript.NodeType.ObjectCreationExpression) {
                 this.logger.log("No call expression for the given position");
                 return null;
             }
 
             var callExpression = <TypeScript.CallExpression>path.ast();
-            var isNew = (callExpression.nodeType === TypeScript.NodeType.New);
+            var isNew = (callExpression.nodeType === TypeScript.NodeType.ObjectCreationExpression);
 
             // Resolve symbol
             var callSymbolInfo = this.compilerState.getCallInformationFromPath(path, script);
@@ -635,11 +635,11 @@ module Services {
                 case TypeScript.NodeType.StringLiteral:
                 case TypeScript.NodeType.RegularExpressionLiteral:
                 case TypeScript.NodeType.NumericLiteral:
-                case TypeScript.NodeType.Null:
+                case TypeScript.NodeType.NullLiteral:
                 case TypeScript.NodeType.Name:
                 case TypeScript.NodeType.ThisExpression:
                 case TypeScript.NodeType.SuperExpression:
-                case TypeScript.NodeType.Dot:
+                case TypeScript.NodeType.MemberAccessExpression:
                     return false;
                 case TypeScript.NodeType.FunctionDeclaration:
                     var funcDecl = <TypeScript.FunctionDeclaration>path.ast();
@@ -673,14 +673,14 @@ module Services {
 
             var isRightOfDot = false;
             if (path.count() >= 1 &&
-                path.asts[path.top].nodeType === TypeScript.NodeType.Dot
+                path.asts[path.top].nodeType === TypeScript.NodeType.MemberAccessExpression
                 && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) {
                 isRightOfDot = true;
                 path.push((<TypeScript.BinaryExpression>path.asts[path.top]).operand1);
             }
             else if (path.count() >= 2 &&
                     path.asts[path.top].nodeType === TypeScript.NodeType.Name &&
-                    path.asts[path.top - 1].nodeType === TypeScript.NodeType.Dot &&
+                    path.asts[path.top - 1].nodeType === TypeScript.NodeType.MemberAccessExpression &&
                     (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
                 isRightOfDot = true;
                 path.pop();
@@ -728,8 +728,8 @@ module Services {
         }
 
         private isRightOfDot(path: TypeScript.AstPath, position: number): bool {
-            return (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.Dot && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) ||
-                   (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Dot && (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]);
+            return (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.MemberAccessExpression && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) ||
+                   (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.MemberAccessExpression && (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]);
         }
 
         private isCompletionListBlocker(path: TypeScript.AstPath): bool {
@@ -750,7 +750,7 @@ module Services {
             if (path.isNameOfVariable() // var <here>
                 || path.isNameOfArgument() // function foo(a, b<here>
                 || path.isArgumentListOfFunction() // function foo(<here>
-                || path.ast().nodeType === TypeScript.NodeType.ArgDecl // function foo(a <here>
+                || path.ast().nodeType === TypeScript.NodeType.Parameter // function foo(a <here>
                 ) {
                 return false;
             }
