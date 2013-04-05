@@ -120,21 +120,6 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
             emitter.emitComments(this, true);
             switch (this.nodeType) {
-                case NodeType.ThisExpression:
-                    emitter.recordSourceMappingStart(this);
-                    if (emitter.thisFnc && (hasFlag(emitter.thisFnc.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
-                        emitter.writeToOutput("_this");
-                    }
-                    else {
-                        emitter.writeToOutput("this");
-                    }
-                    emitter.recordSourceMappingEnd(this);
-                    break;
-                case NodeType.SuperExpression:
-                    emitter.recordSourceMappingStart(this);
-                    emitter.emitSuperReference();
-                    emitter.recordSourceMappingEnd(this);
-                    break;
                 case NodeType.OmittedExpression:
                     break;
                 case NodeType.VoidExpression:
@@ -371,6 +356,51 @@ module TypeScript {
             }
             emitter.emitComments(this, false);
         }
+
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class ThisExpression extends Expression {
+        constructor() {
+            super(NodeType.ThisExpression);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            if (emitter.thisFnc && (hasFlag(emitter.thisFnc.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
+                emitter.writeToOutput("_this");
+            }
+            else {
+                emitter.writeToOutput("this");
+            }
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitComments(this, false);
+        }
+
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class SuperExpression extends Expression {
+        constructor() {
+            super(NodeType.SuperExpression);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            emitter.emitSuperReference();
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitComments(this, false);
+        }
+
+        public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition);
+        }
     }
 
     export class ParenthesizedExpression extends Expression {
@@ -387,7 +417,6 @@ module TypeScript {
             emitter.writeToOutput(")");
             emitter.emitComments(this, false);
         }
-
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&

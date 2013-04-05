@@ -381,10 +381,10 @@ module TypeScript {
             }
             else {
                 if (token.kind() === SyntaxKind.ThisKeyword) {
-                    result = new AST(NodeType.ThisExpression);
+                    result = new ThisExpression();
                 }
                 else if (token.kind() === SyntaxKind.SuperKeyword) {
-                    result = new AST(NodeType.SuperExpression);
+                    result = new SuperExpression();
                 }
                 else if (token.kind() === SyntaxKind.TrueKeyword) {
                     result = new LiteralExpression(NodeType.TrueLiteral);
