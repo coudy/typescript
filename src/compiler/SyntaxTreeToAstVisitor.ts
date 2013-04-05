@@ -370,10 +370,10 @@ module TypeScript {
             return false;
         }
 
-        private visitToken(token: ISyntaxToken): AST {
+        private visitToken(token: ISyntaxToken): Expression {
             this.assertElementAtPosition(token);
 
-            var result: AST = this.getAST(token);
+            var result: Expression = this.getAST(token);
             var fullStart = this.position;
 
             if (result) {
@@ -690,11 +690,7 @@ module TypeScript {
                         this.movePast(node.typeNames.childAt(i));
                     }
                     else {
-                        var type = this.visitType(node.typeNames.childAt(i));
-                        if (type.nodeType === NodeType.TypeRef) {
-                            type = (<TypeReference>type).term;
-                        }
-
+                        var type = this.visitType(node.typeNames.childAt(i)).term;
                         result.append(type);
                     }
                 }
@@ -1066,7 +1062,7 @@ module TypeScript {
             return result;
         }
 
-        private visitVariableStatement(node: VariableStatementSyntax): AST {
+        private visitVariableStatement(node: VariableStatementSyntax): VariableStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1150,7 +1146,7 @@ module TypeScript {
             return result;
         }
 
-        private visitEqualsValueClause(node: EqualsValueClauseSyntax): AST {
+        private visitEqualsValueClause(node: EqualsValueClauseSyntax): Expression {
             this.assertElementAtPosition(node);
 
             this.previousTokenTrailingComments = this.convertTokenTrailingComments(node.equalsToken,
@@ -1338,19 +1334,22 @@ module TypeScript {
             return result;
         }
 
-        private visitType(type: ITypeSyntax): AST {
+        private visitType(type: ITypeSyntax): TypeReference {
             this.assertElementAtPosition(type);
 
+            var result: TypeReference;
             if (type.isToken()) {
                 var start = this.position;
-                var result = new TypeReference(type.accept(this), 0);
+                result = new TypeReference(type.accept(this), 0);
                 this.setSpan(result, start, type);
-
-                return result;
             }
             else {
-                return type.accept(this);
+                result = type.accept(this);
             }
+
+            Debug.assert(result.nodeType === NodeType.TypeRef);
+
+            return result;
         }
 
         private visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
@@ -1362,15 +1361,10 @@ module TypeScript {
                 this.movePast(node);
             }
             else {
-
-                var left = this.visitType(node.left);
+                var left = this.visitType(node.left).term;
                 this.movePast(node.dotToken);
                 var right = this.identifierFromToken(node.right, /*isOptional:*/ false, /*useValueText:*/ true);
                 this.movePast(node.right);
-
-                if (left.nodeType === NodeType.TypeRef) {
-                    left = (<TypeReference>left).term;
-                }
 
                 var term = new BinaryExpression(NodeType.MemberAccessExpression, left, right);
                 this.setSpan(term, start, node);
@@ -1533,12 +1527,8 @@ module TypeScript {
                 this.movePast(node);
             }
             else {
-                var underlying = this.visitType(node.name);
+                var underlying = this.visitType(node.name).term;
                 var typeArguments = node.typeArgumentList.accept(this);
-
-                if (underlying.nodeType === NodeType.TypeRef) {
-                    underlying = (<TypeReference>underlying).term;
-                }
 
                 var genericType = new GenericType(underlying, typeArguments);
                 this.setSpan(genericType, start, node);
@@ -1553,7 +1543,7 @@ module TypeScript {
             return result;
         }
 
-        private visitTypeAnnotation(node: TypeAnnotationSyntax): AST {
+        private visitTypeAnnotation(node: TypeAnnotationSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             this.movePast(node.colonToken);
@@ -2042,7 +2032,7 @@ module TypeScript {
             return result;
         }
 
-        private visitConstraint(node: ConstraintSyntax): any {
+        private visitConstraint(node: ConstraintSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
             this.movePast(node.extendsKeyword);
@@ -2905,7 +2895,7 @@ module TypeScript {
             return result;
         }
 
-        private visitFinallyClause(node: FinallyClauseSyntax): AST {
+        private visitFinallyClause(node: FinallyClauseSyntax): Block {
             this.movePast(node.finallyKeyword);
             return node.block.accept(this);
         }

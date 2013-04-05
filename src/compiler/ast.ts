@@ -118,19 +118,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
-            emitter.emitComments(this, true);
-            switch (this.nodeType) {
-                case NodeType.OmittedExpression:
-                    break;
-                case NodeType.VoidExpression:
-                    emitter.recordSourceMappingStart(this);
-                    emitter.writeToOutput("void ");
-                    emitter.recordSourceMappingEnd(this);
-                    break;
-                default:
-                    throw new Error("please implement in derived class");
-            }
-            emitter.emitComments(this, false);
+            throw new Error("please implement in derived class");
         }
 
         public print(context: PrintContext) {
@@ -251,7 +239,13 @@ module TypeScript {
         }
     }
 
-    export class Identifier extends AST {
+    export class Expression extends AST {
+        constructor(nodeType: NodeType) {
+            super(nodeType);
+        }
+    }
+
+    export class Identifier extends Expression {
         public sym: Symbol = null;
         public text: string;
 
@@ -319,12 +313,6 @@ module TypeScript {
 
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
             // Emit nothing for a missing ID
-        }
-    }
-
-    export class Expression extends AST {
-        constructor(nodeType: NodeType) {
-            super(nodeType);
         }
     }
 
@@ -2455,6 +2443,11 @@ module TypeScript {
     export class OmittedExpression extends Expression {
         constructor() {
             super(NodeType.OmittedExpression);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.emitComments(this, false);
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: bool): bool {
