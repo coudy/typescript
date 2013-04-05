@@ -403,7 +403,7 @@ module TypeScript {
 
                 // Set location info
                 emitter.setUnit(script.locationInfo);
-                emitter.emitJavascript(script, SyntaxKind.CommaToken, false);
+                emitter.emitJavascript(script, false);
             }
 
             return emitter;
