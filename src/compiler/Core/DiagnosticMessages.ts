@@ -663,7 +663,12 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Return type of exported function is using inaccessible module {0}",
             code: 2067
-        }
+        },
+        _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: {
+            category: DiagnosticCategory.Error,
+            message: "'new T[]' cannot be used to create an array. Use 'new Array<T>()' instead.",
+            code: 2068
+        },
     };
 
     var seenCodes = [];

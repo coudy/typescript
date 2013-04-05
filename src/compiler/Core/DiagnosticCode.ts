@@ -77,6 +77,7 @@ module TypeScript {
         Setter__0__already_declared,
         Accessor_may_not_take_type_parameters,
 
+
         // Privacy error messages
         Exported_class__0__extends_private_class__1_,
         Exported_class__0__implements_private_interface__1_,
@@ -128,5 +129,8 @@ module TypeScript {
         Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_,
         Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_,
         Return_type_of_exported_function_is_using_inaccessible_module__0_,
+
+
+        _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead,
     }
 }

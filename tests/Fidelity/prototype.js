@@ -629,6 +629,8 @@ var TypeScript;
         DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_ = 115;
         DiagnosticCode._map[116] = "Return_type_of_exported_function_is_using_inaccessible_module__0_";
         DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module__0_ = 116;
+        DiagnosticCode._map[117] = "_new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead";
+        DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead = 117;
     })(TypeScript.DiagnosticCode || (TypeScript.DiagnosticCode = {}));
     var DiagnosticCode = TypeScript.DiagnosticCode;
 })(TypeScript || (TypeScript = {}));
@@ -1219,6 +1221,11 @@ var TypeScript;
             category: 1 /* Error */ ,
             message: "Return type of exported function is using inaccessible module {0}",
             code: 2067
+        },
+        _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: {
+            category: 1 /* Error */ ,
+            message: "'new T[]' cannot be used to create an array. Use 'new Array<T>()' instead.",
+            code: 2068
         }
     };
     var seenCodes = [];
@@ -18459,7 +18466,7 @@ var TypeScript;
                     var operand = this.parseUnaryExpression();
                     return this.factory.prefixUnaryExpression(operatorKind, operatorToken, operand);
                 } else {
-                    return this.parseTerm(true);
+                    return this.parseTerm(false);
                 }
             };
             ParserImpl.prototype.parseSubExpression = function (precedence, allowIn) {
@@ -18573,25 +18580,25 @@ var TypeScript;
                         return false;
                 }
             };
-            ParserImpl.prototype.parseTerm = function (allowInvocation) {
+            ParserImpl.prototype.parseTerm = function (inObjectCreation) {
                 var term = this.parseTermWorker();
                 if (term === null) {
                     return this.eatIdentifierToken();
                 }
-                return this.parsePostFixExpression(term, allowInvocation);
+                return this.parsePostFixExpression(term, inObjectCreation);
             };
-            ParserImpl.prototype.parsePostFixExpression = function (expression, allowInvocation) {
+            ParserImpl.prototype.parsePostFixExpression = function (expression, inObjectCreation) {
                 while(true) {
                     var currentTokenKind = this.currentToken().tokenKind;
                     switch(currentTokenKind) {
                         case 72 /* OpenParenToken */ :
-                            if (!allowInvocation) {
+                            if (inObjectCreation) {
                                 return expression;
                             }
                             expression = this.factory.invocationExpression(expression, this.parseArgumentList(null));
                             continue;
                         case 80 /* LessThanToken */ :
-                            if (!allowInvocation) {
+                            if (inObjectCreation) {
                                 return expression;
                             }
                             var argumentList = this.tryParseArgumentList();
@@ -18601,7 +18608,7 @@ var TypeScript;
                             }
                             break;
                         case 74 /* OpenBracketToken */ :
-                            expression = this.parseElementAccessExpression(expression);
+                            expression = this.parseElementAccessExpression(expression, inObjectCreation);
                             continue;
                         case 93 /* PlusPlusToken */ :
                         case 94 /* MinusMinusToken */ :
@@ -18647,9 +18654,18 @@ var TypeScript;
                 var closeParenToken = this.eatToken(73 /* CloseParenToken */ );
                 return this.factory.argumentList(typeArgumentList, openParenToken, arguments, closeParenToken);
             };
-            ParserImpl.prototype.parseElementAccessExpression = function (expression) {
+            ParserImpl.prototype.parseElementAccessExpression = function (expression, inObjectCreation) {
+                var start = this.currentTokenStart();
                 var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
-                var argumentExpression = this.parseExpression(true);
+                var argumentExpression;
+                if (this.currentToken().tokenKind === 75 /* CloseBracketToken */  && inObjectCreation) {
+                    var end = this.currentTokenStart() + this.currentToken().width();
+                    var diagnostic = new TypeScript.SyntaxDiagnostic(this.fileName, start, end - start, 117 /* _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead */ , null);
+                    this.addDiagnostic(diagnostic);
+                    argumentExpression = TypeScript.Syntax.emptyToken(11 /* IdentifierName */ );
+                } else {
+                    argumentExpression = this.parseExpression(true);
+                }
                 var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
                 return this.factory.elementAccessExpression(expression, openBracketToken, argumentExpression, closeBracketToken);
             };
@@ -18772,7 +18788,7 @@ var TypeScript;
             };
             ParserImpl.prototype.parseObjectCreationExpression = function () {
                 var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
-                var expression = this.parseTerm(false);
+                var expression = this.parseTerm(true);
                 var argumentList = this.tryParseArgumentList();
                 return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
             };
@@ -24606,7 +24622,8 @@ var Environment = (function () {
             standardOut: WScript.StdOut
         };
     }
-    
+    ;
+
     function getNodeEnvironment() {
         var _fs = require('fs');
         var _path = require('path');
@@ -24718,7 +24735,8 @@ var Environment = (function () {
             }
         };
     }
-    
+    ;
+
     if (typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
     } else if (typeof require === "function") {
@@ -32189,7 +32207,8 @@ var TypeScript;
             if (funcDecl.isConstructor) {
                 go = true;
             }
-            
+            ;
+
         }
         if (isExported) {
             if (funcDecl.type.call) {
@@ -34055,7 +34074,8 @@ var TypeScript;
                 }
             }
             if (fnType.enclosingType) {
-                
+                ;
+
                 var enclosingSym = fnType.symbol.container;
                 if (enclosingSym && enclosingSym.isType() && enclosingSym.getType().isClass()) {
                     enclosingSym = enclosingSym.container;
@@ -44857,7 +44877,8 @@ var TypeScript;
             }
             var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
             var functionSymbol = functionDecl.getSymbol();
-            
+            ;
+
             var functionSignature;
             var isGetter = funcDeclAST.isGetAccessor();
             var isSetter = funcDeclAST.isSetAccessor();

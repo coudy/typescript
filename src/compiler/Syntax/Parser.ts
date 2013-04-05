@@ -3477,7 +3477,7 @@ module TypeScript.Parser {
                 return this.factory.prefixUnaryExpression(operatorKind, operatorToken, operand);
             }
             else {
-                return this.parseTerm(/*allowInvocation*/ true);
+                return this.parseTerm(/*inObjectCreation*/ false);
             }
         }
 
@@ -3648,7 +3648,7 @@ module TypeScript.Parser {
             }
         }
 
-        private parseTerm(allowInvocation: bool): IUnaryExpressionSyntax {
+        private parseTerm(inObjectCreation: bool): IUnaryExpressionSyntax {
             // NOTE: allowInvocation and insideObjectCreation are always the negation of the other.
             // We could remove one of them and just use the other.  However, i think this is much
             // easier to read and understand in this form.
@@ -3659,15 +3659,15 @@ module TypeScript.Parser {
                 return this.eatIdentifierToken();
             }
 
-            return this.parsePostFixExpression(term, allowInvocation);
+            return this.parsePostFixExpression(term, inObjectCreation);
         }
 
-        private parsePostFixExpression(expression: IUnaryExpressionSyntax, allowInvocation: bool): IUnaryExpressionSyntax {
+        private parsePostFixExpression(expression: IUnaryExpressionSyntax, inObjectCreation: bool): IUnaryExpressionSyntax {
             while (true) {
                 var currentTokenKind = this.currentToken().tokenKind;
                 switch (currentTokenKind) {
                     case SyntaxKind.OpenParenToken:
-                        if (!allowInvocation) {
+                        if (inObjectCreation) {
                             return expression;
                         }
 
@@ -3675,7 +3675,7 @@ module TypeScript.Parser {
                         continue;
 
                     case SyntaxKind.LessThanToken:
-                        if (!allowInvocation) {
+                        if (inObjectCreation) {
                             return expression;
                         }
 
@@ -3692,7 +3692,7 @@ module TypeScript.Parser {
                         break;
 
                     case SyntaxKind.OpenBracketToken:
-                        expression = this.parseElementAccessExpression(expression);
+                        expression = this.parseElementAccessExpression(expression, inObjectCreation);
                         continue;
 
                     case SyntaxKind.PlusPlusToken:
@@ -3758,11 +3758,29 @@ module TypeScript.Parser {
             return this.factory.argumentList(typeArgumentList, openParenToken, arguments, closeParenToken);
         }
 
-        private parseElementAccessExpression(expression: IExpressionSyntax): ElementAccessExpressionSyntax {
+        private parseElementAccessExpression(expression: IExpressionSyntax, inObjectCreation: bool): ElementAccessExpressionSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
+            var start = this.currentTokenStart();
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
-            var argumentExpression = this.parseExpression(/*allowIn:*/ true);
+            var argumentExpression: IExpressionSyntax;
+
+            // It's not uncommon for a user to write: "new Type[]".  Check for that common pattern
+            // and report a better error message.
+            if (this.currentToken().tokenKind === SyntaxKind.CloseBracketToken &&
+                inObjectCreation) {
+
+                var end = this.currentTokenStart() + this.currentToken().width();
+                var diagnostic = new SyntaxDiagnostic(this.fileName, start, end - start,
+                    DiagnosticCode._new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead, null);
+                this.addDiagnostic(diagnostic);
+
+                argumentExpression = Syntax.emptyToken(SyntaxKind.IdentifierName);
+            }
+            else {
+                argumentExpression = this.parseExpression(/*allowIn:*/ true);
+            }
+
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
             return this.factory.elementAccessExpression(expression, openBracketToken, argumentExpression, closeBracketToken);
@@ -3984,7 +4002,7 @@ module TypeScript.Parser {
 
             // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
             // we want "new Foo()" to parse as "new Foo()" (one node), not "new (Foo())".
-            var expression = this.parseTerm(/*allowInvocation:*/ false);
+            var expression = this.parseTerm(/*inObjectCreation:*/ true);
             var argumentList = this.tryParseArgumentList();
 
             return this.factory.objectCreationExpression(newKeyword, expression, argumentList);

@@ -80,6 +80,7 @@ module TypeScript {
         Setter__0__already_declared: DiagnosticInfo;
         Accessor_may_not_take_type_parameters: DiagnosticInfo;
 
+
         //Privacy error related diagnostics
         Exported_class__0__extends_private_class__1_: DiagnosticInfo;
         Exported_class__0__implements_private_interface__1_: DiagnosticInfo;
@@ -131,5 +132,9 @@ module TypeScript {
         Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_: DiagnosticInfo;
         Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_: DiagnosticInfo;
         Return_type_of_exported_function_is_using_inaccessible_module__0_: DiagnosticInfo;
+
+
+
+        _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: DiagnosticInfo;
     }
 }
