@@ -2158,6 +2158,29 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
+        private isNameOrMemberAccessExpression(ast: AST): bool {
+
+            var checkAST = ast;
+
+            while (checkAST) {
+                if (checkAST.nodeType == NodeType.ExpressionStatement) {
+                    checkAST = (<ExpressionStatement>checkAST).expression;
+                }
+                else if (checkAST.nodeType == NodeType.ParenthesizedExpression) {
+                    checkAST = (<ParenthesizedExpression>checkAST).expression;
+                }
+                else if (checkAST.nodeType == NodeType.Name) {
+                    return true;
+                }
+                else if (checkAST.nodeType == NodeType.MemberAccessExpression) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             if (nameAST.isMissing()) {
@@ -2284,7 +2307,7 @@ module TypeScript {
 
             // now for the name...
             // For classes, check the statics first below
-            if (!(lhs.isType() && (<PullTypeSymbol>lhs).isClass()) && !nameSymbol) {
+            if (!(lhs.isType() && (<PullTypeSymbol>lhs).isClass() && this.isNameOrMemberAccessExpression(dottedNameAST.operand1)) && !nameSymbol) {
                 nameSymbol = lhsType.findMember(rhsName);
             }
 
