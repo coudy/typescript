@@ -1278,6 +1278,9 @@ module TypeScript {
                 else if (typeName.actualText == "bool") {
                     typeDeclSymbol = this.semanticInfoChain.boolTypeSymbol;
                 }
+                else if (typeName.actualText == "boolean") {
+                    typeDeclSymbol = this.semanticInfoChain.boolTypeSymbol;
+                }
                 else if (typeName.actualText == "null") {
                     typeDeclSymbol = this.semanticInfoChain.nullTypeSymbol;
                 }
@@ -4225,6 +4228,19 @@ module TypeScript {
         }
 
         public typeIsSubtypeOfFunction(source: PullTypeSymbol, context): bool {
+
+            var callSignatures = source.getCallSignatures();
+
+            if (callSignatures.length) {
+                return true;
+            }
+
+            var constructSignatures = source.getConstructSignatures();
+
+            if (constructSignatures.length) {
+                return true;
+            }
+
             if (this.cachedFunctionInterfaceType) {
                 return this.sourceIsSubtypeOfTarget(source, this.cachedFunctionInterfaceType, context);
             }

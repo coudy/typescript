@@ -1286,7 +1286,7 @@ module TypeScript {
             var rhsType = this.typeCheckAST(binex.operand2, typeCheckContext);
 
             var isValidLHS = lhsType && (this.resolver.isAnyOrEquivalent(lhsType) || !lhsType.isPrimitive());
-            var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
+            var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.resolver.typeIsSubtypeOfFunction(rhsType, this.context))
 
             if (!isValidLHS) {
                 this.postError(binex.operand1.minChar, binex.operand1.getLength(), typeCheckContext.scriptName, "The left-hand side of an 'instanceOf' expression must be of type 'any', an object type or a type parameter", typeCheckContext.getEnclosingDecl());
