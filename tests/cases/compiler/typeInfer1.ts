@@ -8,6 +8,6 @@ var x: ITextWriter2 = {
     WriteLine: function(s:string):void {}
 }
 
-var y: ITextWriter2 = {
+var yyyyyyyy: ITextWriter2 = {
     Moo: function() { return "cow"; }
 }

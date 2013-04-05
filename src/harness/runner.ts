@@ -325,7 +325,7 @@ if (runners.length === 0) {
         //runners.push(new UnitTestRunner('services'));
 
         // samples
-        //runners.push(new UnitTestRunner('samples'));
+        runners.push(new UnitTestRunner('samples'));
     } else {
         var runnerFactory = new RunnerFactory();
         var tests = opts.unnamed[0].split(' ');

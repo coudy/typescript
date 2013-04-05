@@ -4,7 +4,7 @@ var x = {
     WriteLine: function (s) {
     }
 };
-var y = {
+var yyyyyyyy = {
     Moo: function () {
         return "cow";
     }
