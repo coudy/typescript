@@ -1,3 +1,4 @@
+;
 
 var x;
 var i;

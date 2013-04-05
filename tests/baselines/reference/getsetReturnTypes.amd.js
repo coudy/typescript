@@ -5,5 +5,6 @@ function makePoint(x) {
         }
     };
 }
+;
 
 var x = makePoint(2).x;

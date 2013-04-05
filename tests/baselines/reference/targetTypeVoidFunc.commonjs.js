@@ -3,6 +3,7 @@ function f1() {
         return;
     };
 }
+;
 
 var x = f1();
 var y = new x();

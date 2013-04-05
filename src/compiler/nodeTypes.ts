@@ -19,8 +19,8 @@ module TypeScript {
     // Note: Any addition to the NodeType should also be supported with addition to AstWalkerDetailCallback
     export enum NodeType {
         None,
-        Empty,
-        EmptyExpr,
+        EmptyStatement,
+        OmittedExpression,
         TrueLiteral,
         FalseLiteral,
         ThisExpression,

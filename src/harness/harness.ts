@@ -1021,8 +1021,8 @@ module Harness {
                     case TypeScript.NodeType.Name: // Type Name?
                     case TypeScript.NodeType.Null:
                     case TypeScript.NodeType.List:
-                    case TypeScript.NodeType.Empty:
-                    case TypeScript.NodeType.EmptyExpr:
+                    case TypeScript.NodeType.OmittedExpression:
+                    case TypeScript.NodeType.EmptyStatement:
                     case TypeScript.NodeType.Asg:
                     case TypeScript.NodeType.TrueLiteral:
                     case TypeScript.NodeType.FalseLiteral:

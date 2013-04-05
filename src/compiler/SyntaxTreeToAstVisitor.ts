@@ -1210,7 +1210,7 @@ module TypeScript {
                 this.movePast(node.closeBracketToken);
 
                 if (node.expressions.childCount() > 0 && node.expressions.childAt(node.expressions.childCount() - 1).kind() === SyntaxKind.CommaToken) {
-                    expressions.append(new AST(NodeType.EmptyExpr));
+                    expressions.append(new OmittedExpression());
                 }
 
                 result = new UnaryExpression(NodeType.ArrayLiteralExpression, expressions);
@@ -1221,16 +1221,16 @@ module TypeScript {
             return result;
         }
 
-        private visitOmittedExpression(node: OmittedExpressionSyntax): AST {
+        private visitOmittedExpression(node: OmittedExpressionSyntax): OmittedExpression {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: AST = this.getAST(node);
+            var result: OmittedExpression = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
             else {
-                result = new AST(NodeType.EmptyExpr);
+                result = new OmittedExpression();
             }
 
             this.setAST(node, result);
@@ -2822,18 +2822,18 @@ module TypeScript {
             return result;
         }
 
-        private visitEmptyStatement(node: EmptyStatementSyntax): AST {
+        private visitEmptyStatement(node: EmptyStatementSyntax): EmptyStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: AST = this.getAST(node);
+            var result: EmptyStatement = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
             else {
                 this.movePast(node.semicolonToken);
 
-                result = new AST(NodeType.Empty);
+                result = new EmptyStatement();
             }
 
             this.setAST(node, result);

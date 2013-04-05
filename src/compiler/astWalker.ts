@@ -95,8 +95,8 @@ module TypeScript {
 
         private initChildrenWalkers(): void {
             this.childrenWalkers[NodeType.None] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.Empty] = ChildrenWalkers.walkNone;
-            this.childrenWalkers[NodeType.EmptyExpr] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.EmptyStatement] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.OmittedExpression] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.TrueLiteral] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.FalseLiteral] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.ThisExpression] = ChildrenWalkers.walkNone;

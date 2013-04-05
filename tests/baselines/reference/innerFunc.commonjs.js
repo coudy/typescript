@@ -10,7 +10,8 @@ var M;
         function oxygen() {
             return 6;
         }
-        
+        ;
+
         return oxygen();
     }
     M.tungsten = tungsten;

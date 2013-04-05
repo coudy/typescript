@@ -93,7 +93,7 @@ module TypeScript {
 
         public typeCheck(typeFlow: TypeFlow) {
             switch (this.nodeType) {
-                case NodeType.EmptyExpr:
+                case NodeType.OmittedExpression:
                     this.type = typeFlow.anyType;
                     break;
                 case NodeType.ThisExpression:
@@ -107,7 +107,7 @@ module TypeScript {
                     break;
                 case NodeType.SuperExpression:
                     return typeFlow.typeCheckSuper(this);
-                case NodeType.Empty:
+                case NodeType.EmptyStatement:
                 case NodeType.VoidExpression:
                     this.type = typeFlow.voidType;
                     break;
@@ -150,11 +150,7 @@ module TypeScript {
                     emitter.emitSuperReference();
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.EmptyExpr:
-                    break;
-                case NodeType.Empty:
-                    emitter.recordSourceMappingStart(this);
-                    emitter.recordSourceMappingEnd(this);
+                case NodeType.OmittedExpression:
                     break;
                 case NodeType.VoidExpression:
                     emitter.recordSourceMappingStart(this);
@@ -1251,7 +1247,7 @@ module TypeScript {
                             return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType != NodeType.InterfaceDeclaration && stmt.nodeType != NodeType.Empty) {
+                    else if (stmt.nodeType != NodeType.InterfaceDeclaration && stmt.nodeType != NodeType.EmptyStatement) {
                         return this.setCachedEmitRequired(true);
                     }
                 }
@@ -2397,6 +2393,49 @@ module TypeScript {
         }
     }
 
+    export class DebuggerStatement extends Statement {
+        constructor() {
+            super(NodeType.DebuggerStatement);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            emitter.writeToOutput("debugger");
+            emitter.recordSourceMappingEnd(this);
+            emitter.writeLineToOutput(";");
+            emitter.emitComments(this, false);
+        }
+    }
+
+    export class OmittedExpression extends Expression {
+        constructor() {
+            super(NodeType.OmittedExpression);
+        }
+
+        public structuralEquals(ast: CatchClause, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class EmptyStatement extends Statement {
+        constructor() {
+            super(NodeType.EmptyStatement);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            emitter.writeLineToOutput(";");
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitComments(this, false);
+        }
+
+        public structuralEquals(ast: CatchClause, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
     export class Comment extends AST {
         public text: string[] = null;
         public minLine: number;
@@ -2694,21 +2733,6 @@ module TypeScript {
             }
 
             return "";
-        }
-    }
-
-    export class DebuggerStatement extends Statement {
-        constructor() {
-            super(NodeType.DebuggerStatement);
-        }
-
-        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
-            emitter.emitComments(this, true);
-            emitter.recordSourceMappingStart(this);
-            emitter.writeToOutput("debugger");
-            emitter.recordSourceMappingEnd(this);
-            emitter.writeLineToOutput(";");
-            emitter.emitComments(this, false);
         }
     }
 }

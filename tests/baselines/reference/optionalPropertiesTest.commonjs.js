@@ -20,9 +20,13 @@ if (foo.print !== undefined) {
     foo.print();
 
 }
+;
 
+;
 
+;
 
+;
 
 var test1 = {};
 var test2 = {};
