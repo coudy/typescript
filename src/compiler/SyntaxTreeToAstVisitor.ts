@@ -1121,7 +1121,9 @@ module TypeScript {
                 }
             }
 
-            return new VariableDeclaration(variableDecls);
+            var result = new VariableDeclaration(variableDecls);
+            this.setSpan(result, start, node);
+            return result;
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
