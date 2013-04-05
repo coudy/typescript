@@ -66,6 +66,7 @@ module TypeScript.Formatting {
         private recordIndentationEditsForToken(token: ISyntaxToken, indentationString: string, commentIndentationString: string) {
             var position = this.position();
             var indentNextTokenOrTrivia = true;
+            var leadingWhiteSpace = ""; // We need to track the whitespace before a multiline comment
 
             // Process any leading trivia if any
             var triviaList = token.leadingTrivia();
@@ -75,12 +76,11 @@ module TypeScript.Formatting {
 
                     switch (trivia.kind()) {
                         case SyntaxKind.MultiLineCommentTrivia:
-                            // If the multiline comment spans multiple lines, we need to add the right indent amount to
-                            // each successive line segment as well.
-                            if (indentNextTokenOrTrivia) {
-                                this.recordIndentationEditsForMultiLineComment(trivia, position, commentIndentationString);
-                                indentNextTokenOrTrivia = false;
-                            }
+                            // We will only indent the first line of the multiline comment if we were planning to indent the next trivia. However,
+                            // subsequent lines will always be indented
+                            this.recordIndentationEditsForMultiLineComment(trivia, position, commentIndentationString, leadingWhiteSpace, !indentNextTokenOrTrivia /* already indented first line */);
+                            indentNextTokenOrTrivia = false;
+                            leadingWhiteSpace = "";
                             break;
 
                         case SyntaxKind.SingleLineCommentTrivia:
@@ -92,15 +92,13 @@ module TypeScript.Formatting {
                             break;
 
                         case SyntaxKind.WhitespaceTrivia:
+                            // If the next trivia is a comment, use the comment indentation level instead of the regular indentation level
+                            var nextTriviaIsComment = triviaList.count() > i + 1 && triviaList.syntaxTriviaAt(i + 1).isComment();
                             if (indentNextTokenOrTrivia) {
-                                var isLastTrivia = (i + 1 == length);
-                                if (isLastTrivia) {
-                                    // this is the white space trivia preceeding the token text, use it to indent the token
-                                    this.recordIndentationEditsForWhitespace(trivia, position, indentationString);
-                                } 
-                                
+                                this.recordIndentationEditsForWhitespace(trivia, position, nextTriviaIsComment ? commentIndentationString : indentationString);
                                 indentNextTokenOrTrivia = false;
                             }
+                            leadingWhiteSpace += trivia.fullText();
                             break;
 
                         case SyntaxKind.NewLineTrivia:
@@ -108,6 +106,7 @@ module TypeScript.Formatting {
                             // next line as well.  Note: don't bother indenting the newline itself.  This will 
                             // just insert ugly whitespace that most users probably will not want.
                             indentNextTokenOrTrivia = true;
+                            leadingWhiteSpace = "";
                             break;
 
                         default:
@@ -147,32 +146,54 @@ module TypeScript.Formatting {
             this.recordEdit(fullStart, text.length, indentationString);
         }
 
-        private recordIndentationEditsForMultiLineComment(trivia: ISyntaxTrivia, fullStart: number, indentationString: string): void {
+        private recordIndentationEditsForMultiLineComment(trivia: ISyntaxTrivia, fullStart: number, indentationString: string, leadingWhiteSpace: string, firstLineAlreadyIndented: bool): void {
             // If the multiline comment spans multiple lines, we need to add the right indent amount to
             // each successive line segment as well.
             var position = fullStart;
             var segments = Syntax.splitMultiLineCommentTriviaIntoMultipleLines(trivia);
 
-            for (var i = 0; i < segments.length; i++) {
+            if (segments.length <= 1) {
+                if (!firstLineAlreadyIndented) {
+                    // Process the one-line multiline comment just like a single line comment
+                    this.recordIndentationEditsForSingleLineOrSkippedText(trivia, fullStart, indentationString);
+                }
+                return;
+            }
+
+            // Find number of columns in first segment
+            var whiteSpaceColumnsInFirstSegment = Indentation.columnForPositionInString(leadingWhiteSpace, leadingWhiteSpace.length, this.options);
+            
+            var indentationColumns = Indentation.columnForPositionInString(indentationString, indentationString.length, this.options);
+            var startIndex = 0;
+            if (firstLineAlreadyIndented) {
+                startIndex = 1;
+                position += segments[0].length;
+            }
+            for (var i = startIndex; i < segments.length; i++) {
                 var segment = segments[i];
-                this.recordIndentationEditsForSegment(segment, position, indentationString);
+                this.recordIndentationEditsForSegment(segment, position, indentationColumns, whiteSpaceColumnsInFirstSegment);
                 position += segment.length;
             }
         }
 
-        private recordIndentationEditsForSegment(segment: string, fullStart: number, indentationString: string): void {
-            // Find the position of the first non whitespace character in the segment.
+        private recordIndentationEditsForSegment(segment: string, fullStart: number, indentationColumns: number, whiteSpaceColumnsInFirstSegment: number): void {
+            // Indent subsequent lines using a column delta of the actual indentation relative to the first line
             var firstNonWhitespacePosition = Indentation.firstNonWhitespacePosition(segment);
-
+            var leadingWhiteSpaceColumns = Indentation.columnForPositionInString(segment, firstNonWhitespacePosition, this.options);
+            var deltaFromFirstSegment = leadingWhiteSpaceColumns - whiteSpaceColumnsInFirstSegment;
+            var finalColumns = indentationColumns + deltaFromFirstSegment;
+            if (finalColumns < 0) {
+                finalColumns = 0;
+            }
+            var indentationString = Indentation.indentationString(finalColumns, this.options);
+            
             if (firstNonWhitespacePosition < segment.length &&
                 CharacterInfo.isLineTerminator(segment.charCodeAt(firstNonWhitespacePosition))) {
-
                 // If this segment was just a newline, then don't bother indenting it.  That will just
                 // leave the user with an ugly indent in their output that they probably do not want.
                 return;
             }
 
-            // Check if the current indentation matches the desired indentation or not
             if (indentationString === segment.substring(0, firstNonWhitespacePosition)) {
                 return;
             }

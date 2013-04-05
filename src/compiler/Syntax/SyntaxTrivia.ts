@@ -106,7 +106,7 @@ module TypeScript.Syntax {
                 case CharacterCodes.lineFeed:
                 case CharacterCodes.paragraphSeparator:
                 case CharacterCodes.lineSeparator:
-                    // Eat from the last stating position through to the end of the newline.
+                    // Eat from the last starting position through to the end of the newline.
                     result.push(triviaText.substring(currentIndex, i + 1));
 
                     // Set the current index to *after* the newline.
