@@ -3006,10 +3006,6 @@ module TypeScript {
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.getReturnType();
 
-        // if (!returnType) {
-        //     returnType = new PullTypeVariableSymbol();
-        // }
-
         for (i = 0; i < typeParameters.length; i++) {
             newSignature.addTypeParameter(typeParameters[i]);
         }
@@ -3017,17 +3013,6 @@ module TypeScript {
         if (signature.hasGenericParameter()) {
             newSignature.setHasGenericParameter();
         }
-
-        context.pushTypeSpecializationCache(typeReplacementMap);
-        var newReturnType = specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast);
-        context.popTypeSpecializationCache();      
-
-        // if (newReturnType != returnType) {
-
-        //     newReturnType.addDeclaration(returnType.getDeclarations()[0]);
-        // }
-
-        newSignature.setReturnType(newReturnType);
 
         var newParameter: PullSymbol;
         var newParameterType: PullTypeSymbol;
@@ -3045,6 +3030,12 @@ module TypeScript {
             }
         }
 
+        context.pushTypeSpecializationCache(typeReplacementMap);
+        var newReturnType = !localTypeParameters[returnType.getName()] ? specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast) : returnType;
+        context.popTypeSpecializationCache();
+
+        newSignature.setReturnType(newReturnType);
+
         for (var k = 0; k < parameters.length; k++) {
 
             newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
@@ -3055,10 +3046,6 @@ module TypeScript {
             context.pushTypeSpecializationCache(typeReplacementMap);
             newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, typeArguments, resolver, enclosingDecl, context, ast) : parameterType;
             context.popTypeSpecializationCache();
-
-            // if (newParameterType != parameterType) {
-            //     newParameterType.addDeclaration(parameterType.getDeclarations()[0]);
-            // }
 
             if (parameters[k].getIsOptional()) {
                 newParameter.setIsOptional();
