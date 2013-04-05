@@ -996,13 +996,8 @@ module TypeScript {
                             } else {
                                 callSignatures = callExpression.nodeType === NodeType.InvocationExpression ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
                             }
-                            var callResolutionResults: PullAdditionalCallResolutionData = {
-                                targetSymbol: null,
-                                targetTypeSymbol:null,
-                                resolvedSignatures: null,
-                                candidateSignature: null
-                            };
 
+                            var callResolutionResults = new PullAdditionalCallResolutionData();
                             if (callExpression.nodeType === NodeType.InvocationExpression) {
                                 this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                             } else {
@@ -1102,6 +1097,58 @@ module TypeScript {
 
                         break;
 
+                    case NodeType.InvocationExpression:
+                    case NodeType.ObjectCreationExpression:
+                        var isNew = current.nodeType === NodeType.ObjectCreationExpression;
+                        var callExpression = <CallExpression>current;
+
+                        // Check if we are in an argumnt for a call, propagate the contextual typing
+                        if ((i + 1 < n) && callExpression.arguments === path.asts[i + 1]) {
+                            var callResolutionResults = new PullAdditionalCallResolutionData();
+                            if (isNew) {
+                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                            }
+                            else {
+                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                            }
+
+                            // Find the index in the arguments list
+                            if (callResolutionResults.actualParametersContextTypeSymbols) {
+                                var argExpression = path.asts[i + 1].nodeType === NodeType.List ? path.asts[i + 2] : path.asts[i + 1];
+                                for (var j = 0, m = callExpression.arguments.members.length; j < m; j++) {
+                                    if (callExpression.arguments.members[j] === argExpression) {
+                                        var callContextualType = callResolutionResults.actualParametersContextTypeSymbols[j];
+                                        if (callContextualType) {
+                                            resolutionContext.pushContextualType(callContextualType, false, null);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            // Just resolve the call expression
+                            if (isNew) {
+                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext);
+                            }
+                            else {
+                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext);
+                            }
+                        }
+
+                        break;
+
+                    case NodeType.ArrayLiteralExpression:
+                        this.pullTypeChecker.resolver.resolveAST(current, isTypedAssignment, enclosingDecl, resolutionContext);
+
+                        // Propagate the child element type
+                        var currentContextualType = resolutionContext.getContextualType();
+                        if (currentContextualType && currentContextualType.isArray()) {
+                            resolutionContext.pushContextualType(currentContextualType.getElementType(), false, null);
+                        }
+
+                        break;
+
                     case NodeType.ObjectLiteralExpression:
                         this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
                         break;
@@ -1111,8 +1158,18 @@ module TypeScript {
                         break;
 
                     case NodeType.CastExpression:
-                        this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
-                        resolutionContext.searchTypeSpace = true;
+                        if (i + 1 < n && path.asts[i + 1] === (<UnaryExpression>current).castTerm) {
+                            // We are inside the cast term
+                            resolutionContext.searchTypeSpace = true;
+                        }
+
+                        var typeSymbol = this.pullTypeChecker.resolver.resolveTypeAssertionExpression(current, isTypedAssignment, enclosingDecl, resolutionContext);
+
+                        // Set the context type
+                        if (typeSymbol) {
+                            resolutionContext.pushContextualType(typeSymbol, false, null);
+                        }
+
                         break;
 
                     case NodeType.TypeRef:
@@ -1205,23 +1262,22 @@ module TypeScript {
                 return null;
             }
 
-            var callResolutionResults = {
-                targetSymbol: null,
-                targetTypeSymbol: null,
-                resolvedSignatures: null,
-                candidateSignature: null,
-                ast: path.ast(),
-                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl),
-                isConstructorCall: isNew
-            };
-
+            var callResolutionResults = new PullAdditionalCallResolutionData();
             if (isNew) {
                 this.pullTypeChecker.resolver.resolveNewExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
                 this.pullTypeChecker.resolver.resolveCallExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
-            return callResolutionResults;
+
+            return {
+                targetSymbol: callResolutionResults.targetSymbol,
+                resolvedSignatures: callResolutionResults.resolvedSignatures,
+                candidateSignature: callResolutionResults.candidateSignature,
+                ast: path.ast(),
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl),
+                isConstructorCall: isNew
+            };
         }
 
         public pullGetVisibleMemberSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
@@ -1254,6 +1310,25 @@ module TypeScript {
 
             return {
                 symbols: symbols,
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
+            };
+        }
+
+        public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+            // Input has to be an object literal
+            if (path.ast().nodeType !== NodeType.ObjectLiteralExpression) {
+                return null;
+            }
+
+            var context = this.extractResolutionContextFromPath(path, document);
+            if (!context) {
+                return null;
+            }
+
+            var members = this.pullTypeChecker.resolver.getVisibleContextSymbols(context.enclosingDecl, context.resolutionContext);
+
+            return {
+                symbols: members,
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
         }

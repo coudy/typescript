@@ -303,6 +303,10 @@ module Services {
             return this.compiler.pullGetVisibleSymbolsFromPath(path, document);
         }
 
+        public geContextualMembersFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetContextualMembersFromPath(path, document);
+        }
+
         public getTopLevelDeclarations(fileName: string): TypeScript.PullDecl[]{
             return this.compiler.getTopLevelDeclarations(fileName);
         }

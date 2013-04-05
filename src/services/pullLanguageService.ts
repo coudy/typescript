@@ -649,8 +649,8 @@ module Services {
                     return false;
                 case TypeScript.NodeType.FunctionDeclaration:
                     var funcDecl = <TypeScript.FunctionDeclaration>path.ast();
-	if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.ConstructMember) ||
-	TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.IndexerMember)) {
+                    if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.ConstructMember) ||
+                        TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.IndexerMember)) {
                         // constructor and index signatures
                         return false;
                     }
@@ -703,6 +703,27 @@ module Services {
                 completions.isMemberCompletion = true;
                 completions.entries = this.getCompletionEntriesFromSymbols(members);
             }
+            // Handle object literal diffrentlly
+            else if (this.isInObjectExpressionContext(path)) {
+                // Get the object literal node
+                while (path.ast().nodeType !== TypeScript.NodeType.ObjectLiteralExpression) {
+                    path.pop();
+                }
+
+                // Try to get the object members form contextual typing
+                var contextualMembers = this.compilerState.geContextualMembersFromPath(path, document);
+                if (contextualMembers && contextualMembers.symbols && contextualMembers.symbols.length > 0) {
+                    // get existing members
+                    var existingMembers = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);
+
+                    // Add filtterd items to the completion list
+                    completions.isMemberCompletion = true;
+                    completions.entries = this.getCompletionEntriesFromSymbols({
+                        symbols: this.filterContextualMembersList(contextualMembers.symbols, existingMembers),
+                        enclosingScopeSymbol: contextualMembers.enclosingScopeSymbol
+                    });
+                }
+            }
             // Ensure we are in a position where it is ok to provide a completion list
             else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
                 // Get scope memebers
@@ -735,9 +756,37 @@ module Services {
             return result;
         }
 
+        private filterContextualMembersList(contextualMemberSymbols: TypeScript.PullSymbol[], existingMembers: TypeScript.PullVisibleSymbolsInfo): TypeScript.PullSymbol[] {
+            if (!existingMembers || !existingMembers.symbols || existingMembers.symbols.length === 0) {
+                return contextualMemberSymbols;
+            }
+
+            var existingMemberSymbols = existingMembers.symbols;
+            var existingMemberNames: { [s: string]: bool; } = {};
+            for (var i = 0, n = existingMemberSymbols.length; i < n; i++) {
+                existingMemberNames[existingMemberSymbols[i].getName()]= true;
+            }
+
+            var filteredMembers: TypeScript.PullSymbol[] = [];
+            for (var j = 0, m = contextualMemberSymbols.length; j < m; j++) {
+                var contextualMemberSymbol = contextualMemberSymbols[j];
+                if (!existingMemberNames[contextualMemberSymbol.getName()]) {
+                    filteredMembers.push(contextualMemberSymbol);
+                }
+            }
+
+            return filteredMembers;
+        }
+
         private isRightOfDot(path: TypeScript.AstPath, position: number): bool {
             return (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.MemberAccessExpression && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) ||
                    (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.MemberAccessExpression && (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]);
+        }
+
+        private isInObjectExpressionContext(path: TypeScript.AstPath): bool {
+            return (path.count() >= 0 && path.asts[path.top].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = {
+                (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.List && path.asts[path.top - 1].nodeType === TypeScript.NodeType.ObjectLiteralExpression) || // var x = { a:1, 
+                (path.count() >= 3 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Member && path.asts[path.top - 2].nodeType === TypeScript.NodeType.List && path.asts[path.top - 3].nodeType === TypeScript.NodeType.ObjectLiteralExpression); // var x = { ab
         }
 
         private isCompletionListBlocker(path: TypeScript.AstPath): bool {

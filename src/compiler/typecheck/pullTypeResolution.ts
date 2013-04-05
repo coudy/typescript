@@ -76,11 +76,12 @@ module TypeScript {
         hadProvisionalErrors: bool;
     }
 
-    export interface PullAdditionalCallResolutionData {
-        targetSymbol: PullSymbol;
-        targetTypeSymbol: PullTypeSymbol;
-        resolvedSignatures: PullSignatureSymbol[];
-        candidateSignature: PullSignatureSymbol;
+    export class PullAdditionalCallResolutionData {
+        public targetSymbol: PullSymbol = null;
+        public targetTypeSymbol: PullTypeSymbol = null;
+        public resolvedSignatures: PullSignatureSymbol[] = null;
+        public candidateSignature: PullSignatureSymbol = null;
+        public actualParametersContextTypeSymbols: PullTypeSymbol[] = null;
     }
 
     // The resolver associates types with a given AST
@@ -498,6 +499,23 @@ module TypeScript {
             }
 
             return this.getVisibleSymbolsFromDeclPath(declPath);
+        }
+
+        public getVisibleContextSymbols(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
+            var contextualTypeSymbol = context.getContextualType();
+            if (!contextualTypeSymbol || this.isAnyOrEquivalent(contextualTypeSymbol)) {
+                return null;
+            }
+
+            var members: PullSymbol[];
+            if (context.searchTypeSpace) {
+                members = contextualTypeSymbol.getAllMembers(PullElementKind.SomeType, /*includePrivate*/ false);
+            }
+            else {
+                members = contextualTypeSymbol.getAllMembers(PullElementKind.SomeValue, /*includePrivate*/ false);
+            }
+
+            return members;
         }
 
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
@@ -3542,23 +3560,46 @@ module TypeScript {
 
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context);
 
-            // Store any additional resolution results if needed before we return
-            if (additionalResults) {
-                additionalResults.targetSymbol = targetSymbol;
-                additionalResults.targetTypeSymbol = targetTypeSymbol;
-                additionalResults.resolvedSignatures = signatures;
-                additionalResults.candidateSignature = signature;
-            }
-
+            var errorCondition: PullSymbol = null;
             if (!signature) {
                 diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, 
                     getDiagnosticMessage(DiagnosticCode.Could_not_select_overload_for__call__expression, null), enclosingDecl);
-                return this.getNewErrorTypeSymbol(diagnostic);
+
+                // Remember the error state
+                errorCondition = this.getNewErrorTypeSymbol(diagnostic);
+
+                if (!signatures.length) {
+                    return errorCondition;
+                }
+
+                // Attempt to recover from the error condition
+                // First, pick the first signature as the candidate signature
+                signature = signatures[0];
+
+                // Second, clear any state left from overload resolution in preparation of contextual typing
+                if (callEx.arguments) {
+                    for (var k = 0, n = callEx.arguments.members.length; k < n; k++) {
+                        var arg = callEx.arguments.members[k];
+                        var argSymbol = this.getSymbolForAST(arg, context);
+
+                        if (argSymbol) {
+                            var argType = argSymbol.getType();
+                            if (arg.nodeType === NodeType.FunctionDeclaration) {
+                                if (!this.canApplyContextualTypeToFunction(argType, <FunctionDeclaration>arg, true)) {
+                                    continue;
+                                }
+                            }
+
+                            argSymbol.invalidate();
+                        }
+                    }
+                }
             }
 
             var returnType = signature.getReturnType();
 
             // contextually type arguments
+            var actualParametersContextTypeSymbols: PullTypeSymbol[] = [];
             if (callEx.arguments) {
                 var len = callEx.arguments.members.length;
                 var params = signature.getParameters();
@@ -3586,6 +3627,7 @@ module TypeScript {
 
                     if (contextualType) {
                         context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                        actualParametersContextTypeSymbols[i] = contextualType;
                     }
 
                     this.resolveStatementOrExpression(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
@@ -3595,6 +3637,20 @@ module TypeScript {
                         contextualType = null;
                     }
                 }
+            }
+
+            // Store any additional resolution results if needed before we return
+            if (additionalResults) {
+                additionalResults.targetSymbol = targetSymbol;
+                additionalResults.targetTypeSymbol = targetTypeSymbol;
+                additionalResults.resolvedSignatures = signatures;
+                additionalResults.candidateSignature = signature;
+                additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
+            }
+
+
+            if (errorCondition) {
+                return errorCondition;
             }
 
             if (!returnType) {
@@ -3756,14 +3812,44 @@ module TypeScript {
                     additionalResults.targetTypeSymbol = targetTypeSymbol;
                     additionalResults.resolvedSignatures = constructSignatures;
                     additionalResults.candidateSignature = signature;
+                    additionalResults.actualParametersContextTypeSymbols = [];
                 }
+
+                var errorCondition: PullSymbol = null;
 
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
-                    //signature = constructSignatures[0];
                     diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
                         getDiagnosticMessage(DiagnosticCode.Could_not_select_overload_for__new__expression, null), enclosingDecl);
-                    return this.getNewErrorTypeSymbol(diagnostic);
+
+                    // Remember the error
+                    errorCondition = this.getNewErrorTypeSymbol(diagnostic);
+
+                    if (!constructSignatures.length) {
+                        return errorCondition;
+                    }
+
+                    // First, pick the first signature as the candidate signature
+                    signature = constructSignatures[0];
+
+                    // Second, clear any state left from overload resolution in preparation of contextual typing
+                    if (callEx.arguments) {
+                        for (var k = 0, n = callEx.arguments.members.length; k < n; k++) {
+                            var arg = callEx.arguments.members[k];
+                            var argSymbol = this.getSymbolForAST(arg, context);
+
+                            if (argSymbol) {
+                                var argType = argSymbol.getType();
+                                if (arg.nodeType === NodeType.FunctionDeclaration) {
+                                    if (!this.canApplyContextualTypeToFunction(argType, <FunctionDeclaration>arg, true)) {
+                                        continue;
+                                    }
+                                }
+
+                                argSymbol.invalidate();
+                            }
+                        }
+                    }
                 }
 
                 returnType = signature.getReturnType();
@@ -3795,6 +3881,7 @@ module TypeScript {
                 }
 
                 // contextually type arguments
+                var actualParametersContextTypeSymbols: PullTypeSymbol[] = [];
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
                     var params = signature.getParameters();
@@ -3822,6 +3909,7 @@ module TypeScript {
 
                         if (contextualType) {
                             context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                            actualParametersContextTypeSymbols[i] = contextualType;
                         }
 
                         this.resolveStatementOrExpression(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
@@ -3831,6 +3919,19 @@ module TypeScript {
                             contextualType = null;
                         }
                     }
+                }
+
+                // Store any additional resolution results if needed before we return
+                if (additionalResults) {
+                    additionalResults.targetSymbol = targetSymbol;
+                    additionalResults.targetTypeSymbol = targetTypeSymbol;
+                    additionalResults.resolvedSignatures = constructSignatures;
+                    additionalResults.candidateSignature = signature;
+                    additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
+                }
+
+                if (errorCondition) {
+                    return errorCondition;
                 }
 
                 if (!returnType) {
@@ -3856,7 +3957,7 @@ module TypeScript {
 
         }
 
-        public resolveTypeAssertionExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveTypeAssertionExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
 
             var assertionExpression = <UnaryExpression>expressionAST;
             var typeReference = this.resolveTypeReference(<TypeReference>assertionExpression.castTerm, enclosingDecl, context);
