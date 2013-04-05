@@ -43,6 +43,7 @@ module TypeScript {
         ImportDeclaration,
         VariableDeclarator,
         VariableDeclaration,
+        Parameter,
 
         // Expressions
         Name,
@@ -106,7 +107,6 @@ module TypeScript {
         CastExpression,
         ParenthesizedExpression,
         Member,
-        Parameter,
 
         // Statements
         Block,

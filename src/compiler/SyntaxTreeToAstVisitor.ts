@@ -387,13 +387,13 @@ module TypeScript {
                     result = new AST(NodeType.SuperExpression);
                 }
                 else if (token.kind() === SyntaxKind.TrueKeyword) {
-                    result = new AST(NodeType.TrueLiteral);
+                    result = new LiteralExpression(NodeType.TrueLiteral);
                 }
                 else if (token.kind() === SyntaxKind.FalseKeyword) {
-                    result = new AST(NodeType.FalseLiteral);
+                    result = new LiteralExpression(NodeType.FalseLiteral);
                 }
                 else if (token.kind() === SyntaxKind.NullKeyword) {
-                    result = new AST(NodeType.NullLiteral);
+                    result = new LiteralExpression(NodeType.NullLiteral);
                 }
                 else if (token.kind() === SyntaxKind.StringLiteral) {
                     result = new StringLiteral(token.text());

@@ -130,21 +130,6 @@ module TypeScript {
                     }
                     emitter.recordSourceMappingEnd(this);
                     break;
-                case NodeType.NullLiteral:
-                    emitter.recordSourceMappingStart(this);
-                    emitter.writeToOutput("null");
-                    emitter.recordSourceMappingEnd(this);
-                    break;
-                case NodeType.FalseLiteral:
-                    emitter.recordSourceMappingStart(this);
-                    emitter.writeToOutput("false");
-                    emitter.recordSourceMappingEnd(this);
-                    break;
-                case NodeType.TrueLiteral:
-                    emitter.recordSourceMappingStart(this);
-                    emitter.writeToOutput("true");
-                    emitter.recordSourceMappingEnd(this);
-                    break;
                 case NodeType.SuperExpression:
                     emitter.recordSourceMappingStart(this);
                     emitter.emitSuperReference();
@@ -355,6 +340,36 @@ module TypeScript {
     export class Expression extends AST {
         constructor(nodeType: NodeType) {
             super(nodeType);
+        }
+    }
+
+    export class LiteralExpression extends Expression {
+        constructor(nodeType: NodeType) {
+            super(nodeType);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            switch (this.nodeType) {
+                case NodeType.NullLiteral:
+                    emitter.recordSourceMappingStart(this);
+                    emitter.writeToOutput("null");
+                    emitter.recordSourceMappingEnd(this);
+                    break;
+                case NodeType.FalseLiteral:
+                    emitter.recordSourceMappingStart(this);
+                    emitter.writeToOutput("false");
+                    emitter.recordSourceMappingEnd(this);
+                    break;
+                case NodeType.TrueLiteral:
+                    emitter.recordSourceMappingStart(this);
+                    emitter.writeToOutput("true");
+                    emitter.recordSourceMappingEnd(this);
+                    break;
+                default:
+                    throw new Error("please implement in derived class");
+            }
+            emitter.emitComments(this, false);
         }
     }
 
