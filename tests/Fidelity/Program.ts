@@ -51,7 +51,7 @@ class Program {
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         if (specificFile === undefined) {
-            // TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
+            TypeScript.SyntaxTreeToAstVisitor.checkPositions = false;
             this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         }
 
