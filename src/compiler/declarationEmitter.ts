@@ -720,7 +720,7 @@ module TypeScript {
                     var variableStatement = <VariableStatement>memberDecl;
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
-                    this.declFile.WriteLine(variableStatement.declaration.declarators[0].id.text + ",");
+                    this.declFile.WriteLine((<VariableDeclarator>variableStatement.declaration.declarators.members[0]).id.text + ",");
                 }
             }
             this.indenter.decreaseIndent();

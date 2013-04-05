@@ -240,38 +240,38 @@ describe("Generic assignment compatibility - 2", function () {
     } );
 
     describe("Objects", function () {
-        var emptyObj = typeFactory.get('var a = {};', 'a');
-        var emptySig = typeFactory.get('var a:{};', 'a');
+        var emptyObj = typeFactory.get('var aa = {};', 'aa');
+        var emptySig = typeFactory.get('var aa:{};', 'aa');
          
         var singleNumObj1 = typeFactory.get('var obj = {one: 1}', 'obj');
         var singleNumObj2 = typeFactory.get('var obj = {two: 1}', 'obj');
-        var singleNumSig = typeFactory.get('var a:{one:number;};', 'a')
-        var singleNumSig2 = typeFactory.get('var a:{two:number;};', 'a')
+        var singleNumSig = typeFactory.get('var aa:{one:number;};', 'aa')
+        var singleNumSig2 = typeFactory.get('var aa:{two:number;};', 'aa')
 
         var singleStringObj1 = typeFactory.get('var obj = {one: "1"}', 'obj');
         var singleStringObj2 = typeFactory.get('var obj = {two: "1"}', 'obj');
-        var singleStringSig = typeFactory.get('var a:{one:string;};', 'a');
-        var singleStringSig2 = typeFactory.get('var a:{two:string;};', 'a');
+        var singleStringSig = typeFactory.get('var aa:{one:string;};', 'aa');
+        var singleStringSig2 = typeFactory.get('var aa:{two:string;};', 'aa');
 
         var singleBoolObj1 = typeFactory.get('var obj = {one: true}', 'obj');
         var singleBoolObj2 = typeFactory.get('var obj = {two: true}', 'obj');
-        var singleBoolSig = typeFactory.get('var a:{one:bool;};', 'a');
+        var singleBoolSig = typeFactory.get('var aa:{one:bool;};', 'aa');
 
         var singleAnyArrayObj1 = typeFactory.get('var obj = {one: <any[]>[1]}', 'obj');
         var singleAnyArrayObj2 = typeFactory.get('var obj = {two: <any[]>[1]}', 'obj');
-        var singleAnyArraySig = typeFactory.get('var a:{one:any[];};', 'a');
+        var singleAnyArraySig = typeFactory.get('var aa:{one:any[];};', 'aa');
 
         var singleNumArrayObj1 = typeFactory.get('var obj = {one: [1]}', 'obj');
         var singleNumArrayObj2 = typeFactory.get('var obj = {two: [1]}', 'obj');
-        var singleNumArraySig = typeFactory.get('var a:{one:number[];};', 'a');
+        var singleNumArraySig = typeFactory.get('var aa:{one:number[];};', 'aa');
 
         var singleStringArrayObj1 = typeFactory.get('var obj = {one: ["1"]}', 'obj');
         var singleStringArrayObj2 = typeFactory.get('var obj = {two: ["1"]}', 'obj');
-        var singleStringArraySig = typeFactory.get('var a:{one:string[];};', 'a');
+        var singleStringArraySig = typeFactory.get('var aa:{one:string[];};', 'aa');
 
         var singleBoolArrayObj1 = typeFactory.get('var obj = {one: [true]}', 'obj');
         var singleBoolArrayObj2 = typeFactory.get('var obj = {two: [true]}', 'obj');
-        var singleBoolArraySig = typeFactory.get('var a:{one:bool[];};', 'a');
+        var singleBoolArraySig = typeFactory.get('var aa:{one:bool[];};', 'aa');
 
         var callObjString = typeFactory.get('var obj = function f<string>(a: string) { return a; };', 'obj'); // TODO: see 654513
         var callSigString = typeFactory.get('var obj: { <string>(a: string): string; }', 'obj');
@@ -279,11 +279,11 @@ describe("Generic assignment compatibility - 2", function () {
         var callObjNum = typeFactory.get('var obj = function f<number>(a: number) { return a; };', 'obj');
         var callSigNum = typeFactory.get('var obj: { <number>(a:number):number;}', 'obj');
 
-        var indexerSigNum = typeFactory.get('var a:{[index:number]:number;};', 'a');
-        var indexerSigString = typeFactory.get('var a:{[index:string]:string;};', 'a'); // basically 'any'
+        var indexerSigNum = typeFactory.get('var aa:{[index:number]:number;};', 'aa');
+        var indexerSigString = typeFactory.get('var aa:{[index:string]:string;};', 'aa'); // basically 'any'
 
-        var constructorSigNum = typeFactory.get('var a:{ new <number>(param: number); };', 'a');
-        var constructorSigString = typeFactory.get('var a:{ new <string>(param: string); };', 'a');
+        var constructorSigNum = typeFactory.get('var aa:{ new <number>(param: number); };', 'aa');
+        var constructorSigString = typeFactory.get('var aa:{ new <string>(param: string); };', 'aa');
 
         var AnyInstances = [emptyObj, singleNumObj1, singleNumObj2, singleStringObj1, singleStringObj2, singleBoolObj1, singleBoolObj2, singleAnyArrayObj1, singleAnyArrayObj2, singleNumArrayObj1, singleNumArrayObj2, singleStringArrayObj1, singleStringArrayObj2, singleBoolArrayObj1, singleBoolArrayObj2, callObjString];
         var AnySig = [emptySig, singleNumSig, singleNumSig2, singleStringSig, singleStringSig2, singleBoolSig, singleAnyArraySig, singleNumArraySig, singleStringArraySig, singleBoolArraySig, callSigString, callSigNum, indexerSigNum, indexerSigString, constructorSigNum, constructorSigString];
