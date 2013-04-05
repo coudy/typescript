@@ -748,7 +748,7 @@ module TypeScript {
                             else if (cur.nodeType === NodeType.CastExpression) {
                                 typeAssertionASTs[typeAssertionASTs.length] = <UnaryExpression>cur;
                             }
-                            else if (cur.nodeType === NodeType.Asg) {
+                            else if (cur.nodeType === NodeType.AssignmentExpression) {
                                 asgAST = <BinaryExpression>cur;
                             }
                             else if (cur.nodeType === NodeType.TypeRef) {
@@ -1029,7 +1029,7 @@ module TypeScript {
                         this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
                         break;
 
-                    case NodeType.Asg:
+                    case NodeType.AssignmentExpression:
                         this.pullTypeChecker.resolver.resolveAST((<BinaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
                         break;
 

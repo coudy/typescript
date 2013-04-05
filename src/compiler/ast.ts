@@ -597,7 +597,7 @@ module TypeScript {
             switch (this.nodeType) {
                 case NodeType.MemberAccessExpression:
                     return typeFlow.typeCheckDotOperator(this);
-                case NodeType.Asg:
+                case NodeType.AssignmentExpression:
                     return typeFlow.typeCheckAsgOperator(this);
                 case NodeType.Add:
                 case NodeType.Sub:
@@ -640,23 +640,23 @@ module TypeScript {
                     return typeFlow.typeCheckLogOr(this);
                 case NodeType.LogAnd:
                     return typeFlow.typeCheckLogAnd(this);
-                case NodeType.AsgAdd:
-                case NodeType.AsgSub:
-                case NodeType.AsgMul:
-                case NodeType.AsgDiv:
-                case NodeType.AsgMod:
-                case NodeType.AsgOr:
-                case NodeType.AsgAnd:
+                case NodeType.AddAssignmentExpression:
+                case NodeType.SubtractAssignmentExpression:
+                case NodeType.MultiplyAssignmentExpression:
+                case NodeType.DivideAssignmentExpression:
+                case NodeType.ModuloAssignmentExpression:
+                case NodeType.OrAssignmentExpression:
+                case NodeType.AndAssignmentExpression:
                     return typeFlow.typeCheckArithmeticOperator(this, true);
-                case NodeType.AsgXor:
+                case NodeType.ExclusiveOrAssignmentExpression:
                     return typeFlow.typeCheckBitwiseOperator(this, true);
                 case NodeType.Lsh:
                 case NodeType.Rsh:
                 case NodeType.Rs2:
                     return typeFlow.typeCheckShift(this, false);
-                case NodeType.AsgLsh:
-                case NodeType.AsgRsh:
-                case NodeType.AsgRs2:
+                case NodeType.LeftShiftAssignmentExpression:
+                case NodeType.SignedRightShiftAssignmentExpression:
+                case NodeType.UnsignedRightShiftAssignmentExpression:
                     return typeFlow.typeCheckShift(this, true);
                 case NodeType.CommaExpression:
                     return typeFlow.typeCheckCommaOperator(this);
@@ -674,18 +674,18 @@ module TypeScript {
         private static getTextForBinaryToken(nodeType: NodeType): string {
             switch (nodeType) {
                 case NodeType.CommaExpression: return ",";
-                case NodeType.Asg: return "=";
-                case NodeType.AsgAdd: return "+=";
-                case NodeType.AsgSub: return "-=";
-                case NodeType.AsgMul: return "*=";
-                case NodeType.AsgDiv: return "/=";
-                case NodeType.AsgMod: return "%=";
-                case NodeType.AsgAnd: return "&=";
-                case NodeType.AsgXor: return "^=";
-                case NodeType.AsgOr: return "|=";
-                case NodeType.AsgLsh: return "<<=";
-                case NodeType.AsgRsh: return ">>=";
-                case NodeType.AsgRs2: return ">>>=";
+                case NodeType.AssignmentExpression: return "=";
+                case NodeType.AddAssignmentExpression: return "+=";
+                case NodeType.SubtractAssignmentExpression: return "-=";
+                case NodeType.MultiplyAssignmentExpression: return "*=";
+                case NodeType.DivideAssignmentExpression: return "/=";
+                case NodeType.ModuloAssignmentExpression: return "%=";
+                case NodeType.AndAssignmentExpression: return "&=";
+                case NodeType.ExclusiveOrAssignmentExpression: return "^=";
+                case NodeType.OrAssignmentExpression: return "|=";
+                case NodeType.LeftShiftAssignmentExpression: return "<<=";
+                case NodeType.SignedRightShiftAssignmentExpression: return ">>=";
+                case NodeType.UnsignedRightShiftAssignmentExpression: return ">>>=";
                 case NodeType.LogOr: return "||";
                 case NodeType.LogAnd: return "&&";
                 case NodeType.Or: return "|";

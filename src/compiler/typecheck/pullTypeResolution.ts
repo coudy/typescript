@@ -2076,7 +2076,7 @@ module TypeScript {
                     return this.semanticInfoChain.voidTypeSymbol;
 
                 // assignment
-                case NodeType.Asg:
+                case NodeType.AssignmentExpression:
                     return this.resolveAssignmentStatement(expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 // boolean operations
@@ -2092,15 +2092,15 @@ module TypeScript {
                     return this.semanticInfoChain.boolTypeSymbol;
 
                 case NodeType.Add:
-                case NodeType.AsgAdd:                
+                case NodeType.AddAssignmentExpression:                
                     return this.resolveArithmeticExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
-                case NodeType.AsgSub:
-                case NodeType.AsgMul:
-                case NodeType.AsgDiv:
-                case NodeType.AsgMod:
-                case NodeType.AsgOr:
-                case NodeType.AsgAnd:
+                case NodeType.SubtractAssignmentExpression:
+                case NodeType.MultiplyAssignmentExpression:
+                case NodeType.DivideAssignmentExpression:
+                case NodeType.ModuloAssignmentExpression:
+                case NodeType.OrAssignmentExpression:
+                case NodeType.AndAssignmentExpression:
 
                 case NodeType.Not:
                 case NodeType.Sub:
@@ -2120,9 +2120,9 @@ module TypeScript {
                 case NodeType.Lsh:
                 case NodeType.Rsh:
                 case NodeType.Rs2:
-                case NodeType.AsgLsh:
-                case NodeType.AsgRsh:
-                case NodeType.AsgRs2:
+                case NodeType.LeftShiftAssignmentExpression:
+                case NodeType.SignedRightShiftAssignmentExpression:
+                case NodeType.UnsignedRightShiftAssignmentExpression:
                     return this.semanticInfoChain.numberTypeSymbol;
 
                 case NodeType.ElementAccessExpression:
@@ -3192,7 +3192,7 @@ module TypeScript {
             leftType = this.widenType(leftType);
             rightType = this.widenType(rightType);
 
-            if (expressionAST.nodeType == NodeType.Add || expressionAST.nodeType == NodeType.AsgAdd) {
+            if (expressionAST.nodeType == NodeType.Add || expressionAST.nodeType == NodeType.AddAssignmentExpression) {
                 if (leftType == this.semanticInfoChain.stringTypeSymbol || rightType == this.semanticInfoChain.stringTypeSymbol) {
                     return this.semanticInfoChain.stringTypeSymbol;
                 }

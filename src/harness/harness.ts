@@ -1023,7 +1023,7 @@ module Harness {
                     case TypeScript.NodeType.List:
                     case TypeScript.NodeType.OmittedExpression:
                     case TypeScript.NodeType.EmptyStatement:
-                    case TypeScript.NodeType.Asg:
+                    case TypeScript.NodeType.AssignmentExpression:
                     case TypeScript.NodeType.TrueLiteral:
                     case TypeScript.NodeType.FalseLiteral:
                     case TypeScript.NodeType.ArrayLiteralExpression:

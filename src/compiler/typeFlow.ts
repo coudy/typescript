@@ -92,7 +92,7 @@ module TypeScript {
                 else if (cur.nodeType === NodeType.Name) {
                     // use
                     if (parent) {
-                        if (parent.nodeType === NodeType.Asg) {
+                        if (parent.nodeType === NodeType.AssignmentExpression) {
                             asg = <BinaryExpression>parent;
                             if (asg.operand1 === cur) {
                                 return cur;
@@ -108,7 +108,7 @@ module TypeScript {
                     id = <Identifier>cur;
                     useSym(id.sym, context, cur);
                 }
-                else if ((cur.nodeType >= NodeType.Asg) && (cur.nodeType <= NodeType.LastAsg)) {
+                else if ((cur.nodeType >= NodeType.AssignmentExpression) && (cur.nodeType <= NodeType.UnsignedRightShiftAssignmentExpression)) {
                     // def
                     asg = <BinaryExpression>cur;
                     if (asg.operand1 && (asg.operand1.nodeType === NodeType.Name)) {
@@ -1384,7 +1384,7 @@ module TypeScript {
             leftType = this.checker.widenType(leftType);
             rightType = this.checker.widenType(rightType);
 
-            if (nodeType === NodeType.Add || nodeType === NodeType.AsgAdd) {
+            if (nodeType === NodeType.Add || nodeType === NodeType.AddAssignmentExpression) {
 
                 if (leftType === this.checker.stringType || rightType === this.checker.stringType) {
                     binex.type = this.checker.stringType;
@@ -3111,8 +3111,8 @@ module TypeScript {
         public typeCheckCondExpr(cond: AST) {
             if (this.checker.styleSettings.assignmentInCond) {
                 if ((cond !== null) &&
-                    (cond.nodeType >= NodeType.Asg) &&
-                    (cond.nodeType <= NodeType.LastAsg)) {
+                    (cond.nodeType >= NodeType.AssignmentExpression) &&
+                    (cond.nodeType <= NodeType.UnsignedRightShiftAssignmentExpression)) {
                     this.checker.errorReporter.simpleError(cond, "top-level assignment statement in conditional expression");
                 }
             }

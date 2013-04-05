@@ -931,7 +931,7 @@ module TypeScript {
                             lastValue = <NumberLiteral>memberValue;
                         }
                         var map: BinaryExpression =
-                            new BinaryExpression(NodeType.Asg,
+                            new BinaryExpression(NodeType.AssignmentExpression,
                                 new BinaryExpression(NodeType.ElementAccessExpression,
                                     new Identifier("_map"),
                                     memberValue),
@@ -1736,18 +1736,18 @@ module TypeScript {
         private getBinaryExpressionNodeType(node: BinaryExpressionSyntax): NodeType {
             switch (node.kind()) {
                 case SyntaxKind.CommaExpression: return NodeType.CommaExpression;
-                case SyntaxKind.AssignmentExpression: return NodeType.Asg;
-                case SyntaxKind.AddAssignmentExpression: return NodeType.AsgAdd;
-                case SyntaxKind.SubtractAssignmentExpression: return NodeType.AsgSub;
-                case SyntaxKind.MultiplyAssignmentExpression: return NodeType.AsgMul;
-                case SyntaxKind.DivideAssignmentExpression: return NodeType.AsgDiv;
-                case SyntaxKind.ModuloAssignmentExpression: return NodeType.AsgMod;
-                case SyntaxKind.AndAssignmentExpression: return NodeType.AsgAnd;
-                case SyntaxKind.ExclusiveOrAssignmentExpression: return NodeType.AsgXor;
-                case SyntaxKind.OrAssignmentExpression: return NodeType.AsgOr;
-                case SyntaxKind.LeftShiftAssignmentExpression: return NodeType.AsgLsh;
-                case SyntaxKind.SignedRightShiftAssignmentExpression: return NodeType.AsgRsh;
-                case SyntaxKind.UnsignedRightShiftAssignmentExpression: return NodeType.AsgRs2;
+                case SyntaxKind.AssignmentExpression: return NodeType.AssignmentExpression;
+                case SyntaxKind.AddAssignmentExpression: return NodeType.AddAssignmentExpression;
+                case SyntaxKind.SubtractAssignmentExpression: return NodeType.SubtractAssignmentExpression;
+                case SyntaxKind.MultiplyAssignmentExpression: return NodeType.MultiplyAssignmentExpression;
+                case SyntaxKind.DivideAssignmentExpression: return NodeType.DivideAssignmentExpression;
+                case SyntaxKind.ModuloAssignmentExpression: return NodeType.ModuloAssignmentExpression;
+                case SyntaxKind.AndAssignmentExpression: return NodeType.AndAssignmentExpression;
+                case SyntaxKind.ExclusiveOrAssignmentExpression: return NodeType.ExclusiveOrAssignmentExpression;
+                case SyntaxKind.OrAssignmentExpression: return NodeType.OrAssignmentExpression;
+                case SyntaxKind.LeftShiftAssignmentExpression: return NodeType.LeftShiftAssignmentExpression;
+                case SyntaxKind.SignedRightShiftAssignmentExpression: return NodeType.SignedRightShiftAssignmentExpression;
+                case SyntaxKind.UnsignedRightShiftAssignmentExpression: return NodeType.UnsignedRightShiftAssignmentExpression;
                 case SyntaxKind.LogicalOrExpression: return NodeType.LogOr;
                 case SyntaxKind.LogicalAndExpression: return NodeType.LogAnd;
                 case SyntaxKind.BitwiseOrExpression: return NodeType.Or;

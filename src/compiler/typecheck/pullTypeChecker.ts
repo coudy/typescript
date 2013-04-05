@@ -109,7 +109,7 @@ module TypeScript {
                 // expressions
 
                 // assignment
-                case NodeType.Asg:
+                case NodeType.AssignmentExpression:
                     return this.typeCheckAssignment(ast, typeCheckContext);
 
                 case GenericType:
@@ -151,7 +151,7 @@ module TypeScript {
                     return this.typeCheckLogicalOperation(ast, typeCheckContext);
 
                 case NodeType.Add:
-                case NodeType.AsgAdd:
+                case NodeType.AddAssignmentExpression:
                     return this.typeCheckBinaryAdditionOperation(ast, typeCheckContext);
 
                 case NodeType.Sub:
@@ -164,15 +164,15 @@ module TypeScript {
                 case NodeType.Rsh:
                 case NodeType.Rs2:
                 case NodeType.Xor:
-                case NodeType.AsgLsh:
-                case NodeType.AsgRsh:
-                case NodeType.AsgRs2:
-                case NodeType.AsgSub:
-                case NodeType.AsgMul:
-                case NodeType.AsgDiv:
-                case NodeType.AsgMod:
-                case NodeType.AsgOr:
-                case NodeType.AsgAnd:
+                case NodeType.LeftShiftAssignmentExpression:
+                case NodeType.SignedRightShiftAssignmentExpression:
+                case NodeType.UnsignedRightShiftAssignmentExpression:
+                case NodeType.SubtractAssignmentExpression:
+                case NodeType.MultiplyAssignmentExpression:
+                case NodeType.DivideAssignmentExpression:
+                case NodeType.ModuloAssignmentExpression:
+                case NodeType.OrAssignmentExpression:
+                case NodeType.AndAssignmentExpression:
                     return this.typeCheckBinaryArithmeticOperation(ast, typeCheckContext);
 
                 case NodeType.PlusExpression:
