@@ -659,10 +659,13 @@ module TypeScript {
         }
 
         public getSpecialization(typeArguments): PullSignatureSymbol {
-            var sig = <PullSignatureSymbol>this.specializationCache[getIDForTypeSubstitutions(typeArguments)];
 
-            if (sig) {
-                return sig;
+            if (typeArguments) {
+                var sig = <PullSignatureSymbol>this.specializationCache[getIDForTypeSubstitutions(typeArguments)];
+
+                if (sig) {
+                    return sig;
+                }
             }
 
             return null;
@@ -1201,6 +1204,11 @@ module TypeScript {
         }
 
         public getSpecialization(substitutingTypes: PullTypeSymbol[]): PullTypeSymbol {
+
+            if (!substitutingTypes || !substitutingTypes.length) {
+                return null;
+            }
+
             if (!this.specializedTypeCache) {
                 this.specializedTypeCache = {};
 
@@ -2555,6 +2563,12 @@ module TypeScript {
             return typeToSpecialize;
         }
 
+        var searchForExistingSpecialization = typeArguments != null;
+
+        if (typeArguments == null) {
+            typeArguments = [];
+        }
+
         if (typeToSpecialize.isTypeParameter()) {
 
             if (context.specializingToAny) {
@@ -2567,7 +2581,7 @@ module TypeScript {
                 return subsitution;
             }
 
-            if (typeArguments.length) {
+            if (typeArguments && typeArguments.length) {
                 return typeArguments[0];
             }
         }
@@ -2589,20 +2603,16 @@ module TypeScript {
 
         var isArray = typeToSpecialize == resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
-        //if (!typeParameters.length) {
-        //    return typeToSpecialize;
-        //}
-
         var i = 0;
         var j = 0;
 
-        if (!typeArguments.length) {
+        if (typeArguments && !typeArguments.length) {
             for (i = 0; i < typeParameters.length; i++) {
                 typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
             }
         }
 
-        var newType: PullTypeSymbol = isArray ? typeArguments[0].getArrayType() : typeToSpecialize.getSpecialization(typeArguments);
+        var newType: PullTypeSymbol = searchForExistingSpecialization ? (isArray ? typeArguments[0].getArrayType() : typeToSpecialize.getSpecialization(typeArguments)) : null;
 
         if (newType) {
             if (!newType.isResolved() && !newType.currentlyBeingSpecialized()) {
@@ -2738,7 +2748,7 @@ module TypeScript {
 
             signature.setIsBeingSpecialized();
             newSignature.addDeclaration(decl);
-            newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
+            newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
             signature.setIsSpecialized();
 
             context.popTypeSpecializationCache();
@@ -2794,7 +2804,7 @@ module TypeScript {
 
             signature.setIsBeingSpecialized();
             newSignature.addDeclaration(decl);
-            newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
+            newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
             signature.setIsSpecialized();
 
             context.popTypeSpecializationCache();
@@ -2850,7 +2860,7 @@ module TypeScript {
 
             signature.setIsBeingSpecialized();
             newSignature.addDeclaration(decl);
-            newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
+            newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
             signature.setIsSpecialized();
 
             context.popTypeSpecializationCache();

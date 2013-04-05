@@ -3620,7 +3620,7 @@ module TypeScript {
                             if (inferredTypeArgs) {
                                 typeParameters = constructSignatures[i].getTypeParameters();
 
-                                if (inferredTypeArgs.length != typeParameters.length) {
+                                if (inferredTypeArgs.length < typeParameters.length) {
                                     continue;
                                 }
 
@@ -5165,6 +5165,12 @@ module TypeScript {
 
             for (i = 0; i < inferenceResults.results.length; i++) {
                 resultTypes[resultTypes.length] = inferenceResults.results[i].type;
+            }
+
+            if (!args.members.length && !resultTypes.length && typeParameters.length) {
+                for (i = 0; i < typeParameters.length; i++) {
+                    resultTypes[resultTypes.length] = this.semanticInfoChain.anyTypeSymbol;
+                }
             }
 
             return resultTypes;
