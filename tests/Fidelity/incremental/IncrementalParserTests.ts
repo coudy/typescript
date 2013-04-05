@@ -58,7 +58,8 @@ module TypeScript {
         Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), newTree.sourceUnit()) === 0);
 
         if (reusedElements !== -1) {
-            Debug.assert(IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit()) === reusedElements);
+            var actualReusedCount = IncrementalParserTests.reusedElements(oldTree.sourceUnit(), incrementalNewTree.sourceUnit());
+            Debug.assert(actualReusedCount === reusedElements, actualReusedCount + " !== " + reusedElements);
         }
 
         Debug.assert(newAST.structuralEquals(incrementalNewAST, true));
@@ -471,6 +472,16 @@ else {\
             compareTrees(text1, text2, textAndChange1.textChangeRange, -1);
             compareTrees(text2, text3, textAndChange2.textChangeRange, -1);
             compareTrees(text1, text3, TextChangeRange.collapseChangesAcrossMultipleVersions([textAndChange1.textChangeRange, textAndChange2.textChangeRange]), -1);
+        }
+
+        public static testSemicolonDelete1() {
+            var source = "export class Foo {\r\n}\r\n\r\nexport var foo = new Foo();\r\n\r\n    export function test(foo: Foo) {\r\n        return true;\r\n    }\r\n";
+
+            var oldText = TextFactory.createText(source);
+            var index = source.lastIndexOf(";");
+            var newTextAndChange = withDelete(oldText, index, 1);
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
         }
         
         //public static testComplexEdits1() {
