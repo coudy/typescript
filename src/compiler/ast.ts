@@ -1702,7 +1702,7 @@ module TypeScript {
         }
     }
 
-    export class DoWhileStatement extends Statement {
+    export class DoStatement extends Statement {
         public whileSpan: ASTSpan = null;
 
         constructor(public body: AST, public cond: AST) {
@@ -1757,7 +1757,7 @@ module TypeScript {
             context.walker.options.goChildren = false;
         }
 
-        public structuralEquals(ast: DoWhileStatement, includingPosition: bool): bool {
+        public structuralEquals(ast: DoStatement, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition) &&
                    structuralEquals(this.cond, ast.cond, includingPosition);

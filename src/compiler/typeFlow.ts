@@ -3099,13 +3099,13 @@ module TypeScript {
             return whileStmt;
         }
 
-        public typeCheckDoWhile(doWhileStmt: DoWhileStatement): DoWhileStatement {
-            doWhileStmt.cond = this.typeCheck(doWhileStmt.cond);
-            this.typeCheckCondExpr(doWhileStmt.cond);
-            doWhileStmt.body = this.typeCheck(doWhileStmt.body);
-            this.typeCheckCompoundStmtBlock(doWhileStmt.body, "do while statement");
-            doWhileStmt.type = this.voidType;
-            return doWhileStmt;
+        public typeCheckDo(doStatement: DoStatement): DoStatement {
+            doStatement.cond = this.typeCheck(doStatement.cond);
+            this.typeCheckCondExpr(doStatement.cond);
+            doStatement.body = this.typeCheck(doStatement.body);
+            this.typeCheckCompoundStmtBlock(doStatement.body, "do while statement");
+            doStatement.type = this.voidType;
+            return doStatement;
         }
 
         public typeCheckCondExpr(cond: AST) {

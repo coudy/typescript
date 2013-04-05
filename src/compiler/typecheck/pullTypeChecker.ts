@@ -234,7 +234,7 @@ module TypeScript {
                     return this.typeCheckWhileStatement(ast, typeCheckContext);
 
                 case NodeType.DoStatement:
-                    return this.typeCheckDoWhileStatement(ast, typeCheckContext);
+                    return this.typeCheckDoStatement(<DoStatement>ast, typeCheckContext);
 
                 case NodeType.IfStatement:
                     return this.typeCheckIfStatement(ast, typeCheckContext);
@@ -1312,11 +1312,9 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public typeCheckDoWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            var whileStatementAST = <DoWhileStatement>ast;
-
-            this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
-            this.typeCheckAST(whileStatementAST.body, typeCheckContext);
+        public typeCheckDoStatement(doStatement: DoStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(doStatement.cond, typeCheckContext);
+            this.typeCheckAST(doStatement.body, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }

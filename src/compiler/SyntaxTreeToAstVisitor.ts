@@ -179,7 +179,6 @@ module TypeScript {
             Debug.assert(span.limChar !== -1);
         }
 
-
         private setSpanExplicit(span: IASTSpan, start: number, end: number): void {
             span.minChar = start;
             span.limChar = end;
@@ -2922,11 +2921,11 @@ module TypeScript {
             return result;
         }
 
-        private visitDoStatement(node: DoStatementSyntax): DoWhileStatement {
+        private visitDoStatement(node: DoStatementSyntax): DoStatement {
             this.assertElementAtPosition(node);
 
             var start = this.position;
-            var result: DoWhileStatement = this.getAST(node);
+            var result: DoStatement = this.getAST(node);
             if (result) {
                 this.movePast(node);
             }
@@ -2942,7 +2941,7 @@ module TypeScript {
                 this.movePast(node.closeParenToken);
                 this.movePast(node.semicolonToken);
 
-                result = new DoWhileStatement(statement, condition);
+                result = new DoStatement(statement, condition);
                 result.whileSpan = whileSpan;
             }
 
