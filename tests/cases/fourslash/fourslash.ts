@@ -118,6 +118,10 @@ module FourSlashInterface {
             }
         }
 
+        public memberListCount(expectedCount: number) {
+            FourSlash.currentTestState.verifyMemberListCount(expectedCount, this.negative);
+        }
+
         // Verifies the completion list contains the specified symbol. The
         // completion list is brought up if necessary
         public completionListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {

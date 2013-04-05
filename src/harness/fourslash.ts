@@ -262,6 +262,15 @@ module FourSlash {
             var members = this.getMemberListAtCaret();
             this.assertItemInCompletionList(members.entries, symbol, type, docComment, fullSymbolName, kind);
         }
+
+        public verifyMemberListCount(expectedCount: number, negative: bool) {
+            var members = this.getMemberListAtCaret();
+            var match = members.entries.length === expectedCount;
+
+            if ((!match && !negative) || (match && negative)) {
+                throw new Error("Member list count was " + members.entries.length + ". Expected " + expectedCount);
+            }
+        }
         
         public verifyMemberListDoesNotContain(symbol: string) {
             var members = this.getMemberListAtCaret();
