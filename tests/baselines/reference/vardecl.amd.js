@@ -27,9 +27,7 @@ var n4;
 var d4;
 var m2;
 (function (m2) {
-    m2.a;
-    m2.b2 = 10;
-    m2.b;
+    m2.a, m2.b2 = 10, m2.b;
     var m1;
     var a2, b22 = 10, b222;
     var m3;

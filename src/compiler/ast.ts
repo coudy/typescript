@@ -1037,7 +1037,7 @@ module TypeScript {
         public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
 
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
-            emitter.emitJavascriptVarDecl(this, tokenId);
+            emitter.emitJavascriptVariableDeclarator(this, tokenId);
         }
 
         public treeViewLabel() {
@@ -1489,21 +1489,41 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
-            emitter.emitComments(this, true);
-            emitter.recordSourceMappingStart(this);
-            emitter.setInVarBlock(this.declarators.members.length);
-            var temp = emitter.setInObjectLiteral(false);
-            if (this.declarators) {
-                emitter.emitJavascriptList(this.declarators, null, SyntaxKind.SemicolonToken, true, false, false);
-            }
-            emitter.setInObjectLiteral(temp);
-            emitter.recordSourceMappingEnd(this);
-            emitter.emitComments(this, false);
+            emitter.emitJavascriptVariableDeclaration(this, startLine);
         }
 
         public structuralEquals(ast: VariableDeclaration, includingPosition: bool): bool {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.declarators, ast.declarators, includingPosition);
+        }
+    }
+
+    export class VariableStatement extends Statement {
+        constructor(public declaration: VariableDeclaration) {
+            super(NodeType.VariableStatement);
+        }
+
+        public emit(emitter: Emitter, tokenId: SyntaxKind, startLine: bool) {
+            emitter.emitComments(this, true);
+            emitter.recordSourceMappingStart(this);
+            var temp = emitter.setInObjectLiteral(false);
+            emitter.emitJavascript(this.declaration, tokenId, startLine);
+
+            // If it was an ambient declarator without an initializer, then we won't emit anything.
+            var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
+            var isAmbientWithoutInit = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) && varDecl.init === null;
+            if (!isAmbientWithoutInit) {
+                emitter.writeLineToOutput(";");
+            }
+            
+            emitter.setInObjectLiteral(temp);
+            emitter.recordSourceMappingEnd(this);
+            emitter.emitComments(this, false);
+        }
+
+        public structuralEquals(ast: VariableStatement, includingPosition: bool): bool {
+            return super.structuralEquals(ast, includingPosition) &&
+                   structuralEquals(this.declaration, ast.declaration, includingPosition);
         }
     }
 
@@ -1932,6 +1952,7 @@ module TypeScript {
                     emitter.emitJavascriptList(this.init, null, SyntaxKind.ForKeyword, false, false, false);
                 }
             }
+
             emitter.writeToOutput("; ");
             emitter.emitJavascript(this.cond, SyntaxKind.ForKeyword, false);
             emitter.writeToOutput("; ");

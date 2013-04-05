@@ -352,6 +352,10 @@ module TypeScript {
             return false;
         }
 
+        public VariableStatementCallback(pre: bool, variableDeclaration: VariableDeclaration): bool {
+            return true;
+        }
+
         public VariableDeclarationCallback(pre: bool, variableDeclaration: VariableDeclaration): bool {
             if (pre) {
                 this.varListCount = variableDeclaration.declarators.members.length;
@@ -712,12 +716,11 @@ module TypeScript {
             var membersLen = moduleDecl.members.members.length;
             for (var j = 1; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.members.members[j];
-                if (memberDecl.nodeType === NodeType.VariableDeclarator) {
+                if (memberDecl.nodeType === NodeType.VariableStatement) {
+                    var variableStatement = <VariableStatement>memberDecl;
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
-                    this.declFile.WriteLine((<VariableDeclarator>memberDecl).id.text + ",");
-                } else {
-                    CompilerDiagnostics.assert(memberDecl.nodeType != NodeType.Asg, "We want to catch this");
+                    this.declFile.WriteLine(variableStatement.declaration.declarators[0].id.text + ",");
                 }
             }
             this.indenter.decreaseIndent();

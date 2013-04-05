@@ -877,6 +877,9 @@ module TypeScript {
         else if (ast.nodeType === NodeType.VariableDeclaration) {
             go = true;
         }
+        else if (ast.nodeType === NodeType.VariableStatement) {
+            go = true;
+        }
         else if (ast.nodeType == NodeType.ModuleDeclaration) {
             go = preCollectModuleDecls(ast, parentAST, context);
         }

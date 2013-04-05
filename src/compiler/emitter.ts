@@ -633,7 +633,7 @@ module TypeScript {
                         var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
                         if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                             this.emitIndent();
-                            this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
+                            this.emitJavascriptVariableDeclarator(varDecl, SyntaxKind.TildeToken);
                             this.writeLineToOutput("");
                         }
                     }
@@ -1025,7 +1025,44 @@ module TypeScript {
             }
         }
 
-        public emitJavascriptVarDecl(varDecl: VariableDeclarator, tokenId: SyntaxKind) {
+        public emitJavascriptVariableDeclaration(declaration: VariableDeclaration, startLine: bool) {
+            var varDecl = <VariableDeclarator>declaration.declarators.members[0];
+
+            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.locationInfo.fileName);
+
+            var parentSymbol = symbol ? symbol.getContainer() : null;
+            var parentKind = parentSymbol ? parentSymbol.getKind() : PullElementKind.None;
+            var inClass = parentKind === PullElementKind.Class;
+
+            this.emitComments(declaration, true);
+            this.recordSourceMappingStart(declaration);
+            this.setInVarBlock(declaration.declarators.members.length);
+            var temp = this.setInObjectLiteral(false);
+
+            var isAmbientWithoutInit = hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) && varDecl.init === null;
+            if (!isAmbientWithoutInit) {
+                for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
+                    var declarator = declaration.declarators.members[i];
+
+                    if (i > 0) {
+                        if (inClass) {
+                            this.writeToOutputTrimmable(";");
+                        }
+                        else {
+                            this.writeToOutputTrimmable(", ");
+                        }
+                    }
+
+                    this.emitJavascript(declarator, SyntaxKind.SemicolonToken, (startLine && i === 0) || inClass);
+                }
+            }
+
+            this.setInObjectLiteral(temp);
+            this.recordSourceMappingEnd(declaration);
+            this.emitComments(declaration, false);
+        }
+
+        public emitJavascriptVariableDeclarator(varDecl: VariableDeclarator, tokenId: SyntaxKind) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.locationInfo.fileName);
             this.pushDecl(pullDecl);
             if ((varDecl.getVarFlags() & VariableFlags.Ambient) === VariableFlags.Ambient) {
@@ -1090,14 +1127,20 @@ module TypeScript {
                     this.emitJavascript(varDecl.init, SyntaxKind.CommaToken, false);
                     this.varListCountStack.pop();
                 }
-                this.onEmitVar();
-                if ((tokenId != SyntaxKind.OpenParenToken)) {
-                    if (this.varListCount() < 0) {
-                        this.writeToOutput(", ");
-                    } else if (tokenId != SyntaxKind.ForKeyword) {
-                        this.writeToOutputTrimmable(";");
+
+                if (parentKind == PullElementKind.Class) {
+                    // class
+                    if (this.emitState.container != EmitContainer.Args) {
+                        this.writeToOutput(";");
                     }
                 }
+
+                this.onEmitVar();
+                //if ((tokenId != SyntaxKind.OpenParenToken)) {
+                //    if (this.varListCount() < 0) {
+                //        this.writeToOutput(", ");
+                //    }
+                //}
                 this.recordSourceMappingEnd(varDecl);
                 this.emitComments(varDecl, false);
             }
@@ -1391,7 +1434,7 @@ module TypeScript {
                     var varDecl = <VariableDeclarator>this.thisClassNode.members.members[iMember];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
-                        this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
+                        this.emitJavascriptVariableDeclarator(varDecl, SyntaxKind.TildeToken);
                         this.writeLineToOutput("");
                     }
                 }
@@ -1453,12 +1496,12 @@ module TypeScript {
                     else if (startLine &&
                              (emitNode.nodeType !== NodeType.ExpressionStatement) &&
                              (emitNode.nodeType !== NodeType.ReturnStatement) &&
+                             (emitNode.nodeType !== NodeType.VariableStatement) &&
                              (emitNode.nodeType != NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType === NodeType.VariableDeclarator) &&
                              ((((<VariableDeclarator>emitNode).getVarFlags()) & VariableFlags.Ambient) === VariableFlags.Ambient) &&
                              (((<VariableDeclarator>emitNode).init) === null)) && this.varListCount() >= 0) &&
-                             (emitNode.nodeType != NodeType.VariableDeclaration) &&
                              (emitNode.nodeType != NodeType.FunctionDeclaration)) {
                         this.writeLineToOutput("");
                     }
@@ -1483,7 +1526,8 @@ module TypeScript {
                 this.indenter.indentAmt > 0 &&
                 ast.nodeType !== NodeType.List &&
                 ast.nodeType !== NodeType.Block &&
-                ast.nodeType !== NodeType.VariableDeclaration) {
+                ast.nodeType !== NodeType.VariableDeclaration &&
+                ast.nodeType !== NodeType.VariableStatement) {
 
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
                     (!((ast.nodeType === NodeType.VariableDeclarator) &&
@@ -1651,7 +1695,7 @@ module TypeScript {
                             if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                                 this.writeLineToOutput("");
                                 this.emitIndent();
-                                this.emitJavascriptVarDecl(varDecl, SyntaxKind.TildeToken);
+                                this.emitJavascriptVariableDeclarator(varDecl, SyntaxKind.TildeToken);
                                 wroteProps++;
                             }
                         }

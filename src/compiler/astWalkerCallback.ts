@@ -119,9 +119,7 @@ module TypeScript.AstWalkerWithDetailCallback {
         WithCallback? (pre, ast: AST): bool;
         LabelCallback? (pre, labelAST: AST): bool;
         LabeledStatementCallback? (pre, ast: AST): bool;
-        EBStartCallback? (pre, ast: AST): bool;
-        GotoEBCallback? (pre, ast: AST): bool;
-        EndCodeCallback? (pre, ast: AST): bool;
+        VariableStatementCallback? (pre, ast: AST): bool;
         ErrorCallback? (pre, ast: AST): bool;
         CommentCallback? (pre, ast: AST): bool;
         DebuggerCallback? (pre, ast: AST): bool;

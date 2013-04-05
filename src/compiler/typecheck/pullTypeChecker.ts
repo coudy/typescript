@@ -245,6 +245,9 @@ module TypeScript {
                 case NodeType.VariableDeclaration:
                     return this.typeCheckVariableDeclaration(<VariableDeclaration>ast, typeCheckContext);
 
+                case NodeType.VariableStatement:
+                    return this.typeCheckVariableStatement(<VariableStatement>ast, typeCheckContext);
+
                 case NodeType.WithStatement:
                     return this.typeCheckWithStatement(ast, typeCheckContext);
 
@@ -1227,21 +1230,25 @@ module TypeScript {
             var forInStatement = <ForInStatement>ast;
 
             var rhsType = this.resolver.widenType(this.typeCheckAST(forInStatement.obj, typeCheckContext));
+            var lval = forInStatement.lval;
 
-            var varDecl = <VariableDeclarator>forInStatement.lval;
+            if (lval.nodeType === NodeType.VariableDeclaration) {
+                var declaration = <VariableDeclaration>forInStatement.lval;
+                var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
-            if (varDecl.typeExpr) {
-                this.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may not contain a type annotation", typeCheckContext.getEnclosingDecl());
+                if (varDecl.typeExpr) {
+                    this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may not contain a type annotation", typeCheckContext.getEnclosingDecl());
+                }
             }
 
-            var varSym = this.resolver.resolveAST(varDecl, false, typeCheckContext.getEnclosingDecl(), this.context);
+            var varSym = this.resolver.resolveAST(forInStatement.lval, false, typeCheckContext.getEnclosingDecl(), this.context);
             this.checkForResolutionError(varSym.getType(), typeCheckContext.getEnclosingDecl());
 
             var isStringOrAny = varSym.getType() == this.semanticInfoChain.stringTypeSymbol || this.resolver.isAnyOrEquivalent(varSym.getType());
             var isValidRHS = rhsType && (this.resolver.isAnyOrEquivalent(rhsType) || !rhsType.isPrimitive());
 
             if (!isStringOrAny) {
-                this.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
+                this.postError(lval.minChar, lval.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may only be of types 'string' or 'any'", typeCheckContext.getEnclosingDecl());
             }
 
             if (!isValidRHS) {
@@ -1333,6 +1340,12 @@ module TypeScript {
 
         public typeCheckVariableDeclaration(variableDeclaration: VariableDeclaration, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             this.typeCheckAST(variableDeclaration.declarators, typeCheckContext);
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        public typeCheckVariableStatement(variableStatement: VariableStatement, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.typeCheckAST(variableStatement.declaration, typeCheckContext);
 
             return this.semanticInfoChain.voidTypeSymbol;
         }

@@ -885,6 +885,10 @@ module TypeScript {
             var members = new ASTList();
 
             var mapDecl = new VariableDeclarator(new Identifier("_map"));
+            var declarators = new ASTList();
+            declarators.append(mapDecl);
+            var declaration = new VariableDeclaration(declarators);
+            var statement = new VariableStatement(declaration);
 
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Exported);
             mapDecl.setVarFlags(mapDecl.getVarFlags() | VariableFlags.Private);
@@ -892,7 +896,7 @@ module TypeScript {
             // REVIEW: Is this still necessary?
             mapDecl.setVarFlags(mapDecl.getVarFlags() | (VariableFlags.Property | VariableFlags.Public));
             mapDecl.init = new UnaryExpression(NodeType.ArrayLiteralExpression, null);
-            members.append(mapDecl);
+            members.append(statement);
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
             var memberName: Identifier;
@@ -939,22 +943,22 @@ module TypeScript {
                         this.setSpanExplicit(map.operand2, memberStart, this.position);
                     }
 
-                    var member = new VariableDeclarator(memberName);
-                    member.init = memberValue;
+                    var declarator = new VariableDeclarator(memberName);
+                    declarator.init = memberValue;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
-                    member.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
-                    member.setVarFlags(member.getVarFlags() | VariableFlags.Property);
-                    this.setSpanExplicit(member, memberStart, this.position);
+                    declarator.typeExpr = new TypeReference(this.createRef(name.actualText, -1), 0);
+                    declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
+                    this.setSpanExplicit(declarator, memberStart, this.position);
 
                     if (memberValue.nodeType === NodeType.NumericLiteral) {
-                        member.setVarFlags(member.getVarFlags() | VariableFlags.Constant);
+                        declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
                     }
                     else if (memberValue.nodeType === NodeType.Lsh) {
                         // If the initializer is of the form "value << value" then treat it as a constant
                         // as well.
                         var binop = <BinaryExpression>memberValue;
                         if (binop.operand1.nodeType === NodeType.NumericLiteral && binop.operand2.nodeType === NodeType.NumericLiteral) {
-                            member.setVarFlags(member.getVarFlags() | VariableFlags.Constant);
+                            declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
                         }
                     }
                     else if (memberValue.nodeType === NodeType.Name) {
@@ -964,16 +968,24 @@ module TypeScript {
                         for (var j = 0; j < memberNames.length; j++) {
                             memberName = memberNames[j];
                             if (memberName.text === nameNode.text) {
-                                member.setVarFlags(member.getVarFlags() | VariableFlags.Constant);
+                                declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
                                 break;
                             }
                         }
                     }
 
-                    members.append(member);
+                    declarators = new ASTList();
+                    declarators.append(declarator);
+                    declaration = new VariableDeclaration(declarators);
+                    this.setSpanExplicit(declaration, memberStart, this.position);
+
+                    statement = new VariableStatement(declaration);
+                    this.setSpanExplicit(statement, memberStart, this.position);
+
+                    members.append(statement);
                     memberNames.push(memberName);
                     // all enum members are exported
-                    member.setVarFlags(member.getVarFlags() | VariableFlags.Exported);
+                    declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Exported);
                 }
             }
 
@@ -1066,17 +1078,11 @@ module TypeScript {
 
             this.moveTo(node, node.variableDeclaration);
 
-            var varList = node.variableDeclaration.accept(this);
+            var declaration = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
 
-            if (varList.nodeType === NodeType.VariableDeclarator) {
-                varDecl = <VariableDeclarator>varList;
-                varList = new ASTList();
-                varList.append(varDecl);
-            }
-
-            for (var i = 0, n = varList.members.length; i < n; i++) {
-                var varDecl = <VariableDeclarator>varList.members[i];
+            for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
+                var varDecl = <VariableDeclarator>declaration.declarators.members[i];
 
                 if (i === 0) {
                     varDecl.preComments = this.mergeComments(preComments, varDecl.preComments);
@@ -1091,18 +1097,13 @@ module TypeScript {
                 }
             }
 
-            if (node.variableDeclaration.variableDeclarators.nonSeparatorCount() === 1) {
-                return varList.members[0];
-            }
-            else {
-                var result = new VariableDeclaration(varList);
-                this.setSpan(result, start, node);
+            var result = new VariableStatement(declaration);
 
-                return result;
-            }
+            this.setSpan(result, start, node);
+            return result;
         }
 
-        private visitVariableDeclaration(node: VariableDeclarationSyntax): AST {
+        private visitVariableDeclaration(node: VariableDeclarationSyntax): VariableDeclaration {
             this.assertElementAtPosition(node);
 
             var start = this.position;
@@ -1120,11 +1121,7 @@ module TypeScript {
                 }
             }
 
-            if (variableDecls.members.length === 1) {
-                return variableDecls.members[0];
-            }
-
-            return variableDecls;
+            return new VariableDeclaration(variableDecls);
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
@@ -2305,6 +2302,14 @@ module TypeScript {
                 }
 
                 result.setVarFlags(result.getVarFlags() | VariableFlags.ClassProperty);
+
+                // var declarators = new ASTList();
+                // declarators.append(declarator);
+
+                //var declaration = new VariableDeclaration(declarators)
+                //this.setSpan(declaration, start, node);
+
+                //result = new VariableStatement(declaration);
             }
 
             this.setAST(node, result);

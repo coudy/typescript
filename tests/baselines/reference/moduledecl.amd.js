@@ -263,9 +263,6 @@ declare module mAmbient {
         y: C;
     }
     enum e {
-        x,
-        y,
-        z,
     }
     module m3 {
         class C {
@@ -278,9 +275,6 @@ declare module mAmbient {
             y: C;
         }
         enum e {
-            x,
-            y,
-            z,
         }
     }
 }

@@ -49,12 +49,9 @@ var m1;
     m3.foo = foo;
 })(exports.m3 || (exports.m3 = {}));
 var m3 = exports.m3;
-exports.eVar1;
-exports.eVar2 = 10;
+exports.eVar1, exports.eVar2 = 10;
 var eVar22;
-exports.eVar3 = 10;
-exports.eVar4;
-exports.eVar5;
+exports.eVar3 = 10, exports.eVar4, exports.eVar5;
 ////[0.d.ts]
 export declare var exportedSimpleVar;
 export declare var exportedVarWithInitialValue: number;

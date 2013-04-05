@@ -107,6 +107,7 @@ module TypeScript {
         CaseClause,
         SwitchStatement,
         TryStatement,
+        VariableStatement,
         CatchClause,
         List,
         Script,
