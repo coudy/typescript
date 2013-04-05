@@ -370,7 +370,7 @@ module TypeScript {
                     var numLit = <NumberLiteral>init;
                     return numLit.value;
                 }
-                else if (init.nodeType === NodeType.Lsh) {
+                else if (init.nodeType === NodeType.LeftShiftExpression) {
                     var binop = <BinaryExpression>init;
                     if (binop.operand1.nodeType === NodeType.NumericLiteral &&
                     binop.operand2.nodeType === NodeType.NumericLiteral) {

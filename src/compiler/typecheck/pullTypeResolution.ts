@@ -2080,18 +2080,18 @@ module TypeScript {
                     return this.resolveAssignmentStatement(expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 // boolean operations
-                case NodeType.LogNot:
-                case NodeType.Ne:
-                case NodeType.Eq:
-                case NodeType.Eqv:
-                case NodeType.NEqv:
-                case NodeType.Lt:
-                case NodeType.Le:
-                case NodeType.Ge:
-                case NodeType.Gt:
+                case NodeType.LogicalNotExpression:
+                case NodeType.NotEqualsWithTypeConversionExpression:
+                case NodeType.EqualsWithTypeConversionExpression:
+                case NodeType.EqualsExpression:
+                case NodeType.NotEqualsExpression:
+                case NodeType.LessThanExpression:
+                case NodeType.LessThanOrEqualExpression:
+                case NodeType.GreaterThanOrEqualExpression:
+                case NodeType.GreaterThanExpression:
                     return this.semanticInfoChain.boolTypeSymbol;
 
-                case NodeType.Add:
+                case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:                
                     return this.resolveArithmeticExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
@@ -2102,24 +2102,24 @@ module TypeScript {
                 case NodeType.OrAssignmentExpression:
                 case NodeType.AndAssignmentExpression:
 
-                case NodeType.Not:
-                case NodeType.Sub:
-                case NodeType.Mul:
-                case NodeType.Div:
-                case NodeType.Mod:
-                case NodeType.Or:
-                case NodeType.And:
+                case NodeType.BitwiseNotExpression:
+                case NodeType.SubtractExpression:
+                case NodeType.MultiplyExpression:
+                case NodeType.DivideExpression:
+                case NodeType.ModuloExpression:
+                case NodeType.BitwiseOrExpression:
+                case NodeType.BitwiseAndExpression:
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
-                case NodeType.IncPost:
-                case NodeType.IncPre:
-                case NodeType.DecPost:
-                case NodeType.DecPre:
+                case NodeType.PostIncrementExpression:
+                case NodeType.PreIncrementExpression:
+                case NodeType.PostDecrementExpression:
+                case NodeType.PreDecrementExpression:
                     return this.semanticInfoChain.numberTypeSymbol;
 
-                case NodeType.Lsh:
-                case NodeType.Rsh:
-                case NodeType.Rs2:
+                case NodeType.LeftShiftExpression:
+                case NodeType.SignedRightShiftExpression:
+                case NodeType.UnsignedRightShiftExpression:
                 case NodeType.LeftShiftAssignmentExpression:
                 case NodeType.SignedRightShiftAssignmentExpression:
                 case NodeType.UnsignedRightShiftAssignmentExpression:
@@ -2128,9 +2128,9 @@ module TypeScript {
                 case NodeType.ElementAccessExpression:
                     return this.resolveIndexExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
-                case NodeType.LogOr:
+                case NodeType.LogicalOrExpression:
                     return this.resolveLogicalOrExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
-                case NodeType.LogAnd:
+                case NodeType.LogicalAndExpression:
                     return this.resolveLogicalAndExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 case NodeType.TypeOfExpression:
@@ -3192,7 +3192,7 @@ module TypeScript {
             leftType = this.widenType(leftType);
             rightType = this.widenType(rightType);
 
-            if (expressionAST.nodeType == NodeType.Add || expressionAST.nodeType == NodeType.AddAssignmentExpression) {
+            if (expressionAST.nodeType == NodeType.AddExpression || expressionAST.nodeType == NodeType.AddAssignmentExpression) {
                 if (leftType == this.semanticInfoChain.stringTypeSymbol || rightType == this.semanticInfoChain.stringTypeSymbol) {
                     return this.semanticInfoChain.stringTypeSymbol;
                 }

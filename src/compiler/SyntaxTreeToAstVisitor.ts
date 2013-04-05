@@ -953,7 +953,7 @@ module TypeScript {
                     if (memberValue.nodeType === NodeType.NumericLiteral) {
                         declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Constant);
                     }
-                    else if (memberValue.nodeType === NodeType.Lsh) {
+                    else if (memberValue.nodeType === NodeType.LeftShiftExpression) {
                         // If the initializer is of the form "value << value" then treat it as a constant
                         // as well.
                         var binop = <BinaryExpression>memberValue;
@@ -1167,10 +1167,10 @@ module TypeScript {
             switch (kind) {
                 case SyntaxKind.PlusExpression: return NodeType.PlusExpression;
                 case SyntaxKind.NegateExpression: return NodeType.NegateExpression;
-                case SyntaxKind.BitwiseNotExpression: return NodeType.Not;
-                case SyntaxKind.LogicalNotExpression: return NodeType.LogNot;
-                case SyntaxKind.PreIncrementExpression: return NodeType.IncPre;
-                case SyntaxKind.PreDecrementExpression: return NodeType.DecPre;
+                case SyntaxKind.BitwiseNotExpression: return NodeType.BitwiseNotExpression;
+                case SyntaxKind.LogicalNotExpression: return NodeType.LogicalNotExpression;
+                case SyntaxKind.PreIncrementExpression: return NodeType.PreIncrementExpression;
+                case SyntaxKind.PreDecrementExpression: return NodeType.PreDecrementExpression;
                 default:
                     throw Errors.invalidOperation();
             }
@@ -1663,7 +1663,7 @@ module TypeScript {
                 var operand = node.operand.accept(this);
                 this.movePast(node.operatorToken);
 
-                result = new UnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.IncPost : NodeType.DecPost, operand);
+                result = new UnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.PostIncrementExpression : NodeType.PostDecrementExpression, operand);
             }
 
             this.setAST(node, result);
@@ -1748,29 +1748,29 @@ module TypeScript {
                 case SyntaxKind.LeftShiftAssignmentExpression: return NodeType.LeftShiftAssignmentExpression;
                 case SyntaxKind.SignedRightShiftAssignmentExpression: return NodeType.SignedRightShiftAssignmentExpression;
                 case SyntaxKind.UnsignedRightShiftAssignmentExpression: return NodeType.UnsignedRightShiftAssignmentExpression;
-                case SyntaxKind.LogicalOrExpression: return NodeType.LogOr;
-                case SyntaxKind.LogicalAndExpression: return NodeType.LogAnd;
-                case SyntaxKind.BitwiseOrExpression: return NodeType.Or;
-                case SyntaxKind.BitwiseExclusiveOrExpression: return NodeType.Xor;
-                case SyntaxKind.BitwiseAndExpression: return NodeType.And;
-                case SyntaxKind.EqualsWithTypeConversionExpression: return NodeType.Eq;
-                case SyntaxKind.NotEqualsWithTypeConversionExpression: return NodeType.Ne;
-                case SyntaxKind.EqualsExpression: return NodeType.Eqv;
-                case SyntaxKind.NotEqualsExpression: return NodeType.NEqv;
-                case SyntaxKind.LessThanExpression: return NodeType.Lt;
-                case SyntaxKind.GreaterThanExpression: return NodeType.Gt;
-                case SyntaxKind.LessThanOrEqualExpression: return NodeType.Le;
-                case SyntaxKind.GreaterThanOrEqualExpression: return NodeType.Ge;
+                case SyntaxKind.LogicalOrExpression: return NodeType.LogicalOrExpression;
+                case SyntaxKind.LogicalAndExpression: return NodeType.LogicalAndExpression;
+                case SyntaxKind.BitwiseOrExpression: return NodeType.BitwiseOrExpression;
+                case SyntaxKind.BitwiseExclusiveOrExpression: return NodeType.BitwiseExclusiveOrExpression;
+                case SyntaxKind.BitwiseAndExpression: return NodeType.BitwiseAndExpression;
+                case SyntaxKind.EqualsWithTypeConversionExpression: return NodeType.EqualsWithTypeConversionExpression;
+                case SyntaxKind.NotEqualsWithTypeConversionExpression: return NodeType.NotEqualsWithTypeConversionExpression;
+                case SyntaxKind.EqualsExpression: return NodeType.EqualsExpression;
+                case SyntaxKind.NotEqualsExpression: return NodeType.NotEqualsExpression;
+                case SyntaxKind.LessThanExpression: return NodeType.LessThanExpression;
+                case SyntaxKind.GreaterThanExpression: return NodeType.GreaterThanExpression;
+                case SyntaxKind.LessThanOrEqualExpression: return NodeType.LessThanOrEqualExpression;
+                case SyntaxKind.GreaterThanOrEqualExpression: return NodeType.GreaterThanOrEqualExpression;
                 case SyntaxKind.InstanceOfExpression: return NodeType.InstanceOfExpression;
                 case SyntaxKind.InExpression: return NodeType.InExpression;
-                case SyntaxKind.LeftShiftExpression: return NodeType.Lsh;
-                case SyntaxKind.SignedRightShiftExpression: return NodeType.Rsh;
-                case SyntaxKind.UnsignedRightShiftExpression: return NodeType.Rs2;
-                case SyntaxKind.MultiplyExpression: return NodeType.Mul;
-                case SyntaxKind.DivideExpression: return NodeType.Div;
-                case SyntaxKind.ModuloExpression: return NodeType.Mod;
-                case SyntaxKind.AddExpression: return NodeType.Add;
-                case SyntaxKind.SubtractExpression: return NodeType.Sub;
+                case SyntaxKind.LeftShiftExpression: return NodeType.LeftShiftExpression;
+                case SyntaxKind.SignedRightShiftExpression: return NodeType.SignedRightShiftExpression;
+                case SyntaxKind.UnsignedRightShiftExpression: return NodeType.UnsignedRightShiftExpression;
+                case SyntaxKind.MultiplyExpression: return NodeType.MultiplyExpression;
+                case SyntaxKind.DivideExpression: return NodeType.DivideExpression;
+                case SyntaxKind.ModuloExpression: return NodeType.ModuloExpression;
+                case SyntaxKind.AddExpression: return NodeType.AddExpression;
+                case SyntaxKind.SubtractExpression: return NodeType.SubtractExpression;
             }
 
             throw Errors.invalidOperation();

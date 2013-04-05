@@ -1384,7 +1384,7 @@ module TypeScript {
             leftType = this.checker.widenType(leftType);
             rightType = this.checker.widenType(rightType);
 
-            if (nodeType === NodeType.Add || nodeType === NodeType.AddAssignmentExpression) {
+            if (nodeType === NodeType.AddExpression || nodeType === NodeType.AddAssignmentExpression) {
 
                 if (leftType === this.checker.stringType || rightType === this.checker.stringType) {
                     binex.type = this.checker.stringType;

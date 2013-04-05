@@ -140,30 +140,30 @@ module TypeScript {
                     return this.typeCheckTypeReference(ast, typeCheckContext);
 
                 // boolean operations
-                case NodeType.Ne:
-                case NodeType.Eq:
-                case NodeType.Eqv:
-                case NodeType.NEqv:
-                case NodeType.Lt:
-                case NodeType.Le:
-                case NodeType.Ge:
-                case NodeType.Gt:
+                case NodeType.NotEqualsWithTypeConversionExpression:
+                case NodeType.EqualsWithTypeConversionExpression:
+                case NodeType.EqualsExpression:
+                case NodeType.NotEqualsExpression:
+                case NodeType.LessThanExpression:
+                case NodeType.LessThanOrEqualExpression:
+                case NodeType.GreaterThanOrEqualExpression:
+                case NodeType.GreaterThanExpression:
                     return this.typeCheckLogicalOperation(ast, typeCheckContext);
 
-                case NodeType.Add:
+                case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
                     return this.typeCheckBinaryAdditionOperation(ast, typeCheckContext);
 
-                case NodeType.Sub:
-                case NodeType.Mul:
-                case NodeType.Div:
-                case NodeType.Mod:
-                case NodeType.Or:
-                case NodeType.And:
-                case NodeType.Lsh:
-                case NodeType.Rsh:
-                case NodeType.Rs2:
-                case NodeType.Xor:
+                case NodeType.SubtractExpression:
+                case NodeType.MultiplyExpression:
+                case NodeType.DivideExpression:
+                case NodeType.ModuloExpression:
+                case NodeType.BitwiseOrExpression:
+                case NodeType.BitwiseAndExpression:
+                case NodeType.LeftShiftExpression:
+                case NodeType.SignedRightShiftExpression:
+                case NodeType.UnsignedRightShiftExpression:
+                case NodeType.BitwiseExclusiveOrExpression:
                 case NodeType.LeftShiftAssignmentExpression:
                 case NodeType.SignedRightShiftAssignmentExpression:
                 case NodeType.UnsignedRightShiftAssignmentExpression:
@@ -177,23 +177,23 @@ module TypeScript {
 
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
-                case NodeType.Not:
+                case NodeType.BitwiseNotExpression:
                     return this.semanticInfoChain.numberTypeSymbol;
 
-                case NodeType.IncPost:
-                case NodeType.IncPre:
-                case NodeType.DecPost:
-                case NodeType.DecPre:
+                case NodeType.PostIncrementExpression:
+                case NodeType.PreIncrementExpression:
+                case NodeType.PostDecrementExpression:
+                case NodeType.PreDecrementExpression:
                     return this.typeCheckUnaryArithmeticOperation(ast, typeCheckContext);
 
                 case NodeType.ElementAccessExpression:
                     return this.typeCheckIndex(ast, typeCheckContext);
 
-                case NodeType.LogNot:
+                case NodeType.LogicalNotExpression:
                     return this.semanticInfoChain.boolTypeSymbol;
 
-                case NodeType.LogOr:
-                case NodeType.LogAnd:
+                case NodeType.LogicalOrExpression:
+                case NodeType.LogicalAndExpression:
                     return this.typeCheckLogicalAndOrExpression(ast, typeCheckContext);
 
                 case NodeType.TypeOfExpression:

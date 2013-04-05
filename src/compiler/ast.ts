@@ -398,20 +398,20 @@ module TypeScript {
 
         public typeCheck(typeFlow: TypeFlow) {
             switch (this.nodeType) {
-                case NodeType.Not:
+                case NodeType.BitwiseNotExpression:
                     return typeFlow.typeCheckBitNot(this);
 
-                case NodeType.LogNot:
+                case NodeType.LogicalNotExpression:
                     return typeFlow.typeCheckLogNot(this);
 
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
                     return typeFlow.typeCheckUnaryNumberOperator(this);
 
-                case NodeType.IncPost:
-                case NodeType.IncPre:
-                case NodeType.DecPost:
-                case NodeType.DecPre:
+                case NodeType.PostIncrementExpression:
+                case NodeType.PreIncrementExpression:
+                case NodeType.PostDecrementExpression:
+                case NodeType.PreDecrementExpression:
                     return typeFlow.typeCheckIncOrDec(this);
 
                 case NodeType.ArrayLiteralExpression:
@@ -466,15 +466,15 @@ module TypeScript {
             emitter.emitComments(this, true);
             emitter.recordSourceMappingStart(this);
             switch (this.nodeType) {
-                case NodeType.IncPost:
+                case NodeType.PostIncrementExpression:
                     emitter.emitJavascript(this.operand, SyntaxKind.PlusPlusToken, false);
                     emitter.writeToOutput("++");
                     break;
-                case NodeType.LogNot:
+                case NodeType.LogicalNotExpression:
                     emitter.writeToOutput("!");
                     emitter.emitJavascript(this.operand, SyntaxKind.ExclamationToken, false);
                     break;
-                case NodeType.DecPost:
+                case NodeType.PostDecrementExpression:
                     emitter.emitJavascript(this.operand, SyntaxKind.MinusMinusToken, false);
                     emitter.writeToOutput("--");
                     break;
@@ -484,29 +484,29 @@ module TypeScript {
                 case NodeType.ArrayLiteralExpression:
                     emitter.emitArrayLiteral(<ASTList>this.operand);
                     break;
-                case NodeType.Not:
+                case NodeType.BitwiseNotExpression:
                     emitter.writeToOutput("~");
                     emitter.emitJavascript(this.operand, SyntaxKind.TildeToken, false);
                     break;
                 case NodeType.NegateExpression:
                     emitter.writeToOutput("-");
-                    if (this.operand.nodeType === NodeType.NegateExpression || this.operand.nodeType === NodeType.DecPre) {
+                    if (this.operand.nodeType === NodeType.NegateExpression || this.operand.nodeType === NodeType.PreDecrementExpression) {
                         emitter.writeToOutput(" ");
                     }
                     emitter.emitJavascript(this.operand, SyntaxKind.MinusToken, false);
                     break;
                 case NodeType.PlusExpression:
                     emitter.writeToOutput("+");
-                    if (this.operand.nodeType === NodeType.PlusExpression || this.operand.nodeType === NodeType.IncPre) {
+                    if (this.operand.nodeType === NodeType.PlusExpression || this.operand.nodeType === NodeType.PreIncrementExpression) {
                         emitter.writeToOutput(" ");
                     }
                     emitter.emitJavascript(this.operand, SyntaxKind.PlusToken, false);
                     break;
-                case NodeType.IncPre:
+                case NodeType.PreIncrementExpression:
                     emitter.writeToOutput("++");
                     emitter.emitJavascript(this.operand, SyntaxKind.PlusPlusToken, false);
                     break;
-                case NodeType.DecPre:
+                case NodeType.PreDecrementExpression:
                     emitter.writeToOutput("--");
                     emitter.emitJavascript(this.operand, SyntaxKind.MinusMinusToken, false);
                     break;
@@ -599,18 +599,18 @@ module TypeScript {
                     return typeFlow.typeCheckDotOperator(this);
                 case NodeType.AssignmentExpression:
                     return typeFlow.typeCheckAsgOperator(this);
-                case NodeType.Add:
-                case NodeType.Sub:
-                case NodeType.Mul:
-                case NodeType.Div:
-                case NodeType.Mod:
-                case NodeType.Or:
-                case NodeType.And:
+                case NodeType.AddExpression:
+                case NodeType.SubtractExpression:
+                case NodeType.MultiplyExpression:
+                case NodeType.DivideExpression:
+                case NodeType.ModuloExpression:
+                case NodeType.BitwiseOrExpression:
+                case NodeType.BitwiseAndExpression:
                     return typeFlow.typeCheckArithmeticOperator(this, false);
-                case NodeType.Xor:
+                case NodeType.BitwiseExclusiveOrExpression:
                     return typeFlow.typeCheckBitwiseOperator(this, false);
-                case NodeType.Ne:
-                case NodeType.Eq:
+                case NodeType.NotEqualsWithTypeConversionExpression:
+                case NodeType.EqualsWithTypeConversionExpression:
                     /*
                     var text: string;
                     if (typeFlow.checker.styleSettings.eqeqeq) {
@@ -624,21 +624,21 @@ module TypeScript {
                         }
                     }
                     */
-                case NodeType.Eqv:
-                case NodeType.NEqv:
-                case NodeType.Lt:
-                case NodeType.Le:
-                case NodeType.Ge:
-                case NodeType.Gt:
+                case NodeType.EqualsExpression:
+                case NodeType.NotEqualsExpression:
+                case NodeType.LessThanExpression:
+                case NodeType.LessThanOrEqualExpression:
+                case NodeType.GreaterThanOrEqualExpression:
+                case NodeType.GreaterThanExpression:
                     return typeFlow.typeCheckBooleanOperator(this);
                 case NodeType.ElementAccessExpression:
                     return typeFlow.typeCheckIndex(this);
                 case NodeType.Member:
                     this.type = typeFlow.voidType;
                     return this;
-                case NodeType.LogOr:
+                case NodeType.LogicalOrExpression:
                     return typeFlow.typeCheckLogOr(this);
-                case NodeType.LogAnd:
+                case NodeType.LogicalAndExpression:
                     return typeFlow.typeCheckLogAnd(this);
                 case NodeType.AddAssignmentExpression:
                 case NodeType.SubtractAssignmentExpression:
@@ -650,9 +650,9 @@ module TypeScript {
                     return typeFlow.typeCheckArithmeticOperator(this, true);
                 case NodeType.ExclusiveOrAssignmentExpression:
                     return typeFlow.typeCheckBitwiseOperator(this, true);
-                case NodeType.Lsh:
-                case NodeType.Rsh:
-                case NodeType.Rs2:
+                case NodeType.LeftShiftExpression:
+                case NodeType.SignedRightShiftExpression:
+                case NodeType.UnsignedRightShiftExpression:
                     return typeFlow.typeCheckShift(this, false);
                 case NodeType.LeftShiftAssignmentExpression:
                 case NodeType.SignedRightShiftAssignmentExpression:
@@ -686,29 +686,29 @@ module TypeScript {
                 case NodeType.LeftShiftAssignmentExpression: return "<<=";
                 case NodeType.SignedRightShiftAssignmentExpression: return ">>=";
                 case NodeType.UnsignedRightShiftAssignmentExpression: return ">>>=";
-                case NodeType.LogOr: return "||";
-                case NodeType.LogAnd: return "&&";
-                case NodeType.Or: return "|";
-                case NodeType.Xor: return "^";
-                case NodeType.And: return "&";
-                case NodeType.Eq: return "==";
-                case NodeType.Ne: return "!=";
-                case NodeType.Eqv: return "===";
-                case NodeType.NEqv: return "!==";
-                case NodeType.Lt: return "<";
-                case NodeType.Gt: return ">";
-                case NodeType.Le: return "<="
-                case NodeType.Ge: return ">="
+                case NodeType.LogicalOrExpression: return "||";
+                case NodeType.LogicalAndExpression: return "&&";
+                case NodeType.BitwiseOrExpression: return "|";
+                case NodeType.BitwiseExclusiveOrExpression: return "^";
+                case NodeType.BitwiseAndExpression: return "&";
+                case NodeType.EqualsWithTypeConversionExpression: return "==";
+                case NodeType.NotEqualsWithTypeConversionExpression: return "!=";
+                case NodeType.EqualsExpression: return "===";
+                case NodeType.NotEqualsExpression: return "!==";
+                case NodeType.LessThanExpression: return "<";
+                case NodeType.GreaterThanExpression: return ">";
+                case NodeType.LessThanOrEqualExpression: return "<="
+                case NodeType.GreaterThanOrEqualExpression: return ">="
                 case NodeType.InstanceOfExpression: return "instanceof";
                 case NodeType.InExpression: return "in";
-                case NodeType.Lsh: return "<<";
-                case NodeType.Rsh: return ">>"
-                case NodeType.Rs2: return ">>>"
-                case NodeType.Mul: return "*"
-                case NodeType.Div: return "/"
-                case NodeType.Mod: return "%"
-                case NodeType.Add: return "+"
-                case NodeType.Sub: return "-";
+                case NodeType.LeftShiftExpression: return "<<";
+                case NodeType.SignedRightShiftExpression: return ">>"
+                case NodeType.UnsignedRightShiftExpression: return ">>>"
+                case NodeType.MultiplyExpression: return "*"
+                case NodeType.DivideExpression: return "/"
+                case NodeType.ModuloExpression: return "%"
+                case NodeType.AddExpression: return "+"
+                case NodeType.SubtractExpression: return "-";
             }
 
             throw Errors.invalidOperation();
