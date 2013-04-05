@@ -178,7 +178,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ForInStatement] = ChildrenWalkers.walkForInStatementChildren;
             this.childrenWalkers[NodeType.IfStatement] = ChildrenWalkers.walkIfStatementChildren;
             this.childrenWalkers[NodeType.WhileStatement] = ChildrenWalkers.walkWhileStatementChildren;
-            this.childrenWalkers[NodeType.DoStatement] = ChildrenWalkers.walkDoWhileStatementChildren;
+            this.childrenWalkers[NodeType.DoStatement] = ChildrenWalkers.walkDoStatementChildren;
             this.childrenWalkers[NodeType.Block] = ChildrenWalkers.walkBlockChildren;
             this.childrenWalkers[NodeType.CaseClause] = ChildrenWalkers.walkCaseClauseChildren;
             this.childrenWalkers[NodeType.SwitchStatement] = ChildrenWalkers.walkSwitchStatementChildren;
@@ -379,7 +379,7 @@ module TypeScript {
             }
         }
 
-        export function walkDoWhileStatementChildren(preAst: DoStatement, parent: AST, walker: IAstWalker): void {
+        export function walkDoStatementChildren(preAst: DoStatement, parent: AST, walker: IAstWalker): void {
             preAst.cond = walker.walk(preAst.cond, preAst);
             if (preAst.body) {
                 preAst.body = walker.walk(preAst.body, preAst);

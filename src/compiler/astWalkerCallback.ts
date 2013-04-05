@@ -100,7 +100,7 @@ module TypeScript.AstWalkerWithDetailCallback {
         ForInCallback? (pre, ast: AST): bool;
         IfCallback? (pre, ast: AST): bool;
         WhileCallback? (pre, ast: AST): bool;
-        DoWhileCallback? (pre, ast: AST): bool;
+        DoCallback? (pre, ast: AST): bool;
         BlockCallback? (pre, block: Block): bool;
         CaseCallback? (pre, ast: AST): bool;
         SwitchCallback? (pre, ast: AST): bool;

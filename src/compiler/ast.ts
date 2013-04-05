@@ -1728,7 +1728,7 @@ module TypeScript {
         }
 
         public typeCheck(typeFlow: TypeFlow) {
-            return typeFlow.typeCheckDoWhile(this);
+            return typeFlow.typeCheckDo(this);
         }
 
         public addToControlFlow(context: ControlFlowContext): void {
