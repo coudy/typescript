@@ -808,12 +808,29 @@ module TypeScript {
         //
         // Resolve a module declaration
         //
-        // The module and its members are pre-bound, so no further resolution is necessary
         //
         public resolveModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var declSymbol = <PullTypeSymbol>this.getSymbolForAST(ast, context, this.unitPath);
+            var containerSymbol = <PullContainerTypeSymbol>this.getSymbolForAST(ast, context, this.unitPath);
 
-            return declSymbol;
+            if (containerSymbol.isResolved()) {
+                return containerSymbol;
+            }
+
+            containerSymbol.setResolved();
+
+            var containerDecl = this.getDeclForAST(ast);            
+
+            if (containerDecl.getKind() != PullElementKind.Enum) {
+
+                var instanceSymbol = containerSymbol.getInstanceSymbol();            
+                
+                // resolve the instance variable, if neccesary
+                if (instanceSymbol) {
+                    this.resolveDeclaredSymbol(instanceSymbol, containerDecl.getParentDecl(), context);
+                }
+            }
+
+            return containerSymbol;
         }
 
         //
