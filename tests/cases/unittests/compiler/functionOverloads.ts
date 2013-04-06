@@ -37,14 +37,13 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
         });
     });
 
-    assert.bug('[Errors] No error for function overload without defintion');
-    //it("Having only signature should be invalid", function() {
-    //    var code  = 'function foo():string;';
-    //    Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-    //        assert.compilerWarning(result, 1, 0, 'Overload declaration lacks definition');
-    //        assert.equal(result.errors.length, 1);
-    //    });
-    //});
+    it("Having only signature should be invalid", function() {
+        var code  = 'function foo():string;';
+        Harness.Compiler.compileString(code, 'functionOverload', function(result) {
+            assert.compilerWarning(result, 1, 0, 'error TS1041: Function implementation expected.');
+            assert.equal(result.errors.length, 1);
+        });
+    });
 
     assert.bug('[Errors] No error trying to call/define ambiguous functions overload');
     //it("Overload signatures should be assign compatible with their implementation", function() {

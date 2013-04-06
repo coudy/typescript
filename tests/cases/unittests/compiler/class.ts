@@ -19,14 +19,13 @@ describe('Compiling unittests\\compiler\\class.ts', function() {
 });
 
 describe('Testing function signatures inside classes', function () {
-    assert.bug('[Errors] No error for function overload without defintion');
-    //it('Regression test - was previously giving runtime error', function () {
-    //    var code = "class A { a(completed: () => any): void; }";
-    //    Harness.Compiler.compileString(code, 'fnsig-inside-classes', function (result) {
-    //        assert.compilerWarning(result, 1, 10, 'Overload declaration lacks definition');
-    //        assert.equal(result.errors.length, 1);
-    //    });
-    //});
+    it('Regression test - was previously giving runtime error', function () {
+        var code = "class A { a(completed: () => any): void; }";
+        Harness.Compiler.compileString(code, 'fnsig-inside-classes', function (result) {
+            assert.compilerWarning(result, 1, 10, 'error TS1041: Function implementation expected.');
+            assert.equal(result.errors.length, 1);
+        });
+    });
 });
 
 describe("Uses of 'this' are illegal within the outer class body", function () {
