@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-///<reference path='..\compiler\typescript.ts' />
-///<reference path='harness.ts' />
+/// <reference path='..\compiler\typescript.ts' />
+/// <reference path='harness.ts' />
 
 module FourSlash {
     // Represents a parsed source file with metadata
@@ -374,13 +374,13 @@ module FourSlash {
             var actualQuickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             if (negative) {
                 if (actualQuickInfo) {
-	throw new Error('verifyQuickInfoExists failed. Expected quick info NOT to exist');
+	                throw new Error('verifyQuickInfoExists failed. Expected quick info NOT to exist');
                 }
             }
             else
             {
                 if (!actualQuickInfo) {
-	throw new Error('verifyQuickInfoExists failed. Expected quick info to exist');
+                	throw new Error('verifyQuickInfoExists failed. Expected quick info to exist');
                 }
             }
         }
@@ -630,13 +630,18 @@ module FourSlash {
             var content = snapshot.getText(0, snapshot.getLength());
             var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), TypeScript.LanguageVersion.EcmaScript5);
             var fullErrs = JSON2.stringify(refSyntaxTree.diagnostics());
-            
+            var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, new TypeScript.CompilationSettings());
+
             if (incrErrs !== fullErrs) {
                 throw new Error('Mismatched incremental/full errors.\n=== Incremental errors ===\n' + incrErrs + '\n=== Full Errors ===\n' + fullErrs);
             }
 
             if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
-                throw new Error('Incrementally-parsed and full-parsed trees were not equal');
+                throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
+            }
+
+            if (!TypeScript.structuralEquals(refAST, this.compiler.fileNameToScript.lookup(this.activeFile.fileName))) {
+                throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
             }
         }
 
@@ -1241,8 +1246,6 @@ module FourSlash {
         inObjectMarker
     }
 
-    var markerTextRegexp = /^[_a-zA-Z0-9\$]*$/;
-
     function reportError(fileName: string, line: number, col: number, message: string) {
         var errorMessage = fileName + "(" + line + "," + col + "): " + message;
         throw new Error(errorMessage);
@@ -1252,59 +1255,88 @@ module FourSlash {
         return !!(text !== null && text.match(markerTextRegexp));
     }
 
-    function recordMarker(fileName: string, location: ILocationInformation, text: string, isObjectMarker: bool, markerMap: MarkerMap,  markers: Marker[]) {
-        var markerName = null;
-        var markerData = null;
-        if (!isObjectMarker && isValidSlashStarMarkerText(text)) {
-            // SlashStar Marker text is a single word, number, or empty
-            markerName = text;
-        } else if (isObjectMarker) {
+    function recordObjectMarker(fileName: string, location: ILocationInformation, text: string, markerMap: MarkerMap, markers: Marker[]) {
+        var markerValue = undefined;
+        try {
             // Attempt to parse the marker value as JSON
-            var markerValue = null;
-            try {
-                markerValue = JSON2.parse("{ " + text + " }");
-            } 
-            catch(e) {
-                reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text " + e.message);
-            }
+            markerValue = JSON2.parse("{ " + text + " }");
+        } catch(e) {
+            reportError(fileName, location.sourceLine, location.sourceColumn, "Unable to parse marker text " + e.message);
+        }
 
-            if (markerValue === null) {
-                reportError(fileName, location.sourceLine, location.sourceColumn, "Object markers can not be empty");
-            }
-            markerName = markerValue.name; 
-            markerData = markerValue;
+        if (markerValue === undefined) {
+            reportError(fileName, location.sourceLine, location.sourceColumn, "Object markers can not be empty");
+            return;
         }
 
         var marker: Marker = {
             fileName: fileName,
             position: location.position,
-            data: markerData
+            data: markerValue
         };
 
-        // Allow object markers to be annonums
-        if (!isObjectMarker || (markerData && markerData.name !== undefined)) {
-            if (markerMap[markerName] !== undefined) {
-                var message = "Marker '" + markerName + "' is duplicated in the source file contents.";
-                reportError(marker.fileName, location.sourceLine, location.sourceColumn, message);
-            }
-            markerMap[markerName] = marker;
+        // Object markers can be anonymous
+        if(markerValue.name) {
+            markerMap[markerValue.name] = marker;
         }
 
         markers.push(marker);
     }
 
+    function recordMarker(fileName: string, location: ILocationInformation, name: string, markerMap: MarkerMap, markers: Marker[]) {
+        var marker: Marker = {
+            fileName: fileName,
+            position: location.position
+        };
+
+        // Verify /**/ markers for uniqueness
+        if (markerMap[name] !== undefined) {
+            var message = "Marker '" + name + "' is duplicated in the source file contents.";
+            reportError(marker.fileName, location.sourceLine, location.sourceColumn, message);
+        } else {
+            markerMap[name] = marker;
+            markers.push(marker);
+        }
+    }
+
     function parseFileContent(content: string, fileName: string, markerMap: MarkerMap,  markers: Marker[], ranges: Range[]): FourSlashFile {
         content = chompLeadingSpace(content);
 
+        // Any /*comment*/ with a character not in this string is not a marker.
+        var validMarkerChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$1234567890_';
+
+        /** The file content (minus metacharacters) so far */
         var output: string = "";
+
+        /** The current marker (or maybe multi-line comment?) we're parsing, possibly */
         var openMarker: ILocationInformation = null;
+
+        /** A stack of the open range markers that are still unclosed */
         var openRanges: ILocationInformation[] = [];
+
+        /** A list of ranges we've collected so far */
         var localRanges: Range[] = [];
-        var currentStart: number = 0;
-        var diffrence: number = 0;
+
+        /** The latest position of the start of an unflushed plaintext area */
+        var lastNormalCharPosition: number = 0;
+
+        /** The total number of metacharacters removed from the file (so far) */
+        var difference: number = 0;
+
+        /** The fourslash file state object we are generating */
         var state: State = State.none;
+
+        /** Current position data */
         var line: number = 1;
         var column: number = 1;
+
+        var flush = (lastSafeCharIndex: number) => {
+            if(lastSafeCharIndex === undefined) {
+                output = output + content.substr(lastNormalCharPosition);
+            } else {
+                output = output + content.substr(lastNormalCharPosition, lastSafeCharIndex - lastNormalCharPosition);
+            }
+        };
 
         if (content.length > 0) {
             var previousChar = content.charAt(0);
@@ -1315,15 +1347,15 @@ module FourSlash {
                         if (previousChar === "[" && currentChar === "|") {
                             // found a range start
                             openRanges.push({
-                                position: (i - 1) - diffrence,
+                                position: (i - 1) - difference,
                                 sourcePosition: i - 1,
                                 sourceLine: line,
                                 sourceColumn: column,
                             });
                             // copy all text up to marker position
-                            output += content.substring(currentStart, i - 1);
-                            currentStart = i + 1;
-                            diffrence += 2;
+                            flush(i - 1);
+                            lastNormalCharPosition = i + 1;
+                            difference += 2;
                         } else if (previousChar === "|" && currentChar === "]") {
                             // found a range end
                             var rangeStart = openRanges.pop();
@@ -1334,56 +1366,80 @@ module FourSlash {
                             var range: Range = {
                                 fileName: fileName,
                                 start: rangeStart.position,
-                                end: (i - 1) - diffrence
+                                end: (i - 1) - difference
                             };
                             localRanges.push(range);
 
                             // copy all text up to range marker position
-                            output += content.substring(currentStart, i - 1);
-                            currentStart = i + 1;
-                            diffrence += 2;
+                            flush(i - 1);
+                            lastNormalCharPosition = i + 1;
+                            difference += 2;
                         } else if (previousChar === "/" && currentChar === "*") {
-                            // found a marker
+                            // found a possible marker start
                             state = State.inSlashStarMarker;
                             openMarker = {
-                                position: (i - 1) - diffrence,
+                                position: (i - 1) - difference,
                                 sourcePosition: i - 1,
                                 sourceLine: line,
                                 sourceColumn: column,
                             };
                         } else if (previousChar === "{" && currentChar === "|") {
-                            // found a marker
+                            // found an object marker start
                             state = State.inObjectMarker;
                             openMarker = {
-                                position: (i - 1) - diffrence,
+                                position: (i - 1) - difference,
                                 sourcePosition: i - 1,
                                 sourceLine: line,
                                 sourceColumn: column,
                             };
+                            flush(i - 1);
                         }
                         break;
+
                     case State.inObjectMarker:
-                    case State.inSlashStarMarker:
-                        if ((state === State.inObjectMarker && previousChar === "|" && currentChar === "}" ) || 
-                            (state === State.inSlashStarMarker && previousChar === "*" && currentChar === "/")) {
-                            // RecordThe marker
-                            var markerNameText = content.substring(openMarker.sourcePosition + 2, i - 1).trim();
+                        // Object markers are only ever terminated by |} and have no content restrictions
+                        if (previousChar === "|" && currentChar === "}") {
+                            // Record the marker
+                            var objectMarkerNameText = content.substring(openMarker.sourcePosition + 2, i - 1).trim();
+                            recordObjectMarker(fileName, openMarker, objectMarkerNameText, markerMap, markers);
 
-                            // If this is a slashStarMarker, and the text is not valid, then it is a normal comment, ignore it
-                            if (state !== State.inSlashStarMarker || isValidSlashStarMarkerText(markerNameText) ) {
-                                recordMarker(fileName, openMarker, markerNameText, (state === State.inObjectMarker), markerMap, markers);
-
-                                // copy all text up to range marker position
-                                output += content.substring(currentStart, openMarker.sourcePosition);
-
-                                // Set the current start to point to the end of the current marker to ignore its text
-                                currentStart = i + 1;
-                                diffrence += i + 1 - openMarker.sourcePosition;
-                            }
+                            // Set the current start to point to the end of the current marker to ignore its text
+                            lastNormalCharPosition = i + 1;
+                            difference += i + 1 - openMarker.sourcePosition;
 
                             // Reset the state
                             openMarker = null;
                             state = State.none;
+                        }
+                        break;
+
+                    case State.inSlashStarMarker:
+                        if (previousChar === "*" && currentChar === "/") {
+                            // Record the marker
+                            // start + 2 to ignore the */, -1 on the end to ignore the * (/ is next)
+                            var markerNameText = content.substring(openMarker.sourcePosition + 2, i - 1).trim();
+                            recordMarker(fileName, openMarker, markerNameText, markerMap, markers);
+
+                            // Set the current start to point to the end of the current marker to ignore its text
+                            flush(openMarker.sourcePosition);
+                            lastNormalCharPosition = i + 1;
+                            difference += i + 1 - openMarker.sourcePosition;
+
+                            // Reset the state
+                            openMarker = null;
+                            state = State.none;
+                        } else if (validMarkerChars.indexOf(currentChar) < 0) {
+                            if(currentChar === '*' && i < content.length - 1 && content.charAt(i + 1) === '/') {
+                                // The marker is about to be closed, ignore the 'invalid' char
+                            } else {
+                                // We've hit a non-valid marker character, so we were actually in a /* comment */.
+                                // Bail out the text we've gathered so far back into the output
+                                flush(i);
+                                lastNormalCharPosition = i;
+                                openMarker = null;
+
+                                state = State.none;
+                            }
                         }
                         break;
                 }
@@ -1401,14 +1457,14 @@ module FourSlash {
                 previousChar = currentChar;
             }
         }
+
         // Add the remaining text
-        output += content.substring(currentStart);
+        flush(undefined);
 
         if (openRanges.length > 0) {
             var openRange = openRanges[0];
             reportError(fileName, openRange.sourceLine, openRange.sourceColumn, "Unterminated range.");
         }
-
 
         if (openMarker !== null) {
             reportError(fileName, openMarker.sourceLine, openMarker.sourceColumn, "Unterminated marker.");

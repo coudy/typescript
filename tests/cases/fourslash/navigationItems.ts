@@ -43,10 +43,9 @@
 ////{| "itemName": "p", "kind": "var", "parentName": "" |}var p: IPoint = new Shapes.Point(3, 4);
 ////{| "itemName": "dist", "kind": "var", "parentName": "" |}var dist = p.getDist();
 
-
-debugger;
-
 test.markers().forEach((marker) => {
-    verify.navigationItemsListContains(marker.data.itemName, marker.data.kind, marker.fileName, marker.data.parentName);
+    if (marker.data) {
+        verify.navigationItemsListContains(marker.data.itemName, marker.data.kind, marker.fileName, marker.data.parentName);
+    }
 });
 
