@@ -46,6 +46,7 @@ module Services {
         // string[]
         getScriptFileNames(): string;
         getScriptVersion(fileName: string): number;
+        getScriptIsOpen(fileName: string): bool;
         getScriptSnapshot(fileName: string): IScriptSnapshotShim;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
     }
@@ -210,6 +211,10 @@ module Services {
 
         public getScriptVersion(fileName: string): number {
             return this.shimHost.getScriptVersion(fileName);
+        }
+
+        public getScriptIsOpen(fileName: string): bool {
+            return this.shimHost.getScriptIsOpen(fileName);
         }
 
         public getDiagnosticsObject(): ILanguageServicesDiagnostics {

@@ -1455,7 +1455,7 @@ module Harness {
         public editRanges: { length: number; textChangeRange: TypeScript.TextChangeRange; }[] = [];
         public lineMap: TypeScript.LineMap = null;
 
-        constructor(public fileName: string, public content: string) {
+        constructor(public fileName: string, public content: string, public isOpen = true) {
             this.setContent(content);
         }
 
@@ -1613,6 +1613,10 @@ module Harness {
 
         public getScriptVersion(fileName: string): number {
             return this.getScriptInfo(fileName).version;
+        }
+
+        public getScriptIsOpen(fileName: string): bool {
+            return this.getScriptInfo(fileName).isOpen;
         }
 
         public getDiagnosticsObject(): Services.ILanguageServicesDiagnostics {

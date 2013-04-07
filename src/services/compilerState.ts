@@ -25,7 +25,8 @@ module Services {
         constructor(
             private fileName: string,
             private host: ILanguageServiceHost,
-            public version: number) {
+            public version: number,
+            public isOpen: bool) {
             this._sourceText = null;
         }
         
@@ -54,10 +55,10 @@ module Services {
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
                 this.map.add(fileName, new HostCacheEntry(
-                    fileName, this.host, this.host.getScriptVersion(fileName)));
+                    fileName, this.host, this.host.getScriptVersion(fileName), this.host.getScriptIsOpen(fileName)));
             }
         }
-
+        
         public contains(fileName: string): bool {
             return this.map.lookup(fileName) !== null;
         }
@@ -68,6 +69,10 @@ module Services {
 
         public getVersion(fileName: string): number {
             return this.map.lookup(fileName).version;
+        }
+
+        public isOpen(fileName: string): bool {
+            return this.map.lookup(fileName).isOpen;
         }
 
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {

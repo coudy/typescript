@@ -26,6 +26,7 @@ module Services {
 
         getScriptFileNames(): string[];
         getScriptVersion(fileName: string): number;
+        getScriptIsOpen(fileName: string): bool;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
     }
