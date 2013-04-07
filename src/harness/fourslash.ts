@@ -1124,7 +1124,7 @@ module FourSlash {
             resolvePath: (s: string)=>s
         }
 
-        Harness.Compiler.emit(emitterIOHost);
+        Harness.Compiler.emitAll(emitterIOHost);
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + fileName + ': ' + fsErrors.lines.join('\r\n'));
         }

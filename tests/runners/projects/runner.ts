@@ -135,7 +135,7 @@ class HarnessBatch {
                 var semanticDiagnostics = compiler.getSemanticDiagnostics(file);
                 compiler.reportDiagnostics(semanticDiagnostics, this.errout);
 
-                var emitDiagnostics = compiler.emit({
+                var emitDiagnostics = compiler.emitAll({
                     createFile: createEmitFile,
                     directoryExists: IO.directoryExists,
                     fileExists: IO.fileExists,

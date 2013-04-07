@@ -1224,8 +1224,8 @@ module Harness {
             compileUnit(lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
-        export function emit(ioHost: TypeScript.EmitterIOHost): TypeScript.IDiagnostic[] {
-            return compiler.emit(ioHost);
+        export function emitAll(ioHost: TypeScript.EmitterIOHost): TypeScript.IDiagnostic[] {
+            return compiler.emitAll(ioHost);
         }
 
         export function reportCompilationErrors(uNames?: string[], errAggregator?: WriterAggregator) {
@@ -1250,7 +1250,7 @@ module Harness {
                 var semanticDiagnostics = compiler.getSemanticDiagnostics(u);
                 compiler.reportDiagnostics(semanticDiagnostics, errs);
 
-                var emitDiagnostics = emit(stdout);
+                var emitDiagnostics = emitAll(stdout);
                 compiler.reportDiagnostics(emitDiagnostics, errs);
 
                 // TODO: should this be outside the loop? are we emitting the .d.ts code twice for a multi-file test?

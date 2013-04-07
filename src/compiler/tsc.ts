@@ -217,7 +217,7 @@ class BatchCompiler {
         };
 
         // TODO: if there are any emit diagnostics.  Don't proceed.
-        var emitDiagnostics = compiler.emit(emitterIOHost, mapInputToOutput);
+        var emitDiagnostics = compiler.emitAll(emitterIOHost, mapInputToOutput);
         compiler.reportDiagnostics(emitDiagnostics, this.errorReporter);
         if (emitDiagnostics.length > 0) {
             return true;
