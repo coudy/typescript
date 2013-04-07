@@ -228,7 +228,7 @@ module TypeScript {
 
                 this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
-                this.pullUpdateScript(document.script, updatedDocument.script);
+                this.pullUpdateScript(document, updatedDocument);
 
                 return updatedDocument;
             });
@@ -667,19 +667,22 @@ module TypeScript {
         }
 
         // returns 'true' if diffs were detected
-        private pullUpdateScript(oldScript: Script, newScript: Script): void {
+        private pullUpdateScript(oldDocument: Document, newDocument: Document): void {
             this.timeFunction("pullUpdateScript: ", () => {
 
+                var oldScript = oldDocument.script;
+                var newScript = newDocument.script;
+                
                 // want to name the new script semantic info the same as the old one
-                var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.fileName);
-                var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldScript.locationInfo.fileName);
+                var newScriptSemanticInfo = new SemanticInfo(oldDocument.fileName);
+                var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldDocument.fileName);
 
                 lastBoundPullDeclId = pullDeclID;
                 lastBoundPullSymbolID = pullSymbolID;
 
                 var declCollectionContext = new DeclCollectionContext(newScriptSemanticInfo);
 
-                declCollectionContext.scriptName = oldScript.locationInfo.fileName;
+                declCollectionContext.scriptName = oldDocument.fileName;
 
                 // create decls
                 getAstWalkerFactory().walk(newScript, preCollectDecls, postCollectDecls, null, declCollectionContext);
@@ -704,10 +707,10 @@ module TypeScript {
 
                 var topLevelDecls = newScriptSemanticInfo.getTopLevelDecls();
 
-                this.semanticInfoChain.update(newScript.locationInfo.fileName);
+                this.semanticInfoChain.update(oldDocument.fileName);
 
                 var binder = new PullSymbolBinder(this.settings, this.semanticInfoChain);
-                binder.setUnit(newScript.locationInfo.fileName);
+                binder.setUnit(oldDocument.fileName);
 
                 var i = 0;
 
