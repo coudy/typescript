@@ -1964,12 +1964,24 @@ module TypeScript {
 
         public isResolved() { return true; }
 
+        public isStringConstant() { return false; }
+
         public isFixed() {
             return true;
         }
         
         public invalidate() {
             // do nothing...
+        }
+    }
+
+    export class PullStringConstantTypeSymbol extends PullPrimitiveTypeSymbol {
+        constructor(name: string) {
+            super(name);
+        }
+
+        public isStringConstant() {
+            return true;
         }
     }
 

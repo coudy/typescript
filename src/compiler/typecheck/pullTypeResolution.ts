@@ -1323,13 +1323,13 @@ module TypeScript {
                 }
             }
 
-                // a function
+            // a function
             else if (typeRef.term.nodeType == NodeType.FunctionDeclaration) {
 
                 typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>typeRef.term, enclosingDecl, context);
             }
 
-                // an interface
+            // an interface
             else if (typeRef.term.nodeType == NodeType.InterfaceDeclaration) {
 
                 typeDeclSymbol = this.resolveInterfaceTypeReference(<NamedDeclaration>typeRef.term, enclosingDecl, context);
@@ -1337,7 +1337,7 @@ module TypeScript {
             else if (typeRef.term.nodeType == NodeType.GenericType) {
                 typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
             }
-                // a dotted name
+            // a dotted name
             else if (typeRef.term.nodeType == NodeType.MemberAccessExpression) {
 
                 // assemble the dotted name path
@@ -1346,13 +1346,17 @@ module TypeScript {
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
 
-                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);              
+                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
 
                 if (typeDeclSymbol.isError()) {
                     return typeDeclSymbol;
                 }
+            }
+
+            else if (typeRef.term.nodeType == NodeType.StringLiteral) {
+                typeDeclSymbol = new PullStringConstantTypeSymbol((<StringLiteral>typeRef.term).text);
             }
 
             if (!typeDeclSymbol) {
@@ -4052,6 +4056,14 @@ module TypeScript {
                 return false;
             }
 
+            if (t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 == this.semanticInfoChain.stringTypeSymbol) {
+                return true;
+            }
+
+            if (t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant() && t1 == this.semanticInfoChain.stringTypeSymbol) {
+                return true;
+            }
+
             if (t1.isPrimitive() || t2.isPrimitive()) {
                 return false;
             }
@@ -4320,10 +4332,18 @@ module TypeScript {
                 if (this.isAnyOrEquivalent(source) || this.isAnyOrEquivalent(target)) {
                     return true;
                 }
+
+                if (source == this.semanticInfoChain.stringTypeSymbol && target.isPrimitive() && (<PullPrimitiveTypeSymbol>target).isStringConstant()) {
+                    return true;
+                }
             }
             else {
                 // This is one difference between assignment compatibility and subtyping
                 if (this.isAnyOrEquivalent(target)) {
+                    return true;
+                }
+
+                if (target == this.semanticInfoChain.stringTypeSymbol && source.isPrimitive() && (<PullPrimitiveTypeSymbol>source).isStringConstant()) {
                     return true;
                 }
             }
@@ -5049,8 +5069,15 @@ module TypeScript {
                     PType = i < bestParams.length ? bestParams[i].getType() : bestParams[bestParams.length - 1].getType().getElementType();
                     QType = i < qParams.length ? qParams[i].getType() : qParams[qParams.length - 1].getType().getElementType();
 
-                    if (this.typesAreIdentical(PType, QType)) {
+                    if (this.typesAreIdentical(PType, QType) && !(QType.isPrimitive() && (<PullPrimitiveTypeSymbol>QType).isStringConstant())) {
                         continue;
+                    }
+                    else if (QType.isPrimitive() &&
+                            (<PullPrimitiveTypeSymbol>QType).isStringConstant() &&
+                            args.members[i].nodeType == NodeType.StringLiteral &&
+                            stripQuotes((<StringLiteral>args.members[i]).text) == stripQuotes((<PullStringConstantTypeSymbol>QType).getName()))
+                    {
+                        best = Q;
                     }
                     else if (this.typesAreIdentical(AType, PType)) {
                         break;
