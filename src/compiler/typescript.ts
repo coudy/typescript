@@ -109,19 +109,26 @@ module TypeScript {
     }
 
     export class Document {
-        private _diagnostics: IDiagnostic[];
-        private _syntaxTree: SyntaxTree;
+        private _diagnostics: IDiagnostic[] = null;
+        private _syntaxTree: SyntaxTree = null;
+        public script: Script;
 
         constructor(private fileName: string,
                     private compilationSettings: CompilationSettings,
                     private scriptSnapshot: IScriptSnapshot,
                     public version: number,
                     public isOpen: bool,
-                    public script: Script,
-                    syntaxTree: SyntaxTree,
-                    diagnostics: IDiagnostic[]) {
-            this._syntaxTree = syntaxTree;
-            this._diagnostics = diagnostics;
+                    syntaxTree: SyntaxTree) {
+
+            if (isOpen) {
+                this._syntaxTree = syntaxTree;
+            }
+            else {
+                // Don't store the syntax tree for a closed file.
+                this._diagnostics = syntaxTree.diagnostics();
+            }
+
+            this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
         }
 
         public diagnostics(): IDiagnostic[]{
@@ -146,27 +153,28 @@ module TypeScript {
 
         public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, textChangeRange: TextChangeRange): Document {
             var oldScript = this.script;
-            var oldSyntaxTree = this.syntaxTree();
+            var oldSyntaxTree = this._syntaxTree;
 
             var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
 
-            var newSyntaxTree = textChangeRange === null
+            // If we don't have a text change, or we don't have an old syntax tree, then do a full
+            // parse.  Otherwise, do an incremental parse.
+            var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null
                 ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName))
                 : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
-            var newScript = SyntaxTreeToAstVisitor.visit(newSyntaxTree, this.fileName, this.compilationSettings);
-
-            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newScript, newSyntaxTree, null);
+            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newSyntaxTree);
         }
 
-        public static fromOpen(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, referencedFiles: IFileReference[], compilationSettings): Document {
+        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, referencedFiles: IFileReference[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
 
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
-            var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
-            script.referencedFiles = referencedFiles;
 
-            return new Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, script, syntaxTree, null);
+            var document = new Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, syntaxTree);
+            document.script.referencedFiles = referencedFiles;
+
+            return document;
         }
 
         //public static fromClosed(fileName: string, scriptSnapshot: IScriptSnapshot, script: Script, syntaxTree: SyntaxTree): Document {
@@ -206,7 +214,7 @@ module TypeScript {
                              isOpen: bool,
                              referencedFiles: IFileReference[] = []): Document {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var document = Document.fromOpen(fileName, scriptSnapshot, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
+                var document = Document.create(fileName, scriptSnapshot, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
                 this.fileNameToDocument.addOrUpdate(fileName, document);
 
                 return document;
@@ -567,8 +575,7 @@ module TypeScript {
         }
 
         public getSyntacticDiagnostics(fileName: string): IDiagnostic[]{
-            var document = this.getDocument(fileName);
-            return document.diagnostics();
+            return this.getDocument(fileName).diagnostics();
         }
 
         /** Used for diagnostics in tests */
