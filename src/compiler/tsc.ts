@@ -173,7 +173,7 @@ class BatchCompiler {
             }
 
             if (code.content != null) {
-                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), code.referencedFiles);
+                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), /*version:*/ 0, /*isOpen:*/ false, code.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(code.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
@@ -273,7 +273,7 @@ class BatchCompiler {
             }
 
             if (code.content != null) {
-                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), code.referencedFiles);
+                compiler.addSourceUnit(code.path, TypeScript.ScriptSnapshot.fromString(code.content), /*version:*/ 0, /*isOpen:*/ true, code.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(code.path);
                 compiler.reportDiagnostics(syntacticDiagnostics, this.errorReporter);
@@ -310,7 +310,7 @@ class BatchCompiler {
                 var text = this.resolvedEnvironment.code[iCode].getText(0, this.resolvedEnvironment.code[iCode].getLength());
                 snapshot = TypeScript.ScriptSnapshot.fromString(text);
 
-                compiler.updateSourceUnit(lastTypecheckedFileName, snapshot, null);
+                compiler.updateSourceUnit(lastTypecheckedFileName, snapshot, /*version:*/ 0, /*isOpen:*/ true, null);
                 semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
                 compiler.reportDiagnostics(semanticDiagnostics, this.errorReporter);
             }

@@ -80,11 +80,6 @@ module Services {
         }
     }
 
-    class ScriptInfo {
-        constructor(public version: number, public isOpen: bool) {
-        }
-    }
-
     export class CompilerState {
         private logger: TypeScript.ILogger;
         private diagnostics: ICompilerDiagnostics;
@@ -93,7 +88,7 @@ module Services {
         // State related to compiler instance
         //
         private compiler: TypeScript.TypeScriptCompiler = null;
-        private fileNameToCompilerScriptInfo: TypeScript.StringHashTable = null;
+        private fileNameToCompilerDocument: TypeScript.StringHashTable = null;
         private hostCache: HostCache = null;
         private symbolTree: SymbolTree = null;
         private _compilationSettings: TypeScript.CompilationSettings = null;
@@ -141,9 +136,12 @@ module Services {
 
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             // Keep track of the version of script we're adding to the compiler.
-            this.fileNameToCompilerScriptInfo.addOrUpdate(fileName,
-                new ScriptInfo(this.hostCache.getVersion(fileName), this.hostCache.isOpen(fileName)));
-            compiler.addSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName));
+            var document = compiler.addSourceUnit(fileName,
+                this.hostCache.getScriptSnapshot(fileName),
+                this.hostCache.getVersion(fileName),
+                this.hostCache.isOpen(fileName));
+
+            this.fileNameToCompilerDocument.addOrUpdate(fileName, document);
         }
 
         private getHostCompilationSettings(): TypeScript.CompilationSettings {
@@ -167,7 +165,7 @@ module Services {
 
             Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
             this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
-            this.fileNameToCompilerScriptInfo = new TypeScript.StringHashTable();
+            this.fileNameToCompilerDocument = new TypeScript.StringHashTable();
 
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();
@@ -315,24 +313,24 @@ module Services {
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
-            var scriptInfo: ScriptInfo = this.fileNameToCompilerScriptInfo.lookup(fileName);
+            var document: TypeScript.Document = this.fileNameToCompilerDocument.lookup(fileName);
 
             //
-            // If file is the same, assume no update
+            // If the document is the same, assume no update
             //
             var version = this.hostCache.getVersion(fileName);
             var isOpen = this.hostCache.isOpen(fileName);
-            if (scriptInfo.version === version && scriptInfo.isOpen === isOpen) {
+            if (document.version === version && document.isOpen === isOpen) {
                 return;
             }
 
-            var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, scriptInfo.version);
+            var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, document.version);
+            var updatedDocument = compiler.updateSourceUnit(fileName,
+                this.hostCache.getScriptSnapshot(fileName),
+                version, isOpen, textChangeRange);
 
             // Keep track of the version of script we're adding to the compiler.
-            this.fileNameToCompilerScriptInfo.addOrUpdate(fileName,
-                new ScriptInfo(this.hostCache.getVersion(fileName), this.hostCache.isOpen(fileName)));
-
-            compiler.updateSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName), textChangeRange);
+            this.fileNameToCompilerDocument.addOrUpdate(fileName, updatedDocument);
         }
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {

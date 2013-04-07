@@ -115,6 +115,8 @@ module TypeScript {
         constructor(private fileName: string,
                     private compilationSettings: CompilationSettings,
                     private scriptSnapshot: IScriptSnapshot,
+                    public version: number,
+                    public isOpen: bool,
                     public script: Script,
                     syntaxTree: SyntaxTree,
                     diagnostics: IDiagnostic[]) {
@@ -142,7 +144,7 @@ module TypeScript {
                 LanguageVersion.EcmaScript5);
         }
 
-        public update(scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): Document {
+        public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, textChangeRange: TextChangeRange): Document {
             var oldScript = this.script;
             var oldSyntaxTree = this.syntaxTree();
 
@@ -154,17 +156,17 @@ module TypeScript {
 
             var newScript = SyntaxTreeToAstVisitor.visit(newSyntaxTree, this.fileName, this.compilationSettings);
 
-            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, newScript, newSyntaxTree, null);
+            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, version, isOpen, newScript, newSyntaxTree, null);
         }
 
-        public static fromOpen(fileName: string, scriptSnapshot: IScriptSnapshot, referencedFiles: IFileReference[], compilationSettings): Document {
+        public static fromOpen(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, referencedFiles: IFileReference[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
 
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
             var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
             script.referencedFiles = referencedFiles;
 
-            return new Document(fileName, compilationSettings, scriptSnapshot, script, syntaxTree, null);
+            return new Document(fileName, compilationSettings, scriptSnapshot, version, isOpen, script, syntaxTree, null);
         }
 
         //public static fromClosed(fileName: string, scriptSnapshot: IScriptSnapshot, script: Script, syntaxTree: SyntaxTree): Document {
@@ -198,23 +200,29 @@ module TypeScript {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
-        public addSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, referencedFiles: IFileReference[]= []): Script {
+        public addSourceUnit(fileName: string,
+                             scriptSnapshot: IScriptSnapshot,
+                             version: number,
+                             isOpen: bool,
+                             referencedFiles: IFileReference[] = []): Document {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var document = Document.fromOpen(fileName, scriptSnapshot, referencedFiles, this.emitOptions.compilationSettings);
+                var document = Document.fromOpen(fileName, scriptSnapshot, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
                 this.fileNameToDocument.addOrUpdate(fileName, document);
 
-                return document.script;
+                return document;
             } );
         }
 
-        public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): void {
-            this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
+        public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: bool, textChangeRange: TextChangeRange): Document {
+            return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 var document = this.getDocument(fileName);
-                var updatedDocument = document.update(scriptSnapshot, textChangeRange);
+                var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange);
 
                 this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
                 this.pullUpdateScript(document.script, updatedDocument.script);
+
+                return updatedDocument;
             });
         }
 

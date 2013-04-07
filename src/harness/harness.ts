@@ -768,7 +768,7 @@ module Harness {
                 throw new Error(diagnostic.message());
             }
             
-            compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText));
+            compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText), /*version:*/ 0, /*isOpen:*/ false);
             compiler.pullTypeCheck();
 
             return compiler;
@@ -786,8 +786,8 @@ module Harness {
             }
             else {
                 // requires unit to already exist in the compiler
-                compiler.updateSourceUnit(fileName, TypeScript.ScriptSnapshot.fromString(""), null);
-                compiler.updateSourceUnit(fileName, TypeScript.ScriptSnapshot.fromString(code), null);
+                compiler.updateSourceUnit(fileName, TypeScript.ScriptSnapshot.fromString(""), /*version:*/ 0, /*isOpen:*/ true, null);
+                compiler.updateSourceUnit(fileName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
             }
         }
 
@@ -1147,7 +1147,7 @@ module Harness {
             postCompile: () => void;
         }
 
-        export function addUnit(code: string, unitName?: string, isDeclareFile?: bool, references?: TypeScript.IFileReference[]) {
+        export function addUnit(code: string, unitName?: string, isDeclareFile?: bool, references?: TypeScript.IFileReference[]): TypeScript.Script {
             var script: TypeScript.Script = null;
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
 
@@ -1164,7 +1164,8 @@ module Harness {
                 // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
                 // of persistent typecheck state
                 //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
-                script = compiler.addSourceUnit(uName, TypeScript.ScriptSnapshot.fromString(code), references);
+                var document = compiler.addSourceUnit(uName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, references);
+                script = document.script;
                 needsFullTypeCheck = true;
             }
 
@@ -1172,7 +1173,7 @@ module Harness {
         }
 
         export function updateUnit(code: string, unitName: string) {
-            compiler.updateSourceUnit(unitName, TypeScript.ScriptSnapshot.fromString(code), null);
+            compiler.updateSourceUnit(unitName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
         }
 
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
