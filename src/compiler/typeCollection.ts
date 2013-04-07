@@ -51,7 +51,7 @@ module TypeScript {
 
         var fieldSymbol =
             new FieldSymbol("prototype", ast.minChar,
-                            context.checker.locationInfo.fileName, true, field);
+                            null /*context.checker.locationInfo.fileName*/, true, field);
         fieldSymbol.flags |= (SymbolFlags.Property | SymbolFlags.BuiltIn);
         field.symbol = fieldSymbol;
         fieldSymbol.declAST = ast;
@@ -178,7 +178,7 @@ module TypeScript {
         }
 
         typeSymbol = new TypeSymbol(importDecl.id.text, importDecl.id.minChar, importDecl.limChar - importDecl.minChar,
-                                    context.checker.locationInfo.fileName, modType, context.checker.compilationSettings.optimizeModuleCodeGen);
+                                    null /*context.checker.locationInfo.fileName*/, modType, context.checker.compilationSettings.optimizeModuleCodeGen);
 
         typeSymbol.aliasLink = importDecl;
 
@@ -246,7 +246,7 @@ module TypeScript {
             }
 
             typeSymbol = new TypeSymbol(modName, moduleDecl.name.minChar, modName.length,
-                                        context.checker.locationInfo.fileName, modType, context.checker.compilationSettings.optimizeModuleCodeGen);
+                                        null /*context.checker.locationInfo.fileName*/, modType, context.checker.compilationSettings.optimizeModuleCodeGen);
             typeSymbol.isDynamic = isQuoted(moduleDecl.prettyName);
 
             if (context.scopeChain.moduleDecl) {
@@ -379,7 +379,7 @@ module TypeScript {
             instanceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             instanceType.ambientMembers = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             typeSymbol = new TypeSymbol(className, classDecl.name.minChar, className.length,
-                                        context.checker.locationInfo.fileName, classType, context.checker.compilationSettings.optimizeModuleCodeGen);
+                                        null /*context.checker.locationInfo.fileName*/, classType, context.checker.compilationSettings.optimizeModuleCodeGen);
             typeSymbol.declAST = classDecl;
             typeSymbol.instanceType = instanceType;
             classType.symbol = typeSymbol;
@@ -462,10 +462,10 @@ module TypeScript {
         if (interfaceSymbol === null) {
             interfaceType = new Type();
             interfaceSymbol = new TypeSymbol(interfaceName,
-                                        interfaceDecl.name.minChar,
-                                        interfaceName.length,
-                                        context.checker.locationInfo.fileName,
-                                        interfaceType, context.checker.compilationSettings.optimizeModuleCodeGen);
+                                             interfaceDecl.name.minChar,
+                                             interfaceName.length,
+                                             null /*context.checker.locationInfo.fileName*/,
+                                             interfaceType, context.checker.compilationSettings.optimizeModuleCodeGen);
             interfaceType.symbol = interfaceSymbol;
             // REVIEW: Shouldn't allocate another table for interface privates
             interfaceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
@@ -510,7 +510,7 @@ module TypeScript {
             var isPrivate = hasFlag(argDecl.getVarFlags(), VariableFlags.Private);
             var fieldSymbol =
                 new FieldSymbol(argDecl.id.text, argDecl.id.minChar,
-                                context.checker.locationInfo.fileName,
+                                null /*context.checker.locationInfo.fileName*/,
                                 true, //!hasFlag(argDecl.getVarFlags(), VariableFlags.Readonly),
                                 field);
             fieldSymbol.transferVarFlags(argDecl.getVarFlags());
@@ -562,7 +562,7 @@ module TypeScript {
 
             var field = new ValueLocation();
             var fieldSymbol =
-                new FieldSymbol(varDecl.id.text, varDecl.id.minChar, context.checker.locationInfo.fileName, true, field);
+                new FieldSymbol(varDecl.id.text, varDecl.id.minChar, null /*context.checker.locationInfo.fileName*/, true, field);
             fieldSymbol.transferVarFlags(varDecl.getVarFlags());
             if (isOptional) {
                 fieldSymbol.flags |= SymbolFlags.Optional;

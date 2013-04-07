@@ -445,8 +445,8 @@ module TypeScript {
         // Caller is responsible for closing the returned emitter.
         // May throw exceptions.
         private emitUnit(script: Script,
-        inputOutputMapper?: (inputName: string, outputName: string) => void ,
-        emitter?: Emitter): Emitter {
+                         inputOutputMapper?: (inputName: string, outputName: string) => void ,
+                         emitter?: Emitter): Emitter {
 
             if (script.emitRequired(this.emitOptions)) {
                 var typeScriptFileName = script.locationInfo.fileName;
@@ -1160,10 +1160,8 @@ module TypeScript {
             };
         }
 
-        public pullGetDeclarationSymbolInfromation(path: AstPath, script: Script, scriptName?: string): PullSymbolInfo {
-            if (!scriptName) {
-                scriptName = script.locationInfo.fileName;
-            }
+        public pullGetDeclarationSymbolInfromation(path: AstPath, script: Script): PullSymbolInfo {
+            var scriptName = script.locationInfo.fileName;
 
             var ast = path.ast();
 

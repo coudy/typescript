@@ -814,7 +814,7 @@ module TypeScript {
             var svThisFnc = this.thisFnc;
             var svThisType = this.thisType;
             var prevMethodStatus = this.enclosingFncIsMethod;
-            var prevLocationInfo = this.checker.locationInfo;
+            // var prevLocationInfo = this.checker.locationInfo;
             if (sym && sym.container) {
                 var instanceScope = /* hasFlag(varDecl.getVarFlags(), VariableFlags.ClassConstructorProperty) ? sym.container.getType().constructorScope : */ sym.container.instanceScope();
                 if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property) && sym.container.declAST.nodeType === NodeType.FunctionDeclaration) {
@@ -828,10 +828,10 @@ module TypeScript {
                     if (this.checker.fileNameToLocationInfo &&
                         (sym.fileName !== unknownLocationInfo.fileName) &&
                         this.checker.fileNameToLocationInfo.lookup(sym.fileName)) {
-                        this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(sym.fileName);
+                        // this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(sym.fileName);
                     }
                     else {
-                        this.checker.locationInfo = unknownLocationInfo;
+                        // this.checker.locationInfo = unknownLocationInfo;
                     }
                     // REVIEW: container linkage for function expressions
                     while (container) {
@@ -859,7 +859,7 @@ module TypeScript {
             }
             this.thisFnc = svThisFnc;
             this.thisType = svThisType;
-            this.checker.locationInfo = prevLocationInfo;
+            // this.checker.locationInfo = prevLocationInfo;
             this.enclosingFncIsMethod = prevMethodStatus;
         }
 
@@ -1256,7 +1256,7 @@ module TypeScript {
         }
 
         public typeCheckScript(script: Script): Script {
-            this.checker.locationInfo = script.locationInfo;
+            // this.checker.locationInfo = script.locationInfo;
             this.scope = this.checker.globalScope;
 
             // if it's a top-level module, the globals have already been added to the implicit
@@ -1728,13 +1728,13 @@ module TypeScript {
                         if (hasFlag(local.getVarFlags(), VariableFlags.Static)) {
                             //local.getVarFlags() |= VarFlags.LocalStatic;
                             varSym = new FieldSymbol(local.id.text, local.minChar,
-                                                      this.checker.locationInfo.fileName,
+                                                     null /*this.checker.locationInfo.fileName*/,
                                                       true, localVar);
                         }
                         else {
                             varSym = new VariableSymbol(local.id.text, local.minChar,
-                                                      this.checker.locationInfo.fileName,
-                                                      localVar);
+                                                        null /*this.checker.locationInfo.fileName*/,
+                                                        localVar);
                         }
                         varSym.transferVarFlags(local.getVarFlags());
                         localVar.symbol = varSym;
@@ -1763,8 +1763,8 @@ module TypeScript {
                     var argLoc = new ValueLocation();
                     argLoc.typeLink = new TypeLink();
                     var theArgSym = new VariableSymbol("arguments", vars.minChar,
-                                                     this.checker.locationInfo.fileName,
-                                                     argLoc);
+                                                       null /*this.checker.locationInfo.fileName*/,
+                                                       argLoc);
 
                     // if the user is using a custom lib.d.ts where IArguments has not been defined
                     // (or they're compiling with the --nolib option), use 'any' as the argument type
@@ -1801,8 +1801,8 @@ module TypeScript {
                             var localVar: ValueLocation = new ValueLocation();
                             localVar.typeLink = new TypeLink();
                             var varSym = new ParameterSymbol(local.id.text, local.minChar,
-                                                                   this.checker.locationInfo.fileName,
-                                                                   localVar);
+                                                             null /*this.checker.locationInfo.fileName*/,
+                                                             localVar);
                             varSym.funcDecl = constructorDecl;
                             varSym.declAST = local;
                             localVar.symbol = varSym;
@@ -2234,7 +2234,7 @@ module TypeScript {
             this.thisFnc = funcDecl;
             var container = funcDecl.type.symbol;
             var prevThisType = this.thisType;
-            var prevLocationInfo = this.checker.locationInfo;
+            // var prevLocationInfo = this.checker.locationInfo;
             var funcTable: IHashTable = null;
             var acceptedContextualType = false;
             var targetParams: ParameterSymbol[] = null;
@@ -2563,7 +2563,7 @@ module TypeScript {
             this.thisClassNode = prevClassNode;
             this.enclosingFncIsMethod = prevMethodStatus;
             this.thisType = prevThisType;
-            this.checker.locationInfo = prevLocationInfo;
+            // this.checker.locationInfo = prevLocationInfo;
             this.checker.currentModDecl = prevModDecl;
 
             signature.typeCheckStatus = this.checker.getTypeCheckFinishedStatus();
@@ -3154,9 +3154,9 @@ module TypeScript {
 
             var resultType = new Type();
             resultType.symbol = new TypeSymbol(this.checker.anon, objectLit.minChar,
-                                             objectLit.limChar - objectLit.minChar,
-                                             this.checker.locationInfo.fileName,
-                                             resultType, this.compilationSettings.optimizeModuleCodeGen);
+                                               objectLit.limChar - objectLit.minChar,
+                                               null /*this.checker.locationInfo.fileName*/,
+                                               resultType, this.compilationSettings.optimizeModuleCodeGen);
 
             resultType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             resultType.memberScope = new SymbolTableScope(resultType.members, null, null, null, null);
@@ -3251,7 +3251,7 @@ module TypeScript {
                         var field = new ValueLocation();
                         fieldSymbol =
                             new FieldSymbol(text, id.minChar,
-                                            this.checker.locationInfo.fileName,
+                                            null /*this.checker.locationInfo.fileName*/,
                                             true, field);
                         fieldSymbol.flags |= SymbolFlags.Property;
                         field.symbol = fieldSymbol;
@@ -3865,7 +3865,7 @@ module TypeScript {
 
         public assignScopes(ast: AST) {
             var script = <Script>ast;
-            this.checker.locationInfo = script.locationInfo;
+            // this.checker.locationInfo = script.locationInfo;
             var globalChain = new ScopeChain(this.checker.gloMod, null, this.globalScope);
             var context = new AssignScopeContext(globalChain, this, [this.checker.currentModDecl]);
             getAstWalkerFactory().walk(ast, preAssignScopes, postAssignScopes, null, context);

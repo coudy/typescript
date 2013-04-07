@@ -529,7 +529,7 @@ module TypeScript {
             var rType = this.field.typeLink.type.specializeType(pattern, replacement, checker, false);
             if (rType != this.field.typeLink.type) {
                 var fieldDef = new ValueLocation();
-                var result = new FieldSymbol(this.name, 0, checker.locationInfo.fileName,
+                var result = new FieldSymbol(this.name, 0, null /*checker.locationInfo.fileName*/,
                                            this.canWrite, fieldDef);
                 result.flags = this.flags;
                 fieldDef.symbol = result;
@@ -603,8 +603,7 @@ module TypeScript {
             var rType = this.parameter.typeLink.type.specializeType(pattern, replacement, checker, false);
             if (this.parameter.typeLink.type != rType) {
                 var paramDef = new ValueLocation();
-                var result = new ParameterSymbol(this.name, 0, checker.locationInfo.fileName,
-                                               paramDef);
+                var result = new ParameterSymbol(this.name, 0, null /*checker.locationInfo.fileName*/, paramDef);
                 paramDef.symbol = result;
                 result.setType(rType);
                 return result;

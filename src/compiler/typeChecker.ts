@@ -260,7 +260,7 @@ module TypeScript {
         public gloMod: TypeSymbol;
         public wildElm: TypeSymbol;
 
-        public locationInfo: LocationInfo = null;
+        // public locationInfo: LocationInfo = null;
         public typeFlow: TypeFlow = null;
 
         public currentCompareA: Symbol = null;
@@ -390,7 +390,7 @@ module TypeScript {
         public collectTypes(ast: AST): void {
             if (ast.nodeType === NodeType.Script) {
                 var script = <Script>ast;
-                this.locationInfo = script.locationInfo;
+                // this.locationInfo = script.locationInfo;
             }
             var globalChain = new ScopeChain(this.gloMod, null, this.globalScope);
             var context = new TypeCollectionContext(globalChain, this);
@@ -423,7 +423,7 @@ module TypeScript {
                     var parameter = <Parameter>args.members[i];
                     var paramDef = new ValueLocation();
                     var parameterSymbol = new ParameterSymbol(parameter.id.text, parameter.minChar,
-                                                            this.locationInfo.fileName, paramDef);
+                                                              null /*this.locationInfo.fileName*/, paramDef);
                     parameterSymbol.declAST = parameter;
                     parameterSymbol.funcDecl = funcDecl;
                     parameter.id.sym = parameterSymbol;
@@ -549,9 +549,9 @@ module TypeScript {
             if (!groupType.symbol) {
                 groupType.symbol =
                     new TypeSymbol(funcName ? funcName : this.anon,
-                                    funcDecl.minChar, funcDecl.limChar - funcDecl.minChar,
-                                    this.locationInfo.fileName,
-                                    groupType, this.compilationSettings.optimizeModuleCodeGen);
+                                   funcDecl.minChar, funcDecl.limChar - funcDecl.minChar,
+                                   null /*this.locationInfo.fileName*/,
+                                   groupType, this.compilationSettings.optimizeModuleCodeGen);
                 if (!useOverloadGroupSym) {
                     groupType.symbol.declAST = funcDecl;
                 }
@@ -684,7 +684,7 @@ module TypeScript {
 
             if (fgSym === null) {
                 var field = new ValueLocation();
-                accessorSym = new FieldSymbol(nameText, funcDecl.minChar, this.locationInfo.fileName, false, field);
+                accessorSym = new FieldSymbol(nameText, funcDecl.minChar, null /*this.locationInfo.fileName*/, false, field);
                 field.symbol = accessorSym;
                 accessorSym.declAST = funcDecl; // REVIEW: need to reset for getters and setters
 
@@ -895,7 +895,7 @@ module TypeScript {
 
                         if (typeSymbol.aliasLink && !typeSymbol.type && typeSymbol.aliasLink.alias.nodeType === NodeType.Name) {
                             var modPath = (<Identifier>typeSymbol.aliasLink.alias).text;
-                            var modSym = this.findSymbolForDynamicModule(modPath, this.locationInfo.fileName, (id) => scope.find(id, false, true));
+                            var modSym = this.findSymbolForDynamicModule(modPath, null /*this.locationInfo.fileName*/, (id) => scope.find(id, false, true));
                             if (modSym) {
                                 typeSymbol.type = modSym.getType();
                             }
@@ -990,7 +990,7 @@ module TypeScript {
         public resolveVarDecl(varDecl: VariableDeclarator, scope: SymbolScope): Symbol {
             var field = new ValueLocation();
             var fieldSymbol =
-                new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.fileName, true,
+                new FieldSymbol(varDecl.id.text, varDecl.minChar, null /*this.locationInfo.fileName*/, true,
                                 //(varDecl.getVarFlags() & VariableFlags.Readonly) === VariableFlags.None,
                                 field);
             fieldSymbol.transferVarFlags(varDecl.getVarFlags());
@@ -1052,10 +1052,10 @@ module TypeScript {
                                 var interfaceDecl = <InterfaceDeclaration>ast;
                                 var interfaceType = new Type();
                                 var interfaceSymbol = new TypeSymbol((<Identifier>interfaceDecl.name).text,
-                                                                   ast.minChar,
-                                                                   ast.limChar - ast.minChar,
-                                                                   this.locationInfo.fileName,
-                                                                   interfaceType, this.compilationSettings.optimizeModuleCodeGen);
+                                                                     ast.minChar,
+                                                                     ast.limChar - ast.minChar,
+                                                                     null /*this.locationInfo.fileName*/,
+                                                                     interfaceType, this.compilationSettings.optimizeModuleCodeGen);
                                 interfaceType.symbol = interfaceSymbol;
                                 interfaceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
 

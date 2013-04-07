@@ -155,9 +155,9 @@ module TypeScript {
 
         public bindSymbol(scope: SymbolScope, symbol: Symbol) {
             if (!symbol.bound) {
-                var prevLocationInfo = this.checker.locationInfo;
+                // var prevLocationInfo = this.checker.locationInfo;
                 if (this.checker.fileNameToLocationInfo && (symbol.fileName != unknownLocationInfo.fileName) && this.checker.fileNameToLocationInfo.lookup(symbol.fileName)) {
-                    this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(symbol.fileName);
+                    // this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(symbol.fileName);
                 }
                 switch (symbol.kind()) {
                     case SymbolKind.Type:
@@ -176,7 +176,7 @@ module TypeScript {
                         // context of a given module  (E.g., an outer import statement)
                         if (typeSymbol.aliasLink && !typeSymbol.type && typeSymbol.aliasLink.alias.nodeType == NodeType.Name) {
                             var modPath = (<Identifier>typeSymbol.aliasLink.alias).text;
-                            var modSym = this.checker.findSymbolForDynamicModule(modPath, this.checker.locationInfo.fileName, (id) => scope.find(id, false, true));
+                            var modSym = this.checker.findSymbolForDynamicModule(modPath, null /*this.checker.locationInfo.fileName*/, (id) => scope.find(id, false, true));
                             if (modSym) {
                                 typeSymbol.type = modSym.getType();
                             }
@@ -203,7 +203,7 @@ module TypeScript {
                                                 true);
                         break;
                 }
-                this.checker.locationInfo = prevLocationInfo;
+                // this.checker.locationInfo = prevLocationInfo;
             }
             symbol.bound = true;
         }

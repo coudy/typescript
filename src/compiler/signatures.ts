@@ -44,8 +44,8 @@ module TypeScript {
                     var oldSym:ParameterSymbol = this.parameters[i];
                     var paramDef = new ValueLocation();
                     var paramSym = new ParameterSymbol(oldSym.name, oldSym.location,
-                                                     checker.locationInfo.fileName,
-                                                     paramDef);
+                                                       null /*checker.locationInfo.fileName*/,
+                                                       paramDef);
 
                     paramSym.declAST = this.declAST;
                     paramDef.symbol = paramSym;

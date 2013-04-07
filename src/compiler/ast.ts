@@ -2387,7 +2387,7 @@ module TypeScript {
             var exceptVar = new ValueLocation();
             var varSym = new VariableSymbol((<VariableDeclarator>this.param).id.text,
                                           this.param.minChar,
-                                          typeFlow.checker.locationInfo.fileName,
+                                          null /*typeFlow.checker.locationInfo.fileName*/,
                                           exceptVar);
             exceptVar.symbol = varSym;
             exceptVar.typeLink = new TypeLink();
