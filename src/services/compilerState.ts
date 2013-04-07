@@ -88,7 +88,6 @@ module Services {
         // State related to compiler instance
         //
         private compiler: TypeScript.TypeScriptCompiler = null;
-        private fileNameToCompilerDocument: TypeScript.StringHashTable = null;
         private hostCache: HostCache = null;
         private symbolTree: SymbolTree = null;
         private _compilationSettings: TypeScript.CompilationSettings = null;
@@ -135,13 +134,10 @@ module Services {
         }
 
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
-            // Keep track of the version of script we're adding to the compiler.
-            var document = compiler.addSourceUnit(fileName,
+            compiler.addSourceUnit(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
                 this.hostCache.getVersion(fileName),
                 this.hostCache.isOpen(fileName));
-
-            this.fileNameToCompilerDocument.addOrUpdate(fileName, document);
         }
 
         private getHostCompilationSettings(): TypeScript.CompilationSettings {
@@ -165,7 +161,6 @@ module Services {
 
             Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
             this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
-            this.fileNameToCompilerDocument = new TypeScript.StringHashTable();
 
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();
@@ -313,7 +308,7 @@ module Services {
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
-            var document: TypeScript.Document = this.fileNameToCompilerDocument.lookup(fileName);
+            var document: TypeScript.Document = this.compiler.getDocument(fileName);
 
             //
             // If the document is the same, assume no update
@@ -325,12 +320,9 @@ module Services {
             }
 
             var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, document.version);
-            var updatedDocument = compiler.updateSourceUnit(fileName,
+            compiler.updateSourceUnit(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
                 version, isOpen, textChangeRange);
-
-            // Keep track of the version of script we're adding to the compiler.
-            this.fileNameToCompilerDocument.addOrUpdate(fileName, updatedDocument);
         }
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {
