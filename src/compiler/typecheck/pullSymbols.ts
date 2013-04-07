@@ -1184,6 +1184,29 @@ module TypeScript {
                     (this.typeArguments && this.typeArguments.length);
         }
 
+        public isFixed() {
+
+            if (!this.isGeneric()) {
+                return true;
+            }
+
+            if (this.typeParameterLinks && this.typeArguments) {
+                if (!this.typeArguments.length || this.typeArguments.length < this.typeParameterLinks.length) {
+                    return false;
+                }
+
+                for (var i = 0; i < this.typeArguments.length; i++) {
+                    if (!this.typeArguments[i].isFixed()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
 
             if (!substitutingTypes || !substitutingTypes.length) {
@@ -1940,6 +1963,10 @@ module TypeScript {
         }
 
         public isResolved() { return true; }
+
+        public isFixed() {
+            return true;
+        }
         
         public invalidate() {
             // do nothing...
@@ -2272,6 +2299,8 @@ module TypeScript {
 
         public isTypeParameter() { return true; }
 
+        public isFixed() { return false; }
+
         public setConstraint(constraintType: PullTypeSymbol) {
 
             if (this.constraintLink) {
@@ -2553,6 +2582,8 @@ module TypeScript {
         return newArrayType;
     }
 
+    export var nSpecializationsCreated = 0;
+
     export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
 
         if (typeToSpecialize.isPrimitive() || !typeToSpecialize.isGeneric()) {
@@ -2584,6 +2615,8 @@ module TypeScript {
             if (typeArguments && typeArguments.length) {
                 return typeArguments[0];
             }
+
+            return typeToSpecialize;
         }
 
         // In this case, we have an array type that may have been specialized to a type variable
@@ -2606,13 +2639,34 @@ module TypeScript {
         var i = 0;
         var j = 0;
 
-        if (typeArguments && !typeArguments.length) {
-            for (i = 0; i < typeParameters.length; i++) {
-                typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
-            }
-        }
+        var newType: PullTypeSymbol = null;
 
-        var newType: PullTypeSymbol = searchForExistingSpecialization ? (isArray ? typeArguments[0].getArrayType() : typeToSpecialize.getSpecialization(typeArguments)) : null;
+        var newTypeDecl = typeToSpecialize.getDeclarations()[0];
+
+        var rootType: PullTypeSymbol = <PullTypeSymbol>newTypeDecl.getSymbol().getType();
+
+        if (!rootType) {
+            rootType = typeToSpecialize;
+        }
+        
+        if (searchForExistingSpecialization) {
+            if (!typeArguments.length || context.specializingToAny) {
+                for (i = 0; i < typeParameters.length; i++) {
+                    typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
+                }
+            }
+
+            if (isArray) {
+                newType = typeArguments[0].getArrayType();
+            }
+            else if (typeArguments.length) {
+                newType = rootType.getSpecialization(typeArguments);
+            }
+            
+            if (!newType && !typeParameters.length && context.specializingToAny) {
+                newType = rootType.getSpecialization([resolver.semanticInfoChain.anyTypeSymbol]);
+            }
+        }// ? (isArray ? typeArguments[0].getArrayType() : typeToSpecialize.getSpecialization(typeArguments)) : null;
 
         if (newType) {
             if (!newType.isResolved() && !newType.currentlyBeingSpecialized()) {
@@ -2622,10 +2676,10 @@ module TypeScript {
                 return newType;
             }
         }
-
-        var newTypeDecl = typeToSpecialize.getDeclarations()[0];
         
         var prevInSpecialization = context.inSpecialization;
+
+        nSpecializationsCreated++;
 
         newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) :
                     isArray ? new PullArrayTypeSymbol() :
@@ -2638,7 +2692,7 @@ module TypeScript {
 
         newType.setTypeArguments(typeArguments);
 
-        typeToSpecialize.addSpecialization(newType, typeArguments);
+        rootType.addSpecialization(newType, typeArguments);
 
         if (isArray) {
             (<PullArrayTypeSymbol>newType).setElementType(typeArguments[0]);
@@ -2925,7 +2979,7 @@ module TypeScript {
             }
             else {
                 // re-resolve all field decls using the current replacements
-                if (fieldType.isGeneric()) {
+                if (fieldType.isGeneric() && !fieldType.isFixed()) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(decls[0].getScriptName());
 
@@ -3041,7 +3095,7 @@ module TypeScript {
         }
 
         context.pushTypeSpecializationCache(typeReplacementMap);
-        var newReturnType = !localTypeParameters[returnType.getName()] ? specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast) : returnType;
+        var newReturnType = (!localTypeParameters[returnType.getName()] /*&& typeArguments != null*/) ? specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast) : returnType;
         context.popTypeSpecializationCache();
 
         newSignature.setReturnType(newReturnType);

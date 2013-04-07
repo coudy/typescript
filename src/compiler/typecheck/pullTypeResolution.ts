@@ -5193,6 +5193,7 @@ module TypeScript {
                         substitutions = inferenceCandidates[j];
 
                         context.pushContextualType(parameterType, true, substitutions);
+
                         argSym = this.resolveStatementOrExpression(args.members[i], true, enclosingDecl, context);
 
                         this.relateTypeToTypeParameters(argSym.getType(), parameterType, false, argContext, enclosingDecl, context);
@@ -5255,6 +5256,19 @@ module TypeScript {
 
             if (parameterType.isTypeParameter()) {
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
+                return;
+            }
+
+            if (!parameterType.isArray() && parameterType.getDeclarations()[0].isEqual(expressionType.getDeclarations()[0]) && expressionType.isGeneric()) {
+                var typeParameters = parameterType.getTypeParameters();
+                var typeArguments = expressionType.getTypeArguments();
+
+                if (typeParameters.length == typeArguments.length) {
+                    for (var i = 0; i < typeParameters.length; i++) {
+                        this.relateTypeToTypeParameters(typeArguments[i], typeParameters[i], shouldFix, argContext, enclosingDecl, context);
+                    }
+                }
+
                 return;
             }
 
