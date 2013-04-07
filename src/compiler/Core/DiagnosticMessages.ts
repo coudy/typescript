@@ -297,6 +297,19 @@ module TypeScript {
             code: 1046
         },
 
+        Rest_parameter_cannot_be_optional: {
+            category: DiagnosticCategory.Error,
+            message: "Rest parameter cannot be optional.",
+            code: 1047
+        },
+
+        Rest_parameter_cannot_have_initializer: {
+            category: DiagnosticCategory.Error,
+            message: "Rest parameter cannot have initializer.",
+            code: 1048
+        },
+
+
 
 
 

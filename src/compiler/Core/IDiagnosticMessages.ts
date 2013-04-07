@@ -53,7 +53,8 @@ module TypeScript {
         _0__modifier_cannot_appear_on_a_module_element: DiagnosticInfo;
         _declare__modifier_cannot_appear_on_an_interface_declaration: DiagnosticInfo;
         _declare__modifier_required_for_top_level_element: DiagnosticInfo;
-
+        Rest_parameter_cannot_be_optional: DiagnosticInfo;
+        Rest_parameter_cannot_have_initializer: DiagnosticInfo;
 
 
 

@@ -76,6 +76,9 @@ module TypeScript {
         Getter__0__already_declared,
         Setter__0__already_declared,
         Accessor_may_not_take_type_parameters,
+        Rest_parameter_cannot_be_optional,
+        Rest_parameter_cannot_have_initializer,
+
 
 
         // Privacy error messages

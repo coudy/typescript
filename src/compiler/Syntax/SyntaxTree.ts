@@ -167,6 +167,20 @@ module TypeScript {
                                 DiagnosticCode.Rest_parameter_must_be_last_in_list);
                             return true;
                         }
+
+                        if (parameter.questionToken) {
+                            this.pushDiagnostic1(
+                                parameterFullStart, parameter,
+                                DiagnosticCode.Rest_parameter_cannot_be_optional);
+                            return true;
+                        }
+
+                        if (parameter.equalsValueClause) {
+                            this.pushDiagnostic1(
+                                parameterFullStart, parameter,
+                                DiagnosticCode.Rest_parameter_cannot_have_initializer);
+                            return true;
+                        }
                     }
                     else if (parameter.questionToken || parameter.equalsValueClause) {
                         seenOptionalParameter = true;

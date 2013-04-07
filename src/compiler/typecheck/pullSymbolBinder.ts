@@ -323,7 +323,8 @@ module TypeScript {
             }
 
             if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
-                importDeclaration.addDiagnostic(new PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
+                importDeclaration.addDiagnostic(new PullDiagnostic(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(),
+                    getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
                 importSymbol = null;
             }
 
@@ -1254,9 +1255,10 @@ module TypeScript {
                     // with an implicit constructor...
                     var span = propertyDeclaration.getSpan();
 
-                    propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
+                    propertyDeclaration.addDiagnostic(new PullDiagnostic(span.start(), span.length(), this.semanticInfo.getPath(),
+                        getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [declName])));
                 }
-                
+
                 propertySymbol = null;
             }
 
@@ -1370,10 +1372,6 @@ module TypeScript {
 
                     if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {
                         parameterSymbol.setIsVarArg();
-
-                        if (argDecl.init || hasFlag(argDecl.id.getFlags(), ASTFlags.OptionalName)) {
-                            decl.addDiagnostic(new PullDiagnostic(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), "Varargs may not be optional or have default parameters"));
-                        }
                     }
 
                     if (decl.getFlags() & PullElementFlags.Optional) {
@@ -1813,7 +1811,8 @@ module TypeScript {
             if (methodSymbol &&
                 (methodSymbol.getKind() != PullElementKind.Method ||
                 (this.symbolIsRedeclaration(methodSymbol) && !isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
-                methodDeclaration.addDiagnostic(new PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [methodName])));
+                methodDeclaration.addDiagnostic(new PullDiagnostic(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(),
+                    getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [methodName])));
                 methodSymbol = null;
             }
 
