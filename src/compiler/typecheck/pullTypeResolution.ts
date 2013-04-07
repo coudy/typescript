@@ -3408,6 +3408,8 @@ module TypeScript {
 
             var typeArgs: PullTypeSymbol[] = null;
             var typeReplacementMap: any = null;
+            var couldNotFindGenericOverload = false;
+
             var i = 0;
 
             // resolve the type arguments, specializing if necessary
@@ -3486,6 +3488,11 @@ module TypeScript {
                     }
                 }
                 // PULLTODO: Try to avoid copying here...
+
+                if (signatures.length && !resolvedSignatures.length) {
+                    couldNotFindGenericOverload = true;
+                }
+
                 signatures = resolvedSignatures;
             }
 
@@ -3495,7 +3502,7 @@ module TypeScript {
             //    return this.semanticInfoChain.anyTypeSymbol;
             //}
 
-            if (!signatures.length) {
+            if (!signatures.length && !couldNotFindGenericOverload) {
 
                 // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
                 if (this.cachedFunctionInterfaceType && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType, context)) {
@@ -3506,7 +3513,7 @@ module TypeScript {
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
-            var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, context);
+            var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context);
 
             // Store any additional resolution results if needed before we return
             if (additionalResults) {
@@ -3701,6 +3708,7 @@ module TypeScript {
                             resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
                         }
                     }
+
                     // PULLTODO: Try to avoid copying here...
                     constructSignatures = resolvedSignatures;
                 }
@@ -3711,7 +3719,7 @@ module TypeScript {
                 //    return this.semanticInfoChain.anyTypeSymbol;
                 //}
 
-                var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, context);
+                var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, callEx.typeArguments != null, context);
 
                 // Store any additional resolution results if needed before we return
                 if (additionalResults) {
@@ -4640,7 +4648,9 @@ module TypeScript {
                 }
             }
 
-            var len = (sourceVarArgCount < targetVarArgCount && sourceSig.hasVariableParamList()) ? targetVarArgCount : sourceVarArgCount;
+            // the clause 'sourceParameters.length > sourceVarArgCount' covers optional parameters, since even though the parameters are optional
+            // they need to agree with the target params
+            var len = (sourceVarArgCount < targetVarArgCount && (sourceSig.hasVariableParamList() || (sourceParameters.length > sourceVarArgCount))) ? targetVarArgCount : sourceVarArgCount;
             var sourceParamType: PullTypeSymbol = null;
             var targetParamType: PullTypeSymbol = null;
             var sourceParamName = "";
@@ -4686,7 +4696,7 @@ module TypeScript {
 
         // Overload resolution
 
-        public resolveOverloads(application: AST, group: PullSignatureSymbol[], enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
+        public resolveOverloads(application: AST, group: PullSignatureSymbol[], enclosingDecl: PullDecl, haveTypeArgumentsAtCallSite: bool, context: PullTypeResolutionContext): PullSignatureSymbol {
             var rd = this.resolutionDataCache.getResolutionData();
             var actuals = rd.actuals;
             var exactCandidates = rd.exactCandidates;
@@ -4729,7 +4739,7 @@ module TypeScript {
 
             for (var j = 0, groupLen = group.length; j < groupLen; j++) {
                 signature = group[j];
-                if (hasOverloads && signature.isDefinition()) {
+                if ((hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())) {
                     continue;
                 }
 
@@ -4742,10 +4752,10 @@ module TypeScript {
                 var applicableCandidates = this.getApplicableSignaturesFromCandidates(conversionCandidates, args, comparisonInfo, enclosingDecl, context);
                 if (applicableCandidates.length > 0) {
                     candidateInfo = this.findMostApplicableSignature(applicableCandidates, args, enclosingDecl, context);
-                    if (candidateInfo.ambiguous) {
-                        //this.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
-                        context.postError(application.minChar, application.getLength(), this.unitPath, "Ambiguous call expression - could not choose overload", enclosingDecl, true);
-                    }
+                    //if (candidateInfo.ambiguous) {
+                    //    //this.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
+                    //    context.postError(application.minChar, application.getLength(), this.unitPath, "Ambiguous call expression - could not choose overload", enclosingDecl, true);
+                    //}
                     candidate = candidateInfo.sig;
                 }
                 else {
@@ -4767,10 +4777,10 @@ module TypeScript {
                         applicableSigs[i] = { signature: exactCandidates[i], hadProvisionalErrors: false };
                     }
                     candidateInfo = this.findMostApplicableSignature(applicableSigs, args, enclosingDecl, context);
-                    if (candidateInfo.ambiguous) {
-                        //this.checker.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
-                        context.postError(application.minChar, application.getLength(), this.unitPath, "Ambiguous call expression - could not choose overload", enclosingDecl, true);
-                    }
+                    //if (candidateInfo.ambiguous) {
+                    //    //this.checker.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
+                    //    context.postError(application.minChar, application.getLength(), this.unitPath, "Ambiguous call expression - could not choose overload", enclosingDecl, true);
+                    //}
                     candidate = candidateInfo.sig;
                 }
                 else {
@@ -4796,13 +4806,13 @@ module TypeScript {
 
             var repeatType: PullTypeSymbol = null;
 
-            if (acceptable || signature.hasVariableParamList()) {
+            if (acceptable) {
                 // assumed structure here is checked when signature is formed
                 if (signature.hasVariableParamList()) {
                     formalLen -= 1;
                     repeatType = parameters[formalLen].getType();
                     repeatType = repeatType.getElementType();
-                    acceptable = actuals.length >= formalLen;
+                    acceptable = actuals.length >= (formalLen < lowerBound ? formalLen : lowerBound);
                 }
                 var len = actuals.length;
 
@@ -5071,7 +5081,7 @@ module TypeScript {
                         setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
                         getTypeAtIndex: (index: number) => { return index ? Q.signature.getReturnType() : best.signature.getReturnType(); } // we only want the "second" type - the "first" is skipped
                     }
-                    var bct = this.findBestCommonType(best.signature.getReturnType(), null, collection, false, context);
+                    var bct = this.findBestCommonType(best.signature.getReturnType(), null, collection, true, context);
                     ambiguous = !bct;
                 }
                 else {

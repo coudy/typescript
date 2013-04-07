@@ -150,7 +150,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 2);
+                    assert.equal(result.errors.length, 4);
                 });
             });
 
@@ -163,7 +163,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
                 code += "foo(1, 'bar');";
                 code += "foo('foo', 1, 3);";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.equal(result.errors.length, 4);
+                    assert.equal(result.errors.length, 2);
                 });
             });
 
