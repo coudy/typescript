@@ -974,10 +974,10 @@ module Harness {
 
                 var fileNames = compiler.fileNameToDocument.getAllKeys();
                 for (var m = 0; m < fileNames.length; m++) {
-                    var script2 = compiler.getDocument(fileNames[m]).script;
-                    if (script2.locationInfo.fileName !== 'lib.d.ts') {
+                    var document2 = compiler.getDocument(fileNames[m]);
+                    if (document2.fileName !== 'lib.d.ts') {
                         if (targetPosition > -1) {
-                            var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
+                            var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, document2);
                             var name = this.getTypeInfoName(tyInfo.ast);
                             var foundValue = new Type(tyInfo.symbol.getTypeName(), code, name);
                             if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
@@ -986,7 +986,7 @@ module Harness {
                         }
                         else {
                             for (var pos = 0; pos < code.length; pos++) {
-                                tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
+                                tyInfo = compiler.pullGetTypeInfoAtPosition(pos, document2);
                                 name = this.getTypeInfoName(tyInfo.ast);
                                 if (name === targetIdentifier) {
                                     foundValue = new Type(tyInfo.symbol.getTypeName(), code, targetIdentifier);

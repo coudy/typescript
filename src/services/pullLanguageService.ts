@@ -41,7 +41,8 @@ module Services {
 
             var result: ReferenceEntry[] = [];
 
-            var script = this.compilerState.getScript(fileName);
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
               
             /// TODO: this does not allow getting references on "constructor"
 
@@ -51,7 +52,7 @@ module Services {
                 return result;
             }
 
-            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, script);
+            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
             if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
                 this.logger.log("No symbol found at the given position");
                 return result;
@@ -72,7 +73,8 @@ module Services {
 
             var result: ReferenceEntry[] = [];
 
-            var script = this.compilerState.getScript(fileName);
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
 
             /// TODO: this does not allow getting references on "constructor"
 
@@ -82,7 +84,7 @@ module Services {
                 return result;
             }
 
-            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, script);
+            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
             if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
                 this.logger.log("No symbol found at the given position");
                 return result;
@@ -102,15 +104,16 @@ module Services {
             
             var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbol);
             if (possiblePositions && possiblePositions.length > 0) {
-                var searchScript = this.compilerState.getScript(fileName);
+                var document = this.compilerState.getDocument(fileName);
+                var script = document.script;
 
                 possiblePositions.forEach(p => {
-                    var path = this.getAstPathToPosition(searchScript, p);
+                    var path = this.getAstPathToPosition(script, p);
                     if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
                         return;
                     }
 
-                    var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, searchScript);
+                    var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
                     if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
                         var isWriteAccess = false; // this.isWriteAccess(searchSymbolInfoAtPosition.ast, searchSymbolInfoAtPosition.parentAST);
                         result.push(new ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast, isWriteAccess));
@@ -144,7 +147,8 @@ module Services {
         public getSignatureAtPosition(fileName: string, position: number): SignatureInfo {
             this.refresh();
 
-            var script = this.compilerState.getScript(fileName);
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
 
             // If "pos" is the "EOF" position
             var atEOF = (position === script.limChar);
@@ -193,7 +197,7 @@ module Services {
             var isNew = (callExpression.nodeType === TypeScript.NodeType.ObjectCreationExpression);
 
             // Resolve symbol
-            var callSymbolInfo = this.compilerState.getCallInformationFromPath(path, script);
+            var callSymbolInfo = this.compilerState.getCallInformationFromPath(path, document);
             if (!callSymbolInfo || !callSymbolInfo.targetSymbol || !callSymbolInfo.resolvedSignatures) {
                 this.logger.log("Could not find symbol for call expression");
                 return null;
@@ -278,14 +282,15 @@ module Services {
 
             var result: DefinitionInfo = null;
 
-            var script = this.compilerState.getScript(fileName);
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
 
             var path = this.getAstPathToPosition(script, position);
             if (path.count() == 0) {
                 return null;
             }
 
-            var symbolInfo = this.compilerState.getSymbolInformationFromPath(path, script);
+            var symbolInfo = this.compilerState.getSymbolInformationFromPath(path, document);
             if (symbolInfo == null || symbolInfo.symbol == null) {
                 this.logger.log("No identifier at the specified location.");
                 return result;
@@ -507,7 +512,8 @@ module Services {
         public getTypeAtPosition(fileName: string, position: number): TypeInfo {
             this.refresh();
 
-            var script = this.compilerState.getScript(fileName);
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
 
             var path = this.getAstPathToPosition(script, position);
             if (path.count() == 0) {
@@ -533,7 +539,7 @@ module Services {
             }
 
             if (path.isDeclaration()) {
-                var declarationInformation = this.compilerState.getDeclarationSymbolInformation(path, script);
+                var declarationInformation = this.compilerState.getDeclarationSymbolInformation(path, document);
 
                 ast = declarationInformation.ast;
                 symbol = declarationInformation.symbol;
@@ -557,7 +563,7 @@ module Services {
                 }
 
                 // Get the call expression symbol
-                var callExpressionInformation = this.compilerState.getCallInformationFromPath(path, script);
+                var callExpressionInformation = this.compilerState.getCallInformationFromPath(path, document);
 
                 if (!callExpressionInformation.targetSymbol) {
                     return null;
@@ -585,7 +591,7 @@ module Services {
                 }
             }
             else {
-                var symbolInformation = this.compilerState.getSymbolInformationFromPath(path, script);
+                var symbolInformation = this.compilerState.getSymbolInformationFromPath(path, document);
 
                 if (!symbolInformation.symbol) {
                     return null;
@@ -664,7 +670,9 @@ module Services {
 
             var completions = new CompletionInfo();
 
-            var script = this.compilerState.getScript(fileName);
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
+
             var path = this.getAstPathToPosition(script, position);
             if (this.isCompletionListBlocker(path)) {
                 this.logger.log("Returning an empty list because position is inside a comment, string or regular expression");
@@ -688,7 +696,7 @@ module Services {
             }
 
             if (isRightOfDot) {
-                var members = this.compilerState.getVisibleMemberSymbolsFromPath(path, script);
+                var members = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);
                 if (!members) {
                     return null;
                 }
@@ -699,7 +707,7 @@ module Services {
             else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
                 // Get scope memebers
                 completions.isMemberCompletion = false;
-                var symbols = this.compilerState.getVisibleSymbolsFromPath(path, script);
+                var symbols = this.compilerState.getVisibleSymbolsFromPath(path, document);
                 completions.entries = this.getCompletionEntriesFromSymbols(symbols);
             }
 

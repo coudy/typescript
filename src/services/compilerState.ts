@@ -254,8 +254,8 @@ module Services {
             }
         }
 
-        public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            return this.compiler.getDocument(fileName).syntaxTree();
+        public getDocument(fileName: string): TypeScript.Document {
+            return this.compiler.getDocument(fileName);
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
@@ -283,24 +283,24 @@ module Services {
         //
         // New Pull stuff
         //
-        public getDeclarationSymbolInformation(path: TypeScript.AstPath, script: TypeScript.Script) {
-            return this.compiler.pullGetDeclarationSymbolInfromation(path, script);
+        public getDeclarationSymbolInformation(path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetDeclarationSymbolInformation(path, document);
         }
 
-        public getSymbolInformationFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
-            return this.compiler.pullGetSymbolInformationFromPath(path, script);
+        public getSymbolInformationFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetSymbolInformationFromPath(path, document);
         }
 
-        public getCallInformationFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
-            return this.compiler.pullGetCallInformationFromPath(path, script);
+        public getCallInformationFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetCallInformationFromPath(path, document);
         }
 
-        public getVisibleMemberSymbolsFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
-            return this.compiler.pullGetVisibleMemberSymbolsFromPath(path, script);
+        public getVisibleMemberSymbolsFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetVisibleMemberSymbolsFromPath(path, document);
         }
 
-        public getVisibleSymbolsFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
-            return this.compiler.pullGetVisibleSymbolsFromPath(path, script);
+        public getVisibleSymbolsFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
+            return this.compiler.pullGetVisibleSymbolsFromPath(path, document);
         }
 
         public getTopLevelDeclarations(fileName: string): TypeScript.PullDecl[]{

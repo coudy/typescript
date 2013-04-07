@@ -112,6 +112,7 @@ module TypeScript {
         private _diagnostics: IDiagnostic[] = null;
         private _syntaxTree: SyntaxTree = null;
         public script: Script;
+        public lineMap: LineMap;
 
         constructor(public fileName: string,
                     private compilationSettings: CompilationSettings,
@@ -128,6 +129,7 @@ module TypeScript {
                 this._diagnostics = syntaxTree.diagnostics();
             }
 
+            this.lineMap = syntaxTree.lineMap();
             this.script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
         }
 
@@ -771,14 +773,14 @@ module TypeScript {
             return this.pullTypeChecker.resolver.resolveDeclaration(ast, resolutionContext, enlosingDecl);
         }
 
-        public resolvePosition(pos: number, script: Script, scriptName?: string): PullTypeInfoAtPositionInfo {
+        public resolvePosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
 
             // find the enclosing decl
             var declStack: PullDecl[] = [];
             var resultASTs: AST[] = [];
-            if (!scriptName) {
-                scriptName = script.locationInfo.fileName;
-            }
+            var script = document.script;
+            var scriptName = document.fileName;
+
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var lastDeclAST: AST = null;
             var foundAST: AST = null;
@@ -1045,10 +1047,9 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromPath(path: AstPath, script: Script, scriptName?: string): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {
-            if (!scriptName) {
-                scriptName = script.locationInfo.fileName;
-            }
+        private extractResolutionContextFromPath(path: AstPath, document: Document): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {
+            var script = document.script;
+            var scriptName = document.fileName;
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var enclosingDecl: PullDecl = null;
@@ -1149,8 +1150,8 @@ module TypeScript {
             };
         }
 
-        public pullGetSymbolInformationFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbolInfo {
-            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+        public pullGetSymbolInformationFromPath(path: AstPath, document: Document): PullSymbolInfo {
+            var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
             }
@@ -1164,8 +1165,9 @@ module TypeScript {
             };
         }
 
-        public pullGetDeclarationSymbolInfromation(path: AstPath, script: Script): PullSymbolInfo {
-            var scriptName = script.locationInfo.fileName;
+        public pullGetDeclarationSymbolInformation(path: AstPath, document: Document): PullSymbolInfo {
+            var script = document.script;
+            var scriptName = document.fileName;
 
             var ast = path.ast();
 
@@ -1173,7 +1175,7 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+            var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
             }
@@ -1190,7 +1192,7 @@ module TypeScript {
             };
         }
 
-        public pullGetCallInformationFromPath(path: AstPath, script: Script, scriptName?: string): PullCallSymbolInfo {
+        public pullGetCallInformationFromPath(path: AstPath, document: Document): PullCallSymbolInfo {
             // AST has to be a call expression
             if (path.ast().nodeType !== NodeType.InvocationExpression && path.ast().nodeType !== NodeType.ObjectCreationExpression) {
                 return null;
@@ -1198,7 +1200,7 @@ module TypeScript {
 
             var isNew = (path.ast().nodeType === NodeType.ObjectCreationExpression);
 
-            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+            var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
             }
@@ -1222,8 +1224,8 @@ module TypeScript {
             return callResolutionResults;
         }
 
-        public pullGetVisibleMemberSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullVisibleSymbolsInfo {
-            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+        public pullGetVisibleMemberSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+            var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
             }
@@ -1239,8 +1241,8 @@ module TypeScript {
             };
         }
 
-        public pullGetVisibleSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullVisibleSymbolsInfo {
-            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+        public pullGetVisibleSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+            var context = this.extractResolutionContextFromPath(path, document);
             if (!context) {
                 return null;
             }
@@ -1256,12 +1258,10 @@ module TypeScript {
             };
         }
 
-        public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): PullTypeInfoAtPositionInfo {
+        public pullGetTypeInfoAtPosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
             return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", () => {
-
-                var info = this.resolvePosition(pos, script, scriptName);
-                return info;
-            } );
+                return this.resolvePosition(pos, document);
+            });
         }
 
         public getTopLevelDeclarations(scriptName: string): PullDecl[] {
@@ -1279,7 +1279,7 @@ module TypeScript {
         private reportDiagnostic(error: IDiagnostic, textWriter: ITextWriter) {
             if (error.fileName()) {
                 var lineCol = { line: -1, character: -1 };
-                var lineMap = this.getDocument(error.fileName()).script.locationInfo.lineMap;
+                var lineMap = this.getDocument(error.fileName()).lineMap;
                 lineMap.fillLineAndCharacterFromPosition(error.start(), lineCol);
 
                 textWriter.Write(error.fileName() + "(" + (lineCol.line + 1) + "," + lineCol.character + "): ");
