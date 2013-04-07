@@ -41,7 +41,7 @@ module TypeScript {
 
         private hasBeenTypeChecked = false;
 
-        constructor(compilationUnitPath: string, public locationInfo: LocationInfo = null) {
+        constructor(compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
         }
 

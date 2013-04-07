@@ -620,7 +620,7 @@ module TypeScript {
                 for (i = 0, n = fileNames.length; i < n; i++) {
                     var fileName = fileNames[i];
                     var document = this.getDocument(fileName);
-                    var semanticInfo = new SemanticInfo(fileName, document.script.locationInfo);
+                    var semanticInfo = new SemanticInfo(fileName);
 
                     declCollectionContext = new DeclCollectionContext(semanticInfo);
                     declCollectionContext.scriptName = fileName;
@@ -671,7 +671,7 @@ module TypeScript {
             this.timeFunction("pullUpdateScript: ", () => {
 
                 // want to name the new script semantic info the same as the old one
-                var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.fileName, newScript.locationInfo);
+                var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.fileName);
                 var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldScript.locationInfo.fileName);
 
                 lastBoundPullDeclId = pullDeclID;
