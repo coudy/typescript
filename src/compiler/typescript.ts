@@ -113,7 +113,7 @@ module TypeScript {
         private _syntaxTree: SyntaxTree = null;
         public script: Script;
 
-        constructor(private fileName: string,
+        constructor(public fileName: string,
                     private compilationSettings: CompilationSettings,
                     private scriptSnapshot: IScriptSnapshot,
                     public version: number,
@@ -252,11 +252,11 @@ module TypeScript {
 
             var fileNames = this.fileNameToDocument.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
+                var fileName = fileNames[i];
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
 
                 if (script.emitRequired(this.emitOptions)) {
-                    var fileName = script.locationInfo.fileName;
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength === -1) {
                         // First time at finding common path
@@ -370,15 +370,16 @@ module TypeScript {
         }
 
         // Caller is responsible for closing emitter.
-        private emitDeclarationsUnit(script: Script, declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
+        private emitDeclarations(document: Document, declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
+            var script = document.script;
             if (this.canEmitDeclarations(script)) {
                 if (!declarationEmitter) {
-                    var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
+                    var declareFileName = this.emitOptions.mapOutputFileName(document.fileName, TypeScriptCompiler.mapToDTSFileName);
                     declarationEmitter = new DeclarationEmitter(
                         declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
                 }
 
-                declarationEmitter.fileName = script.locationInfo.fileName;
+                declarationEmitter.fileName = document.fileName;
                 declarationEmitter.emitDeclarations(script);
             }
 
@@ -386,7 +387,7 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitDeclarations(): IDiagnostic[] {
+        public emitAllDeclarations(): IDiagnostic[] {
             if (this.canEmitDeclarations()) {
                 var sharedEmitter: DeclarationEmitter = null;
                 var fileNames = this.fileNameToDocument.getAllKeys();
@@ -396,17 +397,16 @@ module TypeScript {
 
                     try {
                         var document = this.getDocument(fileNames[i]);
-                        var script = document.script;
 
                         if (this.emitOptions.outputMany) {
-                            var singleEmitter = this.emitDeclarationsUnit(script);
+                            var singleEmitter = this.emitDeclarations(document);
                             if (singleEmitter) {
                                 singleEmitter.close();
                             }
                         }
                         else {
                             // Create or reuse file
-                            sharedEmitter = this.emitDeclarationsUnit(script, sharedEmitter);
+                            sharedEmitter = this.emitDeclarations(document, sharedEmitter);
                         }
                     }
                     catch (ex1) {

@@ -152,7 +152,7 @@ class HarnessBatch {
             resolvePath: IO.resolvePath
         };
 
-        var emitDeclarationsDiagnostics = compiler.emitDeclarations();
+        var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
         compiler.reportDiagnostics(emitDeclarationsDiagnostics, this.errout);
 
         if (this.errout) {

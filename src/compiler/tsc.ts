@@ -228,7 +228,7 @@ class BatchCompiler {
             return true;
         }
 
-        var emitDeclarationsDiagnostics = compiler.emitDeclarations();
+        var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
         compiler.reportDiagnostics(emitDeclarationsDiagnostics, this.errorReporter);
         if (emitDeclarationsDiagnostics.length > 0) {
             return true;

@@ -1254,7 +1254,7 @@ module Harness {
                 compiler.reportDiagnostics(emitDiagnostics, errs);
 
                 // TODO: should this be outside the loop? are we emitting the .d.ts code twice for a multi-file test?
-                var emitDeclarationsDiagnostics = compiler.emitDeclarations();
+                var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
                 compiler.reportDiagnostics(emitDeclarationsDiagnostics, errs);
             } );
 
