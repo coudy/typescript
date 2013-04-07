@@ -126,7 +126,7 @@ class HarnessBatch {
 
         compiler.pullTypeCheck();
 
-        var files = compiler.fileNameToLocationInfo.getAllKeys();
+        var files = compiler.fileNameToDocument.getAllKeys();
         files.forEach(file => {
             if (file.indexOf('lib.d.ts') == -1) {
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(file);

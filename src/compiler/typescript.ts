@@ -108,15 +108,55 @@ module TypeScript {
         enclosingScopeSymbol: PullSymbol;
     }
 
+    export class Document {
+        private _diagnostics: IDiagnostic[];
+        private _syntaxTree: SyntaxTree;
+
+        constructor(public fileName: string,
+                    private scriptSnapshot: IScriptSnapshot,
+                    public script: Script,
+                    syntaxTree: SyntaxTree,
+                    diagnostics: IDiagnostic[]) {
+            this._syntaxTree = syntaxTree;
+            this._diagnostics = diagnostics;
+        }
+
+        public diagnostics(): IDiagnostic[]{
+            if (this._diagnostics === null) {
+                this._diagnostics = this._syntaxTree.diagnostics();
+            }
+
+            return this._diagnostics;
+        }
+
+        public syntaxTree(): SyntaxTree {
+            if (this._syntaxTree) {
+                return this._syntaxTree;
+            }
+
+            return Parser.parse(
+                this.fileName,
+                SimpleText.fromScriptSnapshot(this.scriptSnapshot),
+                TypeScript.isDTSFile(this.fileName),
+                LanguageVersion.EcmaScript5);
+        }
+
+        public static fromOpen(fileName: string, scriptSnapshot: IScriptSnapshot, script: Script, syntaxTree: SyntaxTree): Document {
+            return new Document(fileName, scriptSnapshot, script, syntaxTree, null);
+        }
+
+        public static fromClosed(fileName: string, scriptSnapshot: IScriptSnapshot, script: Script, syntaxTree: SyntaxTree): Document {
+            return new Document(fileName, scriptSnapshot, script, null, syntaxTree.diagnostics());
+        }
+    }
+
     export class TypeScriptCompiler {
         public pullTypeChecker: PullTypeChecker = null;
         public semanticInfoChain: SemanticInfoChain = null;
 
         public emitOptions: EmitOptions;
 
-        public fileNameToScript = new TypeScript.StringHashTable();
-        public fileNameToLocationInfo = new TypeScript.StringHashTable();
-        public fileNameToSyntaxTree = new TypeScript.StringHashTable();
+        public fileNameToDocument = new TypeScript.StringHashTable();
 
         constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings(),
@@ -128,19 +168,22 @@ module TypeScript {
             }
         }
 
+        public getDocument(fileName: string): Document {
+            return this.fileNameToDocument.lookup(fileName);
+        }
+
         public timeFunction(funcDescription: string, func: () => any): any {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
-        public addSourceUnit(fileName: string, sourceText: IScriptSnapshot, referencedFiles: IFileReference[]= []): Script {
+        public addSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, referencedFiles: IFileReference[]= []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
+                var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
                 var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
                 script.referencedFiles = referencedFiles;
 
-                this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-                this.fileNameToLocationInfo.addOrUpdate(fileName, script.locationInfo);
-                this.fileNameToScript.addOrUpdate(fileName, script);
+                this.fileNameToDocument.addOrUpdate(fileName,
+                    Document.fromOpen(fileName, scriptSnapshot, script, syntaxTree));
 
                 return script;
             } );
@@ -148,29 +191,29 @@ module TypeScript {
 
         public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): void {
             this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
-                var oldScript = <Script>this.fileNameToScript.lookup(fileName);
-                var oldSyntaxTree = this.fileNameToSyntaxTree.lookup(fileName);
+                var document = this.getDocument(fileName);
+                var oldScript = document.script;
+                var oldSyntaxTree = document.syntaxTree();
 
                 var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
 
                 var syntaxTree = textChangeRange === null
-                ? TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName))
-                : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
+                    ? TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName))
+                    : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
                 var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
 
-                this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-                this.fileNameToScript.addOrUpdate(fileName, newScript);
-                this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
+                this.fileNameToDocument.addOrUpdate(fileName, Document.fromOpen(fileName, scriptSnapshot, newScript, syntaxTree));
 
                 this.pullUpdateScript(oldScript, newScript);
             } );
         }
 
-        private isDynamicModuleCompilation() {
-            var fileNames = this.fileNameToScript.getAllKeys();
-            for (var i = 0, len = fileNames.length; i < len; i++) {
-                var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
+        private isDynamicModuleCompilation(): bool {
+            var fileNames = this.fileNameToDocument.getAllKeys();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var document = this.getDocument(fileNames[i]);
+                var script = document.script;
                 if (!script.isDeclareFile && script.topLevelMod != null) {
                     return true;
                 }
@@ -182,9 +225,10 @@ module TypeScript {
             var commonComponents: string[] = [];
             var commonComponentsLength = -1;
 
-            var fileNames = this.fileNameToScript.getAllKeys();
+            var fileNames = this.fileNameToDocument.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
-                var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
+                var document = this.getDocument(fileNames[i]);
+                var script = document.script;
 
                 if (script.emitRequired(this.emitOptions)) {
                     var fileName = script.locationInfo.fileName;
@@ -265,10 +309,11 @@ module TypeScript {
 
         public getScripts(): Script[] {
             var result: TypeScript.Script[] = [];
-            var fileNames = this.fileNameToScript.getAllKeys();
+            var fileNames = this.fileNameToDocument.getAllKeys();
 
-            for (var i = 0; i < fileNames.length; i++) {
-                result.push(this.fileNameToScript.lookup(fileNames[i]));
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var document = this.getDocument(fileNames[i]);
+                result.push(document.script);
             }
 
             return result;
@@ -318,13 +363,14 @@ module TypeScript {
         public emitDeclarations(): IDiagnostic[] {
             if (this.canEmitDeclarations()) {
                 var sharedEmitter: DeclarationEmitter = null;
-                var fileNames = this.fileNameToScript.getAllKeys();
+                var fileNames = this.fileNameToDocument.getAllKeys();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     var fileName = fileNames[i];
 
                     try {
-                        var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
+                        var document = this.getDocument(fileNames[i]);
+                        var script = document.script;
 
                         if (this.emitOptions.outputMany) {
                             var singleEmitter = this.emitDeclarationsUnit(script);
@@ -418,14 +464,15 @@ module TypeScript {
 
             var startEmitTime = (new Date()).getTime();
 
-            var fileNames = this.fileNameToScript.getAllKeys();
+            var fileNames = this.fileNameToDocument.getAllKeys();
             var sharedEmitter: Emitter = null;
 
             // Iterate through the files, as long as we don't get an error.
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
 
-                var script = <Script>this.fileNameToScript.lookup(fileName);
+                var document = this.getDocument(fileName);
+                var script = document.script;
 
                 try {
                     if (this.emitOptions.outputMany) {
@@ -502,14 +549,14 @@ module TypeScript {
             return true;
         }
 
-        public getSyntacticDiagnostics(fileName: string): IDiagnostic[] {
-            return this.fileNameToSyntaxTree.lookup(fileName).diagnostics();
+        public getSyntacticDiagnostics(fileName: string): IDiagnostic[]{
+            var document = this.getDocument(fileName);
+            return document.diagnostics();
         }
-
 
         /** Used for diagnostics in tests */
         private getSyntaxTree(fileName: string): SyntaxTree {
-            return this.fileNameToSyntaxTree.lookup(fileName);
+            return this.getDocument(fileName).syntaxTree();
         }
 
         public getSemanticDiagnostics(fileName: string): IDiagnostic[] {
@@ -519,7 +566,8 @@ module TypeScript {
                 var unit = this.semanticInfoChain.getUnit(fileName);
 
                 if (unit) {
-                    var script: Script = this.fileNameToScript.lookup(fileName);
+                    var document = this.getDocument(fileName);
+                    var script = document.script;
 
                     if (script) {
                         this.pullTypeChecker.typeCheckScript(script, fileName, this);
@@ -539,20 +587,21 @@ module TypeScript {
                 this.pullTypeChecker = new PullTypeChecker(this.settings, this.semanticInfoChain);
 
                 var declCollectionContext: DeclCollectionContext = null;
-                var i: number;
+                var i: number, n: number;
 
                 var createDeclsStartTime = new Date().getTime();
 
-                var fileNames = this.fileNameToScript.getAllKeys();
-                for (i = 0; i < fileNames.length; i++) {
+                var fileNames = this.fileNameToDocument.getAllKeys();
+                for (i = 0, n = fileNames.length; i < n; i++) {
                     var fileName = fileNames[i];
-                    var semanticInfo = new SemanticInfo(fileName, this.fileNameToLocationInfo.lookup(fileName));
+                    var document = this.getDocument(fileName);
+                    var semanticInfo = new SemanticInfo(fileName, document.script.locationInfo);
 
                     declCollectionContext = new DeclCollectionContext(semanticInfo);
                     declCollectionContext.scriptName = fileName;
 
                     // create decls
-                    getAstWalkerFactory().walk(this.fileNameToScript.lookup(fileName), preCollectDecls, postCollectDecls, null, declCollectionContext);
+                    getAstWalkerFactory().walk(document.script, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                     semanticInfo.addTopLevelDecl(declCollectionContext.getParent());
 
@@ -576,12 +625,11 @@ module TypeScript {
                 var findErrorsStartTime = new Date().getTime();
 
                 //// type check
-                fileNames = this.fileNameToScript.getAllKeys();
-                for (i = 0; i < fileNames.length; i++) {
+                for (i = 0, n = fileNames.length; i < n; i++) {
                     fileName = fileNames[i];
 
                     this.logger.log("Type checking " + fileName);
-                    this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
+                    this.pullTypeChecker.typeCheckScript(this.getDocument(fileName).script, fileName, this);
                 }
 
                 var findErrorsEndTime = new Date().getTime();
@@ -1205,7 +1253,7 @@ module TypeScript {
         private reportDiagnostic(error: IDiagnostic, textWriter: ITextWriter) {
             if (error.fileName()) {
                 var lineCol = { line: -1, character: -1 };
-                var lineMap = this.fileNameToLocationInfo.lookup(error.fileName()).lineMap;
+                var lineMap = this.getDocument(error.fileName()).script.locationInfo.lineMap;
                 lineMap.fillLineAndCharacterFromPosition(error.start(), lineCol);
 
                 textWriter.Write(error.fileName() + "(" + (lineCol.line + 1) + "," + lineCol.character + "): ");

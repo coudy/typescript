@@ -120,11 +120,11 @@ module Services {
         }
 
         public getFileNames(): string[] {
-            return this.compiler.fileNameToScript.getAllKeys();
+            return this.compiler.fileNameToDocument.getAllKeys();
         }
 
         public getScript(fileName: string): TypeScript.Script {
-            return this.compiler.fileNameToScript.lookup(fileName)
+            return this.compiler.getDocument(fileName).script;
         }
 
         public getScripts(): TypeScript.Script[] {
@@ -139,7 +139,7 @@ module Services {
             return this.compiler.semanticInfoChain;
         }
 
-        private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
+        private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             // Keep track of the version of script we're adding to the compiler.
             this.fileNameToCompilerScriptInfo.addOrUpdate(fileName,
                 new ScriptInfo(this.hostCache.getVersion(fileName), this.hostCache.isOpen(fileName)));
@@ -222,7 +222,7 @@ module Services {
             /// If any file was deleted, we need to create a new compiler, because we are not
             /// even close to supporting removing symbols (unitindex will be all over the place
             /// if we remove scripts from the list).
-            var fileNames = this.compiler.fileNameToLocationInfo.getAllKeys();
+            var fileNames = this.compiler.fileNameToDocument.getAllKeys();
             for (var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
                 var fileName = fileNames[unitIndex];
 
@@ -247,7 +247,7 @@ module Services {
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
 
-                if (this.compiler.fileNameToLocationInfo.lookup(fileName)) {
+                if (this.compiler.getDocument(fileName)) {
                     this.updateCompilerUnit(this.compiler, fileName);
                 }
                 else {
@@ -261,16 +261,8 @@ module Services {
             }
         }
 
-        public getScriptAST(fileName: string): TypeScript.Script {
-            return <TypeScript.Script>this.compiler.fileNameToScript.lookup(fileName);
-        }
-
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            return <TypeScript.SyntaxTree>this.compiler.fileNameToSyntaxTree.lookup(fileName);
-        }
-
-        public getLineMap(fileName: string): number[] {
-            return this.compiler.fileNameToLocationInfo.lookup(fileName).lineMap;
+            return this.compiler.getDocument(fileName).syntaxTree();
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {

@@ -41,7 +41,7 @@ module Services {
 
             var result: ReferenceEntry[] = [];
 
-            var script = this.compilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScript(fileName);
               
             /// TODO: this does not allow getting references on "constructor"
 
@@ -72,7 +72,7 @@ module Services {
 
             var result: ReferenceEntry[] = [];
 
-            var script = this.compilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScript(fileName);
 
             /// TODO: this does not allow getting references on "constructor"
 
@@ -144,7 +144,7 @@ module Services {
         public getSignatureAtPosition(fileName: string, position: number): SignatureInfo {
             this.refresh();
 
-            var script = this.compilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScript(fileName);
 
             // If "pos" is the "EOF" position
             var atEOF = (position === script.limChar);
@@ -278,7 +278,7 @@ module Services {
 
             var result: DefinitionInfo = null;
 
-            var script = this.compilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScript(fileName);
 
             var path = this.getAstPathToPosition(script, position);
             if (path.count() == 0) {
@@ -507,7 +507,7 @@ module Services {
         public getTypeAtPosition(fileName: string, position: number): TypeInfo {
             this.refresh();
 
-            var script = this.compilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScript(fileName);
 
             var path = this.getAstPathToPosition(script, position);
             if (path.count() == 0) {
@@ -664,7 +664,7 @@ module Services {
 
             var completions = new CompletionInfo();
 
-            var script = this.compilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScript(fileName);
             var path = this.getAstPathToPosition(script, position);
             if (this.isCompletionListBlocker(path)) {
                 this.logger.log("Returning an empty list because position is inside a comment, string or regular expression");

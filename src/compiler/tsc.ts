@@ -189,7 +189,7 @@ class BatchCompiler {
         }
 
         compiler.pullTypeCheck();
-        var fileNames = compiler.fileNameToSyntaxTree.getAllKeys();
+        var fileNames = compiler.fileNameToDocument.getAllKeys();
         var typeCheckStart = (new Date()).getTime();
         for (var i = 0, n = fileNames.length; i < n; i++) {
             var fileName = fileNames[i];

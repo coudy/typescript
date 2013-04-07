@@ -972,9 +972,9 @@ module Harness {
 
                 var matchingIdentifiers: Type[] = [];
 
-                var fileNames = compiler.fileNameToScript.getAllKeys();
+                var fileNames = compiler.fileNameToDocument.getAllKeys();
                 for (var m = 0; m < fileNames.length; m++) {
-                    var script2 = <TypeScript.Script>compiler.fileNameToScript.lookup(fileNames[m]);
+                    var script2 = compiler.getDocument(fileNames[m]).script;
                     if (script2.locationInfo.fileName !== 'lib.d.ts') {
                         if (targetPosition > -1) {
                             var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
@@ -1130,7 +1130,7 @@ module Harness {
             stdout.reset();
             stderr.reset();
 
-            var files = compiler.fileNameToLocationInfo.getAllKeys();
+            var files = compiler.fileNameToDocument.getAllKeys();
 
             for (var i = 0; i < files.length; i++) {
                 var fname = files[i];
@@ -1151,13 +1151,14 @@ module Harness {
             var script: TypeScript.Script = null;
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
 
-            var fileNames = compiler.fileNameToLocationInfo.getAllKeys();
+            var fileNames = compiler.fileNameToDocument.getAllKeys();
             for (var i = 0; i < fileNames.length; i++) {
-                if (compiler.fileNameToLocationInfo.lookup(fileNames[i]).fileName === uName) {
+                if (fileNames[i] === uName) {
                     updateUnit(code, uName);
-                    script = <TypeScript.Script>compiler.fileNameToScript.lookup(fileNames[i]);
+                    script = compiler.getDocument(fileNames[i]).script;
                 }
             }
+            
             if (!script) {
                 // TODO: make this toggleable, shouldn't be necessary once typecheck bugs are cleaned up
                 // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
@@ -1232,7 +1233,7 @@ module Harness {
                 us = uNames;
             }
             else {
-                var files = compiler.fileNameToLocationInfo.getAllKeys();
+                var files = compiler.fileNameToDocument.getAllKeys();
                 files.forEach(file => {
                     if (file !== 'lib.d.ts') {
                         us.push(file);
