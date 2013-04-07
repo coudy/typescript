@@ -527,7 +527,6 @@ module TypeScript {
             this.setSpanExplicit(result, start, this.position);
 
             result.moduleElements = bod;
-            result.locationInfo = new LocationInfo(this.fileName, this.lineMap);
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = this.isParsingDeclareFile;
             result.requiresExtendsBlock = this.requiresExtendsBlock;

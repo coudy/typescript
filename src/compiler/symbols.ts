@@ -420,7 +420,7 @@ module TypeScript {
             else {
                 var replType = this.type.specializeType(pattern, replacement, checker, false);
                 if (replType != this.type) {
-                    var result = new TypeSymbol(this.name, -1, 0, unknownLocationInfo.fileName, replType, checker.compilationSettings.optimizeModuleCodeGen);
+                    var result = new TypeSymbol(this.name, -1, 0, ""/*unknownLocationInfo.fileName*/, replType, checker.compilationSettings.optimizeModuleCodeGen);
                     return result;
                 }
                 else {

@@ -105,7 +105,7 @@ module DumpAST {
         entry.minChar = ast.minChar;
         entry.limChar = ast.limChar;
 
-        var lineMap = script.locationInfo.lineMap;
+        var lineMap = null; //script.locationInfo.lineMap;
         entry.startLine = lineMap.getLineAndCharacterFromPosition(ast.minChar).line();
         entry.startCol = lineMap.getLineAndCharacterFromPosition(ast.minChar).character();
         entry.endLine = lineMap.getLineAndCharacterFromPosition(ast.limChar).line();
@@ -132,7 +132,7 @@ module DumpAST {
     }
 
     function verifyAstNodePositions(script: TypeScript.Script, ast: TypeScript.AST): void {
-        var fileName = script.locationInfo.fileName;
+        var fileName = null;  //script.locationInfo.fileName;
         var maxLimChar = script.limChar;
 
         var minChar = ast.minChar;
@@ -222,7 +222,7 @@ module DumpAST {
         text += addKey("sourceText");
         text += ": [\r\n";
 
-        var lineStarts = script.locationInfo.lineMap.lineStarts();
+        var lineStarts = null;// script.locationInfo.lineMap.lineStarts();
         for (var i = 0; i < lineStarts.length; i++) {
             if (i > 0) {
                 text += ",\r\n";

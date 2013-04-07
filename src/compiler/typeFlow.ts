@@ -826,7 +826,7 @@ module TypeScript {
                     var container = sym.container;
                     var svCurrentModDecl = this.checker.currentModDecl;
                     if (this.checker.fileNameToLocationInfo &&
-                        (sym.fileName !== unknownLocationInfo.fileName) &&
+                        // (sym.fileName !== unknownLocationInfo.fileName) &&
                         this.checker.fileNameToLocationInfo.lookup(sym.fileName)) {
                         // this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(sym.fileName);
                     }

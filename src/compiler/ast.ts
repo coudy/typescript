@@ -1209,17 +1209,8 @@ module TypeScript {
         public isSignature() { return (this.getFunctionFlags() & FunctionFlags.Signature) != FunctionFlags.None; }
     }
 
-    export class LocationInfo {
-        constructor(public fileName: string,
-                    public lineMap: LineMap) {
-        }
-    }
-
-    export var unknownLocationInfo = new LocationInfo("unknown", null);
-
     export class Script extends AST {
         public moduleElements: ASTList = null;
-        public locationInfo: LocationInfo = null;
         public referencedFiles: IFileReference[] = [];
         public requiresExtendsBlock = false;
         public isDeclareFile = false;

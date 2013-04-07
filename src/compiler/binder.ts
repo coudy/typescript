@@ -156,7 +156,7 @@ module TypeScript {
         public bindSymbol(scope: SymbolScope, symbol: Symbol) {
             if (!symbol.bound) {
                 // var prevLocationInfo = this.checker.locationInfo;
-                if (this.checker.fileNameToLocationInfo && (symbol.fileName != unknownLocationInfo.fileName) && this.checker.fileNameToLocationInfo.lookup(symbol.fileName)) {
+                if (this.checker.fileNameToLocationInfo /*&& (symbol.fileName != unknownLocationInfo.fileName)*/ && this.checker.fileNameToLocationInfo.lookup(symbol.fileName)) {
                     // this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(symbol.fileName);
                 }
                 switch (symbol.kind()) {

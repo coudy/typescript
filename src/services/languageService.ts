@@ -102,7 +102,7 @@ module Services {
         public kind: string = "";            // see ScriptElementKind
         public kindModifiers: string = "";   // see ScriptElementKindModifier, comma separated
         public matchKind: string = "";
-        public fileName: string = TypeScript.unknownLocationInfo.fileName;
+        public fileName: string = "";
         public minChar: number = -1;
         public limChar: number = -1;
         public containerName: string = "";
@@ -111,7 +111,7 @@ module Services {
 
     export class NavigateToContext {
         public options = new TypeScript.AstWalkOptions();
-        public fileName: string = TypeScript.unknownLocationInfo.fileName;
+        public fileName: string = "";
         public containerSymbols: TypeScript.Symbol[] = [];
         public containerKinds: string[] = [];
         public containerASTs: TypeScript.AST[] = [];

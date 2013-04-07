@@ -138,7 +138,7 @@ module TypeScript {
             // shared global state is resident
             this.setCollectionMode(TypeCheckCollectionMode.Resident);
 
-            this.wildElm = new TypeSymbol("_element", -1, 0, unknownLocationInfo.fileName, new Type(), this.compilationSettings.optimizeModuleCodeGen);
+            this.wildElm = new TypeSymbol("_element", -1, 0, ""/*unknownLocationInfo.fileName*/, new Type(), this.compilationSettings.optimizeModuleCodeGen);
             this.importedGlobalsTypeTable.addPublicMember(this.wildElm.name, this.wildElm);
 
             this.mod = new ModuleType(dualGlobalScopedEnclosedTypes, dualGlobalScopedAmbientEnclosedTypes);
@@ -146,7 +146,7 @@ module TypeScript {
             this.mod.ambientMembers = dualGlobalScopedAmbientMembers;
             this.mod.containedScope = this.globalScope;
 
-            this.gloMod = new TypeSymbol(globalId, -1, 0, unknownLocationInfo.fileName, this.mod, this.compilationSettings.optimizeModuleCodeGen);
+            this.gloMod = new TypeSymbol(globalId, -1, 0, "" /*unknownLocationInfo.fileName*/, this.mod, this.compilationSettings.optimizeModuleCodeGen);
             this.mod.members.addPublicMember(this.gloMod.name, this.gloMod);
 
             this.defineGlobalValue("undefined", this.undefinedType);
@@ -155,7 +155,7 @@ module TypeScript {
         public enterPrimitive(flags: number, name: string) {
             var primitive = new Type();
             primitive.primitiveTypeClass = flags;
-            var symbol = new TypeSymbol(name, -1, name.length, unknownLocationInfo.fileName, primitive, this.compilationSettings.optimizeModuleCodeGen);
+            var symbol = new TypeSymbol(name, -1, name.length, "" /*unknownLocationInfo.fileName*/, primitive, this.compilationSettings.optimizeModuleCodeGen);
             symbol.typeCheckStatus = TypeCheckStatus.Finished;
             primitive.symbol = symbol;
             this.importedGlobals.enter(null, null, symbol, this.errorReporter, true, true, true);
@@ -195,7 +195,7 @@ module TypeScript {
         public defineGlobalValue(name: string, type: Type) {
             var valueLocation = new ValueLocation();
             valueLocation.typeLink = new TypeLink();
-            var sym = new VariableSymbol(name, 0, unknownLocationInfo.fileName, valueLocation);
+            var sym = new VariableSymbol(name, 0, "" /*unknownLocationInfo.fileName*/, valueLocation);
             sym.setType(type);
             sym.typeCheckStatus = TypeCheckStatus.Finished;
             sym.container = this.gloMod;

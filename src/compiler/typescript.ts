@@ -477,7 +477,7 @@ module TypeScript {
                 }
 
                 // Set location info
-                emitter.setUnit(script.locationInfo);
+                emitter.setDocument(document);
                 emitter.emitJavascript(script, false);
             }
 
@@ -490,7 +490,7 @@ module TypeScript {
             if (optionsDiagnostic) {
                 return [optionsDiagnostic];
             }
-
+            
             var startEmitTime = (new Date()).getTime();
 
             var fileNames = this.fileNameToDocument.getAllKeys();
@@ -530,7 +530,7 @@ module TypeScript {
                     sharedEmitter.emitSourceMapsAndClose();
                 }
                 catch (ex2) {
-                    return Emitter.handleEmitterError(sharedEmitter.locationInfo.fileName, ex2);
+                    return Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
                 }
             }
 
