@@ -375,9 +375,10 @@ module TypeScript {
                 if (!declarationEmitter) {
                     var declareFileName = this.emitOptions.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                     declarationEmitter = new DeclarationEmitter(
-                    declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
+                        declareFileName, this.useUTF8ForFile(script), this.semanticInfoChain, this.emitOptions);
                 }
 
+                declarationEmitter.fileName = script.locationInfo.fileName;
                 declarationEmitter.emitDeclarations(script);
             }
 
@@ -418,7 +419,7 @@ module TypeScript {
                         sharedEmitter.close();
                     }
                     catch (ex2) {
-                        return Emitter.handleEmitterError(sharedEmitter.locationInfo.fileName, ex2);
+                        return Emitter.handleEmitterError(sharedEmitter.fileName, ex2);
                     }
                 }
             }

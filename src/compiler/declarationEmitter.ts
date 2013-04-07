@@ -42,7 +42,7 @@ module TypeScript {
     }
     
     export class DeclarationEmitter implements AstWalkerWithDetailCallback.AstWalkerDetailCallback {
-        public locationInfo: LocationInfo = null;
+        public fileName: string = null;
         private declFile: DeclFileWriter = null;
         private indenter = new Indenter();
         private declarationContainerStack: AST[] = [];
@@ -53,9 +53,9 @@ module TypeScript {
         private varListCount: number = 0;
 
         constructor(private emittingFileName: string,
-            isUTF8: bool,
-            private semanticInfoChain: SemanticInfoChain,
-            public emitOptions: EmitOptions) {
+                    isUTF8: bool,
+                    private semanticInfoChain: SemanticInfoChain,
+                    public emitOptions: EmitOptions) {
             // Creating files can cause exceptions, report them.   
             var file = this.createFile(emittingFileName, isUTF8);
             this.declFile = new DeclFileWriter(file);
@@ -239,7 +239,7 @@ module TypeScript {
 
         private emitTypeSignature(type: PullTypeSymbol) {
             var declarationContainerAst = this.getAstDeclarationContainer();
-            var declarationPullSymbol = this.semanticInfoChain.getSymbolForAST(declarationContainerAst, this.locationInfo.fileName);
+            var declarationPullSymbol = this.semanticInfoChain.getSymbolForAST(declarationContainerAst, this.fileName);
             var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
@@ -298,7 +298,7 @@ module TypeScript {
         }
 
         public emitTypeOfBoundDecl(boundDecl: BoundDecl) {
-            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDecl, this.locationInfo.fileName);
+            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDecl, this.fileName);
             var type = pullSymbol.getType();
             if (!type) {
                 // PULLTODO
@@ -377,7 +377,7 @@ module TypeScript {
         }
 
         public isOverloadedCallSignature(funcDecl: FunctionDeclaration) {
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.fileName);
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.fileName);
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getCallSignatures();
             return signatures && signatures.length > 1;
@@ -393,7 +393,7 @@ module TypeScript {
             }
 
             var isInterfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.fileName);
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.fileName);
             var funcTypeSymbol = funcSymbol.getType();
             if (funcDecl.block) {
                 var constructSignatures = funcTypeSymbol.getConstructSignatures();
@@ -420,7 +420,7 @@ module TypeScript {
                 return false;
             }
 
-            var funcSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
+            var funcSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, this.fileName);
             var funcSignature = funcSignatureInfo ? funcSignatureInfo.signature : null;
             this.emitDeclarationComments(funcDecl);
             if (funcDecl.isConstructor) {
@@ -513,7 +513,7 @@ module TypeScript {
 
         public emitBaseExpression(bases: ASTList, index: number, useExtendsList: bool) {
             var containerAst = this.getAstDeclarationContainer();
-            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.locationInfo.fileName);
+            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.fileName);
             var baseType: PullTypeSymbol
             if (useExtendsList) {
                 baseType = containerSymbol.getExtendedTypes()[index];
@@ -546,7 +546,7 @@ module TypeScript {
                 return;
             }
 
-            var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
+            var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.fileName);
             var comments: Comment[] = [];
             if (accessors.getter) {
                 comments = comments.concat(accessors.getter.getDocComments());
@@ -558,7 +558,7 @@ module TypeScript {
         }
 
         public emitPropertyAccessorSignature(funcDecl: FunctionDeclaration) {
-            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
+            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.fileName);
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) && accessorSymbol.getGetter()) {
                 // Setter is being used to emit the type info. 
                 return false;
@@ -635,7 +635,7 @@ module TypeScript {
 
             this.declFile.Write("<");
             var containerAst = this.getAstDeclarationContainer();
-            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.locationInfo.fileName);
+            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.fileName);
             var typars: PullTypeSymbol[];
             if (funcSignature) {
                 typars = funcSignature.getTypeParameters();
@@ -685,7 +685,7 @@ module TypeScript {
 
         public ImportDeclarationCallback(pre: bool, importDecl: ImportDeclaration): bool {
             if (pre) {
-                var importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.getSymbolForAST(importDecl, this.locationInfo.fileName);
+                var importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.getSymbolForAST(importDecl, this.fileName);
                 if (importSymbol.getTypeUsedExternally()) {
                     this.emitDeclarationComments(importDecl);
                     this.emitIndent();
@@ -824,7 +824,6 @@ module TypeScript {
 
         public ScriptCallback(pre: bool, script: Script): bool {
             if (pre) {
-                this.locationInfo = script.locationInfo;
                 if (this.emitOptions.outputMany) {
                     for (var i = 0; i < script.referencedFiles.length; i++) {
                         var referencePath = script.referencedFiles[i].path;
