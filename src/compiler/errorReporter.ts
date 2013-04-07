@@ -18,7 +18,7 @@
 module TypeScript {
     export class ErrorReporter {
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: LineMap) => void = null;
-        public locationInfo: LocationInfo = unknownLocationInfo;
+        // public locationInfo: LocationInfo = unknownLocationInfo;
         public lineCol = { line: 0, character: 0 };
         public hasErrors = false;
         public pushToErrorSink = false;
@@ -31,7 +31,7 @@ module TypeScript {
         public captureError(emsg: string) { this.errorSink[this.errorSink.length] = emsg; }
 
         public emitPrefix() {
-            this.outfile.Write(this.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.character + "): ");
+            this.outfile.Write(/*this.locationInfo.fileName + */"(" + this.lineCol.line + "," + this.lineCol.character + "): ");
         }
 
         public writePrefix(ast: AST): void {
@@ -46,8 +46,8 @@ module TypeScript {
         }
 
         public writePrefixFromSym(symbol: Symbol): void {
-            if (symbol && this.locationInfo.lineMap) {
-                this.locationInfo.lineMap.fillLineAndCharacterFromPosition(symbol.location, this.lineCol);
+            if (symbol /*&& this.locationInfo.lineMap*/) {
+                // this.locationInfo.lineMap.fillLineAndCharacterFromPosition(symbol.location, this.lineCol);
                 if (this.lineCol.line >= 0) {
                     this.lineCol.line++;
                 }
@@ -62,12 +62,12 @@ module TypeScript {
         public setError(ast: AST) {
             if (ast) {
                 // ast.flags |= ASTFlags.Error;
-                if (this.locationInfo.lineMap) {
-                    this.locationInfo.lineMap.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
-                    if (this.lineCol.line >= 0) {
-                        this.lineCol.line++;
-                    }
-                }
+                //if (this.locationInfo.lineMap) {
+                //    this.locationInfo.lineMap.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
+                //    if (this.lineCol.line >= 0) {
+                //        this.lineCol.line++;
+                //    }
+                //}
             }
         }
 
@@ -80,7 +80,7 @@ module TypeScript {
             this.hasErrors = true;
             if (ast && this.errorCallback) {
                 var len = (ast.limChar - ast.minChar);
-                this.errorCallback(ast.minChar, len, message, this.locationInfo.fileName, this.locationInfo.lineMap);
+                this.errorCallback(ast.minChar, len, message, null, null /*this.locationInfo.fileName, this.locationInfo.lineMap*/);
             }
             else {
                 this.writePrefix(ast);
@@ -96,7 +96,7 @@ module TypeScript {
 
             this.hasErrors = true;
             if (this.errorCallback) {
-                this.errorCallback(symbol.location, symbol.length, message, this.locationInfo.fileName, this.locationInfo.lineMap);
+                this.errorCallback(symbol.location, symbol.length, message, null, null /*this.locationInfo.fileName, this.locationInfo.lineMap*/);
             }
             else {
                 this.writePrefixFromSym(symbol);
