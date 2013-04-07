@@ -80,6 +80,11 @@ module Services {
         }
     }
 
+    class ScriptInfo {
+        constructor(public version: number, public isOpen: bool) {
+        }
+    }
+
     export class CompilerState {
         private logger: TypeScript.ILogger;
         private diagnostics: ICompilerDiagnostics;
@@ -88,7 +93,7 @@ module Services {
         // State related to compiler instance
         //
         private compiler: TypeScript.TypeScriptCompiler = null;
-        private fileNameToCompilerScriptVersion: TypeScript.StringHashTable = null;
+        private fileNameToCompilerScriptInfo: TypeScript.StringHashTable = null;
         private hostCache: HostCache = null;
         private symbolTree: SymbolTree = null;
         private _compilationSettings: TypeScript.CompilationSettings = null;
@@ -136,7 +141,8 @@ module Services {
 
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
             // Keep track of the version of script we're adding to the compiler.
-            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
+            this.fileNameToCompilerScriptInfo.addOrUpdate(fileName,
+                new ScriptInfo(this.hostCache.getVersion(fileName), this.hostCache.isOpen(fileName)));
             compiler.addSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName));
         }
 
@@ -161,7 +167,7 @@ module Services {
 
             Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
             this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
-            this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
+            this.fileNameToCompilerScriptInfo = new TypeScript.StringHashTable();
 
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();
@@ -191,20 +197,6 @@ module Services {
             // If full refresh not needed, attempt partial refresh
             if (!this.fullRefresh()) {
                 this.partialRefresh();
-            }
-
-            // Debugging: log version and unit index mapping data
-            if (this.logger.information()) {
-                var fileNames = this.compiler.fileNameToLocationInfo.getAllKeys();
-                for (var i = 0; i < fileNames.length; i++) {
-                    this.logger.log("compiler unit[" + i + "].fileName='" + fileNames[i] + "'");
-                }
-
-                fileNames = this.hostCache.getFileNames();
-                for (var j = 0; j < fileNames.length; j++) {
-                    var fileName = fileNames[j];
-                    this.logger.log("host script[" + j + "].fileName='" + fileName + "', version=" + this.hostCache.getVersion(fileName));
-                }
             }
         }
 
@@ -331,21 +323,22 @@ module Services {
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
-            var compilerScriptVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
+            var scriptInfo: ScriptInfo = this.fileNameToCompilerScriptInfo.lookup(fileName);
 
             //
-            // If file version is the same, assume no update
+            // If file is the same, assume no update
             //
             var version = this.hostCache.getVersion(fileName);
-            if (compilerScriptVersion === version) {
-                //logger.log("Assumed unchanged unit: " + unitIndex + "-"+ fileName);
+            var isOpen = this.hostCache.isOpen(fileName);
+            if (scriptInfo.version === version && scriptInfo.isOpen === isOpen) {
                 return;
             }
 
-            var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, compilerScriptVersion);
+            var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, scriptInfo.version);
 
             // Keep track of the version of script we're adding to the compiler.
-            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
+            this.fileNameToCompilerScriptInfo.addOrUpdate(fileName,
+                new ScriptInfo(this.hostCache.getVersion(fileName), this.hostCache.isOpen(fileName)));
 
             compiler.updateSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName), textChangeRange);
         }

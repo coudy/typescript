@@ -119,8 +119,8 @@ module TypeScript {
         public fileNameToSyntaxTree = new TypeScript.StringHashTable();
 
         constructor(public logger: ILogger = new NullLogger(),
-        public settings: CompilationSettings = new CompilationSettings(),
-        public diagnosticMessages: IDiagnosticMessages = null) {
+                    public settings: CompilationSettings = new CompilationSettings(),
+                    public diagnosticMessages: IDiagnosticMessages = null) {
             this.emitOptions = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
