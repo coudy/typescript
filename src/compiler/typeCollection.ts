@@ -124,7 +124,7 @@ module TypeScript {
                 }
 
                 if (isDynamic) {
-                    symbol = context.tcContext.checker.findSymbolForDynamicModule(name, context.tcContext.script.locationInfo.fileName, findSym);
+                    symbol = context.tcContext.checker.findSymbolForDynamicModule(name, null /*context.tcContext.script.locationInfo.fileName*/, findSym);
                 }
                 else {
                     symbol = findSym(name);

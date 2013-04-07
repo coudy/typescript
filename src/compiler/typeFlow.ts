@@ -1212,7 +1212,7 @@ module TypeScript {
                 var symbol = this.scope.find(idText, false, typespace);
 
                 if (symbol === null && isDynamicModuleName) {
-                    symbol = this.checker.findSymbolForDynamicModule(idText, this.currentScript.locationInfo.fileName, (id) => this.scope.find(id, false, typespace));
+                    symbol = this.checker.findSymbolForDynamicModule(idText, null /*this.currentScript.locationInfo.fileName*/, (id) => this.scope.find(id, false, typespace));
                 }
 
                 if (!symbol) {
