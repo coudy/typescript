@@ -112,7 +112,8 @@ module TypeScript {
         private _diagnostics: IDiagnostic[];
         private _syntaxTree: SyntaxTree;
 
-        constructor(public fileName: string,
+        constructor(private fileName: string,
+                    private compilationSettings: CompilationSettings,
                     private scriptSnapshot: IScriptSnapshot,
                     public script: Script,
                     syntaxTree: SyntaxTree,
@@ -141,13 +142,34 @@ module TypeScript {
                 LanguageVersion.EcmaScript5);
         }
 
-        public static fromOpen(fileName: string, scriptSnapshot: IScriptSnapshot, script: Script, syntaxTree: SyntaxTree): Document {
-            return new Document(fileName, scriptSnapshot, script, syntaxTree, null);
+        public update(scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): Document {
+            var oldScript = this.script;
+            var oldSyntaxTree = this.syntaxTree();
+
+            var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
+
+            var newSyntaxTree = textChangeRange === null
+                ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName))
+                : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
+
+            var newScript = SyntaxTreeToAstVisitor.visit(newSyntaxTree, this.fileName, this.compilationSettings);
+
+            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, newScript, newSyntaxTree, null);
         }
 
-        public static fromClosed(fileName: string, scriptSnapshot: IScriptSnapshot, script: Script, syntaxTree: SyntaxTree): Document {
-            return new Document(fileName, scriptSnapshot, script, null, syntaxTree.diagnostics());
+        public static fromOpen(fileName: string, scriptSnapshot: IScriptSnapshot, referencedFiles: IFileReference[], compilationSettings): Document {
+            // for an open file, make a syntax tree and a script, and store both around.
+
+            var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
+            var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings);
+            script.referencedFiles = referencedFiles;
+
+            return new Document(fileName, compilationSettings, scriptSnapshot, script, syntaxTree, null);
         }
+
+        //public static fromClosed(fileName: string, scriptSnapshot: IScriptSnapshot, script: Script, syntaxTree: SyntaxTree): Document {
+        //    return new Document(fileName, scriptSnapshot, script, null, syntaxTree.diagnostics());
+        //}
     }
 
     export class TypeScriptCompiler {
@@ -178,35 +200,22 @@ module TypeScript {
 
         public addSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, referencedFiles: IFileReference[]= []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), LanguageVersion.EcmaScript5);
-                var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
-                script.referencedFiles = referencedFiles;
+                var document = Document.fromOpen(fileName, scriptSnapshot, referencedFiles, this.emitOptions.compilationSettings);
+                this.fileNameToDocument.addOrUpdate(fileName, document);
 
-                this.fileNameToDocument.addOrUpdate(fileName,
-                    Document.fromOpen(fileName, scriptSnapshot, script, syntaxTree));
-
-                return script;
+                return document.script;
             } );
         }
 
         public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, textChangeRange: TextChangeRange): void {
             this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 var document = this.getDocument(fileName);
-                var oldScript = document.script;
-                var oldSyntaxTree = document.syntaxTree();
+                var updatedDocument = document.update(scriptSnapshot, textChangeRange);
 
-                var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
+                this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
-                var syntaxTree = textChangeRange === null
-                    ? TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName))
-                    : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
-
-                var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, this.emitOptions.compilationSettings);
-
-                this.fileNameToDocument.addOrUpdate(fileName, Document.fromOpen(fileName, scriptSnapshot, newScript, syntaxTree));
-
-                this.pullUpdateScript(oldScript, newScript);
-            } );
+                this.pullUpdateScript(document.script, updatedDocument.script);
+            });
         }
 
         private isDynamicModuleCompilation(): bool {
