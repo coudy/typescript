@@ -1084,7 +1084,7 @@ module TypeScript {
             }
 
             if (!this.memberNameCache) {
-                this.memberNameCache = new BlockIntrinsics();
+               this.populateMemberCache();
             }
 
             if (!this.memberLinks) {
@@ -1097,7 +1097,7 @@ module TypeScript {
                 this.memberCache[this.memberCache.length] = memberSymbol;
 
                 if (!this.memberNameCache) {
-                    this.memberNameCache = new BlockIntrinsics();
+                    this.populateMemberCache();
                 }
                 this.memberNameCache[memberSymbol.getName()] = memberSymbol;
             }
@@ -1718,7 +1718,7 @@ module TypeScript {
             }
 
             if (!this.memberNameCache) {
-                this.memberNameCache = new BlockIntrinsics();
+                this.populateMemberCache();
             }
 
             // Add members

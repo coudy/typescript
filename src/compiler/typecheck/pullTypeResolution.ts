@@ -869,8 +869,9 @@ module TypeScript {
                         if (parentType.isGeneric() && parentType.isResolved() && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                         }
-
-                        classDeclSymbol.addExtendedType(parentType);
+                        if (!classDeclSymbol.hasBase(parentType)) {
+                            classDeclSymbol.addExtendedType(parentType);
+                        }
                     }
                 }
             }
@@ -895,7 +896,9 @@ module TypeScript {
                             implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
                         }
 
-                        classDeclSymbol.addImplementedType(implementedType);
+                        if (!classDeclSymbol.hasBase(implementedType)) {
+                            classDeclSymbol.addImplementedType(implementedType);
+                        }
                     }
                 }
             }
@@ -998,7 +1001,9 @@ module TypeScript {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                         }
 
-                        interfaceDeclSymbol.addExtendedType(parentType);
+                        if (!interfaceDeclSymbol.hasBase(parentType)) {
+                            interfaceDeclSymbol.addExtendedType(parentType);
+                        }
                     }
                 }                
             }
