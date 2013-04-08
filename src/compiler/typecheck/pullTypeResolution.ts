@@ -1953,9 +1953,6 @@ module TypeScript {
                         this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
                     }
                 }
-                //else {
-                //    context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Setters must take arguments", this.getEnclosingDecl(funcDecl), true);
-                //}
 
                 if (signature.hasGenericParameter()) {
                     // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
@@ -1963,11 +1960,6 @@ module TypeScript {
                         setterTypeSymbol.setHasGenericSignature();
                     }
                 }
-
-                // resolve the return type annotation
-                //if (funcDeclAST.returnTypeAnnotation) {
-                //    context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Setters may not contain return type annotations", this.getEnclosingDecl(funcDecl), true);
-                //}
 
                 if (!hadError) {
                     signature.setResolved();
