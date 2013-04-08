@@ -19,6 +19,7 @@ module TypeScript {
     export interface IASTSpan {
         minChar: number;
         limChar: number;
+        trailingTriviaWidth: number;
     }
 
     export class ASTSpan implements IASTSpan {
@@ -52,7 +53,11 @@ module TypeScript {
             includingPosition ? structuralEqualsIncludingPosition : structuralEqualsNotIncludingPosition);
     }
 
-    export class AST extends ASTSpan {
+    export class AST implements IASTSpan {
+        public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
+        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
+        public trailingTriviaWidth = 0;
+
         public type: Type = null;
         private _flags = ASTFlags.None;
 
@@ -68,7 +73,6 @@ module TypeScript {
         private docComments: Comment[] = null;
 
         constructor(public nodeType: NodeType) {
-            super();
         }
 
         public isExpression() { return false; }
