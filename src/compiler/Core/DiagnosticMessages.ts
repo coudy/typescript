@@ -393,7 +393,7 @@ module TypeScript {
 
         Cannot_convert__0__to__1___2: {
             category: DiagnosticCategory.Error,
-            message: "Cannot convert '{0}' to '{1}': {2}",
+            message: "Cannot convert '{0}' to '{1}': {2}.",
             code: 2012
         },
 
@@ -429,137 +429,137 @@ module TypeScript {
 
         Exported_class__0__extends_private_class__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported class '{0}' extends private class '{1}'",
+            message: "Exported class '{0}' extends private class '{1}'.",
             code: 2018
         },
         Exported_class__0__implements_private_interface__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported class '{0}' implements private interface '{1}'",
+            message: "Exported class '{0}' implements private interface '{1}'.",
             code: 2019
         },
         Exported_interface__0__extends_private_interface__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported interface '{0}' extends private interface '{1}'",
+            message: "Exported interface '{0}' extends private interface '{1}'.",
             code: 2020
         },
         Exported_class__0__extends_class_from_private_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported class '{0}' extends class from private module {1}",
+            message: "Exported class '{0}' extends class from private module '{1}'.",
             code: 2021
         },
         Exported_class__0__implements_interface_from_private_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported class '{0}' implements interface from private module {1}",
+            message: "Exported class '{0}' implements interface from private module '{1}'.",
             code: 2022
         },
         Exported_interface__0__extends_interface_from_private_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported interface '{0}' extends interface from private module {1}",
+            message: "Exported interface '{0}' extends interface from private module '{1}'.",
             code: 2023
         },
         Public_static_property__0__of__exported_class_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Public static property '{0}' of exported class has or is using private type '{1}'",
+            message: "Public static property '{0}' of exported class has or is using private type '{1}'.",
             code: 2024
         },
         Public_property__0__of__exported_class_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Public property '{0}' of exported class has or is using private type '{1}'",
+            message: "Public property '{0}' of exported class has or is using private type '{1}'.",
             code: 2025
         },
         Property__0__of__exported_interface_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Property '{0}' of exported interface has or is using private type '{1}'",
+            message: "Property '{0}' of exported interface has or is using private type '{1}'.",
             code: 2026
         },
         Exported_variable__0__has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported variable '{0}' has or is using private type '{1}'",
+            message: "Exported variable '{0}' has or is using private type '{1}'.",
             code: 2027
         },
         Public_static_property__0__of__exported_class_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Public static property '{0}' of exported class is using inaccessible module {1}",
+            message: "Public static property '{0}' of exported class is using inaccessible module '{1}'.",
             code: 2028
         },
         Public_property__0__of__exported_class_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Public property '{0}' of exported class is using inaccessible module {1}",
+            message: "Public property '{0}' of exported class is using inaccessible module '{1}'.",
             code: 2029
         },
         Property__0__of__exported_interface_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Property '{0}' of exported interface is using inaccessible module {1}",
+            message: "Property '{0}' of exported interface is using inaccessible module '{1}'.",
             code: 2030
         },
         Exported_variable__0__is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Exported variable '{0}' is using inaccessible module {1}",
+            message: "Exported variable '{0}' is using inaccessible module '{1}'.",
             code: 2031
         },
         Parameter__0__of_constructor_from_exported_class_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of constructor from exported class has or is using private type '{1}'",
+            message: "Parameter '{0}' of constructor from exported class has or is using private type '{1}'.",
             code: 2032
         },
         Parameter__0__of_public_static_property_setter_from_exported_class_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public static property setter from exported class has or is using private type '{1}'",
+            message: "Parameter '{0}' of public static property setter from exported class has or is using private type '{1}'.",
             code: 2033
         },
         Parameter__0__of_public_property_setter_from_exported_class_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public property setter from exported class has or is using private type '{1}'",
+            message: "Parameter '{0}' of public property setter from exported class has or is using private type '{1}'.",
             code: 2034
         },
         Parameter__0__of_constructor_signature_from_exported_interface_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of constructor signature from exported interface has or is using private type '{1}'",
+            message: "Parameter '{0}' of constructor signature from exported interface has or is using private type '{1}'.",
             code: 2035
         },
         Parameter__0__of_call_signature_from_exported_interface_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of call signature from exported interface has or is using private type '{1}'",
+            message: "Parameter '{0}' of call signature from exported interface has or is using private type '{1}'.",
             code: 2036
         },
         Parameter__0__of_public_static_method_from_exported_class_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public static method from exported class has or is using private type '{1}'",
+            message: "Parameter '{0}' of public static method from exported class has or is using private type '{1}'.",
             code: 2037
         },
         Parameter__0__of_public_method_from_exported_class_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public method from exported class has or is using private type '{1}'",
+            message: "Parameter '{0}' of public method from exported class has or is using private type '{1}'.",
             code: 2038
         },
         Parameter__0__of_method_from_exported_interface_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of method from exported interface has or is using private type '{1}'",
+            message: "Parameter '{0}' of method from exported interface has or is using private type '{1}'.",
             code: 2039
         },
         Parameter__0__of_exported_function_has_or_is_using_private_type__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of exported function has or is using private type '{1}'",
+            message: "Parameter '{0}' of exported function has or is using private type '{1}'.",
             code: 2040
         },
         Parameter__0__of_constructor_from_exported_class_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of constructor from exported class is using inaccessible module {1}",
+            message: "Parameter '{0}' of constructor from exported class is using inaccessible module '{1}'.",
             code: 2041
         },
         Parameter__0__of_public_static_property_setter_from_exported_class_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public static property setter from exported class is using inaccessible module {1}",
+            message: "Parameter '{0}' of public static property setter from exported class is using inaccessible module '{1}'.",
             code: 2042
         },
         Parameter__0__of_public_property_setter_from_exported_class_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public property setter from exported class is using inaccessible module {1}",
+            message: "Parameter '{0}' of public property setter from exported class is using inaccessible module '{1}'.",
             code: 2043
         },
         Parameter__0__of_constructor_signature_from_exported_interface_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of constructor signature from exported interface is using inaccessible module {1}",
+            message: "Parameter '{0}' of constructor signature from exported interface is using inaccessible module '{1}'.",
             code: 2044
         },
         Parameter__0__of_call_signature_from_exported_interface_is_using_inaccessible_module__1_: {
@@ -569,112 +569,112 @@ module TypeScript {
         },
         Parameter__0__of_public_static_method_from_exported_class_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public static method from exported class is using inaccessible module {1}",
+            message: "Parameter '{0}' of public static method from exported class is using inaccessible module '{1}'.",
             code: 2046
         },
         Parameter__0__of_public_method_from_exported_class_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of public method from exported class is using inaccessible module {1}",
+            message: "Parameter '{0}' of public method from exported class is using inaccessible module '{1}'.",
             code: 2047
         },
         Parameter__0__of_method_from_exported_interface_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of method from exported interface is using inaccessible module {1}",
+            message: "Parameter '{0}' of method from exported interface is using inaccessible module '{1}'.",
             code: 2048
         },
         Parameter__0__of_exported_function_is_using_inaccessible_module__1_: {
             category: DiagnosticCategory.Error,
-            message: "Parameter '{0}' of exported function is using inaccessible module {1}",
+            message: "Parameter '{0}' of exported function is using inaccessible module '{1}'.",
             code: 2049
         },
         Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public static property getter from exported class has or is using private type '{0}'",
+            message: "Return type of public static property getter from exported class has or is using private type '{0}'.",
             code: 2050
         },
         Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public property getter from exported class has or is using private type '{0}'",
+            message: "Return type of public property getter from exported class has or is using private type '{0}'.",
             code: 2051
         },
         Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of constructor signature from exported interface has or is using private type '{0}'",
+            message: "Return type of constructor signature from exported interface has or is using private type '{0}'.",
             code: 2052
         },
         Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of call signature from exported interface has or is using private type '{0}'",
+            message: "Return type of call signature from exported interface has or is using private type '{0}'.",
             code: 2053
         },
         Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of index signature from exported interface has or is using private type '{0}'",
+            message: "Return type of index signature from exported interface has or is using private type '{0}'.",
             code: 2054
         },
         Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public static method from exported class has or is using private type '{0}'",
+            message: "Return type of public static method from exported class has or is using private type '{0}'.",
             code: 2055
         },
         Return_type_of_public_method_from_exported_class_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public method from exported class has or is using private type '{0}'",
+            message: "Return type of public method from exported class has or is using private type '{0}'.",
             code: 2056
         },
         Return_type_of_method_from_exported_interface_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of method from exported interface has or is using private type '{0}'",
+            message: "Return type of method from exported interface has or is using private type '{0}'.",
             code: 2057
         },
         Return_type_of_exported_function_has_or_is_using_private_type__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of exported function has or is using private type '{0}'",
+            message: "Return type of exported function has or is using private type '{0}'.",
             code: 2058
         },
         Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public static property getter from exported class is using inaccessible module {0}",
+            message: "Return type of public static property getter from exported class is using inaccessible module '{0}'.",
             code: 2059
         },
         Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public property getter from exported class is using inaccessible module {0}",
+            message: "Return type of public property getter from exported class is using inaccessible module '{0}'.",
             code: 2060
         },
         Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of constructor signature from exported interface is using inaccessible module {0}",
+            message: "Return type of constructor signature from exported interface is using inaccessible module '{0}'.",
             code: 2061
         },
         Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of call signature from exported interface is using inaccessible module {0}",
+            message: "Return type of call signature from exported interface is using inaccessible module '{0}'.",
             code: 2062
         },
         Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of index signature from exported interface is using inaccessible module {0}",
+            message: "Return type of index signature from exported interface is using inaccessible module '{0}'.",
             code: 2063
         },
         Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public static method from exported class is using inaccessible module {0}",
+            message: "Return type of public static method from exported class is using inaccessible module '{0}'.",
             code: 2064
         },
         Return_type_of_public_method_from_exported_class_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of public method from exported class is using inaccessible module {0}",
+            message: "Return type of public method from exported class is using inaccessible module '{0}'.",
             code: 2065
         },
         Return_type_of_method_from_exported_interface_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of method from exported interface is using inaccessible module {0}",
+            message: "Return type of method from exported interface is using inaccessible module '{0}'.",
             code: 2066
         },
         Return_type_of_exported_function_is_using_inaccessible_module__0_: {
             category: DiagnosticCategory.Error,
-            message: "Return type of exported function is using inaccessible module {0}",
+            message: "Return type of exported function is using inaccessible module '{0}'.",
             code: 2067
         },
         _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: {
