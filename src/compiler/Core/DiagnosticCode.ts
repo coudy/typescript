@@ -138,6 +138,19 @@ module TypeScript {
         A_parameter_list_must_follow_a_generic_type_argument_list______expected,
         Multiple_constructor_implementations_are_not_allowed,
         Unable_to_resolve_external_module__0_,
-        Module_cannot_be_aliased_to_a_non_module_type
+        Module_cannot_be_aliased_to_a_non_module_type,
+        A_class_may_only_extend_another_class,
+        A_class_may_only_implement_another_class_or_interface,
+        An_interface_may_only_extend_another_class_or_interface,
+        An_interface_may_not_implement_another_type,
+        Unable_to_resolve_type,
+        Unable_to_resolve_type_of__0_,
+        Unable_to_resolve_type_parameter_constraint,
+        Type_parameter_constraint_may_not_be_a_primitive_type,
+        Supplied_parameters_do_not_match_any_signature_of_call_target,
+        Supplied_parameters_do_not_match_any_signature_of_call_target___0,
+        Invalid__new__expression,
+        Call_signatures_used_in_a__new__expression_must_have_a__void__return_type,
+        Could_not_select_overload_for__new__expression,
     }
 }

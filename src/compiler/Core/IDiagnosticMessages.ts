@@ -140,5 +140,18 @@ module TypeScript {
         Multiple_constructor_implementations_are_not_allowed: DiagnosticInfo;
         Unable_to_resolve_external_module__0_: DiagnosticInfo;
         Module_cannot_be_aliased_to_a_non_module_type: DiagnosticInfo;
+        A_class_may_only_extend_another_class: DiagnosticInfo;
+        A_class_may_only_implement_another_class_or_interface: DiagnosticInfo;
+        An_interface_may_only_extend_another_class_or_interface: DiagnosticInfo;
+        An_interface_may_not_implement_another_type: DiagnosticInfo;
+        Unable_to_resolve_type: DiagnosticInfo;
+        Unable_to_resolve_type_of__0_: DiagnosticInfo;
+        Unable_to_resolve_type_parameter_constraint: DiagnosticInfo;
+        Type_parameter_constraint_may_not_be_a_primitive_type: DiagnosticInfo;
+        Supplied_parameters_do_not_match_any_signature_of_call_target: DiagnosticInfo;
+        Supplied_parameters_do_not_match_any_signature_of_call_target___0: DiagnosticInfo;
+        Invalid__new__expression: DiagnosticInfo;
+        Call_signatures_used_in_a__new__expression_must_have_a__void__return_type: DiagnosticInfo;
+        Could_not_select_overload_for__new__expression: DiagnosticInfo;
     }
 }

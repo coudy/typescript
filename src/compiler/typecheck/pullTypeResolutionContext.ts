@@ -251,7 +251,6 @@ module TypeScript {
         }
 
         public postError(offset: number, length: number, fileName: string, message: string, enclosingDecl: PullDecl, addToDecl = false) {
-
             if (this.emitting) {
                 return;
             }

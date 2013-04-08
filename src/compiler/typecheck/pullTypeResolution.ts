@@ -860,7 +860,8 @@ module TypeScript {
                             context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, (<PullErrorTypeSymbol>parentType).getDiagnostic().message(), enclosingDecl, true);
                         }
                         else {
-                            context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath, "A class may only extend other class types", enclosingDecl, true);
+                            context.postError(classDeclAST.extendsList.members[i].minChar, classDeclAST.extendsList.members[i].getLength(), this.unitPath,
+                                getDiagnosticMessage(DiagnosticCode.A_class_may_only_extend_another_class, null), enclosingDecl, true);
                         }
                     }
                     else {
@@ -885,7 +886,8 @@ module TypeScript {
                             context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, (<PullErrorTypeSymbol>implementedType).getDiagnostic().message(), enclosingDecl, true);
                         }
                         else {
-                            context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath, "A class may only implement other class or interface types", enclosingDecl, true);
+                            context.postError(classDeclAST.implementsList.members[i].minChar, classDeclAST.implementsList.members[i].getLength(), this.unitPath,
+                                getDiagnosticMessage(DiagnosticCode.A_class_may_only_implement_another_class_or_interface, null), enclosingDecl, true);
                         }
                     }
                     else {
@@ -987,7 +989,8 @@ module TypeScript {
                             context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, (<PullErrorTypeSymbol>parentType).getDiagnostic().message(), enclosingDecl, true);
                         }
                         else {
-                            context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath, "An interface may only extend other class or interface types", enclosingDecl, true);
+                            context.postError(interfaceDeclAST.extendsList.members[i].minChar, interfaceDeclAST.extendsList.members[i].getLength(), this.unitPath,
+                                getDiagnosticMessage(DiagnosticCode.An_interface_may_only_extend_another_class_or_interface, null), enclosingDecl, true);
                         }
                     }
                     else {
@@ -1001,7 +1004,8 @@ module TypeScript {
             }
 
             if (interfaceDeclAST.implementsList) {
-                context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath, "An interface may not implement other types", enclosingDecl, true);
+                context.postError(interfaceDeclAST.implementsList.minChar, interfaceDeclAST.implementsList.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.An_interface_may_not_implement_another_type, null), enclosingDecl, true);
             }
 
             interfaceDeclSymbol.setResolved();
@@ -1361,7 +1365,8 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol) {
-                diagnostic = context.postError(typeRef.term.minChar, typeRef.term.getLength(), this.unitPath, "Could not resolve type reference", enclosingDecl);
+                diagnostic = context.postError(typeRef.term.minChar, typeRef.term.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_type, null), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -1448,7 +1453,8 @@ module TypeScript {
                 var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context);
 
                 if (!typeExprSymbol) {
-                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type expression for variable '" + varDecl.id.actualText + "'", decl);
+                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_type_of__0_, [varDecl.id.actualText]), decl);
                     declSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
 
                     if (declParameterSymbol) {
@@ -1500,7 +1506,8 @@ module TypeScript {
                 var initExprSymbol = this.resolveStatementOrExpression(varDecl.init, false, wrapperDecl, context);
 
                 if (!initExprSymbol) {
-                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'", decl);
+                    diagnostic = context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_type_of__0_, [varDecl.id.actualText]), decl);
 
                     context.setTypeInContext(declSymbol, this.getNewErrorTypeSymbol(diagnostic));
 
@@ -1567,10 +1574,12 @@ module TypeScript {
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
 
                 if (!constraintTypeSymbol) {
-                    context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath, "Could not resolve constraint for type parameter '" + typeParameterDecl.getName() + "'", enclosingDecl, true);
+                    context.postError(typeParameterAST.minChar, typeParameterAST.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_type_parameter_constraint, null), enclosingDecl, true);
                 }
                 else if (constraintTypeSymbol.isPrimitive()) {
-                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, "Type parameter constraints may not be primitive types", enclosingDecl, true);
+                    context.postError(typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), this.unitPath, 
+                        getDiagnosticMessage(DiagnosticCode.Type_parameter_constraint_may_not_be_a_primitive_type, null), enclosingDecl, true);
                 }
                 else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
@@ -3737,7 +3746,8 @@ module TypeScript {
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
                     //signature = constructSignatures[0];
-                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for 'new' expression", enclosingDecl);
+                    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Could_not_select_overload_for__new__expression, null), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
 
@@ -3755,8 +3765,9 @@ module TypeScript {
 
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
-                        diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Call signatures used in a 'new' expression must have a return type of 'void'", enclosingDecl);
-                        return this.getNewErrorTypeSymbol(diagnostic);                        
+                        diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath,
+                            getDiagnosticMessage(DiagnosticCode.Call_signatures_used_in_a__new__expression_must_have_a__void__return_type, null), enclosingDecl);
+                        return this.getNewErrorTypeSymbol(diagnostic);
                     }
                 }
 
@@ -3823,7 +3834,8 @@ module TypeScript {
                 return returnType;
             }
 
-            diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid 'new' expression", enclosingDecl);
+            diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, 
+                getDiagnosticMessage(DiagnosticCode.Invalid__new__expression, null), enclosingDecl);
 
             return this.getNewErrorTypeSymbol(diagnostic);
 
@@ -4780,13 +4792,14 @@ module TypeScript {
                     candidate = candidateInfo.sig;
                 }
                 else {
-                    var emsg = "Supplied parameters do not match any signature of call target";
                     if (comparisonInfo.message) {
                         //this.checker.errorReporter.simpleError(target, emsg + ":\n\t" + comparisonInfo.message);
-                        context.postError(application.minChar, application.getLength(), this.unitPath, emsg + ":\n\t" + comparisonInfo.message, enclosingDecl, true);
+                        context.postError(application.minChar, application.getLength(), this.unitPath,
+                            getDiagnosticMessage(DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target___0, [comparisonInfo.message]), enclosingDecl, true);
                     }
                     else {
-                        context.postError(application.minChar, application.getLength(), this.unitPath, emsg, enclosingDecl, true);
+                        context.postError(application.minChar, application.getLength(), this.unitPath,
+                            getDiagnosticMessage(DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null), enclosingDecl, true);
                         //this.checker.errorReporter.simpleError(target, emsg);
                     }
                 }

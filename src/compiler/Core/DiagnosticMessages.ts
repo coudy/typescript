@@ -701,6 +701,71 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Module cannot be aliased to a non-module type.",
             code: 2072
+        },
+        A_class_may_only_extend_another_class: {
+            category: DiagnosticCategory.Error,
+            message: "A class may only extend another class.",
+            code: 2073
+        },
+        A_class_may_only_implement_another_class_or_interface: {
+            category: DiagnosticCategory.Error,
+            message: "A class may only implement another class or interface.",
+            code: 2074
+        },
+        An_interface_may_only_extend_another_class_or_interface: {
+            category: DiagnosticCategory.Error,
+            message: "An interface may only extend another class or interface.",
+            code: 2075
+        },
+        An_interface_may_not_implement_another_type: {
+            category: DiagnosticCategory.Error,
+            message: "An interface may not implement another type.",
+            code: 2076
+        },
+        Unable_to_resolve_type: {
+            category: DiagnosticCategory.Error,
+            message: "Unable to resolve type.",
+            code: 2077
+        },
+        Unable_to_resolve_type_of__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Unable to resolve type of '{0}'.",
+            code: 2078
+        },
+        Unable_to_resolve_type_parameter_constraint: {
+            category: DiagnosticCategory.Error,
+            message: "Unable to resolve type parameter constraint.",
+            code: 2079
+        },
+        Type_parameter_constraint_may_not_be_a_primitive_type: {
+            category: DiagnosticCategory.Error,
+            message: "Type parameter constraint may not be a primitive type.",
+            code: 2080
+        },
+        Supplied_parameters_do_not_match_any_signature_of_call_target: {
+            category: DiagnosticCategory.Error,
+            message: "Supplied parameters do not match any signature of call target.",
+            code: 2081
+        },
+        Supplied_parameters_do_not_match_any_signature_of_call_target___0: {
+            category: DiagnosticCategory.Error,
+            message: "Supplied parameters do not match any signature of call target:\r\n\t{0}",
+            code: 2082
+        },
+        Invalid__new__expression: {
+            category: DiagnosticCategory.Error,
+            message: "Invalid 'new' expression.",
+            code: 2083
+        },
+        Call_signatures_used_in_a__new__expression_must_have_a__void__return_type: {
+            category: DiagnosticCategory.Error,
+            message: "Call sigantures used in a 'new' expression must have a 'void' return type.",
+            code: 2084
+        },
+        Could_not_select_overload_for__new__expression: {
+            category: DiagnosticCategory.Error,
+            message: "Could not select overload for 'new' expression.",
+            code: 2085
         }
     };
 
