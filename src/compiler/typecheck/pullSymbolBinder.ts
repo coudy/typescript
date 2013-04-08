@@ -186,8 +186,8 @@ module TypeScript {
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != moduleKind) {
                 // duplicate symbol error
-                moduleContainerDecl.addDiagnostic(new PullDiagnostic(
-                    moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [modName])));
+                moduleContainerDecl.addDiagnostic(new PullDiagnostic(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(),
+                    getDiagnosticMessage(DiagnosticCode.Duplicate_identifier__0_, [modName])));
 
                 moduleContainerTypeSymbol = null;
             }
@@ -2002,10 +2002,12 @@ module TypeScript {
             if (constructorSymbol &&
                 (constructorSymbol.getKind() != PullElementKind.ConstructorMethod ||
                 (this.symbolIsRedeclaration(constructorSymbol) && !isSignature && !constructorSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+
                 constructorDeclaration.addDiagnostic(new PullDiagnostic(constructorAST.minChar, constructorAST.getLength(), this.semanticInfo.getPath(),
-                    "Duplicate constructor definition"));
+                    getDiagnosticMessage(DiagnosticCode.Multiple_constructor_implementations_are_not_allowed, null)));
+
                 constructorSymbol = null;
-            }            
+            }
 
             if (constructorSymbol) {
 

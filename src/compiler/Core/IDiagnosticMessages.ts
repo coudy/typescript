@@ -137,5 +137,8 @@ module TypeScript {
 
         _new_T____cannot_be_used_to_create_an_array__Use__new_Array_T_____instead: DiagnosticInfo;
         A_parameter_list_must_follow_a_generic_type_argument_list______expected: DiagnosticInfo;
+        Multiple_constructor_implementations_are_not_allowed: DiagnosticInfo;
+        Unable_to_resolve_external_module__0_: DiagnosticInfo;
+        Module_cannot_be_aliased_to_a_non_module_type: DiagnosticInfo;
     }
 }

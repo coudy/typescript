@@ -1074,16 +1074,17 @@ module TypeScript {
                         this.currentUnit.addDynamicModuleImport(importDeclSymbol);
                     }
                     else {
-                        importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), "Could not resolve external module " + modPath));
+                        importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), 
+                            getDiagnosticMessage(DiagnosticCode.Unable_to_resolve_external_module__0_, [modPath])));
                         aliasedType = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
             }
 
             if (aliasedType) {
-
                 if (!aliasedType.isContainer()) {
-                    importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(), "A module cannot be aliased to a non-module type"));
+                    importDecl.addDiagnostic(new PullDiagnostic(importStatementAST.minChar, importStatementAST.getLength(), this.currentUnit.getPath(),
+                        getDiagnosticMessage(DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type, null))); 
                 }
 
                 importDeclSymbol.setAliasedType(aliasedType);

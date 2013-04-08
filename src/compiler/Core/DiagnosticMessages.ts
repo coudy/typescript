@@ -687,6 +687,21 @@ module TypeScript {
             message: "A parameter list must follow a generic type argument list. '(' expected.",
             code: 2069
         },
+        Multiple_constructor_implementations_are_not_allowed: {
+            category: DiagnosticCategory.Error,
+            message: "Multiple constructor implementations are not allowed.",
+            code: 2070
+        },
+        Unable_to_resolve_external_module__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Unable to resolve external module '{0}'.",
+            code: 2071
+        },
+        Module_cannot_be_aliased_to_a_non_module_type: {
+            category: DiagnosticCategory.Error,
+            message: "Module cannot be aliased to a non-module type.",
+            code: 2072
+        }
     };
 
     var seenCodes = [];
