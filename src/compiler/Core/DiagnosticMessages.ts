@@ -766,6 +766,31 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Could not select overload for 'new' expression.",
             code: 2085
+        },
+        Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_: {
+            category: DiagnosticCategory.Error,
+            message: "Type '{0}' does not satisfy the constraint '{1}' for type parameter '{2}'.",
+            code: 2086
+        },
+        Could_not_select_overload_for__call__expression: {
+            category: DiagnosticCategory.Error,
+            message: "Could not select overload for 'call' expression.",
+            code: 2087
+        },
+        Unable_to_invoke_type_with_no_call_signatures: {
+            category: DiagnosticCategory.Error,
+            message: "Unable to invoke type with no call signatures.",
+            code: 2088
+        },
+        Calls_to__super__are_only_valid_inside_a_class: {
+            category: DiagnosticCategory.Error,
+            message: "Calls to 'super' are only valid inside a class.",
+            code: 2089
+        },
+        Generic_type__0__requires_1_type_argument_s_: {
+            category: DiagnosticCategory.Error,
+            message: "Generic type '{0}' requires {1} type argument(s).",
+            code: 2090
         }
     };
 

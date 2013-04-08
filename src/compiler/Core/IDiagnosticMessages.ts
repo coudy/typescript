@@ -153,5 +153,10 @@ module TypeScript {
         Invalid__new__expression: DiagnosticInfo;
         Call_signatures_used_in_a__new__expression_must_have_a__void__return_type: DiagnosticInfo;
         Could_not_select_overload_for__new__expression: DiagnosticInfo;
+        Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_: DiagnosticInfo;
+        Could_not_select_overload_for__call__expression: DiagnosticInfo;
+        Unable_to_invoke_type_with_no_call_signatures: DiagnosticInfo;
+        Calls_to__super__are_only_valid_inside_a_class: DiagnosticInfo;
+        Generic_type__0__requires_1_type_argument_s_: DiagnosticInfo;
     }
 }

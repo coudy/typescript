@@ -152,5 +152,10 @@ module TypeScript {
         Invalid__new__expression,
         Call_signatures_used_in_a__new__expression_must_have_a__void__return_type,
         Could_not_select_overload_for__new__expression,
+        Type__0__does_not_satisfy_the_constraint__1__for_type_parameter__2_,
+        Could_not_select_overload_for__call__expression,
+        Unable_to_invoke_type_with_no_call_signatures,
+        Calls_to__super__are_only_valid_inside_a_class,
+        Generic_type__0__requires_1_type_argument_s_,
     }
 }
