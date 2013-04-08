@@ -14,7 +14,7 @@ describe('Property Access', function() {
     it("Type of expression is object", function() {
         var code = "var foo: { a: number; }; foo.a = 4; foo.b = 5;";
         Harness.Compiler.compileString(code, 'propertyAccess', function(result) {
-            assert.compilerWarning(result, 1, 40, "Could not find dotted symbol name 'b'");
+            assert.compilerWarning(result, 1, 40, "error TS2094: Could not find dotted name 'b'.");
             assert.equal(result.errors.length, 1);
         });
     });

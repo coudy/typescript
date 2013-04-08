@@ -53,6 +53,13 @@ module TypeScript {
         _0__modifier_cannot_appear_on_a_module_element,
         _declare__modifier_cannot_appear_on_an_interface_declaration,
         _declare__modifier_required_for_top_level_element,
+        _set__accessor_must_have_only_one_parameter,
+        _set__accessor_parameter_cannot_have_accessibility_modifier,
+        _set__accessor_parameter_cannot_be_optional,
+        _set__accessor_parameter_cannot_have_initializer,
+        _set__accessor_cannot_have_rest_parameter,
+        _get__accessor_cannot_have_parameters,
+
 
 
 
@@ -157,5 +164,11 @@ module TypeScript {
         Unable_to_invoke_type_with_no_call_signatures,
         Calls_to__super__are_only_valid_inside_a_class,
         Generic_type__0__requires_1_type_argument_s_,
+        Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_,
+        Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements,
+        Could_not_find_enclosing_symbol_for_dotted_name__0_,
+        Could_not_find_dotted_name__0_,
+        Could_not_find_symbol__0_,
+        _get__and__set__accessor_must_have_the_same_type,
     }
 }

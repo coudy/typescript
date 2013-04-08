@@ -55,6 +55,11 @@ module TypeScript {
         _declare__modifier_required_for_top_level_element: DiagnosticInfo;
         Rest_parameter_cannot_be_optional: DiagnosticInfo;
         Rest_parameter_cannot_have_initializer: DiagnosticInfo;
+        _set__accessor_parameter_cannot_have_accessibility_modifier: DiagnosticInfo;
+        _set__accessor_parameter_cannot_be_optional: DiagnosticInfo;
+        _set__accessor_parameter_cannot_have_initializer: DiagnosticInfo;
+        _set__accessor_cannot_have_rest_parameter: DiagnosticInfo;
+        _get__accessor_cannot_have_parameters: DiagnosticInfo;
 
 
 
@@ -80,6 +85,8 @@ module TypeScript {
         Getter__0__already_declared: DiagnosticInfo;
         Setter__0__already_declared: DiagnosticInfo;
         Accessor_may_not_take_type_parameters: DiagnosticInfo;
+        _set__accessor_must_have_only_one_parameter: DiagnosticInfo;
+
 
 
         //Privacy error related diagnostics
@@ -158,5 +165,11 @@ module TypeScript {
         Unable_to_invoke_type_with_no_call_signatures: DiagnosticInfo;
         Calls_to__super__are_only_valid_inside_a_class: DiagnosticInfo;
         Generic_type__0__requires_1_type_argument_s_: DiagnosticInfo;
+        Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_: DiagnosticInfo;
+        Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements: DiagnosticInfo;
+        Could_not_find_enclosing_symbol_for_dotted_name__0_: DiagnosticInfo;
+        Could_not_find_dotted_name__0_: DiagnosticInfo;
+        Could_not_find_symbol__0_: DiagnosticInfo;
+        _get__and__set__accessor_must_have_the_same_type: DiagnosticInfo;
     }
 }

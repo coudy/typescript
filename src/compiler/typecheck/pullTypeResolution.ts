@@ -1901,7 +1901,8 @@ module TypeScript {
                         var setterParameterType = setterParameter.getType();
 
                         if (!this.typesAreIdentical(accessorType, setterParameterType)) {
-                            diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", this.getEnclosingDecl(funcDecl));
+                            diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath,
+                                getDiagnosticMessage(DiagnosticCode._get__and__set__accessor_must_have_the_same_type, null), this.getEnclosingDecl(funcDecl));
                             accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
                         }
                     }
@@ -1952,9 +1953,9 @@ module TypeScript {
                         this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
                     }
                 }
-                else {
-                    context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Setters must take arguments", this.getEnclosingDecl(funcDecl), true);
-                }
+                //else {
+                //    context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Setters must take arguments", this.getEnclosingDecl(funcDecl), true);
+                //}
 
                 if (signature.hasGenericParameter()) {
                     // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
@@ -1964,9 +1965,9 @@ module TypeScript {
                 }
 
                 // resolve the return type annotation
-                if (funcDeclAST.returnTypeAnnotation) {
-                    context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Setters may not contain return type annotations", this.getEnclosingDecl(funcDecl), true);
-                }
+                //if (funcDeclAST.returnTypeAnnotation) {
+                //    context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Setters may not contain return type annotations", this.getEnclosingDecl(funcDecl), true);
+                //}
 
                 if (!hadError) {
                     signature.setResolved();
@@ -1997,7 +1998,8 @@ module TypeScript {
                                 }
                             }
                             else {
-                                var diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", this.getEnclosingDecl(funcDecl));
+                                var diagnostic = context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath,
+                                    getDiagnosticMessage(DiagnosticCode._get__and__set__accessor_must_have_the_same_type, null), this.getEnclosingDecl(funcDecl));
                                 accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
                             }
                         }
@@ -2254,7 +2256,8 @@ module TypeScript {
             }            
 
             if (!nameSymbol) {
-                var diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find symbol '" + id + "'", enclosingDecl);
+                var diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_symbol__0_, [id]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -2298,7 +2301,8 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find enclosing symbol for dotted name '" + rhsName + "'", enclosingDecl);
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [rhsName]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -2401,7 +2405,8 @@ module TypeScript {
                 }                
 
                 if (!nameSymbol) {
-                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted symbol name '" + rhsName + "'", enclosingDecl);
+                    diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
+                        getDiagnosticMessage(DiagnosticCode.Could_not_find_dotted_name__0_, [rhsName]), enclosingDecl);
                     return this.getNewErrorTypeSymbol(diagnostic);
                 }
             }
@@ -2443,7 +2448,8 @@ module TypeScript {
             typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
             if (!typeNameSymbol) {
-                diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find type '" + id + "'", enclosingDecl);
+                diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_symbol__0_, [id]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -2574,7 +2580,8 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find enclosing type for dotted type name '" + rhsName + "'", enclosingDecl);
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, 
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name__0_, [rhsName]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -2605,7 +2612,8 @@ module TypeScript {
             }
 
             if (!childTypeSymbol) {
-                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted type name '" + rhsName + "'", enclosingDecl);
+                diagnostic = context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath,
+                    getDiagnosticMessage(DiagnosticCode.Could_not_find_dotted_name__0_, [rhsName]), enclosingDecl);
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
@@ -3136,8 +3144,10 @@ module TypeScript {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
                 }
             }
+
             if (!elementType) {
-                context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Incompatible types in array literal expression", enclosingDecl, true);
+                context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, 
+                    getDiagnosticMessage(DiagnosticCode.Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements, null), enclosingDecl, true);
 
                 elementType = this.semanticInfoChain.anyTypeSymbol;
             }
@@ -3363,7 +3373,8 @@ module TypeScript {
                 return bct;
             }
 
-            var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(), "Conditional expression types do not agree", enclosingDecl);
+            var diagnostic = context.postError(trinex.minChar, trinex.getLength(), this.getUnitPath(),
+                getDiagnosticMessage(DiagnosticCode.Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_, [leftType.toString(false), rightType.toString(false)]), enclosingDecl);
 
             return this.getNewErrorTypeSymbol(diagnostic);
         }

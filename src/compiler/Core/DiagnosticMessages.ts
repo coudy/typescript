@@ -309,6 +309,42 @@ module TypeScript {
             code: 1048
         },
 
+        _set__accessor_must_have_only_one_parameter: {
+            category: DiagnosticCategory.Error,
+            message: "'set' accessor must have only one parameter.",
+            code: 1049
+        },
+
+        _set__accessor_parameter_cannot_have_accessibility_modifier: {
+            category: DiagnosticCategory.Error,
+            message: "'set' accessor parameter cannot have accessibility modifier.",
+            code: 1050
+        },
+
+        _set__accessor_parameter_cannot_be_optional: {
+            category: DiagnosticCategory.Error,
+            message: "'set' accessor parameter cannot be optional.",
+            code: 1051
+        },
+
+        _set__accessor_parameter_cannot_have_initializer: {
+            category: DiagnosticCategory.Error,
+            message: "'set' accessor parameter cannot have initializer.",
+            code: 1052
+        },
+
+        _set__accessor_cannot_have_rest_parameter: {
+            category: DiagnosticCategory.Error,
+            message: "'set' accessor cannot have rest parameter.",
+            code: 1053
+        },
+
+        _get__accessor_cannot_have_parameters: {
+            category: DiagnosticCategory.Error,
+            message: "'get' accessor cannot have parameters.",
+            code: 1054
+        },
+
 
 
 
@@ -791,7 +827,37 @@ module TypeScript {
             category: DiagnosticCategory.Error,
             message: "Generic type '{0}' requires {1} type argument(s).",
             code: 2090
-        }
+        },
+        Type_of_conditional_expression_cannot_be_determined__Best_common_type_could_not_be_found_between__0__and__1_: {
+            category: DiagnosticCategory.Error,
+            message: "Type of conditional expression cannot be determined. Best common type could not be found between '{0}' and '{1}'.",
+            code: 2091
+        },
+        Type_of_array_literal_cannot_be_determined__Best_common_type_could_not_be_found_for_array_elements: {
+            category: DiagnosticCategory.Error,
+            message: "Type of array literal cannot be determined. Best common type could not be found for array elements.",
+            code: 2092
+        },
+        Could_not_find_enclosing_symbol_for_dotted_name__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Could not find enclosing symbol for dotted name '{0}'.",
+            code: 2093
+        },
+        Could_not_find_dotted_name__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Could not find dotted name '{0}'.",
+            code: 2094
+        },
+        Could_not_find_symbol__0_: {
+            category: DiagnosticCategory.Error,
+            message: "Could not find symbol '{0}'.",
+            code: 2095
+        },
+        _get__and__set__accessor_must_have_the_same_type: {
+            category: DiagnosticCategory.Error,
+            message: "'get' and 'set' accessor must have the same type.",
+            code: 2096
+        },
     };
 
     var seenCodes = [];

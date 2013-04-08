@@ -520,26 +520,26 @@ module TypeScript {
             // check for optionality
             var parameters = functionSignature.getParameters();
 
-            if (parameters.length) {
+            //if (parameters.length) {
 
-                if (isGetter) {
-                    this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters may not take arguments", typeCheckContext.getEnclosingDecl());''
-                }
-                else {
+            //    if (isGetter) {
+            //        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Getters may not take arguments", typeCheckContext.getEnclosingDecl());''
+            //    }
+            //    else {
 
-                    if (parameters.length > 1) {
-                        this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may have one and only one argument", typeCheckContext.getEnclosingDecl());''
-                    }
+            //        if (parameters.length > 1) {
+            //            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may have one and only one argument", typeCheckContext.getEnclosingDecl());''
+            //        }
 
-                    for (var i = 0; i < parameters.length; i++) {
-                        this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
-                        if (parameters[i].getIsOptional()) {
-                            this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not take optional parameters", typeCheckContext.getEnclosingDecl());
-                            break;
-                        }
-                    }
-                }
-            }
+            //        for (var i = 0; i < parameters.length; i++) {
+            //            this.checkForResolutionError(parameters[i].getType(), enclosingDecl);
+            //            if (parameters[i].getIsOptional()) {
+            //                this.postError(funcDeclAST.minChar, funcDeclAST.getLength(), typeCheckContext.scriptName, "Setters may not take optional parameters", typeCheckContext.getEnclosingDecl());
+            //                break;
+            //            }
+            //        }
+            //    }
+            //}
 
             var returnType = functionSignature.getReturnType();
 

@@ -584,7 +584,7 @@ module TypeScript {
             super.visitInterfaceDeclaration(node);
         }
 
-        private checkClassElementModifiers(list: ISyntaxList): void {
+        private checkClassElementModifiers(list: ISyntaxList): bool {
             var modifierFullStart = this.position();
 
             var seenAccessibilityModifier = false;
@@ -598,14 +598,14 @@ module TypeScript {
                     if (seenAccessibilityModifier) {
                         this.pushDiagnostic1(modifierFullStart, modifier,
                             DiagnosticCode.Accessibility_modifier_already_seen);
-                        return;
+                        return true;
                     }
 
                     if (seenStaticModifier) {
                         var previousToken = <ISyntaxToken>list.childAt(i - 1);
                         this.pushDiagnostic1(modifierFullStart, modifier,
                             DiagnosticCode._0__modifier_must_precede__1__modifier, [modifier.text(), previousToken.text()]);
-                        return;
+                        return true;
                     }
 
                     seenAccessibilityModifier = true;
@@ -614,7 +614,7 @@ module TypeScript {
                     if (seenStaticModifier) {
                         this.pushDiagnostic1(modifierFullStart, modifier,
                             DiagnosticCode._0__modifier_already_seen, [modifier.text()]);
-                        return;
+                        return true;
                     }
 
                     seenStaticModifier = true;
@@ -622,33 +622,99 @@ module TypeScript {
                 else {
                     this.pushDiagnostic1(modifierFullStart, modifier,
                         DiagnosticCode._0__modifier_cannot_appear_on_a_class_element, [modifier.text()]);
-                    return;
+                    return true;
                 }
 
                 modifierFullStart += modifier.fullWidth();
             }
+
+            return false;
         }
 
         private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): void {
-            this.checkClassElementModifiers(node.modifiers);
+            if (this.checkClassElementModifiers(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
 
             super.visitMemberVariableDeclaration(node);
         }
 
         private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
-            this.checkClassElementModifiers(node.modifiers);
+            if (this.checkClassElementModifiers(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
 
             super.visitMemberFunctionDeclaration(node);
         }
 
+        private checkGetMemberAccessorParameter(node: GetMemberAccessorDeclarationSyntax): bool {
+            var getKeywordFullStart = this.childFullStart(node, node.getKeyword);
+            if (node.parameterList.parameters.childCount() !== 0) {
+                this.pushDiagnostic1(getKeywordFullStart, node.getKeyword,
+                    DiagnosticCode._get__accessor_cannot_have_parameters);
+                return true;
+            }
+
+            return false;
+        }
+
         private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
-            this.checkClassElementModifiers(node.modifiers);
+            if (this.checkClassElementModifiers(node.modifiers) ||
+                this.checkGetMemberAccessorParameter(node)) {
+                this.skip(node);
+                return;
+            }
 
             super.visitGetMemberAccessorDeclaration(node);
         }
 
+        private checkSetMemberAccessorParameter(node: SetMemberAccessorDeclarationSyntax): bool {
+            var setKeywordFullStart = this.childFullStart(node, node.setKeyword);
+            if (node.parameterList.parameters.childCount() !== 1) {
+                this.pushDiagnostic1(setKeywordFullStart, node.setKeyword,
+                    DiagnosticCode._set__accessor_must_have_only_one_parameter);
+                return true;
+            }
+
+            var parameterListFullStart = this.childFullStart(node, node.parameterList);
+            var parameterFullStart = parameterListFullStart + Syntax.childOffset(node.parameterList, node.parameterList.openParenToken);
+            var parameter = <ParameterSyntax>node.parameterList.parameters.childAt(0);
+
+            if (parameter.publicOrPrivateKeyword) {
+                this.pushDiagnostic1(parameterFullStart, parameter,
+                    DiagnosticCode._set__accessor_parameter_cannot_have_accessibility_modifier);
+                return true;
+            }
+
+            if (parameter.questionToken) {
+                this.pushDiagnostic1(parameterFullStart, parameter,
+                    DiagnosticCode._set__accessor_parameter_cannot_be_optional);
+                return true;
+            }
+
+            if (parameter.equalsValueClause) {
+                this.pushDiagnostic1(parameterFullStart, parameter,
+                    DiagnosticCode._set__accessor_parameter_cannot_have_initializer);
+                return true;
+            }
+
+            if (parameter.dotDotDotToken) {
+                this.pushDiagnostic1(parameterFullStart, parameter,
+                    DiagnosticCode._set__accessor_cannot_have_rest_parameter);
+                return true;
+            }
+
+            return false;
+        }
+
         private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
-            this.checkClassElementModifiers(node.modifiers);
+            if (this.checkClassElementModifiers(node.modifiers) ||
+                this.checkSetMemberAccessorParameter(node)) {
+                this.skip(node);
+                return;
+            }
 
             super.visitSetMemberAccessorDeclaration(node);
         }
