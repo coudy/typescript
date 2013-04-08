@@ -21,7 +21,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += 'function foo(bar?:string):any{ return "" };'
             code += 'var x = foo(5);'
         Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-            assert.compilerWarning(result, 1, 105, 'Supplied parameters do not match any signature of call target');
+            assert.compilerWarning(result, 1, 105, 'error TS2081: Supplied parameters do not match any signature of call target.');
             assert.equal(result.errors.length, 2);
         });
     });
@@ -32,7 +32,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += 'function foo(bar:any):any{ return bar };'
             code += 'var x = foo(true);'
         Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-            assert.compilerWarning(result, 1, 112, 'Supplied parameters do not match any signature of call target');
+            assert.compilerWarning(result, 1, 112, 'error TS2081: Supplied parameters do not match any signature of call target.');
             assert.equal(result.errors.length, 2);
         });
     });
@@ -311,7 +311,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(bar:any):any{ return bar };";
             code += "var x = foo();";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.compilerWarning(result, 1, 112, 'Supplied parameters do not match any signature of call target'); 
+            assert.compilerWarning(result, 1, 112, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
             assert.equal(result.errors.length, 2);
         });
     });
@@ -340,7 +340,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(bar:any):any{ return bar };";
             code += "var x = foo(true);";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.compilerWarning(result, 1, 112, 'Supplied parameters do not match any signature of call target'); 
+            assert.compilerWarning(result, 1, 112, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
             assert.equal(result.errors.length, 2);
         });
     });
@@ -369,7 +369,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(bar:{a:any;}):any{ return bar };";
             code += "var x = foo();";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.compilerWarning(result, 1, 125, 'Supplied parameters do not match any signature of call target'); 
+            assert.compilerWarning(result, 1, 125, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
             assert.equal(result.errors.length, 2);
         });
     });
@@ -430,7 +430,7 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "function foo(bar:{a:any;}[]):any{ return bar };";
             code += "var x = foo();";
         Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.compilerWarning(result, 1, 131, 'Supplied parameters do not match any signature of call target'); 
+            assert.compilerWarning(result, 1, 131, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
             assert.equal(result.errors.length, 2);
         });
     });
