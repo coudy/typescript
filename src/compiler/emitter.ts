@@ -646,11 +646,11 @@ module TypeScript {
 
             this.indenter.decreaseIndent();
             this.emitIndent();
-            this.recordSourceMappingStart(funcDecl.endingToken);
+            this.recordSourceMappingStart(funcDecl.block.closeBraceSpan);
             this.writeToOutput("}");
 
             this.recordSourceMappingNameEnd();
-            this.recordSourceMappingEnd(funcDecl.endingToken);
+            this.recordSourceMappingEnd(funcDecl.block.closeBraceSpan);
             this.recordSourceMappingEnd(funcDecl);
 
             if (shouldParenthesize) {

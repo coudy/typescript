@@ -487,6 +487,10 @@ module FourSlash {
             IO.printLine(this.getBreakpointStatementLocation(pos));
         }
 
+        public printBreakpointAtCurrentLocation() {
+            this.printBreakpointLocation(this.currentCaretPosition);
+        }
+
         public printCurrentParameterHelp() {
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             IO.printLine(JSON2.stringify(help));

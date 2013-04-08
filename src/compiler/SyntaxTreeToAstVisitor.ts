@@ -135,22 +135,24 @@ module TypeScript {
             TypeScript.getAstWalkerFactory().walk(ast, pre);
         }
 
-        private setSpan(span: AST, fullStart: number, element: ISyntaxElement): void {
+        private setSpan(span: ASTSpan, fullStart: number, element: ISyntaxElement): void {
             var desiredMinChar = fullStart + element.leadingTriviaWidth();
-            var desiredLimChar = fullStart + element.fullWidth();
+            var desiredLimChar = desiredMinChar + element.width();
             Debug.assert(!isNaN(desiredMinChar));
             Debug.assert(!isNaN(desiredLimChar));
 
             if (span.minChar !== -1) {
                 Debug.assert(span.limChar !== -1);
+                Debug.assert((<any>span).nodeType != undefined);
 
                 // Have an existing span.  We need to adjust it so that it starts at the provided
                 // desiredMinChar.
                 
                 var delta = desiredMinChar - span.minChar;
-                this.applyDelta(span, delta);
+                this.applyDelta(<AST>span, delta);
 
                 span.limChar = desiredLimChar;
+                span.trailingTriviaWidth = element.trailingTriviaWidth();
 
                 Debug.assert(span.minChar === desiredMinChar);
                 Debug.assert(span.limChar === desiredLimChar);
@@ -160,20 +162,22 @@ module TypeScript {
                 // Have a new span, just set it to the lim/min we were given.
                 span.minChar = desiredMinChar;
                 span.limChar = desiredLimChar;
+                span.trailingTriviaWidth = element.trailingTriviaWidth();
             }
 
             Debug.assert(span.minChar !== -1);
             Debug.assert(span.limChar !== -1);
         }
 
-        private setSpan1(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
+        private setSpan1(span: ASTSpan, fullStart: number, element: ISyntaxElement): void {
             var desiredMinChar = fullStart + element.leadingTriviaWidth();
-            var desiredLimChar = fullStart + element.fullWidth();
+            var desiredLimChar = desiredMinChar + element.width();
             Debug.assert(!isNaN(desiredMinChar));
             Debug.assert(!isNaN(desiredLimChar));
 
             span.minChar = desiredMinChar;
             span.limChar = desiredLimChar;
+            span.trailingTriviaWidth = element.trailingTriviaWidth();
 
             Debug.assert(span.minChar !== -1);
             Debug.assert(span.limChar !== -1);
@@ -584,9 +588,13 @@ module TypeScript {
 
                 this.movePast(node.openBraceToken);
                 var members = this.visitSyntaxList(node.classElements);
+                var closeBracePosition = this.position;
                 this.movePast(node.closeBraceToken);
+                var closeBraceSpan = new ASTSpan();
+                this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
                 result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
+                result.endingToken = closeBraceSpan;
 
                 result.preComments = preComments;
                 result.postComments = postComments;
@@ -753,13 +761,11 @@ module TypeScript {
                 this.isParsingAmbientModule = svIsParsingAmbientModule;
                 var closeBracePosition = this.position;
                 this.movePast(node.closeBraceToken);
+                var closeBraceSpan = new ASTSpan();
+                this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
                 for (var i = names.length - 1; i >= 0; i--) {
                     var innerName = names[i];
-
-                    var closeBraceSpan = new ASTSpan();
-                    closeBraceSpan.minChar = closeBracePosition;
-                    closeBraceSpan.limChar = this.position;
 
                     result = new ModuleDeclaration(innerName, members, closeBraceSpan);
                     this.setSpan(result, start, node);
@@ -983,10 +989,12 @@ module TypeScript {
                 }
             }
 
+            var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
+            var closeBraceSpan = new ASTSpan();
+            this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
-            var endingToken = new ASTSpan();
-            var modDecl = new ModuleDeclaration(name, members, endingToken);
+            var modDecl = new ModuleDeclaration(name, members, closeBraceSpan);
             this.setSpan(modDecl, start, node);
             this.setSpan(mapDecl, start, node);
 
@@ -1261,8 +1269,9 @@ module TypeScript {
             else {
                 var statements = new ASTList();
                 statements.append(new ReturnStatement(body.accept(this)));
-
-                return new Block(statements);
+                var block = new Block(statements);
+                block.closeBraceSpan = statements.members[0];
+                return block;
             }
         }
 
@@ -1559,9 +1568,12 @@ module TypeScript {
             else {
                 this.movePast(node.openBraceToken);
                 var statements = this.visitSyntaxList(node.statements);
+                var closeBracePosition = this.position;
                 this.movePast(node.closeBraceToken);
-
+                var closeBraceSpan = new ASTSpan();
+                this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
                 result = new Block(statements);
+                result.closeBraceSpan = closeBraceSpan;
             }
 
             this.setAST(node, result);

@@ -15,7 +15,7 @@
 ////    }
 ////
 ////
-////    function foo(greeting: string): Foo.Bar.Greeter {
+////    function foo(greeting: string): Greeter {
 ////        return new Greeter(greeting);
 ////    }
 ////
@@ -23,7 +23,7 @@
 ////    var str = greeter.greet();
 ////
 ////    function foo2(greeting: string, ...restGreetings /* more greeting */: string[]) {
-////        var greeters = new Greeter[]; /* inline block comment */
+////        var greeters: Greeter[] = []; /* inline block comment */
 ////        greeters[0] = new Greeter(greeting);
 ////        for (var i = 0; i < restGreetings.length; i++) {
 ////            greeters.push(new Greeter(restGreetings[i]));

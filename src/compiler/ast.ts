@@ -23,7 +23,8 @@ module TypeScript {
 
     export class ASTSpan implements IASTSpan {
         public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
-        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
+        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
+        public trailingTriviaWidth = 0;
     }
 
     export var astID = 0;
@@ -51,10 +52,7 @@ module TypeScript {
             includingPosition ? structuralEqualsIncludingPosition : structuralEqualsNotIncludingPosition);
     }
 
-    export class AST implements IASTSpan {
-        public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
-        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
-
+    export class AST extends ASTSpan {
         public type: Type = null;
         private _flags = ASTFlags.None;
 
@@ -70,7 +68,11 @@ module TypeScript {
         private docComments: Comment[] = null;
 
         constructor(public nodeType: NodeType) {
+            super();
         }
+
+        public isExpression() { return false; }
+        public isStatementOrExpression() { return false; }
 
         public getFlags(): ASTFlags {
             return this._flags;
@@ -940,6 +942,7 @@ module TypeScript {
 
     export class ImportDeclaration extends AST {
         public isDynamicImport = false;
+        public isStatementOrExpression() { return true; }
 
         constructor(public id: Identifier, public alias: AST) {
             super(NodeType.ImportDeclaration);
@@ -1022,6 +1025,7 @@ module TypeScript {
         private _varFlags = VariableFlags.None;
         public sym: Symbol = null;
         public isDeclaration() { return true; }
+        public isStatementOrExpression() { return true; }
 
         constructor(public id: Identifier, nodeType: NodeType) {
             super(nodeType);
@@ -1115,7 +1119,6 @@ module TypeScript {
         public accessorSymbol: Symbol = null;
         public returnStatementsWithExpressions: ReturnStatement[];
         public scopeType: Type = null; // Type of the FuncDecl, before target typing
-        public endingToken: ASTSpan = null;
         public isDeclaration() { return true; }
 
         constructor(public name: Identifier,
@@ -1437,7 +1440,7 @@ module TypeScript {
         public isStatement() {
             return true;
         }
-
+        public isStatementOrExpression() { return true; }
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.voidType;
             return this;
@@ -1547,6 +1550,7 @@ module TypeScript {
     }
 
     export class Block extends Statement {
+        public closeBraceSpan: ASTSpan = null;
         constructor(public statements: ASTList) {
             super(NodeType.Block);
         }

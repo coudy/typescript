@@ -12,7 +12,7 @@ var MyClass = (function () {
 })();
 //@ sourceMappingURL=0.js.map
 ////[bin/0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["MyClass","MyClass.constructor","MyClass.Count","MyClass.SetCount"],"mappings":"AACA,oBAAoB;AACpB;IAAAA;AAYCA,IATGA,0BADAA,uBAAuBA;IACvBA;QAEIE,OAAOA,EAAEA;AACjBA,KACAF;IACIA,6BAAAA,UAAgBA,KAAaA;KAIjCA;;CAZA,IAYC"}
+{"version":3,"file":"0.js","sources":["0.ts"],"names":["MyClass","MyClass.constructor","MyClass.Count","MyClass.SetCount"],"mappings":"AACA,oBAAoB;AACpB;IAAAA;AAYCA,IATGA,0BADAA,uBAAuBA;IACvBA;QAEIE,OAAOA,EAAEA;AAACA,IACdA,CAACA;IAEDF,6BAAAA,UAAgBA,KAAaA;IAG7BG,CAACA;IACLH;AAACA,CAAAA,IAAA"}
 ////[bin/comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[bin/comments_ExternalModules_0.js.map]

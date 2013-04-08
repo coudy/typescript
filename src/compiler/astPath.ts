@@ -289,7 +289,7 @@ module TypeScript {
             if (comments && comments.length > 0) {
                 for (var i = 0; i < comments.length; i++) {
                     var minChar = comments[i].minChar;
-                    var limChar = comments[i].limChar;
+                    var limChar = comments[i].limChar + comments[i].trailingTriviaWidth;
                     if (!comments[i].isBlockComment) {
                         limChar++; // For single line comments, include 1 more character (for the newline)
                     }
@@ -315,16 +315,16 @@ module TypeScript {
                     cur.nodeType === TypeScript.NodeType.Name ||
                     cur.nodeType === TypeScript.NodeType.MemberAccessExpression ||
                     cur.nodeType === TypeScript.NodeType.TypeRef ||
-                    pos === script.limChar; // Special "EOF" case
+                    pos === script.limChar + script.trailingTriviaWidth; // Special "EOF" case
 
                 var minChar = cur.minChar;
-                var limChar = cur.limChar + (inclusive ? 1 : 0)
+                var limChar = cur.limChar + cur.trailingTriviaWidth + (inclusive ? 1 : 0)
                 if (pos >= minChar && pos < limChar) {
 
                     // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
                     //       than top of the stack.
                     var previous = ctx.path.ast();
-                    if (previous === null || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
+                    if (previous === null || (cur.minChar >= previous.minChar && (cur.limChar + cur.trailingTriviaWidth) <= (previous.limChar + previous.trailingTriviaWidth))) {
                         ctx.path.push(cur);
                     }
                     else {

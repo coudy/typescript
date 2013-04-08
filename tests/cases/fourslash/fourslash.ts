@@ -337,7 +337,9 @@ module FourSlashInterface {
         public printBreakpointLocation(pos: number) {
             FourSlash.currentTestState.printBreakpointLocation(pos);
         }
-
+        public printBreakpointAtCurrentLocation() {
+            FourSlash.currentTestState.printBreakpointAtCurrentLocation();
+        }
         public printErrorList() {
             FourSlash.currentTestState.printErrorList();
         }

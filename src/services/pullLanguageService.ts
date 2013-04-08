@@ -946,7 +946,268 @@ module Services {
             return null;
         }
 
+        // Gets breakpoint span in the statement depending on context
+        private getBreakpointInStatement(pos: number, astSpan: TypeScript.ASTSpan, verifyASTPos: bool,
+            existingResult: TypeScript.ASTSpan, forceFirstStatement: bool, isAst: bool): TypeScript.ASTSpan {
+            if (existingResult || !astSpan || (verifyASTPos && pos > astSpan.limChar)) {
+                return existingResult;
+            }
+
+            if (!isAst) {
+                // Satisfies the result
+                return astSpan;
+            }
+
+            var ast = <TypeScript.AST>astSpan;
+            var astList: TypeScript.ASTList = null;
+            if (ast.nodeType == TypeScript.NodeType.Block) {
+                var block = <TypeScript.Block>ast;
+                astList = block.statements;
+            } else if (ast.nodeType == TypeScript.NodeType.List) {
+                astList = <TypeScript.ASTList>ast;
+            } else {
+                return ast;
+            }
+
+            if (astList.members.length > 0) {
+                var lastAST = astList.members[astList.members.length - 1];
+                if (!forceFirstStatement && pos > lastAST.limChar) {
+                    // Use last one if the character after last statement in the block
+                    return lastAST;
+                } else {
+                    return astList.members[0];
+                }
+            }
+
+            return null;
+        }
+
         public getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo {
+            this.refresh();
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
+
+            var containerASTs: TypeScript.AST[] = [];
+            var lineMap = document.lineMap;
+
+            // find line and col
+            var lineCol = { line: -1, character: -1 };
+            lineMap.fillLineAndCharacterFromPosition(pos, lineCol);
+
+            // Get the valid breakpoint location container list till position so we could choose where to set breakpoint
+            var pre = (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker): TypeScript.AST => {
+                if (TypeScript.isValidAstNode(cur)) {
+                    if (pos >= cur.minChar && pos <= cur.limChar) {
+                        switch (cur.nodeType) {
+                            // Can be used as breakpoint location
+                            case TypeScript.NodeType.ModuleDeclaration:
+                            case TypeScript.NodeType.ClassDeclaration:
+                            case TypeScript.NodeType.FunctionDeclaration:
+                            case TypeScript.NodeType.BreakStatement:
+                            case TypeScript.NodeType.ContinueStatement:
+                                containerASTs.push(cur);
+                                break;
+
+                            // These are statements or expressions that cant be used as valid breakpoint statements
+                            case TypeScript.NodeType.Script:
+                            case TypeScript.NodeType.List:
+                            case TypeScript.NodeType.NumericLiteral:
+                            case TypeScript.NodeType.RegularExpressionLiteral:
+                            case TypeScript.NodeType.StringLiteral:
+                            case TypeScript.NodeType.ArrayLiteralExpression:
+                            case TypeScript.NodeType.ObjectLiteralExpression:
+                            case TypeScript.NodeType.CastExpression:
+                            case TypeScript.NodeType.PlusExpression:
+                            case TypeScript.NodeType.NegateExpression:
+                            case TypeScript.NodeType.BitwiseNotExpression:
+                            case TypeScript.NodeType.LogicalNotExpression:
+                            case TypeScript.NodeType.Block:
+                            case TypeScript.NodeType.ExpressionStatement:
+                                break;
+
+                            // Type Reference cannot have breakpoint, nor can its children
+                            case TypeScript.NodeType.TypeRef:
+                                walker.options.goChildren = false;
+                                break;
+
+                            default:
+                                // If it is a statement or expression - they are debuggable
+                                // But expressions are debuggable as standalone statement only
+                                if (cur.isStatementOrExpression() &&
+                                    (!cur.isExpression() ||
+                                     containerASTs.length == 0 ||
+                                     (!containerASTs[containerASTs.length - 1].isExpression() &&
+                                      (containerASTs[containerASTs.length - 1].nodeType != TypeScript.NodeType.VariableDeclarator &&
+                                       containerASTs[containerASTs.length - 1].nodeType != TypeScript.NodeType.Parameter) ||
+                                      containerASTs[containerASTs.length - 1].nodeType == TypeScript.NodeType.ConditionalExpression))) {
+                                    containerASTs.push(cur);
+                                }
+                                break;
+                        }
+                    } else {
+                        walker.options.goChildren = false;
+                    }
+                }
+                return cur;
+            }
+            TypeScript.getAstWalkerFactory().walk(script, pre);
+
+            if (containerASTs.length == 0) {
+                return null;
+            }
+
+            // We have container list in resultAST
+            // Use it to determine where to set the breakpoint
+            var resultAST: TypeScript.ASTSpan = null;
+            var cur = containerASTs[containerASTs.length - 1];
+            var customSpan: TypeScript.ASTSpan = null;
+
+            switch (cur.nodeType) {
+                // TODO : combine these as interface and use custom method instead of duplicate logic
+                case TypeScript.NodeType.ModuleDeclaration:
+                    var moduleDecl = <TypeScript.ModuleDeclaration>cur;
+                    // If inside another module the whole module is debuggable
+                    if (containerASTs.length > 1) {
+                        resultAST = moduleDecl;
+                    } else {
+                        // Use first statement - whatever it is 
+                        resultAST = this.getBreakpointInStatement(pos, moduleDecl.members, false, null, false, true);
+                    }
+                    // Can use ending token and if it cant find anything breakpoint cannot be set at this declaration
+                    customSpan = moduleDecl.endingToken;
+                    break;
+
+                case TypeScript.NodeType.FunctionDeclaration:
+                    var funcDecl = <TypeScript.FunctionDeclaration>cur;
+                    // If function is inside module/class then it can be used completely as statement
+                    if (containerASTs.length > 1) {
+                        resultAST = funcDecl;
+                    } else {
+                        // We want to use first statement in the body if present
+                        resultAST = this.getBreakpointInStatement(pos, funcDecl.block, false, null, false, true);
+                    }
+                    // Can use ending token and if it cant find anything breakpoint cannot be set at this declaration
+                    customSpan = funcDecl.block ? funcDecl.block.closeBraceSpan : null;
+                    break;
+
+                case TypeScript.NodeType.ClassDeclaration:
+                    var classDecl = <TypeScript.ClassDeclaration>cur;
+                    // If class is inside module then it can be used completely as statement
+                    if (containerASTs.length > 1) {
+                        resultAST = classDecl;
+                    } else {
+                        // We want to use first statement in the body if present
+                        resultAST = this.getBreakpointInStatement(pos, classDecl.members, false, null, false, true);
+                    }
+                    // Can use ending token and if it cant find anything breakpoint cannot be set at this declaration
+                    customSpan = classDecl.endingToken;
+                    break;
+
+                case TypeScript.NodeType.VariableDeclarator:
+                    // Use varDecl only if it has initializer
+                    var varDecl = <TypeScript.BoundDecl>cur;
+                    if (varDecl.init) {
+                        resultAST = varDecl;
+                        if (containerASTs.length > 1 && containerASTs[containerASTs.length - 2].nodeType == TypeScript.NodeType.VariableStatement) {
+                            var varStatement = <TypeScript.VariableStatement>containerASTs[containerASTs.length - 2];
+                            if (varStatement.declaration.declarators.members.length && varStatement.declaration.declarators.members[0] == resultAST) {
+                                resultAST = varStatement;
+                            }
+                        }
+                    }
+                    break;
+
+                case TypeScript.NodeType.IfStatement:
+                    var ifStatement = <TypeScript.IfStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, ifStatement.statement, true, resultAST, false, false);
+                    resultAST = this.getBreakpointInStatement(pos, ifStatement.thenBod, true, resultAST, false, true);
+                    resultAST = this.getBreakpointInStatement(pos, ifStatement.elseBod, false, resultAST, false, true);
+                    break;
+
+                case TypeScript.NodeType.ForInStatement:
+                    var forInStatement = <TypeScript.ForInStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, forInStatement.statement, true, resultAST, false, false);
+                    resultAST = this.getBreakpointInStatement(pos, forInStatement.body, false, resultAST, false, true);
+                    break;
+
+                case TypeScript.NodeType.ForStatement:
+                    var forStatement = <TypeScript.ForStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, forStatement.init, true, null, false, true);
+                    resultAST = this.getBreakpointInStatement(pos, forStatement.cond, true, resultAST, false, true);
+                    resultAST = this.getBreakpointInStatement(pos, forStatement.incr, true, resultAST, false, true);
+                    resultAST = this.getBreakpointInStatement(pos, forStatement.body, false, resultAST, false, true);
+                    break;
+
+                case TypeScript.NodeType.WhileStatement:
+                    var whileStatement = <TypeScript.WhileStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, whileStatement.cond, true, null, false, true);
+                    resultAST = this.getBreakpointInStatement(pos, whileStatement.body, false, resultAST, false, true);
+                    break;
+
+                case TypeScript.NodeType.DoStatement:
+                    var doWhileStatement = <TypeScript.DoStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, doWhileStatement.body, true, null, false, true);
+                    resultAST = this.getBreakpointInStatement(pos, doWhileStatement.cond, false, resultAST, false, true);
+                    break;
+
+                case TypeScript.NodeType.SwitchStatement:
+                    var switchStatement = <TypeScript.SwitchStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, switchStatement.statement, true, resultAST, false, false);
+                    // Loop through case statements and find the best one
+                    var caseListCount = switchStatement.caseList.members.length;
+                    if (caseListCount > 0) {
+                        var lastCase = switchStatement.caseList.members[caseListCount - 1];
+                        var caseToUse: TypeScript.CaseClause;
+                        if (pos >= lastCase.limChar) {
+                            // Use last one if the character after last statement in the block
+                            caseToUse = <TypeScript.CaseClause>lastCase;
+                            resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, false, true);
+                        } else {
+                            caseToUse = <TypeScript.CaseClause>switchStatement.caseList.members[0];
+                            resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, true, true);
+                        }
+                    }
+                    break;
+
+                case TypeScript.NodeType.CaseClause:
+                    var caseStatement = <TypeScript.CaseClause>cur;
+                    resultAST = this.getBreakpointInStatement(pos, caseStatement.body.members[0], false, null, false, true);
+                    break;
+
+                case TypeScript.NodeType.WithStatement:
+                    var withStatement = <TypeScript.WithStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, withStatement.body, false, null, false, true);
+                    break;
+
+                case TypeScript.NodeType.TryStatement:
+                    var tryNode = <TypeScript.TryStatement>cur;
+                    resultAST = this.getBreakpointInStatement(pos, tryNode.tryBody, true, null, false, false);
+                    resultAST = this.getBreakpointInStatement(pos, tryNode.catchClause, true, resultAST, false, false);
+                    resultAST = this.getBreakpointInStatement(pos, tryNode.finallyBody, false, resultAST, false, true);
+                    break;
+
+                case TypeScript.NodeType.CatchClause:
+                    var catchNode = <TypeScript.CatchClause>cur;
+                    resultAST = this.getBreakpointInStatement(pos, catchNode.statement, true, null, false, false);
+                    resultAST = this.getBreakpointInStatement(pos, catchNode.body, false, resultAST, false, true);
+                    break;
+
+                default:
+                    resultAST = cur;
+                    break;
+            }
+
+            // If we have custom span check if it is better option
+            if (TypeScript.isValidAstNode(customSpan) && pos >= customSpan.minChar && pos <= customSpan.limChar) {
+                resultAST = customSpan;
+            }
+
+            // Use result AST to create span info
+            if (resultAST) {
+                var result = new SpanInfo(resultAST.minChar, resultAST.limChar);
+                return result;
+            }
+
             return null;
         }
 
