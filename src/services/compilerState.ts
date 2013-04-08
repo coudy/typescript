@@ -428,6 +428,5 @@ module Services {
 
             return symbol.docComments;
         }
-
     }
 }
