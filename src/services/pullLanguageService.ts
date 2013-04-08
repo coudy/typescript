@@ -467,18 +467,18 @@ module Services {
         ///
         /// Return the stack of AST nodes containing "position"
         ///
-        public getAstPathToPosition(script: TypeScript.AST, pos: number, options = TypeScript.GetAstPathOptions.Default): TypeScript.AstPath {
+        public getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar = true, options = TypeScript.GetAstPathOptions.Default): TypeScript.AstPath {
             if (this.logger.information()) {
                 this.logger.log("getAstPathToPosition(" + script + ", " + pos + ")");
             }
 
-            return TypeScript.getAstPathToPosition(script, pos, options);
+            return TypeScript.getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar, options);
         }
 
         public getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath {
             this.logger.log("getIdentifierPathToPosition(" + script + ", " + pos + ")");
 
-            var path = this.getAstPathToPosition(script, pos, TypeScript.GetAstPathOptions.EdgeInclusive);
+            var path = this.getAstPathToPosition(script, pos, true, TypeScript.GetAstPathOptions.EdgeInclusive);
             if (path.count() == 0)
                 return null;
 
@@ -509,21 +509,43 @@ module Services {
         // New Pull stuff
         //
 
-        public getTypeAtPosition(fileName: string, position: number): TypeInfo {
+        private getTypeInfoEligiblePath(fileName: string, position: number, isConstructorValidPosition: bool) {
             this.refresh();
 
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
 
-            var path = this.getAstPathToPosition(script, position);
+            var path = this.getAstPathToPosition(script, position, false);
             if (path.count() == 0) {
                 return null;
             }
 
-            if (this.isGetTypeBlocker(position, path)) {
+            var cur = path.ast();
+            switch (cur.nodeType) {
+                default:
+                    return null;
+                case TypeScript.NodeType.FunctionDeclaration:
+                    var funcDecl = <TypeScript.FunctionDeclaration>cur;
+                    // constructor keyword
+                    if (!isConstructorValidPosition || !funcDecl.isConstructor || !(position >= funcDecl.minChar && position <= funcDecl.minChar + 11 /*constructor*/)) {
+                        return null;
+                    }
+                case TypeScript.NodeType.MemberAccessExpression:
+                case TypeScript.NodeType.SuperExpression:
+                case TypeScript.NodeType.StringLiteral:
+                case TypeScript.NodeType.ThisExpression:
+                case TypeScript.NodeType.Name:
+                    return path;
+            }
+        }
+
+        public getTypeAtPosition(fileName: string, position: number): TypeInfo {
+            var path = this.getTypeInfoEligiblePath(fileName, position, true);
+            if (!path) {
                 return null;
             }
 
+            var document = this.compilerState.getDocument(fileName);
             var ast: TypeScript.AST;
             var symbol: TypeScript.PullSymbol;
             var typeSymbol: TypeScript.PullTypeSymbol;
@@ -537,7 +559,7 @@ module Services {
                 // Skip the name and get to the declaration
                 path.pop();
             }
-
+            
             if (path.isDeclaration()) {
                 var declarationInformation = this.compilerState.getDeclarationSymbolInformation(path, document);
 
@@ -632,37 +654,6 @@ module Services {
             var limChar = ast ? ast.limChar : -1;
 
             return new TypeInfo(memberName, docComment, symbolName, kind, minChar, limChar);
-        }
-
-        private isGetTypeBlocker(position: number, path: TypeScript.AstPath): bool {
-            switch (path.ast().nodeType) {
-                case TypeScript.NodeType.TrueLiteral:
-                case TypeScript.NodeType.FalseLiteral:
-                case TypeScript.NodeType.StringLiteral:
-                case TypeScript.NodeType.RegularExpressionLiteral:
-                case TypeScript.NodeType.NumericLiteral:
-                case TypeScript.NodeType.NullLiteral:
-                case TypeScript.NodeType.Name:
-                case TypeScript.NodeType.ThisExpression:
-                case TypeScript.NodeType.SuperExpression:
-                case TypeScript.NodeType.MemberAccessExpression:
-                    return false;
-                case TypeScript.NodeType.FunctionDeclaration:
-                    var funcDecl = <TypeScript.FunctionDeclaration>path.ast();
-                    if (TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.ConstructMember) ||
-                        TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.IndexerMember)) {
-                        // constructor and index signatures
-                        return false;
-                    }
-                    else if (funcDecl.isConstructor)
-                    {
-                        // constructor keyword
-                        return !(position >= funcDecl.minChar && position <= funcDecl.minChar + 11 /*constructor*/);
-                    }
-                    break;
-            }
-
-            return true;
         }
 
         public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: bool): CompletionInfo {
@@ -992,7 +983,22 @@ module Services {
         //
 
         public getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo {
-            return null;
+            var path = this.getTypeInfoEligiblePath(fileName, startPos, false);
+
+            if (!path) {
+                return null;
+            }
+
+            while (path.count() > 0) {
+                if (path.isMemberOfMemberAccessExpression()) {
+                    path.pop();
+                } else {
+                    break;
+                }
+            }
+            var cur = path.ast();
+            var spanInfo = new SpanInfo(cur.minChar, cur.limChar);
+            return spanInfo;
         }
 
         // Gets breakpoint span in the statement depending on context

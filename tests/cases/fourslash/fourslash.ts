@@ -223,6 +223,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.baselineCurrentFileBreakpointLocations();
         }
 
+        public baselineCurrentFileNameOrDottedNameSpans() {
+            FourSlash.currentTestState.baselineCurrentFileNameOrDottedNameSpans();
+        }
+
         public nameOrDottedNameSpanTextIs(text: string) {
             FourSlash.currentTestState.verifyCurrentNameOrDottedNameSpanText(text);
         }
@@ -339,6 +343,9 @@ module FourSlashInterface {
         }
         public printBreakpointAtCurrentLocation() {
             FourSlash.currentTestState.printBreakpointAtCurrentLocation();
+        }
+        public printNameOrDottedNameSpans(pos: number) {
+            FourSlash.currentTestState.printNameOrDottedNameSpans(pos);
         }
         public printErrorList() {
             FourSlash.currentTestState.printErrorList();

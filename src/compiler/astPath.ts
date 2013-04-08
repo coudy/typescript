@@ -192,6 +192,16 @@ module TypeScript {
                 (this.isMemberOfList((<TypeScript.InterfaceDeclaration>this.parent()).extendsList, this.ast()));
         }
 
+        public isMemberOfMemberAccessExpression() {
+            if (this.count() > 1 &&
+                this.parent().nodeType == NodeType.MemberAccessExpression &&
+                (<BinaryExpression>this.parent()).operand2 == this.asts[this.top]) {
+                return true;
+            }
+
+            return false;
+        }
+        
         public isCallExpression(): bool {
             return this.count() >= 1 &&
             (this.asts[this.top - 0].nodeType === TypeScript.NodeType.InvocationExpression || this.asts[this.top - 0].nodeType === TypeScript.NodeType.ObjectCreationExpression);
@@ -284,12 +294,12 @@ module TypeScript {
     ///
     /// Return the stack of AST nodes containing "position"
     ///
-    export function getAstPathToPosition(script: TypeScript.AST, pos: number, options = GetAstPathOptions.Default): TypeScript.AstPath {
+    export function getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar = true, options = GetAstPathOptions.Default): TypeScript.AstPath {
         var lookInComments = (comments: TypeScript.Comment[]) => {
             if (comments && comments.length > 0) {
                 for (var i = 0; i < comments.length; i++) {
                     var minChar = comments[i].minChar;
-                    var limChar = comments[i].limChar + comments[i].trailingTriviaWidth;
+                    var limChar = comments[i].limChar + (useTrailingTriviaAsLimChar ? comments[i].trailingTriviaWidth : 0);
                     if (!comments[i].isBlockComment) {
                         limChar++; // For single line comments, include 1 more character (for the newline)
                     }
@@ -318,13 +328,14 @@ module TypeScript {
                     pos === script.limChar + script.trailingTriviaWidth; // Special "EOF" case
 
                 var minChar = cur.minChar;
-                var limChar = cur.limChar + cur.trailingTriviaWidth + (inclusive ? 1 : 0)
+                var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
                 if (pos >= minChar && pos < limChar) {
 
                     // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
                     //       than top of the stack.
                     var previous = ctx.path.ast();
-                    if (previous === null || (cur.minChar >= previous.minChar && (cur.limChar + cur.trailingTriviaWidth) <= (previous.limChar + previous.trailingTriviaWidth))) {
+                    if (previous === null || (cur.minChar >= previous.minChar &&
+                        (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (previous.limChar + (useTrailingTriviaAsLimChar ? previous.trailingTriviaWidth : 0)))) {
                         ctx.path.push(cur);
                     }
                     else {

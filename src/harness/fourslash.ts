@@ -780,6 +780,34 @@ module FourSlash {
             }
         }
 
+        private getNameOrDottedNameSpan(pos: number) {
+            var spanInfo = this.languageService.getNameOrDottedNameSpan(this.activeFile.fileName, pos, pos);
+            var resultString = "\n**Pos: " + pos + " SpanInfo: " + JSON2.stringify(spanInfo) + "\n** Statement: ";
+            if (spanInfo !== null) {
+                resultString = resultString + this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getText(spanInfo.minChar, spanInfo.limChar);
+            }
+            return resultString;
+        }
+
+        public baselineCurrentFileNameOrDottedNameSpans() {
+            Harness.Baseline.runBaseline(
+                "Name OrDottedNameSpans for " + this.activeFile.fileName,
+                this.testData.globalOptions['BaselineFile'],
+                () => {
+                    var fileLength = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName).getLength();
+                    var resultString = "";
+                    for (var pos = 0; pos < fileLength; pos++) {
+                        resultString = resultString + this.getNameOrDottedNameSpan(pos);
+                    }
+                    return resultString;
+                },
+                true /* run immediately */);
+        }
+
+        public printNameOrDottedNameSpans(pos: number) {
+            IO.printLine(this.getNameOrDottedNameSpan(pos));
+        }
+
         public verifyOutliningSpans(spans: TextSpan[]) {
             var actual = this.languageService.getOutliningRegions(this.activeFile.fileName);
 
