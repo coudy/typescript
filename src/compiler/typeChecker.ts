@@ -33,6 +33,7 @@ module TypeScript {
         public onlyCaptureFirstError = false;
         public flags: TypeRelationshipFlags = TypeRelationshipFlags.SuccessfulComparison;
         public message = "";
+        public stringConstantVal: AST = null;
 
         public addMessageToFront(message) {
             if (!this.onlyCaptureFirstError) {

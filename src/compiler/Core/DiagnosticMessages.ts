@@ -867,7 +867,13 @@ module TypeScript {
             category: DiagnosticCategory.Warning,
             message: "Use of deprecated type \"bool\", at this location and possibly elsewhere in the file. Use \"boolean\" instead.",
             code: 2098
-        }
+        },
+        Static_methods_may_not_reference_class_type_parameters: {
+            category: DiagnosticCategory.Error,
+            message: "Static methods may not reference class type parameters",
+            code: 2099
+        },
+
     };
 
     var seenCodes = [];

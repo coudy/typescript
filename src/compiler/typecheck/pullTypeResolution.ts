@@ -2488,6 +2488,23 @@ module TypeScript {
                 return this.getNewErrorTypeSymbol(diagnostic);
             }
 
+            if (typeNameSymbol.isTypeParameter()) {
+                if (enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction) && (enclosingDecl.getFlags() & PullElementFlags.Static)) {
+                    var parentDecl = typeNameSymbol.getDeclarations()[0];
+
+                    if (parentDecl != enclosingDecl) {
+                        diagnostic = context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath,
+                            getDiagnosticMessage(DiagnosticCode.Static_methods_may_not_reference_class_type_parameters, null), enclosingDecl);
+                        
+                        typeNameSymbol = this.getNewErrorTypeSymbol(diagnostic);
+
+                        this.setSymbolForAST(nameAST, typeNameSymbol, context);
+
+                        return typeNameSymbol;
+                    }
+                }
+            }
+
             typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
 
             if (!typeNameSymbol.isResolved()) {
@@ -2533,6 +2550,11 @@ module TypeScript {
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
                         typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
+
+                        if (typeArg.isError()) {
+                            return typeArg;
+                        }
+
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
@@ -4193,7 +4215,7 @@ module TypeScript {
 
         // Type Identity
 
-        public typesAreIdentical(t1: PullTypeSymbol, t2: PullTypeSymbol) {
+        public typesAreIdentical(t1: PullTypeSymbol, t2: PullTypeSymbol, val?: AST) {
 
             // This clause will cover both primitive types (since the type objects are shared),
             // as well as shared brands
@@ -4205,12 +4227,12 @@ module TypeScript {
                 return false;
             }
 
-            if (t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 == this.semanticInfoChain.stringTypeSymbol) {
-                return true;
+            if (val && t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 == this.semanticInfoChain.stringTypeSymbol) {
+                return(val.nodeType == NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).text) == stripQuotes(t1.getName()));
             }
 
-            if (t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant() && t1 == this.semanticInfoChain.stringTypeSymbol) {
-                return true;
+            if (val && t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant() && t2 == this.semanticInfoChain.stringTypeSymbol) {
+                return (val.nodeType == NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).text) == stripQuotes(t2.getName()));
             }
 
             if (t1.isPrimitive() || t2.isPrimitive()) {
@@ -4483,7 +4505,10 @@ module TypeScript {
                 }
 
                 if (source == this.semanticInfoChain.stringTypeSymbol && target.isPrimitive() && (<PullPrimitiveTypeSymbol>target).isStringConstant()) {
-                    return true;
+                    return comparisonInfo &&
+                    comparisonInfo.stringConstantVal &&
+                    (comparisonInfo.stringConstantVal.nodeType == NodeType.StringLiteral) &&
+                    (stripQuotes((<StringLiteral>comparisonInfo.stringConstantVal).text) == stripQuotes(target.getName()));
                 }
             }
             else {
@@ -4914,7 +4939,7 @@ module TypeScript {
 
                 returnType = signature.getReturnType();
 
-                this.getCandidateSignatures(signature, actuals, exactCandidates, conversionCandidates, enclosingDecl, context, comparisonInfo);
+                this.getCandidateSignatures(signature, actuals, args, exactCandidates, conversionCandidates, enclosingDecl, context, comparisonInfo);
             }
             if (exactCandidates.length == 0) {
 
@@ -4962,7 +4987,7 @@ module TypeScript {
             return candidate;
         }
 
-        public getCandidateSignatures(signature: PullSignatureSymbol, actuals: PullTypeSymbol[], exactCandidates: PullSignatureSymbol[], conversionCandidates: PullSignatureSymbol[], enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
+        public getCandidateSignatures(signature: PullSignatureSymbol, actuals: PullTypeSymbol[], args: ASTList, exactCandidates: PullSignatureSymbol[], conversionCandidates: PullSignatureSymbol[], enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
             var parameters = signature.getParameters();
             var lowerBound = signature.getNonOptionalParameterCount(); // required parameters
             var upperBound = parameters.length; // required and optional parameters
@@ -5011,13 +5036,19 @@ module TypeScript {
                         this.resolveDeclaredSymbol(typeB, enclosingDecl, context);
                     }
 
-                    if (!typeA || !typeB || !(this.typesAreIdentical(typeA, typeB))) {
+                    if (!typeA || !typeB || !(this.typesAreIdentical(typeA, typeB, args.members[i]))) {
                         exact = false;
                     }
+
+                    comparisonInfo.stringConstantVal = args.members[i];
+
                     // is the argument assignable to the parameter?
                     if (!this.sourceIsAssignableToTarget(typeB, typeA, context, comparisonInfo)) {
                         convert = false;
                     }
+
+                    comparisonInfo.stringConstantVal = null;
+
                     if (!(exact || convert)) {
                         break;
                     }
@@ -5222,6 +5253,13 @@ module TypeScript {
                     if (this.typesAreIdentical(PType, QType) && !(QType.isPrimitive() && (<PullPrimitiveTypeSymbol>QType).isStringConstant())) {
                         continue;
                     }
+                    else if (PType.isPrimitive() &&
+                        (<PullPrimitiveTypeSymbol>PType).isStringConstant() &&
+                        args.members[i].nodeType == NodeType.StringLiteral &&
+                        stripQuotes((<StringLiteral>args.members[i]).text) == stripQuotes((<PullStringConstantTypeSymbol>PType).getName()))
+                    {
+                        break;
+                    }
                     else if (QType.isPrimitive() &&
                             (<PullPrimitiveTypeSymbol>QType).isStringConstant() &&
                             args.members[i].nodeType == NodeType.StringLiteral &&
@@ -5265,6 +5303,8 @@ module TypeScript {
                     ambiguous = false;
                 }
             }
+
+            // double-check if the 
 
             return { sig: best.signature, ambiguous: ambiguous };
         }
